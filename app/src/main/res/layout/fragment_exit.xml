@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:padding="0dip"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:background="#FFFFFFFF"
+    android:id="@+id/fragment_exit">
+    
+    <ImageView 
+        android:id="@+id/fragment_exit_logo" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:contentDescription="logo"
+        android:layout_alignParentTop="true"
+        />
+
+   <TextView
+        android:id="@+id/fragment_exit_question" 
+    	android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#FF916B4A"
+        android:layout_gravity="center"
+        android:layout_marginTop="48dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        
+        android:text="@string/do_you_want_to_sync_your_data_now"
+        android:layout_below="@+id/fragment_exit_logo"
+        />
+
+   <LinearLayout
+   	    android:id="@+id/fragment_exit_buttons"
+   	    android:orientation="horizontal" android:padding="5dip"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true">
+	    
+	    <Button
+	        android:id="@+id/fragment_exit_yes"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:layout_marginRight="0dp"
+	        android:text="@string/yes"
+	        android:textColor="#FF916B4A"
+	        android:textSize="17sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        />
+
+	   
+	   <Button
+	        android:id="@+id/fragment_exit_no"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:layout_marginLeft="0dp"
+	        android:text="@string/no"
+	        android:textColor="#FF916B4A"
+	        android:textSize="17sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        /> 
+		    
+	</LinearLayout>
+      
+</RelativeLayout>
+

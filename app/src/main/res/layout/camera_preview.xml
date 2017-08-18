@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <FrameLayout
+    android:id="@+id/camera_preview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    />
+  
+    <ImageView
+	    android:id="@+id/camera_preview_taken"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:scaleType="centerCrop"
+    />
+  
+	    
+	   <ImageButton
+	        android:id="@+id/camera_preview_cancel"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"     
+	        android:paddingTop="24dp"
+	        android:paddingBottom="24dp"
+	        android:paddingLeft="24dp"
+	        android:src="@drawable/ic_action_cancel"
+	        android:background="@null"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentBottom="true"
+	        android:hapticFeedbackEnabled="true"
+	        /> 
+	   
+	  <ImageButton
+	    android:id="@+id/button_capture"
+	    android:layout_width="48dp"
+	    android:layout_height="48dp"
+	    android:src="@drawable/circle_button"
+	    android:background="@null"
+	    android:layout_margin="16dp"
+	    android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:hapticFeedbackEnabled="true"
+	    />
+	   
+	   <ImageButton
+	        android:id="@+id/camera_preview_ok"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"     
+	        android:paddingTop="24dp"
+	        android:paddingBottom="24dp"
+	        android:paddingRight="24dp"
+	        android:src="@drawable/ic_action_accept"
+	        android:background="@null"
+   	        android:layout_alignParentRight="true"
+	        android:layout_alignParentBottom="true"
+	        android:hapticFeedbackEnabled="true"
+	        /> 
+	        
+	   <ImageButton
+	    android:id="@+id/camera_preview_reload"
+    	android:layout_width="wrap_content"
+        android:layout_height="wrap_content"  
+	    android:src="@drawable/ic_action_repeat"
+	    android:background="@null"
+	    android:paddingTop="24dp"
+	    android:paddingBottom="24dp"
+	    android:visibility="invisible"
+	    android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:hapticFeedbackEnabled="true"
+	    />
+
+  
+</RelativeLayout>

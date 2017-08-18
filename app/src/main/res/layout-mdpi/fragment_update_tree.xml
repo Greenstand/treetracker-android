@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:padding="0dip"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:background="#FFFFFFFF"
+    android:id="@+id/fragment_update_tree">
+    
+    <ImageView 
+        android:id="@+id/fragment_update_tree_image" 
+		android:layout_height="160dp" 
+		android:layout_width="match_parent"
+		android:layout_marginTop="8dp" 
+        android:contentDescription="tree"
+        android:layout_alignParentTop="true"
+        />
+    
+	<LinearLayout
+   	    android:id="@+id/fragment_update_tree_distance_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="3dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_image"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/distance_double_colon"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_update_tree_distance"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="5"
+        />
+	    
+	</LinearLayout>	      
+	
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_gps_accuracy_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="3dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_distance_layout"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/gps_accuracy_double_colon"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_update_tree_gps_accuracy"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="5"
+        />
+	    
+	</LinearLayout>	  
+	
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_image_status_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="3dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_gps_accuracy_layout"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/image_status_double_colon"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_update_tree_image_status"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/ok"
+        />
+	    
+	</LinearLayout>
+	
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_last_update_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="3dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_image_status_layout"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/last_update_double_colon"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_update_tree_last_update"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="5"
+        />
+	    
+	</LinearLayout>
+    
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_created_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="3dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_last_update_layout"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/created_double_colon"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_update_tree_created"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="5"
+        />
+	    
+	</LinearLayout>
+    
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_buttons"
+   	    android:orientation="horizontal" android:padding="5dip"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true">
+	    
+	   <TextView
+       	    android:id="@+id/fragment_update_tree_this_tree"
+			android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_gravity="center_vertical"
+	        android:layout_weight="6"
+	        android:textColor="#FF916B4A"
+	       	android:paddingTop="4dp"
+	        android:paddingBottom="4dp"
+	        android:layout_marginBottom="4dp"
+	        android:layout_marginTop="12dp"
+	        android:text="@string/are_you_updating_this_tree"
+        />
+
+	   
+	   <Button
+	        android:id="@+id/fragment_update_tree_yes"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:paddingTop="4dp"
+	        android:paddingBottom="4dp"
+	        android:layout_marginLeft="2dp"
+	        android:text="@string/yes"
+	        android:textColor="#FF916B4A"
+	        android:textSize="15sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        /> 
+		    
+	</LinearLayout>
+	
+    <ImageButton
+        android:id="@+id/fragment_update_tree_previous"
+    	android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="48dp"
+        android:background="@null"
+        android:src="@drawable/ic_action_back"
+        android:contentDescription="back"/>
+    
+    <ImageButton
+        android:id="@+id/fragment_update_tree_next"
+    	android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="48dp"
+        android:background="@null"
+        android:src="@drawable/ic_action_forward"
+        android:contentDescription="back"/>
+    
+    <TextView
+        android:id="@+id/fragment_update_tree_no_image"
+    	android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fragment_update_tree_image"
+        android:layout_centerHorizontal="true"
+        android:textSize="15sp"
+        android:paddingTop="5dp"
+		android:text="@string/no_image_preview_available"
+        />
+      
+</RelativeLayout>
+

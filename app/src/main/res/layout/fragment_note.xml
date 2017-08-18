@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:padding="0dip"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:background="#FFFFFFFF"
+    android:id="@+id/fragment_note">
+    
+    <ImageView 
+        android:id="@+id/fragment_note_image" 
+		android:layout_height="160dp" 
+		android:layout_width="match_parent"
+		android:layout_marginTop="8dp" 
+        android:contentDescription="tree"
+        android:layout_alignParentTop="true"
+        />
+    <ImageButton 
+        android:id="@+id/fragment_note_take_photo" 
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content"
+		android:layout_marginTop="8dp" 
+        android:contentDescription="tree"
+        android:src="@drawable/ic_action_camera"
+		android:layout_centerHorizontal="true"
+		android:background="@null"
+		android:visibility="gone"
+        android:layout_alignBottom="@+id/fragment_note_image"
+        />
+    
+     <EditText
+        android:id="@+id/fragment_note_note" 
+    	android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        android:lines="6"
+        android:minLines="6"
+        android:maxLines="6"
+        android:maxLength="50"
+        android:hint="@string/your_note"
+        android:layout_below="@+id/fragment_note_image"
+        />
+     
+    <CheckBox
+        android:id="@+id/fragment_note_missing_tree_checkbox"
+    	android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="@string/tree_missing"
+        android:layout_below="@+id/fragment_note_note"
+          />
+     
+    <LinearLayout
+   	    android:id="@+id/fragment_note_buttons"
+   	    android:orientation="horizontal" android:padding="5dip"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true">
+	    
+	    <Button
+	        android:id="@+id/fragment_note_save"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:layout_marginRight="0dp"
+	        android:text="@string/save"
+	        android:textColor="#FF916B4A"
+	        android:textSize="17sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        />
+
+	   
+	   <Button
+	        android:id="@+id/fragment_note_tree_missing"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:visibility="gone"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:layout_marginLeft="0dp"
+	        android:text="@string/tree_missing"
+	        android:textColor="#FF916B4A"
+	        android:textSize="17sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        /> 
+		    
+	</LinearLayout>
+	
+    <TextView
+        android:id="@+id/fragment_note_no_image"
+    	android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fragment_note_image"
+        android:layout_centerHorizontal="true"
+        android:textSize="17sp"
+        android:paddingTop="5dp"
+		android:text="@string/no_image_preview_available"
+		android:visibility="invisible"
+        />
+      
+</RelativeLayout>
+

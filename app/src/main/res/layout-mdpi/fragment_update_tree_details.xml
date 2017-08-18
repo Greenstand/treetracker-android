@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:padding="0dip"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:background="#FFFFFFFF"
+    android:id="@+id/fragment_update_tree_details">
+    
+    <ImageView 
+        android:id="@+id/fragment_update_tree_details_image" 
+		android:layout_height="160dp" 
+		android:layout_width="match_parent"
+		android:layout_marginTop="8dp" 
+        android:contentDescription="tree"
+        android:layout_alignParentTop="true"
+        />
+    <ImageButton 
+        android:id="@+id/fragment_update_tree_details_take_photo" 
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content"
+		android:layout_marginTop="8dp" 
+        android:contentDescription="tree"
+        android:src="@drawable/ic_action_camera"
+		android:layout_centerHorizontal="true"
+		android:background="@null"
+        android:layout_alignBottom="@+id/fragment_update_tree_details_image"
+        />
+    
+	<LinearLayout
+   	    android:id="@+id/fragment_update_tree_details_distance_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="0dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_details_image"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="2"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="4dp"
+	        android:text="@string/distance_double_colon"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_update_tree_details_distance"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="4dp"
+	        android:text="5"
+        />
+	    
+	</LinearLayout>	      
+	
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_details_gps_accuracy_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="0dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_details_distance_layout"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="2"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/gps_accuracy_double_colon"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_update_tree_details_gps_accuracy"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="5"
+        />
+	    
+	</LinearLayout>	  
+	
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_details_next_update_layout"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="1dp"
+   	    android:paddingBottom="0dp"
+   	    android:paddingLeft="24dp"
+   	    android:paddingRight="24dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_update_tree_details_gps_accuracy_layout"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="2"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:text="@string/time_to_next_update_double_colon"
+        />
+       	
+       	<EditText
+       	    android:id="@+id/fragment_update_tree_details_next_update"
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:layout_weight="1"
+	        android:gravity="center_horizontal"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="6dp"
+	        android:inputType="number"
+	        android:maxLength="3"
+        />
+	    
+	</LinearLayout>
+	
+    
+     <EditText
+        android:id="@+id/fragment_update_tree_details_note" 
+    	android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        android:lines="2"
+        android:minLines="2"
+        android:maxLines="2"
+        android:maxLength="50"
+        android:hint="@string/your_note"
+        android:layout_below="@+id/fragment_update_tree_details_next_update_layout"
+        />
+     
+      <EditText
+        android:id="@+id/fragment_update_tree_details_three_digits"
+        android:maxLength="3" 
+    	android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:visibility="gone"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:inputType="number"
+        android:hint="@string/three_digit_number"
+        android:layout_below="@+id/fragment_update_tree_details_note"
+        />
+      
+      
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_details_buttons"
+   	    android:orientation="horizontal" android:padding="0dip"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/fragment_update_tree_details_note">
+	    
+      <CheckBox
+        android:id="@+id/fragment_update_tree_details_remove_photo"
+ 		android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="15sp"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="22dp"
+        android:text="@string/remove_photo"
+        
+          />
+          
+      <CheckBox
+        android:id="@+id/fragment_update_tree_details_missing_tree"
+    	android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="15sp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="12dp"
+        android:text="@string/tree_missing"
+          />
+		    
+	</LinearLayout>
+       
+    <LinearLayout
+   	    android:id="@+id/fragment_update_tree_details_buttons"
+   	    android:orientation="horizontal" android:padding="5dip"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true">
+	    
+	    <Button
+	        android:id="@+id/fragment_update_tree_details_save"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:layout_marginRight="0dp"
+	        android:text="@string/save"
+	        android:textColor="#FF916B4A"
+	        android:textSize="15sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        />
+
+	   
+	   <Button
+	        android:id="@+id/fragment_update_tree_details_reset_gps"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:layout_marginLeft="0dp"
+	        android:text="@string/reset_gps_location"
+	        android:textColor="#FF916B4A"
+	        android:textSize="15sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        /> 
+		    
+	</LinearLayout>
+	
+</RelativeLayout>
+

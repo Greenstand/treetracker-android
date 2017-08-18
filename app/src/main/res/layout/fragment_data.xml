@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:padding="0dip"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:background="#FFFFFFFF"
+    android:id="@+id/fragment_data">
+    
+    <ImageView 
+        android:id="@+id/fragment_data_logo" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:contentDescription="logo"
+        android:layout_alignParentTop="true"
+        />
+    
+    <LinearLayout
+   	    android:id="@+id/fragment_data_total_trees"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="5dp"
+   	    android:paddingBottom="5dp"
+   	    android:paddingLeft="48dp"
+   	    android:paddingRight="48dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_data_logo"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="3"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+	        android:text="@string/total_trees"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_data_total_trees_value"
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+        />
+	    
+	</LinearLayout>
+	
+    
+    <LinearLayout
+   	    android:id="@+id/fragment_data_update"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="5dp"
+   	    android:paddingBottom="5dp"
+   	    android:paddingLeft="48dp"
+   	    android:paddingRight="48dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_data_total_trees"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="3"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+	        android:text="@string/update"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_data_update_value"
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+        />
+	    
+	</LinearLayout>	
+	
+    <LinearLayout
+   	    android:id="@+id/fragment_data_located"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="5dp"
+   	    android:paddingBottom="5dp"
+   	    android:paddingLeft="48dp"
+   	    android:paddingRight="48dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_data_update"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="3"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+	        android:text="@string/located"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_data_located_value"
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+        />
+	    
+	</LinearLayout>	    
+	
+    
+    <LinearLayout
+   	    android:id="@+id/fragment_data_to_sync"
+   	    android:orientation="horizontal" 
+   	    android:paddingTop="5dp"
+   	    android:paddingBottom="5dp"
+   	    android:paddingLeft="48dp"
+   	    android:paddingRight="48dp"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_data_located"
+	    >
+	    
+       	<TextView
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="3"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+	        android:text="@string/to_sync"
+        />
+       	
+       	<TextView
+       	    android:id="@+id/fragment_data_to_sync_value"
+	    	android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:textSize="17sp"
+	        android:layout_weight="1"
+	        android:gravity="right"
+	        android:textColor="#FF916B4A"
+	        android:layout_marginTop="12dp"
+        />
+	    
+	</LinearLayout>	        
+
+   	<LinearLayout
+   	    android:id="@+id/fragment_map_buttons"
+   	    android:orientation="horizontal" android:padding="5dip"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true">
+	    
+	    <Button
+	        android:id="@+id/fragment_data_sync"
+	        android:layout_weight="1"
+	    	android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:text="@string/sync"
+	        android:textColor="#FF916B4A"
+	        android:textSize="17sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        />
+	   
+	   <Button
+	        android:id="@+id/fragment_data_pause"
+	        android:layout_weight="1"
+	    	android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:text="@string/pause"
+	        android:textColor="#FF916B4A"
+	        android:textSize="17sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        />
+	   
+	   <Button
+	        android:id="@+id/fragment_data_resume"
+	        android:layout_weight="1"
+	    	android:layout_width="match_parent"
+	        android:layout_height="wrap_content"     
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:text="@string/resume"
+	        android:textColor="#FF916B4A"
+	        android:textSize="17sp"
+	        android:textStyle="normal"
+	        android:background="@drawable/white_gray_gradient"
+	        /> 
+		    
+	</LinearLayout>
+      
+</RelativeLayout>
+
