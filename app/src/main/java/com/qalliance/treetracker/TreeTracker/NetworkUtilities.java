@@ -58,7 +58,7 @@ public class NetworkUtilities {
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
     public static final String BASE_URL =
-        "http://api.treetracker.org";
+        "http://dev.treetracker.org";
     public static final String FORGOT_PASSWORD_URL = BASE_URL + "/password/remind";
     public static final String AUTH_URI = BASE_URL + "/users/login";
     public static final String SIGNUP_URI = BASE_URL + "/users/signup";
