@@ -507,12 +507,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 		        post.setHeader("Accept-Charset","utf-8");
 
 
-		        DefaultHttpClient mHttpClient = new DefaultHttpClient();
-	            final HttpParams httpParams = mHttpClient.getParams();
-	            HttpConnectionParams.setConnectionTimeout(httpParams,
-	            		NetworkUtilities.REGISTRATION_TIMEOUT);
-	            HttpConnectionParams.setSoTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
-	            ConnManagerParams.setTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
+		        DefaultHttpClient mHttpClient = NetworkUtilities.createHttpClient();
 		        
 		        try {
 		            resp = mHttpClient.execute(post);
@@ -696,12 +691,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 	        post.setHeader("Accept-Charset","utf-8");
 
 
-	        DefaultHttpClient mHttpClient = new DefaultHttpClient();
-            final HttpParams httpParams = mHttpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams,
-            		NetworkUtilities.REGISTRATION_TIMEOUT);
-            HttpConnectionParams.setSoTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
-            ConnManagerParams.setTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
+	        DefaultHttpClient mHttpClient = NetworkUtilities.createHttpClient();
 	        
 	        try {
 	            resp = mHttpClient.execute(post);
@@ -844,12 +834,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 	        post.setHeader("Accept-Charset","utf-8");
 
 
-	        DefaultHttpClient mHttpClient = new DefaultHttpClient();
-            final HttpParams httpParams = mHttpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams,
-            		NetworkUtilities.REGISTRATION_TIMEOUT);
-            HttpConnectionParams.setSoTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
-            ConnManagerParams.setTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
+	        DefaultHttpClient mHttpClient = NetworkUtilities.createHttpClient();
 	        
 	        try {
 	            resp = mHttpClient.execute(post);
@@ -933,12 +918,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 	        Log.e("GET", NetworkUtilities.TREE_SYNC_URI + treeId + "?token=" + mSharedPreferences.getString(ValueHelper.TOKEN, ""));
 
 
-	        DefaultHttpClient mHttpClient = new DefaultHttpClient();
-            final HttpParams httpParams = mHttpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams,
-            		NetworkUtilities.REGISTRATION_TIMEOUT);
-            HttpConnectionParams.setSoTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
-            ConnManagerParams.setTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
+	        DefaultHttpClient mHttpClient = NetworkUtilties.createHttpClient();
 	        
 	        try {
 	            resp = mHttpClient.execute(post);
@@ -1222,12 +1202,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 	        post.setHeader("Accept-Charset","utf-8");
 
 
-	        DefaultHttpClient mHttpClient = new DefaultHttpClient();
-            final HttpParams httpParams = mHttpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams,
-            		NetworkUtilities.REGISTRATION_TIMEOUT);
-            HttpConnectionParams.setSoTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
-            ConnManagerParams.setTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
+	        DefaultHttpClient mHttpClient = NetworkUtilities.createHttpClient();
 	        
 	        try {
 	            resp = mHttpClient.execute(post);

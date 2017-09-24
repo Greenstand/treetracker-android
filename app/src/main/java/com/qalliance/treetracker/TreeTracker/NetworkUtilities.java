@@ -78,13 +78,21 @@ public class NetworkUtilities {
      */
     public static void maybeCreateHttpClient() {
         if (mHttpClient == null) {
-            mHttpClient = new DefaultHttpClient();
-            final HttpParams params = mHttpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(params,
-                REGISTRATION_TIMEOUT);
-            HttpConnectionParams.setSoTimeout(params, REGISTRATION_TIMEOUT);
-            ConnManagerParams.setTimeout(params, REGISTRATION_TIMEOUT);
+            mHttpClient = createHttpClient();
         }
+    }
+
+    /**
+     * Constructs a new DefaultHttpClient with a default 30 second timeout.
+     */
+    public static DefaultHttpClient createHttpClient() {
+        DefaultHttpClient client = new DefaultHttpClient();
+        final HttpParams params = client.getParams();
+        HttpConnectionParams.setConnectionTimeout(params,
+            REGISTRATION_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(params, REGISTRATION_TIMEOUT);
+        ConnManagerParams.setTimeout(params, REGISTRATION_TIMEOUT);
+        return client;
     }
 
     /**
