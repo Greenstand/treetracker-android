@@ -174,12 +174,7 @@ public class ForgotPasswordFragment extends Fragment implements OnClickListener 
 	        post.setHeader("Accept-Charset","utf-8");
 
 
-	        DefaultHttpClient mHttpClient = new DefaultHttpClient();
-            final HttpParams httpParams = mHttpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams,
-            		NetworkUtilities.REGISTRATION_TIMEOUT);
-            HttpConnectionParams.setSoTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
-            ConnManagerParams.setTimeout(httpParams, NetworkUtilities.REGISTRATION_TIMEOUT);
+	        DefaultHttpClient mHttpClient = NetworkUtilities.createHttpClient();
 	        
 	        try {
 	            resp = mHttpClient.execute(post);
