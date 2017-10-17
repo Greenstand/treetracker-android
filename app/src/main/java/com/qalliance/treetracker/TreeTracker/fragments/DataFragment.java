@@ -918,7 +918,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 	        Log.e("GET", NetworkUtilities.TREE_SYNC_URI + treeId + "?token=" + mSharedPreferences.getString(ValueHelper.TOKEN, ""));
 
 
-	        DefaultHttpClient mHttpClient = NetworkUtilties.createHttpClient();
+	        DefaultHttpClient mHttpClient = NetworkUtilities.createHttpClient();
 	        
 	        try {
 	            resp = mHttpClient.execute(post);
