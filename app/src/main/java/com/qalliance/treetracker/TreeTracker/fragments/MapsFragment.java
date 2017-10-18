@@ -1,14 +1,9 @@
 package com.qalliance.treetracker.TreeTracker.fragments;
 
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -20,6 +15,7 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.InflateException;
@@ -44,8 +40,19 @@ import com.qalliance.treetracker.TreeTracker.MainActivity;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 public class MapsFragment extends Fragment implements OnClickListener, OnMarkerClickListener, OnMapReadyCallback {
 
+	public interface LocationDialogListener {
+		void settingsSelected();
+	}
+
+	LocationDialogListener mSettingCallback;
 
 	private ArrayList<Marker> redPulsatingMarkers = new ArrayList<Marker>();
 	private ArrayList<Marker> redToGreenPulsatingMarkers = new ArrayList<Marker>();
@@ -62,6 +69,18 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 	}
 
 	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+
+		try {
+			mSettingCallback = (LocationDialogListener) context;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(context.toString()
+					+ " must implement LocationDialogListener");
+		}
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -73,13 +92,23 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 		super.onPause();
 
 		paused = true;
+		Log.d("GPS_Bugs", "MasFragment onPause");
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.d("GPS_Bugs", "MasFragment on Destroy");
+	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-
+		Log.d("GPS_Bugs", "MasFragment onResume");
+		if (paused) {
+			((SupportMapFragment) getChildFragmentManager()
+					.findFragmentById(R.id.map)).getMapAsync(this);
+		}
 		paused = false;
 
 		mCurrentRedToGreenMarkerColor = R.drawable.green_pin;
@@ -209,6 +238,10 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 				}
 			} else {
 				Log.i("ođe", "5");
+				if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+						ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+					showLocationAlertDialog();
+				}
 				mapGpsAccuracy.setTextColor(Color.RED);
 				mapGpsAccuracyValue.setTextColor(Color.RED);
 				mapGpsAccuracyValue.setText("N/A");
@@ -218,6 +251,25 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 		}
 
 		return v;
+	}
+
+	private void showLocationAlertDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(getString(R.string.location_permission_alert_title))
+				.setMessage(getString(R.string.location_permission_alert_message))
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						mSettingCallback.settingsSelected();
+					}
+				})
+				.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// no need to implement
+					}
+				});
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
 	private Handler handler = new Handler() {
