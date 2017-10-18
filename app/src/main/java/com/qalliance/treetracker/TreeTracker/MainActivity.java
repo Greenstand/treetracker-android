@@ -1,7 +1,6 @@
 package com.qalliance.treetracker.TreeTracker;
 
 
-import android.*;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
@@ -17,6 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,15 +52,13 @@ import com.qalliance.treetracker.TreeTracker.fragments.DataFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.ForgotPasswordFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.HomeFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.LoginFragment;
+import com.qalliance.treetracker.TreeTracker.fragments.MapsFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.SignupFragment;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,7 +71,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends ActionBarActivity implements OnGlobalLayoutListener, LocationListener, OnClickListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainActivity extends ActionBarActivity implements
+        OnGlobalLayoutListener,
+        LocationListener,
+        OnClickListener,
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks,
+        ActivityCompat.OnRequestPermissionsResultCallback,
+        MapsFragment.LocationDialogListener {
 
     FrameLayout mSplashScreen;
     private GoogleApiClient mGoogleApiClient;
@@ -359,13 +364,13 @@ public class MainActivity extends ActionBarActivity implements OnGlobalLayoutLis
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
             // In debug mode, log the status
-            Log.d("Location Updates",
+            Log.d("LocationUpdates",
                     "Google Play services is available.");
             // Continue
             return true;
             // Google Play services was not available for some reason
         } else {
-            Log.e("Location Updates",
+            Log.e("LocationUpdates",
                     "Google Play services is not available.");
 
         }
@@ -1098,9 +1103,19 @@ public class MainActivity extends ActionBarActivity implements OnGlobalLayoutLis
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }
-    
-    
-	class GetMyTreesTask extends AsyncTask<String, Void, String> {
+
+    @Override
+    public void settingsSelected() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+
+    class GetMyTreesTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
