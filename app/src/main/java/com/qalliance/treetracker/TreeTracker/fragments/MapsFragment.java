@@ -3,7 +3,6 @@ package com.qalliance.treetracker.TreeTracker.fragments;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -12,10 +11,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.InflateException;
@@ -37,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.qalliance.treetracker.TreeTracker.MainActivity;
+import com.qalliance.treetracker.TreeTracker.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
 
@@ -49,7 +49,7 @@ import java.util.Date;
 public class MapsFragment extends Fragment implements OnClickListener, OnMarkerClickListener, OnMapReadyCallback {
 
 	public interface LocationDialogListener {
-		void settingsSelected();
+		void refreshMap();
 	}
 
 	LocationDialogListener mSettingCallback;
@@ -240,7 +240,9 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 				Log.i("ođe", "5");
 				if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
 						ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-					showLocationAlertDialog();
+					requestPermissions(
+							new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+							Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION);
 				}
 				mapGpsAccuracy.setTextColor(Color.RED);
 				mapGpsAccuracyValue.setTextColor(Color.RED);
@@ -253,23 +255,11 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 		return v;
 	}
 
-	private void showLocationAlertDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle(getString(R.string.location_permission_alert_title))
-				.setMessage(getString(R.string.location_permission_alert_message))
-				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						mSettingCallback.settingsSelected();
-					}
-				})
-				.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// no need to implement
-					}
-				});
-		AlertDialog dialog = builder.create();
-		dialog.show();
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		if (requestCode == Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION) {
+			mSettingCallback.refreshMap();
+		}
 	}
 
 	private Handler handler = new Handler() {

@@ -16,7 +16,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -1105,13 +1104,8 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void settingsSelected() {
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", getPackageName(), null);
-        intent.setData(uri);
-        intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+    public void refreshMap() {
+        startPeriodicUpdates();
     }
 
 
