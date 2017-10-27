@@ -1,12 +1,6 @@
 package com.qalliance.treetracker.TreeTracker.fragments;
 
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -17,22 +11,26 @@ import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.qalliance.treetracker.TreeTracker.DbHelper;
 import com.qalliance.treetracker.TreeTracker.MainActivity;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TreePreviewFragment extends Fragment implements OnClickListener {
 	
@@ -52,8 +50,7 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-		
+        setHasOptionsMenu(true);
         
     }
 	
@@ -61,7 +58,11 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 	public void onResume() {
 		super.onResume();
 	}
-	
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+	}
     	 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,7 +70,8 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 		
 	    View v = inflater.inflate(R.layout.fragment_tree_preview, container, false);
 	    
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.tree_preview);
+	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.tree_preview);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	    
 	    Bundle extras = getArguments();
 	    

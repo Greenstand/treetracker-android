@@ -6,19 +6,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.Checkable;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -45,14 +45,18 @@ public class SettingsFragment extends Fragment implements OnClickListener, OnChe
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setHasOptionsMenu(true);
     }
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 	}
-	
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+	}
     	 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,8 +69,10 @@ public class SettingsFragment extends Fragment implements OnClickListener, OnChe
 	    mSharedPreferences = getActivity().getSharedPreferences(
 	      	      "com.qalliance.treetracker", Context.MODE_PRIVATE);
 	    
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.settings);
-	    
+	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.settings);
+//		((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.settings);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 	    RadioGroup whichSettings = (RadioGroup) v.findViewById(R.id.fragment_settings_which_settings);
 	    whichSettings.setOnCheckedChangeListener(SettingsFragment.this);
 	    

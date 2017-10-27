@@ -18,10 +18,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -82,7 +84,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setHasOptionsMenu(true);
 
     }
 	
@@ -168,23 +170,29 @@ public class DataFragment extends Fragment implements OnClickListener {
 		}
 			
 	}
-	
-    	 
-	@Override
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+    }
+
+    @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	        Bundle savedInstanceState) {
 		
 	    View v = inflater.inflate(R.layout.fragment_data, container, false);
-	    
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.data);
-	    
+        if (!((AppCompatActivity) getActivity()).getSupportActionBar().isShowing()) {
+            Log.d("MainActivity", "toolbar hide");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        }
+
+	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.data);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.data);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 	    mSharedPreferences = getActivity().getSharedPreferences(
 	      	      "com.qalliance.treetracker", Context.MODE_PRIVATE);
-	    
-	    
-		
-		
-	    
+
 	    Button syncBtn = (Button) v.findViewById(R.id.fragment_data_sync);
 	    syncBtn.setOnClickListener(DataFragment.this);
 

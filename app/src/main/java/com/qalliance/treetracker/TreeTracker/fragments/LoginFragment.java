@@ -1,8 +1,32 @@
 package com.qalliance.treetracker.TreeTracker.fragments;
 
-import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Paint;
+import android.os.Bundle;
+import android.os.Looper;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.qalliance.treetracker.TreeTracker.MainActivity;
+import com.qalliance.treetracker.TreeTracker.NetworkUtilities;
+import com.qalliance.treetracker.TreeTracker.R;
+import com.qalliance.treetracker.TreeTracker.Utils;
+import com.qalliance.treetracker.TreeTracker.ValueHelper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -16,34 +40,7 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Paint;
-import android.os.Bundle;
-import android.os.Looper;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
-import android.text.util.Linkify;
-import android.view.HapticFeedbackConstants;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.qalliance.treetracker.TreeTracker.MainActivity;
-import com.qalliance.treetracker.TreeTracker.NetworkUtilities;
-import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.Utils;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import java.io.InputStream;
 
 public class LoginFragment extends Fragment implements OnClickListener {
 	
@@ -57,14 +54,18 @@ public class LoginFragment extends Fragment implements OnClickListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setHasOptionsMenu(true);
     }
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 	}
-	
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+	}
     	 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,7 +74,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 	    View v = inflater.inflate(R.layout.fragment_login, container, false);
 	    
 	    
-	    ((ActionBarActivity)getActivity()).getSupportActionBar().hide();
+	    ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
 	    
 	    
 	    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -238,13 +239,14 @@ public class LoginFragment extends Fragment implements OnClickListener {
                             mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
                             
                             //Redirect to HomeFragment
-                            fragment = new HomeFragment();
+//                            fragment = new HomeFragment();
+							fragment = new MapsFragment();
             				bundle = getActivity().getIntent().getExtras();
             				fragment.setArguments(bundle);
             				
             				fragmentTransaction = getActivity().getSupportFragmentManager()
             						.beginTransaction();
-            				fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.HOME_FRAGMENT).commit();
+            				fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit();
 
                         } else {
                         	String rsp = Utils.convertStreamToString(in);

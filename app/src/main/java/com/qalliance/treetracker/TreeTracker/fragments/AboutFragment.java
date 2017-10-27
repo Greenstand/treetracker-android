@@ -4,9 +4,10 @@ package com.qalliance.treetracker.TreeTracker.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,14 +28,18 @@ public class AboutFragment extends Fragment implements OnClickListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setHasOptionsMenu(true);
     }
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 	}
-	
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+	}
     	 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,7 +50,9 @@ public class AboutFragment extends Fragment implements OnClickListener {
 //	    ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.information));
 //	    ((ActionBarActivity)getActivity()).getSupportActionBar().show();
 	    
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.information);
+	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.information);
+//		((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.about);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	    
 	    return v;
 	}
