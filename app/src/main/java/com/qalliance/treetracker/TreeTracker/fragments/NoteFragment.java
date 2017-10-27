@@ -1,11 +1,5 @@
 package com.qalliance.treetracker.TreeTracker.fragments;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,13 +23,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -47,11 +43,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qalliance.treetracker.TreeTracker.CameraActivity;
-import com.qalliance.treetracker.TreeTracker.DbHelper;
 import com.qalliance.treetracker.TreeTracker.MainActivity;
 import com.qalliance.treetracker.TreeTracker.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class NoteFragment extends Fragment implements OnClickListener, OnCheckedChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -74,12 +75,17 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		setHasOptionsMenu(true);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
 	}
 
 	@Override
@@ -90,7 +96,8 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 		
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.tree_preview);
+	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.tree_preview);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	    
 	    Bundle extras = getArguments();
 	    

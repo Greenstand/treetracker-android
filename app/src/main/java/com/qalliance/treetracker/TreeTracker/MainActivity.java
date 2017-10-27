@@ -27,15 +27,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,9 +47,9 @@ import com.google.android.gms.location.LocationServices;
 import com.qalliance.treetracker.TreeTracker.fragments.AboutFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.DataFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.ForgotPasswordFragment;
-import com.qalliance.treetracker.TreeTracker.fragments.HomeFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.LoginFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.MapsFragment;
+import com.qalliance.treetracker.TreeTracker.fragments.SettingsFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.SignupFragment;
 
 import org.apache.http.HttpResponse;
@@ -73,7 +71,6 @@ import java.util.Map;
 public class MainActivity extends ActionBarActivity implements
         OnGlobalLayoutListener,
         LocationListener,
-        OnClickListener,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks,
         ActivityCompat.OnRequestPermissionsResultCallback,
@@ -155,14 +152,14 @@ public class MainActivity extends ActionBarActivity implements
         servicesConnected();
         //TODO handle when not connected
 
-        requestWindowFeature(Window.FEATURE_ACTION_BAR);
+//        requestWindowFeature(Window.FEATURE_ACTION_BAR);
 
         setContentView(R.layout.activity_main);
 
         this.findViewById(android.R.id.content).getRootView().getViewTreeObserver().addOnGlobalLayoutListener(this);
 
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//        FrameLayout mDrawerLayout = (FrameLayout) findViewById(R.id.drawer_layout);
+//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 //        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         List<Map<String, String>> data = getMenuData();
@@ -188,20 +185,15 @@ public class MainActivity extends ActionBarActivity implements
         // Note that location updates are on by default
         mUpdatesRequested = true;
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
-        getSupportActionBar().setCustomView(R.layout.action_bar);
-
-        ((ImageButton) findViewById(R.id.action_bar_about)).setOnClickListener(MainActivity.this);
-        ((ImageButton) findViewById(R.id.action_bar_home)).setOnClickListener(MainActivity.this);
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("");
 
         boolean showSignupFragment = mSharedPreferences.getBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false);
         boolean showLoginFragment = mSharedPreferences.getBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, true);
 
+        Log.d("MainActivity", "showSignupFragment: " + showSignupFragment + ", showLoginFragment: " + showLoginFragment);
 
         if (showSignupFragment) {
 
@@ -239,7 +231,7 @@ public class MainActivity extends ActionBarActivity implements
             }
 
             if (startDataSync) {
-
+                Log.d("MainActivity", "startDataSync is true");
                 NotificationManager mNotificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager.cancel(ValueHelper.WIFI_NOTIFICATION_ID);
@@ -254,16 +246,17 @@ public class MainActivity extends ActionBarActivity implements
                 fragmentTransaction.commit();
 
             } else if (mSharedPreferences.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
-
+                Log.d("MainActivity", "TREES_TO_BE_DOWNLOADED_FIRST is true");
                 Bundle bundle = getIntent().getExtras();
 
 
-                fragment = new HomeFragment();
+//                fragment = new HomeFragment();
+                fragment = new MapsFragment();
                 fragment.setArguments(bundle);
 
                 fragmentTransaction = getSupportFragmentManager()
                         .beginTransaction();
-                fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.HOME_FRAGMENT).commit();
+                fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit();
 
                 if (bundle == null)
                     bundle = new Bundle();
@@ -279,21 +272,136 @@ public class MainActivity extends ActionBarActivity implements
                 fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
 
             } else {
-                HomeFragment homeFragment = new HomeFragment();
+                Log.d("MainActivity", "startDataSync is false");
+//                HomeFragment homeFragment = new HomeFragment();
+                MapsFragment homeFragment = new MapsFragment();
                 homeFragment.setArguments(getIntent().getExtras());
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                         .beginTransaction();
-                fragmentTransaction.add(R.id.container_fragment, homeFragment, ValueHelper.HOME_FRAGMENT);
-
+//                fragmentTransaction.add(R.id.container_fragment, homeFragment, ValueHelper.HOME_FRAGMENT);
+                fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT);
                 fragmentTransaction.commit();
             }
 
         }
 
-
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        Log.d("MainActivity", "menu_main created");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Bundle bundle;
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
+        Log.d("MainActivity", currentFragment.toString());
+        FragmentManager fm = getSupportFragmentManager();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Log.d("MainActivity", "press back button");
+
+                Log.d("MainActivity", "click back, back stack count: " + fm.getBackStackEntryCount());
+                for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                }
+                if (fm.getBackStackEntryCount() > 1) {
+                    fm.popBackStack();
+                }
+                return true;
+            case R.id.action_data:
+                fragment = new DataFragment();
+                bundle = getIntent().getExtras();
+                fragment.setArguments(bundle);
+
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
+                for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                }
+                return true;
+            case R.id.action_settings:
+                fragment = new SettingsFragment();
+                bundle = getIntent().getExtras();
+                fragment.setArguments(bundle);
+
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.SETTINGS_FRAGMENT).commit();
+                for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                }
+                return true;
+            case R.id.action_about:
+                Fragment someFragment = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
+
+                boolean aboutIsRunning = false;
+
+                if (someFragment != null) {
+                    if (someFragment instanceof AboutFragment) {
+                        aboutIsRunning = true;
+                    }
+                }
+
+                if (!aboutIsRunning) {
+                    fragment = new AboutFragment();
+                    fragment.setArguments(getIntent().getExtras());
+
+                    fragmentTransaction = getSupportFragmentManager()
+                            .beginTransaction();
+                    fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.ABOUT_FRAGMENT).commit();
+                }
+                for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                }
+                return true;
+            case R.id.action_exit:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setTitle(R.string.exit);
+                builder.setMessage(R.string.do_you_want_to_sync_your_data_now);
+
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        MainActivity.syncDataFromExitScreen = true;
+
+                        fragment = new DataFragment();
+                        fragment.setArguments(getIntent().getExtras());
+
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
+
+                        dialog.dismiss();
+                    }
+
+                });
+
+
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // Code that is executed when clicking NO
+
+                        finish();
+
+                        dialog.dismiss();
+                    }
+
+                });
+
+
+                AlertDialog alert = builder.create();
+                alert.show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private List<Map<String, String>> getMenuData() {
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
@@ -561,12 +669,13 @@ public class MainActivity extends ActionBarActivity implements
 
             Bundle bundle = getIntent().getExtras();
 
-            fragment = new HomeFragment();
+//            fragment = new HomeFragment();
+            fragment = new MapsFragment();
             fragment.setArguments(bundle);
 
             fragmentTransaction = getSupportFragmentManager()
                     .beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.HOME_FRAGMENT).commit();
+            fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit();
 
             if (bundle == null)
                 bundle = new Bundle();
@@ -769,7 +878,8 @@ public class MainActivity extends ActionBarActivity implements
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
 
-                        fragment = new HomeFragment();
+//                        fragment = new HomeFragment();
+                        fragment = new MapsFragment();
                         fragment.setArguments(getIntent().getExtras());
 
                         fragmentTransaction = getSupportFragmentManager()
@@ -910,13 +1020,14 @@ public class MainActivity extends ActionBarActivity implements
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
 
-                        HomeFragment homeFragment = new HomeFragment();
+//                        HomeFragment homeFragment = new HomeFragment();
+                        MapsFragment homeFragment = new MapsFragment();
                         homeFragment.setArguments(getIntent().getExtras());
 
                         FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                                 .beginTransaction();
 
-                        fragmentTransaction.replace(R.id.container_fragment, homeFragment, ValueHelper.HOME_FRAGMENT);
+                        fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT);
 
                         fragmentTransaction.commit();
 
@@ -1035,60 +1146,6 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            case R.id.action_bar_home:
-
-                try {
-                    fragment = new HomeFragment();
-                    fragment.setArguments(getIntent().getExtras());
-
-                    fragmentTransaction = getSupportFragmentManager()
-                            .beginTransaction();
-                    fragmentTransaction.replace(R.id.container_fragment, fragment)
-                            .addToBackStack(ValueHelper.HOME_FRAGMENT).commit();
-
-                    FragmentManager manager = getSupportFragmentManager();
-                    FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
-                    manager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                break;
-
-
-            case R.id.action_bar_about:
-
-                FrameLayout frameLayout = (FrameLayout) findViewById(R.id.container_fragment);
-                Fragment someFragment = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
-
-                boolean aboutIsRunning = false;
-
-                if (someFragment != null) {
-                    if (someFragment instanceof AboutFragment) {
-                        aboutIsRunning = true;
-                    }
-                }
-
-                if (!aboutIsRunning) {
-                    fragment = new AboutFragment();
-                    fragment.setArguments(getIntent().getExtras());
-
-                    fragmentTransaction = getSupportFragmentManager()
-                            .beginTransaction();
-                    fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.ABOUT_FRAGMENT).commit();
-                }
-
-                break;
-        }
-
-    }
-
-
     /**
      * In response to a request to start updates, send a request
      * to Location Services
@@ -1177,8 +1234,10 @@ public class MainActivity extends ActionBarActivity implements
 		        	JSONArray jsonReponseArray = null;
 					String local_id = null;
 					String maindb_id = null;
-						
-					try {
+                    Log.d("MainActivity", "GetMyTreesTask onPostExecute response != null");
+                    Log.d("MainActivity", "response: " + response);
+
+                    try {
 						jsonReponseArray = new JSONArray(response);
 						
 						for (int i = 0; i < jsonReponseArray.length(); i++) {
@@ -1195,6 +1254,7 @@ public class MainActivity extends ActionBarActivity implements
 						}
 						
 						if (jsonReponseArray.length() > 0) {
+                            Log.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0");
 							mSharedPreferences.edit().putBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, true).commit();
 							
 							
@@ -1207,10 +1267,14 @@ public class MainActivity extends ActionBarActivity implements
 
 							fragment = new DataFragment();
 							fragment.setArguments(bundle);
-							
+
 							fragmentTransaction = getSupportFragmentManager()
 									.beginTransaction();
 							fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
+                            Log.d("MainActivity", "click back, back stack count: " + getSupportFragmentManager().getBackStackEntryCount());
+                            for(int entry = 0; entry < getSupportFragmentManager().getBackStackEntryCount(); entry++){
+                                Log.d("MainActivity", "Found fragment: " + getSupportFragmentManager().getBackStackEntryAt(entry).getName());
+                            }
 						}
 
 					} catch (JSONException e1) {

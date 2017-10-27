@@ -12,9 +12,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.InflateException;
@@ -22,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +48,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class MapsFragment extends Fragment implements OnClickListener, OnMarkerClickListener, OnMapReadyCallback {
+    private static final String TAG = "MapsFragment";
 
-	public interface LocationDialogListener {
+    public interface LocationDialogListener {
 		void refreshMap();
 	}
 
@@ -192,17 +194,15 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 		mSharedPreferences = getActivity().getSharedPreferences(
 				"com.qalliance.treetracker", Context.MODE_PRIVATE);
 
-		((TextView) getActivity().findViewById(R.id.actionbar_title)).setText(R.string.map);
+        if (!((AppCompatActivity) getActivity()).getSupportActionBar().isShowing()) {
+            Log.d("MainActivity", "toolbar hide");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        }
+		((TextView) getActivity().findViewById(R.id.toolbar_title)).setText(R.string.map);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-		Button newTreeBtn = (Button) v.findViewById(R.id.fragment_map_new_tree);
-		newTreeBtn.setOnClickListener(MapsFragment.this);
-
-		Button dataBtn = (Button) v.findViewById(R.id.fragment_map_data);
-		dataBtn.setOnClickListener(MapsFragment.this);
-
-		Button updateTreeBtn = (Button) v.findViewById(R.id.fragment_map_update_tree);
-		updateTreeBtn.setOnClickListener(MapsFragment.this);
-
+        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(this);
 
 		((SupportMapFragment) getChildFragmentManager()
 				.findFragmentById(R.id.map)).getMapAsync(this);
@@ -284,9 +284,9 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 
 		Cursor photoCursor;
 		switch (v.getId()) {
-			case R.id.fragment_map_new_tree:
-
-				if (MainActivity.mAllowNewTreeOrUpdate) {
+            case R.id.fab:
+                Log.d(TAG, "fab click");
+                if (MainActivity.mAllowNewTreeOrUpdate) {
 					fragment = new NewTreeFragment();
 					bundle = getActivity().getIntent().getExtras();
 					fragment.setArguments(bundle);
@@ -297,57 +297,47 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 				} else {
 					Toast.makeText(getActivity(), "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show();
 				}
-
-				break;
-			case R.id.fragment_map_data:
-				fragment = new DataFragment();
-				bundle = getActivity().getIntent().getExtras();
-				fragment.setArguments(bundle);
-
-				fragmentTransaction = getActivity().getSupportFragmentManager()
-						.beginTransaction();
-				fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
-				break;
-			case R.id.fragment_map_update_tree:
-
-				if (MainActivity.mAllowNewTreeOrUpdate) {
-					SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();
-
-//					String query = "select * from tree_photo " +
-//							"left outer join tree on tree._id = tree_id " +
-//							"left outer join photo on photo._id = photo_id " +
-//							"left outer join location on location._id = photo.location_id " +
-//							"where is_outdated = 'N'";
-
-					String query = "select * from tree " +
-							"left outer join location on location._id = tree.location_id " +
-							"left outer join tree_photo on tree._id = tree_id " +
-							"left outer join photo on photo._id = photo_id ";
-
-					Log.e("query", query);
-
-					photoCursor = db.rawQuery(query, null);
-
-					if (photoCursor.getCount() <= 0) {
-						Toast.makeText(getActivity(), "No trees to update", Toast.LENGTH_SHORT).show();
-						db.close();
-						return;
-					}
-
-					db.close();
-
-					fragment = new UpdateTreeFragment();
-					bundle = getActivity().getIntent().getExtras();
-					fragment.setArguments(bundle);
-
-					fragmentTransaction = getActivity().getSupportFragmentManager()
-							.beginTransaction();
-					fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.UPDATE_TREE_FRAGMENT).commit();
-				} else {
-					Toast.makeText(getActivity(), "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show();
-				}
-
-				break;
+                break;
+//			case R.id.fragment_map_update_tree:
+//
+//				if (MainActivity.mAllowNewTreeOrUpdate) {
+//					SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();
+//
+////					String query = "select * from tree_photo " +
+////							"left outer join tree on tree._id = tree_id " +
+////							"left outer join photo on photo._id = photo_id " +
+////							"left outer join location on location._id = photo.location_id " +
+////							"where is_outdated = 'N'";
+//
+//					String query = "select * from tree " +
+//							"left outer join location on location._id = tree.location_id " +
+//							"left outer join tree_photo on tree._id = tree_id " +
+//							"left outer join photo on photo._id = photo_id ";
+//
+//					Log.e("query", query);
+//
+//					photoCursor = db.rawQuery(query, null);
+//
+//					if (photoCursor.getCount() <= 0) {
+//						Toast.makeText(getActivity(), "No trees to update", Toast.LENGTH_SHORT).show();
+//						db.close();
+//						return;
+//					}
+//
+//					db.close();
+//
+//					fragment = new UpdateTreeFragment();
+//					bundle = getActivity().getIntent().getExtras();
+//					fragment.setArguments(bundle);
+//
+//					fragmentTransaction = getActivity().getSupportFragmentManager()
+//							.beginTransaction();
+//					fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.UPDATE_TREE_FRAGMENT).commit();
+//				} else {
+//					Toast.makeText(getActivity(), "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show();
+//				}
+//
+//				break;
 		}
 
 
