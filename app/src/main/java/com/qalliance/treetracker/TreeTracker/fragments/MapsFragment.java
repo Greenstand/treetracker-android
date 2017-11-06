@@ -285,7 +285,7 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 		Cursor photoCursor;
 		switch (v.getId()) {
             case R.id.fab:
-                Log.d(TAG, "fab click");
+            	Log.d(TAG, "fab click");
                 if (MainActivity.mAllowNewTreeOrUpdate) {
 					fragment = new NewTreeFragment();
 					bundle = getActivity().getIntent().getExtras();
@@ -297,7 +297,7 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 				} else {
 					Toast.makeText(getActivity(), "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show();
 				}
-                break;
+				break;
 //			case R.id.fragment_map_update_tree:
 //
 //				if (MainActivity.mAllowNewTreeOrUpdate) {
