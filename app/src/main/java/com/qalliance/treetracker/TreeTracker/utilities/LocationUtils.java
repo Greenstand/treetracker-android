@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.utilities;
 
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+
+import com.qalliance.treetracker.TreeTracker.R;
 
 
 /**

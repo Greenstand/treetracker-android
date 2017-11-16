@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.application;
 
 /**
  * Created by kplese on 8/18/17.

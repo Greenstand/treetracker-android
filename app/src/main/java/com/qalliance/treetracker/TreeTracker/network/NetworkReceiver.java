@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.network;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,6 +17,8 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.qalliance.treetracker.TreeTracker.R;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 
 import java.util.Calendar;

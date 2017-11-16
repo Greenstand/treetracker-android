@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;

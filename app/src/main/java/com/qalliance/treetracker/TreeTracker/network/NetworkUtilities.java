@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.network;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +40,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.qalliance.treetracker.TreeTracker.utilities.Utils;
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 
 /**

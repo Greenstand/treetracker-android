@@ -109,29 +109,29 @@
 	    android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_new_tree_gps_accuracy_layout"
 	    >
-	    
-       	<TextView
-	    	android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:textSize="17sp"
-	        android:layout_weight="2"
-	        android:textColor="#FF916B4A"
-	        android:layout_marginTop="12dp"
-	        android:text="@string/time_to_next_update_double_colon"
-        />
-       	
-       	<EditText
-       	    android:id="@+id/fragment_new_tree_next_update"
-	    	android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:textSize="17sp"
-	        android:inputType="number"
-	        android:maxLength="3"
-	        android:layout_weight="1"
-	        android:gravity="center_horizontal"
-	        android:textColor="#FF916B4A"
-	        android:layout_marginTop="12dp"
-        />
+
+		<TextView
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="12dp"
+			android:layout_weight="2"
+			android:text="@string/time_to_next_update_double_colon"
+			android:textColor="#FF916B4A"
+			android:textSize="17sp"
+			android:visibility="invisible" />
+
+		<EditText
+			android:id="@+id/fragment_new_tree_next_update"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="12dp"
+			android:layout_weight="1"
+			android:gravity="center_horizontal"
+			android:inputType="number"
+			android:maxLength="3"
+			android:textColor="#FF916B4A"
+			android:textSize="17sp"
+			android:visibility="invisible" />
 	    
 	</LinearLayout>
 	

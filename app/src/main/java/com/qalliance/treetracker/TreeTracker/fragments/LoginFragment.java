@@ -23,10 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
-import com.qalliance.treetracker.TreeTracker.NetworkUtilities;
+import com.qalliance.treetracker.TreeTracker.network.NetworkUtilities;
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.Utils;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import com.qalliance.treetracker.TreeTracker.utilities.Utils;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

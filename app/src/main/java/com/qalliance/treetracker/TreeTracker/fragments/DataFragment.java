@@ -25,11 +25,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qalliance.treetracker.TreeTracker.DatabaseManager;
+import com.qalliance.treetracker.TreeTracker.database.DatabaseManager;
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.SyncTask;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import com.qalliance.treetracker.TreeTracker.api.SyncTask;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 import com.qalliance.treetracker.TreeTracker.api.models.UserTree;
 
 import java.io.File;

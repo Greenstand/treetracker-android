@@ -32,9 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
-import com.qalliance.treetracker.TreeTracker.NetworkUtilities;
+import com.qalliance.treetracker.TreeTracker.network.NetworkUtilities;
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 import com.qalliance.treetracker.TreeTracker.api.models.UserTree;
 
 import org.apache.http.HttpResponse;

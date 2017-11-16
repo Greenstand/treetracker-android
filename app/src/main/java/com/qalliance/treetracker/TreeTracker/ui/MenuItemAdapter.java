@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.ui;
 
 import java.util.ArrayList;
 import java.util.List;

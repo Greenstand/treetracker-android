@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.database;
 
 public class Tree implements Comparable<Tree> {
 

@@ -1,11 +1,12 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
-import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
+import com.qalliance.treetracker.TreeTracker.R;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 
 public class SplashActivity extends Activity{
 	

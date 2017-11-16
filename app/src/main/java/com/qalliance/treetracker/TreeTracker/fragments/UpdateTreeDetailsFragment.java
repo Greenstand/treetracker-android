@@ -46,9 +46,9 @@ import android.widget.Toast;
 
 import com.qalliance.treetracker.TreeTracker.activities.CameraActivity;
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
-import com.qalliance.treetracker.TreeTracker.Permissions;
+import com.qalliance.treetracker.TreeTracker.application.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

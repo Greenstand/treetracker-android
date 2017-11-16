@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.utilities;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

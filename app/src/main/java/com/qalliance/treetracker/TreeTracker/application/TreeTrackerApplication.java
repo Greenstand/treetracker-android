@@ -1,6 +1,8 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.application;
 
 import android.app.Application;
+
+import com.qalliance.treetracker.TreeTracker.BuildConfig;
 
 import timber.log.Timber;
 

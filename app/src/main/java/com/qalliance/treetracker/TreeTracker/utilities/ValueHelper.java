@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.utilities;
 
 
 public class ValueHelper {
@@ -41,10 +41,10 @@ public class ValueHelper {
 	
 	public static final String JPEG_FILE_PREFIX = "IMG_";
 	public static final String JPEG_FILE_SUFFIX = ".jpg";
-	
-	
-	
-	protected static long SPLASH_SCREEN_DURATION = 1000;
+
+
+
+	public static long SPLASH_SCREEN_DURATION = 1000;
 	
 	
 	public static final String TIME_TO_NEXT_UPDATE_GLOBAL_SETTING = "TIME_TO_NEXT_UPDATE_GLOBAL_SETTING";

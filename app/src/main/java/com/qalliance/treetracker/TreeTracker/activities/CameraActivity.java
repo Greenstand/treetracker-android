@@ -32,13 +32,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.qalliance.treetracker.TreeTracker.AlbumStorageDirFactory;
-import com.qalliance.treetracker.TreeTracker.BaseAlbumDirFactory;
-import com.qalliance.treetracker.TreeTracker.CameraPreview;
-import com.qalliance.treetracker.TreeTracker.FroyoAlbumDirFactory;
+import com.qalliance.treetracker.TreeTracker.camera.AlbumStorageDirFactory;
+import com.qalliance.treetracker.TreeTracker.camera.BaseAlbumDirFactory;
+import com.qalliance.treetracker.TreeTracker.camera.CameraPreview;
+import com.qalliance.treetracker.TreeTracker.camera.FroyoAlbumDirFactory;
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.Utils;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import com.qalliance.treetracker.TreeTracker.utilities.Utils;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 
 
 public class CameraActivity extends Activity implements PictureCallback, OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {

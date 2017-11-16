@@ -28,7 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 
 public class SettingsFragment extends Fragment implements OnClickListener, OnCheckedChangeListener, 
 														  TextWatcher {

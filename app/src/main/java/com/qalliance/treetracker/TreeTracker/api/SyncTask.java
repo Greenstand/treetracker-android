@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.api;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,10 +9,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import com.qalliance.treetracker.TreeTracker.utilities.Utils;
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
-import com.qalliance.treetracker.TreeTracker.api.DataManager;
 import com.qalliance.treetracker.TreeTracker.api.models.NewTree;
 import com.qalliance.treetracker.TreeTracker.api.models.PostResult;
+import com.qalliance.treetracker.TreeTracker.database.DatabaseManager;
 
 import java.io.File;
 

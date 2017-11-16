@@ -37,9 +37,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
-import com.qalliance.treetracker.TreeTracker.Permissions;
+import com.qalliance.treetracker.TreeTracker.application.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.ValueHelper;
+import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
