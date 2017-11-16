@@ -6,29 +6,29 @@ import com.google.gson.annotations.SerializedName;
 public class UserTree {
 
     @SerializedName("id")
-    private int id;
+    private String id;
     @SerializedName("created")
     private String created;
     @SerializedName("updated")
     private String updated;
     @SerializedName("priority")
-    private int priority;
+    private String priority;
     @SerializedName("lat")
     private String lat;
     @SerializedName("lng")
     private String lng;
-    @SerializedName("gps")
-    private int gps;
-    @SerializedName("next_update")
-    private int nextUpdate;
+//    @SerializedName("gps")
+//    private String gps;
+//    @SerializedName("next_update")
+//    private String nextUpdate;
     @SerializedName("imageUrl")
     private String imageUrl;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -48,11 +48,11 @@ public class UserTree {
         this.updated = updated;
     }
 
-    public int getPriority() {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
 
@@ -72,21 +72,21 @@ public class UserTree {
         this.lng = lng;
     }
 
-    public int getGps() {
-        return gps;
-    }
-
-    public void setGps(int gps) {
-        this.gps = gps;
-    }
-
-    public int getNextUpdate() {
-        return nextUpdate;
-    }
-
-    public void setNextUpdate(int nextUpdate) {
-        this.nextUpdate = nextUpdate;
-    }
+//    public String getGps() {
+//        return gps;
+//    }
+//
+//    public void setGps(String gps) {
+//        this.gps = gps;
+//    }
+//
+//    public String getNextUpdate() {
+//        return nextUpdate;
+//    }
+//
+//    public void setNextUpdate(String nextUpdate) {
+//        this.nextUpdate = nextUpdate;
+//    }
 
     public String getImageUrl() {
         return imageUrl;
