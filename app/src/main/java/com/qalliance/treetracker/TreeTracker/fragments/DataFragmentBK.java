@@ -31,7 +31,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qalliance.treetracker.TreeTracker.MainActivity;
+import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 import com.qalliance.treetracker.TreeTracker.NetworkUtilities;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;

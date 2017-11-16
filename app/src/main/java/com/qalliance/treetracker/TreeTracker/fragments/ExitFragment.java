@@ -14,7 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.qalliance.treetracker.TreeTracker.MainActivity;
+import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
 

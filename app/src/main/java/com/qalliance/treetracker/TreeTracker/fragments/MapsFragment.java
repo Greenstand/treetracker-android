@@ -36,7 +36,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.qalliance.treetracker.TreeTracker.MainActivity;
+import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 import com.qalliance.treetracker.TreeTracker.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;

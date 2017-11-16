@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.activities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +24,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +31,14 @@ import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import com.qalliance.treetracker.TreeTracker.AlbumStorageDirFactory;
+import com.qalliance.treetracker.TreeTracker.BaseAlbumDirFactory;
+import com.qalliance.treetracker.TreeTracker.CameraPreview;
+import com.qalliance.treetracker.TreeTracker.FroyoAlbumDirFactory;
+import com.qalliance.treetracker.TreeTracker.R;
+import com.qalliance.treetracker.TreeTracker.Utils;
+import com.qalliance.treetracker.TreeTracker.ValueHelper;
 
 
 public class CameraActivity extends Activity implements PictureCallback, OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {

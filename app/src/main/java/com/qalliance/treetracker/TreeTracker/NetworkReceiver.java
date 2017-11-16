@@ -15,8 +15,9 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 
 import java.util.Calendar;
 

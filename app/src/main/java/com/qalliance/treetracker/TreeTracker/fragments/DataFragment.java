@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qalliance.treetracker.TreeTracker.DatabaseManager;
-import com.qalliance.treetracker.TreeTracker.MainActivity;
+import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.SyncTask;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;

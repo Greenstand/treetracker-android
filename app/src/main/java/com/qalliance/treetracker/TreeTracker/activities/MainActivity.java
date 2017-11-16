@@ -1,4 +1,4 @@
-package com.qalliance.treetracker.TreeTracker;
+package com.qalliance.treetracker.TreeTracker.activities;
 
 
 import android.app.AlertDialog;
@@ -44,6 +44,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.qalliance.treetracker.TreeTracker.DatabaseManager;
+import com.qalliance.treetracker.TreeTracker.DbHelper;
+import com.qalliance.treetracker.TreeTracker.LocationUtils;
+import com.qalliance.treetracker.TreeTracker.NetworkUtilities;
+import com.qalliance.treetracker.TreeTracker.Permissions;
+import com.qalliance.treetracker.TreeTracker.R;
+import com.qalliance.treetracker.TreeTracker.ValueHelper;
 import com.qalliance.treetracker.TreeTracker.api.DataManager;
 import com.qalliance.treetracker.TreeTracker.api.models.UserTree;
 import com.qalliance.treetracker.TreeTracker.fragments.AboutFragment;
@@ -755,6 +762,8 @@ public class MainActivity extends ActionBarActivity implements
                 MainActivity.mAllowNewTreeOrUpdate = false;
             }
 
+            MainActivity.mAllowNewTreeOrUpdate = true;
+
 
             if (mCurrentTreeLocation != null && MainActivity.mCurrentLocation != null) {
                 float[] results = {0, 0, 0};
@@ -1243,7 +1252,7 @@ public class MainActivity extends ActionBarActivity implements
 			String rsp = null;
 	        
 	        HttpGet post = null;
-			post = new HttpGet(NetworkUtilities.TREE_FOR_USER_URI + mSharedPreferences.getString(ValueHelper.MAIN_DB_USER_ID, "-1") 
+			post = new HttpGet(NetworkUtilities.TREE_FOR_USER_URI + mSharedPreferences.getString(ValueHelper.MAIN_DB_USER_ID, "-1")
 					+ "?token=" + mSharedPreferences.getString(ValueHelper.TOKEN, ""));
 			
 			Log.d("URL", NetworkUtilities.TREE_FOR_USER_URI + mSharedPreferences.getString(ValueHelper.MAIN_DB_USER_ID, "-1") 

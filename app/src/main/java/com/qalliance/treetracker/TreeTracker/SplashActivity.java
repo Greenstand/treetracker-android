@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
+import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
+
 public class SplashActivity extends Activity{
 	
 	Thread mSplashThread;

@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.location.Location;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,8 +39,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qalliance.treetracker.TreeTracker.CameraActivity;
-import com.qalliance.treetracker.TreeTracker.MainActivity;
+import com.qalliance.treetracker.TreeTracker.activities.CameraActivity;
+import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 import com.qalliance.treetracker.TreeTracker.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
@@ -55,6 +56,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	private String mCurrentPhotoPath;
 	private long userId;
 	private SharedPreferences mSharedPreferences;
+    private Uri mPhotoUri;
 
 	public NewTreeFragment() {
 		// some overrides and settings go here
@@ -168,11 +170,18 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	}
 	
 	private void takePicture() {
-		if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-			ActivityCompat.requestPermissions( getActivity(), new String[] {  Manifest.permission.CAMERA  },
+		if ( ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions( getActivity(), new String[] {  Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE  },
 					Permissions.MY_PERMISSION_CAMERA);
 		} else {
 			Intent takePictureIntent = new Intent(getActivity(), CameraActivity.class);
+            /*
+			mPhotoUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new ContentValues());
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
+			startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE_CONTENT_RESOLVER);
+*/
 			startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA);
 		}
 	}
