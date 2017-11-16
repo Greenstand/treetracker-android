@@ -10,11 +10,11 @@ public class NewTree {
     @SerializedName("lon")
     private double lon;
     @SerializedName("gps_accuracy")
-    private int gpsAccuracy;
+    private float gpsAccuracy;
     @SerializedName("note")
     private String note;
     @SerializedName("timestamp")
-    private String timestamp;
+    private long timestamp;
     @SerializedName("base_64_image")
     private String base64Image;
 
@@ -42,11 +42,11 @@ public class NewTree {
         this.lon = lon;
     }
 
-    public int getGpsAccuracy() {
+    public float getGpsAccuracy() {
         return gpsAccuracy;
     }
 
-    public void setGpsAccuracy(int gpsAccuracy) {
+    public void setGpsAccuracy(float gpsAccuracy) {
         this.gpsAccuracy = gpsAccuracy;
     }
 
@@ -58,11 +58,11 @@ public class NewTree {
         this.note = note;
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

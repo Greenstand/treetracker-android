@@ -1,6 +1,7 @@
 package com.qalliance.treetracker.TreeTracker.api;
 
 import com.qalliance.treetracker.TreeTracker.api.models.NewTree;
+import com.qalliance.treetracker.TreeTracker.api.models.PostResult;
 import com.qalliance.treetracker.TreeTracker.api.models.UserTree;
 
 import java.util.List;
@@ -16,8 +17,8 @@ public interface ApiService {
     String ENDPOINT = "http://dev.treetracker.org/trees/";
 
     @GET("details/user/{id}")
-    Call<List<UserTree>> getTreesForUser(@Path("id") int userId);
+    Call<List<UserTree>> getTreesForUser(@Path("id") long userId);
 
     @POST("create")
-    Call<NewTree> createTree(@Body NewTree newTree);
+    Call<PostResult> createTree(@Body NewTree newTree);
 }

@@ -44,6 +44,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.qalliance.treetracker.TreeTracker.api.DataManager;
+import com.qalliance.treetracker.TreeTracker.api.models.UserTree;
 import com.qalliance.treetracker.TreeTracker.fragments.AboutFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.DataFragment;
 import com.qalliance.treetracker.TreeTracker.fragments.ForgotPasswordFragment;
@@ -81,7 +83,6 @@ public class MainActivity extends ActionBarActivity implements
 
     public static final Handler mHandler = new Handler();
 
-
     public Map<String, String> map;
 
     private LocationRequest mLocationRequest;
@@ -108,6 +109,10 @@ public class MainActivity extends ActionBarActivity implements
     public static ProgressDialog progressDialog;
 
 
+    private DataManager mDataManager;
+    private DatabaseManager mDatabaseManager;
+    private List<UserTree> mUserTreeList;
+
     /**
      * Called when the activity is first created.
      * @param savedInstanceState If the activity is being re-initialized after 
@@ -125,6 +130,8 @@ public class MainActivity extends ActionBarActivity implements
 
 
         dbHelper = new DbHelper(this, "database", null, 1);
+        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
+
         try {
             dbHelper.createDataBase();
         } catch (IOException e) {
@@ -1002,6 +1009,7 @@ public class MainActivity extends ActionBarActivity implements
                         values.put("organization", jsonReponse.getString("organization"));
 
                         long userId = db.insert("users", null, values);
+                        Log.d("MainActivity", "onLoginResult userId: " + userId);
 
                         mSharedPreferences.edit().putLong(ValueHelper.MAIN_USER_ID, userId).commit();
                         mSharedPreferences.edit().putString(ValueHelper.MAIN_DB_USER_ID, jsonReponse.getString("id")).commit();
@@ -1045,7 +1053,9 @@ public class MainActivity extends ActionBarActivity implements
                                     Permissions.NECESSARY_PERMISSIONS);
                         } else {
                             startPeriodicUpdates();
-                            getMyTreesTask = new GetMyTreesTask().execute(new String[]{});
+//                            getMyTreesTask = new GetMyTreesTask().execute(new String[]{});
+                            getMyTrees();
+
                         }
 
                         Log.i("MainActivity", "token(" + mSharedPreferences.getString(ValueHelper.TOKEN, "") + ")");
@@ -1089,7 +1099,8 @@ public class MainActivity extends ActionBarActivity implements
         if (grantResults.length > 0) {
             if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates();
-                getMyTreesTask = new GetMyTreesTask().execute(new String[]{});
+//                getMyTreesTask = new GetMyTreesTask().execute(new String[]{});
+                getMyTrees();
             }
         }
     }
@@ -1165,7 +1176,63 @@ public class MainActivity extends ActionBarActivity implements
         startPeriodicUpdates();
     }
 
+    private void getMyTrees() {
 
+        mDataManager = new DataManager<List<UserTree>>() {
+            @Override
+            public void onDataLoaded(List<UserTree> data) {
+                mUserTreeList = data;
+                mDatabaseManager.openDatabase();
+                long userId = mSharedPreferences.getLong(ValueHelper.MAIN_USER_ID, -1);
+                for (UserTree userTree : data) {
+                    ContentValues values = new ContentValues();
+                    values.put("tree_id", userTree.getId());
+                    values.put("user_id", Long.toString(userId));
+                    mDatabaseManager.insert("pending_updates", null, values);
+                }
+                mDatabaseManager.closeDatabase();
+
+                if (data.size() > 0) {
+                    Log.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0");
+                    mSharedPreferences.edit().putBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, true).commit();
+
+                    Bundle bundle = getIntent().getExtras();
+
+                    if (bundle == null)
+                        bundle = new Bundle();
+
+                    bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true);
+
+                    fragment = new DataFragment();
+                    fragment.setArguments(bundle);
+
+                    fragmentTransaction = getSupportFragmentManager()
+                            .beginTransaction();
+                    fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
+                    Log.d("MainActivity", "click back, back stack count: " + getSupportFragmentManager().getBackStackEntryCount());
+                    for (int entry = 0; entry < getSupportFragmentManager().getBackStackEntryCount(); entry++) {
+                        Log.d("MainActivity", "Found fragment: " + getSupportFragmentManager().getBackStackEntryAt(entry).getName());
+                    }
+                }
+            }
+
+            @Override
+            public void onRequestFailed(String message) {
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        };
+        long userId = Long.parseLong(mSharedPreferences.getString(ValueHelper.MAIN_DB_USER_ID, "-1"));
+        Log.d("MainActivity", "getMyTrees userId: " + userId);
+        mDataManager.loadUserTrees(userId);
+    }
+
+    public List<UserTree> getUserTrees() {
+        return mUserTreeList;
+    }
+
+    /**
+     * Deprecated. Replaced by API trees/details/user/{id}
+     */
     class GetMyTreesTask extends AsyncTask<String, Void, String> {
 
 		@Override

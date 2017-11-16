@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.media.ExifInterface;
 import android.os.Looper;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -31,6 +32,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Utils {
 	
@@ -236,6 +241,94 @@ public class Utils {
         
         return rotatedBitmap;
         
+	}
+
+	public static long convertDateToTimestamp(String str) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date date = null;
+		try {
+			date = dateFormat.parse(str);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		long unixTime = date.getTime() / 1000;
+		return unixTime;
+	}
+
+	public static String base64Image(String path) {
+
+		/* There isn't enough memory to open up more than a couple camera photos */
+		/* So pre-scale the target bitmap into which the file is decoded */
+
+		/* Get the size of the image */
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, bmOptions);
+		int imageHeight = bmOptions.outHeight;
+		int imageWidth = bmOptions.outWidth;
+		String imageType = bmOptions.outMimeType;
+
+		ExifInterface exif = null;
+		try {
+			exif = new ExifInterface(path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+		int orientation = orientString != null ? Integer.parseInt(orientString)
+				: ExifInterface.ORIENTATION_NORMAL;
+		int rotationAngle = 0;
+		if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+			rotationAngle = 90;
+		if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+			rotationAngle = 180;
+		if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+			rotationAngle = 270;
+
+		// Calculate your sampleSize based on the requiredWidth and
+		// originalWidth
+		// For e.g you want the width to stay consistent at 500dp
+		int requiredWidth = 800;
+
+		if (imageHeight > imageWidth) {
+			requiredWidth = 600;
+		}
+
+
+		int sampleSize = (int) Math.ceil((float) imageWidth
+				/ (float) requiredWidth);
+
+		// If the original image is smaller than required, don't sample
+		if (sampleSize < 1) {
+			sampleSize = 1;
+		}
+
+		bmOptions.inSampleSize = sampleSize;
+		bmOptions.inPurgeable = true;
+		bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+		bmOptions.inJustDecodeBounds = false;
+
+		/* Decode the JPEG file into a Bitmap */
+		Bitmap bitmap = BitmapFactory.decodeFile(path, bmOptions);
+
+		Matrix matrix = new Matrix();
+		matrix.setRotate(rotationAngle, (float) bitmap.getWidth() / 2,
+				(float) bitmap.getHeight() / 2);
+		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+				bmOptions.outWidth, bmOptions.outHeight, matrix, true);
+
+		int compressionQuality = 80;
+		String encodedImage;
+		ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+		rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, compressionQuality,
+				byteArrayBitmapStream);
+		byte[] b = byteArrayBitmapStream.toByteArray();
+		encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+		return encodedImage;
+
+
+
 	}
 	
 }
