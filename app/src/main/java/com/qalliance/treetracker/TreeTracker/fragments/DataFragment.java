@@ -1,34 +1,6 @@
 package com.qalliance.treetracker.TreeTracker.fragments;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -46,10 +18,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -60,8 +34,32 @@ import android.widget.Toast;
 import com.qalliance.treetracker.TreeTracker.MainActivity;
 import com.qalliance.treetracker.TreeTracker.NetworkUtilities;
 import com.qalliance.treetracker.TreeTracker.R;
-import com.qalliance.treetracker.TreeTracker.Utils;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class DataFragment extends Fragment implements OnClickListener {
 
@@ -86,7 +84,7 @@ public class DataFragment extends Fragment implements OnClickListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setHasOptionsMenu(true);
 
     }
 	
@@ -172,23 +170,29 @@ public class DataFragment extends Fragment implements OnClickListener {
 		}
 			
 	}
-	
-    	 
-	@Override
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+    }
+
+    @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	        Bundle savedInstanceState) {
 		
 	    View v = inflater.inflate(R.layout.fragment_data, container, false);
-	    
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.data);
-	    
+        if (!((AppCompatActivity) getActivity()).getSupportActionBar().isShowing()) {
+            Log.d("MainActivity", "toolbar hide");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        }
+
+	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.data);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.data);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 	    mSharedPreferences = getActivity().getSharedPreferences(
 	      	      "com.qalliance.treetracker", Context.MODE_PRIVATE);
-	    
-	    
-		
-		
-	    
+
 	    Button syncBtn = (Button) v.findViewById(R.id.fragment_data_sync);
 	    syncBtn.setOnClickListener(DataFragment.this);
 

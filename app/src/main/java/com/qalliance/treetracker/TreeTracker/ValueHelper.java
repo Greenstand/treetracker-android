@@ -73,7 +73,7 @@ public class ValueHelper {
 	public static final int TIME_TO_NEXT_UPDATE_DEFAULT_SETTING = 30;
 	public static final int MIN_ACCURACY_DEFAULT_SETTING = 10;
 	public static final int WIFI_NOTIFICATION_ID = 2000;
-	
+
 	
 	
 	

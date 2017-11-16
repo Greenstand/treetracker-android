@@ -1,13 +1,7 @@
 package com.qalliance.treetracker.TreeTracker.fragments;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -30,10 +24,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -44,11 +39,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qalliance.treetracker.TreeTracker.CameraActivity;
-import com.qalliance.treetracker.TreeTracker.DbHelper;
 import com.qalliance.treetracker.TreeTracker.MainActivity;
 import com.qalliance.treetracker.TreeTracker.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class NewTreeFragment extends Fragment implements OnClickListener, TextWatcher, ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -64,7 +63,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -72,6 +71,10 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		super.onResume();
 	}
 
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -82,7 +85,8 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		
 		((RelativeLayout)v.findViewById(R.id.fragment_new_tree)).setVisibility(View.INVISIBLE);
 
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.new_tree);
+	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.new_tree);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		mSharedPreferences = getActivity().getSharedPreferences(
 				"com.qalliance.treetracker", Context.MODE_PRIVATE);

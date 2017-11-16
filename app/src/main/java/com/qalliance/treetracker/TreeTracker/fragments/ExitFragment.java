@@ -13,9 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.google.android.gms.maps.SupportMapFragment;
 import com.qalliance.treetracker.TreeTracker.MainActivity;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.ValueHelper;
@@ -52,9 +50,6 @@ public class ExitFragment extends Fragment implements OnClickListener {
 	    mSharedPreferences = getActivity().getSharedPreferences(
 	      	      "com.qalliance.treetracker", Context.MODE_PRIVATE);
 
-	    ((TextView)getActivity().findViewById(R.id.actionbar_title)).setText(R.string.welcome);
-
-	    
 	    Button yesBtn = (Button) v.findViewById(R.id.fragment_exit_yes);
 	    yesBtn.setOnClickListener(ExitFragment.this);
 

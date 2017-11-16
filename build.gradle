@@ -16,6 +16,10 @@ allprojects {
     repositories {
         jcenter()
     }
+    ext {
+        androidSupportVersion = '25.2.0'
+        retrofit2Version = '2.3.0'
+    }
 }
 
 task clean(type: Delete) {
