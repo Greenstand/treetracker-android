@@ -116,7 +116,9 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 			MainActivity.mCurrentTreeLocation = new Location("treetracker");
 			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
 			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
-			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
+
+			// No GPS accuracy info from new api.
+//			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
 			
 			float[] results = {0,0,0};
 			if (MainActivity.mCurrentLocation != null) {
