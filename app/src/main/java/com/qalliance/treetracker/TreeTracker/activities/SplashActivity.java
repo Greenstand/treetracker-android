@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
+import com.qalliance.treetracker.TreeTracker.BuildConfig;
 import com.qalliance.treetracker.TreeTracker.R;
 import com.qalliance.treetracker.TreeTracker.utilities.ValueHelper;
+
+import timber.log.Timber;
 
 public class SplashActivity extends Activity{
 	
@@ -17,7 +20,7 @@ public class SplashActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_splash);
-		
+		Timber.tag("BuildVariant").d("build variant: " + BuildConfig.BUILD_TYPE + ", url: " + BuildConfig.BASE_URL);
 
 	        
 	        // The thread to wait for splash screen events
