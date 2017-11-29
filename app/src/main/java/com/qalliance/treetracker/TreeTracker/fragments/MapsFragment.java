@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.qalliance.treetracker.TreeTracker.BuildConfig;
 import com.qalliance.treetracker.TreeTracker.activities.MainActivity;
 import com.qalliance.treetracker.TreeTracker.application.Permissions;
 import com.qalliance.treetracker.TreeTracker.R;
@@ -286,7 +287,7 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 		switch (v.getId()) {
             case R.id.fab:
             	Log.d(TAG, "fab click");
-                if (MainActivity.mAllowNewTreeOrUpdate) {
+                if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY.equals("off")) {
 					fragment = new NewTreeFragment();
 					bundle = getActivity().getIntent().getExtras();
 					fragment.setArguments(bundle);

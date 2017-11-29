@@ -14,9 +14,41 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            resValue "string", "app_name", "Tree Tracker"
+            buildConfigField 'String', 'BASE_URL', '"http://treetracker.org"'
+            buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker/databases/"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            applicationIdSuffix ".debug"
+            minifyEnabled true
+            resValue "string", "app_name", "Tree Tracker(debug)"
+            buildConfigField "String", "GPS_ACCURACY", '"off"'
+            buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org"'
+            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.debug/databases/"'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        dev {
+            initWith(debug)
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "Tree Tracker(dev)"
+            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.dev/databases/"'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        qa {
+            initWith(debug)
+            applicationIdSuffix ".qa"
+            resValue "string", "app_name", "Tree Tracker(qa)"
+            buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org"'
+            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.qa/databases/"'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+
     }
     useLibrary 'org.apache.http.legacy'
 }
@@ -28,16 +60,14 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "com.android.support:appcompat-v7:${androidSupportVersion}"
     compile "com.android.support:design:${androidSupportVersion}"
     testCompile 'junit:junit:4.12'
-
     compile 'com.google.android.gms:play-services:11.2.0'
-
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
     compile "com.squareup.retrofit2:converter-gson:${retrofit2Version}"

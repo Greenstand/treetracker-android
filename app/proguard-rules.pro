@@ -23,3 +23,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-dontwarn com.squareup.okhttp3.internal.**
+-dontwarn com.squareup.okhttp3.**
+-dontwarn javax.annotation.**
+-dontwarn okio.**
+-dontwarn retrofit2.**
+-dontwarn android.support.v4.**
+-dontwarn com.google.android.gms.internal.**
+-keep class * {
+    public private *;
+}
+-keep public class com.google.android.gms.*
