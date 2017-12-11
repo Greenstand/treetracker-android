@@ -11,6 +11,8 @@ android {
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        buildConfigField "String", "DOS_ACCESS_KEY", "\"${dos_access_key}\""
+        buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
     }
     buildTypes {
         release {
@@ -23,19 +25,16 @@ android {
         }
         debug {
             applicationIdSuffix ".debug"
-            minifyEnabled true
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "String", "GPS_ACCURACY", '"off"'
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org"'
             buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.debug/databases/"'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
             buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.dev/databases/"'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         qa {
             initWith(debug)
@@ -44,7 +43,6 @@ android {
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org"'
             buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.qa/databases/"'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     productFlavors {
@@ -72,4 +70,6 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
     compile "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
     compile 'com.jakewharton.timber:timber:4.6.0'
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
 }
