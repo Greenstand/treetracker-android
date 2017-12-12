@@ -20,7 +20,7 @@ import java.io.File;
 public class DOSpaces {
 
     public static final String ENDPOINT = "https://nyc3.digitaloceanspaces.com";
-    public static final String BUCKET = "my-bucket";
+    public static final String BUCKET = "treetracker-dev";
 
 
     private static DOSpaces sInstance;
