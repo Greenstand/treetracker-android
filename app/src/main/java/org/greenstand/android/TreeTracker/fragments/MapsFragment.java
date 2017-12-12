@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.application.Permissions;
 import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
+import org.greenstand.android.TreeTracker.BuildConfig;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -286,7 +287,7 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 		switch (v.getId()) {
             case R.id.fab:
             	Log.d(TAG, "fab click");
-                if (MainActivity.mAllowNewTreeOrUpdate) {
+                if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY.equals("off")) {
 					fragment = new NewTreeFragment();
 					bundle = getActivity().getIntent().getExtras();
 					fragment.setArguments(bundle);

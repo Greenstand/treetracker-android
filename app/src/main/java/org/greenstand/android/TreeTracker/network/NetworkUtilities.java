@@ -40,6 +40,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 
@@ -53,8 +54,12 @@ public class NetworkUtilities {
     public static final String PARAM_UPDATED = "timestamp";
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
+<<<<<<< HEAD:app/src/main/java/org/greenstand/android/TreeTracker/network/NetworkUtilities.java
     public static final String BASE_URL =
         "http://treetracker.org";
+=======
+    public static final String BASE_URL = BuildConfig.BASE_URL;
+>>>>>>> 8b7b3251cae52e2ac28cde1a746fb21fecbd3e2b:app/src/main/java/com/qalliance/treetracker/TreeTracker/network/NetworkUtilities.java
     public static final String FORGOT_PASSWORD_URL = BASE_URL + "/password/remind";
     public static final String AUTH_URI = BASE_URL + "/users/login";
     public static final String SIGNUP_URI = BASE_URL + "/users/signup";
