@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 
 android {
@@ -8,8 +18,8 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 7
-        versionName "1.0.1"
+        versionCode 8
+        versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -19,24 +29,21 @@ android {
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField 'String', 'BASE_URL', '"http://treetracker.org"'
             buildConfigField "String", "GPS_ACCURACY", '"on"'
-            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker/databases/"'
+            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             applicationIdSuffix ".debug"
-            minifyEnabled true
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "String", "GPS_ACCURACY", '"off"'
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org"'
-            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.debug/databases/"'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.debug/databases/"'
         }
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
-            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.dev/databases/"'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.dev/databases/"'
         }
         qa {
             initWith(debug)
@@ -44,8 +51,7 @@ android {
             resValue "string", "app_name", "Tree Tracker(qa)"
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org"'
-            buildConfigField "String", "DB_PATH", '"/data/data/com.qalliance.treetracker.TreeTracker.qa/databases/"'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.qa/databases/"'
         }
     }
     productFlavors {
@@ -58,6 +64,7 @@ repositories {
     maven {
         url "https://maven.google.com"
     }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
@@ -79,4 +86,9 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
     compile "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
     compile 'com.jakewharton.timber:timber:4.6.0'
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
+    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+        transitive = true;
+    }
 }

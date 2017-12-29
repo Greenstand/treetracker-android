@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.qalliance.treetracker.TreeTracker.BuildConfig;
+import org.greenstand.android.TreeTracker.BuildConfig;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
