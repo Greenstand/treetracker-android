@@ -57,8 +57,9 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	private long userId;
 	private SharedPreferences mSharedPreferences;
     private Uri mPhotoUri;
+    private ContentValues contentValues;
 
-	public NewTreeFragment() {
+    public NewTreeFragment() {
 		// some overrides and settings go here
 	}
 
@@ -66,7 +67,8 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-	}
+
+    }
 
 	@Override
 	public void onResume() {
@@ -98,13 +100,8 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		Button saveBtn = (Button) v.findViewById(R.id.fragment_new_tree_save);
 		saveBtn.setOnClickListener(NewTreeFragment.this);
 
-		Button resetGPSLocBtn = (Button) v
-				.findViewById(R.id.fragment_new_tree_reset_gps);
-		resetGPSLocBtn.setOnClickListener(NewTreeFragment.this);
-
 		ImageButton takePhoto = (ImageButton) v.findViewById(R.id.fragment_new_tree_take_photo);
 		takePhoto.setOnClickListener(NewTreeFragment.this);
-
 
 		mImageView = (ImageView) v.findViewById(R.id.fragment_new_tree_image);
 
@@ -139,13 +136,31 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 		newTreetimeToNextUpdate.addTextChangedListener(NewTreeFragment.this);
 
-
 		takePicture();
 
 		return v;
 	}
 
-	public void onClick(View v) {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (MainActivity.mCurrentLocation == null) {
+            Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
+            getActivity().getSupportFragmentManager().popBackStack();
+        }
+
+        contentValues = new ContentValues();
+        contentValues.put("accuracy",
+                Float.toString(MainActivity.mCurrentLocation.getAccuracy()));
+        contentValues.put("lat",
+                Double.toString(MainActivity.mCurrentLocation.getLatitude()));
+        contentValues.put("long",
+                Double.toString(MainActivity.mCurrentLocation.getLongitude()));
+
+    }
+
+    public void onClick(View v) {
 
 		v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
 				HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
@@ -161,9 +176,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			break;
 		case R.id.fragment_new_tree_take_photo:
 			takePicture();
-			break;
-		case R.id.fragment_new_tree_reset_gps:
-			((MainActivity)getActivity()).getLocation();
 			break;
 		}
 
@@ -212,6 +224,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 				setPic();
 
+				/*
 				boolean saveAndEdit = mSharedPreferences.getBoolean(ValueHelper.SAVE_AND_EDIT, true);
 
 				if (!saveAndEdit) {
@@ -220,6 +233,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 					Toast.makeText(getActivity(), "Tree saved", Toast.LENGTH_SHORT).show();
 					getActivity().getSupportFragmentManager().popBackStack();
 				}
+				*/
 			}
 		} else if (resultCode == Activity.RESULT_CANCELED) {
 			if (((RelativeLayout)getActivity().findViewById(R.id.fragment_new_tree)).getVisibility() != View.VISIBLE) {
@@ -231,7 +245,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	private void saveToDb() {
 		SQLiteDatabase dbw = MainActivity.dbHelper.getWritableDatabase();
 
-		ContentValues contentValues = new ContentValues();
 
 		// location
 		contentValues.put("user_id", userId);
@@ -242,36 +255,20 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		} else {
 			MainActivity.mCurrentLocation.getAccuracy();
 			contentValues.put("user_id", userId);
-			contentValues.put("accuracy",
-					Float.toString(MainActivity.mCurrentLocation.getAccuracy()));
-			contentValues.put("lat",
-					Double.toString(MainActivity.mCurrentLocation.getLatitude()));
-			contentValues.put("long",
-					Double.toString(MainActivity.mCurrentLocation.getLongitude()));
 
 			long locationId = dbw.insert("location", null, contentValues);
-
-
-			CheckBox removePhoto = (CheckBox) getActivity().findViewById(R.id.fragment_new_tree_remove_photo);
-
 
 			Log.d("locationId", Long.toString(locationId));
 
 			long photoId = -1;
-			if (!removePhoto.isChecked()) {
-				Log.e("checked", "false");
-				// photo
-				contentValues = new ContentValues();
-				contentValues.put("user_id", userId);
-				contentValues.put("location_id", locationId);
-				contentValues.put("name", mCurrentPhotoPath);
+            // photo
+            contentValues = new ContentValues();
+            contentValues.put("user_id", userId);
+            contentValues.put("location_id", locationId);
+            contentValues.put("name", mCurrentPhotoPath);
 
-				photoId = dbw.insert("photo", null, contentValues);
-				Log.d("photoId", Long.toString(photoId));
-			} else {
-				Log.e("checked", "true");
-			}
-
+            photoId = dbw.insert("photo", null, contentValues);
+            Log.d("photoId", Long.toString(photoId));
 
 
 			int minAccuracy = mSharedPreferences.getInt(
@@ -328,14 +325,12 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			long treeId = dbw.insert("tree", null, contentValues);
 			Log.d("treeId", Long.toString(treeId));
 
-			if (!removePhoto.isChecked()) {
-				// tree_photo
-				contentValues = new ContentValues();
-				contentValues.put("tree_id", treeId);
-				contentValues.put("photo_id", photoId);
-				long treePhotoId = dbw.insert("tree_photo", null, contentValues);
-				Log.d("treePhotoId", Long.toString(treePhotoId));
-			}
+            // tree_photo
+            contentValues = new ContentValues();
+            contentValues.put("tree_id", treeId);
+            contentValues.put("photo_id", photoId);
+            long treePhotoId = dbw.insert("tree_photo", null, contentValues);
+            Log.d("treePhotoId", Long.toString(treePhotoId));
 
 
 			// tree_note

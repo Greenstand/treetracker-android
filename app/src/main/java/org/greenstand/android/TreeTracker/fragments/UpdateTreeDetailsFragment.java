@@ -136,9 +136,7 @@ public class UpdateTreeDetailsFragment extends Fragment implements OnClickListen
 		Button saveBtn = (Button) v.findViewById(R.id.fragment_update_tree_details_save);
 		saveBtn.setOnClickListener(UpdateTreeDetailsFragment.this);
 
-		Button resetGPSLocBtn = (Button) v.findViewById(R.id.fragment_update_tree_details_reset_gps);
-		resetGPSLocBtn.setOnClickListener(UpdateTreeDetailsFragment.this);
-		
+
 		CheckBox treeMissingChk = (CheckBox) v.findViewById(R.id.fragment_update_tree_details_missing_tree);
 		treeMissingChk.setOnCheckedChangeListener(UpdateTreeDetailsFragment.this);
 		
@@ -243,16 +241,10 @@ public class UpdateTreeDetailsFragment extends Fragment implements OnClickListen
 				FragmentManager.BackStackEntry second = manager.getBackStackEntryAt(1);
 				manager.popBackStack(second.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
 			}
-			
-			
-			
 			break;
 			
 		case R.id.fragment_update_tree_details_take_photo:
 			takePicture();
-			break;
-		case R.id.fragment_update_tree_details_reset_gps:
-			((MainActivity)getActivity()).getLocation();
 			break;
 		}
 

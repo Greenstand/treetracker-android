@@ -42,24 +42,24 @@
 		<TextView
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:textSize="17sp"
-			android:layout_weight="2"
-			android:textColor="#FF916B4A"
 			android:layout_marginTop="8dp"
+			android:layout_weight="2"
 			android:text="@string/distance_double_colon"
-			/>
+			android:textColor="#FF916B4A"
+			android:textSize="17sp"
+			android:visibility="invisible" />
 
 		<TextView
 			android:id="@+id/fragment_update_tree_details_distance"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:textSize="17sp"
+			android:layout_marginTop="12dp"
 			android:layout_weight="1"
 			android:gravity="right"
-			android:textColor="#FF916B4A"
-			android:layout_marginTop="12dp"
 			android:text="5"
-			/>
+			android:textColor="#FF916B4A"
+			android:textSize="17sp"
+			android:visibility="invisible" />
 
 	</LinearLayout>
 
@@ -114,25 +114,25 @@
 		<TextView
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:textSize="17sp"
-			android:layout_weight="2"
-			android:textColor="#FF916B4A"
 			android:layout_marginTop="12dp"
+			android:layout_weight="2"
 			android:text="@string/time_to_next_update_double_colon"
-			/>
+			android:textColor="#FF916B4A"
+			android:textSize="17sp"
+			android:visibility="invisible" />
 
 		<EditText
 			android:id="@+id/fragment_update_tree_details_next_update"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:textSize="17sp"
+			android:layout_marginTop="12dp"
 			android:layout_weight="1"
 			android:gravity="center_horizontal"
-			android:textColor="#FF916B4A"
-			android:layout_marginTop="12dp"
 			android:inputType="number"
 			android:maxLength="3"
-			/>
+			android:textColor="#FF916B4A"
+			android:textSize="17sp"
+			android:visibility="invisible" />
 
 	</LinearLayout>
 
@@ -182,24 +182,24 @@
 			android:id="@+id/fragment_update_tree_details_remove_photo"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:textSize="16sp"
-			android:layout_marginTop="0dp"
 			android:layout_marginLeft="22dp"
+			android:layout_marginTop="0dp"
+			android:layout_weight="1"
 			android:text="@string/remove_photo"
+			android:textSize="16sp"
 
-			/>
+			android:visibility="invisible" />
 
 		<CheckBox
 			android:id="@+id/fragment_update_tree_details_missing_tree"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:textSize="16sp"
-			android:layout_marginTop="0dp"
 			android:layout_marginRight="12dp"
+			android:layout_marginTop="0dp"
+			android:layout_weight="1"
 			android:text="@string/tree_missing"
-			/>
+			android:textSize="16sp"
+			android:visibility="invisible" />
 
 	</LinearLayout>
 
@@ -225,21 +225,6 @@
 			android:background="@drawable/white_gray_gradient"
 			/>
 
-
-		<Button
-			android:id="@+id/fragment_update_tree_details_reset_gps"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:paddingTop="8dp"
-			android:paddingBottom="8dp"
-			android:layout_marginLeft="0dp"
-			android:text="@string/reset_gps_location"
-			android:textColor="#FF916B4A"
-			android:textSize="17sp"
-			android:textStyle="normal"
-			android:background="@drawable/white_gray_gradient"
-			/>
 
 	</LinearLayout>
 
