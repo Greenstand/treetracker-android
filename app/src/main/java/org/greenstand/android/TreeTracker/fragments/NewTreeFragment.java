@@ -82,14 +82,14 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			Bundle savedInstanceState) {
 
 		View v = inflater.inflate(R.layout.fragment_new_tree, container, false);
-		
+
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-		
+
 		((RelativeLayout)v.findViewById(R.id.fragment_new_tree)).setVisibility(View.INVISIBLE);
 
 	    ((TextView)getActivity().findViewById(R.id.toolbar_title)).setText(R.string.new_tree);
 		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		mSharedPreferences = getActivity().getSharedPreferences(
 				"org.greenstand.android", Context.MODE_PRIVATE);
 
@@ -101,10 +101,10 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		Button resetGPSLocBtn = (Button) v
 				.findViewById(R.id.fragment_new_tree_reset_gps);
 		resetGPSLocBtn.setOnClickListener(NewTreeFragment.this);
-		
+
 		ImageButton takePhoto = (ImageButton) v.findViewById(R.id.fragment_new_tree_take_photo);
 		takePhoto.setOnClickListener(NewTreeFragment.this);
-		
+
 
 		mImageView = (ImageView) v.findViewById(R.id.fragment_new_tree_image);
 
@@ -113,18 +113,18 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		} else {
 			new BaseAlbumDirFactory();
 		}
-		
+
 		TextView newTreeDistance = (TextView)v.findViewById(R.id.fragment_new_tree_distance);
 		newTreeDistance.setText(Integer.toString(0) + " " + getResources().getString(R.string.meters));
-		
+
 		TextView newTreeGpsAccuracy = (TextView)v.findViewById(R.id.fragment_new_tree_gps_accuracy);
 		if (MainActivity.mCurrentLocation != null) {
 			newTreeGpsAccuracy.setText(Integer.toString(Math.round(MainActivity.mCurrentLocation.getAccuracy())) + " " + getResources().getString(R.string.meters));
 		} else {
 			newTreeGpsAccuracy.setText("0 " + getResources().getString(R.string.meters));
 		}
-		
-		
+
+
 		int timeToNextUpdate = mSharedPreferences.getInt(
 				ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences.getInt(
 						ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
@@ -132,13 +132,13 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 		EditText newTreetimeToNextUpdate = (EditText)v.findViewById(R.id.fragment_new_tree_next_update);
 		newTreetimeToNextUpdate.setText(Integer.toString(timeToNextUpdate));
-		
+
 		if (mSharedPreferences.getBoolean(ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT, false)) {
 			newTreetimeToNextUpdate.setEnabled(false);
 		}
-		
+
 		newTreetimeToNextUpdate.addTextChangedListener(NewTreeFragment.this);
-		
+
 
 		takePicture();
 
@@ -153,9 +153,9 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		switch (v.getId()) {
 
 		case R.id.fragment_new_tree_save:
-			
+
 			saveToDb();
-			
+
 			Toast.makeText(getActivity(), "Tree saved", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
 			break;
@@ -168,11 +168,11 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		}
 
 	}
-	
+
 	private void takePicture() {
 		if ( ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			ActivityCompat.requestPermissions( getActivity(), new String[] {  Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE  },
+		    requestPermissions( new String[] {  Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE  },
 					Permissions.MY_PERMISSION_CAMERA);
 		} else {
 			Intent takePictureIntent = new Intent(getActivity(), CameraActivity.class);
@@ -186,37 +186,37 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		}
 	}
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-		if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-			takePicture();
-		}
-	}
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            takePicture();
+        }
+    }
 
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == Activity.RESULT_OK) {
-			
+
 			mCurrentPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH);
-			
+
 			if (mCurrentPhotoPath != null) {
 				((RelativeLayout)getActivity().findViewById(R.id.fragment_new_tree)).setVisibility(View.VISIBLE);
-				
+
 				MainActivity.mCurrentTreeLocation = new Location("treetracker");
 				if (MainActivity.mCurrentLocation != null) {
 					MainActivity.mCurrentTreeLocation.setLatitude(MainActivity.mCurrentLocation.getLatitude());
 					MainActivity.mCurrentTreeLocation.setLongitude(MainActivity.mCurrentLocation.getLongitude());
 				}
-				
+
 				setPic();
-				
+
 				boolean saveAndEdit = mSharedPreferences.getBoolean(ValueHelper.SAVE_AND_EDIT, true);
-				
+
 				if (!saveAndEdit) {
 					saveToDb();
-					
+
 					Toast.makeText(getActivity(), "Tree saved", Toast.LENGTH_SHORT).show();
 					getActivity().getSupportFragmentManager().popBackStack();
 				}
@@ -235,7 +235,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 		// location
 		contentValues.put("user_id", userId);
-		
+
 		if (MainActivity.mCurrentLocation == null) {
 			Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
@@ -250,10 +250,10 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 					Double.toString(MainActivity.mCurrentLocation.getLongitude()));
 
 			long locationId = dbw.insert("location", null, contentValues);
-			
-			
+
+
 			CheckBox removePhoto = (CheckBox) getActivity().findViewById(R.id.fragment_new_tree_remove_photo);
-			
+
 
 			Log.d("locationId", Long.toString(locationId));
 
@@ -277,9 +277,9 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			int minAccuracy = mSharedPreferences.getInt(
 					ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
 					ValueHelper.MIN_ACCURACY_DEFAULT_SETTING);
-			
+
 			EditText newTreetimeToNextUpdate = (EditText)getActivity().findViewById(R.id.fragment_new_tree_next_update);
-			int timeToNextUpdate = Integer.parseInt(newTreetimeToNextUpdate.getText().toString().equals("") ? 
+			int timeToNextUpdate = Integer.parseInt(newTreetimeToNextUpdate.getText().toString().equals("") ?
 					"0" : newTreetimeToNextUpdate.getText().toString());
 
 			// settings
@@ -289,18 +289,18 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 			long settingsId = dbw.insert("settings", null, contentValues);
 			Log.d("settingsId", Long.toString(settingsId));
-			
-			
+
+
 			// note
 			String content = ((EditText) getActivity().findViewById(R.id.fragment_new_tree_note)).getText().toString();
 			contentValues = new ContentValues();
 			contentValues.put("user_id", userId);
 			contentValues.put("content", content);
-			
+
 			long noteId = dbw.insert("note", null, contentValues);
 			Log.d("noteId", Long.toString(noteId));
 
-			
+
 
 			// tree
 			String threeDigitNumber = ((EditText) getActivity().findViewById(R.id.fragment_new_tree_three_digits)).getText().toString();
@@ -309,18 +309,18 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			contentValues.put("location_id", locationId);
 			contentValues.put("settings_id", settingsId);
 			contentValues.put("three_digit_number", threeDigitNumber);
-			
+
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			
+
 			Date date = new Date();
 		    Calendar calendar = Calendar.getInstance();
 		    calendar.setTime(date);
-		    
+
 		    calendar.add(Calendar.DAY_OF_MONTH, timeToNextUpdate);
 		    date = (Date) calendar.getTime();
-		    
+
 		    Log.i("date", date.toString());
-			
+
 		    contentValues.put("time_created", dateFormat.format(new Date()));
 		    contentValues.put("time_updated", dateFormat.format(new Date()));
 			contentValues.put("time_for_update", dateFormat.format(date));
@@ -336,8 +336,8 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 				long treePhotoId = dbw.insert("tree_photo", null, contentValues);
 				Log.d("treePhotoId", Long.toString(treePhotoId));
 			}
-			
-			
+
+
 			// tree_note
 			contentValues = new ContentValues();
 			contentValues.put("tree_id", treeId);
@@ -361,7 +361,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		bmOptions.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
 		int imageWidth = bmOptions.outWidth;
-		
+
 		// Calculate your sampleSize based on the requiredWidth and
 		// originalWidth
 		// For e.g you want the width to stay consistent at 500dp
@@ -387,7 +387,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 		/* Decode the JPEG file into a Bitmap */
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-		
+
 		if (bitmap == null) {
 			Toast.makeText(getActivity(), "Error setting image. Please try again.", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
@@ -449,25 +449,25 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 		return inSampleSize;
 	}
-	
+
 
 
 
 	public void afterTextChanged(Editable s) {
 		Log.e("days", s.toString());
-		
+
 
 	}
 
 	public void beforeTextChanged(CharSequence s, int start, int count,
 			int after) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

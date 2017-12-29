@@ -80,9 +80,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
         captureButton = (ImageButton) findViewById(R.id.button_capture);
         reloadButton = (ImageButton) findViewById(R.id.camera_preview_reload);
         
-        
-        
-        
+
      // Add a listener to the buttons
         captureButton.setOnClickListener(CameraActivity.this);
         cancelImg.setOnClickListener(CameraActivity.this);
