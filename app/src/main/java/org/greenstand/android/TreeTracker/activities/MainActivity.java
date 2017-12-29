@@ -323,7 +323,7 @@ public class MainActivity extends ActionBarActivity implements
                 for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
                     Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
-                if (fm.getBackStackEntryCount() > 1) {
+                if (fm.getBackStackEntryCount() > 0) {
                     fm.popBackStack();
                 }
                 return true;
