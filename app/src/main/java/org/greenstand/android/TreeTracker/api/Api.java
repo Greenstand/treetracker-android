@@ -29,6 +29,7 @@ public class Api {
                 .Builder()
                 .addInterceptor(logInterceptor())
                 .build();
+
         api = new Retrofit.Builder()
                 .client(mOkHttpClient)
                 .baseUrl(ApiService.ENDPOINT)
@@ -46,7 +47,7 @@ public class Api {
             }
         });
 
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return httpLoggingInterceptor;
     }
 }
