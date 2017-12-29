@@ -607,6 +607,7 @@ public class MainActivity extends ActionBarActivity implements
          * Connect the client. Don't re-start any requests here;
          * instead, wait for onResume()
          */
+
     }
 
     /*
