@@ -312,8 +312,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle;
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
-        Log.d("MainActivity", currentFragment.toString());
         FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
             case android.R.id.home:

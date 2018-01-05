@@ -148,6 +148,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
         if (MainActivity.mCurrentLocation == null) {
             Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
             getActivity().getSupportFragmentManager().popBackStack();
+            return;
         }
 
         contentValues = new ContentValues();
@@ -253,7 +254,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
 		} else {
-			MainActivity.mCurrentLocation.getAccuracy();
 			contentValues.put("user_id", userId);
 
 			long locationId = dbw.insert("location", null, contentValues);
