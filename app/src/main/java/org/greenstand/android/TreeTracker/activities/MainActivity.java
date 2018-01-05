@@ -721,7 +721,8 @@ public class MainActivity extends ActionBarActivity implements
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location;
 
-        int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
+        ///int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
+        int minAccuracy = 10;
 
         TextView mapGpsAccuracy = ((TextView) findViewById(R.id.fragment_map_gps_accuracy));
         TextView mapGpsAccuracyValue = ((TextView) findViewById(R.id.fragment_map_gps_accuracy_value));
@@ -760,10 +761,7 @@ public class MainActivity extends ActionBarActivity implements
                 mapGpsAccuracyValue.setText("N/A");
                 MainActivity.mAllowNewTreeOrUpdate = false;
             }
-
-            // For Debugging
-            MainActivity.mAllowNewTreeOrUpdate = true;
-
+            
 
             if (mCurrentTreeLocation != null && MainActivity.mCurrentLocation != null) {
                 float[] results = {0, 0, 0};
