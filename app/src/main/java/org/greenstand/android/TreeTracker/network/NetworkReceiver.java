@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.greenstand.android.TreeTracker.R;
+import org.greenstand.android.TreeTracker.database.DbHelper;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 
@@ -62,7 +63,8 @@ public class NetworkReceiver extends BroadcastReceiver{
 		if (isConnected && isWiFi || timeOfDay==6) {
 			Toast.makeText(context, "WIFI CONNECTED", Toast.LENGTH_LONG).show();
 
-			SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();     //added this
+			DbHelper dbHelper = new DbHelper(context, "database", null, 1);
+			SQLiteDatabase db = dbHelper.getReadableDatabase();     //added this
 			Cursor treeCursor = db.rawQuery("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null);
 			//this too
 			treeCursor.moveToFirst();   //this

@@ -16,10 +16,10 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
-        minSdkVersion 15
+            minSdkVersion 15
         targetSdkVersion 25
-        versionCode 10
-        versionName "1.0.4"
+        versionCode 11
+        versionName "1.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -36,7 +36,7 @@ android {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "String", "GPS_ACCURACY", '"off"'
-            buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org"'
+            buildConfigField 'String', 'BASE_URL', '"http://174.138.107.11"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.debug/databases/"'
         }
         dev {
