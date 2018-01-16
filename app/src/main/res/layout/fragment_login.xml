@@ -48,40 +48,41 @@
         android:hint="@string/password"
         android:layout_below="@+id/fragment_login_email_address"
         />
-
-
-	<TextView
-		android:id="@+id/fragment_login_login_do_not_have_account"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_below="@+id/fragment_login_password"
-		android:layout_marginBottom="8dp"
-		android:layout_marginRight="25dp"
-		android:layout_marginTop="16dp"
-		android:clickable="true"
-		android:lines="1"
-		android:text="@string/sign_up"
-		android:textColor="#FF916B4A"
-		android:textSize="16sp"
-		android:visibility="gone" />
- 
-
+   
+   
+        
   <TextView 
-        android:id="@+id/fragment_login_login_forgot_password"
+        android:id="@+id/fragment_login_login_do_not_have_account"
     	android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
         android:textSize="16sp"
 		android:lines="1"
 		android:textColor="#FF916B4A"
 		android:clickable="true"
-		android:text="@string/forgot_password"
+		android:text="@string/sign_up"
 		android:layout_below="@+id/fragment_login_password"
-		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
         />
+
+
+	<TextView
+		android:id="@+id/fragment_login_login_forgot_password"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/fragment_login_password"
+		android:layout_marginBottom="8dp"
+		android:layout_marginLeft="25dp"
+		android:layout_marginTop="16dp"
+		android:clickable="true"
+		android:lines="1"
+		android:text="@string/forgot_password"
+		android:textColor="#FF916B4A"
+		android:textSize="16sp"
+		android:visibility="invisible" />
     
    <Button
         android:id="@+id/fragment_login_login"
