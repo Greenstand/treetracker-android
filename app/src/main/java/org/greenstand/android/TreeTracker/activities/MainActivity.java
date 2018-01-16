@@ -761,7 +761,7 @@ public class MainActivity extends ActionBarActivity implements
                 mapGpsAccuracyValue.setText("N/A");
                 MainActivity.mAllowNewTreeOrUpdate = false;
             }
-            
+
 
             if (mCurrentTreeLocation != null && MainActivity.mCurrentLocation != null) {
                 float[] results = {0, 0, 0};
