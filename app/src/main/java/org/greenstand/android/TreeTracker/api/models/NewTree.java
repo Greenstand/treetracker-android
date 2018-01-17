@@ -15,8 +15,8 @@ public class NewTree {
     private String note;
     @SerializedName("timestamp")
     private long timestamp;
-    @SerializedName("base_64_image")
-    private String base64Image;
+    @SerializedName("image_url")
+    private String imageUrl;
 
     public int getUserId() {
         return userId;
