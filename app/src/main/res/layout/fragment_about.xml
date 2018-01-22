@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:background="#FFFFFFFF"
     android:id="@+id/fragment_about">
-    
-    <ImageView 
-        android:id="@+id/fragment_about_logo" 
+
+    <ImageView
+        android:id="@+id/fragment_about_logo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/logo"
@@ -16,11 +16,11 @@
         android:layout_alignParentTop="true"
         />
 
-   <TextView
-        android:id="@+id/fragment_about_welcome" 
-    	android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/fragment_about_welcome"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textColor="#FF916B4A"
         android:layout_marginTop="12dp"
         android:layout_marginLeft="24dp"
@@ -30,11 +30,11 @@
         />
 
 
-   <TextView
-        android:id="@+id/fragment_about_information_text" 
-    	android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/fragment_about_information_text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textColor="#000"
         android:layout_marginTop="12dp"
         android:layout_marginLeft="24dp"
@@ -43,7 +43,38 @@
         android:layout_below="@+id/fragment_about_welcome"
         />
 
-  
-      
+    <TextView
+        android:id="@+id/fragment_about_versionname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#FF916B4A"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:layout_below="@+id/fragment_about_information_text"
+        />
+    <TextView
+        android:id="@+id/fragment_about_versioncode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#FF916B4A"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_centerInParent="true"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_below="@+id/fragment_about_versionname"
+
+        />
+
+
+
+
+
 </RelativeLayout>
 
