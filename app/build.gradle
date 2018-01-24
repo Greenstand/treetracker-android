@@ -22,6 +22,8 @@ android {
         versionName "1.0.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        buildConfigField "String", "DOS_ACCESS_KEY", "\"${dos_access_key}\""
+        buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
     }
     buildTypes {
         release {
@@ -35,7 +37,7 @@ android {
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
-            buildConfigField "String", "GPS_ACCURACY", '"on"'  // Change this back to 'off' and use QA build instead
+            buildConfigField "String", "GPS_ACCURACY", '"off"'  // Change this back to 'off' and use QA build instead
             buildConfigField 'String', 'BASE_URL', '"http://174.138.107.11"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.debug/databases/"'
         }
@@ -91,4 +93,6 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
 }
