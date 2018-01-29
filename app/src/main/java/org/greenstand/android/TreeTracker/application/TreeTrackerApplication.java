@@ -1,6 +1,8 @@
 package org.greenstand.android.TreeTracker.application;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 //import com.crashlytics.android.Crashlytics;
 //import io.fabric.sdk.android.Fabric;
@@ -20,4 +22,10 @@ public class TreeTrackerApplication extends Application {
 		  }
 	  }
 
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
+
+	}
 }
