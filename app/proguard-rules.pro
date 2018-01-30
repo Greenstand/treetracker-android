@@ -30,6 +30,8 @@
 -dontwarn retrofit2.**
 -dontwarn android.support.v4.**
 -dontwarn com.google.android.gms.internal.**
+-dontwarn com.fasterxml.jackson.core.**
+-dontwarn java.lang.management.**
 -keep class * {
     public private *;
 }

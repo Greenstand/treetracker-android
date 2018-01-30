@@ -915,7 +915,7 @@ public class MainActivity extends ActionBarActivity implements
             }
 
         } else {
-            Log.e("MainActivity", "onSignupResult: failed to signup");
+            Log.e("MainActivity", "onSignupResult: failed to signup " + String.valueOf(httpResponseCode) );
             switch (httpResponseCode) {
                 case -1:
                     Toast.makeText(MainActivity.this, "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show();

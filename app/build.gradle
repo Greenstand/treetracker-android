@@ -8,18 +8,26 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+//apply plugin: 'io.fabric'
 
 
 android {
+    signingConfigs {
+        treetracker_upload_key {
+            keyAlias 'treetracker-upload'
+            keyPassword 'trees4life'
+            storeFile file('/Users/zaven/software-development/Clients/Greenstand/treetracker-keys/treetracker-upload.keystore')
+            storePassword 'trees4life'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
-            minSdkVersion 15
+        minSdkVersion 15
         targetSdkVersion 25
-        versionCode 14
-        versionName "1.0.8"
+        versionCode 16
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -27,15 +35,24 @@ android {
         release {
             minifyEnabled true
             resValue "string", "app_name", "Tree Tracker"
-            buildConfigField 'String', 'BASE_URL', '"https://treetracker.org"'
+            buildConfigField 'String', 'BASE_URL', '"https://www.treetracker.org"'
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        releaseCopy {
+            resValue "string", "app_name", "Tree Tracker"
+            buildConfigField 'String', 'BASE_URL', '"https://www.treetracker.org"'
+            buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
+            signingConfig signingConfigs.treetracker_upload_key
+            debuggable true
+        }
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
-            buildConfigField "String", "GPS_ACCURACY", '"on"'  // Change this back to 'off' and use QA build instead
+            buildConfigField "String", "GPS_ACCURACY", '"on"'
+            // Change this back to 'off' and use QA build instead
             buildConfigField 'String', 'BASE_URL', '"http://174.138.107.11"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.debug/databases/"'
         }
@@ -72,15 +89,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
-
     compile "com.android.support:appcompat-v7:${androidSupportVersion}"
     compile "com.android.support:design:${androidSupportVersion}"
-
-    compile 'junit:junit:4.12'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'junit:junit:4.12'
-
+    //compile 'junit:junit:4.12'
+    //testCompile 'junit:junit:4.12'
+    //androidTestCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services:11.2.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
