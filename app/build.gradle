@@ -12,22 +12,14 @@ apply plugin: 'com.android.application'
 
 
 android {
-    signingConfigs {
-        treetracker_upload_key {
-            keyAlias 'treetracker-upload'
-            keyPassword 'trees4life'
-            storeFile file('/Users/zaven/software-development/Clients/Greenstand/treetracker-keys/treetracker-upload.keystore')
-            storePassword 'trees4life'
-        }
-    }
     compileSdkVersion 25
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 16
-        versionName "1.1.1"
+        versionCode 17
+        versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -39,14 +31,6 @@ android {
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        releaseCopy {
-            resValue "string", "app_name", "Tree Tracker"
-            buildConfigField 'String', 'BASE_URL', '"https://www.treetracker.org"'
-            buildConfigField "String", "GPS_ACCURACY", '"on"'
-            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
-            signingConfig signingConfigs.treetracker_upload_key
-            debuggable true
         }
         debug {
             applicationIdSuffix ".debug"
@@ -112,4 +96,4 @@ dependencies {
     compile 'com.google.firebase:firebase-core:11.8.0'
 
 }
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'

@@ -32,6 +32,7 @@
 -dontwarn com.google.android.gms.internal.**
 -dontwarn com.fasterxml.jackson.core.**
 -dontwarn java.lang.management.**
+-dontwarn com.google.android.gms.**
 -keep class * {
     public private *;
 }
