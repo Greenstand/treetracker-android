@@ -20,7 +20,9 @@ public class Api {
     }
 
     public ApiService getApi() {
-        if (api == null) createApi();
+        if (api == null) {
+            createApi();
+        }
         return api;
     }
 
@@ -39,8 +41,8 @@ public class Api {
     }
 
     private static HttpLoggingInterceptor logInterceptor() {
-        HttpLoggingInterceptor httpLoggingInterceptor =
-                new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+        HttpLoggingInterceptor httpLoggingInterceptor = 
+            new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
                 Timber.tag("OkHttp").d(message);

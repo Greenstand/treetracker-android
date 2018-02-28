@@ -137,10 +137,10 @@ public class NetworkUtilities {
 			e1.printStackTrace();
 		}  
   
-		Log.e("json string", signupObj.toString());
+		Log.i("json string", signupObj.toString());
 		  
 		se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-		Log.e("SIGNUP_URI", SIGNUP_URI);
+		Log.i("SIGNUP_URI", SIGNUP_URI);
         
         final HttpPost post = new HttpPost(SIGNUP_URI);
         post.setEntity(se);
