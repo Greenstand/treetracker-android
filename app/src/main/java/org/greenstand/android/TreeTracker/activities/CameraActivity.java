@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.camera.AlbumStorageDirFactory;
 import org.greenstand.android.TreeTracker.camera.BaseAlbumDirFactory;
 import org.greenstand.android.TreeTracker.camera.CameraPreview;
@@ -141,7 +143,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		setPic();
 	}
 	
-	private void galleryAddPic() {
+	private void galleryAddPic() throws IOException {
 		Intent mediaScanIntent = new Intent(
 				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
 		
@@ -163,8 +165,10 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		}
 
 		
-		//  File f = new File(mCurrentPhotoPath);
-		Uri contentUri = Uri.fromFile(f);
+//		File f = new File(mCurrentPhotoPath);
+		Uri contentUri = FileProvider.getUriForFile(CameraActivity.this,
+				BuildConfig.APPLICATION_ID + ".provider", createImageFile());
+		//Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		sendBroadcast(mediaScanIntent);
 	}
