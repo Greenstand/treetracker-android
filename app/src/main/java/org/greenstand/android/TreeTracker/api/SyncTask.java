@@ -9,11 +9,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
-import org.greenstand.android.TreeTracker.utilities.Utils;
+import com.amazonaws.AmazonClientException;
+
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.api.models.NewTree;
 import org.greenstand.android.TreeTracker.api.models.PostResult;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
+import org.greenstand.android.TreeTracker.utilities.Utils;
 
 import java.io.File;
 
@@ -93,15 +95,31 @@ public class SyncTask extends AsyncTask<Void, Void, String> {
             String timeCreated = treeCursor.getString(treeCursor.getColumnIndex("tree_time_created"));
             newTree.setTimestamp(Utils.convertDateToTimestamp(timeCreated));
 
-            String image = Utils.base64Image(treeCursor.getString(treeCursor.getColumnIndex("name")));
-            newTree.setBase64Image(image);
-//            Timber.tag("DataFragment").d("user_id: " + newTree.getUserId());
-//            Timber.tag("DataFragment").d("lat: " + newTree.getLat());
-//            Timber.tag("DataFragment").d("lon: " + newTree.getLon());
-//            Timber.tag("DataFragment").d("note: " + newTree.getNote());
-//            Timber.tag("DataFragment").d("gps: " + newTree.getGpsAccuracy());
-//            Timber.tag("DataFragment").d("timestamp: " + newTree.getTimestamp());
-//            Timber.tag("DataFragment").d("image: " + newTree.getBase64Image());
+            /**
+             * Implementation for saving image into DigitalOcean Spaces.
+             */
+            String imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"));
+            String imageUrl;
+            try {
+                imageUrl = DigitalOceanSpaces.instance().put(imagePath, userId);
+            } catch (AmazonClientException ace) {
+                Timber.tag("SyncTask").e("Caught an AmazonClientException, which " +
+                        "means the client encountered " +
+                        "an internal error while trying to " +
+                        "communicate with S3, " +
+                        "such as not being able to access the network.");
+                Timber.tag("SyncTask").e("Error Message: " + ace.getMessage());
+                return "Failed.";
+            }
+            Timber.tag("SyncTask").e("imageUrl: " + imageUrl);
+            newTree.setBase64Image(imageUrl);
+
+            /**
+             * Deprecated.
+             *
+                String image = Utils.base64Image(treeCursor.getString(treeCursor.getColumnIndex("name")));
+                newTree.setBase64Image(image);
+             */
 
             PostResult response = (PostResult) mDataManager.createNewTree(newTree);
             if (response != null) {
