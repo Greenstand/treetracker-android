@@ -721,7 +721,7 @@ public class MainActivity extends ActionBarActivity implements
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location;
 
-        ///int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
+        //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         int minAccuracy = 10;
 
         TextView mapGpsAccuracy = ((TextView) findViewById(R.id.fragment_map_gps_accuracy));
