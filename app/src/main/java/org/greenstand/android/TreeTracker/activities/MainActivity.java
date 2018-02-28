@@ -44,6 +44,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import org.greenstand.android.TreeTracker.database.DbHelper;
 import org.greenstand.android.TreeTracker.utilities.LocationUtils;
@@ -93,6 +94,8 @@ public class MainActivity extends ActionBarActivity implements
     public Map<String, String> map;
 
     private LocationRequest mLocationRequest;
+
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private boolean mUpdatesRequested;
 
@@ -1156,10 +1159,10 @@ public class MainActivity extends ActionBarActivity implements
                 case HttpStatus.SC_UNAUTHORIZED:
                     Toast.makeText(MainActivity.this, "Incorrect username or password.", Toast.LENGTH_SHORT).show();
                     break;
-
-                case -1000:
+               
+		case -1000:
                     Toast.makeText(MainActivity.this, "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show();
-                    break;
+		    break;
 
                 default:
                     break;
@@ -1173,12 +1176,19 @@ public class MainActivity extends ActionBarActivity implements
      */
     private void startPeriodicUpdates() {
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && 
+	    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
+	/**  DELETE IF NOT NEEDED
+        * LocationServices.FusedLocationApi.requestLocationUpdates(
+        *      mGoogleApiClient, mLocationRequest, this);
+	*/
+	    
+	LocationServices.mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+            mLocationCallback,
+            null /* Looper */);
     }
 
     @Override
