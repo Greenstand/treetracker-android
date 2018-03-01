@@ -945,8 +945,10 @@ public class MainActivity extends AppCompatActivity implements
      * Location Services
      */
     private void stopPeriodicUpdates() {
-        locationManager.removeUpdates(mLocationListener);
-        mLocationListener = null;
+        if(locationManager != null) {
+            locationManager.removeUpdates(mLocationListener);
+            mLocationListener = null;
+        }
         mLocationUpdatesStarted = false;
 
     }
