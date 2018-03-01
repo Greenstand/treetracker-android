@@ -22,8 +22,6 @@ android {
         versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        buildConfigField "String", "DOS_ACCESS_KEY", "\"${dos_access_key}\""
-        buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
     }
     buildTypes {
         release {
@@ -95,8 +93,6 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
-    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
     compile 'com.google.firebase:firebase-core:11.8.0'
 
 }
