@@ -340,9 +340,11 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		switch (v.getId()) {
 			case R.id.button_capture:
 				// get an image from the camera
-				safeToTakePicture = false;
-				mCamera.takePicture(null, null, CameraActivity.this);
-				Log.e("take", "pic");
+                if(safeToTakePicture) {
+                    safeToTakePicture = false;
+                    mCamera.takePicture(null, null, CameraActivity.this);
+                    Log.e("take", "pic");
+                }
 				break;
 			case R.id.camera_preview_cancel:
 				setResult(Activity.RESULT_CANCELED);
