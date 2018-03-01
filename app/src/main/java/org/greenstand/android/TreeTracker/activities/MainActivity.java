@@ -41,8 +41,10 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
@@ -97,8 +99,6 @@ public class MainActivity extends ActionBarActivity implements
 
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private boolean mUpdatesRequested;
-
     private SharedPreferences mSharedPreferences;
 
     private Fragment fragment;
@@ -122,6 +122,7 @@ public class MainActivity extends ActionBarActivity implements
     private DataManager mDataManager;
     private DatabaseManager mDatabaseManager;
     private List<UserTree> mUserTreeList;
+    private LocationCallback mLocationCallback;
 
     /**
      * Called when the activity is first created.
@@ -184,23 +185,6 @@ public class MainActivity extends ActionBarActivity implements
                 R.layout.item, new String[]{"menu_item", "menu_item_id"},
                 new int[]{R.id.menu_item, R.id.menu_item_id});
 
-        // Create a new global location parameters object
-        mLocationRequest = LocationRequest.create();
-        
-
-        /*
-         * Set the update interval
-         */
-        mLocationRequest.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
-
-        // Use high accuracy
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        // Set the interval ceiling to one minute
-        mLocationRequest.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
-
-        // Note that location updates are on by default
-        mUpdatesRequested = true;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -302,6 +286,7 @@ public class MainActivity extends ActionBarActivity implements
             }
 
         }
+
 
     }
 
@@ -525,13 +510,11 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
-
+    // This is only relevant for google play services
     public void onConnected(Bundle bundle) {
         MainActivity.this.getLocation();
 
-        if (mUpdatesRequested) {
-            startPeriodicUpdates();
-        }
+        startPeriodicUpdates();
     }
 
     @Override
@@ -604,10 +587,6 @@ public class MainActivity extends ActionBarActivity implements
 
         Log.i("uso", "on start");
 
-        /*
-         * Connect the client. Don't re-start any requests here;
-         * instead, wait for onResume()
-         */
 
     }
 
@@ -676,16 +655,12 @@ public class MainActivity extends ActionBarActivity implements
         }
 
 
-//        if (mUpdatesRequested && mLocationClient.isConnected()) {
-//
-//            startPeriodicUpdates();
-//        }
+        startPeriodicUpdates();
 
         if (mSharedPreferences.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
 
             Bundle bundle = getIntent().getExtras();
 
-//            fragment = new HomeFragment();
             fragment = new MapsFragment();
             fragment.setArguments(bundle);
 
@@ -716,11 +691,13 @@ public class MainActivity extends ActionBarActivity implements
      * Location Services
      */
     private void stopPeriodicUpdates() {
-        //mLocationClient.removeLocationUpdates(this);
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
 
     public void onLocationChanged(Location location) {
+        Log.d("onLocationChanged", location.toString());
+
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location;
 
@@ -1038,7 +1015,6 @@ public class MainActivity extends ActionBarActivity implements
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
 
-//                        HomeFragment homeFragment = new HomeFragment();
                         MapsFragment homeFragment = new MapsFragment();
                         homeFragment.setArguments(getIntent().getExtras());
 
@@ -1063,7 +1039,6 @@ public class MainActivity extends ActionBarActivity implements
                                     Permissions.NECESSARY_PERMISSIONS);
                         } else {
                             startPeriodicUpdates();
-//                            getMyTreesTask = new GetMyTreesTask().execute(new String[]{});
                             getMyTrees();
 
                         }
@@ -1109,7 +1084,6 @@ public class MainActivity extends ActionBarActivity implements
         if (grantResults.length > 0) {
             if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates();
-//                getMyTreesTask = new GetMyTreesTask().execute(new String[]{});
                 getMyTrees();
             }
         }
@@ -1181,14 +1155,60 @@ public class MainActivity extends ActionBarActivity implements
             return;
         }
 
-	/**  DELETE IF NOT NEEDED
-        * LocationServices.FusedLocationApi.requestLocationUpdates(
-        *      mGoogleApiClient, mLocationRequest, this);
-	*/
-	    
-	LocationServices.mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-            mLocationCallback,
-            null /* Looper */);
+/*
+        // The FusedLocationProviderClient returns values of accuracy that are worse than the
+        // Android location manager.  The actual accuracy probably isn't different,
+        // but we need to analyse these and also use location update filtering.
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Create a new global location parameters object
+        mLocationRequest = LocationRequest.create();
+
+        // Set the update interval
+        mLocationRequest.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Use high accuracy
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        // Set the interval ceiling to one minute
+        mLocationRequest.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
+
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                onLocationChanged(location);
+            };
+        };
+
+        Log.d("MainActivity", "Requesting location updates");
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback,
+                null /* Looper */
+/*);
+*/
+
+        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+
+        //Location Listener is an interface. It will be called every time when the location manager reacted.
+        android.location.LocationListener locationListener = new android.location.LocationListener() {
+            public void onLocationChanged(Location location) {
+                // This method is called when a new location is found by the network location provider or Gps provider.
+                //Log.d("onLocationChanged", location.toString());
+                onLocationChanged(location);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Register the listener with Location Manager's network provider
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
     }
 
     @Override
