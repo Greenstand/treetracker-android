@@ -20,7 +20,7 @@ public class TreeTrackerApplication extends Application {
 
 	    if (BuildConfig.DEBUG) {
 			  Timber.plant(new Timber.DebugTree());
-		  }
+	    }
 	  }
 
 	@Override
