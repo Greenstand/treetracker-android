@@ -122,7 +122,10 @@ public class MainActivity extends ActionBarActivity implements
     private DataManager mDataManager;
     private DatabaseManager mDatabaseManager;
     private List<UserTree> mUserTreeList;
-    private LocationCallback mLocationCallback;
+//    private LocationCallback mLocationCallback;
+    private LocationManager locationManager;
+    private android.location.LocationListener mLocationListener;
+    private android.location.LocationListener mLocationListener;
 
     /**
      * Called when the activity is first created.
@@ -569,6 +572,7 @@ public class MainActivity extends ActionBarActivity implements
 
         super.onPause();
 
+        stopPeriodicUpdates();
 
         if (isFinishing()) {
             Log.e("zelim izac", "gotov");
@@ -607,7 +611,7 @@ public class MainActivity extends ActionBarActivity implements
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (!(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
+        if (! locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
             builder.setTitle(R.string.enable_location_access);
@@ -683,15 +687,6 @@ public class MainActivity extends ActionBarActivity implements
 
         }
 
-    }
-
-
-    /**
-     * In response to a request to stop updates, send a request to
-     * Location Services
-     */
-    private void stopPeriodicUpdates() {
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
 
@@ -1190,10 +1185,10 @@ public class MainActivity extends ActionBarActivity implements
 /*);
 */
 
-        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
         //Location Listener is an interface. It will be called every time when the location manager reacted.
-        android.location.LocationListener locationListener = new android.location.LocationListener() {
+        mLocationListener = new android.location.LocationListener() {
             public void onLocationChanged(Location location) {
                 // This method is called when a new location is found by the network location provider or Gps provider.
                 //Log.d("onLocationChanged", location.toString());
@@ -1208,8 +1203,20 @@ public class MainActivity extends ActionBarActivity implements
         };
 
         // Register the listener with Location Manager's network provider
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
     }
+
+
+    /**
+     * In response to a request to stop updates, send a request to
+     * Location Services
+     */
+    private void stopPeriodicUpdates() {
+        // mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        
+        locationManager.removeUpdates(mLocationListener);
+    }
+
 
     @Override
     public void refreshMap() {
