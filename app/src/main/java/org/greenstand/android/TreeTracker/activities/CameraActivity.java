@@ -60,7 +60,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	private File tmpImageFile;
 	private ImageButton reloadButton;
 	private AsyncTask<String, Void, String> openCameraTask;
-	
+	private boolean safeToTakePicture = true;
     
     public static final int MEDIA_TYPE_IMAGE = 1;
 
@@ -141,6 +141,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 			e.printStackTrace();
 		}
 		setPic();
+		safeToTakePicture = true;
 	}
 	
 	private void galleryAddPic() throws IOException {
@@ -339,6 +340,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		switch (v.getId()) {
 			case R.id.button_capture:
 				// get an image from the camera
+				safeToTakePicture = false;
 				mCamera.takePicture(null, null, CameraActivity.this);
 				Log.e("take", "pic");
 				break;
