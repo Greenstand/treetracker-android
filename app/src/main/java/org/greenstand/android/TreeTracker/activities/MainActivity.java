@@ -8,7 +8,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -28,29 +27,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.FrameLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import org.greenstand.android.TreeTracker.database.DbHelper;
-import org.greenstand.android.TreeTracker.utilities.LocationUtils;
-import org.greenstand.android.TreeTracker.network.NetworkUtilities;
 import org.greenstand.android.TreeTracker.application.Permissions;
 import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
@@ -61,43 +48,25 @@ import org.greenstand.android.TreeTracker.fragments.DataFragment;
 import org.greenstand.android.TreeTracker.fragments.ForgotPasswordFragment;
 import org.greenstand.android.TreeTracker.fragments.LoginFragment;
 import org.greenstand.android.TreeTracker.fragments.MapsFragment;
-import org.greenstand.android.TreeTracker.fragments.SettingsFragment;
 import org.greenstand.android.TreeTracker.fragments.SignupFragment;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends ActionBarActivity implements
-        OnGlobalLayoutListener,
-        LocationListener,
-        GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks,
+public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         MapsFragment.LocationDialogListener {
 
-    FrameLayout mSplashScreen;
-    private GoogleApiClient mGoogleApiClient;
+    private static final String TAG = "MainActivity";
 
     public static final Handler mHandler = new Handler();
 
     public Map<String, String> map;
-
-    private LocationRequest mLocationRequest;
-
-    private FusedLocationProviderClient mFusedLocationClient;
 
     private SharedPreferences mSharedPreferences;
 
@@ -118,14 +87,13 @@ public class MainActivity extends ActionBarActivity implements
 
     public static ProgressDialog progressDialog;
 
-
     private DataManager mDataManager;
     private DatabaseManager mDatabaseManager;
     private List<UserTree> mUserTreeList;
-//    private LocationCallback mLocationCallback;
+
     private LocationManager locationManager;
     private android.location.LocationListener mLocationListener;
-    private android.location.LocationListener mLocationListener;
+    private boolean mLocationUpdatesStarted;
 
     /**
      * Called when the activity is first created.
@@ -162,32 +130,7 @@ public class MainActivity extends ActionBarActivity implements
             mSharedPreferences.edit().putBoolean(ValueHelper.FIRST_RUN, false).commit();
         }
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */,
-                        this /* OnConnectionFailedListener */)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        servicesConnected();
-        //TODO handle when not connected
-
-//        requestWindowFeature(Window.FEATURE_ACTION_BAR);
-
         setContentView(R.layout.activity_main);
-
-        this.findViewById(android.R.id.content).getRootView().getViewTreeObserver().addOnGlobalLayoutListener(this);
-
-//        FrameLayout mDrawerLayout = (FrameLayout) findViewById(R.id.drawer_layout);
-//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-        List<Map<String, String>> data = getMenuData();
-        SimpleAdapter adapter = new SimpleAdapter(this, data,
-                R.layout.item, new String[]{"menu_item", "menu_item_id"},
-                new int[]{R.id.menu_item, R.id.menu_item_id});
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -253,8 +196,6 @@ public class MainActivity extends ActionBarActivity implements
                 Log.d("MainActivity", "TREES_TO_BE_DOWNLOADED_FIRST is true");
                 Bundle bundle = getIntent().getExtras();
 
-
-//                fragment = new HomeFragment();
                 fragment = new MapsFragment();
                 fragment.setArguments(bundle);
 
@@ -277,13 +218,11 @@ public class MainActivity extends ActionBarActivity implements
 
             } else {
                 Log.d("MainActivity", "startDataSync is false");
-//                HomeFragment homeFragment = new HomeFragment();
                 MapsFragment homeFragment = new MapsFragment();
                 homeFragment.setArguments(getIntent().getExtras());
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                         .beginTransaction();
-//                fragmentTransaction.add(R.id.container_fragment, homeFragment, ValueHelper.HOME_FRAGMENT);
                 fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT);
                 fragmentTransaction.commit();
             }
@@ -327,6 +266,7 @@ public class MainActivity extends ActionBarActivity implements
                     Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
                 return true;
+            /*
             case R.id.action_settings:
                 fragment = new SettingsFragment();
                 bundle = getIntent().getExtras();
@@ -338,6 +278,7 @@ public class MainActivity extends ActionBarActivity implements
                     Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
                 return true;
+                */
             case R.id.action_about:
                 Fragment someFragment = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
 
@@ -390,9 +331,7 @@ public class MainActivity extends ActionBarActivity implements
                     public void onClick(DialogInterface dialog, int which) {
 
                         // Code that is executed when clicking NO
-
                         finish();
-
                         dialog.dismiss();
                     }
 
@@ -406,125 +345,24 @@ public class MainActivity extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private List<Map<String, String>> getMenuData() {
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-
-        Map<String, String> map = new HashMap<String, String>();
-
-        map = new HashMap<String, String>();
-        map.put("menu_item", getResources().getString(R.string.home));
-        map.put("menu_item_id", ValueHelper.MENU_HOME);
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("menu_item", getResources().getString(R.string.map));
-        map.put("menu_item_id", ValueHelper.MENU_MAP);
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("menu_item", getResources().getString(R.string.data));
-        map.put("menu_item_id", ValueHelper.MENU_DATA);
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("menu_item", getResources().getString(R.string.settings));
-        map.put("menu_item_id", ValueHelper.MENU_SETTINGS);
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("menu_item", getResources().getString(R.string.exit));
-        map.put("menu_item_id", ValueHelper.MENU_EXIT);
-        list.add(map);
-
-        return list;
-    }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-//        mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-//        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
-    public void onGlobalLayout() {
-
-    }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("u mainu sam", "OK");
+        Log.e(TAG, "onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
-    private boolean servicesConnected() {
-        // Check that Google Play services is available
-        int resultCode =
-                GooglePlayServicesUtil.
-                        isGooglePlayServicesAvailable(this);
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            // In debug mode, log the status
-            Log.d("LocationUpdates",
-                    "Google Play services is available.");
-            // Continue
-            return true;
-            // Google Play services was not available for some reason
-        } else {
-            Log.e("LocationUpdates",
-                    "Google Play services is not available.");
-
-        }
-        return false;
-    }
-
-
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        /*
-         * Google Play services can resolve some errors it detects.
-         * If the error has a resolution, try sending an Intent to
-         * start a Google Play services activity that can resolve
-         * error.
-         */
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(
-                        this,
-                        ValueHelper.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-                /*
-                 * Thrown if Google Play services canceled the original
-                 * PendingIntent
-                 */
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    // This is only relevant for google play services
-    public void onConnected(Bundle bundle) {
-        MainActivity.this.getLocation();
-
-        startPeriodicUpdates();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
 
     /*
      * Called when the Activity is no longer visible at all.
@@ -532,12 +370,8 @@ public class MainActivity extends ActionBarActivity implements
      */
     @Override
     public void onRestart() {
-
-
-        Log.i("on restart", "restart");
-
+        Log.i(TAG, "onRestart");
         super.onRestart();
-
     }
 
     /*
@@ -546,20 +380,14 @@ public class MainActivity extends ActionBarActivity implements
      */
     @Override
     public void onStop() {
-
+        Log.i(TAG, "onStop");
         super.onStop();
-
-        Log.e("ON", "stooooop");
-
-
     }
 
     @Override
     public void onDestroy() {
+        Log.e(TAG, "onDestroy");
         super.onDestroy();
-
-        Log.e("ON", "DESTROY");
-
     }
 
 
@@ -569,16 +397,10 @@ public class MainActivity extends ActionBarActivity implements
      */
     @Override
     public void onPause() {
-
+        Log.d(TAG, "onPause");
         super.onPause();
 
         stopPeriodicUpdates();
-
-        if (isFinishing()) {
-            Log.e("zelim izac", "gotov");
-        } else {
-            Log.e("stani, nisam gotov", "gotov");
-        }
     }
 
     /*
@@ -586,12 +408,8 @@ public class MainActivity extends ActionBarActivity implements
      */
     @Override
     public void onStart() {
-
+        Log.d(TAG, "onStart");
         super.onStart();
-
-        Log.i("uso", "on start");
-
-
     }
 
     /*
@@ -599,9 +417,8 @@ public class MainActivity extends ActionBarActivity implements
      */
     @Override
     public void onResume() {
+        Log.d(TAG, "onResume");
         super.onResume();
-
-        Log.i("uso", "u resume");
 
         if (Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -611,7 +428,7 @@ public class MainActivity extends ActionBarActivity implements
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (! locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
+        if (! locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
             builder.setTitle(R.string.enable_location_access);
@@ -691,7 +508,7 @@ public class MainActivity extends ActionBarActivity implements
 
 
     public void onLocationChanged(Location location) {
-        Log.d("onLocationChanged", location.toString());
+        //Log.d("onLocationChanged", location.toString());
 
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location;
@@ -762,50 +579,7 @@ public class MainActivity extends ActionBarActivity implements
                 if (updateTreeDetailsDistance != null) {
                     updateTreeDetailsDistance.setText(Integer.toString(Math.round(results[0])) + " " + getResources().getString(R.string.meters));
                 }
-
-
-//				Toast.makeText(MainActivity.this, "distance  " + Float.toString(results[0]), Toast.LENGTH_LONG).show();
-
             }
-        }
-
-    }
-
-    /**
-     *
-     * Calls getLastLocation() to get the current location
-     *
-     */
-    public void getLocation() {
-
-        // If Google Play Services is available
-        if (servicesConnected()) {
-
-            // Get the current location
-//            mCurrentLocation = mLocationClient.getLastLocation();
-//
-//            onLocationChanged(mLocationClient.getLastLocation());
-
-            if (mCurrentLocation != null) {
-                Log.e("latlong ", Double.toString(mCurrentLocation.getLatitude()) + " " + Double.toString(mCurrentLocation.getLongitude()));
-            }
-
-        } else {
-            //mLocationClient.connect();
-        }
-    }
-
-
-    /**
-     * Called when the authentication process completes (see attemptLogin()).
-     */
-    public void onAuthenticationResult(boolean result) {
-        Log.i("MainActivity", "onAuthenticationResult(" + result + ")");
-        // Hide the progress dialog
-
-        if (result) {
-        } else {
-            Log.e("MainActivity", "onAuthenticationResult: failed to authenticate");
         }
     }
 
@@ -830,16 +604,13 @@ public class MainActivity extends ActionBarActivity implements
                 case HttpStatus.SC_OK:
                     //successfull signup, save the token and continue
 
-
                     try {
                         jsonReponse = new JSONObject(responseBody);
 
                         mSharedPreferences.edit().putString(ValueHelper.TOKEN, jsonReponse.getString("token")).commit();
                         //Below code unsets the login and signup fragments because user successfully loged in
 
-
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
 
                         ContentValues values = new ContentValues();
                         values.put("main_db_id", jsonReponse.getString("id"));
@@ -867,10 +638,8 @@ public class MainActivity extends ActionBarActivity implements
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
                         mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
 
-//                        fragment = new HomeFragment();
                         fragment = new MapsFragment();
                         fragment.setArguments(getIntent().getExtras());
-
                         fragmentTransaction = getSupportFragmentManager()
                                 .beginTransaction();
                         fragmentTransaction.replace(R.id.container_fragment, fragment).commit();
@@ -959,11 +728,9 @@ public class MainActivity extends ActionBarActivity implements
         Log.i("MainActivity", "httpResponseCode(" + Integer.toString(httpResponseCode) + ")");
         // Hide the progress dialog
 
-
         if (MainActivity.progressDialog != null) {
             MainActivity.progressDialog.dismiss();
         }
-
 
         if (result) {
 
@@ -978,9 +745,7 @@ public class MainActivity extends ActionBarActivity implements
                         mSharedPreferences.edit().putString(ValueHelper.TOKEN, jsonReponse.getString("token")).commit();
                         //Below code unsets the login and signup fragments because user successfully loged in
 
-
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
 
                         ContentValues values = new ContentValues();
                         values.put("main_db_id", jsonReponse.getString("id"));
@@ -1150,49 +915,15 @@ public class MainActivity extends ActionBarActivity implements
             return;
         }
 
-/*
-        // The FusedLocationProviderClient returns values of accuracy that are worse than the
-        // Android location manager.  The actual accuracy probably isn't different,
-        // but we need to analyse these and also use location update filtering.
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        // Create a new global location parameters object
-        mLocationRequest = LocationRequest.create();
-
-        // Set the update interval
-        mLocationRequest.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
-
-        // Use high accuracy
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        // Set the interval ceiling to one minute
-        mLocationRequest.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
-
-
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
-                onLocationChanged(location);
-            };
-        };
-
-        Log.d("MainActivity", "Requesting location updates");
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                mLocationCallback,
-                null /* Looper */
-/*);
-*/
+        if(mLocationUpdatesStarted){
+            return;
+        }
 
         locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
-        //Location Listener is an interface. It will be called every time when the location manager reacted.
         mLocationListener = new android.location.LocationListener() {
             public void onLocationChanged(Location location) {
-                // This method is called when a new location is found by the network location provider or Gps provider.
-                //Log.d("onLocationChanged", location.toString());
-                onLocationChanged(location);
+                MainActivity.this.onLocationChanged(location);
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -1204,6 +935,8 @@ public class MainActivity extends ActionBarActivity implements
 
         // Register the listener with Location Manager's network provider
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+
+        mLocationUpdatesStarted = true;
     }
 
 
@@ -1212,9 +945,10 @@ public class MainActivity extends ActionBarActivity implements
      * Location Services
      */
     private void stopPeriodicUpdates() {
-        // mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        
         locationManager.removeUpdates(mLocationListener);
+        mLocationListener = null;
+        mLocationUpdatesStarted = false;
+
     }
 
 
@@ -1276,134 +1010,6 @@ public class MainActivity extends ActionBarActivity implements
     public List<UserTree> getUserTrees() {
         return mUserTreeList;
     }
-
-    /**
-     * Deprecated. Replaced by API trees/details/user/{id}
-     */
-    class GetMyTreesTask extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected String doInBackground(String... params) {
-
-	        HttpResponse resp = null;
-	        
-			String rsp = null;
-	        
-	        HttpGet post = null;
-			post = new HttpGet(NetworkUtilities.TREE_FOR_USER_URI + mSharedPreferences.getString(ValueHelper.MAIN_DB_USER_ID, "-1")
-					+ "?token=" + mSharedPreferences.getString(ValueHelper.TOKEN, ""));
-			
-			Log.d("URL", NetworkUtilities.TREE_FOR_USER_URI + mSharedPreferences.getString(ValueHelper.MAIN_DB_USER_ID, "-1") 
-					+ "?token=" + mSharedPreferences.getString(ValueHelper.TOKEN, ""));
-
-	        post.setHeader("Accept-Charset","utf-8");
-
-
-	        DefaultHttpClient mHttpClient = NetworkUtilities.createHttpClient();
-	        
-	        try {
-	            resp = mHttpClient.execute(post);
-	        } catch (final ConnectException e) {
-	            Log.d("", "Connect exception", e);
-	        } catch (final IOException e) {
-	                Log.v("", "IOException when getting authtoken", e);
-	        } finally {
-	                Log.v("", "getAuthtoken completing");
-	        }
-	        
-			try {
-				
-				if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-						rsp = "Token invalid";
-						return rsp;
-					
-				} else {
-					rsp = EntityUtils.toString(resp.getEntity());
-				}
-				
-				
-				
-			} catch (IllegalStateException e) {
-				Log.e("onpostexec", "IllegalStateException");
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.e("onpostexec", "IOException");
-				e.printStackTrace();
-			} catch (Exception e) {
-				Log.e("Exception", "Exception");
-				e.printStackTrace();
-			}
-		
-			
-	        
-	        return rsp;
-		}
-		
-		
-		 protected void onPostExecute(String response) {
-		        super.onPostExecute(response);
-		        
-		        if (response != null) {
-		        	JSONObject jsonResponse = null;
-		        	JSONArray jsonReponseArray = null;
-					String local_id = null;
-					String maindb_id = null;
-                    Log.d("MainActivity", "GetMyTreesTask onPostExecute response != null");
-                    Log.d("MainActivity", "response: " + response);
-
-                    try {
-						jsonReponseArray = new JSONArray(response);
-						
-						for (int i = 0; i < jsonReponseArray.length(); i++) {
-				  			SQLiteDatabase db = MainActivity.dbHelper.getWritableDatabase();
-				  			
-				  			 
-				  		    ContentValues values = new ContentValues();
-				  		    values.put("tree_id", (String) jsonReponseArray.get(i));
-				  		    values.put("user_id", Long.toString(mSharedPreferences.getLong(ValueHelper.MAIN_USER_ID, -1)));
-							
-							
-							db.insert("pending_updates", null, values);
-							db.close();
-						}
-						
-						if (jsonReponseArray.length() > 0) {
-                            Log.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0");
-							mSharedPreferences.edit().putBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, true).commit();
-							
-							
-							Bundle bundle = getIntent().getExtras();
-							
-							if (bundle == null)
-								bundle = new Bundle();
-							
-							bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true);
-
-							fragment = new DataFragment();
-							fragment.setArguments(bundle);
-
-							fragmentTransaction = getSupportFragmentManager()
-									.beginTransaction();
-							fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
-                            Log.d("MainActivity", "click back, back stack count: " + getSupportFragmentManager().getBackStackEntryCount());
-                            for(int entry = 0; entry < getSupportFragmentManager().getBackStackEntryCount(); entry++){
-                                Log.d("MainActivity", "Found fragment: " + getSupportFragmentManager().getBackStackEntryAt(entry).getName());
-                            }
-						}
-
-					} catch (JSONException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-		  			
-		        } else {
-	        		
-		        }
-		 }
-		
-		
-	}
 
 }
 
