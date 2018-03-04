@@ -511,8 +511,7 @@ public class MainActivity extends AppCompatActivity implements
         mCurrentLocation = location;
 
         //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
-        //TODO int minAccuracy = 10;
-        int minAccuracy = 30;
+        int minAccuracy = 10;
 
         TextView mapGpsAccuracy = ((TextView) findViewById(R.id.fragment_map_gps_accuracy));
         TextView mapGpsAccuracyValue = ((TextView) findViewById(R.id.fragment_map_gps_accuracy_value));
