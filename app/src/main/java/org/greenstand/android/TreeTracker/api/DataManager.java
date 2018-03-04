@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.api;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.greenstand.android.TreeTracker.api.models.NewTree;
 import org.greenstand.android.TreeTracker.api.models.UserTree;
 
@@ -55,6 +57,10 @@ public abstract class DataManager<T> {
                 result = tree.body();
             }
         } catch (IOException e) {
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        } catch (Exception e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
         return result;

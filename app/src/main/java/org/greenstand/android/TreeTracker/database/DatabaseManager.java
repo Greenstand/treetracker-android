@@ -12,7 +12,7 @@ public class DatabaseManager {
 
     private static DatabaseManager sInstance;
     private DbHelper mDbHelper;
-    private SQLiteDatabase mDatabase;
+    private SQLiteDatabase mDatabase = null;
     private int mOpenCounter;
 
     public static synchronized DatabaseManager getInstance(DbHelper dbHelper) {
