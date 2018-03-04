@@ -26,31 +26,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.greenstand.android.TreeTracker.database.DatabaseManager;
-import org.greenstand.android.TreeTracker.database.DbHelper;
-import org.greenstand.android.TreeTracker.application.Permissions;
+import org.apache.http.HttpStatus;
 import org.greenstand.android.TreeTracker.R;
-import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 import org.greenstand.android.TreeTracker.api.DataManager;
 import org.greenstand.android.TreeTracker.api.models.UserTree;
+import org.greenstand.android.TreeTracker.application.Permissions;
+import org.greenstand.android.TreeTracker.database.DatabaseManager;
+import org.greenstand.android.TreeTracker.database.DbHelper;
 import org.greenstand.android.TreeTracker.fragments.AboutFragment;
 import org.greenstand.android.TreeTracker.fragments.DataFragment;
 import org.greenstand.android.TreeTracker.fragments.ForgotPasswordFragment;
 import org.greenstand.android.TreeTracker.fragments.LoginFragment;
 import org.greenstand.android.TreeTracker.fragments.MapsFragment;
 import org.greenstand.android.TreeTracker.fragments.SignupFragment;
-
-import org.apache.http.HttpStatus;
+import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -514,7 +511,8 @@ public class MainActivity extends AppCompatActivity implements
         mCurrentLocation = location;
 
         //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
-        int minAccuracy = 10;
+        //TODO int minAccuracy = 10;
+        int minAccuracy = 30;
 
         TextView mapGpsAccuracy = ((TextView) findViewById(R.id.fragment_map_gps_accuracy));
         TextView mapGpsAccuracyValue = ((TextView) findViewById(R.id.fragment_map_gps_accuracy_value));

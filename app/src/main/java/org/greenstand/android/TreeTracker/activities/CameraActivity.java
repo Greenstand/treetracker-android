@@ -1,14 +1,5 @@
 package org.greenstand.android.TreeTracker.activities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -34,13 +25,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.greenstand.android.TreeTracker.BuildConfig;
+import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.camera.AlbumStorageDirFactory;
 import org.greenstand.android.TreeTracker.camera.BaseAlbumDirFactory;
 import org.greenstand.android.TreeTracker.camera.CameraPreview;
 import org.greenstand.android.TreeTracker.camera.FroyoAlbumDirFactory;
-import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import timber.log.Timber;
 
 
 public class CameraActivity extends Activity implements PictureCallback, OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -54,11 +55,9 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	private ImageView mImageView;
 	private View mParameters;
 	private byte[] mCurrentPictureData;
-	private ImageButton saveImg;
 	private ImageButton cancelImg;
 	private ImageButton captureButton;
 	private File tmpImageFile;
-	private ImageButton reloadButton;
 	private AsyncTask<String, Void, String> openCameraTask;
 	private boolean safeToTakePicture = true;
     
@@ -77,17 +76,16 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 
         mImageView = (ImageView) findViewById(R.id.camera_preview_taken);
         
-        saveImg = (ImageButton) findViewById(R.id.camera_preview_ok);
+
         cancelImg = (ImageButton) findViewById(R.id.camera_preview_cancel);
         captureButton = (ImageButton) findViewById(R.id.button_capture);
-        reloadButton = (ImageButton) findViewById(R.id.camera_preview_reload);
+
         
 
      // Add a listener to the buttons
         captureButton.setOnClickListener(CameraActivity.this);
         cancelImg.setOnClickListener(CameraActivity.this);
-        saveImg.setOnClickListener(CameraActivity.this);
-        reloadButton.setOnClickListener(CameraActivity.this);
+
         
         openCameraTask = new OpenCameraTask().execute(new String[]{});
         
@@ -117,9 +115,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
     }
 
 	public void onPictureTaken(byte[] data, Camera camera) {
-		saveImg.setVisibility(View.VISIBLE);
-		reloadButton.setVisibility(View.VISIBLE);
 		captureButton.setVisibility(View.INVISIBLE);
+		cancelImg.setVisibility(View.INVISIBLE);
 		
 		mCurrentPictureData = data;
 		tmpImageFile = null;
@@ -142,6 +139,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		}
 		setPic();
 		safeToTakePicture = true;
+		savePicture();      //skip picture preview
+		releaseCamera();
 	}
 	
 	private void galleryAddPic() throws IOException {
@@ -219,6 +218,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		if (mCamera != null){
 		    mCamera.release();        // release the camera for other applications
 		    mCamera = null;
+			Timber.d("camera released");
 		}
 	}
 	
@@ -336,71 +336,50 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	
 	public void onClick(View v) {
 		v.setHapticFeedbackEnabled(true);
-
-		switch (v.getId()) {
-			case R.id.button_capture:
-				// get an image from the camera
-                if(safeToTakePicture) {
-                    safeToTakePicture = false;
-                    mCamera.takePicture(null, null, CameraActivity.this);
-                    Log.e("take", "pic");
-                }
-				break;
-			case R.id.camera_preview_cancel:
-				setResult(Activity.RESULT_CANCELED);
-				finish();
-				break;
-			case R.id.camera_preview_reload:
-				mCamera.startPreview();
-				FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-				preview.removeAllViews();
-				preview.addView(mPreview);
-
-				mImageView.setImageDrawable(null);
-				reloadButton.setVisibility(View.INVISIBLE);
-				captureButton.setVisibility(View.VISIBLE);
-				saveImg.setVisibility(View.INVISIBLE);
-				break;
-			case R.id.camera_preview_ok:
-				File pictureFile = null;
-				try {
-					pictureFile = setUpPhotoFile();
-					mCurrentPhotoPath = pictureFile.getAbsolutePath();
-				} catch (IOException e) {
-					e.printStackTrace();
-					pictureFile = null;
-					mCurrentPhotoPath = null;
-				}
-				boolean saved = true;
-				try {				    FileOutputStream fos = new FileOutputStream(pictureFile);
-				    fos.write(mCurrentPictureData);
-				    fos.close();
-				    galleryAddPic();
-				} catch (FileNotFoundException e) {
-				    Log.d(TAG, "File not found: " + e.getMessage());
-				    saved = false;
-				} catch (IOException e) {
-				    Log.d(TAG, "Error accessing file: " + e.getMessage());
-				    saved = false;
-				} catch (Exception e) {
-				    Log.d(TAG, "Error accessing file: " + e.getMessage());
-				    saved = false;
-				}
-
-				if (saved) {
-					Intent data = new Intent();
-					data.putExtra(ValueHelper.TAKEN_IMAGE_PATH, mCurrentPhotoPath);
-					setResult(Activity.RESULT_OK, data);
-
-				} else {
-					setResult(Activity.RESULT_CANCELED);
-				}
-				finish();
-					break;
-			default:
-				break;
+        // get an image from the camera
+        if(safeToTakePicture) {
+            safeToTakePicture = false;
+            mCamera.takePicture(null, null, CameraActivity.this);
+            Log.e("take", "pic");
 		}
 	}
+
+	private void savePicture(){
+        File pictureFile = null;
+        try {
+            pictureFile = setUpPhotoFile();
+            mCurrentPhotoPath = pictureFile.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            pictureFile = null;
+            mCurrentPhotoPath = null;
+        }
+        boolean saved = true;
+        try {				    FileOutputStream fos = new FileOutputStream(pictureFile);
+            fos.write(mCurrentPictureData);
+            fos.close();
+            galleryAddPic();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+            saved = false;
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            saved = false;
+        } catch (Exception e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            saved = false;
+        }
+
+        if (saved) {
+            Intent data = new Intent();
+            data.putExtra(ValueHelper.TAKEN_IMAGE_PATH, mCurrentPhotoPath);
+            setResult(Activity.RESULT_OK, data);
+
+        } else {
+            setResult(Activity.RESULT_CANCELED);
+        }
+        finish();
+    }
 
     
 	class OpenCameraTask extends AsyncTask<String, Void, String> {
@@ -408,7 +387,6 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		protected void onPreExecute() {
 			cancelImg.setVisibility(View.INVISIBLE);
 			captureButton.setVisibility(View.INVISIBLE);
-			saveImg.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
