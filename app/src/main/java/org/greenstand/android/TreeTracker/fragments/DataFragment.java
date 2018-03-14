@@ -58,7 +58,7 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
     private AlbumStorageDirFactory mAlbumStorageDirFactory;
     private SharedPreferences mSharedPreferences;
 
-    private AsyncTask<Void, Void, String> syncTask;
+    private AsyncTask<Void, Integer, String> syncTask;
 
     public DataFragment() {
         mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
@@ -171,7 +171,7 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         }
     }
 
-    private void updateData() {
+    public void updateData() {
         mDatabaseManager.openDatabase();
 
         Cursor treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS total FROM tree", null);
@@ -284,6 +284,11 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         Toast.makeText(getActivity(), "Sync " + message, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onProgressUpdate(Integer... values) {
+        updateData();
+    }
+
     class UpdateLocalDb extends AsyncTask<List<UserTree>, Void, Void> {
 
         @Override
@@ -368,6 +373,12 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
                 mDatabaseManager.closeDatabase();
             }
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+
         }
 
         @Override
