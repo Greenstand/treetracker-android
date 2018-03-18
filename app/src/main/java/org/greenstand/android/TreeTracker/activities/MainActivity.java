@@ -302,45 +302,6 @@ public class MainActivity extends AppCompatActivity implements
                     Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
                 return true;
-            case R.id.action_exit:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                builder.setTitle(R.string.exit);
-                builder.setMessage(R.string.do_you_want_to_sync_your_data_now);
-
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        MainActivity.syncDataFromExitScreen = true;
-
-                        fragment = new DataFragment();
-                        fragment.setArguments(getIntent().getExtras());
-
-                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
-
-                        dialog.dismiss();
-                    }
-
-                });
-
-
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        // Code that is executed when clicking NO
-                        finish();
-                        dialog.dismiss();
-                    }
-
-                });
-
-
-                AlertDialog alert = builder.create();
-                alert.show();
-                return true;
         }
         return super.onOptionsItemSelected(item);
     }
