@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import org.greenstand.android.TreeTracker.fragments.DataFragment;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.api.models.NewTree;
@@ -23,10 +24,11 @@ import timber.log.Timber;
  * Created by lei on 11/11/17.
  */
 
-public class SyncTask extends AsyncTask<Void, Void, String> {
+public class SyncTask extends AsyncTask<Void, Integer, String> {
 
     public interface SyncTaskListener {
         void onPostExecute(String message);
+        void onProgressUpdate(Integer... values);
     }
 
     private Context mContext;
@@ -34,6 +36,7 @@ public class SyncTask extends AsyncTask<Void, Void, String> {
     private DatabaseManager mDatabaseManager;
     private DataManager mDataManager;
     private int userId;
+    private int value;
 
     public SyncTask(Context context, SyncTaskListener listener, int userId) {
         this.mContext = context;
@@ -76,6 +79,9 @@ public class SyncTask extends AsyncTask<Void, Void, String> {
 
         Cursor treeCursor = mDatabaseManager.queryCursor(query, null);
         Timber.tag("DataFragment").d("treeCursor: " + DatabaseUtils.dumpCursorToString(treeCursor));
+       value= treeCursor.getCount();
+        Timber.tag("DataFragment").d("treeCursor: " + treeCursor.getCount());
+
         while (treeCursor.moveToNext()) {
             String localTreeId = treeCursor.getString(treeCursor.getColumnIndex("tree_id"));
             Timber.tag("DataFragment").d("tree_id: " + localTreeId);
@@ -148,8 +154,16 @@ public class SyncTask extends AsyncTask<Void, Void, String> {
             } else {
                 return "Failed.";
             }
+            value--;
+            publishProgress(value);
         }
         return "Completed.";
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+        callback.onProgressUpdate(values);
     }
 
     @Override
