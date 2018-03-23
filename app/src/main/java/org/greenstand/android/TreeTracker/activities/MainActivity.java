@@ -26,31 +26,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.greenstand.android.TreeTracker.database.DatabaseManager;
-import org.greenstand.android.TreeTracker.database.DbHelper;
-import org.greenstand.android.TreeTracker.application.Permissions;
+import org.apache.http.HttpStatus;
 import org.greenstand.android.TreeTracker.R;
-import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 import org.greenstand.android.TreeTracker.api.DataManager;
 import org.greenstand.android.TreeTracker.api.models.UserTree;
+import org.greenstand.android.TreeTracker.application.Permissions;
+import org.greenstand.android.TreeTracker.database.DatabaseManager;
+import org.greenstand.android.TreeTracker.database.DbHelper;
 import org.greenstand.android.TreeTracker.fragments.AboutFragment;
 import org.greenstand.android.TreeTracker.fragments.DataFragment;
 import org.greenstand.android.TreeTracker.fragments.ForgotPasswordFragment;
 import org.greenstand.android.TreeTracker.fragments.LoginFragment;
 import org.greenstand.android.TreeTracker.fragments.MapsFragment;
 import org.greenstand.android.TreeTracker.fragments.SignupFragment;
-
-import org.apache.http.HttpStatus;
+import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -301,45 +298,6 @@ public class MainActivity extends AppCompatActivity implements
                 for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
                     Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
-                return true;
-            case R.id.action_exit:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                builder.setTitle(R.string.exit);
-                builder.setMessage(R.string.do_you_want_to_sync_your_data_now);
-
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        MainActivity.syncDataFromExitScreen = true;
-
-                        fragment = new DataFragment();
-                        fragment.setArguments(getIntent().getExtras());
-
-                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
-
-                        dialog.dismiss();
-                    }
-
-                });
-
-
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        // Code that is executed when clicking NO
-                        finish();
-                        dialog.dismiss();
-                    }
-
-                });
-
-
-                AlertDialog alert = builder.create();
-                alert.show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
