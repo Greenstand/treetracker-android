@@ -19,5 +19,8 @@ Once this is done, you can then proceed by running one of the following tasks to
 
 ## Contributing
 
-Please review the roadmap (https://github.com/Greenstand/treetracker.org/wiki/Roadmap) or issue tracker here on github.
+(https://github.com/Greenstand/Development-Overview/blob/master/Contributing.md) 
+
+Please review the roadmap (https://github.com/Greenstand/Development-Overview/blob/master/Roadmap.md) or issue tracker here on github.
+
 All contributions should be submitted as pull requests against the master branch at https://github.com/Greenstand/treetracker-android/
