@@ -28,6 +28,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
 
     public interface SyncTaskListener {
         void onPostExecute(String message);
+
         void onProgressUpdate(Integer... values);
     }
 
@@ -79,7 +80,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
 
         Cursor treeCursor = mDatabaseManager.queryCursor(query, null);
         Timber.tag("DataFragment").d("treeCursor: " + DatabaseUtils.dumpCursorToString(treeCursor));
-       value= treeCursor.getCount();
+        value = treeCursor.getCount();
         Timber.tag("DataFragment").d("treeCursor: " + treeCursor.getCount());
 
         while (treeCursor.moveToNext()) {
@@ -169,8 +170,8 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
     @Override
     protected void onPostExecute(String message) {
         super.onPostExecute(message);
-        mDatabaseManager.closeDatabase();
         callback.onPostExecute(message);
+        mDatabaseManager.closeDatabase();
     }
 
     @Override
