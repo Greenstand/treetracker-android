@@ -118,7 +118,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
                 return "Failed.";
             }
             Log.d("SyncTask", "imageUrl: " + imageUrl);
-            newTree.setBase64Image(imageUrl); // method name should be changed as use new infrastructure.
+            newTree.setImageUrl(imageUrl); // method name should be changed as use new infrastructure.
 
 //            Timber.tag("DataFragment").d("user_id: " + newTree.getUserId());
 //            Timber.tag("DataFragment").d("lat: " + newTree.getLat());

@@ -2,10 +2,6 @@ package org.greenstand.android.TreeTracker.api.models;
 
 import com.google.gson.annotations.SerializedName;
 
-
-Merge NewTree and UserTree
-Add the URL here and to the database, using a database migration
-
 public class NewTree {
     @SerializedName("user_id")
     private int userId;
@@ -70,5 +66,11 @@ public class NewTree {
         this.timestamp = timestamp;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
