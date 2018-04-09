@@ -2,8 +2,8 @@ package org.greenstand.android.TreeTracker.api;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.greenstand.android.TreeTracker.api.models.NewTree;
-import org.greenstand.android.TreeTracker.api.models.UserTree;
+import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest;
+import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,7 +49,7 @@ public abstract class DataManager<T> {
         });
     }
 
-    public T createNewTree(NewTree newTree) {
+    public T createNewTree(NewTreeRequest newTree) {
         T result = null;
         try {
             Response<T> tree = (Response<T>) mApi.getApi().createTree(newTree).execute();

@@ -37,7 +37,7 @@ import android.widget.Toast;
 import org.apache.http.HttpStatus;
 import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.api.DataManager;
-import org.greenstand.android.TreeTracker.api.models.UserTree;
+import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 import org.greenstand.android.TreeTracker.application.Permissions;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import org.greenstand.android.TreeTracker.database.DbHelper;
@@ -554,80 +554,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    /**
-     * Called when the signup process completes
-     * @param httpResponseCode
-     */
-    public void onSignupResult(boolean result, int httpResponseCode, String responseBody) {
-        Log.i("MainActivity", "onSignupResult(" + result + ")");
-        Log.i("MainActivity", "httpResponseCode(" + Integer.toString(httpResponseCode) + ")");
-        // Hide the progress dialog
-
-        if (MainActivity.progressDialog != null) {
-            MainActivity.progressDialog.dismiss();
-        }
-
-        if (result) {
-
-            JSONObject jsonReponse;
-            switch (httpResponseCode) {
-                case HttpStatus.SC_OK:
-                    //successfull signup, save the token and continue
-
-                    try {
-                        jsonReponse = new JSONObject(responseBody);
-
-                        mSharedPreferences.edit().putString(ValueHelper.TOKEN, jsonReponse.getString("token")).commit();
-                        //Below code unsets the login and signup fragments because user successfully loged in
-
-                        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                        ContentValues values = new ContentValues();
-                        values.put("main_db_id", jsonReponse.getString("id"));
-                        values.put("first_name", jsonReponse.getString("first_name"));
-                        values.put("last_name", jsonReponse.getString("last_name"));
-                        values.put("email", jsonReponse.getString("email"));
-                        values.put("is_main_user", "Y");
-                        values.put("organization", jsonReponse.getString("organization"));
-
-                        long userId = db.insert("users", null, values);
-
-                        mSharedPreferences.edit().putLong(ValueHelper.MAIN_USER_ID, userId).commit();
-                        mSharedPreferences.edit().putString(ValueHelper.MAIN_DB_USER_ID, jsonReponse.getString("id")).commit();
-                        mSharedPreferences.edit().putString(ValueHelper.MAIN_USER_FIRST_NAME, jsonReponse.getString("first_name")).commit();
-                        mSharedPreferences.edit().putString(ValueHelper.MAIN_USER_LAST_NAME, jsonReponse.getString("last_name")).commit();
-
-                        mSharedPreferences.edit().putInt(ValueHelper.MAIN_DB_NEXT_UPDATE, Integer.parseInt(jsonReponse.getString("next_update"))).commit();
-                        mSharedPreferences.edit().putInt(ValueHelper.MAIN_DB_MIN_ACCURACY, Integer.parseInt(jsonReponse.getString("min_gps_accuracy"))).commit();
-
-                        mSharedPreferences.edit().putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING, Integer.parseInt(jsonReponse.getString("next_update"))).commit();
-                        mSharedPreferences.edit().putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, Integer.parseInt(jsonReponse.getString("min_gps_accuracy"))).commit();
-
-                        db.close();
-
-                        mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
-                        mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
-
-                        fragment = new MapsFragment();
-                        fragment.setArguments(getIntent().getExtras());
-                        fragmentTransaction = getSupportFragmentManager()
-                                .beginTransaction();
-                        fragmentTransaction.replace(R.id.container_fragment, fragment).commit();
-
-
-                        Toast.makeText(MainActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
-
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    break;
-
-
-                default:
-                    break;
-            }
-
+   /*
         } else {
             Log.e("MainActivity", "onSignupResult: failed to signup " + String.valueOf(httpResponseCode) );
             switch (httpResponseCode) {
@@ -685,6 +612,34 @@ public class MainActivity extends AppCompatActivity implements
                 default:
                     break;
             }
+        }
+    }
+*/
+
+    public void transitionToMapsFragment() {
+        fragment = new MapsFragment();
+        fragment.setArguments(getIntent().getExtras());
+        fragmentTransaction = getSupportFragmentManager()
+                .beginTransaction();
+        fragmentTransaction.replace(R.id.container_fragment, fragment).commit();
+
+
+        if (
+                (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                        ||  (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                        ||  (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+
+                ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            android.Manifest.permission.CAMERA,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    Permissions.NECESSARY_PERMISSIONS);
+        } else {
+            startPeriodicUpdates();
+            getMyTrees();
+
         }
     }
 

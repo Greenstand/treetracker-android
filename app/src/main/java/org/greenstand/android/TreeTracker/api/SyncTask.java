@@ -12,8 +12,8 @@ import android.util.Log;
 
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
-import org.greenstand.android.TreeTracker.api.models.NewTree;
-import org.greenstand.android.TreeTracker.api.models.PostResult;
+import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest;
+import org.greenstand.android.TreeTracker.api.models.responses.PostResult;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import com.amazonaws.AmazonClientException;
 
@@ -88,7 +88,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             String localTreeId = treeCursor.getString(treeCursor.getColumnIndex("tree_id"));
             Timber.tag("DataFragment").d("tree_id: " + localTreeId);
 
-            NewTree newTree = new NewTree();
+            NewTreeRequest newTree = new NewTreeRequest();
             newTree.setUserId(userId);
             newTree.setLat(treeCursor.getDouble(treeCursor.getColumnIndex("lat")));
             newTree.setLon(treeCursor.getDouble(treeCursor.getColumnIndex("long")));

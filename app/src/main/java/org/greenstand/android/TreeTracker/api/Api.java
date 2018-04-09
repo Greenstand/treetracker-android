@@ -9,7 +9,7 @@ import timber.log.Timber;
 public class Api {
 
     private static Api sInstance;
-    private ApiService api;
+    private ApiService apiService;
     private OkHttpClient mOkHttpClient;
 
     public static Api instance() {
@@ -20,10 +20,10 @@ public class Api {
     }
 
     public ApiService getApi() {
-        if (api == null) {
+        if (apiService == null) {
             createApi();
         }
-        return api;
+        return apiService;
     }
 
     private void createApi() {
@@ -32,7 +32,7 @@ public class Api {
                 .addInterceptor(logInterceptor())
                 .build();
 
-        api = new Retrofit.Builder()
+        apiService = new Retrofit.Builder()
                 .client(mOkHttpClient)
                 .baseUrl(ApiService.ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create())

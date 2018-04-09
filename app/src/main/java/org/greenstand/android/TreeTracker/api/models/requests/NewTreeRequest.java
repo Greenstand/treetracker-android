@@ -1,8 +1,8 @@
-package org.greenstand.android.TreeTracker.api.models;
+package org.greenstand.android.TreeTracker.api.models.requests;
 
 import com.google.gson.annotations.SerializedName;
 
-public class NewTree {
+public class NewTreeRequest {
     @SerializedName("user_id")
     private int userId;
     @SerializedName("lat")

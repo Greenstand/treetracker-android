@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.api.models;
+package org.greenstand.android.TreeTracker.api.models.responses;
 
 import com.google.gson.annotations.SerializedName;
 

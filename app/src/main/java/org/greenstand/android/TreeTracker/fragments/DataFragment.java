@@ -30,7 +30,7 @@ import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.api.SyncTask;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
-import org.greenstand.android.TreeTracker.api.models.UserTree;
+import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 
 import java.io.File;
 import java.io.FileOutputStream;
