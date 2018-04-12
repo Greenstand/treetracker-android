@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.api.Api;
@@ -36,6 +37,7 @@ import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 
 import java.util.List;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,6 +76,30 @@ public class SignupFragment extends Fragment implements OnClickListener {
 
 		Button signUpBtn = (Button) v.findViewById(R.id.fragment_signup_signup);
 		signUpBtn.setOnClickListener(SignupFragment.this);
+
+		if (BuildConfig.DEBUG) {
+			//It's not a release version.
+			signUpBtn.setOnLongClickListener(new Button.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View view) {
+					EditText signupFirstName = (EditText) getActivity().findViewById(R.id.fragment_signup_first_name);
+					EditText signupLastName = (EditText) getActivity().findViewById(R.id.fragment_signup_last_name);
+					EditText signupEmail = (EditText) getActivity().findViewById(R.id.fragment_signup_email_address);
+					EditText signupPassword = (EditText) getActivity().findViewById(R.id.fragment_signup_password);
+					EditText signupOrganization = (EditText) getActivity().findViewById(R.id.fragment_signup_organization);
+					EditText signupPhone = (EditText) getActivity().findViewById(R.id.fragment_signup_phone_number);
+
+					signupFirstName.setText("First Name Test");
+					signupLastName.setText("Last Name Test");
+					signupEmail.setText(UUID.randomUUID().toString() + "@greenstand.org");
+					signupPassword.setText("tttttttt");
+					signupOrganization.setText("Greenstand");
+					signupPhone.setText("1234567890");
+
+					return true;
+				}
+			});
+		}
 
 		TextView loginText = (TextView) v.findViewById(R.id.fragment_signup_login_already_have_account);
 		loginText.setText(Html.fromHtml(loginText.getText() + " <a style=\"color:#916B4A;\" href=\"http://www.google.com\">"

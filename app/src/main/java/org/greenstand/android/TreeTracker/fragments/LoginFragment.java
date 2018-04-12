@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.api.Api;
@@ -76,6 +77,8 @@ public class LoginFragment extends Fragment implements OnClickListener {
 	    
 	    Button loginBtn = (Button) v.findViewById(R.id.fragment_login_login);
 	    loginBtn.setOnClickListener(LoginFragment.this);
+
+
 	    
 	    TextView loginText = (TextView) v.findViewById(R.id.fragment_login_login_do_not_have_account);
 	    loginText.setPaintFlags(loginText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
