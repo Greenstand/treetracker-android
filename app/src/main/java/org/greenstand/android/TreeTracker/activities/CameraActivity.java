@@ -1,14 +1,5 @@
 package org.greenstand.android.TreeTracker.activities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,13 +24,24 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import org.greenstand.android.TreeTracker.BuildConfig;
+import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.camera.AlbumStorageDirFactory;
 import org.greenstand.android.TreeTracker.camera.BaseAlbumDirFactory;
 import org.greenstand.android.TreeTracker.camera.CameraPreview;
 import org.greenstand.android.TreeTracker.camera.FroyoAlbumDirFactory;
-import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import timber.log.Timber;
 
 
 public class CameraActivity extends Activity implements PictureCallback, OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -52,13 +55,11 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	private ImageView mImageView;
 	private View mParameters;
 	private byte[] mCurrentPictureData;
-	private ImageButton saveImg;
 	private ImageButton cancelImg;
 	private ImageButton captureButton;
 	private File tmpImageFile;
-	private ImageButton reloadButton;
 	private AsyncTask<String, Void, String> openCameraTask;
-	
+	private boolean safeToTakePicture = true;
     
     public static final int MEDIA_TYPE_IMAGE = 1;
 
@@ -75,17 +76,16 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 
         mImageView = (ImageView) findViewById(R.id.camera_preview_taken);
         
-        saveImg = (ImageButton) findViewById(R.id.camera_preview_ok);
+
         cancelImg = (ImageButton) findViewById(R.id.camera_preview_cancel);
         captureButton = (ImageButton) findViewById(R.id.button_capture);
-        reloadButton = (ImageButton) findViewById(R.id.camera_preview_reload);
+
         
 
      // Add a listener to the buttons
         captureButton.setOnClickListener(CameraActivity.this);
         cancelImg.setOnClickListener(CameraActivity.this);
-        saveImg.setOnClickListener(CameraActivity.this);
-        reloadButton.setOnClickListener(CameraActivity.this);
+
         
         openCameraTask = new OpenCameraTask().execute(new String[]{});
         
@@ -115,53 +115,60 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
     }
 
 	public void onPictureTaken(byte[] data, Camera camera) {
-		saveImg.setVisibility(View.VISIBLE);
-		reloadButton.setVisibility(View.VISIBLE);
 		captureButton.setVisibility(View.INVISIBLE);
+		cancelImg.setVisibility(View.INVISIBLE);
 		
 		mCurrentPictureData = data;
 		tmpImageFile = null;
 		try {
 			tmpImageFile = File.createTempFile("tmpimage.jpg", null, getCacheDir());
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			Log.e("file not", "created");
 			e.printStackTrace();
 		}
 		
 		try {
-            FileOutputStream fo = new FileOutputStream(tmpImageFile);
-            fo.write(data);
-            fo.close();
-		} catch (IOException e) {
+			FileOutputStream fo = new FileOutputStream(tmpImageFile);
+		    	fo.write(data);
+		    	fo.close();
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		setPic();
+		safeToTakePicture = true;
+		savePicture();      //skip picture preview
+		releaseCamera();
 	}
 	
-	private void galleryAddPic() {
+	private void galleryAddPic() throws IOException {
 		Intent mediaScanIntent = new Intent(
 				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
 		
 		Bitmap photo = Utils.resizedImage(mCurrentPhotoPath);
 		
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        photo.compress(Bitmap.CompressFormat.JPEG, 70, bytes);
+       		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        	photo.compress(Bitmap.CompressFormat.JPEG, 70, bytes);
 
-        File f = new File(mCurrentPhotoPath);
-        try {
+		File f = new File(mCurrentPhotoPath);
+		try {
 			f.createNewFile();
-            FileOutputStream fo = new FileOutputStream(f);
-            fo.write(bytes.toByteArray());
-            fo.close();
-		} catch (IOException e) {
+			FileOutputStream fo = new FileOutputStream(f);
+			fo.write(bytes.toByteArray());
+			fo.close();
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		
 //		File f = new File(mCurrentPhotoPath);
-		Uri contentUri = Uri.fromFile(f);
+		Uri contentUri = FileProvider.getUriForFile(CameraActivity.this,
+				BuildConfig.APPLICATION_ID + ".provider", createImageFile());
+		//Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		sendBroadcast(mediaScanIntent);
 	}
@@ -186,7 +193,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	        if (! mediaStorageDir.mkdirs()){
 	            Log.d("MyCameraApp", "failed to create directory");
 	            return null;
-	        }
+	       	}
 	    }
 
 	    // Create a media file name
@@ -198,22 +205,22 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	    } else {
 	        return null;
 	    }
-
 	    return mediaFile;
 	}
 	
 	@Override
-    protected void onPause() {
-        super.onPause();
-	    releaseCamera();              // release the camera immediately on pause event
-    }
-	
+	protected void onPause() {
+		super.onPause();
+		releaseCamera();       // release the camera immediately on pause event
+	}
+
 	private void releaseCamera(){
-        if (mCamera != null){
-            mCamera.release();        // release the camera for other applications
-            mCamera = null;
-        }
-    }
+		if (mCamera != null){
+		    mCamera.release();        // release the camera for other applications
+		    mCamera = null;
+			Timber.d("camera released");
+		}
+	}
 	
 	private String getAlbumName() {
 		return getString(R.string.album_name);
@@ -222,12 +229,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	private File getAlbumDir() {
 		File storageDir = null;
 
-		if (Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())) {
-
-			storageDir = mAlbumStorageDirFactory
-					.getAlbumStorageDir(getAlbumName());
-
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+			storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
 			if (storageDir != null) {
 				if (!storageDir.mkdirs()) {
 					if (!storageDir.exists()) {
@@ -236,29 +239,23 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 					}
 				}
 			}
-
 		} else {
-			Log.v(getString(R.string.app_name),
-					"External storage is not mounted READ/WRITE.");
+			Log.v(getString(R.string.app_name),"External storage is not mounted READ/WRITE.");
 		}
-
 		return storageDir;
 	}
 	
 	private File createImageFile() throws IOException {
 		// Create an image file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-				.format(new Date());
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String imageFileName = ValueHelper.JPEG_FILE_PREFIX + timeStamp + "_";
 		File albumF = getAlbumDir();
-		File imageF = File.createTempFile(imageFileName,
-				ValueHelper.JPEG_FILE_SUFFIX, albumF);
+		File imageF = File.createTempFile(imageFileName,ValueHelper.JPEG_FILE_SUFFIX, albumF);
 
 		return imageF;
 	}
 	
 	private File setUpPhotoFile() throws IOException {
-
 		File f = createImageFile();
 		mCurrentPhotoPath = f.getAbsolutePath();
 
@@ -281,8 +278,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		// For e.g you want the width to stay consistent at 500dp
 		int requiredWidth = (int) (500 * getResources().getDisplayMetrics().density);
 
-		int sampleSize = (int) Math.ceil((float) imageWidth
-				/ (float) requiredWidth);
+		int sampleSize = (int) Math.ceil((float) imageWidth / (float) requiredWidth);
 
 		Log.e("sampleSize ", Integer.toString(sampleSize));
 		// If the original image is smaller than required, don't sample
@@ -307,7 +303,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		ExifInterface exif = null;
 		try {
 			exif = new ExifInterface(tmpImageFile.getAbsolutePath());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -336,120 +333,83 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	public void onOrientationChanged(int orientation) {
 	  
 	}
-
-    public void onClick(View v) {
-    	v.setHapticFeedbackEnabled(true);
-    	
-    	switch (v.getId()) {
-		case R.id.button_capture:
-	        // get an image from the camera
-	        mCamera.takePicture(null, null, CameraActivity.this);
-	        Log.e("take", "pic");
-			break;
-		case R.id.camera_preview_cancel:
-			setResult(Activity.RESULT_CANCELED);
-	        finish();
-			break;
-		case R.id.camera_preview_reload:
-			mCamera.startPreview();
-			
-			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-			preview.removeAllViews();
-	        preview.addView(mPreview);
-			
-			mImageView.setImageDrawable(null);
-			reloadButton.setVisibility(View.INVISIBLE);
-			captureButton.setVisibility(View.VISIBLE);
-			saveImg.setVisibility(View.INVISIBLE);
-			break;
-		case R.id.camera_preview_ok:
-			File pictureFile = null;
-	        
-			try {
-				pictureFile = setUpPhotoFile();
-				mCurrentPhotoPath = pictureFile.getAbsolutePath();
-			} catch (IOException e) {
-				e.printStackTrace();
-				pictureFile = null;
-				mCurrentPhotoPath = null;
-			}
-
-			boolean saved = true;
-	        try {
-	            FileOutputStream fos = new FileOutputStream(pictureFile);
-	            fos.write(mCurrentPictureData);
-	            fos.close();
-	            
-	            galleryAddPic();
-	        } catch (FileNotFoundException e) {
-	            Log.d(TAG, "File not found: " + e.getMessage());
-	            saved = false;
-	        } catch (IOException e) {
-	            Log.d(TAG, "Error accessing file: " + e.getMessage());
-	            saved = false;
-	        } catch (Exception e) {
-	            Log.d(TAG, "Error accessing file: " + e.getMessage());
-	            saved = false;
-	        }
-	        
-	        
-	        if (saved) {
-		        Intent data = new Intent();
-		        data.putExtra(ValueHelper.TAKEN_IMAGE_PATH, mCurrentPhotoPath);
-		        setResult(Activity.RESULT_OK, data);
-		        
-	        } else {
-	        	setResult(Activity.RESULT_CANCELED);
-	        }
-	        
-	        finish();
-	        
-			break;
-		default:
-			break;
+	
+	public void onClick(View v) {
+		v.setHapticFeedbackEnabled(true);
+        // get an image from the camera
+        if(safeToTakePicture) {
+            safeToTakePicture = false;
+            mCamera.takePicture(null, null, CameraActivity.this);
+            Log.e("take", "pic");
 		}
+	}
+
+	private void savePicture(){
+        File pictureFile = null;
+        try {
+            pictureFile = setUpPhotoFile();
+            mCurrentPhotoPath = pictureFile.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            pictureFile = null;
+            mCurrentPhotoPath = null;
+        }
+        boolean saved = true;
+        try {				    FileOutputStream fos = new FileOutputStream(pictureFile);
+            fos.write(mCurrentPictureData);
+            fos.close();
+            galleryAddPic();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+            saved = false;
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            saved = false;
+        } catch (Exception e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            saved = false;
+        }
+
+        if (saved) {
+            Intent data = new Intent();
+            data.putExtra(ValueHelper.TAKEN_IMAGE_PATH, mCurrentPhotoPath);
+            setResult(Activity.RESULT_OK, data);
+
+        } else {
+            setResult(Activity.RESULT_CANCELED);
+        }
+        finish();
     }
 
     
-    class OpenCameraTask extends AsyncTask<String, Void, String> {
+	class OpenCameraTask extends AsyncTask<String, Void, String> {
     	
-    	protected void onPreExecute() {
-	        cancelImg.setVisibility(View.INVISIBLE);
-	        captureButton.setVisibility(View.INVISIBLE);
-	        saveImg.setVisibility(View.INVISIBLE);
-    	}
+		protected void onPreExecute() {
+			cancelImg.setVisibility(View.INVISIBLE);
+			captureButton.setVisibility(View.INVISIBLE);
+		}
 
 		@Override
 		protected String doInBackground(String... params) {
-	        mCamera = getCameraInstance();
-	        
-
+			mCamera = getCameraInstance();
 			return null;
+		}	
+
+		protected void onPostExecute(String response) {
+			super.onPostExecute(response);
+
+			if (mCamera == null) {
+				openCameraTask = new OpenCameraTask().execute(new String[]{});
+			} else {
+				// Create our Preview view and set it as the content of our activity.
+				mPreview = new CameraPreview(CameraActivity.this, mCamera);
+				FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+				preview.addView(mPreview);
+				cancelImg.setVisibility(View.VISIBLE);
+				captureButton.setVisibility(View.VISIBLE);
+			}
 		}
-		
-		
-		 protected void onPostExecute(String response) {
-		        super.onPostExecute(response);
-		        
-		        if (mCamera == null) {
-		        	openCameraTask = new OpenCameraTask().execute(new String[]{});
-		        } else {
-			        // Create our Preview view and set it as the content of our activity.
-			        mPreview = new CameraPreview(CameraActivity.this, mCamera);
-			        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-			        preview.addView(mPreview);
-
-			        
-			        cancelImg.setVisibility(View.VISIBLE);
-			        captureButton.setVisibility(View.VISIBLE);
-		        }
-			
-		 }
-		
-		
 	}
-
-
 }
 
 

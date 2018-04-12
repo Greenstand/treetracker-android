@@ -1,27 +1,35 @@
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
 apply plugin: 'com.android.application'
-//apply plugin: 'io.fabric'
-
+apply plugin: 'io.fabric'
+apply plugin: 'com.github.triplet.play'
 
 android {
     compileSdkVersion 25
     buildToolsVersion "26.0.2"
+    playAccountConfigs {
+        defaultAccountConfig {
+            jsonFile = file('keys.json')
+        }
+    }
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 17
-        versionName "1.1.2"
+        versionCode 20
+        versionName "1.1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
     buildTypes {
         release {
@@ -95,5 +103,8 @@ dependencies {
     }
     compile 'com.google.firebase:firebase-core:11.8.0'
 
+}
+play {
+    track = 'beta' // or 'rollout' or 'production' or 'alpha'
 }
 //apply plugin: 'com.google.gms.google-services'
