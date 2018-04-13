@@ -433,6 +433,16 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
+        //solution for #57 git
+        dbHelper = new DbHelper(this, "database", null, 1);
+        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
+
+        try {
+            dbHelper.createDataBase();
+        } catch (IOException e) {
+            Log.e("nije mi ", "uspjelo");
+        }
+        //end of solution for #57 git
 
         startPeriodicUpdates();
 
