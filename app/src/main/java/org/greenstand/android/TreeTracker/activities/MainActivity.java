@@ -398,6 +398,8 @@ public class MainActivity extends AppCompatActivity implements
 
                     if (Build.VERSION.SDK_INT >= 19) {
                         //LOCATION_MODE
+                        //Sollution for problem 25 added the ability to pop up location start activity
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     } else {
                         //LOCATION_PROVIDERS_ALLOWED
 
