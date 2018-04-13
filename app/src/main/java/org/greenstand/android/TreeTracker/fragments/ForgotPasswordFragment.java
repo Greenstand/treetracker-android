@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -61,9 +62,12 @@ public class ForgotPasswordFragment extends Fragment implements OnClickListener 
 	        Bundle savedInstanceState) {
 		
 	    View v = inflater.inflate(R.layout.fragment_forgot_password, container, false);
-	    
-	    ((ActionBarActivity)getActivity()).getSupportActionBar().hide();
-	    
+
+	    //Solution for 68, ActionBarActivity has been depreciated in Android most likely causing the issue
+//	    ((ActionBarActivity)getActivity()).getSupportActionBar().hide();
+		//New code
+		((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+
 	    Button loginBtn = (Button) v.findViewById(R.id.fragment_forgot_password_submit);
 	    loginBtn.setOnClickListener(ForgotPasswordFragment.this);
 	    
