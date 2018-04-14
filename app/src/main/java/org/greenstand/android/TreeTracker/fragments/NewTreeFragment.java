@@ -52,6 +52,7 @@ import java.util.Date;
 
 public class NewTreeFragment extends Fragment implements OnClickListener, TextWatcher, ActivityCompat.OnRequestPermissionsResultCallback {
 
+	private static final String TAG = "NewTreeFragment";
 	private ImageView mImageView;
 	private String mCurrentPhotoPath;
 	private long userId;
@@ -189,12 +190,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 					Permissions.MY_PERMISSION_CAMERA);
 		} else {
 			Intent takePictureIntent = new Intent(getActivity(), CameraActivity.class);
-            /*
-			mPhotoUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new ContentValues());
-			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
-			startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE_CONTENT_RESOLVER);
-*/
 			startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA);
 		}
 	}
@@ -215,28 +210,19 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			mCurrentPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH);
 
 			if (mCurrentPhotoPath != null) {
-				((RelativeLayout)getActivity().findViewById(R.id.fragment_new_tree)).setVisibility(View.VISIBLE);
+                ((RelativeLayout) getActivity().findViewById(R.id.fragment_new_tree)).setVisibility(View.VISIBLE);
 
-				MainActivity.mCurrentTreeLocation = new Location("treetracker");
-				if (MainActivity.mCurrentLocation != null) {
-					MainActivity.mCurrentTreeLocation.setLatitude(MainActivity.mCurrentLocation.getLatitude());
-					MainActivity.mCurrentTreeLocation.setLongitude(MainActivity.mCurrentLocation.getLongitude());
-				}
+                MainActivity.mCurrentTreeLocation = new Location("treetracker");
+                if (MainActivity.mCurrentLocation != null) {
+                    MainActivity.mCurrentTreeLocation.setLatitude(MainActivity.mCurrentLocation.getLatitude());
+                    MainActivity.mCurrentTreeLocation.setLongitude(MainActivity.mCurrentLocation.getLongitude());
+                }
 
-				setPic();
+                setPic();
+            }
 
-				/*
-				boolean saveAndEdit = mSharedPreferences.getBoolean(ValueHelper.SAVE_AND_EDIT, true);
-
-				if (!saveAndEdit) {
-					saveToDb();
-
-					Toast.makeText(getActivity(), "Tree saved", Toast.LENGTH_SHORT).show();
-					getActivity().getSupportFragmentManager().popBackStack();
-				}
-				*/
-			}
 		} else if (resultCode == Activity.RESULT_CANCELED) {
+			Log.d(TAG, "Photo was cancelled");
 			if (((RelativeLayout)getActivity().findViewById(R.id.fragment_new_tree)).getVisibility() != View.VISIBLE) {
 				getActivity().getSupportFragmentManager().popBackStack();
 			}

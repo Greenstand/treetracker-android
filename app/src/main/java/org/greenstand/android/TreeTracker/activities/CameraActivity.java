@@ -355,7 +355,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
             mCurrentPhotoPath = null;
         }
         boolean saved = true;
-        try {				    FileOutputStream fos = new FileOutputStream(pictureFile);
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
             fos.write(mCurrentPictureData);
             fos.close();
             galleryAddPic();

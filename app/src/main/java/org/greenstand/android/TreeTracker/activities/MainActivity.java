@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e(TAG, "onActivityResult");
+        Log.i(TAG, "onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
     }
 
