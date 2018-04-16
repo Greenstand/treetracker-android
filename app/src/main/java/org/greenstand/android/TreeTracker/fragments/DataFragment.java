@@ -28,7 +28,7 @@ import android.widget.Toast;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.R;
-import org.greenstand.android.TreeTracker.api.SyncTask;
+import org.greenstand.android.TreeTracker.managers.SyncTask;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 

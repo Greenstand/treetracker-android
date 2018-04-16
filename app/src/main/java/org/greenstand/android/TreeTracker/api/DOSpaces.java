@@ -13,6 +13,9 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import org.greenstand.android.TreeTracker.BuildConfig;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by lei on 12/11/17.
@@ -41,12 +44,14 @@ public class DOSpaces {
         s3Client.setEndpoint(ENDPOINT);
     }
 
-    public String put(String path, int userId) throws AmazonClientException {
+    public String put(String path) throws AmazonClientException {
         AccessControlList acl = new AccessControlList();
         acl.grantPermission(GroupGrantee.AllUsers, Permission.Read);
 
         File image = new File(path);
-        String dosKey = Integer.toString(userId) + '/' + image.getName();
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+
+        String dosKey = timeStamp + '_' + UUID.randomUUID() + '_' + image.getName();
         PutObjectRequest poRequest =
                 new PutObjectRequest(BUCKET, dosKey, image);
         poRequest.withAccessControlList(acl);

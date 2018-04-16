@@ -2,8 +2,9 @@ package org.greenstand.android.TreeTracker.utilities;
 
 
 public class ValueHelper {
-	
-	
+
+	public static final String NAME_SPACE = "org.greenstand.android";
+
 	private static final int errorsOffset = 0;
 	public static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = errorsOffset + 1;
 
@@ -43,8 +44,7 @@ public class ValueHelper {
 	public static final String JPEG_FILE_SUFFIX = ".jpg";
 
 
-
-	public static long SPLASH_SCREEN_DURATION = 1000;
+    public static long SPLASH_SCREEN_DURATION = 1000;
 	
 	
 	public static final String TIME_TO_NEXT_UPDATE_GLOBAL_SETTING = "TIME_TO_NEXT_UPDATE_GLOBAL_SETTING";

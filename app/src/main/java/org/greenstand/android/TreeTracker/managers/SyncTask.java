@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.api;
+package org.greenstand.android.TreeTracker.managers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import org.greenstand.android.TreeTracker.api.DOSpaces;
+import org.greenstand.android.TreeTracker.managers.DataManager;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest;
@@ -92,7 +94,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             newTree.setUserId(userId);
             newTree.setLat(treeCursor.getDouble(treeCursor.getColumnIndex("lat")));
             newTree.setLon(treeCursor.getDouble(treeCursor.getColumnIndex("long")));
-            newTree.setGpsAccuracy(treeCursor.getFloat(treeCursor.getColumnIndex("accuracy")));
+            newTree.setGpsAccuracy((int) treeCursor.getFloat(treeCursor.getColumnIndex("accuracy")));
             String note = treeCursor.getString(treeCursor.getColumnIndex("content"));
             if (note == null) {
                 note = "";
@@ -107,7 +109,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             String imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"));
             String imageUrl;
             try {
-                imageUrl = DOSpaces.instance().put(imagePath, userId);
+                imageUrl = DOSpaces.instance().put(imagePath);
             } catch (AmazonClientException ace) {
                 Log.e("SyncTask", "Caught an AmazonClientException, which " +
                         "means the client encountered " +

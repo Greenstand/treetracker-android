@@ -36,14 +36,14 @@ import android.widget.Toast;
 
 import org.apache.http.HttpStatus;
 import org.greenstand.android.TreeTracker.R;
-import org.greenstand.android.TreeTracker.api.DataManager;
+import org.greenstand.android.TreeTracker.api.Api;
+import org.greenstand.android.TreeTracker.managers.DataManager;
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 import org.greenstand.android.TreeTracker.application.Permissions;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import org.greenstand.android.TreeTracker.database.DbHelper;
 import org.greenstand.android.TreeTracker.fragments.AboutFragment;
 import org.greenstand.android.TreeTracker.fragments.DataFragment;
-import org.greenstand.android.TreeTracker.fragments.ForgotPasswordFragment;
 import org.greenstand.android.TreeTracker.fragments.LoginFragment;
 import org.greenstand.android.TreeTracker.fragments.MapsFragment;
 import org.greenstand.android.TreeTracker.fragments.SignupFragment;
@@ -226,6 +226,10 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
+        // Application Setup
+        SharedPreferences sharedPreferences = getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString(ValueHelper.TOKEN, null);
+        Api.instance().setAuthToken(token);
 
     }
 

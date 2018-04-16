@@ -1,7 +1,8 @@
-package org.greenstand.android.TreeTracker.api;
+package org.greenstand.android.TreeTracker.managers;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.greenstand.android.TreeTracker.api.Api;
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest;
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 

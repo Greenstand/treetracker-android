@@ -10,7 +10,7 @@ public class NewTreeRequest {
     @SerializedName("lon")
     private double lon;
     @SerializedName("gps_accuracy")
-    private float gpsAccuracy;
+    private int gpsAccuracy;
     @SerializedName("note")
     private String note;
     @SerializedName("timestamp")
@@ -46,7 +46,7 @@ public class NewTreeRequest {
         return gpsAccuracy;
     }
 
-    public void setGpsAccuracy(float gpsAccuracy) {
+    public void setGpsAccuracy(int gpsAccuracy) {
         this.gpsAccuracy = gpsAccuracy;
     }
 
