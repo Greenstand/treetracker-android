@@ -100,8 +100,9 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		Button saveBtn = (Button) v.findViewById(R.id.fragment_new_tree_save);
 		saveBtn.setOnClickListener(NewTreeFragment.this);
 
-		ImageButton takePhoto = (ImageButton) v.findViewById(R.id.fragment_new_tree_take_photo);
-		takePhoto.setOnClickListener(NewTreeFragment.this);
+//		Must be commented for solution 35
+//		ImageButton takePhoto = (ImageButton) v.findViewById(R.id.fragment_new_tree_take_photo);
+//		takePhoto.setOnClickListener(NewTreeFragment.this);
 
 		mImageView = (ImageView) v.findViewById(R.id.fragment_new_tree_image);
 
@@ -175,9 +176,10 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			Toast.makeText(getActivity(), "Tree saved", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
 			break;
-		case R.id.fragment_new_tree_take_photo:
-			takePicture();
-			break;
+//      Solution 35
+//		case R.id.fragment_new_tree_take_photo:
+//			takePicture();
+//			break;
 		}
 
 	}
