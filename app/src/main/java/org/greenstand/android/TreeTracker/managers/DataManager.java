@@ -50,21 +50,4 @@ public abstract class DataManager<T> {
         });
     }
 
-    public T createNewTree(NewTreeRequest newTree) {
-        T result = null;
-        try {
-            Response<T> tree = (Response<T>) mApi.getApi().createTree(newTree).execute();
-            if (tree.isSuccessful()){
-                result = tree.body();
-            }
-        } catch (IOException e) {
-            Crashlytics.logException(e);
-            e.printStackTrace();
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-            e.printStackTrace();
-        }
-        return result;
-    }
-
 }

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import org.greenstand.android.TreeTracker.api.Api;
 import org.greenstand.android.TreeTracker.api.DOSpaces;
 import org.greenstand.android.TreeTracker.managers.DataManager;
 import org.greenstand.android.TreeTracker.utilities.Utils;
@@ -21,6 +22,7 @@ import com.amazonaws.AmazonClientException;
 
 import java.io.File;
 
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -122,15 +124,12 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             Log.d("SyncTask", "imageUrl: " + imageUrl);
             newTree.setImageUrl(imageUrl); // method name should be changed as use new infrastructure.
 
-//            Timber.tag("DataFragment").d("user_id: " + newTree.getUserId());
-//            Timber.tag("DataFragment").d("lat: " + newTree.getLat());
-//            Timber.tag("DataFragment").d("lon: " + newTree.getLon());
-//            Timber.tag("DataFragment").d("note: " + newTree.getNote());
-//            Timber.tag("DataFragment").d("gps: " + newTree.getGpsAccuracy());
-//            Timber.tag("DataFragment").d("timestamp: " + newTree.getTimestamp());
-//            Timber.tag("DataFragment").d("image: " + newTree.getBase64Image());
+            /*
+            * Save to the API
+            */
+            Response<PostResult> treeResponse = (Response<PostResult>) Api.instance().getApi().createTree(newTree).execute();
+            PostResult response = treeResponse.body();
 
-            PostResult response = (PostResult) mDataManager.createNewTree(newTree);
             if (response != null) {
                 int treeIdResponse = response.getStatus();
                 Timber.tag("DataFragment").d("status code: " + treeIdResponse);
