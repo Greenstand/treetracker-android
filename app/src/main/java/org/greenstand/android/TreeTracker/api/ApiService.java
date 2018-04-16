@@ -21,8 +21,8 @@ public interface ApiService {
 
     String ENDPOINT = BuildConfig.BASE_URL;
 
-    @GET("trees/details/user/{id}")
-    Call<List<UserTree>> getTreesForUser(@Path("id") long userId);
+    @GET("trees/details/user/")
+    Call<List<UserTree>> getTreesForUser();
 
     @POST("trees/create")
     Call<PostResult> createTree(@Body NewTreeRequest newTree);

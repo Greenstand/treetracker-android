@@ -21,7 +21,7 @@ public class UserTree {
 //    private String gps;
 //    @SerializedName("next_update")
 //    private String nextUpdate;
-    @SerializedName("imageUrl")
+    @SerializedName("image_url")
     private String imageUrl;
 
     public String getId() {

@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private FragmentTransaction fragmentTransaction;
 
-    private AsyncTask<String, Void, String> getMyTreesTask;
-
     public static DbHelper dbHelper;
 
     public static Location mCurrentLocation;
@@ -104,6 +102,17 @@ public class MainActivity extends AppCompatActivity implements
 
         Log.e("on", "create");
 
+        // Application Setup
+        SharedPreferences sharedPreferences = getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString(ValueHelper.TOKEN, null);
+        Api.instance().setAuthToken(token);
+
+        /*
+        if(Api.instance().isLoggedIn()){
+            getMyTrees();
+        }
+        */
+
         mSharedPreferences = this.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE);
 
@@ -134,28 +143,7 @@ public class MainActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("");
 
-        boolean showSignupFragment = mSharedPreferences.getBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false);
-        boolean showLoginFragment = mSharedPreferences.getBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, true);
-
-        Log.d("MainActivity", "showSignupFragment: " + showSignupFragment + ", showLoginFragment: " + showLoginFragment);
-
-        if (showSignupFragment) {
-
-            mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, true).commit();
-            mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
-
-            SignupFragment signupFragment = new SignupFragment();
-            signupFragment.setArguments(getIntent().getExtras());
-
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-                    .beginTransaction();
-            fragmentTransaction.add(R.id.container_fragment, signupFragment, ValueHelper.SIGNUP_FRAGMENT);
-
-            fragmentTransaction.commit();
-        } else if (showLoginFragment) {
-
-            mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
-            mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, true).commit();
+       if (!Api.instance().isLoggedIn()) {
 
             LoginFragment loginFragment = new LoginFragment();
             loginFragment.setArguments(getIntent().getExtras());
@@ -226,10 +214,6 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
-        // Application Setup
-        SharedPreferences sharedPreferences = getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString(ValueHelper.TOKEN, null);
-        Api.instance().setAuthToken(token);
 
     }
 
@@ -642,126 +626,7 @@ public class MainActivity extends AppCompatActivity implements
                     Permissions.NECESSARY_PERMISSIONS);
         } else {
             startPeriodicUpdates();
-            getMyTrees();
-
-        }
-    }
-
-
-    /**
-     * Called when the signup process completes
-     * @param httpResponseCode
-     */
-    public void onLoginResult(boolean result, int httpResponseCode, String responseBody) {
-        Log.i("MainActivity", "onLoginResult(" + result + ")");
-        Log.i("MainActivity", "httpResponseCode(" + Integer.toString(httpResponseCode) + ")");
-        // Hide the progress dialog
-
-        if (MainActivity.progressDialog != null) {
-            MainActivity.progressDialog.dismiss();
-        }
-
-        if (result) {
-
-            JSONObject jsonReponse;
-            switch (httpResponseCode) {
-                case HttpStatus.SC_OK:
-                    //successfull login, save the token and continue
-
-                    try {
-                        jsonReponse = new JSONObject(responseBody);
-
-                        mSharedPreferences.edit().putString(ValueHelper.TOKEN, jsonReponse.getString("token")).commit();
-                        //Below code unsets the login and signup fragments because user successfully loged in
-
-                        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                        ContentValues values = new ContentValues();
-                        values.put("main_db_id", jsonReponse.getString("id"));
-                        values.put("first_name", jsonReponse.getString("first_name"));
-                        values.put("last_name", jsonReponse.getString("last_name"));
-                        values.put("email", jsonReponse.getString("email"));
-                        values.put("is_main_user", "Y");
-                        values.put("organization", jsonReponse.getString("organization"));
-
-                        long userId = db.insert("users", null, values);
-                        Log.d("MainActivity", "onLoginResult userId: " + userId);
-
-                        mSharedPreferences.edit().putLong(ValueHelper.MAIN_USER_ID, userId).commit();
-                        mSharedPreferences.edit().putString(ValueHelper.MAIN_DB_USER_ID, jsonReponse.getString("id")).commit();
-                        mSharedPreferences.edit().putString(ValueHelper.MAIN_USER_FIRST_NAME, jsonReponse.getString("first_name")).commit();
-                        mSharedPreferences.edit().putString(ValueHelper.MAIN_USER_LAST_NAME, jsonReponse.getString("last_name")).commit();
-
-                        mSharedPreferences.edit().putInt(ValueHelper.MAIN_DB_NEXT_UPDATE, Integer.parseInt(jsonReponse.getString("next_update"))).commit();
-                        mSharedPreferences.edit().putInt(ValueHelper.MAIN_DB_MIN_ACCURACY, Integer.parseInt(jsonReponse.getString("min_gps_accuracy"))).commit();
-
-                        mSharedPreferences.edit().putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING, Integer.parseInt(jsonReponse.getString("next_update"))).commit();
-                        mSharedPreferences.edit().putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, Integer.parseInt(jsonReponse.getString("min_gps_accuracy"))).commit();
-
-
-                        db.close();
-
-                        mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
-                        mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
-
-                        MapsFragment homeFragment = new MapsFragment();
-                        homeFragment.setArguments(getIntent().getExtras());
-
-                        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-                                .beginTransaction();
-
-                        fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT);
-
-                        fragmentTransaction.commit();
-
-                        if (
-                                (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                            ||  (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                            ||  (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-
-                            ) {
-                            ActivityCompat.requestPermissions(this, new String[]{
-                                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                            android.Manifest.permission.CAMERA,
-                                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            },
-                                    Permissions.NECESSARY_PERMISSIONS);
-                        } else {
-                            startPeriodicUpdates();
-                            getMyTrees();
-
-                        }
-
-                        Log.i("MainActivity", "token(" + mSharedPreferences.getString(ValueHelper.TOKEN, "") + ")");
-//						Below code unsets the login and signup fragments because user successfully loged in 
-                        mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false).commit();
-                        mSharedPreferences.edit().putBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false).commit();
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-                    break;
-
-
-                default:
-                    break;
-            }
-
-        } else {
-            Log.e("MainActivity", "onLoginResult: failed to login");
-            switch (httpResponseCode) {
-                case HttpStatus.SC_UNAUTHORIZED:
-                    Toast.makeText(MainActivity.this, "Incorrect username or password.", Toast.LENGTH_SHORT).show();
-                    break;
-
-                case -1:
-                    Toast.makeText(MainActivity.this, "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show();
-                    break;
-
-                default:
-                    break;
-            }
+            // getMyTrees();
 
         }
     }
@@ -773,17 +638,17 @@ public class MainActivity extends AppCompatActivity implements
         if (grantResults.length > 0) {
             if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates();
-                getMyTrees();
+                // getMyTrees();
             }
         }
     }
 
 
-
-
     /**
      * Called when the tree sync process completes (for one tree)
      * @param httpResponseCode
+     *
+     * We are not currently syncing trees, instead the app is for providing trees to the server and that's it
      */
     public void onTreeSyncResult(boolean result, int httpResponseCode, String responseBody) {
         Log.i("MainActivity", "onTreeSyncedResult(" + result + ")");
@@ -933,9 +798,8 @@ public class MainActivity extends AppCompatActivity implements
                 Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         };
-        long userId = Long.parseLong(mSharedPreferences.getString(ValueHelper.MAIN_DB_USER_ID, "-1"));
-        Log.d("MainActivity", "getMyTrees userId: " + userId);
-        mDataManager.loadUserTrees(userId);
+        Log.d("MainActivity", "getMyTrees");
+        mDataManager.loadUserTrees();
     }
 
     public List<UserTree> getUserTrees() {

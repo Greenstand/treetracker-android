@@ -205,7 +205,7 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         Cursor treeCursor = mDatabaseManager.queryCursor("SELECT DISTINCT tree_id FROM pending_updates WHERE tree_id NOT NULL and tree_id <> 0", null);
         List<UserTree> trees = ((MainActivity)getActivity()).getUserTrees();
 
-        if (treeCursor.moveToFirst()) {
+        if (!(trees == null) && treeCursor.moveToFirst()) {
             new UpdateLocalDb().execute(trees);
         }
 

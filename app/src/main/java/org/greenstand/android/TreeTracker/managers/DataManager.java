@@ -32,8 +32,8 @@ public abstract class DataManager<T> {
 
     public abstract void onRequestFailed(String message);
 
-    public void loadUserTrees(long userId) {
-        Call<List<UserTree>> trees = mApi.getApi().getTreesForUser(userId);
+    public void loadUserTrees() {
+        Call<List<UserTree>> trees = mApi.getApi().getTreesForUser();
         trees.enqueue(new Callback<List<UserTree>>() {
             @Override
             public void onResponse(Call<List<UserTree>> call, Response<List<UserTree>> response) {

@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpStatus;
 import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.R;
@@ -162,13 +163,30 @@ public class LoginFragment extends Fragment implements OnClickListener {
                                 mSharedPreferences.edit().putString(ValueHelper.TOKEN, response.body().getToken()).commit();
                                 Api.instance().setAuthToken(response.body().getToken());
                                 ((MainActivity) getActivity()).transitionToMapsFragment();
-                            }
+                            } else {
+								switch (response.code()) {
+									case HttpStatus.SC_UNAUTHORIZED:
+										Toast.makeText(getActivity(), "Incorrect username or password.", Toast.LENGTH_SHORT).show();
+										break;
+
+									case -1:
+										Toast.makeText(getActivity(), "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show();
+										break;
+
+									default:
+										break;
+								}
+							}
                         }
 
                         @Override
                         public void onFailure(Call<TokenResponse> call, Throwable t) {
                             MainActivity.progressDialog.dismiss();
-                            Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+
+
+
+
+							Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
                             Timber.tag(TAG).e(t.getMessage());
                         }
                     });

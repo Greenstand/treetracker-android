@@ -36,6 +36,10 @@ public class Api {
         this.authToken = authToken;
     }
 
+    public boolean isLoggedIn() {
+        return authToken != null;
+    }
+
     private void createApi() {
         mOkHttpClient = new OkHttpClient
                 .Builder()

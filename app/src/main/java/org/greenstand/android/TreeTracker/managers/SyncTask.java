@@ -21,6 +21,7 @@ import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import com.amazonaws.AmazonClientException;
 
 import java.io.File;
+import java.io.IOException;
 
 import retrofit2.Response;
 import timber.log.Timber;
@@ -127,13 +128,17 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             /*
             * Save to the API
             */
-            Response<PostResult> treeResponse = (Response<PostResult>) Api.instance().getApi().createTree(newTree).execute();
-            PostResult response = treeResponse.body();
+            PostResult postResult = null;
+            try {
+                Response<PostResult> treeResponse = null;
+                treeResponse = Api.instance().getApi().createTree(newTree).execute();
+                postResult = treeResponse.body();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            if (response != null) {
-                int treeIdResponse = response.getStatus();
-                Timber.tag("DataFragment").d("status code: " + treeIdResponse);
-
+            if (postResult != null) {
+                int treeIdResponse = postResult.getStatus();
                 ContentValues values = new ContentValues();
                 values.put("is_synced", "Y");
                 values.put("main_db_id", treeIdResponse);
