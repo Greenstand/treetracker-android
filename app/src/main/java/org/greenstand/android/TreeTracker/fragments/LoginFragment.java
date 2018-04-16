@@ -152,8 +152,8 @@ public class LoginFragment extends Fragment implements OnClickListener {
 					MainActivity.progressDialog.show();
 
 
-                    Call<TokenResponse> register = Api.instance().getApi().signIn(authRequest);
-                    register.enqueue(new Callback<TokenResponse>() {
+                    Call<TokenResponse> signIn = Api.instance().getApi().signIn(authRequest);
+					signIn.enqueue(new Callback<TokenResponse>() {
                         @Override
                         public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
                             MainActivity.progressDialog.dismiss();
