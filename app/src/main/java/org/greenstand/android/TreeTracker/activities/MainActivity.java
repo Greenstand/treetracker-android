@@ -771,7 +771,6 @@ public class MainActivity extends AppCompatActivity implements
 
                 if (data.size() > 0) {
                     Log.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0");
-                    mSharedPreferences.edit().putBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, true).commit();
 
                     Bundle bundle = getIntent().getExtras();
 

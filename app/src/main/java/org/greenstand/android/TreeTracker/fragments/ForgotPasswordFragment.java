@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenstand.android.TreeTracker.R;
 
@@ -29,6 +30,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.api.Api;
 import org.greenstand.android.TreeTracker.api.models.requests.ForgotPasswordRequest;
 import org.greenstand.android.TreeTracker.api.models.responses.TokenResponse;
@@ -44,10 +46,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ForgotPasswordFragment extends Fragment implements OnClickListener {
-	
-	private AsyncTask<String, Void, String> mResetPassTask;
 
-	public ForgotPasswordFragment() {
+    private static final String TAG = "ForgotPasswordFragment";
+    private AsyncTask<String, Void, String> mResetPassTask;
+    private ProgressDialog progressDialog;
+
+    public ForgotPasswordFragment() {
 		//some overrides and settings go here
 	}
 
@@ -101,13 +105,20 @@ public class ForgotPasswordFragment extends Fragment implements OnClickListener 
 				InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 				inputManager.hideSoftInputFromWindow(forgotEmail.getWindowToken(), 0);
 
+				progressDialog = new ProgressDialog(getActivity());
+				progressDialog.setCancelable(false);
+				progressDialog.setMessage(getActivity().getString(R.string.forgot_password_resetting));
+				progressDialog.show();
+
 				ForgotPasswordRequest forgotPasswordRequest = new ForgotPasswordRequest();
 				forgotPasswordRequest.setClientId(forgotEmail.getText().toString());
 				Call<Void> forgotPassword = Api.instance().getApi().passwordReset(forgotPasswordRequest);
 				forgotPassword.enqueue(new Callback<Void>() {
 					@Override
 					public void onResponse(Call<Void> call, Response<Void> response) {
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        progressDialog.hide();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
 						builder.setTitle(R.string.password_reset);
 
@@ -137,6 +148,9 @@ public class ForgotPasswordFragment extends Fragment implements OnClickListener 
 
 					@Override
 					public void onFailure(Call<Void> call, Throwable t) {
+                        progressDialog.hide();
+                        Toast.makeText(getActivity(), "Password Reset Failed", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, t.toString());
 
 					}
 				});
