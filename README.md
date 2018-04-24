@@ -19,6 +19,17 @@ Once this is done, you can then proceed by running one of the following tasks to
 * `generateReleasePlayResources`  | Collects play store resources for the Release build
 * `publishListingRelease`         | Updates the play store listing for the Release build
 
+## Deploying to Fabric
+
+To deploy to the fabric build, there are two things that need to be done:
+
+1. Inside of /app, place a `fabric.properties` file, that contains the following
+```
+apiKey=<API_KEY_HERE>
+apiSecret=<API_SECRET_HERE>
+```
+1. Run `./gradlew assembleDebug crashlyticsUploadDistributionDebug`
+
 ## Contributing
 
  (https://github.com/Greenstand/Development-Overview/blob/master/Contributing.md) 
