@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements
                 "org.greenstand.android", Context.MODE_PRIVATE);
 
 
-        dbHelper = new DbHelper(this, "database", null, 1);
+        dbHelper = new DbHelper(this, "databasev2", null, 1);
         mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
 
         try {

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.greenstand.android.TreeTracker.BuildConfig;
 
@@ -16,8 +17,9 @@ import java.io.OutputStream;
 
 
 public class DbHelper extends SQLiteOpenHelper{
-	
-  private static String DB_PATH = BuildConfig.DB_PATH;
+
+	private static final String TAG = "SQLiteOpenHelper";
+	private static String DB_PATH = BuildConfig.DB_PATH;
 
   private static String DB_NAME = "treetracker.db";
 
@@ -65,7 +67,7 @@ public class DbHelper extends SQLiteOpenHelper{
     			copyDataBase();
  
     		} catch (IOException e) {
- 
+        		Log.e(TAG, e.getStackTrace().toString());
         		throw new Error("Error copying database");
  
         	}
