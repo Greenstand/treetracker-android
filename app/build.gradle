@@ -51,9 +51,11 @@ android {
         release {
             minifyEnabled true
             resValue "string", "app_name", "Tree Tracker"
-            buildConfigField 'String', 'BASE_URL', '"https://www.treetracker.org"'
             buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField 'String', 'BASE_URL', '"https://www.treetracker.org/api/mobile"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://ams3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -70,7 +72,10 @@ android {
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
             buildConfigField "String", "GPS_ACCURACY", '"off"'
+            buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.dev/databases/"'
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://nyc3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-dev"'
         }
         staging {
             initWith(debug)
