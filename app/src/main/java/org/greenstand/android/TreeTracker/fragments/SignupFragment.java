@@ -224,6 +224,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
 
                                 SharedPreferences mSharedPreferences = getActivity().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE);
                                 mSharedPreferences.edit().putString(ValueHelper.TOKEN, response.body().getToken()).commit();
+								Api.instance().setAuthToken(response.body().getToken());
 
                                 ((MainActivity) getActivity()).transitionToMapsFragment();
                             }
