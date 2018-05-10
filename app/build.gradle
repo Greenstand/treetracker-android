@@ -13,9 +13,23 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.github.triplet.play'
 
+
+def loadExtraProperties(String fileName) {
+    def props = new Properties()
+    props.load(new FileInputStream(fileName))
+
+    props.each { key, val ->
+        project.setProperty(key, val)
+    }
+}
+
+
+loadExtraProperties("treetracker.keys.properties")
+
+
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.2"
+    buildToolsVersion '27.0.3'
     playAccountConfigs {
         defaultAccountConfig {
             jsonFile = file('keys.json')
@@ -25,43 +39,53 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 28
-        versionName "1.1.6"
+        versionCode 31
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
+        buildConfigField "String", "DOS_ACCESS_KEY", "\"${dos_access_key}\""
+        buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
     }
     buildTypes {
         release {
             minifyEnabled true
             resValue "string", "app_name", "Tree Tracker"
-            buildConfigField 'String', 'BASE_URL', '"https://www.treetracker.org"'
             buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField 'String', 'BASE_URL', '"http://174.138.125.240/api/mobile/"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://nyc3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "String", "GPS_ACCURACY", '"on"'
-            // Change this back to 'off' and use QA build instead
-            buildConfigField 'String', 'BASE_URL', '"http://174.138.107.11"'
+            buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.debug/databases/"'
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://ams3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test"'
         }
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
+            buildConfigField "String", "GPS_ACCURACY", '"off"'
+            buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.dev/databases/"'
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://nyc3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-dev"'
         }
-        qa {
+        staging {
             initWith(debug)
-            applicationIdSuffix ".qa"
-            resValue "string", "app_name", "Tree Tracker(qa)"
+            applicationIdSuffix ".staging"
+            resValue "string", "app_name", "Tree Tracker(staging)"
             buildConfigField "String", "GPS_ACCURACY", '"on"'
-            buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org"'
+            buildConfigField 'String', 'BASE_URL', '"http://staging.treetracker.org"'
             buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.qa/databases/"'
         }
+
     }
     productFlavors {
 
@@ -108,3 +132,4 @@ play {
     track = 'beta' // or 'rollout' or 'production' or 'alpha'
 }
 //apply plugin: 'com.google.gms.google-services'
+

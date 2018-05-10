@@ -1,9 +1,13 @@
 package org.greenstand.android.TreeTracker.api;
 
 import org.greenstand.android.TreeTracker.BuildConfig;
-import org.greenstand.android.TreeTracker.api.models.NewTree;
-import org.greenstand.android.TreeTracker.api.models.PostResult;
-import org.greenstand.android.TreeTracker.api.models.UserTree;
+import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest;
+import org.greenstand.android.TreeTracker.api.models.requests.ForgotPasswordRequest;
+import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest;
+import org.greenstand.android.TreeTracker.api.models.responses.PostResult;
+import org.greenstand.android.TreeTracker.api.models.requests.RegisterRequest;
+import org.greenstand.android.TreeTracker.api.models.responses.TokenResponse;
+import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 
 import java.util.List;
 
@@ -17,9 +21,19 @@ public interface ApiService {
 
     String ENDPOINT = BuildConfig.BASE_URL;
 
-    @GET("details/user/{id}")
-    Call<List<UserTree>> getTreesForUser(@Path("id") long userId);
+    @GET("trees/details/user/")
+    Call<List<UserTree>> getTreesForUser();
 
     @POST("trees/create")
-    Call<PostResult> createTree(@Body NewTree newTree);
+    Call<PostResult> createTree(@Body NewTreeRequest newTree);
+
+    @POST("auth/token")
+    Call<TokenResponse> signIn(@Body AuthenticationRequest authenticationRequest);
+
+    @POST("auth/register")
+    Call<TokenResponse> register(@Body RegisterRequest registerRequest);
+
+    @POST("auth/forgot")
+    Call<Void> passwordReset(@Body ForgotPasswordRequest forgotPasswordRequest);
+
 }

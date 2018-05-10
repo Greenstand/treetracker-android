@@ -25,9 +25,13 @@ allprojects {
     ext {
         androidSupportVersion = '25.2.0'
         retrofit2Version = '2.3.0'
+        dos_access_key = "configure in treetracker.keys.properties"
+        dos_secret_key = "configure in treetracker.keys.properties"
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+

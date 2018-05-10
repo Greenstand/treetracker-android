@@ -1,9 +1,10 @@
-package org.greenstand.android.TreeTracker.api;
+package org.greenstand.android.TreeTracker.managers;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.greenstand.android.TreeTracker.api.models.NewTree;
-import org.greenstand.android.TreeTracker.api.models.UserTree;
+import org.greenstand.android.TreeTracker.api.Api;
+import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest;
+import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,8 +32,8 @@ public abstract class DataManager<T> {
 
     public abstract void onRequestFailed(String message);
 
-    public void loadUserTrees(long userId) {
-        Call<List<UserTree>> trees = mApi.getApi().getTreesForUser(userId);
+    public void loadUserTrees() {
+        Call<List<UserTree>> trees = mApi.getApi().getTreesForUser();
         trees.enqueue(new Callback<List<UserTree>>() {
             @Override
             public void onResponse(Call<List<UserTree>> call, Response<List<UserTree>> response) {
@@ -47,23 +48,6 @@ public abstract class DataManager<T> {
                 Timber.tag(TAG).e(t.getMessage());
             }
         });
-    }
-
-    public T createNewTree(NewTree newTree) {
-        T result = null;
-        try {
-            Response<T> tree = (Response<T>) mApi.getApi().createTree(newTree).execute();
-            if (tree.isSuccessful()){
-                result = tree.body();
-            }
-        } catch (IOException e) {
-            Crashlytics.logException(e);
-            e.printStackTrace();
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-            e.printStackTrace();
-        }
-        return result;
     }
 
 }

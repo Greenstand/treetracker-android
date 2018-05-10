@@ -1,8 +1,8 @@
-package org.greenstand.android.TreeTracker.api.models;
+package org.greenstand.android.TreeTracker.api.models.requests;
 
 import com.google.gson.annotations.SerializedName;
 
-public class NewTree {
+public class NewTreeRequest {
     @SerializedName("user_id")
     private int userId;
     @SerializedName("lat")
@@ -10,13 +10,13 @@ public class NewTree {
     @SerializedName("lon")
     private double lon;
     @SerializedName("gps_accuracy")
-    private float gpsAccuracy;
+    private int gpsAccuracy;
     @SerializedName("note")
     private String note;
     @SerializedName("timestamp")
     private long timestamp;
-    @SerializedName("base_64_image")
-    private String base64Image;
+    @SerializedName("image_url")
+    private String imageUrl;
 
     public int getUserId() {
         return userId;
@@ -46,7 +46,7 @@ public class NewTree {
         return gpsAccuracy;
     }
 
-    public void setGpsAccuracy(float gpsAccuracy) {
+    public void setGpsAccuracy(int gpsAccuracy) {
         this.gpsAccuracy = gpsAccuracy;
     }
 
@@ -66,11 +66,11 @@ public class NewTree {
         this.timestamp = timestamp;
     }
 
-    public String getBase64Image() {
-        return base64Image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setBase64Image(String base64Image) {
-        this.base64Image = base64Image;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

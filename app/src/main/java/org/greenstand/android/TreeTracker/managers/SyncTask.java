@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.api;
+package org.greenstand.android.TreeTracker.managers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,16 +8,22 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 
-import org.greenstand.android.TreeTracker.fragments.DataFragment;
+import org.greenstand.android.TreeTracker.api.Api;
+import org.greenstand.android.TreeTracker.api.DOSpaces;
+import org.greenstand.android.TreeTracker.managers.DataManager;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
-import org.greenstand.android.TreeTracker.api.models.NewTree;
-import org.greenstand.android.TreeTracker.api.models.PostResult;
+import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest;
+import org.greenstand.android.TreeTracker.api.models.responses.PostResult;
 import org.greenstand.android.TreeTracker.database.DatabaseManager;
+import com.amazonaws.AmazonClientException;
 
 import java.io.File;
+import java.io.IOException;
 
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -87,11 +93,11 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             String localTreeId = treeCursor.getString(treeCursor.getColumnIndex("tree_id"));
             Timber.tag("DataFragment").d("tree_id: " + localTreeId);
 
-            NewTree newTree = new NewTree();
+            NewTreeRequest newTree = new NewTreeRequest();
             newTree.setUserId(userId);
             newTree.setLat(treeCursor.getDouble(treeCursor.getColumnIndex("lat")));
             newTree.setLon(treeCursor.getDouble(treeCursor.getColumnIndex("long")));
-            newTree.setGpsAccuracy(treeCursor.getFloat(treeCursor.getColumnIndex("accuracy")));
+            newTree.setGpsAccuracy((int) treeCursor.getFloat(treeCursor.getColumnIndex("accuracy")));
             String note = treeCursor.getString(treeCursor.getColumnIndex("content"));
             if (note == null) {
                 note = "";
@@ -100,21 +106,39 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             String timeCreated = treeCursor.getString(treeCursor.getColumnIndex("tree_time_created"));
             newTree.setTimestamp(Utils.convertDateToTimestamp(timeCreated));
 
-            String image = Utils.base64Image(treeCursor.getString(treeCursor.getColumnIndex("name")));
-            newTree.setBase64Image(image);
-//            Timber.tag("DataFragment").d("user_id: " + newTree.getUserId());
-//            Timber.tag("DataFragment").d("lat: " + newTree.getLat());
-//            Timber.tag("DataFragment").d("lon: " + newTree.getLon());
-//            Timber.tag("DataFragment").d("note: " + newTree.getNote());
-//            Timber.tag("DataFragment").d("gps: " + newTree.getGpsAccuracy());
-//            Timber.tag("DataFragment").d("timestamp: " + newTree.getTimestamp());
-//            Timber.tag("DataFragment").d("image: " + newTree.getBase64Image());
+            /**
+             * Implementation for saving image into DigitalOcean Spaces.
+             */
+            String imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"));
+            String imageUrl;
+            try {
+                imageUrl = DOSpaces.instance().put(imagePath);
+            } catch (AmazonClientException ace) {
+                Log.e("SyncTask", "Caught an AmazonClientException, which " +
+                        "means the client encountered " +
+                        "an internal error while trying to " +
+                        "communicate with S3, " +
+                        "such as not being able to access the network.");
+                Log.e("SyncTask", "Error Message: " + ace.getMessage());
+                return "Failed.";
+            }
+            Log.d("SyncTask", "imageUrl: " + imageUrl);
+            newTree.setImageUrl(imageUrl); // method name should be changed as use new infrastructure.
 
-            PostResult response = (PostResult) mDataManager.createNewTree(newTree);
-            if (response != null) {
-                int treeIdResponse = response.getStatus();
-                Timber.tag("DataFragment").d("status code: " + treeIdResponse);
+            /*
+            * Save to the API
+            */
+            PostResult postResult = null;
+            try {
+                Response<PostResult> treeResponse = null;
+                treeResponse = Api.instance().getApi().createTree(newTree).execute();
+                postResult = treeResponse.body();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+            if (postResult != null) {
+                int treeIdResponse = postResult.getStatus();
                 ContentValues values = new ContentValues();
                 values.put("is_synced", "Y");
                 values.put("main_db_id", treeIdResponse);

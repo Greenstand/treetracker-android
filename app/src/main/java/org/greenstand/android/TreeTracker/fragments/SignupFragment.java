@@ -2,8 +2,10 @@ package org.greenstand.android.TreeTracker.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,17 +24,29 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
-import org.greenstand.android.TreeTracker.network.NetworkUtilities;
 import org.greenstand.android.TreeTracker.R;
+import org.greenstand.android.TreeTracker.api.Api;
+import org.greenstand.android.TreeTracker.api.ApiService;
+import org.greenstand.android.TreeTracker.api.models.requests.RegisterRequest;
+import org.greenstand.android.TreeTracker.api.models.responses.TokenResponse;
+import org.greenstand.android.TreeTracker.api.models.responses.UserTree;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
+import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 public class SignupFragment extends Fragment implements OnClickListener {
 
+    public static final String TAG = "SignupFragment";
 
 	public SignupFragment() {
 		//some overrides and settings go here
@@ -63,6 +77,30 @@ public class SignupFragment extends Fragment implements OnClickListener {
 		Button signUpBtn = (Button) v.findViewById(R.id.fragment_signup_signup);
 		signUpBtn.setOnClickListener(SignupFragment.this);
 
+		if (BuildConfig.DEBUG) {
+			//It's not a release version.
+			signUpBtn.setOnLongClickListener(new Button.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View view) {
+					EditText signupFirstName = (EditText) getActivity().findViewById(R.id.fragment_signup_first_name);
+					EditText signupLastName = (EditText) getActivity().findViewById(R.id.fragment_signup_last_name);
+					EditText signupEmail = (EditText) getActivity().findViewById(R.id.fragment_signup_email_address);
+					EditText signupPassword = (EditText) getActivity().findViewById(R.id.fragment_signup_password);
+					EditText signupOrganization = (EditText) getActivity().findViewById(R.id.fragment_signup_organization);
+					EditText signupPhone = (EditText) getActivity().findViewById(R.id.fragment_signup_phone_number);
+
+					signupFirstName.setText("First Name Test");
+					signupLastName.setText("Last Name Test");
+					signupEmail.setText(UUID.randomUUID().toString() + "@greenstand.org");
+					signupPassword.setText("tttttttt");
+					signupOrganization.setText("Greenstand");
+					signupPhone.setText("1234567890");
+
+					return true;
+				}
+			});
+		}
+
 		TextView loginText = (TextView) v.findViewById(R.id.fragment_signup_login_already_have_account);
 		loginText.setText(Html.fromHtml(loginText.getText() + " <a style=\"color:#916B4A;\" href=\"http://www.google.com\">"
 				+ getResources().getString(R.string.log_in) + ".</a> "));
@@ -73,8 +111,6 @@ public class SignupFragment extends Fragment implements OnClickListener {
 
 		TextView fragment_signup_privacy_policy_link = (TextView) v.findViewById(R.id.fragment_signup_privacy_policy_link);
 		fragment_signup_privacy_policy_link.setMovementMethod(LinkMovementMethod.getInstance());
-
-
 
 		return v;
 	}
@@ -161,29 +197,48 @@ public class SignupFragment extends Fragment implements OnClickListener {
 					InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 					inputManager.hideSoftInputFromWindow(signupEmail.getWindowToken(), 0);
 
-					JSONObject signupObj = new JSONObject();
-					try {
-						signupObj.put("username", txtEmail);
-						signupObj.put("first_name", txtFirstName);
-						signupObj.put("last_name", txtLastName);
-						signupObj.put("password", txtPass);
-						signupObj.put("organization", txtOrg);
-						signupObj.put("phone", txtPhone);
+					RegisterRequest registerRequest = new RegisterRequest();
+					registerRequest.setFirstName(txtFirstName);
+					registerRequest.setLastName(txtLastName);
+					registerRequest.setClientId(txtEmail);
+					registerRequest.setClientSecret(txtPass);
+					registerRequest.setOrganization(txtOrg);
+					registerRequest.setPhone(txtPhone);
 
 
-						NetworkUtilities.attemptSignup(signupObj, MainActivity.mHandler, getActivity());
+                    MainActivity.progressDialog = new ProgressDialog(getActivity());
+                    MainActivity.progressDialog.setCancelable(false);
+                    MainActivity.progressDialog.setMessage(getActivity().getString(R.string.sign_up_in_progress));
+                    MainActivity.progressDialog.show();
 
-						MainActivity.progressDialog = new ProgressDialog(getActivity());
-						MainActivity.progressDialog.setCancelable(false);
-						MainActivity.progressDialog.setMessage(getActivity().getString(R.string.sign_up_in_progress));
-						MainActivity.progressDialog.show();
+                    final String finalFirstName = txtFirstName;
+                    final String finalLastName = txtLastName;
+
+                    Call<TokenResponse> register = Api.instance().getApi().register(registerRequest);
+                    register.enqueue(new Callback<TokenResponse>() {
+                        @Override
+                        public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                            MainActivity.progressDialog.cancel();
+
+                            if (response.isSuccessful()) {
+
+                                SharedPreferences mSharedPreferences = getActivity().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE);
+                                mSharedPreferences.edit().putString(ValueHelper.TOKEN, response.body().getToken()).commit();
+								Api.instance().setAuthToken(response.body().getToken());
+
+                                ((MainActivity) getActivity()).transitionToMapsFragment();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<TokenResponse> call, Throwable t) {
+                            MainActivity.progressDialog.cancel();
+                            Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                            Timber.tag(TAG).e(t.getMessage());
+                        }
+                    });
 
 
-
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 
 				}
 

@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.api.models;
+package org.greenstand.android.TreeTracker.api.models.responses;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -21,7 +21,7 @@ public class UserTree {
 //    private String gps;
 //    @SerializedName("next_update")
 //    private String nextUpdate;
-    @SerializedName("imageUrl")
+    @SerializedName("image_url")
     private String imageUrl;
 
     public String getId() {

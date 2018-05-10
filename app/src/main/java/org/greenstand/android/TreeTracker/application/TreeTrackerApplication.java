@@ -16,7 +16,9 @@ public class TreeTrackerApplication extends Application {
 	  public void onCreate() {
 	    // The following line triggers the initialization of ACRA
 	    super.onCreate();
-	    Fabric.with(this, new Crashlytics());
+	    if(!BuildConfig.DEBUG) {
+			Fabric.with(this, new Crashlytics());
+		}
 
 	    if (BuildConfig.DEBUG) {
 			  Timber.plant(new Timber.DebugTree());
