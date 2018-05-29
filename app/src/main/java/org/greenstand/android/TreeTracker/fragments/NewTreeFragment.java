@@ -207,7 +207,10 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == Activity.RESULT_OK) {
+
+		if(data!=null && resultCode != Activity.RESULT_CANCELED)
+    	{
+    		if (resultCode == Activity.RESULT_OK) {
 
 			mCurrentPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH);
 
@@ -223,7 +226,10 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
                 setPic();
             }
 
-		} else if (resultCode == Activity.RESULT_CANCELED) {
+		}
+    }
+
+		else if (resultCode == Activity.RESULT_CANCELED) {
 			Log.d(TAG, "Photo was cancelled");
 			if (((RelativeLayout)getActivity().findViewById(R.id.fragment_new_tree)).getVisibility() != View.VISIBLE) {
 				getActivity().getSupportFragmentManager().popBackStack();
