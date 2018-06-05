@@ -337,8 +337,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	public void onClick(View v) {
 		v.setHapticFeedbackEnabled(true);
         // get an image from the camera
-        if(safeToTakePicture) {
-            safeToTakePicture = false;
+		if(safeToTakePicture && mCamera!=null) {     //check mCamera isn't null to avoid error
+			safeToTakePicture = false;
             mCamera.takePicture(null, null, CameraActivity.this);
             Log.e("take", "pic");
 		}
