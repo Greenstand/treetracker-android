@@ -7,6 +7,9 @@ paying planters on a per planting basis.
 
 For more on design intent: https://github.com/Greenstand/treetracker-android/wiki/User-Story
 
+## Project Setup
+Developers will need to ask the channel for treetracker.keys.properties file to build gradle for the application.
+
 ## Deployment
 
 There is one prerequisite to using the appropriate gradle tasks:
