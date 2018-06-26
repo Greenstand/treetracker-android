@@ -5,7 +5,7 @@ This project coordinates tree planting employment for people living in extreme p
 The Android segment allows people to track and verify reforestation plantings,
 paying planters on a per planting basis.
 
-For more on design intent: https://github.com/Greenstand/treetracker-android/wiki/User-Story
+For more on design intent and the app's user story see the [wiki in this repository](https://github.com/Greenstand/treetracker-android/wiki/User-Story)
 
 ## Deployment
 
@@ -21,9 +21,9 @@ Once this is done, you can then proceed by running one of the following tasks to
 
 ## Contributing
 
- (https://github.com/Greenstand/Development-Overview/blob/master/Contributing.md) 
+ See [Contributing in Development-Overview](https://github.com/Greenstand/Development-Overview/blob/master/Contributing.md) 
 
-Please review the issue tracker here on this github repository https://github.com/Greenstand/treetracker-android/issues
+Please review the [issue tracker](https://github.com/Greenstand/treetracker-android/issues) here on this github repository 
 
 Check out the cool [roadmap](https://github.com/Greenstand/Development-Overview/blob/master/Roadmap.md) or 
 
