@@ -423,8 +423,8 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
-        //solution for #57 git
-        dbHelper = new DbHelper(this, "database", null, 1);
+        //solution for #98 git
+        dbHelper = new DbHelper(this, "databasev2", null, 1);
         mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
 
         try {
