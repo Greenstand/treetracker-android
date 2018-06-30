@@ -321,7 +321,19 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 		// location
 		contentValues.put("user_id", userId);
 
-		MainActivity.mCurrentLocation.getAccuracy();
+
+		//Solution to problem 55
+		try
+		{
+			//If the current location is null instead of throwing a fat error that breaks down the whole app
+			MainActivity.mCurrentLocation.getAccuracy();
+		} catch(NullPointerException nullPointer)
+		{
+			//We give the user a toast message saying that the location accuracy cannot be found
+			//and they need to try again.
+			Toast.makeText(getContext(), "Sorry, the location accuracy cannot be found try again!", Toast.LENGTH_LONG);
+		}
+
 		contentValues.put("user_id", userId);
 		contentValues.put("accuracy",
 				Float.toString(MainActivity.mCurrentLocation.getAccuracy()));

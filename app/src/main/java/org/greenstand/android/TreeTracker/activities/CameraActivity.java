@@ -164,11 +164,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 			e.printStackTrace();
 		}
 
-		
-//		File f = new File(mCurrentPhotoPath);
 		Uri contentUri = FileProvider.getUriForFile(CameraActivity.this,
 				BuildConfig.APPLICATION_ID + ".provider", createImageFile());
-		//Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		sendBroadcast(mediaScanIntent);
 	}

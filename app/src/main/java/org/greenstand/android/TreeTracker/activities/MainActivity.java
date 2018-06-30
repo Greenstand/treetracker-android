@@ -471,6 +471,7 @@ public class MainActivity extends AppCompatActivity implements
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location;
 
+
         //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         int minAccuracy = 10;
 
