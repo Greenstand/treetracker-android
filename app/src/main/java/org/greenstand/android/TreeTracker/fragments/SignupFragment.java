@@ -140,6 +140,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
 				EditText signupLastName = (EditText) getActivity().findViewById(R.id.fragment_signup_last_name);
 				EditText signupEmail = (EditText) getActivity().findViewById(R.id.fragment_signup_email_address);
 				EditText signupPassword = (EditText) getActivity().findViewById(R.id.fragment_signup_password);
+				EditText signupPasswordConfirm = (EditText) getActivity().findViewById(R.id.fragment_signup_password_confirm);
 				EditText signupOrganization = (EditText) getActivity().findViewById(R.id.fragment_signup_organization);
 				EditText signupPhone = (EditText) getActivity().findViewById(R.id.fragment_signup_phone_number);
 
@@ -152,7 +153,12 @@ public class SignupFragment extends Fragment implements OnClickListener {
 					signupPassword.setError("Please enter your password.");
 					signupPassword.requestFocus();
 					validForm = false;
-				} else {
+				} else if(!signupPassword.getText().equals(signupPasswordConfirm.getText())) {
+					signupPasswordConfirm.setError("Your passwords don't match.");
+					signupPasswordConfirm.requestFocus();
+					validForm = false;
+				}
+				else {
 					txtPass = signupPassword.getText().toString();
 				}
 
