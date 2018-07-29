@@ -131,6 +131,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
 				String txtLastName = "";
 				String txtEmail = "";
 				String txtPass = "";
+				String txtPassConfirm = "";
 				String txtOrg = "";
 				String txtPhone = "";
 
@@ -146,6 +147,8 @@ public class SignupFragment extends Fragment implements OnClickListener {
 
 				txtOrg = signupOrganization.getText().toString();
 				txtPhone = signupPhone.getText().toString();
+				txtPass = signupPassword.getText().toString().trim();
+				txtPassConfirm = signupPasswordConfirm.getText().toString().trim();
 
 				CheckBox signupPrivacyPolicy=(CheckBox) getActivity().findViewById(R.id.fragment_signup_privacy_policy_checkbox);
 
@@ -153,7 +156,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
 					signupPassword.setError("Please enter your password.");
 					signupPassword.requestFocus();
 					validForm = false;
-				} else if(!signupPassword.getText().equals(signupPasswordConfirm.getText())) {
+				} else if(!txtPass.equals(txtPassConfirm)) {
 					signupPasswordConfirm.setError("Your passwords don't match.");
 					signupPasswordConfirm.requestFocus();
 					validForm = false;

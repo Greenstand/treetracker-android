@@ -60,31 +60,22 @@
             android:inputType="textEmailAddress"
             android:textSize="16sp" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/fragment_signup_password_layout"
+        <EditText
+            android:id="@+id/fragment_signup_password"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/fragment_signup_email_address"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            app:passwordToggleEnabled="true">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/fragment_signup_password"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/fragment_signup_email_address"
-                android:hint="@string/password"
-                android:inputType="textPassword"
-                android:paddingTop="1dp"
-                android:textSize="16sp" />
-        </android.support.design.widget.TextInputLayout>
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/fragment_signup_password_confirm"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_below="@+id/fragment_signup_password_layout"
+            android:layout_below="@+id/fragment_signup_password"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:hint="@string/confirm_password"
