@@ -101,31 +101,23 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
+    api fileTree(include: ['*.jar'], dir: 'libs')
 
-    })
+    api "com.android.support:appcompat-v7:${androidSupportVersion}"
+    api "com.android.support:design:${androidSupportVersion}"
 
-    compile "com.android.support:appcompat-v7:${androidSupportVersion}"
-    compile "com.android.support:design:${androidSupportVersion}"
-
-    //compile 'junit:junit:4.12'
-    //testCompile 'junit:junit:4.12'
-    //androidTestCompile 'junit:junit:4.12'
-
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.android.gms:play-services:11.8.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-    compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
-    compile "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
-    compile 'com.jakewharton.timber:timber:4.6.0'
-    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
-    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+    api 'com.android.support:multidex:1.0.1'
+    implementation 'com.google.android.gms:play-services:11.8.0'
+    api 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+    api "com.squareup.retrofit2:retrofit:${retrofit2Version}"
+    api "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
+    api 'com.jakewharton.timber:timber:4.6.0'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    api 'com.amazonaws:aws-android-sdk-s3:2.2.+'
+    api('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
-    compile 'com.google.firebase:firebase-core:11.8.0'
+    api 'com.google.firebase:firebase-core:11.8.0'
 
 }
 play {
