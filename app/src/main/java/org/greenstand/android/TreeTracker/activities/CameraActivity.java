@@ -63,6 +63,13 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
     
     public static final int MEDIA_TYPE_IMAGE = 1;
 
+	private BitmapFactory.Options bmOptions = new BitmapFactory.Options();//*** edited on July 24 2018
+	private Bitmap photo;
+	private Bitmap bitmap;
+	private Bitmap rotatedBitmap;
+	private File storageDir;
+	private File pictureFile;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,7 +154,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		Intent mediaScanIntent = new Intent(
 				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
 		
-		Bitmap photo = Utils.resizedImage(mCurrentPhotoPath);
+		photo = Utils.resizedImage(mCurrentPhotoPath);
 		
        		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         	photo.compress(Bitmap.CompressFormat.JPEG, 70, bytes);
@@ -171,6 +178,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		//Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		sendBroadcast(mediaScanIntent);
+
 	}
 	
 	/** Create a file Uri for saving an image or video */
@@ -227,7 +235,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	}
 	
 	private File getAlbumDir() {
-		File storageDir = null;
+		storageDir = null;
 
 		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 			storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
@@ -268,7 +276,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		/* So pre-scale the target bitmap into which the file is decoded */
 
 		/* Get the size of the image */
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+
 		bmOptions.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(tmpImageFile.getAbsolutePath(), bmOptions);
 		int imageWidth = bmOptions.outWidth;
@@ -293,7 +301,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		bmOptions.inJustDecodeBounds = false;
 
 		/* Decode the JPEG file into a Bitmap */
-		Bitmap bitmap = BitmapFactory.decodeFile(tmpImageFile.getAbsolutePath(), bmOptions);
+		bitmap = BitmapFactory.decodeFile(tmpImageFile.getAbsolutePath(), bmOptions);
 				
 		if (bitmap == null) {
 			return;
@@ -322,12 +330,13 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		Matrix matrix = new Matrix();
 		matrix.setRotate(rotationAngle, (float) bitmap.getWidth() / 2,
 				(float) bitmap.getHeight() / 2);
-		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+		rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
 				bmOptions.outWidth, bmOptions.outHeight, matrix, true);
 
 		/* Associate the Bitmap to the ImageView */
 		mImageView.setImageBitmap(rotatedBitmap);
 		mImageView.setVisibility(View.VISIBLE);
+		bitmap=null;
 	}
 	
 	public void onOrientationChanged(int orientation) {
@@ -345,7 +354,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	}
 
 	private void savePicture(){
-        File pictureFile = null;
+        pictureFile = null;
         try {
             pictureFile = setUpPhotoFile();
             mCurrentPhotoPath = pictureFile.getAbsolutePath();
