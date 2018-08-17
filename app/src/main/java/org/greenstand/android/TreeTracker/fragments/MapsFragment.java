@@ -387,20 +387,18 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 
 		if (treeCursor.getCount() > 0) {
 
-			LatLng latLng = new LatLng(-33.867, 151.206);
-			int bla = 0;
+			LatLng latLng = null;
 
 			do {
 
-
-				Log.e("time_for_update", treeCursor.getString(treeCursor.getColumnIndex("_id")));
+				Log.i("tree id", String.valueOf(treeCursor.getLong(treeCursor.getColumnIndex("_id"))));
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
 				Boolean isSynced = Boolean.parseBoolean(treeCursor.getString(treeCursor.getColumnIndex("is_synced")));
 
-				Log.e("issynced", Boolean.toString(isSynced));
+				Log.i("issynced", Boolean.toString(isSynced));
 
 				Date dateForUpdate = new Date();
 				try {
@@ -445,11 +443,7 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 				}
 
 
-				Log.i("updated", "*************");
-				Log.i("updated", updated.toLocaleString());
-				Log.i("dateForUpdate", dateForUpdate.toLocaleString());
-
-
+				// This 'update' logic is not currently in use
 				if (dateForUpdate.before(new Date())) {
 
 
