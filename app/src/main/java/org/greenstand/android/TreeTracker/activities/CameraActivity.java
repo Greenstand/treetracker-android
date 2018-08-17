@@ -205,6 +205,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	    } else {
 	        return null;
 	    }
+
 	    return mediaFile;
 	}
 	
@@ -394,7 +395,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		protected String doInBackground(String... params) {
 			mCamera = getCameraInstance();
 			return null;
-		}	
+		}
 
 		protected void onPostExecute(String response) {
 			super.onPostExecute(response);
@@ -408,6 +409,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 				preview.addView(mPreview);
 				cancelImg.setVisibility(View.VISIBLE);
 				captureButton.setVisibility(View.VISIBLE);
+
 			}
 		}
 	}

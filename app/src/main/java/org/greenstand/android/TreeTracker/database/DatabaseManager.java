@@ -35,14 +35,15 @@ public class DatabaseManager {
         }
         return mDatabase;
     }
-
-    public synchronized void closeDatabase() {
-        mOpenCounter--;
-        if(mOpenCounter == 0) {
-            // Closing database
-            mDatabase.close();
-        }
-    }
+//    Zaven noted that closing the database was not necessary
+//    Further looking at the code there is no uses of this method
+//    public synchronized void closeDatabase() {
+//        mOpenCounter--;
+//        if(mOpenCounter == 0) {
+//            // Closing database
+//            mDatabase.close();
+//        }
+//    }
 
     public Cursor queryCursor(String sql, String[] selectionArgs) {
         return mDatabase.rawQuery(sql, selectionArgs);
