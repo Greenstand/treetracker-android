@@ -90,7 +90,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
         Timber.tag("DataFragment").d("treeCursor: " + treeCursor.getCount());
 
         while (treeCursor.moveToNext()) {
-            String localTreeId = treeCursor.getString(treeCursor.getColumnIndex("tree_id"));
+            String localTreeId = String.valueOf(treeCursor.getLong(treeCursor.getColumnIndex("tree_id")));
             Timber.tag("DataFragment").d("tree_id: " + localTreeId);
 
             NewTreeRequest newTree = new NewTreeRequest();
