@@ -19,7 +19,6 @@ import java.io.OutputStream;
 public class DbHelper extends SQLiteOpenHelper{
 
     private static final String TAG = "SQLiteOpenHelper";
-	private static String DB_PATH = BuildConfig.DB_PATH;
 	private static String DB_NAME = "treetracker.db";
 
 	private Context myContext;
@@ -85,7 +84,7 @@ public class DbHelper extends SQLiteOpenHelper{
     	SQLiteDatabase checkDB = null;
  
     	try{
-    		String myPath = DB_PATH + DB_NAME;
+    		String myPath = myContext.getDatabasePath(DB_NAME).getPath();
     		checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
  
     	}catch(SQLiteException e){
@@ -115,7 +114,7 @@ public class DbHelper extends SQLiteOpenHelper{
     	InputStream myInput = myContext.getAssets().open(DB_NAME);
  
     	// Path to the just created empty db
-    	String outFileName = DB_PATH + DB_NAME;
+    	String outFileName = myContext.getDatabasePath(DB_NAME).getPath();
  
     	//Open the empty db as the output stream
     	OutputStream myOutput = new FileOutputStream(outFileName);

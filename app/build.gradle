@@ -53,7 +53,6 @@ android {
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField 'String', 'BASE_URL', '"http://174.138.125.240/api/mobile/"'
-            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker/databases/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://nyc3.digitaloceanspaces.com"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -63,7 +62,6 @@ android {
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
-            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.debug/databases/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://ams3.digitaloceanspaces.com"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test"'
         }
@@ -73,7 +71,6 @@ android {
             resValue "string", "app_name", "Tree Tracker(dev)"
             buildConfigField "String", "GPS_ACCURACY", '"off"'
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
-            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.dev/databases/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://nyc3.digitaloceanspaces.com"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-dev"'
         }
@@ -83,7 +80,6 @@ android {
             resValue "string", "app_name", "Tree Tracker(staging)"
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField 'String', 'BASE_URL', '"http://staging.treetracker.org"'
-            buildConfigField "String", "DB_PATH", '"/data/data/org.greenstand.android.TreeTracker.qa/databases/"'
         }
 
     }
