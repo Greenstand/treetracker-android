@@ -23,7 +23,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         if(camera == null){
             return;
         }
-        
+
         Parameters parameters = mCamera.getParameters();
         parameters.setRotation(90);
         mCamera.setParameters(parameters);

@@ -101,10 +101,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		Button saveBtn = (Button) v.findViewById(R.id.fragment_new_tree_save);
 		saveBtn.setOnClickListener(NewTreeFragment.this);
 
-//		Must be commented for solution 35
-//		ImageButton takePhoto = (ImageButton) v.findViewById(R.id.fragment_new_tree_take_photo);
-//		takePhoto.setOnClickListener(NewTreeFragment.this);
-
 		mImageView = (ImageView) v.findViewById(R.id.fragment_new_tree_image);
 
 		TextView newTreeDistance = (TextView)v.findViewById(R.id.fragment_new_tree_distance);

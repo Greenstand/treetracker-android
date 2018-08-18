@@ -357,7 +357,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 				openCameraTask = new OpenCameraTask().execute(new String[]{});
 			} else {
 				// Create our Preview view and set it as the content of our activity.
-				mPreview = new CameraPreview(CameraActivity.this, mCamera);
+				mPreview = new  CameraPreview(CameraActivity.this, mCamera);
 				FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 				preview.addView(mPreview);
 				cancelImg.setVisibility(View.VISIBLE);
