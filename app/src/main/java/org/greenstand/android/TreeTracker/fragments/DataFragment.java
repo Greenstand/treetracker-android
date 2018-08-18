@@ -100,12 +100,6 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         Button resumeBtn = (Button) v.findViewById(R.id.fragment_data_resume);
         resumeBtn.setOnClickListener(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
-        } else {
-            mAlbumStorageDirFactory = new BaseAlbumDirFactory();
-        }
-
         return v;
     }
 
@@ -281,7 +275,9 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
     @Override
     public void onPostExecute(String message) {
         updateData();
-        Toast.makeText(getActivity(), "Sync " + message, Toast.LENGTH_SHORT).show();
+        if(getActivity() != null && getActivity().isFinishing() != true) {
+            Toast.makeText(getActivity(), "Sync " + message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
