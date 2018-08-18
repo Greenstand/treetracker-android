@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,10 +27,7 @@ import android.widget.ImageView;
 
 import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.R;
-import org.greenstand.android.TreeTracker.camera.AlbumStorageDirFactory;
-import org.greenstand.android.TreeTracker.camera.BaseAlbumDirFactory;
 import org.greenstand.android.TreeTracker.camera.CameraPreview;
-import org.greenstand.android.TreeTracker.camera.FroyoAlbumDirFactory;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 
@@ -50,7 +48,6 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
     private CameraPreview mPreview;
 	private String TAG = "Camera activity";
 	private PictureCallback mPicture;
-	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 	private String mCurrentPhotoPath;
 	private ImageView mImageView;
 	private View mParameters;
@@ -68,25 +65,15 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_preview);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
-		} else {
-			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
-		}
-
         mImageView = (ImageView) findViewById(R.id.camera_preview_taken);
-        
 
         cancelImg = (ImageButton) findViewById(R.id.camera_preview_cancel);
         captureButton = (ImageButton) findViewById(R.id.button_capture);
 
-        
-
-     // Add a listener to the buttons
+        // Add a listener to the buttons
         captureButton.setOnClickListener(CameraActivity.this);
         cancelImg.setOnClickListener(CameraActivity.this);
 
-        
         openCameraTask = new OpenCameraTask().execute(new String[]{});
         
     }
@@ -130,8 +117,8 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		
 		try {
 			FileOutputStream fo = new FileOutputStream(tmpImageFile);
-		    	fo.write(data);
-		    	fo.close();
+			fo.write(data);
+			fo.close();
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -213,35 +200,14 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		}
 	}
 	
-	private String getAlbumName() {
-		return getString(R.string.album_name);
-	}
-	
-	private File getAlbumDir() {
-		File storageDir = null;
 
-		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-			storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
-			if (storageDir != null) {
-				if (!storageDir.mkdirs()) {
-					if (!storageDir.exists()) {
-						Log.d("CameraSample", "failed to create directory");
-						return null;
-					}
-				}
-			}
-		} else {
-			Log.v(getString(R.string.app_name),"External storage is not mounted READ/WRITE.");
-		}
-		return storageDir;
-	}
-	
 	private File createImageFile() throws IOException {
 		// Create an image file name
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String imageFileName = ValueHelper.JPEG_FILE_PREFIX + timeStamp + "_";
-		File albumF = getAlbumDir();
-		File imageF = File.createTempFile(imageFileName,ValueHelper.JPEG_FILE_SUFFIX, albumF);
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("treeImages", Context.MODE_PRIVATE);
+		File imageF = File.createTempFile(imageFileName,ValueHelper.JPEG_FILE_SUFFIX, directory); // NOTE: createTempFile is just a shortcut for a unique name
 
 		return imageF;
 	}
@@ -321,9 +287,6 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		mImageView.setVisibility(View.VISIBLE);
 	}
 	
-	public void onOrientationChanged(int orientation) {
-	  
-	}
 	
 	public void onClick(View v) {
 		v.setHapticFeedbackEnabled(true);
