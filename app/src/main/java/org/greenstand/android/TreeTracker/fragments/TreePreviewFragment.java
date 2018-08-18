@@ -36,7 +36,6 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 	
 	private ImageView mImageView;
 	private String mCurrentPhotoPath;
-	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 	private Bitmap mImageBitmap;
 	private String treeIdStr = "";
 	private Fragment fragment;

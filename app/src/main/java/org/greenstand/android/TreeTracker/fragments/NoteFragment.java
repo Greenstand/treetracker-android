@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,7 +59,6 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 
 	private ImageView mImageView;
 	private String mCurrentPhotoPath;
-	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 	private Bitmap mImageBitmap;
 	private Fragment fragment;
 	private Bundle bundle;
@@ -256,8 +256,8 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 		if (Environment.MEDIA_MOUNTED.equals(Environment
 				.getExternalStorageState())) {
 
-			storageDir = mAlbumStorageDirFactory
-					.getAlbumStorageDir(getAlbumName());
+			ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+			storageDir = cw.getDir("treeImages", Context.MODE_PRIVATE);
 
 			if (storageDir != null) {
 				if (!storageDir.mkdirs()) {

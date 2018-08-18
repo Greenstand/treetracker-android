@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.fragments;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -55,7 +56,6 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
     private TextView locatedTrees;
     private TextView tosyncTrees;
     private ProgressDialog progressDialog;
-    private AlbumStorageDirFactory mAlbumStorageDirFactory;
     private SharedPreferences mSharedPreferences;
 
     private AsyncTask<Void, Integer, String> syncTask;
@@ -216,7 +216,8 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         if (Environment.MEDIA_MOUNTED.equals(Environment
                 .getExternalStorageState())) {
 
-            storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
+            ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+            storageDir = cw.getDir("treeImages", Context.MODE_PRIVATE);
 
             if (storageDir != null) {
                 if (!storageDir.mkdirs()) {
