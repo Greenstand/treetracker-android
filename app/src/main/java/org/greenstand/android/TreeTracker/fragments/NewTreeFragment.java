@@ -107,12 +107,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 		mImageView = (ImageView) v.findViewById(R.id.fragment_new_tree_image);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			new FroyoAlbumDirFactory();
-		} else {
-			new BaseAlbumDirFactory();
-		}
-
 		TextView newTreeDistance = (TextView)v.findViewById(R.id.fragment_new_tree_distance);
 		newTreeDistance.setText(Integer.toString(0) + " " + getResources().getString(R.string.meters));
 

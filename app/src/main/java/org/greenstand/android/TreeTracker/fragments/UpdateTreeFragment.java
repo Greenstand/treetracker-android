@@ -271,12 +271,6 @@ public class UpdateTreeFragment extends Fragment implements OnClickListener, Act
 
 		mImageView = (ImageView) v.findViewById(R.id.fragment_update_tree_image);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			new FroyoAlbumDirFactory();
-		} else {
-			new BaseAlbumDirFactory();
-		}
-
 		if (photoCursor.getCount() > 0) {
 			takePicture();
 		}

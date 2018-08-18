@@ -144,13 +144,7 @@ public class UpdateTreeDetailsFragment extends Fragment implements OnClickListen
 		takePhoto.setOnClickListener(UpdateTreeDetailsFragment.this);
 
 		mImageView = (ImageView) v.findViewById(R.id.fragment_update_tree_details_image);
-		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			new FroyoAlbumDirFactory();
-		} else {
-			new BaseAlbumDirFactory();
-		}	
-		
+
 		setPic();
 		
 		TextView newTreeDistance = (TextView)v.findViewById(R.id.fragment_update_tree_details_distance);
