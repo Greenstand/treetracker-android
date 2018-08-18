@@ -10,7 +10,7 @@ For more on design intent and the app's user story see the [wiki in this reposit
 ## Project Setup
 Developers will need to ask the channel for treetracker.keys.properties file to build gradle for the application.
 
-For development, selected the build varient _dev_. This build varient is configured to allow trees to be added without a specific accuracy.  
+For development, selected the build variant _dev_. This build varient is configured to allow trees to be added without a specific accuracy.  
 
 ## Deployment
 
