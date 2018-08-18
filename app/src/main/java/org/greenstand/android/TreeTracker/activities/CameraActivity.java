@@ -143,14 +143,12 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		releaseCamera();
 	}
 	
-	private void galleryAddPic() throws IOException {
-		Intent mediaScanIntent = new Intent(
-				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-		
+	private void compressImage() throws IOException {
+
 		Bitmap photo = Utils.resizedImage(mCurrentPhotoPath);
 		
-       		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        	photo.compress(Bitmap.CompressFormat.JPEG, 70, bytes);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		photo.compress(Bitmap.CompressFormat.JPEG, 70, bytes);
 
 		File f = new File(mCurrentPhotoPath);
 		try {
@@ -164,13 +162,6 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 			e.printStackTrace();
 		}
 
-		
-//		File f = new File(mCurrentPhotoPath);
-		Uri contentUri = FileProvider.getUriForFile(CameraActivity.this,
-				BuildConfig.APPLICATION_ID + ".provider", createImageFile());
-		//Uri contentUri = Uri.fromFile(f);
-		mediaScanIntent.setData(contentUri);
-		sendBroadcast(mediaScanIntent);
 	}
 	
 	/** Create a file Uri for saving an image or video */
@@ -359,7 +350,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
             FileOutputStream fos = new FileOutputStream(pictureFile);
             fos.write(mCurrentPictureData);
             fos.close();
-            galleryAddPic();
+            compressImage();
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
             saved = false;
