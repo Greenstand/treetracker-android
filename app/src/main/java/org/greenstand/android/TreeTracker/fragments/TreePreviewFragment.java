@@ -264,31 +264,34 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 		ExifInterface exif = null;
 		try {
 			exif = new ExifInterface(mCurrentPhotoPath);
+
+			String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+			int orientation = orientString != null ? Integer.parseInt(orientString)
+					: ExifInterface.ORIENTATION_NORMAL;
+			int rotationAngle = 0;
+			if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+				rotationAngle = 90;
+			if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+				rotationAngle = 180;
+			if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+				rotationAngle = 270;
+
+			Log.d("rotationAngle", Integer.toString(rotationAngle));
+
+			Matrix matrix = new Matrix();
+			matrix.setRotate(rotationAngle, (float) bitmap.getWidth() / 2,
+					(float) bitmap.getHeight() / 2);
+			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+					bmOptions.outWidth, bmOptions.outHeight, matrix, true);
+            /* Associate the Bitmap to the ImageView */
+            mImageView.setImageBitmap(rotatedBitmap);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-		int orientation = orientString != null ? Integer.parseInt(orientString)
-				: ExifInterface.ORIENTATION_NORMAL;
-		int rotationAngle = 0;
-		if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
-			rotationAngle = 90;
-		if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
-			rotationAngle = 180;
-		if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
-			rotationAngle = 270;
+            mImageView.setImageBitmap(bitmap);
+        }
 
-		Log.d("rotationAngle", Integer.toString(rotationAngle));
 
-		Matrix matrix = new Matrix();
-		matrix.setRotate(rotationAngle, (float) bitmap.getWidth() / 2,
-				(float) bitmap.getHeight() / 2);
-		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-				bmOptions.outWidth, bmOptions.outHeight, matrix, true);
 
-		/* Associate the Bitmap to the ImageView */
-		mImageView.setImageBitmap(rotatedBitmap);
 		mImageView.setVisibility(View.VISIBLE);
 	}
 	
