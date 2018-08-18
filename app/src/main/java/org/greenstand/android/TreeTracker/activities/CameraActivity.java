@@ -286,7 +286,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 		mImageView.setImageBitmap(rotatedBitmap);
 		mImageView.setVisibility(View.VISIBLE);
 	}
-	
+
 	
 	public void onClick(View v) {
 		v.setHapticFeedbackEnabled(true);
