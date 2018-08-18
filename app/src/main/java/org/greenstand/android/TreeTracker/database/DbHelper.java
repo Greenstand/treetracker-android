@@ -18,18 +18,19 @@ import java.io.OutputStream;
 
 public class DbHelper extends SQLiteOpenHelper{
 
-	private static final String TAG = "SQLiteOpenHelper";
+    private static final String TAG = "SQLiteOpenHelper";
 	private static String DB_PATH = BuildConfig.DB_PATH;
+	private static String DB_NAME = "treetracker.db";
 
-  private static String DB_NAME = "treetracker.db";
+	private Context myContext;
 
-  private SQLiteDatabase dbTabmenu;
-
-  private Context myContext; 
+	public static DbHelper getDbHelper(Context context){
+	    return new DbHelper(context, DB_NAME, null, 1);
+    }
 
 	public DbHelper(Context context, String name, CursorFactory factory,
 			int version) {
-		super(context, DB_NAME, null, 1);
+		super(context, name, null, 1);
 		
         this.myContext = context;
     }
@@ -54,7 +55,6 @@ public class DbHelper extends SQLiteOpenHelper{
     	boolean dbExist = checkDataBase();
  
     	if(dbExist){
-//    	if(false){
     		//do nothing - database already exist
     	}else{
  
@@ -133,23 +133,6 @@ public class DbHelper extends SQLiteOpenHelper{
     	myInput.close();
  
     }
-    
-    public void openDataBase() throws SQLException{
-    	 
-    	//Open the database
-        String myPath = DB_PATH + DB_NAME;
-    	dbTabmenu = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
- 
-    }
-    
-    @Override
-   	public synchronized void close() {
-    
-       	    if(dbTabmenu != null)
-       	    	dbTabmenu.close();
-    
-       	    super.close();
-    
-   	}
+
   
 }

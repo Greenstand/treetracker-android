@@ -117,13 +117,14 @@ public class MainActivity extends AppCompatActivity implements
                 "org.greenstand.android", Context.MODE_PRIVATE);
 
 
-        dbHelper = new DbHelper(this, "databasev2", null, 1);
+        dbHelper = DbHelper.getDbHelper(this);
         mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
 
         try {
             dbHelper.createDataBase();
         } catch (IOException e) {
-            Log.e("nije mi ", "uspjelo");
+            // This should be a fatal error
+            e.printStackTrace();
         }
 
 
@@ -422,17 +423,6 @@ public class MainActivity extends AppCompatActivity implements
             alert.show();
 
         }
-
-        //solution for #98 git
-        dbHelper = new DbHelper(this, "databasev2", null, 1);
-        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
-
-        try {
-            dbHelper.createDataBase();
-        } catch (IOException e) {
-            Log.e("nije mi ", "uspjelo");
-        }
-        //end of solution for #57 git
 
         startPeriodicUpdates();
 
