@@ -111,20 +111,21 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
              */
             String imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"));
             String imageUrl;
-            try {
-                imageUrl = DOSpaces.instance().put(imagePath);
-            } catch (AmazonClientException ace) {
-                Log.e("SyncTask", "Caught an AmazonClientException, which " +
-                        "means the client encountered " +
-                        "an internal error while trying to " +
-                        "communicate with S3, " +
-                        "such as not being able to access the network.");
-                Log.e("SyncTask", "Error Message: " + ace.getMessage());
-                return "Failed.";
+            if(imagePath != null && imagePath != "") { // don't crash if image path is empty
+                try {
+                    imageUrl = DOSpaces.instance().put(imagePath);
+                } catch (AmazonClientException ace) {
+                    Log.e("SyncTask", "Caught an AmazonClientException, which " +
+                            "means the client encountered " +
+                            "an internal error while trying to " +
+                            "communicate with S3, " +
+                            "such as not being able to access the network.");
+                    Log.e("SyncTask", "Error Message: " + ace.getMessage());
+                    return "Failed.";
+                }
+                Log.d("SyncTask", "imageUrl: " + imageUrl);
+                newTree.setImageUrl(imageUrl); // method name should be changed as use new infrastructure.
             }
-            Log.d("SyncTask", "imageUrl: " + imageUrl);
-            newTree.setImageUrl(imageUrl); // method name should be changed as use new infrastructure.
-
             /*
             * Save to the API
             */

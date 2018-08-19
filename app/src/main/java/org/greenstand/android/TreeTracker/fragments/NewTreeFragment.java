@@ -201,7 +201,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			if (mCurrentPhotoPath != null) {
                 ((RelativeLayout) getActivity().findViewById(R.id.fragment_new_tree)).setVisibility(View.VISIBLE);
 
-                MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
+                MainActivity.mCurrentTreeLocation = new Location(""); // Just a blank location
                 if (MainActivity.mCurrentLocation != null) {
                     MainActivity.mCurrentTreeLocation.setLatitude(MainActivity.mCurrentLocation.getLatitude());
                     MainActivity.mCurrentTreeLocation.setLongitude(MainActivity.mCurrentLocation.getLongitude());
@@ -224,7 +224,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	private void saveToDb() {
 		SQLiteDatabase dbw = MainActivity.dbHelper.getWritableDatabase();
 
-
 		if (MainActivity.mCurrentLocation == null) {
 			Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
@@ -246,12 +245,12 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			long photoId = -1;
 
             // photo
-            contentValues = new ContentValues();
-            contentValues.put("user_id", userId);
-            contentValues.put("location_id", locationId);
-            contentValues.put("name", mCurrentPhotoPath);
+			ContentValues photoContentValues = new ContentValues();
+			photoContentValues.put("user_id", userId);
+			photoContentValues.put("location_id", locationId);
+			photoContentValues.put("name", mCurrentPhotoPath);
 
-            photoId = dbw.insert("photo", null, contentValues);
+            photoId = dbw.insert("photo", null, photoContentValues);
             Log.d("photoId", Long.toString(photoId));
 
 
@@ -264,66 +263,58 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 					"0" : newTreetimeToNextUpdate.getText().toString());
 
 			// settings
-            contentValues = new ContentValues();
-			contentValues.put("time_to_next_update", timeToNextUpdate);
-			contentValues.put("min_accuracy", minAccuracy);
+			ContentValues settingsContentValues = new ContentValues();
+			settingsContentValues.put("time_to_next_update", timeToNextUpdate);
+			settingsContentValues.put("min_accuracy", minAccuracy);
 
-			long settingsId = dbw.insert("settings", null, contentValues);
+			long settingsId = dbw.insert("settings", null, settingsContentValues);
 			Log.d("settingsId", Long.toString(settingsId));
 
 
 			// note
 			String content = ((EditText) getActivity().findViewById(R.id.fragment_new_tree_note)).getText().toString();
-			contentValues = new ContentValues();
-			contentValues.put("user_id", userId);
-			contentValues.put("content", content);
+			ContentValues noteContentValues = new ContentValues();
+			noteContentValues.put("user_id", userId);
+			noteContentValues.put("content", content);
 
-			long noteId = dbw.insert("note", null, contentValues);
+			long noteId = dbw.insert("note", null, noteContentValues);
 			Log.d("noteId", Long.toString(noteId));
 
 
-
 			// tree
-			String threeDigitNumber = ((EditText) getActivity().findViewById(R.id.fragment_new_tree_three_digits)).getText().toString();
-			contentValues = new ContentValues();
-			contentValues.put("user_id", userId);
-			contentValues.put("location_id", locationId);
-			contentValues.put("settings_id", settingsId);
-			contentValues.put("three_digit_number", threeDigitNumber);
+			ContentValues treeContentValues = new ContentValues();
+			treeContentValues.put("user_id", userId);
+			treeContentValues.put("location_id", locationId);
+			treeContentValues.put("settings_id", settingsId);
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 			Date date = new Date();
 		    Calendar calendar = Calendar.getInstance();
 		    calendar.setTime(date);
-
 		    calendar.add(Calendar.DAY_OF_MONTH, timeToNextUpdate);
-		    date = (Date) calendar.getTime();
+		    date = calendar.getTime();
 
-		    Log.i("date", date.toString());
+			treeContentValues.put("time_created", dateFormat.format(new Date()));
+			treeContentValues.put("time_updated", dateFormat.format(new Date()));
+			treeContentValues.put("time_for_update", dateFormat.format(date));
 
-		    contentValues.put("time_created", dateFormat.format(new Date()));
-		    contentValues.put("time_updated", dateFormat.format(new Date()));
-			contentValues.put("time_for_update", dateFormat.format(date));
-
-			long treeId = dbw.insert("tree", null, contentValues);
+			long treeId = dbw.insert("tree", null, treeContentValues);
 			Log.d("treeId", Long.toString(treeId));
 
             // tree_photo
-            contentValues = new ContentValues();
-            contentValues.put("tree_id", treeId);
-            contentValues.put("photo_id", photoId);
-            long treePhotoId = dbw.insert("tree_photo", null, contentValues);
+            ContentValues treePhotoContentValues = new ContentValues();
+			treePhotoContentValues.put("tree_id", treeId);
+			treePhotoContentValues.put("photo_id", photoId);
+            long treePhotoId = dbw.insert("tree_photo", null, treePhotoContentValues);
             Log.d("treePhotoId", Long.toString(treePhotoId));
 
 
 			// tree_note
-			contentValues = new ContentValues();
-			contentValues.put("tree_id", treeId);
-			contentValues.put("note_id", noteId);
-			// TODO: note text itself not being saved ??
-
-			long treeNoteId = dbw.insert("tree_note", null, contentValues);
+			ContentValues treeNoteContentValues = new ContentValues();
+			treeNoteContentValues.put("tree_id", treeId);
+			treeNoteContentValues.put("note_id", noteId);
+			long treeNoteId = dbw.insert("tree_note", null, treeNoteContentValues);
 			Log.d("treeNoteId", Long.toString(treeNoteId));
 		}
 

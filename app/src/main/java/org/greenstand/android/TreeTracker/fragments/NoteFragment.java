@@ -146,8 +146,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 			String lat = photoCursor.getString(photoCursor.getColumnIndex("lat"));
 			String lon = photoCursor.getString(photoCursor.getColumnIndex("long"));
 			
-			MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
-			
+			MainActivity.mCurrentTreeLocation = new Location(""); // Empty location
 			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(lat));
 			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(lon));
 			

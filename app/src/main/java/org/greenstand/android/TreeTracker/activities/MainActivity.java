@@ -517,16 +517,6 @@ public class MainActivity extends AppCompatActivity implements
                 if (treePreviewDistance != null) {
                     treePreviewDistance.setText(Integer.toString(Math.round(results[0])) + " " + getResources().getString(R.string.meters));
                 }
-
-                TextView updateTreeDistance = (TextView) findViewById(R.id.fragment_update_tree_distance);
-                if (updateTreeDistance != null) {
-                    updateTreeDistance.setText(Integer.toString(Math.round(results[0])) + " " + getResources().getString(R.string.meters));
-                }
-
-                TextView updateTreeDetailsDistance = (TextView) findViewById(R.id.fragment_update_tree_details_distance);
-                if (updateTreeDetailsDistance != null) {
-                    updateTreeDetailsDistance.setText(Integer.toString(Math.round(results[0])) + " " + getResources().getString(R.string.meters));
-                }
             }
         }
     }

@@ -113,7 +113,7 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 				noImage.setVisibility(View.VISIBLE);
 			}
 			
-			MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
+			MainActivity.mCurrentTreeLocation = new Location("");
 			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
 			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
 
