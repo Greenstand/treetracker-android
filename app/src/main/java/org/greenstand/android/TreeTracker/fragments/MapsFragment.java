@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.util.IOUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -42,9 +43,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.application.Permissions;
 import org.greenstand.android.TreeTracker.R;
+import org.greenstand.android.TreeTracker.utilities.TreeImage;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 import org.greenstand.android.TreeTracker.BuildConfig;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -349,7 +355,7 @@ public class MapsFragment extends Fragment
     @Override
     public boolean onLongClick(View view) {
 
-        Toast.makeText(getActivity(), "Adding lot of trees", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Adding lot of trees", Toast.LENGTH_LONG).show();
 
 
         // programmatically add 500 trees, for analysis only
@@ -371,6 +377,27 @@ public class MapsFragment extends Fragment
 
             long locationId = dbw.insert("location", null, locationContentValues);
 
+            long photoId = -1;
+            try {
+                InputStream myInput = getActivity().getAssets().open("testtreeimage.jpg");
+                File f = TreeImage.createImageFile(getActivity());
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(IOUtils.toByteArray(myInput));
+                fos.close();
+
+                ContentValues photoContentValues = new ContentValues();
+                photoContentValues.put("user_id", userId);
+                photoContentValues.put("location_id", locationId);
+                photoContentValues.put("name", f.getAbsolutePath());
+
+                photoId = dbw.insert("photo", null, photoContentValues);
+                //Timber.d("photoId " + Long.toString(photoId));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
             ContentValues treeContentValues = new ContentValues();
             treeContentValues.put("user_id", userId);
             treeContentValues.put("location_id", locationId);
@@ -379,6 +406,13 @@ public class MapsFragment extends Fragment
             treeContentValues.put("time_updated", dateFormat.format(new Date()));
 
             long treeId = dbw.insert("tree", null, treeContentValues);
+
+
+            ContentValues treePhotoContentValues = new ContentValues();
+            treePhotoContentValues.put("tree_id", treeId);
+            treePhotoContentValues.put("photo_id", photoId);
+            long treePhotoId = dbw.insert("tree_photo", null, treePhotoContentValues);
+            //Timber.d("treePhotoId " + Long.toString(treePhotoId));
         }
 
         Toast.makeText(getActivity(), "Lots of trees added", Toast.LENGTH_SHORT).show();
@@ -433,14 +467,14 @@ public class MapsFragment extends Fragment
 
 			do {
 
-				Timber.d("tree id " + String.valueOf(treeCursor.getLong(treeCursor.getColumnIndex("_id"))));
+				//Timber.d("tree id " + String.valueOf(treeCursor.getLong(treeCursor.getColumnIndex("_id"))));
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-
+/*
 				Boolean isSynced = Boolean.parseBoolean(treeCursor.getString(treeCursor.getColumnIndex("is_synced")));
 
-				Timber.d("issynced " + Boolean.toString(isSynced));
+				//Timber.d("issynced " + Boolean.toString(isSynced));
 
 				Date dateForUpdate = new Date();
 				try {
@@ -465,7 +499,7 @@ public class MapsFragment extends Fragment
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+*/
 				boolean priority = treeCursor.getString(treeCursor.getColumnIndex("is_priority")).equals("Y");
 				latLng = new LatLng(Double.parseDouble(treeCursor.getString(treeCursor.getColumnIndex("lat"))),
 						Double.parseDouble(treeCursor.getString(treeCursor.getColumnIndex("long"))));
@@ -486,7 +520,7 @@ public class MapsFragment extends Fragment
 
 
 				// This 'update' logic is not currently in use
-				if (dateForUpdate.before(new Date())) {
+				/*if (dateForUpdate.before(new Date())) {
 
 
 					Log.e("updated", "should be red");
@@ -499,6 +533,7 @@ public class MapsFragment extends Fragment
 
 					marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin));
 				}
+				*/
 
 //		        Log.i("updated", "*************");
 //		        if (created.before(updated) && !isSynced) {

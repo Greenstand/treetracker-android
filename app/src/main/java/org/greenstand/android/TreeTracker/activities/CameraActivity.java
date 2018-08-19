@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import org.greenstand.android.TreeTracker.BuildConfig;
 import org.greenstand.android.TreeTracker.R;
 import org.greenstand.android.TreeTracker.camera.CameraPreview;
+import org.greenstand.android.TreeTracker.utilities.TreeImage;
 import org.greenstand.android.TreeTracker.utilities.Utils;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 
@@ -201,19 +202,11 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	}
 	
 
-	private File createImageFile() throws IOException {
-		// Create an image file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		String imageFileName = ValueHelper.JPEG_FILE_PREFIX + timeStamp + "_";
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directory = cw.getDir("treeImages", Context.MODE_PRIVATE);
-		File imageF = File.createTempFile(imageFileName,ValueHelper.JPEG_FILE_SUFFIX, directory); // NOTE: createTempFile is just a shortcut for a unique name
 
-		return imageF;
-	}
 	
 	private File setUpPhotoFile() throws IOException {
-		File f = createImageFile();
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File f = TreeImage.createImageFile(cw);
 		mCurrentPhotoPath = f.getAbsolutePath();
 
 		return f;
