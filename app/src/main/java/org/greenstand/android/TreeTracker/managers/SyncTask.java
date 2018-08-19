@@ -172,11 +172,6 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
                     }
                 }
 
-                try {
-                    this.mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             } else {
                 return "Failed.";
             }
