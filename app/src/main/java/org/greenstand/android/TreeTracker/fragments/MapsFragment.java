@@ -415,7 +415,7 @@ public class MapsFragment extends Fragment
             //Timber.d("treePhotoId " + Long.toString(treePhotoId));
         }
 
-        Toast.makeText(getActivity(), "Lots of trees added", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Lots of trees added", Toast.LENGTH_LONG).show();
 
         return true;
     }
