@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.Environment;
@@ -145,7 +146,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 			String lat = photoCursor.getString(photoCursor.getColumnIndex("lat"));
 			String lon = photoCursor.getString(photoCursor.getColumnIndex("long"));
 			
-			MainActivity.mCurrentTreeLocation = new Location("treetracker");
+			MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
 			
 			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(lat));
 			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(lon));

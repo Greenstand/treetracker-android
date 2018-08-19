@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -220,7 +221,7 @@ public class UpdateTreeFragment extends Fragment implements OnClickListener, Act
 				noImage.setVisibility(View.VISIBLE);
 			}
 			
-			MainActivity.mCurrentTreeLocation = new Location("treetracker");
+			MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
 			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
 			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
 			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
@@ -310,7 +311,7 @@ public class UpdateTreeFragment extends Fragment implements OnClickListener, Act
 					treeIdStr = photoCursor.getString(photoCursor.getColumnIndex("the_tree_id"));
 					
 					
-					MainActivity.mCurrentTreeLocation = new Location("treetracker");
+					MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
 					MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
 					MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
 					MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
@@ -385,7 +386,7 @@ public class UpdateTreeFragment extends Fragment implements OnClickListener, Act
 					
 					treeIdStr = photoCursor.getString(photoCursor.getColumnIndex("the_tree_id"));
 					
-					MainActivity.mCurrentTreeLocation = new Location("treetracker");
+					MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
 					MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
 					MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
 					MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));

@@ -48,7 +48,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MapsFragment extends Fragment implements OnClickListener, OnMarkerClickListener, OnMapReadyCallback {
+import timber.log.BuildConfig;
+
+public class MapsFragment extends Fragment
+        implements OnClickListener, OnMarkerClickListener, OnMapReadyCallback, View.OnLongClickListener {
     private static final String TAG = "MapsFragment";
 
     public interface LocationDialogListener {
@@ -204,6 +207,9 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(this);
+        if(BuildConfig.BUILD_TYPE == "dev"){
+            fab.setOnLongClickListener(this);
+        }
 
 		((SupportMapFragment) getChildFragmentManager()
 				.findFragmentById(R.id.map)).getMapAsync(this);
@@ -344,7 +350,14 @@ public class MapsFragment extends Fragment implements OnClickListener, OnMarkerC
 
 	}
 
-	public boolean onMarkerClick(Marker marker) {
+    @Override
+    public boolean onLongClick(View view) {
+	    // programmatically add 500 trees, for analysis only
+
+        return true;
+    }
+
+    public boolean onMarkerClick(Marker marker) {
 		fragment = new TreePreviewFragment();
 		bundle = getActivity().getIntent().getExtras();
 

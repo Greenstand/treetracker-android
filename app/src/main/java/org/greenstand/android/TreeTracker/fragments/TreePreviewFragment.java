@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -112,7 +113,7 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 				noImage.setVisibility(View.VISIBLE);
 			}
 			
-			MainActivity.mCurrentTreeLocation = new Location("treetracker");
+			MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
 			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
 			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
 

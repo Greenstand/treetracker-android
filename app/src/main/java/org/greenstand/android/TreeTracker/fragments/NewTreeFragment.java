@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -58,7 +60,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	private long userId;
 	private SharedPreferences mSharedPreferences;
     private Uri mPhotoUri;
-    private ContentValues contentValues;
 
     public NewTreeFragment() {
 		// some overrides and settings go here
@@ -143,13 +144,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
             return;
         }
 
-        contentValues = new ContentValues();
-        contentValues.put("accuracy",
-                Float.toString(MainActivity.mCurrentLocation.getAccuracy()));
-        contentValues.put("lat",
-                Double.toString(MainActivity.mCurrentLocation.getLatitude()));
-        contentValues.put("long",
-                Double.toString(MainActivity.mCurrentLocation.getLongitude()));
 
     }
 
@@ -207,7 +201,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			if (mCurrentPhotoPath != null) {
                 ((RelativeLayout) getActivity().findViewById(R.id.fragment_new_tree)).setVisibility(View.VISIBLE);
 
-                MainActivity.mCurrentTreeLocation = new Location("treetracker");
+                MainActivity.mCurrentTreeLocation = new Location(LocationManager.GPS_PROVIDER);
                 if (MainActivity.mCurrentLocation != null) {
                     MainActivity.mCurrentTreeLocation.setLatitude(MainActivity.mCurrentLocation.getLatitude());
                     MainActivity.mCurrentTreeLocation.setLongitude(MainActivity.mCurrentLocation.getLongitude());
@@ -231,20 +225,26 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		SQLiteDatabase dbw = MainActivity.dbHelper.getWritableDatabase();
 
 
-		// location
-		contentValues.put("user_id", userId);
-
 		if (MainActivity.mCurrentLocation == null) {
 			Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
 		} else {
-			contentValues.put("user_id", userId);
 
-			long locationId = dbw.insert("location", null, contentValues);
+            ContentValues locationContentValues = new ContentValues();
+            locationContentValues.put("accuracy",
+                    Float.toString(MainActivity.mCurrentLocation.getAccuracy()));
+            locationContentValues.put("lat",
+                    Double.toString(MainActivity.mCurrentLocation.getLatitude()));
+            locationContentValues.put("long",
+                    Double.toString(MainActivity.mCurrentLocation.getLongitude()));
+            locationContentValues.put("user_id", userId);
+
+			long locationId = dbw.insert("location", null, locationContentValues);
 
 			Log.d("locationId", Long.toString(locationId));
 
 			long photoId = -1;
+
             // photo
             contentValues = new ContentValues();
             contentValues.put("user_id", userId);
@@ -264,7 +264,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 					"0" : newTreetimeToNextUpdate.getText().toString());
 
 			// settings
-			contentValues = new ContentValues();
+            contentValues = new ContentValues();
 			contentValues.put("time_to_next_update", timeToNextUpdate);
 			contentValues.put("min_accuracy", minAccuracy);
 
@@ -321,6 +321,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			contentValues = new ContentValues();
 			contentValues.put("tree_id", treeId);
 			contentValues.put("note_id", noteId);
+			// TODO: note text itself not being saved ??
 
 			long treeNoteId = dbw.insert("tree_note", null, contentValues);
 			Log.d("treeNoteId", Long.toString(treeNoteId));
