@@ -171,23 +171,23 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         Cursor treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS total FROM tree", null);
         treeCursor.moveToFirst();
         totalTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("total")));
-        Log.i("total", treeCursor.getString(treeCursor.getColumnIndex("total")));
+        Timber.d("total " +treeCursor.getString(treeCursor.getColumnIndex("total")));
 
         treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS updated FROM tree WHERE is_synced = 'Y' AND time_for_update < DATE('NOW')", null);
         treeCursor.moveToFirst();
         updateTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("updated")));
-        Log.i("updated", treeCursor.getString(treeCursor.getColumnIndex("updated")));
+        Timber.d("updated " + treeCursor.getString(treeCursor.getColumnIndex("updated")));
 
         treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y' AND time_for_update >= DATE('NOW')", null);
         treeCursor.moveToFirst();
         locatedTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("located")));
-        Log.i("located", treeCursor.getString(treeCursor.getColumnIndex("located")));
+        Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")));
 
 
         treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null);
         treeCursor.moveToFirst();
         tosyncTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("tosync")));
-        Log.i("to sync", treeCursor.getString(treeCursor.getColumnIndex("tosync")));
+        Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")));
 
         mDatabaseManager.closeDatabase();
     }
@@ -222,7 +222,7 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
             if (storageDir != null) {
                 if (!storageDir.mkdirs()) {
                     if (!storageDir.exists()) {
-                        Log.d("CameraSample", "failed to create directory");
+                        Timber.d("CameraSample", "failed to create directory");
                         return null;
                     }
                 }
@@ -388,7 +388,7 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
             }
             FragmentManager fm = getActivity().getSupportFragmentManager();
             for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                Log.d("CheckFragmentBackStack", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                Timber.d("CheckFragmentBackStack", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
             }
             if (fm.getBackStackEntryCount() > 1) {
                 fm.popBackStack();

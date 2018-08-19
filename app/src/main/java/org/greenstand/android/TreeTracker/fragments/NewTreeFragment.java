@@ -52,6 +52,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import timber.log.Timber;
+
 public class NewTreeFragment extends Fragment implements OnClickListener, TextWatcher, ActivityCompat.OnRequestPermissionsResultCallback {
 
 	private static final String TAG = "NewTreeFragment";
@@ -214,7 +216,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
     }
 
 		else if (resultCode == Activity.RESULT_CANCELED) {
-			Log.d(TAG, "Photo was cancelled");
+			Timber.d("Photo was cancelled");
 			if (((RelativeLayout)getActivity().findViewById(R.id.fragment_new_tree)).getVisibility() != View.VISIBLE) {
 				getActivity().getSupportFragmentManager().popBackStack();
 			}
@@ -240,7 +242,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 
 			long locationId = dbw.insert("location", null, locationContentValues);
 
-			Log.d("locationId", Long.toString(locationId));
+			Timber.d("locationId " + Long.toString(locationId));
 
 			long photoId = -1;
 
@@ -251,7 +253,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			photoContentValues.put("name", mCurrentPhotoPath);
 
             photoId = dbw.insert("photo", null, photoContentValues);
-            Log.d("photoId", Long.toString(photoId));
+            Timber.d("photoId " + Long.toString(photoId));
 
 
 			int minAccuracy = mSharedPreferences.getInt(
@@ -268,7 +270,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			settingsContentValues.put("min_accuracy", minAccuracy);
 
 			long settingsId = dbw.insert("settings", null, settingsContentValues);
-			Log.d("settingsId", Long.toString(settingsId));
+			Timber.d("settingsId", Long.toString(settingsId));
 
 
 			// note
@@ -278,7 +280,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			noteContentValues.put("content", content);
 
 			long noteId = dbw.insert("note", null, noteContentValues);
-			Log.d("noteId", Long.toString(noteId));
+			Timber.d("noteId " + Long.toString(noteId));
 
 
 			// tree
@@ -300,14 +302,14 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			treeContentValues.put("time_for_update", dateFormat.format(date));
 
 			long treeId = dbw.insert("tree", null, treeContentValues);
-			Log.d("treeId", Long.toString(treeId));
+			Timber.d("treeId", Long.toString(treeId));
 
             // tree_photo
             ContentValues treePhotoContentValues = new ContentValues();
 			treePhotoContentValues.put("tree_id", treeId);
 			treePhotoContentValues.put("photo_id", photoId);
             long treePhotoId = dbw.insert("tree_photo", null, treePhotoContentValues);
-            Log.d("treePhotoId", Long.toString(treePhotoId));
+            Timber.d("treePhotoId " + Long.toString(treePhotoId));
 
 
 			// tree_note
@@ -315,7 +317,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			treeNoteContentValues.put("tree_id", treeId);
 			treeNoteContentValues.put("note_id", noteId);
 			long treeNoteId = dbw.insert("tree_note", null, treeNoteContentValues);
-			Log.d("treeNoteId", Long.toString(treeNoteId));
+			Timber.d("treeNoteId " + Long.toString(treeNoteId));
 		}
 
 		dbw.close();
@@ -383,7 +385,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
 			rotationAngle = 270;
 
-		Log.d("rotationAngle", Integer.toString(rotationAngle));
+		Timber.d("rotationAngle " + Integer.toString(rotationAngle));
 
 		Matrix matrix = new Matrix();
 		matrix.setRotate(rotationAngle, (float) bitmap.getWidth() / 2,

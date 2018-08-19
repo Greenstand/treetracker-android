@@ -85,7 +85,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
             c = Camera.open(); // attempt to get a Camera instance
         }
         catch (Exception e){
-            Log.i("in use", e.getLocalizedMessage());
+            Timber.d("in use" + e.getLocalizedMessage());
         }
         return c; // returns null if camera is unavailable
     }
@@ -169,7 +169,7 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
 	    // Create the storage directory if it does not exist
 	    if (! mediaStorageDir.exists()){
 	        if (! mediaStorageDir.mkdirs()){
-	            Log.d("MyCameraApp", "failed to create directory");
+	            Timber.d("MyCameraApp", "failed to create directory");
 	            return null;
 	       	}
 	    }
@@ -315,13 +315,13 @@ public class CameraActivity extends Activity implements PictureCallback, OnClick
             fos.close();
             compressImage();
         } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
+            Timber.d(TAG, "File not found: " + e.getMessage());
             saved = false;
         } catch (IOException e) {
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            Timber.d(TAG, "Error accessing file: " + e.getMessage());
             saved = false;
         } catch (Exception e) {
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            Timber.d(TAG, "Error accessing file: " + e.getMessage());
             saved = false;
         }
 

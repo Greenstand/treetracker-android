@@ -51,6 +51,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import timber.log.Timber;
+
 public class MapsFragment extends Fragment
         implements OnClickListener, OnMarkerClickListener, OnMapReadyCallback, View.OnLongClickListener {
     private static final String TAG = "MapsFragment";
@@ -99,19 +101,16 @@ public class MapsFragment extends Fragment
 		super.onPause();
 
 		paused = true;
-		Log.d("GPS_Bugs", "MasFragment onPause");
 	}
 
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
-		Log.d("GPS_Bugs", "MasFragment on Destroy");
-	}
+        super.onDestroy();
+    }
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.d("GPS_Bugs", "MasFragment onResume");
 		if (paused) {
 			((SupportMapFragment) getChildFragmentManager()
 					.findFragmentById(R.id.map)).getMapAsync(this);
@@ -200,7 +199,7 @@ public class MapsFragment extends Fragment
 				"org.greenstand.android", Context.MODE_PRIVATE);
 
         if (!((AppCompatActivity) getActivity()).getSupportActionBar().isShowing()) {
-            Log.d("MainActivity", "toolbar hide");
+            Timber.d("MainActivity", "toolbar hide");
             ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         }
 		((TextView) getActivity().findViewById(R.id.toolbar_title)).setText(R.string.map);
@@ -241,7 +240,6 @@ public class MapsFragment extends Fragment
 					}
 				}
 			} else {
-				Log.i("ođe", "5");
 				if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
 						ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 					requestPermissions(
@@ -289,7 +287,7 @@ public class MapsFragment extends Fragment
 		Cursor photoCursor;
 		switch (v.getId()) {
             case R.id.fab:
-            	Log.d(TAG, "fab click");
+            	Timber.d(TAG, "fab click");
                 if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY.equals("off")) {
 					fragment = new NewTreeFragment();
 					bundle = getActivity().getIntent().getExtras();
@@ -435,14 +433,14 @@ public class MapsFragment extends Fragment
 
 			do {
 
-				Log.i("tree id", String.valueOf(treeCursor.getLong(treeCursor.getColumnIndex("_id"))));
+				Timber.d("tree id " + String.valueOf(treeCursor.getLong(treeCursor.getColumnIndex("_id"))));
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
 				Boolean isSynced = Boolean.parseBoolean(treeCursor.getString(treeCursor.getColumnIndex("is_synced")));
 
-				Log.i("issynced", Boolean.toString(isSynced));
+				Timber.d("issynced " + Boolean.toString(isSynced));
 
 				Date dateForUpdate = new Date();
 				try {

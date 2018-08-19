@@ -33,6 +33,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import timber.log.Timber;
+
 public class TreePreviewFragment extends Fragment implements OnClickListener {
 	
 	private ImageView mImageView;
@@ -277,7 +279,7 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 			if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
 				rotationAngle = 270;
 
-			Log.d("rotationAngle", Integer.toString(rotationAngle));
+			Timber.d("rotationAngle " + Integer.toString(rotationAngle));
 
 			Matrix matrix = new Matrix();
 			matrix.setRotate(rotationAngle, (float) bitmap.getWidth() / 2,

@@ -55,6 +55,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         MapsFragment.LocationDialogListener {
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             if (startDataSync) {
-                Log.d("MainActivity", "startDataSync is true");
+                Timber.d("MainActivity", "startDataSync is true");
                 NotificationManager mNotificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager.cancel(ValueHelper.WIFI_NOTIFICATION_ID);
@@ -179,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements
                 fragmentTransaction.commit();
 
             } else if (mSharedPreferences.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
-                Log.d("MainActivity", "TREES_TO_BE_DOWNLOADED_FIRST is true");
+                Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true");
                 Bundle bundle = getIntent().getExtras();
 
                 fragment = new MapsFragment();
@@ -203,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements
                 fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
 
             } else {
-                Log.d("MainActivity", "startDataSync is false");
+                Timber.d("MainActivity", "startDataSync is false");
                 MapsFragment homeFragment = new MapsFragment();
                 homeFragment.setArguments(getIntent().getExtras());
 
@@ -221,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        Log.d("MainActivity", "menu_main created");
         return true;
     }
 
@@ -231,12 +232,7 @@ public class MainActivity extends AppCompatActivity implements
         FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
             case android.R.id.home:
-                Log.d("MainActivity", "press back button");
 
-                Log.d("MainActivity", "click back, back stack count: " + fm.getBackStackEntryCount());
-                for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
-                }
                 if (fm.getBackStackEntryCount() > 0) {
                     fm.popBackStack();
                 }
@@ -249,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
                 for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                    Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
                 return true;
             /*
@@ -261,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.SETTINGS_FRAGMENT).commit();
                 for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                    Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
                 return true;
                 */
@@ -285,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements
                     fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.ABOUT_FRAGMENT).commit();
                 }
                 for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                    Log.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                    Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
                 }
                 return true;
         }
@@ -307,7 +303,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -317,7 +312,6 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onRestart() {
-        Log.i(TAG, "onRestart");
         super.onRestart();
     }
 
@@ -327,7 +321,6 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onStop() {
-        Log.i(TAG, "onStop");
         super.onStop();
     }
 
@@ -344,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onPause() {
-        Log.d(TAG, "onPause");
+        Timber.d(TAG, "onPause");
         super.onPause();
 
         stopPeriodicUpdates();
@@ -355,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onStart() {
-        Log.d(TAG, "onStart");
+        Timber.d(TAG, "onStart");
         super.onStart();
     }
 
@@ -364,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume");
+        Timber.d(TAG, "onResume");
         super.onResume();
 
         if (Build.VERSION.SDK_INT >= 23 &&
@@ -456,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     public void onLocationChanged(Location location) {
-        //Log.d("onLocationChanged", location.toString());
+        //Timber.d("onLocationChanged", location.toString());
 
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location;
@@ -631,8 +624,8 @@ public class MainActivity extends AppCompatActivity implements
      * We are not currently syncing trees, instead the app is for providing trees to the server and that's it
      */
     public void onTreeSyncResult(boolean result, int httpResponseCode, String responseBody) {
-        Log.i("MainActivity", "onTreeSyncedResult(" + result + ")");
-        Log.i("MainActivity", "httpResponseCode(" + Integer.toString(httpResponseCode) + ")");
+        //Log.i("MainActivity", "onTreeSyncedResult(" + result + ")");
+        //Log.i("MainActivity", "httpResponseCode(" + Integer.toString(httpResponseCode) + ")");
         // Hide the progress dialog
 
         if (result) {
@@ -750,7 +743,7 @@ public class MainActivity extends AppCompatActivity implements
                 mDatabaseManager.closeDatabase();
 
                 if (data.size() > 0) {
-                    Log.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0");
+                    Timber.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0");
 
                     Bundle bundle = getIntent().getExtras();
 
@@ -765,10 +758,7 @@ public class MainActivity extends AppCompatActivity implements
                     fragmentTransaction = getSupportFragmentManager()
                             .beginTransaction();
                     fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit();
-                    Log.d("MainActivity", "click back, back stack count: " + getSupportFragmentManager().getBackStackEntryCount());
-                    for (int entry = 0; entry < getSupportFragmentManager().getBackStackEntryCount(); entry++) {
-                        Log.d("MainActivity", "Found fragment: " + getSupportFragmentManager().getBackStackEntryAt(entry).getName());
-                    }
+
                 }
             }
 
@@ -777,7 +767,7 @@ public class MainActivity extends AppCompatActivity implements
                 Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         };
-        Log.d("MainActivity", "getMyTrees");
+        Timber.d("getMyTrees");
         mDataManager.loadUserTrees();
     }
 

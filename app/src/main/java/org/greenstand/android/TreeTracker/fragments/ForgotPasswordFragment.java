@@ -44,6 +44,7 @@ import java.net.ConnectException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ForgotPasswordFragment extends Fragment implements OnClickListener {
 
@@ -150,7 +151,7 @@ public class ForgotPasswordFragment extends Fragment implements OnClickListener 
 					public void onFailure(Call<Void> call, Throwable t) {
                         progressDialog.hide();
                         Toast.makeText(getActivity(), "Password Reset Failed", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, t.toString());
+                        Timber.d(t.toString());
 
 					}
 				});

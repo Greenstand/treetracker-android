@@ -107,10 +107,8 @@ public class SettingsFragment extends Fragment implements OnClickListener, OnChe
 	    	gpsAcc.setText(Integer.toString(accServer)  + " " + getActivity().getResources().getString(R.string.meters));
 	    	
 	    	nextUpdate.setEnabled(false);
-	    	Log.i("radio group", "treetracker");
 	    } else {
 	    	LinearLayout manualSettings = (LinearLayout) v.findViewById(R.id.fragment_settings_manual_settings);
-	    	Log.i("radio group", "manual");
 	    	whichSettings.check(R.id.fragment_settings_manual);
 	    	manualSettings.setVisibility(View.VISIBLE);
 	    	nextUpdate.setEnabled(true);
@@ -128,7 +126,6 @@ public class SettingsFragment extends Fragment implements OnClickListener, OnChe
 				
 				if (Integer.parseInt(rb.getText().toString()) == 
 						mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING) ) {
-					Log.i("rb text", rb.getText().toString());
 					manualRadioSettings.check(rb.getId());
 					break;
 				}

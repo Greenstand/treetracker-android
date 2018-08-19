@@ -56,6 +56,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import timber.log.Timber;
+
 public class NoteFragment extends Fragment implements OnClickListener, OnCheckedChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
 	private ImageView mImageView;
@@ -262,7 +264,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 			if (storageDir != null) {
 				if (!storageDir.mkdirs()) {
 					if (!storageDir.exists()) {
-						Log.d("CameraSample", "failed to create directory");
+						Timber.d("CameraSample", "failed to create directory");
 						return null;
 					}
 				}
@@ -332,7 +334,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 
 		long locationId = dbw.insert("location", null, contentValues);
 
-		Log.d("locationId", Long.toString(locationId));
+		Timber.d("locationId " + Long.toString(locationId));
 
 		// note
 		String content = ((EditText) getActivity().findViewById(R.id.fragment_note_note)).getText().toString();
@@ -341,7 +343,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 		contentValues.put("content", content);
 		
 		long noteId = dbw.insert("note", null, contentValues);
-		Log.d("noteId", Long.toString(noteId));
+		Timber.d("noteId " + Long.toString(noteId));
 		
 
 		// tree
@@ -370,7 +372,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 	    calendar.add(Calendar.DAY_OF_MONTH, timeToNextUpdate);
 	    date = (Date) calendar.getTime();
 	    
-	    Log.i("date", date.toString());
+	    Timber.d("date " + date.toString());
 		
 		contentValues.put("time_for_update", dateFormat.format(date));
 		contentValues.put("time_updated", dateFormat.format(new Date()));
@@ -383,7 +385,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 		contentValues.put("note_id", noteId);
 
 		long treeNoteId = dbw.insert("tree_note", null, contentValues);
-		Log.d("treeNoteId", Long.toString(treeNoteId));
+		Timber.d("treeNoteId", Long.toString(treeNoteId));
 
 
 
@@ -452,7 +454,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 		if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
 			rotationAngle = 270;
 
-		Log.d("rotationAngle", Integer.toString(rotationAngle));
+		Timber.d("rotationAngle", Integer.toString(rotationAngle));
 
 		Matrix matrix = new Matrix();
 		matrix.setRotate(rotationAngle, (float) bitmap.getWidth() / 2,

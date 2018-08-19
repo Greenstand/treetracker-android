@@ -123,7 +123,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
                     Log.e("SyncTask", "Error Message: " + ace.getMessage());
                     return "Failed.";
                 }
-                Log.d("SyncTask", "imageUrl: " + imageUrl);
+                Timber.d("SyncTask", "imageUrl: " + imageUrl);
                 newTree.setImageUrl(imageUrl); // method name should be changed as use new infrastructure.
             }
             /*

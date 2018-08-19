@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import timber.log.Timber;
+
 /** A basic Camera preview class */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
@@ -44,7 +46,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setDisplayOrientation(90);
             mCamera.startPreview();
         } catch (IOException e) {
-            Log.d(TAG , "Error setting camera preview: " + e.getMessage());
+            Timber.d(TAG , "Error setting camera preview: " + e.getMessage());
         }
     }
 
@@ -77,7 +79,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
 
         } catch (Exception e){
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Timber.d("Error starting camera preview: " + e.getMessage());
         }
     }
 }

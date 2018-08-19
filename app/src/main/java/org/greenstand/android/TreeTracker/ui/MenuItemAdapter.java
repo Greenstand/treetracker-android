@@ -13,7 +13,7 @@ import android.widget.Filter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
+import timber.log.Timber;
 
 
 public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
@@ -65,7 +65,7 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
 			protected void publishResults(CharSequence constraint, FilterResults results) {
 				objects = (ArrayList<MenuItem>) results.values;
 	            notifyDataSetChanged();
-				Log.d("objects count", Integer.toString(objects.size()));	            
+				Timber.d("objects count" + Integer.toString(objects.size()));
 			}
 			
 			@Override
