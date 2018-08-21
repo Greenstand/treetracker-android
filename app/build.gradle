@@ -10,6 +10,7 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 apply plugin: 'com.github.triplet.play'
 
@@ -94,6 +95,7 @@ repositories {
         url "https://maven.google.com"
     }
     maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
 }
 
 dependencies {
@@ -114,6 +116,7 @@ dependencies {
         transitive = true;
     }
     api 'com.google.firebase:firebase-core:11.8.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 play {

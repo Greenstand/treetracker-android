@@ -67,7 +67,7 @@ public class ExitFragment extends Fragment implements OnClickListener {
 		switch (v.getId()) {
 			case R.id.fragment_exit_yes:
 
-				MainActivity.syncDataFromExitScreen = true;
+				MainActivity.Companion.setSyncDataFromExitScreen(true);
 				
 				fragment = new DataFragment();
 				bundle = getActivity().getIntent().getExtras();

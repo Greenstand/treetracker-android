@@ -147,16 +147,16 @@ public class LoginFragment extends Fragment implements OnClickListener {
 					authRequest.setClientId(txtEmail);
 					authRequest.setClientSecret(txtPass);
 
-					MainActivity.progressDialog = new ProgressDialog(getActivity());
-					MainActivity.progressDialog.setCancelable(false);
-					MainActivity.progressDialog.setMessage(getActivity().getString(R.string.log_in_in_progress));
-					MainActivity.progressDialog.show();
+					MainActivity.Companion.setProgressDialog(new ProgressDialog(getActivity()));
+					MainActivity.Companion.getProgressDialog().setCancelable(false);
+					MainActivity.Companion.getProgressDialog().setMessage(getActivity().getString(R.string.log_in_in_progress));
+					MainActivity.Companion.getProgressDialog().show();
 
                     Call<TokenResponse> signIn = Api.instance().getApi().signIn(authRequest);
 					signIn.enqueue(new Callback<TokenResponse>() {
                         @Override
                         public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
-                            MainActivity.progressDialog.dismiss();
+                            MainActivity.Companion.getProgressDialog().dismiss();
 
                             if (response.isSuccessful()) {
                                 SharedPreferences mSharedPreferences = getActivity().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE);
@@ -181,7 +181,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 
                         @Override
                         public void onFailure(Call<TokenResponse> call, Throwable t) {
-                            MainActivity.progressDialog.dismiss();
+                            MainActivity.Companion.getProgressDialog().dismiss();
 
 
 

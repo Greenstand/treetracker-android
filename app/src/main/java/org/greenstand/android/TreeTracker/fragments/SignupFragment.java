@@ -215,10 +215,10 @@ public class SignupFragment extends Fragment implements OnClickListener {
 					registerRequest.setPhone(txtPhone);
 
 
-                    MainActivity.progressDialog = new ProgressDialog(getActivity());
-                    MainActivity.progressDialog.setCancelable(false);
-                    MainActivity.progressDialog.setMessage(getActivity().getString(R.string.sign_up_in_progress));
-                    MainActivity.progressDialog.show();
+                    MainActivity.Companion.setProgressDialog(new ProgressDialog(getActivity()));
+                    MainActivity.Companion.getProgressDialog().setCancelable(false);
+                    MainActivity.Companion.getProgressDialog().setMessage(getActivity().getString(R.string.sign_up_in_progress));
+                    MainActivity.Companion.getProgressDialog().show();
 
                     final String finalFirstName = txtFirstName;
                     final String finalLastName = txtLastName;
@@ -227,7 +227,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
                     register.enqueue(new Callback<TokenResponse>() {
                         @Override
                         public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
-                            MainActivity.progressDialog.cancel();
+                            MainActivity.Companion.getProgressDialog().cancel();
 
                             if (response.isSuccessful()) {
 
@@ -241,7 +241,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
 
                         @Override
                         public void onFailure(Call<TokenResponse> call, Throwable t) {
-                            MainActivity.progressDialog.cancel();
+                            MainActivity.Companion.getProgressDialog().cancel();
                             Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
                             Timber.tag(TAG).e(t.getMessage());
                         }

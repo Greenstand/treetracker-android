@@ -110,8 +110,8 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		newTreeDistance.setText(Integer.toString(0) + " " + getResources().getString(R.string.meters));
 
 		TextView newTreeGpsAccuracy = (TextView)v.findViewById(R.id.fragment_new_tree_gps_accuracy);
-		if (MainActivity.mCurrentLocation != null) {
-			newTreeGpsAccuracy.setText(Integer.toString(Math.round(MainActivity.mCurrentLocation.getAccuracy())) + " " + getResources().getString(R.string.meters));
+		if (MainActivity.Companion.getMCurrentLocation() != null) {
+			newTreeGpsAccuracy.setText(Integer.toString(Math.round(MainActivity.Companion.getMCurrentLocation().getAccuracy())) + " " + getResources().getString(R.string.meters));
 		} else {
 			newTreeGpsAccuracy.setText("0 " + getResources().getString(R.string.meters));
 		}
@@ -140,7 +140,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
     public void onStart() {
         super.onStart();
 
-        if (MainActivity.mCurrentLocation == null) {
+        if (MainActivity.Companion.getMCurrentLocation() == null) {
             Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
             getActivity().getSupportFragmentManager().popBackStack();
             return;
@@ -203,10 +203,10 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			if (mCurrentPhotoPath != null) {
                 ((RelativeLayout) getActivity().findViewById(R.id.fragment_new_tree)).setVisibility(View.VISIBLE);
 
-                MainActivity.mCurrentTreeLocation = new Location(""); // Just a blank location
-                if (MainActivity.mCurrentLocation != null) {
-                    MainActivity.mCurrentTreeLocation.setLatitude(MainActivity.mCurrentLocation.getLatitude());
-                    MainActivity.mCurrentTreeLocation.setLongitude(MainActivity.mCurrentLocation.getLongitude());
+                MainActivity.Companion.setMCurrentTreeLocation(new Location("")); // Just a blank location
+                if (MainActivity.Companion.getMCurrentLocation() != null) {
+                    MainActivity.Companion.getMCurrentTreeLocation().setLatitude(MainActivity.Companion.getMCurrentLocation().getLatitude());
+                    MainActivity.Companion.getMCurrentTreeLocation().setLongitude(MainActivity.Companion.getMCurrentLocation().getLongitude());
                 }
 
                 setPic();
@@ -224,20 +224,20 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	}
 
 	private void saveToDb() {
-		SQLiteDatabase dbw = MainActivity.dbHelper.getWritableDatabase();
+		SQLiteDatabase dbw = MainActivity.Companion.getDbHelper().getWritableDatabase();
 
-		if (MainActivity.mCurrentLocation == null) {
+		if (MainActivity.Companion.getMCurrentLocation() == null) {
 			Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
 			getActivity().getSupportFragmentManager().popBackStack();
 		} else {
 
             ContentValues locationContentValues = new ContentValues();
             locationContentValues.put("accuracy",
-                    Float.toString(MainActivity.mCurrentLocation.getAccuracy()));
+                    Float.toString(MainActivity.Companion.getMCurrentLocation().getAccuracy()));
             locationContentValues.put("lat",
-                    Double.toString(MainActivity.mCurrentLocation.getLatitude()));
+                    Double.toString(MainActivity.Companion.getMCurrentLocation().getLatitude()));
             locationContentValues.put("long",
-                    Double.toString(MainActivity.mCurrentLocation.getLongitude()));
+                    Double.toString(MainActivity.Companion.getMCurrentLocation().getLongitude()));
             locationContentValues.put("user_id", userId);
 
 			long locationId = dbw.insert("location", null, locationContentValues);

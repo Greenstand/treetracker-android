@@ -84,7 +84,7 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 	    ((Button) v.findViewById(R.id.fragment_tree_preview_more)).setOnClickListener(TreePreviewFragment.this);
 	    
 	    
-		SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();
+		SQLiteDatabase db = MainActivity.Companion.getDbHelper().getReadableDatabase();
 		String query = "select * from tree " +
 				"left outer join location on location._id = tree.location_id " +
 				"left outer join tree_photo on tree._id = tree_id " +
@@ -115,24 +115,24 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 				noImage.setVisibility(View.VISIBLE);
 			}
 			
-			MainActivity.mCurrentTreeLocation = new Location("");
-			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
-			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
+			MainActivity.Companion.setMCurrentTreeLocation(new Location(""));
+			MainActivity.Companion.getMCurrentTreeLocation().setLatitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat"))));
+			MainActivity.Companion.getMCurrentTreeLocation().setLongitude(Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long"))));
 
 			// No GPS accuracy info from new api.
 //			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
 			
 			float[] results = {0,0,0};
-			if (MainActivity.mCurrentLocation != null) {
-				Location.distanceBetween(MainActivity.mCurrentLocation.getLatitude(), MainActivity.mCurrentLocation.getLongitude(),
-						MainActivity.mCurrentTreeLocation.getLatitude(), MainActivity.mCurrentTreeLocation.getLongitude(), results);
+			if (MainActivity.Companion.getMCurrentLocation() != null) {
+				Location.distanceBetween(MainActivity.Companion.getMCurrentLocation().getLatitude(), MainActivity.Companion.getMCurrentLocation().getLongitude(),
+						MainActivity.Companion.getMCurrentTreeLocation().getLatitude(), MainActivity.Companion.getMCurrentTreeLocation().getLongitude(), results);
 			}
 			
 			TextView distanceTxt = (TextView) v.findViewById(R.id.fragment_tree_preview_distance);
 			distanceTxt.setText(Integer.toString(Math.round(results[0])) + " " + getResources().getString(R.string.meters));
 			
 			TextView accuracyTxt = (TextView) v.findViewById(R.id.fragment_tree_preview_gps_accuracy);
-			accuracyTxt.setText(Integer.toString(Math.round(MainActivity.mCurrentTreeLocation.getAccuracy())) + " " + getResources().getString(R.string.meters));
+			accuracyTxt.setText(Integer.toString(Math.round(MainActivity.Companion.getMCurrentTreeLocation().getAccuracy())) + " " + getResources().getString(R.string.meters));
 			
 
 			TextView createdTxt = (TextView) v.findViewById(R.id.fragment_tree_preview_created);

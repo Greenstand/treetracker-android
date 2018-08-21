@@ -123,7 +123,7 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 
 		mImageView = (ImageView) v.findViewById(R.id.fragment_note_image);
 	    
-		SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();
+		SQLiteDatabase db = MainActivity.Companion.getDbHelper().getReadableDatabase();
 		
 		String query = "select * from tree " +
 				"left outer join location on location._id = tree.location_id " +
@@ -148,9 +148,9 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 			String lat = photoCursor.getString(photoCursor.getColumnIndex("lat"));
 			String lon = photoCursor.getString(photoCursor.getColumnIndex("long"));
 			
-			MainActivity.mCurrentTreeLocation = new Location(""); // Empty location
-			MainActivity.mCurrentTreeLocation.setLatitude(Double.parseDouble(lat));
-			MainActivity.mCurrentTreeLocation.setLongitude(Double.parseDouble(lon));
+			MainActivity.Companion.setMCurrentTreeLocation(new Location("")); // Empty location
+			MainActivity.Companion.getMCurrentTreeLocation().setLatitude(Double.parseDouble(lat));
+			MainActivity.Companion.getMCurrentTreeLocation().setLongitude(Double.parseDouble(lon));
 			
 		} while (photoCursor.moveToNext());
 		
@@ -316,21 +316,21 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 	}
 
 	private void saveToDb() {
-		SQLiteDatabase dbw = MainActivity.dbHelper.getWritableDatabase();
+		SQLiteDatabase dbw = MainActivity.Companion.getDbHelper().getWritableDatabase();
 
 		ContentValues contentValues = new ContentValues();
 
 		// location
 		contentValues.put("user_id", userId);
 
-		MainActivity.mCurrentLocation.getAccuracy();
+		MainActivity.Companion.getMCurrentLocation().getAccuracy();
 		contentValues.put("user_id", userId);
 		contentValues.put("accuracy",
-				Float.toString(MainActivity.mCurrentLocation.getAccuracy()));
+				Float.toString(MainActivity.Companion.getMCurrentLocation().getAccuracy()));
 		contentValues.put("lat",
-				Double.toString(MainActivity.mCurrentLocation.getLatitude()));
+				Double.toString(MainActivity.Companion.getMCurrentLocation().getLatitude()));
 		contentValues.put("long",
-				Double.toString(MainActivity.mCurrentLocation.getLongitude()));
+				Double.toString(MainActivity.Companion.getMCurrentLocation().getLongitude()));
 
 		long locationId = dbw.insert("location", null, contentValues);
 

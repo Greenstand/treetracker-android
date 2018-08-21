@@ -48,7 +48,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
     public SyncTask(Context context, SyncTaskListener listener, int userId) {
         this.mContext = context;
         this.callback = listener;
-        this.mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper);
+        this.mDatabaseManager = DatabaseManager.getInstance(MainActivity.Companion.getDbHelper());
         this.userId = userId;
         this.mDataManager = new DataManager<PostResult>() {
             @Override

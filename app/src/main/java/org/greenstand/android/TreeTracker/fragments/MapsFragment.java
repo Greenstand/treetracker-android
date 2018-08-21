@@ -227,19 +227,19 @@ public class MapsFragment extends Fragment
 		int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING);
 
 		if (mapGpsAccuracy != null) {
-			if (MainActivity.mCurrentLocation != null) {
-				if (MainActivity.mCurrentLocation.hasAccuracy() && (MainActivity.mCurrentLocation.getAccuracy() < minAccuracy)) {
+			if (MainActivity.Companion.getMCurrentLocation() != null) {
+				if (MainActivity.Companion.getMCurrentLocation().hasAccuracy() && (MainActivity.Companion.getMCurrentLocation().getAccuracy() < minAccuracy)) {
 					mapGpsAccuracy.setTextColor(Color.GREEN);
 					mapGpsAccuracyValue.setTextColor(Color.GREEN);
-					mapGpsAccuracyValue.setText(Integer.toString(Math.round(MainActivity.mCurrentLocation.getAccuracy())) + " " + getResources().getString(R.string.meters));
-					MainActivity.mAllowNewTreeOrUpdate = true;
+					mapGpsAccuracyValue.setText(Integer.toString(Math.round(MainActivity.Companion.getMCurrentLocation().getAccuracy())) + " " + getResources().getString(R.string.meters));
+					MainActivity.Companion.setMAllowNewTreeOrUpdate(true);
 				} else {
 					mapGpsAccuracy.setTextColor(Color.RED);
-					MainActivity.mAllowNewTreeOrUpdate = false;
+					MainActivity.Companion.setMAllowNewTreeOrUpdate(false);
 
-					if (MainActivity.mCurrentLocation.hasAccuracy()) {
+					if (MainActivity.Companion.getMCurrentLocation().hasAccuracy()) {
 						mapGpsAccuracyValue.setTextColor(Color.RED);
-						mapGpsAccuracyValue.setText(Integer.toString(Math.round(MainActivity.mCurrentLocation.getAccuracy())) + " " + getResources().getString(R.string.meters));
+						mapGpsAccuracyValue.setText(Integer.toString(Math.round(MainActivity.Companion.getMCurrentLocation().getAccuracy())) + " " + getResources().getString(R.string.meters));
 					} else {
 						mapGpsAccuracyValue.setTextColor(Color.RED);
 						mapGpsAccuracyValue.setText("N/A");
@@ -255,7 +255,7 @@ public class MapsFragment extends Fragment
 				mapGpsAccuracy.setTextColor(Color.RED);
 				mapGpsAccuracyValue.setTextColor(Color.RED);
 				mapGpsAccuracyValue.setText("N/A");
-				MainActivity.mAllowNewTreeOrUpdate = false;
+				MainActivity.Companion.setMAllowNewTreeOrUpdate(false);
 			}
 
 		}
@@ -294,7 +294,7 @@ public class MapsFragment extends Fragment
 		switch (v.getId()) {
             case R.id.fab:
             	Timber.d(TAG, "fab click");
-                if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY.equals("off")) {
+                if (MainActivity.Companion.getMAllowNewTreeOrUpdate() || BuildConfig.GPS_ACCURACY.equals("off")) {
 					fragment = new NewTreeFragment();
 					bundle = getActivity().getIntent().getExtras();
 					fragment.setArguments(bundle);
@@ -360,7 +360,7 @@ public class MapsFragment extends Fragment
 
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
-        SQLiteDatabase dbw = MainActivity.dbHelper.getWritableDatabase();
+        SQLiteDatabase dbw = MainActivity.Companion.getDbHelper().getWritableDatabase();
 
         int userId = -1;
 
@@ -368,11 +368,11 @@ public class MapsFragment extends Fragment
 
             ContentValues locationContentValues = new ContentValues();
             locationContentValues.put("accuracy",
-                    Float.toString(MainActivity.mCurrentLocation.getAccuracy()));
+                    Float.toString(MainActivity.Companion.getMCurrentLocation().getAccuracy()));
             locationContentValues.put("lat",
-                    Double.toString(MainActivity.mCurrentLocation.getLatitude() + (Math.random() - .5) / 1000));
+                    Double.toString(MainActivity.Companion.getMCurrentLocation().getLatitude() + (Math.random() - .5) / 1000));
             locationContentValues.put("long",
-                    Double.toString(MainActivity.mCurrentLocation.getLongitude() + (Math.random() - .5) / 1000));
+                    Double.toString(MainActivity.Companion.getMCurrentLocation().getLongitude() + (Math.random() - .5) / 1000));
             locationContentValues.put("user_id", userId);
 
             long locationId = dbw.insert("location", null, locationContentValues);
@@ -453,7 +453,7 @@ public class MapsFragment extends Fragment
 		}
 		map.setMyLocationEnabled(true);
 
-		SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();
+		SQLiteDatabase db = MainActivity.Companion.getDbHelper().getReadableDatabase();
 
 		Cursor treeCursor = db.rawQuery("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null);
 		treeCursor.moveToFirst();
@@ -547,8 +547,8 @@ public class MapsFragment extends Fragment
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
 
 		} else {
-			if (MainActivity.mCurrentLocation != null) {
-				LatLng myLatLng = new LatLng(MainActivity.mCurrentLocation.getLatitude(), MainActivity.mCurrentLocation.getLongitude());
+			if (MainActivity.Companion.getMCurrentLocation() != null) {
+				LatLng myLatLng = new LatLng(MainActivity.Companion.getMCurrentLocation().getLatitude(), MainActivity.Companion.getMCurrentLocation().getLongitude());
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10));
 			}
 		}
