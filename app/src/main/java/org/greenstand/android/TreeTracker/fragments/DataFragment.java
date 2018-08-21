@@ -173,7 +173,7 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         totalTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("total")));
         Timber.d("total " +treeCursor.getString(treeCursor.getColumnIndex("total")));
 
-        treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS updated FROM tree WHERE is_synced = 'Y' AND time_for_update < DATE('NOW')", null);
+        /*treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS updated FROM tree WHERE is_synced = 'Y' AND time_for_update < DATE('NOW')", null);
         treeCursor.moveToFirst();
         updateTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("updated")));
         Timber.d("updated " + treeCursor.getString(treeCursor.getColumnIndex("updated")));
@@ -182,7 +182,12 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         treeCursor.moveToFirst();
         locatedTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("located")));
         Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")));
+        */
 
+        treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null);
+        treeCursor.moveToFirst();
+        locatedTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("located")));
+        Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")));
 
         treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null);
         treeCursor.moveToFirst();
