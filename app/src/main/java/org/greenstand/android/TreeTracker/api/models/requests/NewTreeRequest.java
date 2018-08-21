@@ -17,6 +17,8 @@ public class NewTreeRequest {
     private long timestamp;
     @SerializedName("image_url")
     private String imageUrl;
+    @SerializedName("sequence_id")
+    private long sequenceId;
 
     public int getUserId() {
         return userId;
@@ -72,5 +74,13 @@ public class NewTreeRequest {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public long getSequenceId() {
+        return sequenceId;
+    }
+
+    public void setSequenceId(long sequenceId) {
+        this.sequenceId = sequenceId;
     }
 }

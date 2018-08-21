@@ -95,6 +95,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
 
             NewTreeRequest newTree = new NewTreeRequest();
             newTree.setUserId(userId);
+            newTree.setSequenceId(treeCursor.getLong(treeCursor.getColumnIndex("tree_id")));
             newTree.setLat(treeCursor.getDouble(treeCursor.getColumnIndex("lat")));
             newTree.setLon(treeCursor.getDouble(treeCursor.getColumnIndex("long")));
             newTree.setGpsAccuracy((int) treeCursor.getFloat(treeCursor.getColumnIndex("accuracy")));
