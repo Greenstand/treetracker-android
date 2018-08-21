@@ -740,7 +740,6 @@ public class MainActivity extends AppCompatActivity implements
                     values.put("user_id", Long.toString(userId));
                     mDatabaseManager.insert("pending_updates", null, values);
                 }
-                mDatabaseManager.closeDatabase();
 
                 if (data.size() > 0) {
                     Timber.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0");

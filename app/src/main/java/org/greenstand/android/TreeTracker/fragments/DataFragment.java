@@ -189,7 +189,6 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
         tosyncTrees.setText(treeCursor.getString(treeCursor.getColumnIndex("tosync")));
         Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")));
 
-        mDatabaseManager.closeDatabase();
     }
 
     public void resolvePendingUpdates() {
@@ -203,7 +202,6 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
             new UpdateLocalDb().execute(trees);
         }
 
-        mDatabaseManager.closeDatabase();
     }
 
     private String getAlbumName() {
@@ -367,7 +365,6 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
 //                }
 
                 mDatabaseManager.delete("pending_updates", "tree_id = ?", new String[] { tree.getId() });
-                mDatabaseManager.closeDatabase();
             }
             return null;
         }

@@ -191,12 +191,10 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
     protected void onPostExecute(String message) {
         super.onPostExecute(message);
         callback.onPostExecute(message);
-        mDatabaseManager.closeDatabase();
     }
 
     @Override
     protected void onCancelled(String message) {
         super.onCancelled(message);
-        mDatabaseManager.closeDatabase();
     }
 }

@@ -28,21 +28,13 @@ public class DatabaseManager {
     }
 
     public synchronized SQLiteDatabase openDatabase() {
-        mOpenCounter++;
-        if(mOpenCounter == 1) {
+        if(mDatabase == null) {
             // Opening new database
             mDatabase = mDbHelper.getWritableDatabase();
         }
         return mDatabase;
     }
 
-    public synchronized void closeDatabase() {
-        mOpenCounter--;
-        if(mOpenCounter == 0) {
-            // Closing database
-            mDatabase.close();
-        }
-    }
 
     public Cursor queryCursor(String sql, String[] selectionArgs) {
         return mDatabase.rawQuery(sql, selectionArgs);
