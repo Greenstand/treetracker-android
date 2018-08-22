@@ -380,7 +380,7 @@ public class MapsFragment extends Fragment
             long photoId = -1;
             try {
                 InputStream myInput = getActivity().getAssets().open("testtreeimage.jpg");
-                File f = TreeImage.createImageFile(getActivity());
+                File f = TreeImage.INSTANCE.createImageFile(getActivity());
                 FileOutputStream fos = new FileOutputStream(f);
                 fos.write(IOUtils.toByteArray(myInput));
                 fos.close();
