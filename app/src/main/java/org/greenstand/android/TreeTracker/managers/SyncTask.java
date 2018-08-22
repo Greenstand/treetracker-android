@@ -105,7 +105,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             }
             newTree.setNote(note);
             String timeCreated = treeCursor.getString(treeCursor.getColumnIndex("tree_time_created"));
-            newTree.setTimestamp(Utils.convertDateToTimestamp(timeCreated));
+            newTree.setTimestamp(Utils.Companion.convertDateToTimestamp(timeCreated));
 
             /**
              * Implementation for saving image into DigitalOcean Spaces.

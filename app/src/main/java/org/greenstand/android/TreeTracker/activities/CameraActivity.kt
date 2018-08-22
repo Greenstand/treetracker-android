@@ -139,22 +139,23 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
     private fun compressImage() {
 
-        val photo = Utils.resizedImage(mCurrentPhotoPath)
+        if(mCurrentPhotoPath != null) {
+            val photo = Utils.resizedImage(mCurrentPhotoPath!!)
 
-        val bytes = ByteArrayOutputStream()
-        photo.compress(Bitmap.CompressFormat.JPEG, 70, bytes)
+            val bytes = ByteArrayOutputStream()
+            photo.compress(Bitmap.CompressFormat.JPEG, 70, bytes)
 
-        val f = File(mCurrentPhotoPath!!)
-        try {
-            f.createNewFile()
-            val fo = FileOutputStream(f)
-            fo.write(bytes.toByteArray())
-            fo.close()
-        } catch (e: IOException) {
-            // TODO Auto-generated catch block
-            e.printStackTrace()
+            val f = File(mCurrentPhotoPath!!)
+            try {
+                f.createNewFile()
+                val fo = FileOutputStream(f)
+                fo.write(bytes.toByteArray())
+                fo.close()
+            } catch (e: IOException) {
+                // TODO Auto-generated catch block
+                e.printStackTrace()
+            }
         }
-
     }
 
     override fun onPause() {
