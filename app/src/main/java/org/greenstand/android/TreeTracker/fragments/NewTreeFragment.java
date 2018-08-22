@@ -225,7 +225,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	}
 
 	private void saveToDb() {
-		SQLiteDatabase dbw = DatabaseManager.getInstance(MainActivity.Companion.getDbHelper()).openDatabase();
+		SQLiteDatabase dbw = DatabaseManager.Companion.getInstance(MainActivity.Companion.getDbHelper()).openDatabase();
 
 		if (MainActivity.Companion.getMCurrentLocation() == null) {
 			Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();

@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
 
         dbHelper = DbHelper.getDbHelper(this)
-        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper)
+        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
 
         try {
             dbHelper?.createDataBase()

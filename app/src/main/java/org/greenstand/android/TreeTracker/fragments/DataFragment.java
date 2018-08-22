@@ -61,7 +61,7 @@ public class DataFragment extends Fragment implements View.OnClickListener, Sync
     private AsyncTask<Void, Integer, String> syncTask;
 
     public DataFragment() {
-        mDatabaseManager = DatabaseManager.getInstance(MainActivity.Companion.getDbHelper());
+        mDatabaseManager = DatabaseManager.Companion.getInstance(MainActivity.Companion.getDbHelper());
     }
 
     @Override
