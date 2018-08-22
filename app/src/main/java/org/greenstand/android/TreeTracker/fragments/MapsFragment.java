@@ -250,7 +250,7 @@ public class MapsFragment extends Fragment
 						ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 					requestPermissions(
 							new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-							Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION);
+							Permissions.INSTANCE.getMY_PERMISSION_ACCESS_COURSE_LOCATION());
 				}
 				mapGpsAccuracy.setTextColor(Color.RED);
 				mapGpsAccuracyValue.setTextColor(Color.RED);
@@ -265,7 +265,7 @@ public class MapsFragment extends Fragment
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		if (requestCode == Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION) {
+		if (requestCode == Permissions.INSTANCE.getMY_PERMISSION_ACCESS_COURSE_LOCATION()) {
 			mSettingCallback.refreshMap();
 		}
 	}

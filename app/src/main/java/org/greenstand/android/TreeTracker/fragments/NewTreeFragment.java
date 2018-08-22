@@ -176,7 +176,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 		if ( ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 		    requestPermissions( new String[] {  Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE  },
-					Permissions.MY_PERMISSION_CAMERA);
+					Permissions.INSTANCE.getMY_PERMISSION_CAMERA());
 		} else {
 			Intent takePictureIntent = new Intent(getActivity(), CameraActivity.class);
 			startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA);
@@ -186,7 +186,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == Permissions.INSTANCE.getMY_PERMISSION_CAMERA() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             takePicture();
         }
     }
