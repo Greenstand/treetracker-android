@@ -425,19 +425,19 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             if (mCurrentLocation != null) {
                 if (mCurrentLocation!!.hasAccuracy() && mCurrentLocation!!.accuracy < minAccuracy) {
                     mapGpsAccuracy.setTextColor(Color.GREEN)
-                    mapGpsAccuracyValue.setTextColor(Color.GREEN)
-                    mapGpsAccuracyValue.text = Integer.toString(Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    mapGpsAccuracyValue?.setTextColor(Color.GREEN)
+                    mapGpsAccuracyValue?.text = Integer.toString(Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
                     MainActivity.mAllowNewTreeOrUpdate = true
                 } else {
                     mapGpsAccuracy.setTextColor(Color.RED)
                     MainActivity.mAllowNewTreeOrUpdate = false
 
                     if (mCurrentLocation!!.hasAccuracy()) {
-                        mapGpsAccuracyValue.setTextColor(Color.RED)
-                        mapGpsAccuracyValue.text = Integer.toString(Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        mapGpsAccuracyValue?.setTextColor(Color.RED)
+                        mapGpsAccuracyValue?.text = Integer.toString(Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
                     } else {
-                        mapGpsAccuracyValue.setTextColor(Color.RED)
-                        mapGpsAccuracyValue.text = "N/A"
+                        mapGpsAccuracyValue?.setTextColor(Color.RED)
+                        mapGpsAccuracyValue?.text = "N/A"
                     }
                 }
 
@@ -445,13 +445,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     val newTreeGpsAccuracy = findViewById(R.id.fragment_new_tree_gps_accuracy) as TextView?
 
                     if (newTreeGpsAccuracy != null) {
-                        newTreeGpsAccuracy.text = Integer.toString(Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        newTreeGpsAccuracy?.text = Integer.toString(Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
                     }
                 }
             } else {
                 mapGpsAccuracy.setTextColor(Color.RED)
-                mapGpsAccuracyValue.setTextColor(Color.RED)
-                mapGpsAccuracyValue.text = "N/A"
+                mapGpsAccuracyValue?.setTextColor(Color.RED)
+                mapGpsAccuracyValue?.text = "N/A"
                 MainActivity.mAllowNewTreeOrUpdate = false
             }
 
