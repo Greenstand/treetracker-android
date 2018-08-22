@@ -417,8 +417,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         val minAccuracy = 10
 
-        val mapGpsAccuracy = findViewById(R.id.fragment_map_gps_accuracy) as TextView
-        val mapGpsAccuracyValue = findViewById(R.id.fragment_map_gps_accuracy_value) as TextView
+        val mapGpsAccuracy = findViewById(R.id.fragment_map_gps_accuracy) as TextView?
+        val mapGpsAccuracyValue = findViewById(R.id.fragment_map_gps_accuracy_value) as TextView?
 
 
         if (mapGpsAccuracy != null) {
@@ -442,7 +442,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 }
 
                 if (mCurrentLocation!!.hasAccuracy()) {
-                    val newTreeGpsAccuracy = findViewById(R.id.fragment_new_tree_gps_accuracy) as TextView
+                    val newTreeGpsAccuracy = findViewById(R.id.fragment_new_tree_gps_accuracy) as TextView?
 
                     if (newTreeGpsAccuracy != null) {
                         newTreeGpsAccuracy.text = Integer.toString(Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)

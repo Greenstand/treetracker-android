@@ -31,8 +31,7 @@ class SplashActivity : Activity() {
                 }
 
                 // Run next activity
-                val intent = Intent()
-                intent.setClass(this@SplashActivity, MainActivity::class.java!!)
+                val intent = Intent(this@SplashActivity, MainActivity::class.java!!)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                 startActivity(intent)
                 overridePendingTransition(0, 0)
