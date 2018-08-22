@@ -45,6 +45,7 @@ import org.greenstand.android.TreeTracker.activities.CameraActivity;
 import org.greenstand.android.TreeTracker.activities.MainActivity;
 import org.greenstand.android.TreeTracker.application.Permissions;
 import org.greenstand.android.TreeTracker.R;
+import org.greenstand.android.TreeTracker.database.DatabaseManager;
 import org.greenstand.android.TreeTracker.utilities.ValueHelper;
 
 import java.io.IOException;
@@ -224,7 +225,7 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 	}
 
 	private void saveToDb() {
-		SQLiteDatabase dbw = MainActivity.Companion.getDbHelper().getWritableDatabase();
+		SQLiteDatabase dbw = DatabaseManager.getInstance(MainActivity.Companion.getDbHelper()).openDatabase();
 
 		if (MainActivity.Companion.getMCurrentLocation() == null) {
 			Toast.makeText(getActivity(), "Insufficient accuracy", Toast.LENGTH_SHORT).show();
@@ -319,8 +320,6 @@ public class NewTreeFragment extends Fragment implements OnClickListener, TextWa
 			long treeNoteId = dbw.insert("tree_note", null, treeNoteContentValues);
 			Timber.d("treeNoteId " + Long.toString(treeNoteId));
 		}
-
-		dbw.close();
 
 	}
 

@@ -101,22 +101,26 @@ repositories {
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
 
-    api "com.android.support:appcompat-v7:${androidSupportVersion}"
-    api "com.android.support:design:${androidSupportVersion}"
-
-    api 'com.android.support:multidex:1.0.1'
+    implementation "com.android.support:appcompat-v7:${androidSupportVersion}"
+    implementation "com.android.support:design:${androidSupportVersion}"
     implementation 'com.google.android.gms:play-services:11.8.0'
+    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.24.0'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.24.0'
+
     api 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     api "com.squareup.retrofit2:retrofit:${retrofit2Version}"
     api "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
     api 'com.jakewharton.timber:timber:4.6.0'
-    implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
     api 'com.amazonaws:aws-android-sdk-s3:2.2.+'
     api('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
     api 'com.google.firebase:firebase-core:11.8.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
 
 }
 play {

@@ -542,8 +542,6 @@ public class MapsFragment extends Fragment
 			} while (treeCursor.moveToNext());
 
 
-			db.close();
-
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
 
 		} else {

@@ -190,8 +190,7 @@ public class TreePreviewFragment extends Fragment implements OnClickListener {
 			
 		} while (photoCursor.moveToNext());
 		
-		db.close();
-  
+
 	    return v;
 	}
 

@@ -461,12 +461,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Location.distanceBetween(MainActivity.mCurrentLocation!!.latitude, MainActivity.mCurrentLocation!!.longitude,
                         MainActivity.mCurrentTreeLocation!!.latitude, MainActivity.mCurrentTreeLocation!!.longitude, results)
 
-                val newTreeDistance = findViewById(R.id.fragment_new_tree_distance) as TextView
+                val newTreeDistance = findViewById(R.id.fragment_new_tree_distance) as TextView?
                 if (newTreeDistance != null) {
                     newTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
                 }
 
-                val treePreviewDistance = findViewById(R.id.fragment_tree_preview_distance) as TextView
+                val treePreviewDistance = findViewById(R.id.fragment_tree_preview_distance) as TextView?
                 if (treePreviewDistance != null) {
                     treePreviewDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
                 }
@@ -552,8 +552,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     Permissions.NECESSARY_PERMISSIONS)
         } else {
             startPeriodicUpdates()
-            // getMyTrees();
-
         }
     }
 
@@ -563,7 +561,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         if (grantResults.size > 0) {
             if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates()
-                // getMyTrees();
             }
         }
     }

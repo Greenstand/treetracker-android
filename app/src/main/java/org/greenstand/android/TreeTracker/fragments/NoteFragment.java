@@ -153,8 +153,6 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 			MainActivity.Companion.getMCurrentTreeLocation().setLongitude(Double.parseDouble(lon));
 			
 		} while (photoCursor.moveToNext());
-		
-		db.close();
 
 		return v;
 	}
@@ -386,10 +384,6 @@ public class NoteFragment extends Fragment implements OnClickListener, OnChecked
 
 		long treeNoteId = dbw.insert("tree_note", null, contentValues);
 		Timber.d("treeNoteId", Long.toString(treeNoteId));
-
-
-
-		dbw.close();
 
 	}
 

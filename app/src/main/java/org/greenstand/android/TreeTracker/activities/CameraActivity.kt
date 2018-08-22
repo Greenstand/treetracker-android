@@ -12,12 +12,9 @@ import android.hardware.Camera
 import android.hardware.Camera.PictureCallback
 import android.media.ExifInterface
 import android.net.Uri
-import android.os.AsyncTask
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.FileProvider
 import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
@@ -25,7 +22,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 
-import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
 import org.greenstand.android.TreeTracker.utilities.TreeImage
@@ -41,23 +37,24 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import timber.log.Timber
-
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.*
 
 class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mCamera: Camera? = null
     private var mPreview: CameraPreview? = null
     private val TAG = "Camera activity"
-    private val mPicture: PictureCallback? = null
     private var mCurrentPhotoPath: String? = null
     private var mImageView: ImageView? = null
-    private val mParameters: View? = null
     private var mCurrentPictureData: ByteArray? = null
     private var cancelImg: ImageButton? = null
     private var captureButton: ImageButton? = null
     private var tmpImageFile: File? = null
-    private var openCameraTask: AsyncTask<String, Void, String>? = null
     private var safeToTakePicture = true
+
+    private var operationAttempt: Job? = null
+
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +69,32 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
         captureButton!!.setOnClickListener(this@CameraActivity)
         cancelImg!!.setOnClickListener(this@CameraActivity)
 
-        openCameraTask = OpenCameraTask().execute(*arrayOf())
+        //openCameraTask = OpenCameraTask().execute(*arrayOf())
+        operationAttempt?.cancel()
+        operationAttempt = launch(UI) {
+
+            Timber.i("Opening Camera")
+
+            cancelImg!!.visibility = View.INVISIBLE
+            captureButton!!.visibility = View.INVISIBLE
+
+            while(mCamera == null){
+                try {
+                    mCamera = Camera.open()
+                } catch (e: Exception) {
+                    Timber.d("in use" + e.localizedMessage)
+                }
+                delay(250)
+            }
+
+            mPreview = CameraPreview(this@CameraActivity, mCamera)
+            val preview = findViewById(R.id.camera_preview) as FrameLayout
+            preview.addView(mPreview)
+            cancelImg!!.visibility = View.VISIBLE
+            captureButton!!.visibility = View.VISIBLE
+        }
+
+
 
     }
 
@@ -274,52 +296,13 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
     }
 
 
-    internal inner class OpenCameraTask : AsyncTask<String, Void, String>() {
 
-        override fun onPreExecute() {
-            cancelImg!!.visibility = View.INVISIBLE
-            captureButton!!.visibility = View.INVISIBLE
-        }
-
-        override fun doInBackground(vararg params: String): String? {
-            mCamera = cameraInstance
-            return null
-        }
-
-        override fun onPostExecute(response: String) {
-            super.onPostExecute(response)
-
-            if (mCamera == null) {
-                openCameraTask = OpenCameraTask().execute(*arrayOf())
-            } else {
-                // Create our Preview view and set it as the content of our activity.
-                mPreview = CameraPreview(this@CameraActivity, mCamera)
-                val preview = findViewById(R.id.camera_preview) as FrameLayout
-                preview.addView(mPreview)
-                cancelImg!!.visibility = View.VISIBLE
-                captureButton!!.visibility = View.VISIBLE
-            }
-        }
-    }
 
     companion object {
 
         val MEDIA_TYPE_IMAGE = 1
 
-        /** A safe way to get an instance of the Camera object.  */
-        // attempt to get a Camera instance
-        // returns null if camera is unavailable
-        val cameraInstance: Camera?
-            get() {
-                var c: Camera? = null
-                try {
-                    c = Camera.open()
-                } catch (e: Exception) {
-                    Timber.d("in use" + e.localizedMessage)
-                }
 
-                return c
-            }
 
         /** Create a file Uri for saving an image or video  */
         private fun getOutputMediaFileUri(type: Int): Uri {
