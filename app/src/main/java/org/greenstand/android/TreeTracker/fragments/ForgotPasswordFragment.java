@@ -113,7 +113,7 @@ public class ForgotPasswordFragment extends Fragment implements OnClickListener 
 
 				ForgotPasswordRequest forgotPasswordRequest = new ForgotPasswordRequest();
 				forgotPasswordRequest.setClientId(forgotEmail.getText().toString());
-				Call<Void> forgotPassword = Api.instance().getApi().passwordReset(forgotPasswordRequest);
+				Call<Void> forgotPassword = Api.Companion.instance().getApi().passwordReset(forgotPasswordRequest);
 				forgotPassword.enqueue(new Callback<Void>() {
 					@Override
 					public void onResponse(Call<Void> call, Response<Void> response) {

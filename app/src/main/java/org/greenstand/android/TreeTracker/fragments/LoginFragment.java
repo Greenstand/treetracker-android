@@ -152,7 +152,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 					MainActivity.Companion.getProgressDialog().setMessage(getActivity().getString(R.string.log_in_in_progress));
 					MainActivity.Companion.getProgressDialog().show();
 
-                    Call<TokenResponse> signIn = Api.instance().getApi().signIn(authRequest);
+                    Call<TokenResponse> signIn = Api.Companion.instance().getApi().signIn(authRequest);
 					signIn.enqueue(new Callback<TokenResponse>() {
                         @Override
                         public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
@@ -161,7 +161,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
                             if (response.isSuccessful()) {
                                 SharedPreferences mSharedPreferences = getActivity().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE);
                                 mSharedPreferences.edit().putString(ValueHelper.TOKEN, response.body().getToken()).commit();
-                                Api.instance().setAuthToken(response.body().getToken());
+                                Api.Companion.instance().setAuthToken(response.body().getToken());
                                 ((MainActivity) getActivity()).transitionToMapsFragment();
                             } else {
 								switch (response.code()) {

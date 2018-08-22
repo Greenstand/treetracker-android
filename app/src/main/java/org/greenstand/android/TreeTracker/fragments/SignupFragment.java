@@ -223,7 +223,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
                     final String finalFirstName = txtFirstName;
                     final String finalLastName = txtLastName;
 
-                    Call<TokenResponse> register = Api.instance().getApi().register(registerRequest);
+                    Call<TokenResponse> register = Api.Companion.instance().getApi().register(registerRequest);
                     register.enqueue(new Callback<TokenResponse>() {
                         @Override
                         public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
@@ -233,7 +233,7 @@ public class SignupFragment extends Fragment implements OnClickListener {
 
                                 SharedPreferences mSharedPreferences = getActivity().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE);
                                 mSharedPreferences.edit().putString(ValueHelper.TOKEN, response.body().getToken()).commit();
-								Api.instance().setAuthToken(response.body().getToken());
+								Api.Companion.instance().setAuthToken(response.body().getToken());
 
                                 ((MainActivity) getActivity()).transitionToMapsFragment();
                             }

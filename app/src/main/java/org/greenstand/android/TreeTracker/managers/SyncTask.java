@@ -133,7 +133,7 @@ public class SyncTask extends AsyncTask<Void, Integer, String> {
             PostResult postResult = null;
             try {
                 Response<PostResult> treeResponse = null;
-                treeResponse = Api.instance().getApi().createTree(newTree).execute();
+                treeResponse = Api.Companion.instance().getApi().createTree(newTree).execute();
                 postResult = treeResponse.body();
             } catch (IOException e) {
                 e.printStackTrace();
