@@ -20,9 +20,7 @@ class NewTreeRequest {
     @SerializedName("sequence_id")
     var sequenceId: Long = 0
 
-    fun getGpsAccuracy(): Float {
-        return gpsAccuracy.toFloat()
-    }
+    fun getGpsAccuracy() = gpsAccuracy.toFloat()
 
     fun setGpsAccuracy(gpsAccuracy: Int) {
         this.gpsAccuracy = gpsAccuracy
