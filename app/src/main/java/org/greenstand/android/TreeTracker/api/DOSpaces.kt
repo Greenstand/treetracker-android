@@ -46,13 +46,7 @@ class DOSpaces private constructor() {
         val poRequest = PutObjectRequest(BuildConfig.DO_SPACES_BUCKET, dosKey, image)
         poRequest.withAccessControlList(accessControlList)
 
-        Observable.create(ObservableOnSubscribe<PutObjectResult> { s3Client.putObject(poRequest) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( { result -> Timber.d("Successfully uploaded new tree to AWS")}, { t -> Timber.d("Couldn't upload to AWS: ${t.message}")
-                })
-
-        //val poResult = s3Client.putObject(poRequest)
+        val poResult = s3Client.putObject(poRequest)
 
         return String.format("https://%s.nyc3.digitaloceanspaces.com/%s", BuildConfig.DO_SPACES_BUCKET, dosKey)
     }
