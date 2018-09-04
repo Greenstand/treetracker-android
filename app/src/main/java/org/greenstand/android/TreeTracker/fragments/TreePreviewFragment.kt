@@ -1,13 +1,10 @@
 package org.greenstand.android.TreeTracker.fragments
 
 
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
-import android.location.LocationManager
 import android.media.ExifInterface
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -37,7 +34,7 @@ import timber.log.Timber
 
 class TreePreviewFragment : Fragment(), OnClickListener {
 
-    private var mImageView: ImageView? = null
+    private var treePreviewImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private val mImageBitmap: Bitmap? = null
     private var treeIdStr: String? = ""
@@ -51,18 +48,13 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+        menu?.clear()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val v = inflater!!.inflate(R.layout.fragment_tree_preview, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_tree_preview, container, false)
 
         (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.tree_preview)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -71,18 +63,18 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
         treeIdStr = extras.getString(ValueHelper.TREE_ID)
 
-        mImageView = v.findViewById(R.id.fragment_tree_preview_image) as ImageView
+        treePreviewImageView = rootView.findViewById(R.id.fragment_tree_preview_image) as ImageView
 
-        (v.findViewById(R.id.fragment_tree_preview_more) as Button).setOnClickListener(this@TreePreviewFragment)
+        (rootView.findViewById(R.id.fragment_tree_preview_more) as Button).setOnClickListener(this@TreePreviewFragment)
 
 
-        val db = MainActivity.dbHelper!!.readableDatabase
+        val readableDB = MainActivity.dbHelper!!.readableDatabase
         val query = "select * from tree " +
                 "left outer join location on location._id = tree.location_id " +
                 "left outer join tree_photo on tree._id = tree_id " +
                 "left outer join photo on photo._id = photo_id where tree._id =" + treeIdStr
 
-        val photoCursor = db.rawQuery(query, null)
+        val photoCursor = readableDB.rawQuery(query, null)
 
         photoCursor.moveToFirst()
 
@@ -99,7 +91,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                 photoCursor.getString(photoCursor.getColumnIndex("is_outdated")) == "Y"
 
 
-            val noImage = v.findViewById(R.id.fragment_tree_preview_no_image) as TextView
+            val noImage = rootView.findViewById(R.id.fragment_tree_preview_no_image) as TextView
 
             if (mCurrentPhotoPath != null && !isOutdated) {
                 setPic()
@@ -113,8 +105,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             MainActivity.mCurrentTreeLocation!!.latitude = java.lang.Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat")))
             MainActivity.mCurrentTreeLocation!!.longitude = java.lang.Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long")))
 
-            // No GPS accuracy info from new api.
-            //			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
 
             val results = floatArrayOf(0f, 0f, 0f)
             if (MainActivity.mCurrentLocation != null) {
@@ -122,20 +112,20 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                         MainActivity.mCurrentTreeLocation!!.latitude, MainActivity.mCurrentTreeLocation!!.longitude, results)
             }
 
-            val distanceTxt = v.findViewById(R.id.fragment_tree_preview_distance) as TextView
+            val distanceTxt = rootView.findViewById(R.id.fragment_tree_preview_distance) as TextView
             distanceTxt.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
 
-            val accuracyTxt = v.findViewById(R.id.fragment_tree_preview_gps_accuracy) as TextView
-            accuracyTxt.text = Integer.toString(Math.round(MainActivity.mCurrentTreeLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+            val treeAccuracyTV = rootView.findViewById(R.id.fragment_tree_preview_gps_accuracy) as TextView
+            val treeAccuracy = photoCursor.getString(photoCursor.getColumnIndex("accuracy")).toFloat()
+            treeAccuracyTV.text = treeAccuracy.toString() + " " + resources.getString(R.string.meters)
 
-
-            val createdTxt = v.findViewById(R.id.fragment_tree_preview_created) as TextView
+            val createdTxt = rootView.findViewById(R.id.fragment_tree_preview_created) as TextView
             createdTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_created")).substring(0, photoCursor.getString(photoCursor.getColumnIndex("time_created")).lastIndexOf(":"))
 
-            val updatedTxt = v.findViewById(R.id.fragment_tree_preview_last_update) as TextView
+            val updatedTxt = rootView.findViewById(R.id.fragment_tree_preview_last_update) as TextView
             updatedTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_updated")).substring(0, photoCursor.getString(photoCursor.getColumnIndex("time_updated")).lastIndexOf(":"))
 
-            val statusTxt = v.findViewById(R.id.fragment_tree_preview_image_status) as TextView
+            val statusTxt = rootView.findViewById(R.id.fragment_tree_preview_image_status) as TextView
 
             var dateForUpdate = Date()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -156,10 +146,10 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                     "left outer join note on note_id = note._id " +
                     "where content is not null and tree_id = " + treeIdStr + " order by note.time_created asc"
 
-            val noteCursor = db.rawQuery(noteQuery, null)
+            val noteCursor = readableDB.rawQuery(noteQuery, null)
 
 
-            val notesTxt = v.findViewById(R.id.fragment_tree_preview_notes) as TextView
+            val notesTxt = rootView.findViewById(R.id.fragment_tree_preview_notes) as TextView
 
             notesTxt.text = " "
 
@@ -184,7 +174,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         } while (photoCursor.moveToNext())
 
 
-        return v
+        return rootView
     }
 
     override fun onClick(v: View) {
@@ -222,7 +212,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
 
-        val targetH = mImageView!!.height
+        val targetH = treePreviewImageView!!.height
 
         /* Get the size of the image */
         val bmOptions = BitmapFactory.Options()
@@ -279,15 +269,15 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
                     bmOptions.outWidth, bmOptions.outHeight, matrix, true)
             /* Associate the Bitmap to the ImageView */
-            mImageView!!.setImageBitmap(rotatedBitmap)
+            treePreviewImageView!!.setImageBitmap(rotatedBitmap)
         } catch (e: IOException) {
             e.printStackTrace()
-            mImageView!!.setImageBitmap(bitmap)
+            treePreviewImageView!!.setImageBitmap(bitmap)
         }
 
 
 
-        mImageView!!.visibility = View.VISIBLE
+        treePreviewImageView!!.visibility = View.VISIBLE
     }
 
 

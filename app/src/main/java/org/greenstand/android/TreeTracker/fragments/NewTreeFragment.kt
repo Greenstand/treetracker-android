@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -50,8 +49,9 @@ import java.util.Date
 import timber.log.Timber
 
 class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat.OnRequestPermissionsResultCallback {
-    private var mImageView: ImageView? = null
-    private var mCurrentPhotoPath: String? = null
+
+    private var newTreeImageView: ImageView? = null
+    private var newTreePhotoPath: String? = null
     private var userId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private val mPhotoUri: Uri? = null
@@ -70,10 +70,10 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         menu!!.clear()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val v = inflater!!.inflate(R.layout.fragment_new_tree, container, false)
+        val v = inflater.inflate(R.layout.fragment_new_tree, container, false)
 
         activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
@@ -82,15 +82,14 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.new_tree)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        mSharedPreferences = activity.getSharedPreferences(
-                "org.greenstand.android", Context.MODE_PRIVATE)
+        mSharedPreferences = activity.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
 
         val saveBtn = v.findViewById(R.id.fragment_new_tree_save) as Button
         saveBtn.setOnClickListener(this@NewTreeFragment)
 
-        mImageView = v.findViewById(R.id.fragment_new_tree_image) as ImageView
+        newTreeImageView = v.findViewById(R.id.fragment_new_tree_image) as ImageView
 
         val newTreeDistance = v.findViewById(R.id.fragment_new_tree_distance) as TextView
         newTreeDistance.text = Integer.toString(0) + " " + resources.getString(R.string.meters)
@@ -130,8 +129,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             activity.supportFragmentManager.popBackStack()
             return
         }
-
-
     }
 
     override fun onClick(v: View) {
@@ -152,7 +149,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         //		case R.id.fragment_new_tree_take_photo:
         //			takePicture();
         //			break;
-
     }
 
     private fun takePicture() {
@@ -178,9 +174,9 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         if (data != null && resultCode != Activity.RESULT_CANCELED) {
             if (resultCode == Activity.RESULT_OK) {
 
-                mCurrentPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+                newTreePhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
-                if (mCurrentPhotoPath != null) {
+                if (newTreePhotoPath != null) {
                     (activity.findViewById(R.id.fragment_new_tree) as RelativeLayout).visibility = View.VISIBLE
 
                     MainActivity.mCurrentTreeLocation = Location("") // Just a blank location
@@ -228,7 +224,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             val photoContentValues = ContentValues()
             photoContentValues.put("user_id", userId)
             photoContentValues.put("location_id", locationId)
-            photoContentValues.put("name", mCurrentPhotoPath)
+            photoContentValues.put("name", newTreePhotoPath)
 
             photoId = dbw.insert("photo", null, photoContentValues)
             Timber.d("photoId " + java.lang.Long.toString(photoId))
@@ -310,7 +306,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         /* Get the size of the image */
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
+        BitmapFactory.decodeFile(newTreePhotoPath, bmOptions)
         val imageWidth = bmOptions.outWidth
 
         // Calculate your sampleSize based on the requiredWidth and
@@ -336,7 +332,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         bmOptions.inJustDecodeBounds = false
 
         /* Decode the JPEG file into a Bitmap */
-        val bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
+        val bitmap = BitmapFactory.decodeFile(newTreePhotoPath, bmOptions)
 
         if (bitmap == null) {
             Toast.makeText(activity, "Error setting image. Please try again.", Toast.LENGTH_SHORT).show()
@@ -346,7 +342,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
         var exif: ExifInterface? = null
         try {
-            exif = ExifInterface(mCurrentPhotoPath)
+            exif = ExifInterface(newTreePhotoPath)
         } catch (e: IOException) {
             // TODO Auto-generated catch block
             e.printStackTrace()
@@ -374,8 +370,8 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
                 bmOptions.outWidth, bmOptions.outHeight, matrix, true)
 
         /* Associate the Bitmap to the ImageView */
-        mImageView!!.setImageBitmap(rotatedBitmap)
-        mImageView!!.visibility = View.VISIBLE
+        newTreeImageView!!.setImageBitmap(rotatedBitmap)
+        newTreeImageView!!.visibility = View.VISIBLE
     }
 
 
@@ -385,8 +381,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
     }
 
-    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int,
-                                   after: Int) {
+    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
         // TODO Auto-generated method stub
 
     }

@@ -7,21 +7,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.HapticFeedbackConstants
-import android.view.InflateException
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -46,22 +40,20 @@ import org.greenstand.android.TreeTracker.utilities.TreeImage
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.BuildConfig
 
-import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.ArrayList
-import java.util.Calendar
 import java.util.Date
 
 import timber.log.Timber
 
-
+/**
+ *
+ */
 class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback, View.OnLongClickListener {
 
-    internal var mSettingCallback: LocationDialogListener
+    internal var mSettingCallback: LocationDialogListener? = null
 
     private val redPulsatingMarkers = ArrayList<Marker>()
     private val redToGreenPulsatingMarkers = ArrayList<Marker>()
@@ -70,13 +62,6 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     private var mCurrentRedToGreenMarkerColor = -1
     private var paused = false
     protected var mCurrentMarkerColor: Int = 0
-
-    private val handler = object : Handler() {
-
-        override fun handleMessage(msg: Message) {
-
-        }
-    }
 
     private var fragment: Fragment? = null
 
@@ -87,6 +72,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     interface LocationDialogListener {
         fun refreshMap()
     }
+
+
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -172,7 +159,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         try {
             val fragment = activity
                     .supportFragmentManager.findFragmentById(
-                    R.id.map) as SupportMapFragment
+                    R.id.map)
             if (fragment != null)
                 activity.supportFragmentManager.beginTransaction().remove(fragment).commit()
 
@@ -187,17 +174,19 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
+        //var rootView = inflater!!.inflate(R.layout.fragment_map, container, false)    or   =  view
+        var rootView = inflater!!.inflate(R.layout.fragment_map, container, false)
+        /*
         if (view != null) {
             val parent = view!!.parent as ViewGroup
             parent?.removeView(view)
         }
         try {
-            view = inflater!!.inflate(R.layout.fragment_map, container, false)
+            rootView = inflater!!.inflate(R.layout.fragment_map, container, false)
         } catch (e: InflateException) {
             /* map is already there, just return view as it is */
         }
-
-        val v = view
+        */
 
         mSharedPreferences = activity.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
@@ -209,18 +198,18 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.map)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
 
-        val fab = v!!.findViewById(R.id.fab) as FloatingActionButton
-        fab.setOnClickListener(this)
+        val addNewTreeFAB = rootView?.findViewById(R.id.fab_add_new_tree)
+        addNewTreeFAB?.setOnClickListener(this)
         if (BuildConfig.BUILD_TYPE === "dev") {
-            fab.setOnLongClickListener(this)
+            addNewTreeFAB?.setOnLongClickListener(this)
         }
 
         (childFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment).getMapAsync(this)
 
 
-        val mapGpsAccuracy = v.findViewById(R.id.fragment_map_gps_accuracy) as TextView
-        val mapGpsAccuracyValue = v.findViewById(R.id.fragment_map_gps_accuracy_value) as TextView
+        val mapGpsAccuracy = rootView.findViewById(R.id.fragment_map_gps_accuracy) as TextView
+        val mapGpsAccuracyValue = rootView.findViewById(R.id.fragment_map_gps_accuracy_value) as TextView
 
         val minAccuracy = mSharedPreferences!!.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
 
@@ -257,24 +246,23 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
         }
 
-        return v
+        return rootView
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION) {
-            mSettingCallback.refreshMap()
+            mSettingCallback?.refreshMap()
         }
     }
 
 
     override fun onClick(v: View) {
 
-
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
 
         val photoCursor: Cursor
         when (v.id) {
-            R.id.fab -> {
+            R.id.fab_add_new_tree -> {
                 Timber.d(TAG, "fab click")
                 if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY == "off") {
                     fragment = NewTreeFragment()
@@ -328,8 +316,6 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         //				}
         //
         //				break;
-
-
     }
 
     // For debug analysis purposes only
@@ -337,11 +323,9 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
         Toast.makeText(activity, "Adding lot of trees", Toast.LENGTH_LONG).show()
 
-
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
-        val dbw = MainActivity.dbHelper!!.writableDatabase
-
+        val writableDatabase = MainActivity.dbHelper!!.writableDatabase
         val userId = -1
 
         for (i in 0..499) {
@@ -355,7 +339,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                     java.lang.Double.toString(MainActivity.mCurrentLocation!!.longitude + (Math.random() - .5) / 1000))
             locationContentValues.put("user_id", userId)
 
-            val locationId = dbw.insert("location", null, locationContentValues)
+            val locationId = writableDatabase.insert("location", null, locationContentValues)
 
             var photoId: Long = -1
             try {
@@ -370,7 +354,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                 photoContentValues.put("location_id", locationId)
                 photoContentValues.put("name", f.absolutePath)
 
-                photoId = dbw.insert("photo", null, photoContentValues)
+                photoId = writableDatabase.insert("photo", null, photoContentValues)
                 //Timber.d("photoId " + Long.toString(photoId));
 
             } catch (e: IOException) {
@@ -385,13 +369,13 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             treeContentValues.put("time_created", dateFormat.format(Date()))
             treeContentValues.put("time_updated", dateFormat.format(Date()))
 
-            val treeId = dbw.insert("tree", null, treeContentValues)
+            val treeId = writableDatabase.insert("tree", null, treeContentValues)
 
 
             val treePhotoContentValues = ContentValues()
             treePhotoContentValues.put("tree_id", treeId)
             treePhotoContentValues.put("photo_id", photoId)
-            val treePhotoId = dbw.insert("tree_photo", null, treePhotoContentValues)
+            val treePhotoId = writableDatabase.insert("tree_photo", null, treePhotoContentValues)
             //Timber.d("treePhotoId " + Long.toString(treePhotoId));
         }
 
@@ -431,9 +415,9 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         }
         map.isMyLocationEnabled = true
 
-        val db = MainActivity.dbHelper!!.readableDatabase
+        val readableDB = MainActivity.dbHelper!!.readableDatabase
 
-        val treeCursor = db.rawQuery("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null)
+        val treeCursor = readableDB.rawQuery("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null)
         treeCursor.moveToFirst()
 
         redToGreenPulsatingMarkers.clear()
@@ -537,7 +521,17 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     }
 
     companion object {
+
         private val TAG = "MapsFragment"
         private var view: View? = null
+
+        //
+        private val handler = object : Handler() {
+
+            override fun handleMessage(msg: Message) {
+
+            }
+        }
     }
-}//some overrides and settings go here
+
+}
