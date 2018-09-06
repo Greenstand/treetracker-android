@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.coroutines.experimental.Job
 
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.activities.MainActivity
@@ -57,36 +58,6 @@ class DataFragment : Fragment(), View.OnClickListener, SyncTask.SyncTaskListener
     private var mSharedPreferences: SharedPreferences? = null
 
     private var syncTask: AsyncTask<Void, Int, String>? = null
-
-    private val albumName: String
-        get() = getString(R.string.album_name)
-
-    private val albumDir: File?
-        get() {
-            var storageDir: File? = null
-
-            if (Environment.MEDIA_MOUNTED == Environment
-                            .getExternalStorageState()) {
-
-                val cw = ContextWrapper(activity.applicationContext)
-                storageDir = cw.getDir("treeImages", Context.MODE_PRIVATE)
-
-                if (storageDir != null) {
-                    if (!storageDir.mkdirs()) {
-                        if (!storageDir.exists()) {
-                            Timber.d("CameraSample", "failed to create directory")
-                            return null
-                        }
-                    }
-                }
-
-            } else {
-                Log.v(getString(R.string.app_name),
-                        "External storage is not mounted READ/WRITE.")
-            }
-
-            return storageDir
-        }
 
     init {
         mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
@@ -224,47 +195,9 @@ class DataFragment : Fragment(), View.OnClickListener, SyncTask.SyncTaskListener
         val trees = (activity as MainActivity).userTrees
 
         if (trees != null && treeCursor.moveToFirst()) {
-            UpdateLocalDb().execute(trees)
+            //UpdateLocalDb().execute(trees)
         }
 
-    }
-
-    @Throws(IOException::class)
-    private fun createImageFile(): File {
-        // Create an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss")
-                .format(Date())
-        val imageFileName = ValueHelper.JPEG_FILE_PREFIX + timeStamp + "_"
-        val albumF = albumDir
-
-        return File.createTempFile(imageFileName,
-                ValueHelper.JPEG_FILE_SUFFIX, albumF)
-    }
-
-    private fun saveImage(sUrl: String?): String {
-        val bitmap: Bitmap
-        var file: File? = null
-        var out: FileOutputStream? = null
-        try {
-            val inputStream = URL(sUrl).openStream()
-            bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream.close()
-            file = createImageFile()
-            out = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-        } catch (e: IOException) {
-            Timber.tag("saveImage").d("Exception 1, Something went wrong!")
-            e.printStackTrace()
-        } finally {
-            try {
-                out!!.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-        }
-        Timber.tag("saveImage").d("filePath: " + file!!.absolutePath)
-        return file.absolutePath
     }
 
     override fun onPostExecute(message: String) {
@@ -278,7 +211,7 @@ class DataFragment : Fragment(), View.OnClickListener, SyncTask.SyncTaskListener
         updateData()
     }
 
-    internal inner class UpdateLocalDb : AsyncTask<List<UserTree>, Void, Void>() {
+/*    internal inner class UpdateLocalDb : AsyncTask<List<UserTree>, Void, Void>() {
 
         override fun doInBackground(lists: Array<List<UserTree>>): Void? {
             val trees = lists[0]
@@ -384,5 +317,6 @@ class DataFragment : Fragment(), View.OnClickListener, SyncTask.SyncTaskListener
 
         }
     }
+    */
 
 }
