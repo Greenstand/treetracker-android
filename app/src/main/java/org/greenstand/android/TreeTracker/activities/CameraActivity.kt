@@ -69,7 +69,6 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
         captureButton!!.setOnClickListener(this@CameraActivity)
         cancelImg!!.setOnClickListener(this@CameraActivity)
 
-        //openCameraTask = OpenCameraTask().execute(*arrayOf())
         operationAttempt?.cancel()
         operationAttempt = launch(UI) {
 
