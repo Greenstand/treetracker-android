@@ -9,12 +9,12 @@
     android:background="#FFFFFFFF"
     android:id="@+id/fragment_map">
 
-	<fragment 
-	      android:id="@+id/map"
-	      android:layout_width="match_parent"
-	      android:layout_height="match_parent"
-	      android:layout_above="@+id/fragment_map_gps_accuracy_layout"
-	      android:name="com.google.android.gms.maps.SupportMapFragment"/>
+	<FrameLayout
+		android:id="@+id/map"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/fragment_map_gps_accuracy_layout"
+		/>
 
    	
    	<LinearLayout
