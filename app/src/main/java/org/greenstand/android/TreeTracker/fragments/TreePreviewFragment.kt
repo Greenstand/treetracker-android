@@ -126,7 +126,8 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             distanceTxt.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
 
             val accuracyTxt = v.findViewById(R.id.fragment_tree_preview_gps_accuracy) as TextView
-            accuracyTxt.text = Integer.toString(Math.round(MainActivity.mCurrentTreeLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+            val treeAccuracy = photoCursor.getString(photoCursor.getColumnIndex("accuracy")).toFloat()
+            accuracyTxt.text = treeAccuracy.toString() + " " + resources.getString(R.string.meters)
 
 
             val createdTxt = v.findViewById(R.id.fragment_tree_preview_created) as TextView
