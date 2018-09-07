@@ -7,10 +7,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -19,7 +16,6 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.InflateException
 import android.view.LayoutInflater
@@ -42,18 +38,14 @@ import com.google.android.gms.maps.model.MarkerOptions
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.utilities.TreeImage
+import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.BuildConfig
 
-import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.ArrayList
-import java.util.Calendar
 import java.util.Date
 
 import timber.log.Timber
@@ -113,8 +105,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         }
         paused = false
 
-        mCurrentRedToGreenMarkerColor = R.drawable.green_pin
-        mCurrentMarkerColor = R.drawable.red_pin_pulsating_4
+     //  mCurrentRedToGreenMarkerColor = R.drawable.green_pin
+      //  mCurrentMarkerColor = R.drawable.red_pin_pulsating_4
 /*
         handler.post(object : Runnable {
             override fun run() {
@@ -178,8 +170,6 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-
-
         var v : View? = view
 
         try {
@@ -198,10 +188,21 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
         if (!(activity as AppCompatActivity).supportActionBar!!.isShowing) {
-            Timber.d("MainActivity", "toolbar hide")
+            Timber.d("toolbar hide")
             (activity as AppCompatActivity).supportActionBar!!.show()
         }
+
+        val currentTimestamp = System.currentTimeMillis() / 1000
+        val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+        if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
+            activity.title = resources.getString(R.string.user_not_identified)
+        } else {
+            activity.title = mSharedPreferences!!.getString(ValueHelper.USER_IDENTIFIER, resources.getString(R.string.user_not_identified))
+        }
+
         (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.map)
+
+
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
 
         val fab = v!!.findViewById(R.id.fab) as FloatingActionButton
@@ -269,15 +270,33 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         val photoCursor: Cursor
         when (v.id) {
             R.id.fab -> {
-                Timber.d(TAG, "fab click")
-                if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY == "off") {
-                    fragment = NewTreeFragment()
-                    bundle = activity.intent.extras
-                    fragment!!.arguments = bundle
+                Timber.d("fab click")
 
-                    fragmentTransaction = activity.supportFragmentManager
-                            .beginTransaction()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
+
+
+                if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY == "off") {
+
+                    val currentTimestamp = System.currentTimeMillis() / 1000
+                    val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                    if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
+
+                        fragment = UserIdentificationFragment()
+                        fragmentTransaction = activity.supportFragmentManager
+                                .beginTransaction()
+                        fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+
+                    } else {
+
+                        fragment = NewTreeFragment()
+                        bundle = activity.intent.extras
+                        fragment!!.arguments = bundle
+
+                        fragmentTransaction = activity.supportFragmentManager
+                                .beginTransaction()
+                        fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
+
+
+                    }
                 } else {
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
                 }
@@ -354,7 +373,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             var photoId: Long = -1
             try {
                 val myInput = activity.assets.open("testtreeimage.jpg")
-                val f = TreeImage.createImageFile(activity)
+                val f = ImageUtils.createImageFile(activity)
                 val fos = FileOutputStream(f)
                 fos.write(IOUtils.toByteArray(myInput))
                 fos.close()

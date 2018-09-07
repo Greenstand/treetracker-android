@@ -24,7 +24,7 @@ import android.widget.ImageView
 
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
-import org.greenstand.android.TreeTracker.utilities.TreeImage
+import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
@@ -173,7 +173,7 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
     private fun setUpPhotoFile(): File {
         val cw = ContextWrapper(applicationContext)
-        val f = TreeImage.createImageFile(cw)
+        val f = ImageUtils.createImageFile(cw)
         mCurrentPhotoPath = f.absolutePath
 
         return f

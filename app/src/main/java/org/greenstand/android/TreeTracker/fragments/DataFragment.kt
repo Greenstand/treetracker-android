@@ -73,7 +73,7 @@ class DataFragment : Fragment(), View.OnClickListener {
         setHasOptionsMenu(true)
 
         mSharedPreferences = activity.getSharedPreferences(
-                "org.greenstand.android", Context.MODE_PRIVATE)
+                ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
 
     }
 

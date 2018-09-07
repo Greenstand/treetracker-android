@@ -45,6 +45,7 @@ import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.DatabaseManager
+import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 import java.io.IOException
@@ -312,72 +313,11 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
 
-        /* Get the size of the image */
-        val bmOptions = BitmapFactory.Options()
-        bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        val imageWidth = bmOptions.outWidth
-
-        // Calculate your sampleSize based on the requiredWidth and
-        // originalWidth
-        // For e.g you want the width to stay consistent at 500dp
-        val requiredWidth = (500 * resources.displayMetrics.density).toInt()
-
-        Log.e("required Width ", Integer.toString(requiredWidth))
-        Log.e("imageWidth  ", Integer.toString(imageWidth))
-
-        var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
-
-        Log.e("sampleSize ", Integer.toString(sampleSize))
-        // If the original image is smaller than required, don't sample
-        if (sampleSize < 1) {
-            sampleSize = 1
-        }
-
-        Log.e("sampleSize 2 ", Integer.toString(sampleSize))
-        bmOptions.inSampleSize = sampleSize
-        bmOptions.inPurgeable = true
-        bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
-        bmOptions.inJustDecodeBounds = false
-
-        /* Decode the JPEG file into a Bitmap */
-        val bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-
-        if (bitmap == null) {
+        val rotatedBitmap = ImageUtils.decodeBitmap(mCurrentPhotoPath, resources.displayMetrics.density)
+        if(rotatedBitmap == null) {
             Toast.makeText(activity, "Error setting image. Please try again.", Toast.LENGTH_SHORT).show()
             activity.supportFragmentManager.popBackStack()
         }
-
-
-        var exif: ExifInterface? = null
-        try {
-            exif = ExifInterface(mCurrentPhotoPath)
-        } catch (e: IOException) {
-            // TODO Auto-generated catch block
-            e.printStackTrace()
-        }
-
-        val orientString = exif!!.getAttribute(ExifInterface.TAG_ORIENTATION)
-        val orientation = if (orientString != null)
-            Integer.parseInt(orientString)
-        else
-            ExifInterface.ORIENTATION_NORMAL
-        var rotationAngle = 0
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
-            rotationAngle = 90
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
-            rotationAngle = 180
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
-            rotationAngle = 270
-
-        Timber.d("rotationAngle " + Integer.toString(rotationAngle))
-
-        val matrix = Matrix()
-        matrix.setRotate(rotationAngle.toFloat(), bitmap!!.width.toFloat() / 2,
-                bitmap.height.toFloat() / 2)
-        val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                bmOptions.outWidth, bmOptions.outHeight, matrix, true)
-
         /* Associate the Bitmap to the ImageView */
         mImageView!!.setImageBitmap(rotatedBitmap)
         mImageView!!.visibility = View.VISIBLE

@@ -126,74 +126,62 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.title = ""
 
-        if (!Api.instance().isLoggedIn) {
 
-            val loginFragment = LoginFragment()
-            loginFragment.arguments = intent.extras
+        val extras = intent.extras
+        var startDataSync = false
+        if (extras != null) {
+            if (extras.getBoolean(ValueHelper.RUN_FROM_NOTIFICATION_SYNC)) {
+                startDataSync = true
+            }
+        }
+
+        if (startDataSync) {
+            Timber.d("MainActivity startDataSync is true")
+            val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            mNotificationManager.cancel(ValueHelper.WIFI_NOTIFICATION_ID)
+
+            val dataFragment = DataFragment()
+            dataFragment.arguments = intent.extras
 
             val fragmentTransaction = supportFragmentManager
                     .beginTransaction()
-            fragmentTransaction.add(R.id.container_fragment, loginFragment, ValueHelper.LOGIN_FRAGMENT)
+            fragmentTransaction.add(R.id.container_fragment, dataFragment, ValueHelper.DATA_FRAGMENT)
 
             fragmentTransaction.commit()
+
+        } else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
+            Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
+            var bundle = intent.extras
+
+            fragment = MapsFragment()
+            fragment!!.arguments = bundle
+
+            fragmentTransaction = supportFragmentManager
+                    .beginTransaction()
+            fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit()
+
+            if (bundle == null)
+                bundle = Bundle()
+
+            bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true)
+
+
+            fragment = DataFragment()
+            fragment!!.arguments = bundle
+
+            fragmentTransaction = supportFragmentManager
+                    .beginTransaction()
+            fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
+
         } else {
-            val extras = intent.extras
-            var startDataSync = false
-            if (extras != null) {
-                if (extras.getBoolean(ValueHelper.RUN_FROM_NOTIFICATION_SYNC)) {
-                    startDataSync = true
-                }
-            }
+            Timber.d("MainActivity" + " startDataSync is false")
+            val homeFragment = MapsFragment()
+            homeFragment.arguments = intent.extras
 
-            if (startDataSync) {
-                Timber.d("MainActivity", "startDataSync is true")
-                val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                mNotificationManager.cancel(ValueHelper.WIFI_NOTIFICATION_ID)
-
-                val dataFragment = DataFragment()
-                dataFragment.arguments = intent.extras
-
-                val fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction.add(R.id.container_fragment, dataFragment, ValueHelper.DATA_FRAGMENT)
-
-                fragmentTransaction.commit()
-
-            } else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
-                Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
-                var bundle = intent.extras
-
-                fragment = MapsFragment()
-                fragment!!.arguments = bundle
-
-                fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit()
-
-                if (bundle == null)
-                    bundle = Bundle()
-
-                bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true)
-
-
-                fragment = DataFragment()
-                fragment!!.arguments = bundle
-
-                fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
-
-            } else {
-                Timber.d("MainActivity", "startDataSync is false")
-                val homeFragment = MapsFragment()
-                homeFragment.arguments = intent.extras
-
-                val fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
-                fragmentTransaction.commit()
-            }
-
+            val fragmentTransaction = supportFragmentManager
+                    .beginTransaction()
+            fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
+            fragmentTransaction.commit()
         }
 
 
@@ -278,7 +266,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
     }
 

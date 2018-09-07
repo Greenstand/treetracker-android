@@ -122,9 +122,12 @@ dependencies {
 
 
 
+    implementation 'com.android.support:support-v4:25.4.0'
 }
 play {
     track = 'beta' // or 'rollout' or 'production' or 'alpha'
 }
 //apply plugin: 'com.google.gms.google-services'
 
+
+apply plugin: 'kotlin-android-extensions'
