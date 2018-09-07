@@ -77,6 +77,8 @@ object ValueHelper {
 
     const val TIME_OF_LAST_USER_IDENTIFICATION = "TIME_OF_LAST_USER_IDENTIFICATION"
     const val USER_IDENTIFIER = "USER_IDENTIFIER"
+    const val USER_PHOTO = "USER_PHOTO"
+
 
     const val IDENTIFICATION_TIMEOUT = 60 * 60 * 2
 }

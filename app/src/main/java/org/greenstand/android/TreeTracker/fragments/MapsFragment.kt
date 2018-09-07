@@ -22,6 +22,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 
@@ -105,7 +107,29 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         }
         paused = false
 
-     //  mCurrentRedToGreenMarkerColor = R.drawable.green_pin
+        val currentTimestamp = System.currentTimeMillis() / 1000
+        val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+        if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
+            (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+        } else {
+            val title = mSharedPreferences!!.getString(ValueHelper.USER_IDENTIFIER, resources.getString(R.string.user_not_identified))
+            (activity.findViewById(R.id.toolbar_title) as TextView).text = title
+        }
+
+        val photoPath = mSharedPreferences!!.getString(ValueHelper.USER_PHOTO, null)
+        val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
+        if (photoPath != null) {
+            val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
+            if(rotatedBitmap != null){
+                imageView.setImageBitmap(rotatedBitmap)
+                imageView.visibility = View.VISIBLE
+
+            }
+        } else {
+            imageView.visibility = View.GONE
+        }
+
+        //  mCurrentRedToGreenMarkerColor = R.drawable.green_pin
       //  mCurrentMarkerColor = R.drawable.red_pin_pulsating_4
 /*
         handler.post(object : Runnable {
@@ -192,15 +216,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             (activity as AppCompatActivity).supportActionBar!!.show()
         }
 
-        val currentTimestamp = System.currentTimeMillis() / 1000
-        val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-        if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
-            activity.title = resources.getString(R.string.user_not_identified)
-        } else {
-            activity.title = mSharedPreferences!!.getString(ValueHelper.USER_IDENTIFIER, resources.getString(R.string.user_not_identified))
-        }
 
-        (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.map)
 
 
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)

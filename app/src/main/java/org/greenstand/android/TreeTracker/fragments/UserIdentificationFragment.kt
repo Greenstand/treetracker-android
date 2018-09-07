@@ -18,9 +18,9 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
-import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -70,7 +70,7 @@ class UserIdentificationFragment : Fragment() {
                 } else {
 
                     // Show some error message, with details about format
-
+                    Toast.makeText(activity, "Invalid Identifier.  Please enter an email or a phone number", Toast.LENGTH_LONG)
                 }
             }
 
@@ -85,8 +85,9 @@ class UserIdentificationFragment : Fragment() {
                 val editor = mSharedPreferences!!.edit()
 
                 val tsLong = System.currentTimeMillis() / 1000
-                editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong);
-                editor!!.putString(ValueHelper.USER_IDENTIFIER, mUserIdentifier.toString());
+                editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
+                editor!!.putString(ValueHelper.USER_IDENTIFIER, mUserIdentifier.toString())
+                editor!!.putString(ValueHelper.USER_PHOTO, mPhotoPath)
                 editor!!.commit()
 
                 // TODO consider returning to MapFragment and pushing this new fragment from there

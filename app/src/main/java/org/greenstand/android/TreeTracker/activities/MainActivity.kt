@@ -41,11 +41,7 @@ import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.database.DbHelper
-import org.greenstand.android.TreeTracker.fragments.AboutFragment
-import org.greenstand.android.TreeTracker.fragments.DataFragment
-import org.greenstand.android.TreeTracker.fragments.LoginFragment
-import org.greenstand.android.TreeTracker.fragments.MapsFragment
-import org.greenstand.android.TreeTracker.fragments.SignupFragment
+import org.greenstand.android.TreeTracker.fragments.*
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.json.JSONException
 import org.json.JSONObject
@@ -251,6 +247,22 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).name)
                 }
                 return true
+            }
+
+            R.id.action_change_user -> {
+                val editor = mSharedPreferences!!.edit()
+                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor.putString(ValueHelper.USER_IDENTIFIER, null)
+                editor.putString(ValueHelper.USER_PHOTO, null)
+                editor.commit()
+
+                (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+
+
+                fragment = UserIdentificationFragment()
+                fragmentTransaction = supportFragmentManager
+                        .beginTransaction()
+                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
             }
         }
         return super.onOptionsItemSelected(item)
