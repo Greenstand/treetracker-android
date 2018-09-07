@@ -99,20 +99,10 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-    }
-
     override fun onPause() {
         super.onPause()
 
         paused = true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onResume() {
@@ -125,7 +115,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
         mCurrentRedToGreenMarkerColor = R.drawable.green_pin
         mCurrentMarkerColor = R.drawable.red_pin_pulsating_4
-
+/*
         handler.post(object : Runnable {
             override fun run() {
                 if (mCurrentRedToGreenMarkerColor == R.drawable.red_pin) {
@@ -164,6 +154,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                     handler.postDelayed(this, 200)
             }
         })
+        */
     }
 
     override fun onDestroyView() {
@@ -544,4 +535,4 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         private val TAG = "MapsFragment"
         private var view: View? = null
     }
-}//some overrides and settings go here
+}
