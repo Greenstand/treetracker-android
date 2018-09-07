@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-  <FrameLayout
-    android:id="@+id/camera_preview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    />
-  
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <ImageView
-	    android:id="@+id/camera_preview_taken"
+        android:id="@+id/camera_preview_taken"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:scaleType="centerCrop"
-    />
-  
-	    
-	   <ImageButton
-	        android:id="@+id/camera_preview_cancel"
-	    	android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"     
-	        android:paddingTop="24dp"
-	        android:paddingBottom="24dp"
-	        android:paddingLeft="24dp"
-	        android:src="@drawable/ic_action_cancel"
-	        android:background="@null"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentBottom="true"
-	        android:hapticFeedbackEnabled="true"
-	        /> 
-	   
-	  <ImageButton
+	    android:scaleType="centerCrop" />
+
+    <ImageButton
+        android:id="@+id/camera_preview_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:paddingLeft="24dp"
+        android:src="@drawable/ic_action_cancel"
+        android:background="@null"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:hapticFeedbackEnabled="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+    <ImageButton
 	    android:id="@+id/button_capture"
 	    android:layout_width="48dp"
 	    android:layout_height="48dp"
@@ -42,9 +41,9 @@
 	    android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:hapticFeedbackEnabled="true"
-	    />
-	   
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
   
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
