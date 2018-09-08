@@ -13,6 +13,7 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
@@ -30,12 +31,15 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import org.greenstand.android.TreeTracker.BuildConfig
 
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.Api
 import org.greenstand.android.TreeTracker.api.DOSpaces
+import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest
+import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -137,27 +141,61 @@ class DataFragment : Fragment(), View.OnClickListener {
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1);
         operationAttempt = launch(UI) {
 
-            val treeCursor = getTreesToUploadCursor().await()
-            Timber.tag("DataFragment").d("treeCursor: " + DatabaseUtils.dumpCursorToString(treeCursor))
-            Timber.tag("DataFragment").d("treeCursor: " + treeCursor.count)
-
             var success = true;
-            while(treeCursor.moveToNext()){
-                success = uploadNextTree(treeCursor).await()
-                if(success) {
-                    updateData()
+
+            success = identifyDevice().await()
+            if(!success){
+                Toast.makeText(activity, "Start Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
+            } else {
+
+                val treeCursor = getTreesToUploadCursor().await()
+                Timber.tag("DataFragment").d("treeCursor: " + DatabaseUtils.dumpCursorToString(treeCursor))
+                Timber.tag("DataFragment").d("treeCursor: " + treeCursor.count)
+
+                while (treeCursor.moveToNext()) {
+                    success = uploadNextTree(treeCursor).await()
+                    if (success) {
+                        updateData()
+                    } else {
+                        break;
+                    }
+                }
+
+                if (success) {
+                    Toast.makeText(activity, "Sync Successful", Toast.LENGTH_SHORT).show()
                 } else {
-                    break;
+                    Toast.makeText(activity, "Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
                 }
             }
-
-            if(success) {
-                Toast.makeText(activity, "Sync Successful", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(activity, "Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
-            }
-
         }
+    }
+
+    private fun identifyDevice() = async {
+
+        val authenticationRequest = AuthenticationRequest()
+        authenticationRequest.clientId = BuildConfig.TREETRACKER_CLIENT_ID
+        authenticationRequest.clientSecret = BuildConfig.TREETRACKER_CLIENT_SECRET
+        authenticationRequest.deviceAndroidId = Settings.Secure.ANDROID_ID
+        val signInReponse = Api.instance().api!!.signIn(authenticationRequest).execute()
+        if (!signInReponse.isSuccessful) {
+            return@async false
+        }
+        val tokenResponse = signInReponse!!.body()
+        Api.instance().setAuthToken(tokenResponse?.token!!)
+
+
+        val deviceRequest = DeviceRequest()
+        deviceRequest.app_version = BuildConfig.VERSION_NAME
+        deviceRequest.app_build = BuildConfig.VERSION_CODE
+        deviceRequest.brand = Build.BRAND
+        deviceRequest.hardware = Build.HARDWARE
+        deviceRequest.device = Build.DEVICE
+        deviceRequest.model = Build.MODEL
+        deviceRequest.serial = Build.SERIAL
+
+        val response = Api.instance().api!!.updateDevice(deviceRequest).execute()
+        return@async response.isSuccessful
+
     }
 
     private fun getTreesToUploadCursor() = async {
@@ -206,7 +244,7 @@ class DataFragment : Fragment(), View.OnClickListener {
          */
         val imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"))
         val imageUrl: String
-        if (imagePath != null && imagePath !== "") { // don't crash if image path is empty
+        if (imagePath != null && imagePath != "") { // don't crash if image path is empty
             try {
                 imageUrl = DOSpaces.instance().put(imagePath)
             } catch (ace: AmazonClientException) {
@@ -219,7 +257,7 @@ class DataFragment : Fragment(), View.OnClickListener {
                 return@async false;
             }
 
-            Timber.d("SyncTask " +"imageUrl: $imageUrl")
+            Timber.d("imageUrl: $imageUrl")
             newTree.imageUrl = imageUrl // method name should be changed as use new infrastructure.
         }
         /*

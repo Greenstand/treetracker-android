@@ -47,6 +47,8 @@ android {
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         buildConfigField "String", "DOS_ACCESS_KEY", "\"${dos_access_key}\""
         buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
+        buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
+        buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
     }
     buildTypes {
         release {

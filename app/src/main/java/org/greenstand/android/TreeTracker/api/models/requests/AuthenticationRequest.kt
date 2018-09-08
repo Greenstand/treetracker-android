@@ -13,4 +13,7 @@ class AuthenticationRequest {
 
     @SerializedName("client_secret")
     var clientSecret: String? = null
+
+    @SerializedName("device_android_id")
+    var deviceAndroidId: String? = null
 }

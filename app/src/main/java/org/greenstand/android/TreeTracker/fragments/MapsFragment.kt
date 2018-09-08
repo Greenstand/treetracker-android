@@ -114,63 +114,21 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         } else {
             val title = mSharedPreferences!!.getString(ValueHelper.USER_IDENTIFIER, resources.getString(R.string.user_not_identified))
             (activity.findViewById(R.id.toolbar_title) as TextView).text = title
+
+            val photoPath = mSharedPreferences!!.getString(ValueHelper.USER_PHOTO, null)
+            val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
+            if (photoPath != null) {
+                val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
+                if(rotatedBitmap != null){
+                    imageView.setImageBitmap(rotatedBitmap)
+                    imageView.visibility = View.VISIBLE
+
+                }
+            } else {
+                imageView.visibility = View.GONE
+            }
         }
 
-        val photoPath = mSharedPreferences!!.getString(ValueHelper.USER_PHOTO, null)
-        val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
-        if (photoPath != null) {
-            val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
-            if(rotatedBitmap != null){
-                imageView.setImageBitmap(rotatedBitmap)
-                imageView.visibility = View.VISIBLE
-
-            }
-        } else {
-            imageView.visibility = View.GONE
-        }
-
-        //  mCurrentRedToGreenMarkerColor = R.drawable.green_pin
-      //  mCurrentMarkerColor = R.drawable.red_pin_pulsating_4
-/*
-        handler.post(object : Runnable {
-            override fun run() {
-                if (mCurrentRedToGreenMarkerColor == R.drawable.red_pin) {
-                    mCurrentRedToGreenMarkerColor = R.drawable.green_pin
-                } else {
-                    mCurrentRedToGreenMarkerColor = R.drawable.red_pin
-                }
-                for (marker in redToGreenPulsatingMarkers) {
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(mCurrentRedToGreenMarkerColor))
-                }
-
-                if (!paused)
-                    handler.postDelayed(this, 500)
-            }
-        })
-
-        handler.post(object : Runnable {
-            override fun run() {
-                if (mCurrentMarkerColor == R.drawable.red_pin) {
-                    mCurrentMarkerColor = R.drawable.red_pin_pulsating_1
-                } else if (mCurrentMarkerColor == R.drawable.red_pin_pulsating_1) {
-                    mCurrentMarkerColor = R.drawable.red_pin_pulsating_2
-                } else if (mCurrentMarkerColor == R.drawable.red_pin_pulsating_2) {
-                    mCurrentMarkerColor = R.drawable.red_pin_pulsating_3
-                } else if (mCurrentMarkerColor == R.drawable.red_pin_pulsating_3) {
-                    mCurrentMarkerColor = R.drawable.red_pin_pulsating_4
-                } else if (mCurrentMarkerColor == R.drawable.red_pin_pulsating_4) {
-                    mCurrentMarkerColor = R.drawable.red_pin
-                }
-
-                for (marker in redPulsatingMarkers) {
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(mCurrentMarkerColor))
-                }
-
-                if (!paused)
-                    handler.postDelayed(this, 200)
-            }
-        })
-        */
     }
 
     override fun onDestroyView() {
