@@ -67,7 +67,6 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
         // Add a listener to the buttons
         captureButton!!.setOnClickListener(this@CameraActivity)
-        cancelImg!!.setOnClickListener(this@CameraActivity)
 
         if(intent.extras != null) {
             captureSelfie = intent.extras.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
@@ -78,7 +77,6 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
             Timber.i("Opening Camera")
 
-            cancelImg!!.visibility = View.INVISIBLE
             captureButton!!.visibility = View.INVISIBLE
 
             while(mCamera == null){
