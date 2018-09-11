@@ -222,7 +222,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
                     java.lang.Double.toString(MainActivity.mCurrentLocation!!.latitude))
             locationContentValues.put("long",
                     java.lang.Double.toString(MainActivity.mCurrentLocation!!.longitude))
-            locationContentValues.put("user_id", userId)
 
             val locationId = dbw.insert("location", null, locationContentValues)
 
@@ -232,7 +231,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
             // photo
             val photoContentValues = ContentValues()
-            photoContentValues.put("user_id", userId)
             photoContentValues.put("location_id", locationId)
             photoContentValues.put("name", mCurrentPhotoPath)
 
