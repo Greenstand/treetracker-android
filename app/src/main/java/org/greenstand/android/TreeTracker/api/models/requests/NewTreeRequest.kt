@@ -19,6 +19,10 @@ class NewTreeRequest {
     var imageUrl: String? = null
     @SerializedName("sequence_id")
     var sequenceId: Long = 0
+    @SerializedName("planter_photo_url")
+    var planterPhotoUrl: String? = null
+    @SerializedName("planter_identifier")
+    var planterIdentifier: String? = null
 
     fun getGpsAccuracy(): Float {
         return gpsAccuracy.toFloat()

@@ -148,11 +148,26 @@ class DataFragment : Fragment(), View.OnClickListener {
                 Toast.makeText(activity, "Start Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
             } else {
 
+                // Get all planter_identifications without a photo_url
+                val planterCursor = getPlanterIdentificationsToUploadCursor().await()
+                while(planterCursor.moveToNext()){
+                    val imageUrl = uploadPlanterPhoto(planterCursor).await()
+                    if(imageUrl != null){
+                        // update the planter photo_url to reflect this
+                        val planterIdentificationsId = planterCursor.getString(planterCursor.getColumnIndex("_id"))
+                        val values = ContentValues()
+                        values.put("photo_url", imageUrl)
+                        mDatabaseManager.update("planter_identifications", values, "_id = ?", arrayOf(planterIdentificationsId))
+                    }
+                }
+
+
                 val treeCursor = getTreesToUploadCursor().await()
                 Timber.tag("DataFragment").d("treeCursor: " + DatabaseUtils.dumpCursorToString(treeCursor))
                 Timber.tag("DataFragment").d("treeCursor: " + treeCursor.count)
 
                 while (treeCursor.moveToNext()) {
+
                     success = uploadNextTree(treeCursor).await()
                     if (success) {
                         updateData()
@@ -211,17 +226,55 @@ class DataFragment : Fragment(), View.OnClickListener {
                 "location.long, " +
                 "location.accuracy, " +
                 "photo.name, " +
-                "note.content " +
+                "note.content, " +
+                "planter_identifications.identifier as planter_identifier, " +
+                "planter_identifications.photo_path as planter_photo_path, " +
+                "planter_identifications.photo_url as planter_photo_url, " +
+                "planter_identifications._id as planter_identifications_id " +
                 "FROM tree " +
                 "LEFT OUTER JOIN location ON location._id = tree.location_id " +
                 "LEFT OUTER JOIN tree_photo ON tree._id = tree_photo.tree_id " +
                 "LEFT OUTER JOIN photo ON photo._id = tree_photo.photo_id " +
                 "LEFT OUTER JOIN tree_note ON tree._id = tree_note.tree_id " +
                 "LEFT OUTER JOIN note ON note._id = tree_note.note_id " +
+                "LEFT OUTER JOIN planter_identifications ON  planter_identifications._id = tree.planter_identification_id  " +
                 "WHERE " +
                 "is_synced = 'N'"
 
         return@async mDatabaseManager.queryCursor(query, null)
+    }
+
+    private fun getPlanterIdentificationsToUploadCursor() = async {
+        mDatabaseManager.openDatabase()
+        val query = "SELECT * FROM planter_identifications WHERE photo_url IS NULL"
+        return@async mDatabaseManager.queryCursor(query, null)
+    }
+
+    private fun uploadPlanterPhoto(planterCursor: Cursor) = async {
+        /**
+         * Implementation for saving image into DigitalOcean Spaces.
+         */
+        val imagePath = planterCursor.getString(planterCursor.getColumnIndex("photo_path"))
+        val imageUrl: String
+        if (imagePath != null && imagePath != "") { // don't crash if image path is empty
+            try {
+                imageUrl = DOSpaces.instance().put(imagePath)
+            } catch (ace: AmazonClientException) {
+                Log.e("SyncTask", "Caught an AmazonClientException, which " +
+                        "means the client encountered " +
+                        "an internal error while trying to " +
+                        "communicate with S3, " +
+                        "such as not being able to access the network.")
+                Log.e("SyncTask", "Error Message: " + ace.message)
+                return@async null
+            }
+
+            Timber.d("imageUrl: $imageUrl")
+            return@async imageUrl
+        } else {
+            return@async null
+        }
+
     }
 
     private fun uploadNextTree(treeCursor: Cursor) = async{
@@ -242,6 +295,9 @@ class DataFragment : Fragment(), View.OnClickListener {
         val timeCreated = treeCursor.getString(treeCursor.getColumnIndex("tree_time_created"))
         newTree.timestamp = Utils.convertDateToTimestamp(timeCreated)
 
+        newTree.planterPhotoUrl = treeCursor.getString(treeCursor.getColumnIndex("planter_photo_url"))
+        newTree.planterIdentifier = treeCursor.getString(treeCursor.getColumnIndex("planter_identifier"))
+
         /**
          * Implementation for saving image into DigitalOcean Spaces.
          */
@@ -261,7 +317,7 @@ class DataFragment : Fragment(), View.OnClickListener {
             }
 
             Timber.d("imageUrl: $imageUrl")
-            newTree.imageUrl = imageUrl // method name should be changed as use new infrastructure.
+            newTree.imageUrl = imageUrl
         }
         /*
         * Save to the API
