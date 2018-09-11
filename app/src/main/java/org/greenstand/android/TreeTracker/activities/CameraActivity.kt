@@ -56,6 +56,8 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
     private var operationAttempt: Job? = null
 
 
+    private var captureSelfie: Boolean = false
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_preview)
@@ -69,6 +71,8 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
         captureButton!!.setOnClickListener(this@CameraActivity)
         cancelImg!!.setOnClickListener(this@CameraActivity)
 
+        captureSelfie = intent.extras.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
+
         operationAttempt?.cancel()
         operationAttempt = launch(UI) {
 
@@ -79,11 +83,20 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
             while(mCamera == null){
                 try {
-                    val numberOfCameras = Camera.getNumberOfCameras()
-                    if(numberOfCameras > 1){
-                        mCamera = Camera.open(1)
+
+                    if(captureSelfie) {
+
+                        val numberOfCameras = Camera.getNumberOfCameras()
+                        if (numberOfCameras > 1) {
+                            mCamera = Camera.open(1)
+                        } else {
+                            mCamera = Camera.open()
+                        }
+
                     } else {
+
                         mCamera = Camera.open()
+
                     }
                 } catch (e: Exception) {
                     Timber.d("in use" + e.localizedMessage)
@@ -238,6 +251,10 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
             rotationAngle = 180
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
             rotationAngle = 270
+
+        if(captureSelfie)
+            rotationAngle = 180 // TODO but this will still be saved with wrong rotation
+
 
         val matrix = Matrix()
         matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,

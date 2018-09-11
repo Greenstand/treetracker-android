@@ -114,6 +114,7 @@ class UserIdentificationFragment : Fragment() {
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
+            takePictureIntent.extras.putBoolean(ValueHelper.TAKE_SELFIE_EXTRA, true)
             startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
         }
     }

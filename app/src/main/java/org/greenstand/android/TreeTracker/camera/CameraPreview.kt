@@ -13,8 +13,9 @@ import timber.log.Timber
 
 /** A basic Camera preview class  */
 class CameraPreview(context: Context, private val mCamera: Camera?) : SurfaceView(context), SurfaceHolder.Callback {
-    private var mHolder: SurfaceHolder? = null
     private val TAG = "CAMERA PREVIEW"
+
+    // TODO see: https://stackoverflow.com/questions/19577299/android-camera-preview-stretched
 
     init {
 

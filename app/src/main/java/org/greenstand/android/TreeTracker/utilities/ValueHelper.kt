@@ -81,4 +81,6 @@ object ValueHelper {
 
 
     const val IDENTIFICATION_TIMEOUT = 60 * 60 * 2
+
+    const val TAKE_SELFIE_EXTRA = "TAKE_SELFIE_EXTRA"
 }
