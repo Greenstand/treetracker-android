@@ -138,12 +138,19 @@ class DataFragment : Fragment(), View.OnClickListener {
 
 
     fun startDataSynchronization() {
+
+
+
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1);
         operationAttempt = launch(UI) {
 
-            var success = true;
+            var success = true
+            if(Api.instance().api != null){
+                success = identifyDevice().await()
+            } else {
+                success = false
+            }
 
-            success = identifyDevice().await()
             if(!success){
                 Toast.makeText(activity, "Start Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
             } else {
@@ -191,15 +198,19 @@ class DataFragment : Fragment(), View.OnClickListener {
         authenticationRequest.clientId = BuildConfig.TREETRACKER_CLIENT_ID
         authenticationRequest.clientSecret = BuildConfig.TREETRACKER_CLIENT_SECRET
         authenticationRequest.deviceAndroidId = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID);
-        val signInReponse = Api.instance().api!!.signIn(authenticationRequest).execute()
-        if (!signInReponse.isSuccessful) {
+
+        try {
+            val signInReponse = Api.instance().api!!.signIn(authenticationRequest).execute()
+            if (!signInReponse.isSuccessful) {
+                return@async false
+            }
+            val tokenResponse = signInReponse!!.body()
+            Api.instance().setAuthToken(tokenResponse?.token!!)
+        } catch ( e: IOException) {
             return@async false
         }
-        val tokenResponse = signInReponse!!.body()
-        Api.instance().setAuthToken(tokenResponse?.token!!)
 
-
-        val deviceRequest = DeviceRequest()
+    val deviceRequest = DeviceRequest()
         deviceRequest.app_version = BuildConfig.VERSION_NAME
         deviceRequest.app_build = BuildConfig.VERSION_CODE
         deviceRequest.brand = Build.BRAND
@@ -211,8 +222,13 @@ class DataFragment : Fragment(), View.OnClickListener {
         deviceRequest.androidRelease = Build.VERSION.RELEASE
         deviceRequest.androidSdkVersion = Build.VERSION.SDK_INT
 
-        val response = Api.instance().api!!.updateDevice(deviceRequest).execute()
-        return@async response.isSuccessful
+        try {
+            val response = Api.instance().api!!.updateDevice(deviceRequest).execute()
+            return@async response.isSuccessful
+        } catch ( e: IOException) {
+            return@async false
+        }
+
 
     }
 
