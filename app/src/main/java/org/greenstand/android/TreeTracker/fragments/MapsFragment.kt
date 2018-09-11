@@ -55,28 +55,17 @@ import timber.log.Timber
 
 class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback, View.OnLongClickListener {
 
-    internal var mSettingCallback: LocationDialogListener? = null
-
-    private val redPulsatingMarkers = ArrayList<Marker>()
-    private val redToGreenPulsatingMarkers = ArrayList<Marker>()
+    private var mSettingCallback: LocationDialogListener? = null
 
     private var mSharedPreferences: SharedPreferences? = null
-    private var mCurrentRedToGreenMarkerColor = -1
     private var paused = false
-    protected var mCurrentMarkerColor: Int = 0
-
-    private val handler = object : Handler() {
-
-        override fun handleMessage(msg: Message) {
-
-        }
-    }
 
     private var fragment: Fragment? = null
 
     private var bundle: Bundle? = null
 
     private var fragmentTransaction: FragmentTransaction? = null
+    private var mapFragment: SupportMapFragment? = null
 
     interface LocationDialogListener {
         fun refreshMap()
@@ -160,10 +149,12 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             Timber.d(e.localizedMessage);
         }
 
-        val mapFragment = SupportMapFragment()
-        childFragmentManager.beginTransaction().apply {
-            add(R.id.map, mapFragment)
-            commit()
+        if(mapFragment == null) {
+            mapFragment = SupportMapFragment()
+            childFragmentManager.beginTransaction().apply {
+                add(R.id.map, mapFragment)
+                commit()
+            }
         }
 
         mSharedPreferences = activity.getSharedPreferences(
@@ -185,7 +176,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             fab.setOnLongClickListener(this)
         }
 
-        mapFragment.getMapAsync(this)
+        mapFragment!!.getMapAsync(this)
 
 
         val mapGpsAccuracy = v.findViewById(R.id.fragment_map_gps_accuracy) as TextView
@@ -424,49 +415,13 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         val treeCursor = db.rawQuery("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null)
         treeCursor.moveToFirst()
 
-        redToGreenPulsatingMarkers.clear()
-        redPulsatingMarkers.clear()
-
         if (treeCursor.count > 0) {
+            Timber.d("Adding markers")
 
             var latLng: LatLng? = null
 
             do {
 
-                //Timber.d("tree id " + String.valueOf(treeCursor.getLong(treeCursor.getColumnIndex("_id"))));
-
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
-                /*
-				Boolean isSynced = Boolean.parseBoolean(treeCursor.getString(treeCursor.getColumnIndex("is_synced")));
-
-				//Timber.d("issynced " + Boolean.toString(isSynced));
-
-				Date dateForUpdate = new Date();
-				try {
-					dateForUpdate = dateFormat.parse(treeCursor.getString(treeCursor.getColumnIndex("time_for_update")));
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				Date updated = new Date();
-				try {
-					updated = dateFormat.parse(treeCursor.getString(treeCursor.getColumnIndex("time_updated")));
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				Date created = new Date();
-				try {
-					created = dateFormat.parse(treeCursor.getString(treeCursor.getColumnIndex("time_created")));
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-*/
-                val priority = treeCursor.getString(treeCursor.getColumnIndex("is_priority")) == "Y"
                 latLng = LatLng(java.lang.Double.parseDouble(treeCursor.getString(treeCursor.getColumnIndex("lat"))),
                         java.lang.Double.parseDouble(treeCursor.getString(treeCursor.getColumnIndex("long"))))
 
@@ -475,36 +430,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                         .title(java.lang.Long.toString(treeCursor.getLong(treeCursor.getColumnIndex("tree_id"))))// set Id instead of title
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
                         .position(latLng)
-                val marker = map.addMarker(markerOptions)
+                map.addMarker(markerOptions)
 
-
-
-                if (priority) {
-                    redPulsatingMarkers.add(marker)
-                    continue
-                }
-
-
-                // This 'update' logic is not currently in use
-                /*if (dateForUpdate.before(new Date())) {
-
-
-					Log.e("updated", "should be red");
-
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(dateForUpdate);
-
-					Calendar currCalendar = Calendar.getInstance();
-					currCalendar.setTime(new Date());
-
-					marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin));
-				}
-				*/
-
-                //		        Log.i("updated", "*************");
-                //		        if (created.before(updated) && !isSynced) {
-                //		        	redToGreenPulsatingMarkers.add(marker);
-                //		        }
             } while (treeCursor.moveToNext())
 
 
@@ -519,8 +446,6 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
         map.setOnMarkerClickListener(this@MapsFragment)
 
-        // Other supported types include: MAP_TYPE_NORMAL,
-        // MAP_TYPE_TERRAIN, MAP_TYPE_HYBRID and MAP_TYPE_NONE
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
     }
 

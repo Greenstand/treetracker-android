@@ -79,7 +79,12 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
             while(mCamera == null){
                 try {
-                    mCamera = Camera.open()
+                    val numberOfCameras = Camera.getNumberOfCameras()
+                    if(numberOfCameras > 1){
+                        mCamera = Camera.open(1)
+                    } else {
+                        mCamera = Camera.open()
+                    }
                 } catch (e: Exception) {
                     Timber.d("in use" + e.localizedMessage)
                 }
