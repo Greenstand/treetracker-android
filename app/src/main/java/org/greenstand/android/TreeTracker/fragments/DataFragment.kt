@@ -175,7 +175,7 @@ class DataFragment : Fragment(), View.OnClickListener {
         val authenticationRequest = AuthenticationRequest()
         authenticationRequest.clientId = BuildConfig.TREETRACKER_CLIENT_ID
         authenticationRequest.clientSecret = BuildConfig.TREETRACKER_CLIENT_SECRET
-        authenticationRequest.deviceAndroidId = Settings.Secure.ANDROID_ID
+        authenticationRequest.deviceAndroidId = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID);
         val signInReponse = Api.instance().api!!.signIn(authenticationRequest).execute()
         if (!signInReponse.isSuccessful) {
             return@async false
@@ -192,6 +192,9 @@ class DataFragment : Fragment(), View.OnClickListener {
         deviceRequest.device = Build.DEVICE
         deviceRequest.model = Build.MODEL
         deviceRequest.serial = Build.SERIAL
+        deviceRequest.manufacturer = Build.MANUFACTURER
+        deviceRequest.androidRelease = Build.VERSION.RELEASE
+        deviceRequest.androidSdkVersion = Build.VERSION.SDK_INT
 
         val response = Api.instance().api!!.updateDevice(deviceRequest).execute()
         return@async response.isSuccessful

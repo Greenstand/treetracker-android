@@ -28,4 +28,10 @@ class DeviceRequest {
     @SerializedName("serial")
     var serial: String? = null
 
+    @SerializedName("androidRelease")
+    var androidRelease: String? = null
+
+    @SerializedName("androidSdkVersion")
+    var androidSdkVersion: Int? = null
+
 }
