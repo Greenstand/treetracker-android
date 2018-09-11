@@ -5,6 +5,7 @@ import android.location.Location
 import android.util.Log
 
 import org.greenstand.android.TreeTracker.R
+import timber.log.Timber
 
 
 /**
@@ -62,7 +63,7 @@ object LocationUtils {
 
             // Return the latitude and longitude as strings
 
-            Timber.d("accuracy", java.lang.Float.toString(currentLocation.accuracy))
+            Timber.d("accuracy " + java.lang.Float.toString(currentLocation.accuracy))
 
             return context.getString(
                     R.string.latitude_longitude,
