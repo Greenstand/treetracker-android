@@ -43,13 +43,13 @@ object ImageUtils {
 
         var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
-        Log.e("sampleSize ", Integer.toString(sampleSize))
+        Timber.d("sampleSize " + Integer.toString(sampleSize))
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
         }
 
-        Log.e("sampleSize 2 ", Integer.toString(sampleSize))
+        Timber.d("sampleSize 2 " + Integer.toString(sampleSize))
         bmOptions.inSampleSize = sampleSize
         bmOptions.inPurgeable = true
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565

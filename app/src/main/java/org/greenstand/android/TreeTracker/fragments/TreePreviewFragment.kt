@@ -86,9 +86,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
         photoCursor.moveToFirst()
 
-
-        Log.e("query", query)
-
         do {
 
             mCurrentPhotoPath = photoCursor.getString(photoCursor.getColumnIndex("name"))
@@ -167,13 +164,9 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             while (noteCursor.moveToNext()) {
                 val currentText = notesTxt.text.toString()
 
-                Log.e("tree_id", noteCursor.getString(noteCursor.getColumnIndex("tree_id")))
-                Log.e("note", noteCursor.getString(noteCursor.getColumnIndex("notetext")))
-
                 if (noteCursor.getString(noteCursor.getColumnIndex("notetext")).trim { it <= ' ' }.length == 0) {
                     continue
                 }
-
 
                 val text = noteCursor.getString(noteCursor.getColumnIndex("notetext")) + "\n\n" + currentText
 
@@ -235,18 +228,13 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         // For e.g you want the width to stay consistent at 500dp
         val requiredWidth = (500 * resources.displayMetrics.density).toInt()
 
-        Log.e("required Width ", Integer.toString(requiredWidth))
-        Log.e("imageWidth  ", Integer.toString(imageWidth))
-
         var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
-        Log.e("sampleSize ", Integer.toString(sampleSize))
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
         }
 
-        Log.e("sampleSize 2 ", Integer.toString(sampleSize))
         bmOptions.inSampleSize = sampleSize
         bmOptions.inPurgeable = true
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565

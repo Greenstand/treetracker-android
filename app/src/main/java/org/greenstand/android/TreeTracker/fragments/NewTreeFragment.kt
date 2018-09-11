@@ -328,7 +328,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
 
     override fun afterTextChanged(s: Editable) {
-        Log.e("days", s.toString())
+        Timber.d("days "+ s.toString())
 
 
     }

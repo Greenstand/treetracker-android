@@ -137,7 +137,7 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
         try {
             tmpImageFile = File.createTempFile("tmpimage.jpg", null, cacheDir)
         } catch (e: IOException) {
-            Log.e("file not", "created")
+            Timber.d("file not created")
             e.printStackTrace()
         }
 
@@ -217,13 +217,13 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
         var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
-        Log.e("sampleSize ", Integer.toString(sampleSize))
+        Timber.d("sampleSize " + Integer.toString(sampleSize))
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
         }
 
-        Log.e("sampleSize 2 ", Integer.toString(sampleSize))
+        Timber.d("sampleSize 2 " + Integer.toString(sampleSize))
         bmOptions.inSampleSize = sampleSize
         bmOptions.inPurgeable = true
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
@@ -276,7 +276,7 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
         if (safeToTakePicture && mCamera != null) {     //check mCamera isn't null to avoid error
             safeToTakePicture = false
             mCamera!!.takePicture(null, null, this@CameraActivity)
-            Log.e("take", "pic")
+            Timber.d("take pic")
         }
     }
 

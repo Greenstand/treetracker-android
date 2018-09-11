@@ -260,12 +260,12 @@ class DataFragment : Fragment(), View.OnClickListener {
             try {
                 imageUrl = DOSpaces.instance().put(imagePath)
             } catch (ace: AmazonClientException) {
-                Log.e("SyncTask", "Caught an AmazonClientException, which " +
+                Timber.d("Caught an AmazonClientException, which " +
                         "means the client encountered " +
                         "an internal error while trying to " +
                         "communicate with S3, " +
                         "such as not being able to access the network.")
-                Log.e("SyncTask", "Error Message: " + ace.message)
+                Timber.d("Error Message: " + ace.message)
                 return@async null
             }
 
@@ -307,12 +307,12 @@ class DataFragment : Fragment(), View.OnClickListener {
             try {
                 imageUrl = DOSpaces.instance().put(imagePath)
             } catch (ace: AmazonClientException) {
-                Log.e("SyncTask", "Caught an AmazonClientException, which " +
+                Timber.d("Caught an AmazonClientException, which " +
                         "means the client encountered " +
                         "an internal error while trying to " +
                         "communicate with S3, " +
                         "such as not being able to access the network.")
-                Log.e("SyncTask", "Error Message: " + ace.message)
+                Timber.d("Error Message: " + ace.message)
                 return@async false;
             }
 

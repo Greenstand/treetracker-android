@@ -73,8 +73,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.e("on", "create")
-
         // Application Setup
         val sharedPreferences = getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
         val token = sharedPreferences.getString(ValueHelper.TOKEN, null)
@@ -294,7 +292,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     public override fun onDestroy() {
-        Log.e(TAG, "onDestroy")
         super.onDestroy()
     }
 
@@ -561,53 +558,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
 
-    /**
-     * Called when the tree sync process completes (for one tree)
-     * @param httpResponseCode
-     *
-     * We are not currently syncing trees, instead the app is for providing trees to the server and that's it
-     */
-    fun onTreeSyncResult(result: Boolean, httpResponseCode: Int, responseBody: String) {
-        //Log.i("MainActivity", "onTreeSyncedResult(" + result + ")");
-        //Log.i("MainActivity", "httpResponseCode(" + Integer.toString(httpResponseCode) + ")");
-        // Hide the progress dialog
-
-        if (result) {
-
-            val jsonReponse: JSONObject
-            when (httpResponseCode) {
-                HttpStatus.SC_OK ->
-                    //successfull sync, save the token and continue
-
-                    try {
-                        jsonReponse = JSONObject(responseBody)
-
-                        Log.e("response body", jsonReponse.toString())
-
-                    } catch (e: JSONException) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace()
-
-                        Log.e("response body", responseBody)
-                    }
-
-
-                else -> {
-                }
-            }
-
-        } else {
-            Log.e("MainActivity", "onLoginResult: failed to login")
-            when (httpResponseCode) {
-                HttpStatus.SC_UNAUTHORIZED -> Toast.makeText(this@MainActivity, "Incorrect username or password.", Toast.LENGTH_SHORT).show()
-
-                -1000 -> Toast.makeText(this@MainActivity, "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show()
-
-                else -> {
-                }
-            }
-        }
-    }
 
     /**
      * In response to a request to start updates, send a request

@@ -21,6 +21,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.DbHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import timber.log.Timber
 
 import java.util.Calendar
 
@@ -64,7 +65,7 @@ class NetworkReceiver : BroadcastReceiver() {
             //this too
             treeCursor.moveToFirst()   //this
             val tosync = Integer.parseInt(treeCursor.getString(treeCursor.getColumnIndex("tosync")))
-            Log.e("to sync", treeCursor.getString(treeCursor.getColumnIndex("tosync")))
+            Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
 
 
             var notification: Uri? = null

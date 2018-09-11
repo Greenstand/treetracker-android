@@ -24,6 +24,7 @@ import org.apache.http.message.BasicHeader
 import org.apache.http.params.HttpConnectionParams
 import org.apache.http.protocol.HTTP
 import org.json.JSONObject
+import timber.log.Timber
 
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
@@ -134,7 +135,7 @@ class Utils {
 
                         val se = StringEntity(json.toString())
 
-                        Log.e("json string", json.toString())
+                        Timber.d("json string " + json.toString())
 
                         se.contentType = BasicHeader(HTTP.CONTENT_TYPE, "application/json")
                         post.entity = se

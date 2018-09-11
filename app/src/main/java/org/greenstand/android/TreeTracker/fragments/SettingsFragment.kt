@@ -29,6 +29,7 @@ import android.widget.Toast
 
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import timber.log.Timber
 
 class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, TextWatcher {
 
@@ -234,9 +235,7 @@ class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, T
 
 
     override fun afterTextChanged(s: Editable) {
-        Log.e("days", s.toString())
-
-
+        Timber.d("days " + s.toString())
     }
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int,

@@ -326,7 +326,6 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         contentValues.put("is_priority", "N")
 
         if (mTreeIsMissing) {
-            Log.e("missing", "ok")
             contentValues.put("is_missing", "Y")
             contentValues.put("cause_of_death_id", noteId)
         }
@@ -384,18 +383,13 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         // For e.g you want the width to stay consistent at 500dp
         val requiredWidth = (500 * resources.displayMetrics.density).toInt()
 
-        Log.e("required Width ", Integer.toString(requiredWidth))
-        Log.e("imageWidth  ", Integer.toString(imageWidth))
-
         var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
-        Log.e("sampleSize ", Integer.toString(sampleSize))
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
         }
 
-        Log.e("sampleSize 2 ", Integer.toString(sampleSize))
         bmOptions.inSampleSize = sampleSize
         bmOptions.inPurgeable = true
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565

@@ -62,7 +62,7 @@ object LocationUtils {
 
             // Return the latitude and longitude as strings
 
-            Log.e("accuracy", java.lang.Float.toString(currentLocation.accuracy))
+            Timber.d("accuracy", java.lang.Float.toString(currentLocation.accuracy))
 
             return context.getString(
                     R.string.latitude_longitude,

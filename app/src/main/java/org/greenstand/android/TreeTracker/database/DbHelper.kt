@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 
 import org.greenstand.android.TreeTracker.BuildConfig
+import timber.log.Timber
 
 import java.io.FileOutputStream
 import java.io.IOException
@@ -55,7 +56,7 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
                 copyDataBase()
 
             } catch (e: IOException) {
-                Log.e(TAG, e.stackTrace.toString())
+                Timber.d(e.stackTrace.toString())
                 throw Error("Error copying database")
 
             }
