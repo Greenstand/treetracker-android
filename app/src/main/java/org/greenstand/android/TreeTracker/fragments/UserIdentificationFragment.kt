@@ -68,15 +68,11 @@ class UserIdentificationFragment : Fragment() {
 
                 if(phoneNumberPattern.matcher(identifier).matches()) {
                     mUserIdentifier = identifier
-                } else {
-
-                    // Show some error message, with details about format
-                    Toast.makeText(activity, "Invalid Identifier.  Please enter an email or a phone number", Toast.LENGTH_LONG)
                 }
             }
 
             if(mUserIdentifier == null) {
-                // Some Toast
+                Toast.makeText(activity, "Invalid Identifier.  Please enter an email or a phone number", Toast.LENGTH_LONG).show()
             } else if(mPhotoPath == null){
                 takePicture()
             } else {
