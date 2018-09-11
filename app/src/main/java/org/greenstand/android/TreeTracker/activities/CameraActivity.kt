@@ -48,7 +48,6 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
     private var mCurrentPhotoPath: String? = null
     private var mImageView: ImageView? = null
     private var mCurrentPictureData: ByteArray? = null
-    private var cancelImg: ImageButton? = null
     private var captureButton: ImageButton? = null
     private var tmpImageFile: File? = null
     private var safeToTakePicture = true
@@ -64,7 +63,6 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
         mImageView = findViewById(R.id.camera_preview_taken) as ImageView
 
-        cancelImg = findViewById(R.id.camera_preview_cancel) as ImageButton
         captureButton = findViewById(R.id.button_capture) as ImageButton
 
         // Add a listener to the buttons
@@ -109,7 +107,6 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
             mPreview = CameraPreview(this@CameraActivity, mCamera)
             val preview = findViewById(R.id.camera_preview) as FrameLayout
             preview.addView(mPreview)
-            cancelImg!!.visibility = View.VISIBLE
             captureButton!!.visibility = View.VISIBLE
         }
 
@@ -130,7 +127,6 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
 
     override fun onPictureTaken(data: ByteArray, camera: Camera) {
         captureButton!!.visibility = View.INVISIBLE
-        cancelImg!!.visibility = View.INVISIBLE
 
         mCurrentPictureData = data
         tmpImageFile = null
