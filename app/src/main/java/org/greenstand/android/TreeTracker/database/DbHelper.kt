@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.database
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
@@ -61,6 +62,21 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
 
             }
 
+            if(checkV1DataBase()) {
+                // The V1 database is still here
+                val db1Helper = getDbV1Helper(myContext)
+                val db2Helper = getDbHelper(myContext)
+                val treesCursor = db1Helper.readableDatabase.rawQuery("select * from trees where is_synced = 'N'", null)
+                while (treesCursor.moveToNext()) {
+                    val treeContentValues = ContentValues()
+
+                    // how do we get the user identifier?
+                    //                     sharedPreferences.edit().putString(ValueHelper.USERNAME, txtEmail).commit()
+
+                    db2Helper.writableDatabase.insert("tree", null, treeContentValues)
+                }
+            }
+
         }
 
     }
@@ -90,9 +106,32 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
 
         }
 
-        return if (checkDB != null) true else false
+        return checkDB != null
     }
 
+
+    private fun checkV1DataBase(): Boolean {
+
+        var checkDB: SQLiteDatabase? = null
+
+        try {
+            val myPath = myContext.getDatabasePath(DB_NAME_V1).path
+            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
+
+        } catch (e: SQLiteException) {
+
+            //database does't exist yet.
+
+        }
+
+        if (checkDB != null) {
+
+            checkDB.close()
+
+        }
+
+        return checkDB != null
+    }
 
     /**
      * Copies your database from your local assets-folder to the just created empty database in the
@@ -129,13 +168,16 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
 
     companion object {
 
-        private val TAG = "SQLiteOpenHelper"
-        private val DB_NAME_V1 = "treetracker.db"
-        private val DB_NAME_V2 = "treetracker.v2.db"
+        private const val DB_NAME_V1 = "treetracker.db"
+        private const val DB_NAME_V2 = "treetracker.v2.db"
 
 
         fun getDbHelper(context: Context): DbHelper {
             return DbHelper(context, DB_NAME_V2, null, 1)
+        }
+
+        fun getDbV1Helper(context: Context): DbHelper {
+            return DbHelper(context, DB_NAME_V1, null, 1)
         }
     }
 

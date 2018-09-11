@@ -73,17 +73,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Application Setup
-        val sharedPreferences = getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
-        val token = sharedPreferences.getString(ValueHelper.TOKEN, null)
-        Api.instance().setAuthToken(token)
-
-        /*
-        if(Api.instance().isLoggedIn()){
-            getMyTrees();
-        }
-        */
-
         mSharedPreferences = this.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
