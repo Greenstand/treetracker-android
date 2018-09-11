@@ -9,8 +9,6 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -22,7 +20,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -47,7 +44,6 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.ArrayList
 import java.util.Date
 
 import timber.log.Timber
@@ -101,10 +97,10 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
             (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
         } else {
-            val title = mSharedPreferences!!.getString(ValueHelper.USER_IDENTIFIER, resources.getString(R.string.user_not_identified))
+            val title = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
             (activity.findViewById(R.id.toolbar_title) as TextView).text = title
 
-            val photoPath = mSharedPreferences!!.getString(ValueHelper.USER_PHOTO, null)
+            val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
             val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
             if (photoPath != null) {
                 val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)

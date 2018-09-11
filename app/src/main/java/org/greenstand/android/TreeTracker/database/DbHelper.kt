@@ -35,6 +35,11 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
     @Throws(IOException::class)
     fun createDataBase() {
 
+
+        // TODO: Check if the v1 database is in place and copy trees to new database if so
+        // just copy the un-synced trees, the photos, and notes
+        // copy from DB_NAME_V1 to DB_NAME_V2
+
         val dbExist = checkDataBase()
 
         if (dbExist) {
@@ -69,7 +74,7 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
         var checkDB: SQLiteDatabase? = null
 
         try {
-            val myPath = myContext.getDatabasePath(DB_NAME).path
+            val myPath = myContext.getDatabasePath(DB_NAME_V2).path
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
 
         } catch (e: SQLiteException) {
@@ -97,10 +102,10 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
     private fun copyDataBase() {
 
         //Open your local db as the input stream
-        val myInput = myContext.assets.open(DB_NAME)
+        val myInput = myContext.assets.open(DB_NAME_V2)
 
         // Path to the just created empty db
-        val outFileName = myContext.getDatabasePath(DB_NAME).path
+        val outFileName = myContext.getDatabasePath(DB_NAME_V2).path
 
         //Open the empty db as the output stream
         val myOutput = FileOutputStream(outFileName)
@@ -124,10 +129,12 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
     companion object {
 
         private val TAG = "SQLiteOpenHelper"
-        private val DB_NAME = "treetracker.db"
+        private val DB_NAME_V1 = "treetracker.db"
+        private val DB_NAME_V2 = "treetracker.v2.db"
+
 
         fun getDbHelper(context: Context): DbHelper {
-            return DbHelper(context, DB_NAME, null, 1)
+            return DbHelper(context, DB_NAME_V2, null, 1)
         }
     }
 

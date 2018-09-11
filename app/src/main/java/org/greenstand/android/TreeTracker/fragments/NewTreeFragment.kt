@@ -270,10 +270,13 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
 
             // tree
+            val planterIdentifierId = mSharedPreferences?.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
+
             val treeContentValues = ContentValues()
             treeContentValues.put("user_id", userId)
             treeContentValues.put("location_id", locationId)
             treeContentValues.put("settings_id", settingsId)
+            treeContentValues.put("planter_identification_id", planterIdentifierId)
 
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 

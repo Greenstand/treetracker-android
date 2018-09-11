@@ -6,23 +6,18 @@ import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -252,8 +247,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             R.id.action_change_user -> {
                 val editor = mSharedPreferences!!.edit()
                 editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor.putString(ValueHelper.USER_IDENTIFIER, null)
-                editor.putString(ValueHelper.USER_PHOTO, null)
+                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor.putString(ValueHelper.PLANTER_PHOTO, null)
                 editor.commit()
 
                 (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)

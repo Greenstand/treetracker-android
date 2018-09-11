@@ -3,12 +3,11 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
-import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -21,7 +20,9 @@ import android.widget.TextView
 import android.widget.Toast
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
+import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
+import org.greenstand.android.TreeTracker.database.DatabaseManager
 
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Validation
@@ -80,14 +81,24 @@ class UserIdentificationFragment : Fragment() {
                 takePicture()
             } else {
                 // do the login
+                val dbw = DatabaseManager.getInstance(MainActivity.dbHelper!!).openDatabase()
+                // photo
+                val identificationContentValues = ContentValues()
+                identificationContentValues.put("identifier", mUserIdentifier.toString())
+                identificationContentValues.put("photo_path", mPhotoPath)
+
+                val identificationId = dbw.insert("planter_identifications", null, identificationContentValues)
+
+
                 mSharedPreferences = activity.getSharedPreferences(
                         ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
                 val editor = mSharedPreferences!!.edit()
 
                 val tsLong = System.currentTimeMillis() / 1000
                 editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
-                editor!!.putString(ValueHelper.USER_IDENTIFIER, mUserIdentifier.toString())
-                editor!!.putString(ValueHelper.USER_PHOTO, mPhotoPath)
+                editor!!.putString(ValueHelper.PLANTER_IDENTIFIER, mUserIdentifier.toString())
+                editor!!.putString(ValueHelper.PLANTER_PHOTO, mPhotoPath)
+                editor!!.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
                 editor!!.commit()
 
                 // TODO consider returning to MapFragment and pushing this new fragment from there
@@ -114,7 +125,7 @@ class UserIdentificationFragment : Fragment() {
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
-            takePictureIntent.extras.putBoolean(ValueHelper.TAKE_SELFIE_EXTRA, true)
+            takePictureIntent.putExtra(ValueHelper.TAKE_SELFIE_EXTRA, true)
             startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
         }
     }

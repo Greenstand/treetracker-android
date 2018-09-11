@@ -71,7 +71,9 @@ class CameraActivity : Activity(), PictureCallback, OnClickListener, ActivityCom
         captureButton!!.setOnClickListener(this@CameraActivity)
         cancelImg!!.setOnClickListener(this@CameraActivity)
 
-        captureSelfie = intent.extras.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
+        if(intent.extras != null) {
+            captureSelfie = intent.extras.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
+        }
 
         operationAttempt?.cancel()
         operationAttempt = launch(UI) {

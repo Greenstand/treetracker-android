@@ -65,6 +65,7 @@ planter_identification_id INTEGER REFERENCES planter_identifications(_id) ON UPD
 CREATE TABLE planter_identifications(
 _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 identifier TEXT,
+photo_path TEXT,
 photo_url TEXT,
 time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
