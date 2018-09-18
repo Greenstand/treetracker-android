@@ -23,6 +23,9 @@ interface ApiService {
     @PUT("devices/")
     fun updateDevice(@Body deviceRequest: DeviceRequest): Call<PostResult>
 
+    @POST("planters/registration")
+    fun createPlanterRegistration(@Body registration: RegistrationRequest): Call<PostResult>
+
     companion object {
 
         const val ENDPOINT = BuildConfig.BASE_URL

@@ -41,6 +41,7 @@ import org.greenstand.android.TreeTracker.api.DOSpaces
 import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
+import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.Utils
@@ -137,14 +138,12 @@ class DataFragment : Fragment(), View.OnClickListener {
     }
 
 
-    fun startDataSynchronization() {
-
-
+    private fun startDataSynchronization() {
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1);
         operationAttempt = launch(UI) {
 
-            var success = true
+            var success: Boolean
             if(Api.instance().api != null){
                 success = identifyDevice().await()
             } else {
@@ -154,6 +153,11 @@ class DataFragment : Fragment(), View.OnClickListener {
             if(!success){
                 Toast.makeText(activity, "Start Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
             } else {
+
+                val registrationsCursor = getPlanterRegistrationsToUploadCursor().await()
+                while(registrationsCursor.moveToNext()){
+                    success = uploadPlanterRegistration(registrationsCursor).await()
+                }
 
                 // Get all planter_identifications without a photo_url
                 val planterCursor = getPlanterIdentificationsToUploadCursor().await()
@@ -266,6 +270,30 @@ class DataFragment : Fragment(), View.OnClickListener {
         return@async mDatabaseManager.queryCursor(query, null)
     }
 
+    private fun getPlanterRegistrationsToUploadCursor() = async {
+        mDatabaseManager.openDatabase()
+        val query = "SELECT * FROM planter_details WHERE uploaded = 'N'"
+        return@async mDatabaseManager.queryCursor(query, null)
+    }
+
+    private fun uploadPlanterRegistration(registrationsCursor: Cursor) = async {
+        val registration = RegistrationRequest()
+        registration.planterIdentifier = registrationsCursor.getString(registrationsCursor.getColumnIndex("identifier"))
+        registration.firstName = registrationsCursor.getString(registrationsCursor.getColumnIndex("first_name"))
+        registration.lastName = registrationsCursor.getString(registrationsCursor.getColumnIndex("last_name"))
+        registration.organization = registrationsCursor.getString(registrationsCursor.getColumnIndex("organization"))
+        val result = Api.instance().api!!.createPlanterRegistration(registration).execute()
+        if(result != null) {
+            val id = registrationsCursor.getString(registrationsCursor.getColumnIndex("_id"))
+            val values = ContentValues()
+            values.put("uploaded", "Y")
+            mDatabaseManager.update("planter_details", values, "_id = ?", arrayOf(id))
+            return@async true
+        } else {
+            return@async false
+        }
+    }
+
     private fun uploadPlanterPhoto(planterCursor: Cursor) = async {
         /**
          * Implementation for saving image into DigitalOcean Spaces.
@@ -360,7 +388,7 @@ class DataFragment : Fragment(), View.OnClickListener {
                 while (photoCursor.moveToNext()) {
                     try {
                         val file = File(photoCursor.getString(photoCursor.getColumnIndex("name")))
-                        val deleted = file.delete()
+                        file.delete()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

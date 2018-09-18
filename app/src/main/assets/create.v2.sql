@@ -79,6 +79,7 @@ last_name TEXT,
 organization TEXT,
 phone TEXT,
 email TEXT,
+uploaded BOOLEAN DEFAULT 'N',
 time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
