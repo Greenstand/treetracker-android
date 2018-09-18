@@ -28,7 +28,7 @@ class DOSpaces private constructor() {
     init {
         val basicAWSCredentials = BasicAWSCredentials(BuildConfig.DOS_ACCESS_KEY, BuildConfig.DOS_SECRET_KEY)
         s3Client = AmazonS3Client(basicAWSCredentials)
-        s3Client.setEndpoint(BuildConfig.DO_SPACES_ENDPOINT)
+        s3Client.setEndpoint(String.format("https://%s.digitaloceanspaces.com/", BuildConfig.DO_SPACES_ENDPOINT))
     }
 
     @Throws(AmazonClientException::class)
@@ -43,7 +43,7 @@ class DOSpaces private constructor() {
         val poRequest = PutObjectRequest(BuildConfig.DO_SPACES_BUCKET, dosKey, image)
         poRequest.withAccessControlList(acl)
         val poResult = s3Client.putObject(poRequest)
-        return String.format("https://%s.nyc3.digitaloceanspaces.com/%s", BuildConfig.DO_SPACES_BUCKET, dosKey)
+        return String.format("https://%s.%s.digitaloceanspaces.com/%s",  BuildConfig.DO_SPACES_BUCKET, BuildConfig.DO_SPACES_ENDPOINT, dosKey)
     }
 
     companion object {
