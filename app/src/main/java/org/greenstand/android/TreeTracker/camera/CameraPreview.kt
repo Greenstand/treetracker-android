@@ -25,6 +25,8 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
     private var supportedPreviewSizes: List<Camera.Size>? = null
     private var optimalPreviewSize: Camera.Size? = null
 
+    private var distance = 0F
+
     init {
 
         if (camera != null) {
@@ -127,7 +129,6 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
         camera.parameters = parameters
     }
 
-
     override fun surfaceCreated(holder: SurfaceHolder) {
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
@@ -177,6 +178,52 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
         } catch (e: Exception) {
             Timber.d("Error starting camera preview: " + e.message)
         }
-
     }
+
+    /**
+     * Adding Pinch To Zoom while taking new tree images
+     */
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        val params = camera?.parameters
+        val action = event?.action
+
+        // need more than 1 point of action in touch event
+        if (event?.pointerCount!! > 1) {
+            if (action == MotionEvent.ACTION_POINTER_DOWN) {
+                distance = getGestureDistance(event)
+            } else if (action == MotionEvent.ACTION_MOVE && params!!.isZoomSupported) {
+                camera?.cancelAutoFocus()
+                performZoom(event, params)
+            }
+        }
+
+        return true
+    }
+
+    private fun performZoom(event: MotionEvent, params: Camera.Parameters) {
+        val maxZoom = params.maxZoom
+        var zoom = params.zoom
+        val newGestureDistance = getGestureDistance(event)
+
+        if (newGestureDistance > distance) {
+            // Set Zoom in increment values here
+            if (zoom < maxZoom)
+                zoom++
+        } else if (newGestureDistance < distance) {
+            // Set Zoom out increment values here
+            if (zoom > 0)
+                zoom--
+        }
+        distance = newGestureDistance
+        params.zoom = zoom
+        camera?.parameters = params
+    }
+
+    private fun getGestureDistance(event: MotionEvent): Float {
+        val x = event.getX(0) - event.getX(1)
+        val y = event.getY(0) - event.getY(1)
+        return sqrt(x * x + y * y)
+    }
+
 }
