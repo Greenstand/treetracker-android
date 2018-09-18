@@ -38,6 +38,12 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+import timber.log.Timber
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.*
+import java.io.*
+import java.io.FileDescriptor.`in`
+
 class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mCamera: Camera? = null
@@ -45,7 +51,6 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
     private val TAG = "Camera activity"
     private var mCurrentPhotoPath: String? = null
     private var mImageView: ImageView? = null
-    private var mCurrentPictureData: ByteArray? = null
     private var captureButton: ImageButton? = null
     private var tmpImageFile: File? = null
     private var safeToTakePicture = true
@@ -121,8 +126,6 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
     override fun onPictureTaken(data: ByteArray, camera: Camera) {
         captureButton!!.visibility = View.INVISIBLE
 
-        mCurrentPictureData = data
-        tmpImageFile = null
         try {
             tmpImageFile = File.createTempFile("tmpimage.jpg", null, cacheDir)
         } catch (e: IOException) {
@@ -137,6 +140,19 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         } catch (e: IOException) {
             // TODO Auto-generated catch block
             e.printStackTrace()
+        }
+
+        if(captureSelfie){
+
+            var exif: ExifInterface? = null
+            try {
+                exif = ExifInterface(tmpImageFile!!.absolutePath)
+                exif.setAttribute(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_ROTATE_270.toString())
+                exif.saveAttributes()
+            } catch (e: IOException) {
+                // TODO Auto-generated catch block
+                e.printStackTrace()
+            }
         }
 
         setPic()
@@ -243,9 +259,6 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
             rotationAngle = 270
 
-        if(captureSelfie)
-            rotationAngle = 180 // TODO but this will still be saved with wrong rotation
-
 
         val matrix = Matrix()
         matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
@@ -270,7 +283,7 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
     }
 
     private fun savePicture() {
-        var pictureFile: File? = null
+        var pictureFile: File?
         try {
             pictureFile = setUpPhotoFile()
             mCurrentPhotoPath = pictureFile.absolutePath
@@ -283,8 +296,16 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         var saved = true
         try {
             val fos = FileOutputStream(pictureFile!!)
-            fos.write(mCurrentPictureData!!)
+            val input: InputStream  = FileInputStream(tmpImageFile)
+            val buf = ByteArray(1024)
+            var len: Int = input.read(buf)
+            while ( len > 0)
+            {
+                fos.write(buf, 0, len)
+                len = input.read(buf)
+            }
             fos.close()
+            tmpImageFile!!.delete()
             compressImage()
         } catch (e: FileNotFoundException) {
             Timber.d(TAG, "File not found: " + e.message)
