@@ -50,7 +50,16 @@ class UserDetailsFragment : Fragment() {
             val lastNameTextView = v.findViewById(R.id.fragment_user_details_last_name) as TextView
             val organizationTextView = v.findViewById(R.id.fragment_user_details_organization) as TextView
             val planterIdentifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, null)
-            if(planterIdentifier == null){
+
+            var dataReady = true // TODO: handle form errors and required fields
+            if(firstNameTextView.text == null){
+                dataReady = false
+            } else if(lastNameTextView.text == null){
+                dataReady = false
+            }
+
+
+            if(!dataReady || planterIdentifier == null){
                 // data inconsistency
                 // TODO: handle this somehow
             } else {

@@ -106,7 +106,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         } else {
             val identifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
 
-            val cursor = mDatabaseManager.queryCursor("SELECT * FROM planter_details WHERE identifier = $identifier", null)
+            val cursor = mDatabaseManager.queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null)
             cursor.moveToFirst()
             val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
             (activity.findViewById(R.id.toolbar_title) as TextView).text = title

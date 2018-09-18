@@ -86,7 +86,7 @@ class UserIdentificationFragment : Fragment() {
                 mDatabaseManager.openDatabase()
 
                 val identifier = mUserIdentifier.toString()
-                val planterDetailsCursor = mDatabaseManager.queryCursor("SELECT * FROM planter_details WHERE identifier = $identifier", null);
+                val planterDetailsCursor = mDatabaseManager.queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null);
                 var planterDetailsId : Int? = null
                 if(planterDetailsCursor.count > 0){
                     planterDetailsCursor.moveToFirst()
