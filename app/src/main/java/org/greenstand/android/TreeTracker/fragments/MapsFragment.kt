@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.database.DatabaseManager
 
 import java.io.FileOutputStream
 import java.io.IOException
@@ -62,6 +63,9 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
     private var fragmentTransaction: FragmentTransaction? = null
     private var mapFragment: SupportMapFragment? = null
+
+    private var mDatabaseManager: DatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
+
 
     interface LocationDialogListener {
         fun refreshMap()
@@ -86,6 +90,9 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
     override fun onResume() {
         super.onResume()
+
+        mDatabaseManager.openDatabase()
+
         if (paused) {
             (childFragmentManager
                     .findFragmentById(R.id.map) as SupportMapFragment).getMapAsync(this)
@@ -97,7 +104,11 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
             (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
         } else {
-            val title = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
+            val identifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
+
+            val cursor = mDatabaseManager.queryCursor("SELECT * FROM planter_details WHERE identifier = $identifier", null)
+            cursor.moveToFirst()
+            val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
             (activity.findViewById(R.id.toolbar_title) as TextView).text = title
 
             val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)

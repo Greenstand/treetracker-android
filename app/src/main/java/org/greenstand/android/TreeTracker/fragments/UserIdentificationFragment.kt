@@ -42,6 +42,12 @@ class UserIdentificationFragment : Fragment() {
     private var mUserIdentifier: CharSequence? = null
     private var mSharedPreferences: SharedPreferences? = null
 
+    private var mDatabaseManager: DatabaseManager
+
+    init {
+        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -77,11 +83,25 @@ class UserIdentificationFragment : Fragment() {
                 takePicture()
             } else {
                 // do the login
+                mDatabaseManager.openDatabase()
+
+                val identifier = mUserIdentifier.toString()
+                val planterDetailsCursor = mDatabaseManager.queryCursor("SELECT * FROM planter_details WHERE identifier = $identifier", null);
+                var planterDetailsId : Int? = null
+                if(planterDetailsCursor.count > 0){
+                    planterDetailsCursor.moveToFirst()
+                    planterDetailsId = planterDetailsCursor.getInt(planterDetailsCursor.getColumnIndex("_id"))
+
+                }
+
+
                 val dbw = DatabaseManager.getInstance(MainActivity.dbHelper!!).openDatabase()
+
                 // photo
                 val identificationContentValues = ContentValues()
-                identificationContentValues.put("identifier", mUserIdentifier.toString())
+                identificationContentValues.put("identifier", identifier)
                 identificationContentValues.put("photo_path", mPhotoPath)
+                identificationContentValues.put("planter_details_id", planterDetailsId)
 
                 val identificationId = dbw.insert("planter_identifications", null, identificationContentValues)
 
@@ -91,19 +111,29 @@ class UserIdentificationFragment : Fragment() {
                 val editor = mSharedPreferences!!.edit()
 
                 val tsLong = System.currentTimeMillis() / 1000
-                editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
                 editor!!.putString(ValueHelper.PLANTER_IDENTIFIER, mUserIdentifier.toString())
                 editor!!.putString(ValueHelper.PLANTER_PHOTO, mPhotoPath)
                 editor!!.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
                 editor!!.commit()
 
                 // TODO consider returning to MapFragment and pushing this new fragment from there
-                val fragment = NewTreeFragment()
 
                 activity.supportFragmentManager.popBackStack()
                 val fragmentTransaction = activity.supportFragmentManager
                         .beginTransaction()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
+                if(planterDetailsId == null){
+                    val fragment = UserDetailsFragment()
+                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.USER_DETAILS_FRAGMENT).commit()
+
+                } else {
+
+                    // We only fully verify the user identification if we have already collected the details
+                    editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
+                    editor!!.commit()
+
+                    val fragment = NewTreeFragment()
+                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
+                }
             }
         }
 
@@ -159,20 +189,4 @@ class UserIdentificationFragment : Fragment() {
     }
 
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment UserIdentificationFragement.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                UserIdentificationFragment().apply {
-
-                }
-    }
 }

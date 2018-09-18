@@ -64,9 +64,21 @@ planter_identification_id INTEGER REFERENCES planter_identifications(_id) ON UPD
 
 CREATE TABLE planter_identifications(
 _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+planter_details_id INTEGER,
 identifier TEXT,
 photo_path TEXT,
 photo_url TEXT,
+time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE planter_details(
+_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+identifier TEXT,
+first_name TEXT,
+last_name TEXT,
+organization TEXT,
+phone TEXT,
+email TEXT,
 time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
