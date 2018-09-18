@@ -52,9 +52,9 @@ class UserDetailsFragment : Fragment() {
             val planterIdentifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, null)
 
             var dataReady = true // TODO: handle form errors and required fields
-            if(firstNameTextView.text == null){
+            if(firstNameTextView.text == null || firstNameTextView.text.isEmpty()){
                 dataReady = false
-            } else if(lastNameTextView.text == null){
+            } else if(lastNameTextView.text == null || firstNameTextView.text.isEmpty()){
                 dataReady = false
             }
 
