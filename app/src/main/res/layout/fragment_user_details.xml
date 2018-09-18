@@ -75,11 +75,30 @@
 
             />
 
+        <CheckBox
+            android:id="@+id/fragment_signup_privacy_policy_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@+id/fragment_user_details_organization"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="24dp"
+            android:textColorLink="#1B5E20"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/fragment_signup_privacy_policy_link"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/fragment_user_details_organization"
+            android:layout_toRightOf="@id/fragment_signup_privacy_policy_checkbox"
+            android:linksClickable="true"
+            android:text="@string/privacy_policy" />
+
         <Button
             android:id="@+id/fragment_user_details_continue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_user_details_organization"
+            android:layout_below="@+id/fragment_signup_privacy_policy_checkbox"
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:layout_marginTop="16dp"

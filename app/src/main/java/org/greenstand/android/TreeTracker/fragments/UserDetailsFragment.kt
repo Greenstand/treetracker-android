@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
@@ -49,12 +50,15 @@ class UserDetailsFragment : Fragment() {
             val firstNameTextView = v.findViewById(R.id.fragment_user_details_first_name) as TextView
             val lastNameTextView = v.findViewById(R.id.fragment_user_details_last_name) as TextView
             val organizationTextView = v.findViewById(R.id.fragment_user_details_organization) as TextView
+            var privacyPolicyCheckbox = v.findViewById(R.id.fragment_signup_privacy_policy_checkbox) as CheckBox
             val planterIdentifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, null)
 
             var dataReady = true // TODO: handle form errors and required fields
             if(firstNameTextView.text == null || firstNameTextView.text.isEmpty()){
                 dataReady = false
             } else if(lastNameTextView.text == null || firstNameTextView.text.isEmpty()){
+                dataReady = false
+            } else if (!privacyPolicyCheckbox.isChecked){
                 dataReady = false
             }
 
