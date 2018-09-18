@@ -21,6 +21,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.DbHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.database.DatabaseManager
 import timber.log.Timber
 
 import java.util.Calendar
@@ -59,7 +60,7 @@ class NetworkReceiver : BroadcastReceiver() {
         if (isConnected && isWiFi || timeOfDay == 6) {
             Toast.makeText(context, "WIFI CONNECTED", Toast.LENGTH_LONG).show()
 
-            val dbHelper = DbHelper(context, "database", null, 1)
+            val dbHelper = MainActivity.dbHelper!!
             val db = dbHelper.readableDatabase     //added this
             val treeCursor = db.rawQuery("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
             //this too
