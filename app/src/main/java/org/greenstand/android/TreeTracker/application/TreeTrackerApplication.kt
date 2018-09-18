@@ -6,16 +6,17 @@ import android.support.multidex.MultiDex
 
 import com.crashlytics.android.Crashlytics
 
-import org.greenstand.android.TreeTracker.BuildConfig
-
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
+
+import org.greenstand.android.TreeTracker.BuildConfig
+
 
 class TreeTrackerApplication : Application() {
     override fun onCreate() {
         // The following line triggers the initialization of ACRA
         super.onCreate()
-        if (!BuildConfig.DEBUG) {
+        if (BuildConfig.ENABLE_FABRIC == "true") {
             Fabric.with(this, Crashlytics())
         }
 

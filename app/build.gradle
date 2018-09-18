@@ -39,7 +39,7 @@ android {
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 36
         versionName "1.2.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -58,6 +58,7 @@ android {
             buildConfigField 'String', 'BASE_URL', '"http://174.138.125.240/api/mobile/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://nyc3.digitaloceanspaces.com"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
+            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -67,6 +68,7 @@ android {
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://ams3.digitaloceanspaces.com"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test"'
+            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
         }
         dev {
             initWith(debug)
@@ -76,13 +78,16 @@ android {
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"https://nyc3.digitaloceanspaces.com"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-dev"'
+            buildConfigField 'String', 'ENABLE_FABRIC', '"false"'
         }
+
         staging {
             initWith(debug)
             applicationIdSuffix ".staging"
             resValue "string", "app_name", "Tree Tracker(staging)"
             buildConfigField "String", "GPS_ACCURACY", '"on"'
             buildConfigField 'String', 'BASE_URL', '"http://staging.treetracker.org"'
+            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
         }
 
     }
