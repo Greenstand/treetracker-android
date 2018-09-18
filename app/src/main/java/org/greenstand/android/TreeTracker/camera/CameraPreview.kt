@@ -183,7 +183,13 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
     /**
      * Adding Pinch To Zoom while taking new tree images
      */
+    //TODO: re-enable pinch to zoom.  This introduces a crash on some phones
+    // Fatal Exception: java.lang.RuntimeException
+    // Camera is being used after Camera.release() was called
+    /*
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        if(camera.)
 
         val params = camera?.parameters
         val action = event?.action
@@ -225,5 +231,6 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
         val y = event.getY(0) - event.getY(1)
         return sqrt(x * x + y * y)
     }
+    */
 
 }
