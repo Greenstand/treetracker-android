@@ -38,11 +38,6 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-import timber.log.Timber
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.*
-import java.io.*
-import java.io.FileDescriptor.`in`
 
 class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
