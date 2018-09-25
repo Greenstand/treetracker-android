@@ -22,15 +22,12 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 
-import org.apache.http.HttpStatus
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.api.Api
 import org.greenstand.android.TreeTracker.managers.DataManager
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
@@ -38,8 +35,6 @@ import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.database.DbHelper
 import org.greenstand.android.TreeTracker.fragments.*
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.json.JSONException
-import org.json.JSONObject
 
 import java.io.IOException
 
