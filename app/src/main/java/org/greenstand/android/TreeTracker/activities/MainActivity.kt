@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.activities
 
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.NotificationManager
 import android.app.ProgressDialog
@@ -173,7 +174,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragmentTransaction = supportFragmentManager.beginTransaction()
                 fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
                 for (entry in 0 until fm.backStackEntryCount) {
-                    Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).name)
+                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
                 }
                 return true
             }
@@ -210,7 +211,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.ABOUT_FRAGMENT).commit()
                 }
                 for (entry in 0 until fm.backStackEntryCount) {
-                    Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).name)
+                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
                 }
                 return true
             }
@@ -234,19 +235,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         return super.onOptionsItemSelected(item)
     }
 
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-    }
 
     /*
      * Called when the Activity is no longer visible at all.
@@ -295,81 +283,23 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         Timber.d("onResume")
         super.onResume()
 
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return
+        if(necessaryPermissionsGranted()) {
+            requestNecessaryPermissions()
+        } else {
+            startPeriodicUpdates()
         }
+    }
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private fun necessaryPermissionsGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+    }
 
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            val builder = AlertDialog.Builder(this@MainActivity)
-
-            builder.setTitle(R.string.enable_location_access)
-            builder.setMessage(R.string.you_must_enable_location_access_in_your_settings_in_order_to_continue)
-
-            builder.setPositiveButton(R.string.ok) { dialog, which ->
-                if (Build.VERSION.SDK_INT >= 19) {
-                    //LOCATION_MODE
-                    //Sollution for problem 25 added the ability to pop up location start activity
-                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                } else {
-                    //LOCATION_PROVIDERS_ALLOWED
-
-                    val locationProviders = Settings.Secure.getString(contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
-                    if (locationProviders == null || locationProviders == "") {
-                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                    }
-                }
-
-
-                dialog.dismiss()
-            }
-
-
-            builder.setNegativeButton(R.string.cancel) { dialog, which ->
-                finish()
-
-                dialog.dismiss()
-            }
-
-
-            val alert = builder.create()
-            alert.setCancelable(false)
-            alert.setCanceledOnTouchOutside(false)
-            alert.show()
-
-        }
-
-        startPeriodicUpdates()
-
-        if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
-
-            var bundle = intent.extras
-
-            fragment = MapsFragment()
-            fragment!!.arguments = bundle
-
-            fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit()
-
-            if (bundle == null)
-                bundle = Bundle()
-
-            bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true)
-
-
-            fragment = DataFragment()
-            fragment!!.arguments = bundle
-
-            fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
-
-        }
-
+    private fun requestNecessaryPermissions(){
+        ActivityCompat.requestPermissions(this, arrayOf(
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION),
+                Permissions.NECESSARY_PERMISSIONS)
     }
 
 
@@ -440,86 +370,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
 
-    /*
-        } else {
-            Log.e("MainActivity", "onSignupResult: failed to signup " + String.valueOf(httpResponseCode) );
-            switch (httpResponseCode) {
-                case -1:
-                    Toast.makeText(MainActivity.this, "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show();
-                    break;
-
-                case HttpStatus.SC_CONFLICT:
-                    Log.e("conflict", "alert should display");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
-                    builder.setTitle(R.string.user_already_exists);
-                    builder.setMessage(R.string.user_with_that_email);
-
-                    builder.setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int which) {
-                            fragment = new LoginFragment();
-                            fragment.setArguments(getIntent().getExtras());
-
-                            fragmentTransaction = getSupportFragmentManager()
-                                    .beginTransaction();
-                            fragmentTransaction.replace(R.id.container_fragment, fragment).commit();
-
-                            dialog.dismiss();
-                        }
-
-                    });
-
-
-                    builder.setNegativeButton(R.string.reset_password, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            fragment = new ForgotPasswordFragment();
-                            fragment.setArguments(getIntent().getExtras());
-
-                            fragmentTransaction = getSupportFragmentManager()
-                                    .beginTransaction();
-                            fragmentTransaction.replace(R.id.container_fragment, fragment)
-                                    .addToBackStack(ValueHelper.FORGOT_PASSWORD_FRAGMENT).commit();
-
-
-                            dialog.dismiss();
-                        }
-
-                    });
-
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                    break;
-
-
-                default:
-                    break;
-            }
-        }
-    }
-*/
-
-    fun transitionToMapsFragment() {
-        fragment = MapsFragment()
-        fragment!!.arguments = intent.extras
-        fragmentTransaction = supportFragmentManager
-                .beginTransaction()
-        fragmentTransaction!!.replace(R.id.container_fragment, fragment).commit()
-
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    Permissions.NECESSARY_PERMISSIONS)
-        } else {
-            startPeriodicUpdates()
-        }
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -536,17 +386,63 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      * In response to a request to start updates, send a request
      * to Location Services
      */
+    @SuppressLint("MissingPermission")
     private fun startPeriodicUpdates() {
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        if (necessaryPermissionsGranted()) {
+            Toast.makeText(this, "GPS Permissions Not Enabled", Toast.LENGTH_LONG).show()
+            requestNecessaryPermissions()
+            return
+        }
+
+
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        // TODO this check may not longer be necessary
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            val builder = AlertDialog.Builder(this@MainActivity)
+
+            builder.setTitle(R.string.enable_location_access)
+            builder.setMessage(R.string.you_must_enable_location_access_in_your_settings_in_order_to_continue)
+
+            builder.setPositiveButton(R.string.ok) { dialog, which ->
+                if (Build.VERSION.SDK_INT >= 19) {
+                    //LOCATION_MODE
+                    //Sollution for problem 25 added the ability to pop up location start activity
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                } else {
+                    //LOCATION_PROVIDERS_ALLOWED
+
+                    val locationProviders = Settings.Secure.getString(contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
+                    if (locationProviders == null || locationProviders == "") {
+                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    }
+                }
+
+
+                dialog.dismiss()
+            }
+
+
+            builder.setNegativeButton(R.string.cancel) { dialog, which ->
+                finish()
+
+                dialog.dismiss()
+            }
+
+
+            val alert = builder.create()
+            alert.setCancelable(false)
+            alert.setCanceledOnTouchOutside(false)
+            alert.show()
+
             return
         }
 
         if (mLocationUpdatesStarted) {
             return
         }
-
-        locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         mLocationListener = object : android.location.LocationListener {
             override fun onLocationChanged(location: Location) {

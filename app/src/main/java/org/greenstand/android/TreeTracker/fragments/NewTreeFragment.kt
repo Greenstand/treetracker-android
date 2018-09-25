@@ -124,7 +124,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
         newTreetimeToNextUpdate.addTextChangedListener(this@NewTreeFragment)
 
-        takePicture()
 
         return v
     }
@@ -133,9 +132,10 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         super.onStart()
 
         if (MainActivity.mCurrentLocation == null) {
-            Toast.makeText(activity, "Insufficient accuracy", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
             activity.supportFragmentManager.popBackStack()
-            return
+        } else {
+            takePicture()
         }
 
 
@@ -174,8 +174,10 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            takePicture()
+        if(grantResults.isNotEmpty()) {
+            if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePicture()
+            }
         }
     }
 
@@ -211,7 +213,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
     private fun saveToDb() {
 
         if (MainActivity.mCurrentLocation == null) {
-            Toast.makeText(activity, "Insufficient accuracy", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
             activity.supportFragmentManager.popBackStack()
         } else {
 
