@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -93,6 +94,9 @@ class UserDetailsFragment : Fragment() {
             }
 
         }
+
+        val fragment_signup_privacy_policy_link = v.findViewById(R.id.fragment_signup_privacy_policy_link) as TextView
+        fragment_signup_privacy_policy_link.movementMethod = LinkMovementMethod.getInstance()
 
         return v
     }
