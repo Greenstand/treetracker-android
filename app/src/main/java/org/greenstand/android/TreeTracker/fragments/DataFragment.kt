@@ -187,10 +187,12 @@ class DataFragment : Fragment(), View.OnClickListener {
                     }
                 }
 
-                if (success) {
-                    Toast.makeText(activity, "Sync Successful", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(activity, "Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
+                if(activity != null) {
+                    if (success) {
+                        Toast.makeText(activity, "Sync Successful", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(activity, "Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
