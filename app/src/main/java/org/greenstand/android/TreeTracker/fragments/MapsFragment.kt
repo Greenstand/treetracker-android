@@ -106,21 +106,29 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             val identifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
 
             val cursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null)
-            cursor.moveToFirst()
-            val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
-            (activity.findViewById(R.id.toolbar_title) as TextView).text = title
-
-            val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
-            val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
-            if (photoPath != null) {
-                val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
-                if(rotatedBitmap != null){
-                    imageView.setImageBitmap(rotatedBitmap)
-                    imageView.visibility = View.VISIBLE
-
-                }
+            if(cursor.count == 0){
+                (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+                // And time them out
+                val editor = mSharedPreferences!!.edit()
+                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor.commit()
             } else {
-                imageView.visibility = View.GONE
+                cursor.moveToFirst()
+                val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
+                (activity.findViewById(R.id.toolbar_title) as TextView).text = title
+
+                val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
+                val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
+                if (photoPath != null) {
+                    val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
+                    if (rotatedBitmap != null) {
+                        imageView.setImageBitmap(rotatedBitmap)
+                        imageView.visibility = View.VISIBLE
+
+                    }
+                } else {
+                    imageView.visibility = View.GONE
+                }
             }
         }
 
