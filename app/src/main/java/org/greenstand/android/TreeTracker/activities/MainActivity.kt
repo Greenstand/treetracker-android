@@ -610,8 +610,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     mDatabaseManager!!.insert("pending_updates", null, values)
                 }
 
-                if (data.size > 0) {
-                    Timber.d("MainActivity", "GetMyTreesTask onPostExecute jsonReponseArray.length() > 0")
+                if (data.isNotEmpty()) {
+                    Timber.d("MainActivity GetMyTreesTask onPostExecute jsonReponseArray.length() > 0")
 
                     var bundle = intent.extras
 
@@ -649,11 +649,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         var mCurrentLocation: Location? = null
         var mCurrentTreeLocation: Location? = null
 
-        var syncDataFromExitScreen = false
-
         var mAllowNewTreeOrUpdate = false
 
-        var progressDialog: ProgressDialog? = null
     }
 
 }
