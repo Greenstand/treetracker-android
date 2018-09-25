@@ -8,7 +8,7 @@ paying planters on a per planting basis.
 For more on design intent and the app's user story see the [wiki in this repository](https://github.com/Greenstand/treetracker-android/wiki/User-Story)
 
 ## Project Setup
-Developers will need to ask the channel for treetracker.keys.properties file to build gradle for the application.
+Developers will need to ask the #android channel in Slack for treetracker.keys.properties file to build gradle for the application.
 
 For development, selected the build variant _dev_. This build varient is configured to allow trees to be added without a specific accuracy.  
 
@@ -30,6 +30,6 @@ Once this is done, you can then proceed by running one of the following tasks to
 
 Please review the [issue tracker](https://github.com/Greenstand/treetracker-android/issues) here on this github repository 
 
-Check out the cool [roadmap](https://github.com/Greenstand/Development-Overview/blob/master/Roadmap.md) or 
+Check out the cool [roadmap](https://github.com/Greenstand/Development-Overview/blob/master/Roadmap.md)
 
 All contributions should be submitted as pull requests against the master branch in this github repository. https://github.com/Greenstand/treetracker-android/
