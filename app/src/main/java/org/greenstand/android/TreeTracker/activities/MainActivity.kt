@@ -31,6 +31,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.managers.DataManager
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.database.DbHelper
 import org.greenstand.android.TreeTracker.fragments.*
@@ -51,7 +52,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private var fragmentTransaction: FragmentTransaction? = null
 
     private var mDataManager: DataManager<*>? = null
-    private var mDatabaseManager: DatabaseManager? = null
     var userTrees: List<UserTree>? = null
         private set
 
@@ -70,17 +70,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         mSharedPreferences = this.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
-
-
-        dbHelper = DbHelper.getDbHelper(this)
-        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
-
-        try {
-            dbHelper?.createDataBase()
-        } catch (e: IOException) {
-            // This should be a fatal error
-            e.printStackTrace()
-        }
 
 
         if (mSharedPreferences!!.getBoolean(ValueHelper.FIRST_RUN, true)) {
@@ -285,7 +274,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      * Parts of the UI may be visible, but the Activity is inactive.
      */
     public override fun onPause() {
-        Timber.d(TAG, "onPause")
+        Timber.d("onPause")
         super.onPause()
 
         stopPeriodicUpdates()
@@ -295,7 +284,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      * Called when the Activity is restarted, even before it becomes visible.
      */
     public override fun onStart() {
-        Timber.d(TAG, "onStart")
+        Timber.d("onStart")
         super.onStart()
     }
 
@@ -303,7 +292,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      * Called when the system detects that this Activity is now visible.
      */
     public override fun onResume() {
-        Timber.d(TAG, "onResume")
+        Timber.d("onResume")
         super.onResume()
 
         if (Build.VERSION.SDK_INT >= 23 &&
@@ -601,13 +590,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         mDataManager = object : DataManager<List<UserTree>>() {
             override fun onDataLoaded(data: List<UserTree>) {
                 userTrees = data
-                mDatabaseManager!!.openDatabase()
+                TreeTrackerApplication.getDatabaseManager().openDatabase()
                 val userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
                 for (userTree in data) {
                     val values = ContentValues()
                     values.put("tree_id", userTree.id)
                     values.put("user_id", java.lang.Long.toString(userId))
-                    mDatabaseManager!!.insert("pending_updates", null, values)
+                    TreeTrackerApplication.getDatabaseManager().insert("pending_updates", null, values)
                 }
 
                 if (data.isNotEmpty()) {
@@ -641,10 +630,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     // TODO: implementing this as a static companion object is not necessarily a good design
     companion object {
-
-        private val TAG = "MainActivity"
-
-        var dbHelper: DbHelper? = null
 
         var mCurrentLocation: Location? = null
         var mCurrentTreeLocation: Location? = null

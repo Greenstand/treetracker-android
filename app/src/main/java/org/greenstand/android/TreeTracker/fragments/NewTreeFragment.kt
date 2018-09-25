@@ -44,6 +44,7 @@ import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -208,7 +209,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
     }
 
     private fun saveToDb() {
-        val dbw = DatabaseManager.getInstance(MainActivity.dbHelper!!).openDatabase()
 
         if (MainActivity.mCurrentLocation == null) {
             Toast.makeText(activity, "Insufficient accuracy", Toast.LENGTH_SHORT).show()
@@ -223,7 +223,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             locationContentValues.put("long",
                     java.lang.Double.toString(MainActivity.mCurrentLocation!!.longitude))
 
-            val locationId = dbw.insert("location", null, locationContentValues)
+            val locationId = TreeTrackerApplication.getDatabaseManager().insert("location", null, locationContentValues)
 
             Timber.d("locationId " + java.lang.Long.toString(locationId))
 
@@ -234,7 +234,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             photoContentValues.put("location_id", locationId)
             photoContentValues.put("name", mCurrentPhotoPath)
 
-            photoId = dbw.insert("photo", null, photoContentValues)
+            photoId = TreeTrackerApplication.getDatabaseManager().insert("photo", null, photoContentValues)
             Timber.d("photoId " + java.lang.Long.toString(photoId))
 
 
@@ -253,8 +253,8 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             settingsContentValues.put("time_to_next_update", timeToNextUpdate)
             settingsContentValues.put("min_accuracy", minAccuracy)
 
-            val settingsId = dbw.insert("settings", null, settingsContentValues)
-            Timber.d("settingsId", java.lang.Long.toString(settingsId))
+            val settingsId = TreeTrackerApplication.getDatabaseManager().insert("settings", null, settingsContentValues)
+            Timber.d("settingsId "+ java.lang.Long.toString(settingsId))
 
 
             // note
@@ -263,7 +263,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             noteContentValues.put("user_id", userId)
             noteContentValues.put("content", content)
 
-            val noteId = dbw.insert("note", null, noteContentValues)
+            val noteId = TreeTrackerApplication.getDatabaseManager().insert("note", null, noteContentValues)
             Timber.d("noteId " + java.lang.Long.toString(noteId))
 
 
@@ -288,14 +288,14 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             treeContentValues.put("time_updated", dateFormat.format(Date()))
             treeContentValues.put("time_for_update", dateFormat.format(date))
 
-            val treeId = dbw.insert("tree", null, treeContentValues)
-            Timber.d("treeId", java.lang.Long.toString(treeId))
+            val treeId = TreeTrackerApplication.getDatabaseManager().insert("tree", null, treeContentValues)
+            Timber.d("treeId " + java.lang.Long.toString(treeId))
 
             // tree_photo
             val treePhotoContentValues = ContentValues()
             treePhotoContentValues.put("tree_id", treeId)
             treePhotoContentValues.put("photo_id", photoId)
-            val treePhotoId = dbw.insert("tree_photo", null, treePhotoContentValues)
+            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null, treePhotoContentValues)
             Timber.d("treePhotoId " + java.lang.Long.toString(treePhotoId))
 
 
@@ -303,7 +303,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             val treeNoteContentValues = ContentValues()
             treeNoteContentValues.put("tree_id", treeId)
             treeNoteContentValues.put("note_id", noteId)
-            val treeNoteId = dbw.insert("tree_note", null, treeNoteContentValues)
+            val treeNoteId = TreeTrackerApplication.getDatabaseManager().insert("tree_note", null, treeNoteContentValues)
             Timber.d("treeNoteId " + java.lang.Long.toString(treeNoteId))
         }
 

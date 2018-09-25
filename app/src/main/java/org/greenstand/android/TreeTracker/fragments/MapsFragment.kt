@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 
 import java.io.FileOutputStream
@@ -63,8 +64,6 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
     private var fragmentTransaction: FragmentTransaction? = null
     private var mapFragment: SupportMapFragment? = null
-
-    private var mDatabaseManager: DatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
 
 
     interface LocationDialogListener {
@@ -91,7 +90,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     override fun onResume() {
         super.onResume()
 
-        mDatabaseManager.openDatabase()
+        TreeTrackerApplication.getDatabaseManager().openDatabase()
 
         if (paused) {
             (childFragmentManager
@@ -106,7 +105,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         } else {
             val identifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
 
-            val cursor = mDatabaseManager.queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null)
+            val cursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null)
             cursor.moveToFirst()
             val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
             (activity.findViewById(R.id.toolbar_title) as TextView).text = title
@@ -325,7 +324,6 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
-        val dbw = MainActivity.dbHelper!!.writableDatabase
 
         val userId = -1
 
@@ -340,7 +338,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                     java.lang.Double.toString(MainActivity.mCurrentLocation!!.longitude + (Math.random() - .5) / 1000))
             locationContentValues.put("user_id", userId)
 
-            val locationId = dbw.insert("location", null, locationContentValues)
+            val locationId = TreeTrackerApplication.getDatabaseManager().insert("location", null, locationContentValues)
 
             var photoId: Long = -1
             try {
@@ -355,7 +353,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                 photoContentValues.put("location_id", locationId)
                 photoContentValues.put("name", f.absolutePath)
 
-                photoId = dbw.insert("photo", null, photoContentValues)
+                photoId = TreeTrackerApplication.getDatabaseManager().insert("photo", null, photoContentValues)
                 //Timber.d("photoId " + Long.toString(photoId));
 
             } catch (e: IOException) {
@@ -370,13 +368,13 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             treeContentValues.put("time_created", dateFormat.format(Date()))
             treeContentValues.put("time_updated", dateFormat.format(Date()))
 
-            val treeId = dbw.insert("tree", null, treeContentValues)
+            val treeId = TreeTrackerApplication.getDatabaseManager().insert("tree", null, treeContentValues)
 
 
             val treePhotoContentValues = ContentValues()
             treePhotoContentValues.put("tree_id", treeId)
             treePhotoContentValues.put("photo_id", photoId)
-            val treePhotoId = dbw.insert("tree_photo", null, treePhotoContentValues)
+            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null, treePhotoContentValues)
             //Timber.d("treePhotoId " + Long.toString(treePhotoId));
         }
 
@@ -417,9 +415,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         }
         map.isMyLocationEnabled = true
 
-        val db = MainActivity.dbHelper!!.readableDatabase
 
-        val treeCursor = db.rawQuery("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null)
+        val treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null)
         treeCursor.moveToFirst()
 
         if (treeCursor.count > 0) {

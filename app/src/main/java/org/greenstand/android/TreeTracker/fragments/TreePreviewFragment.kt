@@ -26,6 +26,7 @@ import android.widget.TextView
 
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 import java.io.IOException
@@ -76,13 +77,12 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         (v.findViewById(R.id.fragment_tree_preview_more) as Button).setOnClickListener(this@TreePreviewFragment)
 
 
-        val db = MainActivity.dbHelper!!.readableDatabase
         val query = "select * from tree " +
                 "left outer join location on location._id = tree.location_id " +
                 "left outer join tree_photo on tree._id = tree_id " +
                 "left outer join photo on photo._id = photo_id where tree._id =" + treeIdStr
 
-        val photoCursor = db.rawQuery(query, null)
+        val photoCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(query, null)
 
         photoCursor.moveToFirst()
 
@@ -154,7 +154,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                     "left outer join note on note_id = note._id " +
                     "where content is not null and tree_id = " + treeIdStr + " order by note.time_created asc"
 
-            val noteCursor = db.rawQuery(noteQuery, null)
+            val noteCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(noteQuery, null)
 
 
             val notesTxt = v.findViewById(R.id.fragment_tree_preview_notes) as TextView

@@ -47,6 +47,7 @@ import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 import java.io.File
@@ -87,7 +88,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
                 if (storageDir != null) {
                     if (!storageDir.mkdirs()) {
                         if (!storageDir.exists()) {
-                            Timber.d("CameraSample", "failed to create directory")
+                            Timber.d("CameraSample failed to create directory")
                             return null
                         }
                     }
@@ -145,14 +146,12 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
 
         mImageView = v.findViewById(R.id.fragment_note_image) as ImageView
 
-        val db = MainActivity.dbHelper!!.readableDatabase
-
         val query = "select * from tree " +
                 "left outer join location on location._id = tree.location_id " +
                 "left outer join tree_photo on tree._id = tree_id " +
                 "left outer join photo on photo._id = photo_id where is_outdated = 'N' and tree._id =" + treeIdStr
 
-        val photoCursor = db.rawQuery(query, null)
+        val photoCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(query, null)
         photoCursor.moveToFirst()
 
         do {
@@ -289,7 +288,6 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
     }
 
     private fun saveToDb() {
-        val dbw = MainActivity.dbHelper!!.writableDatabase
 
         var contentValues = ContentValues()
 
@@ -305,7 +303,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         contentValues.put("long",
                 java.lang.Double.toString(MainActivity.mCurrentLocation!!.longitude))
 
-        val locationId = dbw.insert("location", null, contentValues)
+        val locationId = TreeTrackerApplication.getDatabaseManager().insert("location", null, contentValues)
 
         Timber.d("locationId " + java.lang.Long.toString(locationId))
 
@@ -315,7 +313,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         contentValues.put("user_id", userId)
         contentValues.put("content", content)
 
-        val noteId = dbw.insert("note", null, contentValues)
+        val noteId = TreeTrackerApplication.getDatabaseManager().insert("note", null, contentValues)
         Timber.d("noteId " + java.lang.Long.toString(noteId))
 
 
@@ -349,14 +347,14 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         contentValues.put("time_for_update", dateFormat.format(date))
         contentValues.put("time_updated", dateFormat.format(Date()))
 
-        dbw.update("tree", contentValues, "_id = ?", arrayOf<String>(treeIdStr!!))
+        TreeTrackerApplication.getDatabaseManager().update("tree", contentValues, "_id = ?", arrayOf<String>(treeIdStr!!))
 
         // tree_note
         contentValues = ContentValues()
         contentValues.put("tree_id", treeIdStr)
         contentValues.put("note_id", noteId)
 
-        val treeNoteId = dbw.insert("tree_note", null, contentValues)
+        val treeNoteId = TreeTrackerApplication.getDatabaseManager().insert("tree_note", null, contentValues)
         Timber.d("treeNoteId " +java.lang.Long.toString(treeNoteId))
 
     }

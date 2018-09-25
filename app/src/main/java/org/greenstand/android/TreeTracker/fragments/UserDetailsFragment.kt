@@ -9,10 +9,12 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -33,8 +35,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class UserDetailsFragment : Fragment() {
 
-    private var mDatabaseManager: DatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
-
     private var mSharedPreferences: SharedPreferences? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +45,7 @@ class UserDetailsFragment : Fragment() {
         mSharedPreferences = activity.getSharedPreferences(
                 ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
 
-        val continueButton = v.findViewById(R.id.fragment_user_details_continue)
+        val continueButton: Button = v.findViewById(R.id.fragment_user_details_continue)
         continueButton.setOnClickListener {
             val firstNameTextView = v.findViewById(R.id.fragment_user_details_first_name) as TextView
             val lastNameTextView = v.findViewById(R.id.fragment_user_details_last_name) as TextView
@@ -74,11 +74,11 @@ class UserDetailsFragment : Fragment() {
                 detailsContentValues.put("last_name", lastNameTextView.text.toString())
                 detailsContentValues.put("organization", organizationTextView.text.toString())
 
-                val planterDetailsId = mDatabaseManager.insert("planter_details", null, detailsContentValues)
+                val planterDetailsId = TreeTrackerApplication.getDatabaseManager().insert("planter_details", null, detailsContentValues)
                 val identifierContentValues = ContentValues();
                 identifierContentValues.put("planter_details_id", planterDetailsId)
                 val args = arrayOf(planterIdentifier)
-                mDatabaseManager.update("planter_identifications", identifierContentValues, "identifier = ?",  args)
+                TreeTrackerApplication.getDatabaseManager().update("planter_identifications", identifierContentValues, "identifier = ?",  args)
 
                 val editor = mSharedPreferences!!.edit()
                 val tsLong = System.currentTimeMillis() / 1000

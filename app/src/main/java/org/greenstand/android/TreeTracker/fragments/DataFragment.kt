@@ -43,6 +43,7 @@ import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.Utils
 import retrofit2.Response
@@ -57,7 +58,6 @@ import timber.log.Timber
 
 class DataFragment : Fragment(), View.OnClickListener {
 
-    private val mDatabaseManager: DatabaseManager
     private var totalTrees: TextView? = null
     private var updateTrees: TextView? = null
     private var locatedTrees: TextView? = null
@@ -69,9 +69,6 @@ class DataFragment : Fragment(), View.OnClickListener {
 
     private var operationAttempt: Job? = null
 
-    init {
-        mDatabaseManager = DatabaseManager.getInstance(MainActivity.dbHelper!!)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,7 +165,7 @@ class DataFragment : Fragment(), View.OnClickListener {
                         val planterIdentificationsId = planterCursor.getString(planterCursor.getColumnIndex("_id"))
                         val values = ContentValues()
                         values.put("photo_url", imageUrl)
-                        mDatabaseManager.update("planter_identifications", values, "_id = ?", arrayOf(planterIdentificationsId))
+                        TreeTrackerApplication.getDatabaseManager().update("planter_identifications", values, "_id = ?", arrayOf(planterIdentificationsId))
                     }
                 }
 
@@ -239,7 +236,7 @@ class DataFragment : Fragment(), View.OnClickListener {
     }
 
     private fun getTreesToUploadCursor() = async {
-        mDatabaseManager.openDatabase()
+        TreeTrackerApplication.getDatabaseManager().openDatabase()
         val query = "SELECT " +
                 "tree._id as tree_id, " +
                 "tree.time_created as tree_time_created, " +
@@ -263,19 +260,19 @@ class DataFragment : Fragment(), View.OnClickListener {
                 "WHERE " +
                 "is_synced = 'N'"
 
-        return@async mDatabaseManager.queryCursor(query, null)
+        return@async TreeTrackerApplication.getDatabaseManager().queryCursor(query, null)
     }
 
     private fun getPlanterIdentificationsToUploadCursor() = async {
-        mDatabaseManager.openDatabase()
+        TreeTrackerApplication.getDatabaseManager().openDatabase()
         val query = "SELECT * FROM planter_identifications WHERE photo_url IS NULL"
-        return@async mDatabaseManager.queryCursor(query, null)
+        return@async TreeTrackerApplication.getDatabaseManager().queryCursor(query, null)
     }
 
     private fun getPlanterRegistrationsToUploadCursor() = async {
-        mDatabaseManager.openDatabase()
+        TreeTrackerApplication.getDatabaseManager().openDatabase()
         val query = "SELECT * FROM planter_details WHERE uploaded = 'N'"
-        return@async mDatabaseManager.queryCursor(query, null)
+        return@async TreeTrackerApplication.getDatabaseManager().queryCursor(query, null)
     }
 
     private fun uploadPlanterRegistration(registrationsCursor: Cursor) = async {
@@ -289,7 +286,7 @@ class DataFragment : Fragment(), View.OnClickListener {
             val id = registrationsCursor.getString(registrationsCursor.getColumnIndex("_id"))
             val values = ContentValues()
             values.put("uploaded", "Y")
-            mDatabaseManager.update("planter_details", values, "_id = ?", arrayOf(id))
+            TreeTrackerApplication.getDatabaseManager().update("planter_details", values, "_id = ?", arrayOf(id))
             return@async true
         } else {
             return@async false
@@ -382,11 +379,11 @@ class DataFragment : Fragment(), View.OnClickListener {
             val values = ContentValues()
             values.put("is_synced", "Y")
             values.put("main_db_id", treeIdResponse)
-            val isMissingCursor = mDatabaseManager.queryCursor("SELECT is_missing FROM tree WHERE is_missing = 'Y' AND _id = $localTreeId", null)
+            val isMissingCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT is_missing FROM tree WHERE is_missing = 'Y' AND _id = $localTreeId", null)
             if (isMissingCursor.moveToNext()) {
-                mDatabaseManager.delete("tree", "_id = ?", arrayOf(localTreeId))
+                TreeTrackerApplication.getDatabaseManager().delete("tree", "_id = ?", arrayOf(localTreeId))
                 val photoQuery = "SELECT name FROM photo left outer join tree_photo on photo_id = photo._id where tree_id = $localTreeId"
-                val photoCursor = mDatabaseManager.queryCursor(photoQuery, null)
+                val photoCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(photoQuery, null)
                 while (photoCursor.moveToNext()) {
                     try {
                         val file = File(photoCursor.getString(photoCursor.getColumnIndex("name")))
@@ -397,9 +394,9 @@ class DataFragment : Fragment(), View.OnClickListener {
 
                 }
             } else {
-                mDatabaseManager.update("tree", values, "_id = ?", arrayOf(localTreeId))
+                TreeTrackerApplication.getDatabaseManager().update("tree", values, "_id = ?", arrayOf(localTreeId))
                 val outDatedQuery = "SELECT name FROM photo left outer join tree_photo on photo_id = photo._id where is_outdated = 'Y' and tree_id = $localTreeId"
-                val outDatedPhotoCursor = mDatabaseManager.queryCursor(outDatedQuery, null)
+                val outDatedPhotoCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(outDatedQuery, null)
                 while (outDatedPhotoCursor.moveToNext()) {
                     try {
                         val file = File(outDatedPhotoCursor.getString(outDatedPhotoCursor.getColumnIndex("name")))
@@ -439,9 +436,9 @@ class DataFragment : Fragment(), View.OnClickListener {
     }
 
     fun updateData() {
-        mDatabaseManager.openDatabase()
+        TreeTrackerApplication.getDatabaseManager().openDatabase()
 
-        var treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS total FROM tree", null)
+        var treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS total FROM tree", null)
         treeCursor.moveToFirst()
         totalTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("total"))
         Timber.d("total " + treeCursor.getString(treeCursor.getColumnIndex("total")))
@@ -457,12 +454,12 @@ class DataFragment : Fragment(), View.OnClickListener {
         Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")));
         */
 
-        treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null)
+        treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null)
         treeCursor.moveToFirst()
         locatedTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("located"))
         Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")))
 
-        treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
+        treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
         treeCursor.moveToFirst()
         tosyncTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("tosync"))
         Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
@@ -471,9 +468,9 @@ class DataFragment : Fragment(), View.OnClickListener {
 
     fun resolvePendingUpdates() {
         updateData()
-        mDatabaseManager.openDatabase()
+        TreeTrackerApplication.getDatabaseManager().openDatabase()
 
-        val treeCursor = mDatabaseManager.queryCursor("SELECT DISTINCT tree_id FROM pending_updates WHERE tree_id NOT NULL and tree_id <> 0", null)
+        val treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT DISTINCT tree_id FROM pending_updates WHERE tree_id NOT NULL and tree_id <> 0", null)
         val trees = (activity as MainActivity).userTrees
 
         if (trees != null && treeCursor.moveToFirst()) {

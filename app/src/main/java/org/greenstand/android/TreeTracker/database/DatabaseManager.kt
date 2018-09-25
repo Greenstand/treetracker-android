@@ -8,9 +8,8 @@ import android.database.sqlite.SQLiteDatabase
  * Created by lei on 11/9/17.
  */
 
-class DatabaseManager private constructor(private val mDbHelper: DbHelper) {
+class DatabaseManager (private val mDbHelper: DbHelper) {
     private var mDatabase: SQLiteDatabase? = null
-    private val mOpenCounter: Int = 0
 
     @Synchronized
     fun openDatabase(): SQLiteDatabase {
@@ -38,17 +37,5 @@ class DatabaseManager private constructor(private val mDbHelper: DbHelper) {
         return mDatabase!!.delete(table, whereClause, whereArgs)
     }
 
-    companion object {
 
-        private var sInstance: DatabaseManager? = null
-
-        @Synchronized
-        fun getInstance(dbHelper: DbHelper): DatabaseManager {
-            if (sInstance == null) {
-                sInstance = DatabaseManager(dbHelper)
-            }
-
-            return sInstance!!
-        }
-    }
 }
