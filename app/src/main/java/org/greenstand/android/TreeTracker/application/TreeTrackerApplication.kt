@@ -44,7 +44,7 @@ class TreeTrackerApplication : Application() {
         val dbHelper = DbHelper.getDbHelper(this)
 
         try {
-            dbHelper?.createDataBase()
+            dbHelper!!.createDataBase()
         } catch (e: IOException) {
             // This should be a fatal error
             e.printStackTrace()
@@ -61,6 +61,7 @@ class TreeTrackerApplication : Application() {
         fun getDatabaseManager() : DatabaseManager{
             if(databaseManager == null){
                 databaseManager = application!!.getDatabaseManager()
+                databaseManager!!.openDatabase()
             }
             return databaseManager!!
         }
