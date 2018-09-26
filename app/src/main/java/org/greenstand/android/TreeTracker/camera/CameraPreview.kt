@@ -58,7 +58,7 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
 
         if(supportedPreviewSizes != null) {
             optimalPreviewSize = getOptimalPreviewSize(supportedPreviewSizes, height, width)
-            Timber.i(TAG, "Found Optimal Camera Preview Size: ${optimalPreviewSize.toString()}")
+            Timber.i("Found Optimal Camera Preview Size: ${optimalPreviewSize.toString()}")
         }
 
         if(optimalPreviewSize != null) {
@@ -79,7 +79,7 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
 
         val ASPECT_TOLERANCE = 0.1
         val targetRatio = height.toDouble() / width
-        Timber.i(TAG, "getOptimalPreviewSize:: Target Ratio = $targetRatio")
+        Timber.i("getOptimalPreviewSize:: Target Ratio = $targetRatio")
 
         if (sizes == null)
             return null
@@ -136,7 +136,7 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
             camera?.setDisplayOrientation(90)
             camera?.startPreview()
         } catch (e: IOException) {
-            Timber.d(TAG, "Error setting camera preview: " + e.message)
+            Timber.d("Error setting camera preview: " + e.message)
         }
 
     }
