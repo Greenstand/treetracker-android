@@ -171,9 +171,7 @@ class UserIdentificationFragment : Fragment() {
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
-            if ((activity.findViewById(R.id.fragment_new_tree) as RelativeLayout).visibility != View.VISIBLE) {
-                activity.supportFragmentManager.popBackStack()
-            }
+          
         }
     }
 
