@@ -178,7 +178,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
                 mCurrentPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
                 if (mCurrentPhotoPath != null) {
-                    (activity.findViewById(R.id.fragment_new_tree) as RelativeLayout).visibility = View.VISIBLE
 
                     MainActivity.mCurrentTreeLocation = Location("") // Just a blank location
                     if (MainActivity.mCurrentLocation != null) {
@@ -192,9 +191,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
-            if ((activity.findViewById(R.id.fragment_new_tree) as RelativeLayout).visibility != View.VISIBLE) {
-                activity.supportFragmentManager.popBackStack()
-            }
+            activity.supportFragmentManager.popBackStack()
         }
     }
 
