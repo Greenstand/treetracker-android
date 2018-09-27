@@ -69,9 +69,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         val v = inflater!!.inflate(R.layout.fragment_new_tree, container, false)
 
         activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-
-        (v.findViewById(R.id.fragment_new_tree) as RelativeLayout).visibility = View.INVISIBLE
-
+        
         (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.new_tree)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
