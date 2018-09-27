@@ -7,23 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.sqlite.SQLiteDatabase
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.location.Location
-import android.location.LocationManager
-import android.location.LocationProvider
-import android.media.ExifInterface
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.Menu
@@ -32,9 +24,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -45,11 +35,9 @@ import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -69,10 +57,6 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
@@ -377,4 +361,4 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         }
     }
 
-}// some overrides and settings go here
+}
