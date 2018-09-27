@@ -67,7 +67,11 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
 
             }
 
-            if(checkV1DataBase()) {
+            val sharedPreferences = myContext.getSharedPreferences(
+                    "org.greenstand.android", Context.MODE_PRIVATE)
+            val v1DatabaseChecked = sharedPreferences.getBoolean(ValueHelper.V1_DATABASE_CHECKED, false)
+
+            if(checkV1DataBase() && !v1DatabaseChecked) {
                 // The V1 database is still here
                 val db1Helper = getDbV1Helper(myContext)
                 val db2Helper = getDbHelper(myContext)
@@ -161,6 +165,10 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
 
                     db2Helper.writableDatabase.insert("tree", null, treeContentValues)
                 }
+
+                val editor = sharedPreferences.edit()
+                editor.putBoolean(ValueHelper.V1_DATABASE_CHECKED, true)
+                editor.commit()
             }
 
         }
@@ -186,11 +194,7 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
 
         }
 
-        if (checkDB != null) {
-
-            checkDB.close()
-
-        }
+        checkDB?.close()
 
         return checkDB != null
     }
