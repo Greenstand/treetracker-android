@@ -170,6 +170,8 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
+        takePictureInvoked = true
+
         if (data != null && resultCode != Activity.RESULT_CANCELED) {
             if (resultCode == Activity.RESULT_OK) {
 
