@@ -62,6 +62,8 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
     private var userId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private val mPhotoUri: Uri? = null
+    private var takePictureInvoked: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,7 +136,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         if (MainActivity.mCurrentLocation == null) {
             Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
             activity.supportFragmentManager.popBackStack()
-        } else {
+        } else if (!takePictureInvoked) {
             takePicture()
         }
 
@@ -163,10 +165,12 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
     }
 
     private fun takePicture() {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
+            takePictureInvoked = true
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
             startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
         }
