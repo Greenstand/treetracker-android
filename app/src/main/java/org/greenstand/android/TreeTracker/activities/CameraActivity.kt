@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.activities
 
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -10,17 +11,23 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.SurfaceTexture
 
 import android.hardware.Camera
+import android.hardware.camera2.*
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.HandlerThread
 import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AppCompatActivity
+import android.util.Size
+import android.view.Surface
+import android.view.TextureView
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.ImageView
 
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
@@ -30,6 +37,7 @@ import kotlinx.coroutines.experimental.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.ImageUtils.createImageFile
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
@@ -38,14 +46,16 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+class CameraActivity: AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mCamera: Camera? = null
     private var mPreview: CameraPreview? = null
     private val TAG = "Camera activity"
     private var mCurrentPhotoPath: String? = null
-    private var mImageView: ImageView? = null
+
+    //
+    private var mTextureView: TextureView? = null
+
     private var captureButton: ImageButton? = null
     private var tmpImageFile: File? = null
     private var safeToTakePicture = true
@@ -54,16 +64,127 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
 
     private var captureSelfie: Boolean = false
 
+    // All camera2 operations need the manager
+    private var cameraManager: CameraManager? = null
+
+    // ID for current primary/secondary camera instance
+    private var currentCameraID = ""
+
+    // Best preview size for available dimensions
+    private var optimalPreviewSize: Size? = null
+
+    //
+    private var backgroundHandler: Handler? = null
+    private var backgroundThread: HandlerThread? = null
+
+    /**
+     *
+     */
+    private var cameraCaptureSessionCallback = object : CameraCaptureSession.StateCallback() {
+
+        override fun onConfigured(cameraCaptureSession: CameraCaptureSession) {
+            if (mCameraDevice == null) {
+                return
+            }
+            //
+            try {
+                val captureRequest = mCameraCaptureRequestBuilder?.build()
+                mCameraCaptureSession = cameraCaptureSession
+                cameraCaptureSession.setRepeatingRequest(captureRequest, null, backgroundHandler)
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
+            }
+
+            //
+            Timber.i(TAG, "CameraCaptureSession: onConfigured")
+        }
+
+        override fun onConfigureFailed(cameraCaptureSession: CameraCaptureSession) {
+            //
+            Timber.e(TAG, "CameraCaptureSession: onConfigurationFailed")
+        }
+    }
+
+
+    /**
+     *
+     */
+    private val cameraStateCallback = object : CameraDevice.StateCallback() {
+
+        override fun onOpened(camera: CameraDevice?) {
+            mCameraDevice = camera
+            setupPreview()
+            Timber.i(TAG, "Camera State: OPENED")
+        }
+
+        override fun onClosed(camera: CameraDevice?) {
+            //
+            Timber.i(TAG, "Camera State: CLOSED")
+        }
+
+        override fun onDisconnected(camera: CameraDevice?) {
+            //
+            mCameraDevice?.close()
+            mCameraDevice = null
+            Timber.e(TAG, "Camera State: DISCONNECTED")
+        }
+
+        override fun onError(camera: CameraDevice?, error: Int) {
+            //
+            mCameraDevice?.close()
+            mCameraDevice = null
+            Timber.e(TAG, "Camera State Error Code: $error")
+        }
+    }
+
+    /**
+     *
+     */
+    private val surfaceTextureListener =  object : TextureView.SurfaceTextureListener {
+
+        override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
+            //
+            setupCamera()
+            openCamera()
+        }
+
+        override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
+        }
+
+        override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
+            return false
+        }
+
+        override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {
+
+        }
+    }
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_preview)
 
-        mImageView = findViewById(R.id.camera_preview_taken) as ImageView
+        mTextureView = findViewById(R.id.camera_preview_taken) as TextureView
+        initCamera2()
 
         captureButton = findViewById(R.id.button_capture) as ImageButton
 
-        // Add a listener to the buttons
-        captureButton!!.setOnClickListener(this@CameraActivity)
+        // Listener for the capture button
+        captureButton!!.setOnClickListener {
+            captureButton?.isHapticFeedbackEnabled = true
+            // get an image from the camera
+            if (safeToTakePicture && mCamera != null) {     //check mCamera isn't null to avoid error
+                safeToTakePicture = false
+
+                val textureBitmap = mTextureView?.bitmap
+                var outputPhoto = FileOutputStream(createImageFile(baseContext))
+                val result = textureBitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputPhoto)
+
+                captureNewImage(convertBitmapToByteArray(textureBitmap!!), mCamera!!)
+
+                Timber.d("take pic")
+            }
+        }
 
         if(intent.extras != null) {
             captureSelfie = intent.extras.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
@@ -99,16 +220,98 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
                 delay(250)
             }
 
-            mPreview = CameraPreview(this@CameraActivity, mCamera)
-            val preview = findViewById(R.id.camera_preview) as FrameLayout
-            preview.addView(mPreview)
+            //mPreview = CameraPreview(this@CameraActivity, mCamera)
+            //val preview = findViewById(R.id.camera_preview) as FrameLayout
+            //preview.addView(mPreview)
             captureButton?.visibility = View.VISIBLE
         }
 
     }
 
+    /**
+     *
+     */
+    private fun setCameraID(manager: CameraManager): String {
+        for (cameraID in manager.cameraIdList) {
+            val characteristics = manager.getCameraCharacteristics(cameraID)
+            // We don't use a front facing camera in this sample.
+            val cameraDirection = characteristics.get(CameraCharacteristics.LENS_FACING)
+            if (cameraDirection != null &&
+                    cameraDirection == CameraCharacteristics.LENS_FACING_FRONT) {
+                continue
+            }
+            return cameraID
+        }
+        throw IllegalStateException("Could not set Camera Id")
+    }
+
+    /**
+     *
+     */
+    private fun initCamera2() {
+
+        if(!isCameraHardwareAvailable((baseContext))) {
+            ActivityCompat.requestPermissions(this, arrayOf<String>(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+        }
+
+        //
+        cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        currentCameraID = setCameraID(cameraManager!!)
+    }
+
+    /**
+     *
+     */
+    private fun openCamera() {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                Timber.i(TAG, "Opening Camera ...")
+                cameraManager?.openCamera(currentCameraID, cameraStateCallback, backgroundHandler)
+            }
+        } catch (e: CameraAccessException) {
+            e.printStackTrace()
+        }
+
+    }
+
+    /**
+     * Iterates through camera IDs (for each of the camera instance's this device has) and does yada yada with em/ find preview size etc for each here
+     */
+    private fun setupCamera() {
+        try {
+            cameraManager?.cameraIdList?.forEach {
+                val cameraCharacteristics = cameraManager?.getCameraCharacteristics(it)
+                if (cameraCharacteristics?.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) {
+                    val streamConfigurationMap = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    optimalPreviewSize = streamConfigurationMap?.getOutputSizes(SurfaceTexture::class.java)?.get(0)
+                    Timber.i(TAG, "Best Preview Size: Width=${optimalPreviewSize?.width} | Height=${optimalPreviewSize?.height}")
+                    this.currentCameraID = it
+                }
+            }
+        } catch (e: CameraAccessException) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Invoked after successfully opening camera / preview texture view
+     */
+     private fun setupPreview() {
+        try {
+            val surfaceTexture: SurfaceTexture = mTextureView!!.surfaceTexture
+            surfaceTexture.setDefaultBufferSize(optimalPreviewSize!!.width, optimalPreviewSize!!.height)
+            val previewSurface = Surface(surfaceTexture)
+            mCameraCaptureRequestBuilder = mCameraDevice?.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+            mCameraCaptureRequestBuilder?.addTarget(previewSurface)
+
+            mCameraDevice?.createCaptureSession(Collections.singletonList(previewSurface), cameraCaptureSessionCallback, backgroundHandler)
+        } catch (e: CameraAccessException) {
+            e.printStackTrace()
+        }
+    }
+
     /** Check if this device has a camera  */
-    private fun checkCameraHardware(context: Context): Boolean {
+    private fun isCameraHardwareAvailable(context: Context): Boolean {
         return if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // this device has a camera
             true
@@ -118,7 +321,10 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         }
     }
 
-    override fun onPictureTaken(data: ByteArray, camera: Camera) {
+    /**
+     *
+     */
+    private fun captureNewImage(data: ByteArray, camera: Camera) {
         captureButton!!.visibility = View.INVISIBLE
 
         try {
@@ -137,7 +343,8 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
             e.printStackTrace()
         }
 
-        if(captureSelfie){
+        //
+        if(captureSelfie) {
 
             var exif: ExifInterface? = null
             try {
@@ -205,10 +412,10 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         /* So pre-scale the target bitmap into which the file is decoded */
 
         /* Get the size of the image */
-        val bmOptions = BitmapFactory.Options()
-        bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(tmpImageFile!!.absolutePath, bmOptions)
-        val imageWidth = bmOptions.outWidth
+        val bitmapOptions = BitmapFactory.Options()
+        bitmapOptions.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(tmpImageFile!!.absolutePath, bitmapOptions)
+        val imageWidth = bitmapOptions.outWidth
 
         // Calculate your sampleSize based on the requiredWidth and
         // originalWidth
@@ -224,13 +431,13 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         }
 
         Timber.d("sampleSize 2 " + Integer.toString(sampleSize))
-        bmOptions.inSampleSize = sampleSize
-        bmOptions.inPurgeable = true
-        bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
-        bmOptions.inJustDecodeBounds = false
+        bitmapOptions.inSampleSize = sampleSize
+        bitmapOptions.inPurgeable = true
+        bitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565
+        bitmapOptions.inJustDecodeBounds = false
 
         /* Decode the JPEG file into a Bitmap */
-        val bitmap = BitmapFactory.decodeFile(tmpImageFile!!.absolutePath, bmOptions) ?: return
+        val bitmap = BitmapFactory.decodeFile(tmpImageFile!!.absolutePath, bitmapOptions) ?: return
 
 
         var exif: ExifInterface? = null
@@ -259,22 +466,24 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
                 bitmap.height.toFloat() / 2)
         val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                bmOptions.outWidth, bmOptions.outHeight, matrix, true)
+                bitmapOptions.outWidth, bitmapOptions.outHeight, matrix, true)
 
         /* Associate the Bitmap to the ImageView */
-        mImageView?.setImageBitmap(rotatedBitmap)
-        mImageView?.visibility = View.VISIBLE
+        Timber.i(TAG, "Successfully formed bitmap for new image capture!")
+        //mTextureView?.bitmap = rotatedBitmap
+        mTextureView?.visibility = View.VISIBLE
     }
 
+    /**
+     * Helper to send / store bitmap
+     */
+    private fun convertBitmapToByteArray(bitmap: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        val result = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val byteArray = stream.toByteArray()
+        Timber.i(TAG, "Result For Converting New Image Bitmap to Byte[]: $result")
 
-    override fun onClick(v: View) {
-        v.isHapticFeedbackEnabled = true
-        // get an image from the camera
-        if (safeToTakePicture && mCamera != null) {     //check mCamera isn't null to avoid error
-            safeToTakePicture = false
-            mCamera?.takePicture(null, null, this@CameraActivity)
-            Timber.d("take pic")
-        }
+        return byteArray
     }
 
     private fun savePicture() {
@@ -324,17 +533,83 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         finish()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        startBackgroundThread()
+        if (mTextureView?.isAvailable!!) {
+            setupCamera()
+            openCamera()
+        } else {
+            // Don't listen unless necessary
+            mTextureView?.surfaceTextureListener = surfaceTextureListener
+        }
+    }
+
+    /**
+     *
+     */
+    private fun startBackgroundThread() {
+        //
+        backgroundThread = HandlerThread("camera_background_thread")
+        backgroundThread?.start()
+        //
+        backgroundHandler = Handler(backgroundThread?.getLooper())
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        closeCamera()
+        closeBackgroundThread()
+    }
+
+    /**
+     *
+     */
+    private fun closeCamera() {
+        if (mCameraCaptureSession != null) {
+            mCameraCaptureSession?.close()
+            mCameraCaptureSession = null
+        }
+
+        if (mCameraDevice != null) {
+            mCameraDevice?.close()
+            mCameraDevice = null
+        }
+    }
+
+    /**
+     *
+     */
+    private fun closeBackgroundThread() {
+        if (backgroundHandler != null) {
+            backgroundThread?.quitSafely()
+            backgroundThread = null
+            backgroundHandler = null
+        }
+    }
 
 
 
     companion object {
 
-        val MEDIA_TYPE_IMAGE = 1
+        //
+        var mCameraCaptureRequestBuilder: CaptureRequest.Builder? = null
 
+        //
+        var mCameraCaptureSession: CameraCaptureSession? = null
+
+        //
+        var mCameraDevice: CameraDevice? = null
+
+
+        const val MEDIA_TYPE_IMAGE = 1
+        const val CAMERA_REQUEST_CODE  = 123
 
 
         /** Create a file Uri for saving an image or video  */
-        private fun getOutputMediaFileUri(type: Int): Uri {
+        private fun ƒgetOutputMediaFileUri(type: Int): Uri {
             return Uri.fromFile(getOutputMediaFile(type))
         }
 
