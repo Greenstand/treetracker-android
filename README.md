@@ -26,7 +26,7 @@ Once this is done, you can then proceed by running one of the following tasks to
 
 ## Contributing
 
- See [Contributing in Development-Overview](https://github.com/Greenstand/Development-Overview/blob/master/Contributing.md) 
+ See [Contributing in the Development-Overview README](https://github.com/Greenstand/Development-Overview/blob/master/README.md)
 
 Please review the [issue tracker](https://github.com/Greenstand/treetracker-android/issues) here on this github repository 
 
