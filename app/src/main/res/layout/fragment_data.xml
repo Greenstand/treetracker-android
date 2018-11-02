@@ -142,17 +142,54 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/fragment_data_sync"
+    <LinearLayout
+        android:id="@+id/fragment_map_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:background="@drawable/white_gray_gradient"
-        android:text="@string/sync"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_seventeen"
-        android:textStyle="normal" />
+        android:orientation="horizontal"
+        android:padding="@dimen/fifty_dp">
+
+        <Button
+            android:id="@+id/fragment_data_sync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/white_gray_gradient"
+            android:paddingTop="@dimen/margin_eight"
+            android:paddingBottom="@dimen/margin_eight"
+            android:text="@string/sync"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/fragment_data_pause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/white_gray_gradient"
+            android:paddingTop="@dimen/margin_eight"
+            android:paddingBottom="@dimen/margin_eight"
+            android:text="@string/pause"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/fragment_data_resume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/white_gray_gradient"
+            android:paddingTop="@dimen/margin_eight"
+            android:paddingBottom="@dimen/margin_eight"
+            android:text="@string/resume"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen"
+            android:textStyle="normal" />
+
+    </LinearLayout>
 
 </RelativeLayout>
 

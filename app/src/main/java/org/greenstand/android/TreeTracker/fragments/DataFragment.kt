@@ -96,6 +96,12 @@ class DataFragment : Fragment(), View.OnClickListener {
         val syncBtn = v.findViewById(R.id.fragment_data_sync) as Button
         syncBtn.setOnClickListener(this)
 
+        val pauseBtn = v.findViewById(R.id.fragment_data_pause) as Button
+        pauseBtn.setOnClickListener(this)
+
+        val resumeBtn = v.findViewById(R.id.fragment_data_resume) as Button
+        resumeBtn.setOnClickListener(this)
+
         return v
     }
 
@@ -418,7 +424,14 @@ class DataFragment : Fragment(), View.OnClickListener {
                 Toast.makeText(activity, "Start syncing", Toast.LENGTH_SHORT).show()
                 startDataSynchronization()
             }
-
+            R.id.fragment_data_pause -> {
+                operationAttempt?.cancel();
+                Toast.makeText(activity, "Pause syncing", Toast.LENGTH_SHORT).show()
+            }
+            R.id.fragment_data_resume -> {
+                Toast.makeText(activity, "Resume syncing", Toast.LENGTH_SHORT).show()
+                startDataSynchronization()
+            }
         }
     }
 
