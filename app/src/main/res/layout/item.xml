@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
- android:layout_width="match_parent"
- android:layout_height="48dp"
- android:orientation="horizontal" 
- android:background="@drawable/drawer_item_border"
- android:padding="10dp">
-		 
-	<TextView
-	 android:id="@+id/menu_item"
-	 android:layout_width="match_parent"
-	 android:layout_height="wrap_content"
-	 android:textSize="18sp" >
-	 </TextView>
-	
-	<TextView
-	 android:id="@+id/menu_item_id"
-	 android:layout_width="match_parent"
-	 android:layout_height="wrap_content"
-	 android:visibility="gone"
-	 >
-	 </TextView>
-	 
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/padding_forty_eight"
+    android:background="@drawable/drawer_item_border"
+    android:orientation="horizontal"
+    android:padding="@dimen/margin_ten">
+
+    <TextView
+        android:id="@+id/menu_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/about_text_size"/>
+
+    <TextView
+        android:id="@+id/menu_item_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
 </LinearLayout>

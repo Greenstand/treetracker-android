@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/camera_preview_taken"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:scaleType="centerCrop" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ImageButton
-	    android:id="@+id/button_capture"
-	    android:layout_width="48dp"
-	    android:layout_height="48dp"
-	    android:src="@drawable/circle_button"
-	    android:background="@null"
-	    android:layout_margin="16dp"
-	    android:layout_centerHorizontal="true"
+        android:id="@+id/button_capture"
+        android:layout_width="@dimen/button_capture_dim"
+        android:layout_height="@dimen/button_capture_dim"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@null"
         android:hapticFeedbackEnabled="true"
+        android:src="@drawable/circle_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
-  
 </android.support.constraint.ConstraintLayout>
