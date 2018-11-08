@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="#FFFFFFFF"
+    android:orientation="vertical"
+    android:padding="0dip">
 
     <FrameLayout
         android:id="@+id/map"
@@ -14,50 +17,58 @@
 
     <ImageView
         android:id="@+id/map_user_image"
-        android:layout_width="@dimen/hundred_dim"
-        android:layout_height="@dimen/hundred_dim"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
         android:layout_gravity="top|start"
-        android:scaleType="centerCrop" />
+        android:layout_margin="0dip"
+        android:padding="0dip"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/fragment_map_gps_accuracy_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:orientation="horizontal">
+        android:layout_above="@+id/fragment_map_buttons"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        android:padding="0dip"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/fragment_map_gps_accuracy"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/margin_twelve"
             android:layout_weight="1"
-            android:gravity="end"
+            android:gravity="right"
             android:text="@string/gps_accuracy_double_colon"
-            android:textColor="@color/red"
-            android:textSize="@dimen/text_size_twenty" />
+            android:textColor="#FFFF0000"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/fragment_map_gps_accuracy_value"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginTop="@dimen/margin_twelve"
             android:layout_weight="1"
-            android:gravity="start"
-            android:textColor="@color/red"
-            android:textSize="@dimen/text_size_twenty" />
+            android:gravity="left"
+            android:textColor="#FFFF0000"
+            android:textSize="20sp"
+            tools:text="10 meters" />
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <Button
+        android:id="@+id/addTreeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_add_white_24dp" />
+        android:background="@color/colorAccent"
+        android:text="@string/add_tree"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_map_gps_accuracy_layout"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</FrameLayout>
-
+</android.support.constraint.ConstraintLayout>
