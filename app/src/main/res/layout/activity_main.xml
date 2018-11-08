@@ -1,41 +1,39 @@
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/drawer_layout"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-	<android.support.design.widget.AppBarLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-		<android.support.v7.widget.Toolbar
-			android:id="@+id/toolbar"
-			android:minHeight="?attr/actionBarSize"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?attr/colorPrimary">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize">
 
-			<TextView
-				android:id="@+id/toolbar_title"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textSize="18dp"
-				tools:text="Maps"
-				android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/button_text_size"
+                tools:text="@string/map" />
 
-		</android.support.v7.widget.Toolbar>
+        </android.support.v7.widget.Toolbar>
 
-	</android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.AppBarLayout>
 
-	<FrameLayout
-		android:id="@+id/container_fragment"
-		android:layout_marginTop="?attr/actionBarSize"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="#FFFFFF"
-		android:layout_alignParentBottom="true">
-	</FrameLayout>
-    
+    <FrameLayout
+        android:id="@+id/container_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@color/white"
+        tools:ignore="ObsoleteLayoutParam" />
+
 </FrameLayout>

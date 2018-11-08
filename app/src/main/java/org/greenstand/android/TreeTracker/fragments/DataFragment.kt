@@ -51,6 +51,7 @@ import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import timber.log.Timber
+import java.lang.Integer.valueOf
 
 /**
  * Created by lei on 11/9/17.
@@ -65,7 +66,8 @@ class DataFragment : Fragment(), View.OnClickListener {
     private var progressDialog: ProgressDialog? = null
     private var mSharedPreferences: SharedPreferences? = null
     private var userId: Long = -1
-
+    var numbersOfTreesToSync: Int = 0;
+    var syncBtn: Button? = null
 
     private var operationAttempt: Job? = null
 
@@ -93,14 +95,14 @@ class DataFragment : Fragment(), View.OnClickListener {
         (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.data)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        val syncBtn = v.findViewById(R.id.fragment_data_sync) as Button
-        syncBtn.setOnClickListener(this)
+        syncBtn = v.findViewById(R.id.fragment_data_sync) as Button
+        syncBtn!!.setOnClickListener(this)
 
-        val pauseBtn = v.findViewById(R.id.fragment_data_pause) as Button
-        pauseBtn.setOnClickListener(this)
-
-        val resumeBtn = v.findViewById(R.id.fragment_data_resume) as Button
-        resumeBtn.setOnClickListener(this)
+//        val pauseBtn = v.findViewById(R.id.fragment_data_pause) as Button
+//        pauseBtn.setOnClickListener(this)
+//
+//        val resumeBtn = v.findViewById(R.id.fragment_data_resume) as Button
+//        resumeBtn.setOnClickListener(this)
 
         return v
     }
@@ -136,7 +138,7 @@ class DataFragment : Fragment(), View.OnClickListener {
 
 
     private fun startDataSynchronization() {
-
+        syncBtn?.setText(R.string.stop)
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1);
         operationAttempt = launch(UI) {
 
@@ -185,6 +187,7 @@ class DataFragment : Fragment(), View.OnClickListener {
                 }
 
                 if(activity != null) {
+                    syncBtn?.setText(R.string.sync)
                     if (success) {
                         Toast.makeText(activity, "Sync Successful", Toast.LENGTH_SHORT).show()
                     } else {
@@ -419,20 +422,33 @@ class DataFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
         val userId = mSharedPreferences!!.getString(ValueHelper.MAIN_DB_USER_ID, "-1")
-        when (v.id) {
-            R.id.fragment_data_sync -> {
+        numbersOfTreesToSync = valueOf(tosyncTrees!!.text.toString())
+        when(numbersOfTreesToSync) {
+            0 -> {
+                operationAttempt?.cancel();
+                Toast.makeText(activity, "Pause syncing", Toast.LENGTH_SHORT).show()
+                syncBtn?.setText(R.string.sync)
+            }
+            else -> {
                 Toast.makeText(activity, "Start syncing", Toast.LENGTH_SHORT).show()
                 startDataSynchronization()
             }
-            R.id.fragment_data_pause -> {
-                operationAttempt?.cancel();
-                Toast.makeText(activity, "Pause syncing", Toast.LENGTH_SHORT).show()
-            }
-            R.id.fragment_data_resume -> {
-                Toast.makeText(activity, "Resume syncing", Toast.LENGTH_SHORT).show()
-                startDataSynchronization()
-            }
         }
+//        when (v.id) {
+//            R.id.fragment_data_sync -> {
+//                Toast.makeText(activity, "Start syncing", Toast.LENGTH_SHORT).show()
+//                startDataSynchronization()
+//            }
+//            R.id.fragment_data_pause -> {
+//                operationAttempt?.cancel();
+//                Toast.makeText(activity, "Pause syncing", Toast.LENGTH_SHORT).show()
+//            }
+//            R.id.fragment_data_resume -> {
+//                Toast.makeText(activity, "Resume syncing", Toast.LENGTH_SHORT).show()
+//                startDataSynchronization()
+//            }
+//        }
+
     }
 
     fun updateData() {

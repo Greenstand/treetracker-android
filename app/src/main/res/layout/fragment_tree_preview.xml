@@ -1,288 +1,261 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:padding="0dip"
-    android:layout_width="match_parent" 
+    android:id="@+id/fragment_tree_preview"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF"
-    android:id="@+id/fragment_tree_preview">
-    
-    <ImageView 
-        android:id="@+id/fragment_tree_preview_image" 
-		android:layout_height="160dp" 
-		android:layout_width="match_parent"
-		android:layout_marginTop="12dp" 
-        android:contentDescription="tree"
-        android:layout_alignParentTop="true"
-        />
-    
-    <ScrollView 
-       	android:layout_width="match_parent" 
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="12dp" 
-	    android:fadingEdgeLength="50dp"
-	    android:requiresFadingEdge="vertical"
-	    android:background="#FFFFFFFF"
-        android:layout_below="@+id/fragment_tree_preview_image"
-        android:layout_above="@+id/fragment_tree_preview_buttons">
-        
-       	<RelativeLayout 
-  	    	android:layout_width="match_parent" 
-	    	android:layout_height="match_parent">
-			<LinearLayout
-		   	    android:id="@+id/fragment_tree_preview_distance_layout"
-		   	    android:orientation="horizontal" 
-		   	    android:paddingTop="3dp"
-		   	    android:paddingBottom="0dp"
-		   	    android:paddingLeft="24dp"
-		   	    android:paddingRight="24dp"
-			    android:layout_width="match_parent" 
-			    android:layout_height="wrap_content"
-		        
-			    >
-			    
-		       	<TextView
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="@string/distance_double_colon"
-		        />
-		       	
-		       	<TextView
-		       	    android:id="@+id/fragment_tree_preview_distance"
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:gravity="right"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="5"
-		        />
-			    
-			</LinearLayout>	      
-			
-		    <LinearLayout
-		   	    android:id="@+id/fragment_tree_preview_gps_accuracy_layout"
-		   	    android:orientation="horizontal" 
-		   	    android:paddingTop="3dp"
-		   	    android:paddingBottom="0dp"
-		   	    android:paddingLeft="24dp"
-		   	    android:paddingRight="24dp"
-			    android:layout_width="match_parent" 
-			    android:layout_height="wrap_content"
-		        android:layout_below="@+id/fragment_tree_preview_distance_layout"
-			    >
-			    
-		       	<TextView
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="@string/gps_accuracy_double_colon"
-		        />
-		       	
-		       	<TextView
-		       	    android:id="@+id/fragment_tree_preview_gps_accuracy"
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:gravity="right"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="5"
-		        />
-			    
-			</LinearLayout>	  
-			
-		    <LinearLayout
-		   	    android:id="@+id/fragment_tree_preview_image_status_layout"
-		   	    android:orientation="horizontal" 
-		   	    android:paddingTop="3dp"
-		   	    android:paddingBottom="0dp"
-		   	    android:paddingLeft="24dp"
-		   	    android:paddingRight="24dp"
-			    android:layout_width="match_parent" 
-			    android:layout_height="wrap_content"
-		        android:layout_below="@+id/fragment_tree_preview_gps_accuracy_layout"
-			    >
-			    
-		       	<TextView
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="@string/image_status_double_colon"
-		        />
-		       	
-		       	<TextView
-		       	    android:id="@+id/fragment_tree_preview_image_status"
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:gravity="right"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="@string/ok"
-		        />
-			    
-			</LinearLayout>
-			
-		    <LinearLayout
-		   	    android:id="@+id/fragment_tree_preview_last_update_layout"
-		   	    android:orientation="horizontal" 
-		   	    android:paddingTop="3dp"
-		   	    android:paddingBottom="0dp"
-		   	    android:paddingLeft="24dp"
-		   	    android:paddingRight="24dp"
-			    android:layout_width="match_parent" 
-			    android:layout_height="wrap_content"
-		        android:layout_below="@+id/fragment_tree_preview_image_status_layout"
-			    >
-			    
-		       	<TextView
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="@string/last_update_double_colon"
-		        />
-		       	
-		       	<TextView
-		       	    android:id="@+id/fragment_tree_preview_last_update"
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:gravity="right"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="5"
-		        />
-			    
-			</LinearLayout>
-		    
-		    <LinearLayout
-		   	    android:id="@+id/fragment_tree_preview_created_layout"
-		   	    android:orientation="horizontal" 
-		   	    android:paddingTop="3dp"
-		   	    android:paddingBottom="0dp"
-		   	    android:paddingLeft="24dp"
-		   	    android:paddingRight="24dp"
-			    android:layout_width="match_parent" 
-			    android:layout_height="wrap_content"
-		        android:layout_below="@+id/fragment_tree_preview_last_update_layout"
-			    >
-			    
-		       	<TextView
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="@string/created_double_colon"
-		        />
-		       	
-		       	<TextView
-		       	    android:id="@+id/fragment_tree_preview_created"
-			    	android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:gravity="right"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="5"
-		        />
-			    
-			</LinearLayout>
-			
-   		    <LinearLayout
-		   	    android:id="@+id/fragment_tree_preview_notes_layout"
-		   	    android:orientation="vertical" 
-		   	    android:paddingTop="10dp"
-		   	    android:paddingBottom="0dp"
-		   	    android:paddingLeft="24dp"
-		   	    android:paddingRight="24dp"
-			    android:layout_width="match_parent" 
-			    android:layout_height="wrap_content"
-			    android:layout_centerHorizontal="true"
-		        android:layout_below="@+id/fragment_tree_preview_created_layout"
-			    >
-			    
-				<TextView
-			    	android:layout_width="wrap_content"
-			        android:layout_height="0dip"
-			        android:textSize="17sp"
-			        android:layout_weight="1"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="12dp"
-			        android:text="@string/notes_double_colon"
-		        />
-		       	
-		       	<TextView
-		       	    android:id="@+id/fragment_tree_preview_notes"
-			    	android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:textSize="17sp"
-			        android:gravity="center"
-			        android:textColor="#FF000000"
-			        android:layout_marginTop="24dp"
-			        android:text=" "
-		        />
-			    
-			</LinearLayout>
-	</RelativeLayout>
-    </ScrollView>
-    
-     <LinearLayout
-   	    android:id="@+id/fragment_tree_preview_buttons"
-   	    android:orientation="horizontal" android:padding="5dip"
-	    android:layout_width="match_parent" 
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true">
+    android:background="@color/white"
+    android:orientation="vertical">
 
-		 <Button
-			 android:id="@+id/fragment_tree_preview_more"
-			 android:layout_width="match_parent"
-			 android:layout_height="wrap_content"
-			 android:layout_marginRight="0dp"
-			 android:layout_weight="1"
-			 android:background="@drawable/white_gray_gradient"
-			 android:paddingBottom="8dp"
-			 android:paddingTop="8dp"
-			 android:text="@string/more"
-			 android:textColor="#FF000000"
-			 android:textSize="17sp"
-			 android:textStyle="normal"
-			 android:visibility="invisible" />
-	 
-	</LinearLayout>
-	
+    <ImageView
+        android:id="@+id/fragment_tree_preview_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_new_tree_image"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/margin_twelve"
+        android:contentDescription="@string/tree" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/fragment_tree_preview_buttons"
+        android:layout_below="@+id/fragment_tree_preview_image"
+        android:layout_marginTop="@dimen/margin_twelve"
+        android:background="@color/white"
+        android:fadingEdgeLength="@dimen/fifty_dp"
+        android:requiresFadingEdge="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/fragment_tree_preview_distance_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/margin_twenty_four"
+                android:paddingTop="@dimen/three_dp"
+                android:paddingRight="@dimen/margin_twenty_four">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:text="@string/distance_double_colon"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+                <TextView
+                    android:id="@+id/fragment_tree_preview_distance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/five_text_view"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_tree_preview_gps_accuracy_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_tree_preview_distance_layout"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/margin_twenty_four"
+                android:paddingTop="@dimen/three_dp"
+                android:paddingRight="@dimen/margin_twenty_four">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:text="@string/gps_accuracy_double_colon"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+                <TextView
+                    android:id="@+id/fragment_tree_preview_gps_accuracy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/five_text_view"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_tree_preview_image_status_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_tree_preview_gps_accuracy_layout"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/margin_twenty_four"
+                android:paddingTop="@dimen/three_dp"
+                android:paddingRight="@dimen/margin_twenty_four">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:text="@string/image_status_double_colon"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+                <TextView
+                    android:id="@+id/fragment_tree_preview_image_status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/ok"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_tree_preview_last_update_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_tree_preview_image_status_layout"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/margin_twenty_four"
+                android:paddingTop="@dimen/three_dp"
+                android:paddingRight="@dimen/margin_twenty_four">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:text="@string/last_update_double_colon"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+                <TextView
+                    android:id="@+id/fragment_tree_preview_last_update"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/five_text_view"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_tree_preview_created_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_tree_preview_last_update_layout"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/margin_twenty_four"
+                android:paddingTop="@dimen/three_dp"
+                android:paddingRight="@dimen/margin_twenty_four">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:text="@string/created_double_colon"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+                <TextView
+                    android:id="@+id/fragment_tree_preview_created"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/five_text_view"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_tree_preview_notes_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_tree_preview_created_layout"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/margin_twenty_four"
+                android:paddingTop="@dimen/margin_ten"
+                android:paddingRight="@dimen/margin_twenty_four">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dip"
+                    android:layout_marginTop="@dimen/margin_twelve"
+                    android:layout_weight="1"
+                    android:text="@string/notes_double_colon"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+                <TextView
+                    android:id="@+id/fragment_tree_preview_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_twenty_four"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_seventeen" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/fragment_tree_preview_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="@dimen/fifty_dp">
+
+        <Button
+            android:id="@+id/fragment_tree_preview_more"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/white_gray_gradient"
+            android:paddingTop="@dimen/margin_eight"
+            android:paddingBottom="@dimen/margin_eight"
+            android:text="@string/more"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen"
+            android:textStyle="normal"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/fragment_tree_preview_no_image"
-    	android:layout_width="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/fragment_tree_preview_image"
         android:layout_centerHorizontal="true"
-        android:textSize="17sp"
-        android:paddingTop="5dp"
-		android:text="@string/no_image_preview_available"
-		android:visibility="invisible"
-        />
-      
-      
+        android:paddingTop="@dimen/padding_five"
+        android:text="@string/no_image_preview_available"
+        android:textSize="@dimen/text_size_seventeen"
+        android:visibility="invisible" />
+
 </RelativeLayout>
 

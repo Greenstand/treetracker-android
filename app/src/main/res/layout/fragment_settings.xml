@@ -1,198 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:padding="0dip"
-    android:layout_width="match_parent" 
+    android:id="@+id/fragment_settings"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF"
-    android:id="@+id/fragment_settings">
-    
-    <LinearLayout 
-        android:id="@+id/fragment_settings_which_settings_layout"
-        android:orientation="vertical" android:padding="0dip"
-    android:layout_width="match_parent" 
-    android:layout_height="wrap_content">
-   
-	    <RadioGroup 
-	        android:id="@+id/fragment_settings_which_settings"
-	        android:orientation="vertical" 
-	        android:paddingLeft="0dip"
-	        android:paddingTop="6dip"
-	        android:paddingBottom="0dip"
-	    	android:layout_width="match_parent"
-	    	android:layout_height="wrap_content">
-	        
-	        <RadioButton 
-	            android:id="@+id/fragment_settings_treetracker"
-	            android:layout_width="wrap_content" 
-	    		android:layout_height="wrap_content"
-	    		android:layout_marginLeft="24dp"
-	    		android:text="@string/treetracker"
-	    		/>
-	        
-	        <RadioButton 
-	            android:id="@+id/fragment_settings_manual"
-	            android:layout_width="wrap_content" 
-	    		android:layout_height="wrap_content"
-	    		android:layout_marginLeft="24dp"
-	    		android:text="@string/manual"
-	    		/>
-	        
-	    </RadioGroup>
-    </LinearLayout>
-    
-    
+    android:background="@color/white"
+    android:orientation="vertical">
+
     <LinearLayout
-   	    android:id="@+id/fragment_settings_gps_accuracy_layout"
-   	    android:orientation="horizontal" 
-   	    android:paddingTop="2dp"
-   	    android:paddingBottom="2dp"
-   	    android:paddingLeft="48dp"
-   	    android:paddingRight="32dp"
-	    android:layout_width="match_parent" 
-	    android:layout_height="wrap_content"
+        android:id="@+id/fragment_settings_which_settings_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/fragment_settings_which_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/six_dp">
+
+            <RadioButton
+                android:id="@+id/fragment_settings_treetracker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_twenty_four"
+                android:text="@string/treetracker" />
+
+            <RadioButton
+                android:id="@+id/fragment_settings_manual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_twenty_four"
+                android:text="@string/manual" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_settings_gps_accuracy_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_settings_which_settings_layout"
-	    >
-	    
-       	<TextView
-	    	android:layout_width="0dp"
-	        android:layout_height="40dp"
-	        android:textSize="17sp"
-	        android:layout_weight="1"
-	        android:textColor="#000"
-	        android:layout_marginTop="12dp"
-	        android:text="@string/gps_accuracy_double_colon"
-        />
-       	
-       	<TextView
-       	    android:id="@+id/fragment_settings_gps_accuracy"
-	    	android:layout_width="0dp"
-	        android:layout_height="40dp"
-	        android:textSize="17sp"
-	        android:layout_weight="1"
-	        android:gravity="right"
-	        android:textColor="#FF000000"
-	        android:layout_marginTop="12dp"
-        />
-	    
-	</LinearLayout>	        
-    
-    
-    
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding_forty_eight"
+        android:paddingTop="@dimen/two_dp"
+        android:paddingRight="@dimen/padding_thirty_two"
+        android:paddingBottom="@dimen/two_dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/height_forty"
+            android:layout_marginTop="@dimen/margin_twelve"
+            android:layout_weight="1"
+            android:text="@string/gps_accuracy_double_colon"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen" />
+
+        <TextView
+            android:id="@+id/fragment_settings_gps_accuracy"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/height_forty"
+            android:layout_marginTop="@dimen/margin_twelve"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/fragment_settings_manual_settings"
-        android:orientation="vertical" 
-        android:padding="0dip"
-	    android:layout_width="match_parent" 
-	    android:layout_height="wrap_content"
-	    android:visibility="gone"
-	    android:layout_below="@+id/fragment_settings_gps_accuracy_layout">
-        
-	     <RadioGroup 
-	        android:id="@+id/fragment_settings_manual_settings_radio_group"
-	        android:orientation="vertical" 
-	        android:paddingLeft="48dip"
-	    	android:layout_width="match_parent"
-	    	android:layout_height="match_parent">
-	         
-	         <RadioButton 
-	            android:id="@+id/fragment_settings_10"
-	            android:layout_width="wrap_content" 
-	    		android:layout_height="wrap_content"
-	    		android:text="10"
-	    		/>
-	         
-	         <RadioButton 
-	            android:id="@+id/fragment_settings_50"
-	            android:layout_width="wrap_content" 
-	    		android:layout_height="wrap_content"
-	    		android:text="50"
-	    		/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_settings_gps_accuracy_layout"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-	         	         	         	         
-	         <RadioButton 
-	            android:id="@+id/fragment_settings_200"
-	            android:layout_width="wrap_content" 
-	    		android:layout_height="wrap_content"
-	    		android:text="200"
-	    		/>
-	         
-   	         <RadioButton 
-	            android:id="@+id/fragment_settings_1000"
-	            android:layout_width="wrap_content" 
-	    		android:layout_height="wrap_content"
-	    		android:text="1000"
-	    		/>
-	        
-	    </RadioGroup>
-        
+        <RadioGroup
+            android:id="@+id/fragment_settings_manual_settings_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/padding_forty_eight">
+
+            <RadioButton
+                android:id="@+id/fragment_settings_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ten" />
+
+            <RadioButton
+                android:id="@+id/fragment_settings_50"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fifty" />
+
+            <RadioButton
+                android:id="@+id/fragment_settings_200"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/two_hundred" />
+
+            <RadioButton
+                android:id="@+id/fragment_settings_1000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/thousand" />
+
+        </RadioGroup>
+
     </LinearLayout>
-    
-    
+
     <LinearLayout
-   	    android:id="@+id/fragment_settings_next_update_layout"
-   	    android:orientation="horizontal" 
-   	    android:paddingBottom="5dp"
-   	    android:paddingLeft="48dp"
-   	    android:paddingRight="32dp"
-	    android:layout_width="match_parent" 
-	    android:layout_height="wrap_content"
+        android:id="@+id/fragment_settings_next_update_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_settings_manual_settings"
-	    >
-	    
-       	<TextView
-       	    android:id="@+id/fragment_settings_next_update_text"
-	    	android:layout_width="0dp"
-	        android:layout_height="40dp"
-	        android:textSize="17sp"
-	        android:layout_weight="3"
-	        android:textColor="#000"
-	        android:layout_marginTop="5dp"
-	        android:text="@string/days_to_next_update_double_colon"
-        />
-       	
-       	<EditText
-       	    android:id="@+id/fragment_settings_next_update"
-	    	android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:textSize="17sp"
-	        android:layout_weight="1"
-	        android:gravity="center_horizontal"
-	        android:textColor="#FF000000"
-	        android:layout_marginTop="0dp"
-	        android:inputType="number"
-	        android:maxLength="3"
-        />
-       	
-	</LinearLayout>	     
-	
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding_forty_eight"
+        android:paddingRight="@dimen/padding_thirty_two"
+        android:paddingBottom="@dimen/padding_five">
+
+        <TextView
+            android:id="@+id/fragment_settings_next_update_text"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/height_forty"
+            android:layout_marginTop="@dimen/padding_five"
+            android:layout_weight="3"
+            android:text="@string/days_to_next_update_double_colon"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen" />
+
+        <EditText
+            android:id="@+id/fragment_settings_next_update"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:inputType="number"
+            android:maxLength="3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_seventeen" />
+
+    </LinearLayout>
+
     <CheckBox
-		 android:id="@+id/fragment_settings_save_and_edit"
-		 android:layout_width="match_parent"
-		 android:layout_height="wrap_content"
-		 android:textSize="17sp"
-		 android:layout_marginTop="0dp"
-		 android:layout_marginLeft="24dp"
-		 android:layout_marginRight="24dp"
-		 android:text="@string/save_and_edit"
-		 android:visibility="gone"
-		 android:layout_below="@+id/fragment_settings_next_update_layout"
-        />
-    
-    
+        android:id="@+id/fragment_settings_save_and_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_settings_next_update_layout"
+        android:layout_marginLeft="@dimen/margin_twenty_four"
+        android:layout_marginRight="@dimen/margin_twenty_four"
+        android:text="@string/save_and_edit"
+        android:textSize="@dimen/text_size_seventeen"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/fragment_settings_submit"
-    	android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/submit"
-        android:padding="5dip"
-        android:layout_margin="5dip"
-        android:textColor="#FF000000"
-        android:textSize="17sp"
-        android:textStyle="normal"
-        android:background="@drawable/white_gray_gradient"
         android:layout_alignParentBottom="true"
-        />
-   
+        android:layout_margin="@dimen/padding_five"
+        android:background="@drawable/white_gray_gradient"
+        android:padding="@dimen/padding_five"
+        android:text="@string/submit"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_seventeen"
+        android:textStyle="normal" />
+
 </RelativeLayout>
 
