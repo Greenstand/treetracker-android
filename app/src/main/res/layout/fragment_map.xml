@@ -1,74 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:padding="0dip"
-    android:layout_width="match_parent" 
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_map"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
-    android:background="#FFFFFFFF"
-    android:id="@+id/fragment_map">
+    android:background="@color/white"
+    android:orientation="vertical">
 
-	<FrameLayout
-		android:id="@+id/map"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_above="@+id/fragment_map_gps_accuracy_layout"
-		/>
+    <FrameLayout
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-	<ImageView
-		android:id="@+id/map_user_image"
-		android:layout_width="100dip"
-		android:layout_height="100dip"
-        android:layout_margin="0dip"
-        android:padding="0dip"
-        android:scaleType="centerCrop"
-        android:layout_gravity="top|start"/>
-   	
-   	<LinearLayout
-   	    android:id="@+id/fragment_map_gps_accuracy_layout"
-   	    android:orientation="horizontal"
-		android:padding="0dip"
-	    android:layout_width="match_parent" 
-	    android:layout_height="wrap_content"
-		android:layout_gravity="bottom|end"
-	   	android:layout_above="@+id/fragment_map_buttons">
-	    
-	   	<TextView
-	        android:id="@+id/fragment_map_gps_accuracy" 
-	    	android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="20sp"
-	        android:textColor="#FFFF0000"
-	        android:layout_marginTop="12dp"
-	        android:gravity="right"
-	        android:layout_gravity="right"
-	        android:layout_weight="1"
-	        android:text="@string/gps_accuracy_double_colon"
+    <ImageView
+        android:id="@+id/map_user_image"
+        android:layout_width="@dimen/hundred_dim"
+        android:layout_height="@dimen/hundred_dim"
+        android:layout_gravity="top|start"
+        android:scaleType="centerCrop" />
 
-	        />
-	   	
-	   	<TextView
-	        android:id="@+id/fragment_map_gps_accuracy_value" 
-	    	android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="20sp"
-	        android:layout_marginTop="12dp"
-   	        android:gravity="left"
-	        android:layout_gravity="left"
-	        android:textColor="#FFFF0000"
-	        android:layout_weight="1"
-	        />
-		    
-	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/fragment_map_gps_accuracy_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:orientation="horizontal">
 
-	<android.support.design.widget.FloatingActionButton
-		android:id="@+id/fab"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom|end"
-		android:layout_margin="@dimen/activity_horizontal_margin"
-		android:src="@drawable/ic_add_white_24dp"/>
-      
+        <TextView
+            android:id="@+id/fragment_map_gps_accuracy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/margin_twelve"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/gps_accuracy_double_colon"
+            android:textColor="@color/red"
+            android:textSize="@dimen/text_size_twenty" />
+
+        <TextView
+            android:id="@+id/fragment_map_gps_accuracy_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="@dimen/margin_twelve"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:textColor="@color/red"
+            android:textSize="@dimen/text_size_twenty" />
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:src="@drawable/ic_add_white_24dp" />
+
 </FrameLayout>
 
