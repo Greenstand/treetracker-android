@@ -82,12 +82,16 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             mSharedPreferences!!.edit().putBoolean(ValueHelper.FIRST_RUN, false).commit()
         }
 
-        setContentView(R.layout.activity_main)
+          setContentView(R.layout.activity_main)
 
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.title = ""
+
+        //get the userId to check if is loged in
+        val DEFAUL_VALUE = -1;
+        val userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, DEFAUL_VALUE.toLong());
 
 
         val extras = intent.extras
@@ -98,7 +102,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
         }
 
-        if (startDataSync) {
+        //if no user is loged In then open the user identification fragment
+        if(userId == DEFAUL_VALUE.toLong()){
+          openChangeUserFragment()
+        }else if (startDataSync) {
             Timber.d("MainActivity startDataSync is true")
             val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             mNotificationManager.cancel(ValueHelper.WIFI_NOTIFICATION_ID)
@@ -216,25 +223,26 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 return true
             }
 
-            R.id.action_change_user -> {
-                val editor = mSharedPreferences!!.edit()
-                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor.commit()
-
-                (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
-
-
-                fragment = UserIdentificationFragment()
-                fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
-            }
+            R.id.action_change_user -> openChangeUserFragment()
         }
         return super.onOptionsItemSelected(item)
     }
 
+    fun openChangeUserFragment(){
+        val editor = mSharedPreferences!!.edit()
+        editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+        editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+        editor.putString(ValueHelper.PLANTER_PHOTO, null)
+        editor.commit()
+
+        (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+
+
+        fragment = UserIdentificationFragment()
+        fragmentTransaction = supportFragmentManager
+                .beginTransaction()
+        fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+    }
 
     /*
      * Called when the Activity is no longer visible at all.
