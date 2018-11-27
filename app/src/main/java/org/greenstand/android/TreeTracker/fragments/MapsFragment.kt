@@ -98,15 +98,23 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
         if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
             (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+            //reset all sharedPreferences
+            val editor = mSharedPreferences!!.edit()
+            editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+            editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+            editor.putString(ValueHelper.PLANTER_PHOTO, null)
+            editor.apply()
         } else {
             val identifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
-
+            //
             val cursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null)
             if(cursor.count == 0){
                 (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
                 // And time them out
                 val editor = mSharedPreferences!!.edit()
                 editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor.putString(ValueHelper.PLANTER_PHOTO, null)
                 editor.commit()
             } else {
                 cursor.moveToFirst()

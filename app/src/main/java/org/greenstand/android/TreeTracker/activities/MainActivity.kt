@@ -29,6 +29,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.api.Api
 import org.greenstand.android.TreeTracker.managers.DataManager
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
@@ -72,7 +73,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         mSharedPreferences = this.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
-
         if (mSharedPreferences!!.getBoolean(ValueHelper.FIRST_RUN, true)) {
 
             if (mSharedPreferences!!.getBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
@@ -84,15 +84,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
           setContentView(R.layout.activity_main)
 
+
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.title = ""
-
-        //get the userId to check if is loged in
-        val DEFAUL_VALUE = -1;
-        val userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, DEFAUL_VALUE.toLong());
-
 
         val extras = intent.extras
         var startDataSync = false
@@ -102,10 +98,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
         }
 
-        //if no user is loged In then open the user identification fragment
-        if(userId == DEFAUL_VALUE.toLong()){
-          openChangeUserFragment()
-        }else if (startDataSync) {
+
+        if (startDataSync) {
             Timber.d("MainActivity startDataSync is true")
             val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             mNotificationManager.cancel(ValueHelper.WIFI_NOTIFICATION_ID)
@@ -119,7 +113,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
             fragmentTransaction.commit()
 
-        } else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
+        }
+
+        val userIdentifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, null)
+        if(  userIdentifier == null){
+            openChangeUser()
+        }else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
             Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
             var bundle = intent.extras
 
@@ -144,17 +143,17 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
 
         } else {
-            Timber.d("MainActivity" + " startDataSync is false")
-            val homeFragment = MapsFragment()
-            homeFragment.arguments = intent.extras
+            if (userIdentifier != getString(R.string.user_not_identified)) {
+                Timber.d("MainActivity" + " startDataSync is false")
+                val homeFragment = MapsFragment()
+                homeFragment.arguments = intent.extras
 
-            val fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
-            fragmentTransaction.commit()
+                val fragmentTransaction = supportFragmentManager
+                        .beginTransaction()
+                fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
+                fragmentTransaction.commit()
+            }else openChangeUser()
         }
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -223,12 +222,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 return true
             }
 
-            R.id.action_change_user -> openChangeUserFragment()
+            R.id.action_change_user -> openChangeUser()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    fun openChangeUserFragment(){
+    fun openChangeUser(){
         val editor = mSharedPreferences!!.edit()
         editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
         editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
@@ -518,7 +517,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
                     fragmentTransaction = supportFragmentManager
                             .beginTransaction()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
+                    fragmentTransaction!!.replace(R.id.container_fragment, fragment)
+                            .addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
 
                 }
             }
