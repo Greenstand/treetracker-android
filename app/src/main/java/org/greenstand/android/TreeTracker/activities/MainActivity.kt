@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
             fragmentTransaction = supportFragmentManager
                     .beginTransaction()
-            fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit()
+            fragmentTransaction!!.replace(R.id.container_fragment, fragment as MapsFragment).addToBackStack(ValueHelper.MAP_FRAGMENT).commit()
 
             if (bundle == null)
                 bundle = Bundle()
@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
             fragmentTransaction = supportFragmentManager
                     .beginTransaction()
-            fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
+            fragmentTransaction!!.replace(R.id.container_fragment, fragment as DataFragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
 
         } else {
             Timber.d("MainActivity" + " startDataSync is false")
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragment!!.arguments = bundle
 
                 fragmentTransaction = supportFragmentManager.beginTransaction()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
+                fragmentTransaction!!.replace(R.id.container_fragment, fragment as DataFragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
                 for (entry in 0 until fm.backStackEntryCount) {
                     Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
                 }
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
                     fragmentTransaction = supportFragmentManager
                             .beginTransaction()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.ABOUT_FRAGMENT).commit()
+                    fragmentTransaction!!.replace(R.id.container_fragment, fragment as AboutFragment).addToBackStack(ValueHelper.ABOUT_FRAGMENT).commit()
                 }
                 for (entry in 0 until fm.backStackEntryCount) {
                     Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragment = UserIdentificationFragment()
                 fragmentTransaction = supportFragmentManager
                         .beginTransaction()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+                fragmentTransaction!!.replace(R.id.container_fragment, fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -510,7 +510,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
                     fragmentTransaction = supportFragmentManager
                             .beginTransaction()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
+                    fragmentTransaction!!.replace(R.id.container_fragment, fragment as DataFragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
 
                 }
             }

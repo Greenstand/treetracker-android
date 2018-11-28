@@ -43,7 +43,7 @@ class UserDetailsFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_user_details, container, false)
 
-        mSharedPreferences = activity.getSharedPreferences(
+        mSharedPreferences = activity!!.getSharedPreferences(
                 ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
 
         val continueButton: Button = v.findViewById(R.id.fragment_user_details_continue)
@@ -86,8 +86,8 @@ class UserDetailsFragment : Fragment() {
                 editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
                 editor!!.commit()
 
-                activity.supportFragmentManager.popBackStack()
-                val fragmentTransaction = activity.supportFragmentManager
+                activity!!.supportFragmentManager.popBackStack()
+                val fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
                 val fragment = NewTreeFragment()
                 fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()

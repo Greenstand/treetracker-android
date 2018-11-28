@@ -63,17 +63,16 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         menu!!.clear()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val v = inflater!!.inflate(R.layout.fragment_new_tree, container, false)
+        val v = inflater.inflate(R.layout.fragment_new_tree, container, false)
 
-        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.new_tree)
+        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.new_tree)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        mSharedPreferences = activity.getSharedPreferences(
+        mSharedPreferences = (activity as AppCompatActivity).getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
@@ -117,7 +116,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
         if (MainActivity.mCurrentLocation == null) {
             Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
-            activity.supportFragmentManager.popBackStack()
+            activity!!.supportFragmentManager.popBackStack()
         } else if (!takePictureInvoked) {
             takePicture()
         }
@@ -137,7 +136,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
                 saveToDb()
 
                 Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT).show()
-                activity.supportFragmentManager.popBackStack()
+                activity!!.supportFragmentManager.popBackStack()
             }
         }//      Solution 35
         //		case R.id.fragment_new_tree_take_photo:
@@ -147,8 +146,8 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
     }
 
     private fun takePicture() {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
@@ -191,7 +190,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
-            activity.supportFragmentManager.popBackStack()
+            activity!!.supportFragmentManager.popBackStack()
         }
     }
 
@@ -199,7 +198,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
         if (MainActivity.mCurrentLocation == null) {
             Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
-            activity.supportFragmentManager.popBackStack()
+            activity!!.supportFragmentManager.popBackStack()
         } else {
 
             val locationContentValues = ContentValues()
@@ -229,7 +228,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
                     ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
                     ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
 
-            val newTreetimeToNextUpdate = activity.findViewById(R.id.fragment_new_tree_next_update) as EditText
+            val newTreetimeToNextUpdate = activity!!.findViewById(R.id.fragment_new_tree_next_update) as EditText
             val timeToNextUpdate = Integer.parseInt(if (newTreetimeToNextUpdate.text.toString() == "")
                 "0"
             else
@@ -245,7 +244,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
 
             // note
-            val content = (activity.findViewById(R.id.fragment_new_tree_note) as EditText).text.toString()
+            val content = (activity!!.findViewById(R.id.fragment_new_tree_note) as EditText).text.toString()
             val noteContentValues = ContentValues()
             noteContentValues.put("user_id", userId)
             noteContentValues.put("content", content)
@@ -304,7 +303,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
         val rotatedBitmap = ImageUtils.decodeBitmap(mCurrentPhotoPath, resources.displayMetrics.density)
         if(rotatedBitmap == null) {
             Toast.makeText(activity, "Error setting image. Please try again.", Toast.LENGTH_SHORT).show()
-            activity.supportFragmentManager.popBackStack()
+            activity!!.supportFragmentManager.popBackStack()
         }
         /* Associate the Bitmap to the ImageView */
         mImageView!!.setImageBitmap(rotatedBitmap)
