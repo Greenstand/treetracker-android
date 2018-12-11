@@ -53,14 +53,8 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
             //do nothing - database already exist
         } else {
 
-            //By calling this method and empty database will be created into the default system path
-            //of your application so we are gonna be able to overwrite that database with our database.
-            this.readableDatabase
-
             try {
-
                 copyDataBase()
-
             } catch (e: IOException) {
                 Timber.d(e.stackTrace.toString())
                 throw Error("Error copying database")
@@ -185,9 +179,11 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
         var checkDB: SQLiteDatabase? = null
 
         try {
-            val myPath = myContext.getDatabasePath(DB_NAME_V2).path
+            val file = myContext.getDatabasePath(DB_NAME_V2)
+            if(file.exists()) {
+                val myPath = file.path
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
-
+            }
         } catch (e: SQLiteException) {
 
             //database does't exist yet.
@@ -205,9 +201,10 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
         var checkDB: SQLiteDatabase? = null
 
         try {
-            val myPath = myContext.getDatabasePath(DB_NAME_V1).path
-            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
-
+            val file = myContext.getDatabasePath(DB_NAME_V1)
+            if(file.exists()) {
+                checkDB = SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READONLY)
+            }
         } catch (e: SQLiteException) {
 
             //database does't exist yet.
