@@ -2,25 +2,15 @@ package org.greenstand.android.TreeTracker.database
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CursorFactory
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
-import android.widget.EditText
-
-import org.greenstand.android.TreeTracker.BuildConfig
-import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
-
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
-import java.util.*
 
 
 class DbHelper(private val myContext: Context, name: String, factory: CursorFactory?,
@@ -182,7 +172,7 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
             val file = myContext.getDatabasePath(DB_NAME_V2)
             if(file.exists()) {
                 val myPath = file.path
-            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
+                checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
             }
         } catch (e: SQLiteException) {
 
