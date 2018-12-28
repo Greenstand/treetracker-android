@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
-    android:background="#FFFFFFFF"
-    android:orientation="vertical"
-    android:padding="0dip">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/map"
@@ -17,11 +16,9 @@
 
     <ImageView
         android:id="@+id/map_user_image"
-        android:layout_width="100dip"
-        android:layout_height="100dip"
+        android:layout_width="@dimen/hundred_dim"
+        android:layout_height="@dimen/hundred_dim"
         android:layout_gravity="top|start"
-        android:layout_margin="0dip"
-        android:padding="0dip"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,10 +27,8 @@
         android:id="@+id/fragment_map_gps_accuracy_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/fragment_map_buttons"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/margin_eight"
         android:orientation="horizontal"
-        android:padding="0dip"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -44,8 +39,8 @@
             android:layout_weight="1"
             android:gravity="right"
             android:text="@string/gps_accuracy_double_colon"
-            android:textColor="#FFFF0000"
-            android:textSize="20sp" />
+            android:textColor="@color/red"
+            android:textSize="@dimen/text_size_twenty" />
 
         <TextView
             android:id="@+id/fragment_map_gps_accuracy_value"
@@ -53,9 +48,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:textColor="#FFFF0000"
-            android:textSize="20sp"
-            tools:text="10 meters" />
+            android:textColor="@color/red"
+            android:textSize="@dimen/text_size_twenty"
+            tools:text="@string/gps_accuracy_length" />
 
     </LinearLayout>
 

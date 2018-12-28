@@ -28,6 +28,8 @@ Once this is done, you can proceed by running one of the following tasks to run 
 
  See [Contributing in the Development-Overview README](https://github.com/Greenstand/Development-Overview/blob/master/README.md)
 
+Review the project board for current priorities [Android Project](https://github.com/orgs/Greenstand/projects/5)
+
 Please review the [issue tracker](https://github.com/Greenstand/treetracker-android/issues) here on this github repository 
 
 Check out the cool [roadmap](https://github.com/Greenstand/Development-Overview/blob/master/Roadmap.md)
