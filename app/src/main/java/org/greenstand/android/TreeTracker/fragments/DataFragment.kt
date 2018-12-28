@@ -27,10 +27,13 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.amazonaws.AmazonClientException
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Job
+
+
+import kotlinx.coroutines.android.UI
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+
 import org.greenstand.android.TreeTracker.BuildConfig
 
 import org.greenstand.android.TreeTracker.database.DatabaseManager
@@ -76,7 +79,7 @@ class DataFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        mSharedPreferences = activity.getSharedPreferences(
+        mSharedPreferences = activity!!.getSharedPreferences(
                 ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
 
     }
@@ -85,14 +88,14 @@ class DataFragment : Fragment(), View.OnClickListener {
         menu!!.clear()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater!!.inflate(R.layout.fragment_data, container, false)
         totalTrees = v.findViewById(R.id.fragment_data_total_trees_value) as TextView
         updateTrees = v.findViewById(R.id.fragment_data_update_value) as TextView
         locatedTrees = v.findViewById(R.id.fragment_data_located_value) as TextView
         tosyncTrees = v.findViewById(R.id.fragment_data_to_sync_value) as TextView
 
-        (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.data)
+        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.data)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         syncBtn = v.findViewById(R.id.fragment_data_sync) as Button
@@ -117,7 +120,7 @@ class DataFragment : Fragment(), View.OnClickListener {
                 resolvePendingUpdates()
                 progressDialog = ProgressDialog(activity)
                 progressDialog!!.setCancelable(false)
-                progressDialog!!.setMessage(activity.getString(R.string.downloading_your_trees))
+                progressDialog!!.setMessage(activity!!.getString(R.string.downloading_your_trees))
                 progressDialog!!.show()
             }
 
@@ -167,7 +170,8 @@ class DataFragment : Fragment(), View.OnClickListener {
                         val planterIdentificationsId = planterCursor.getString(planterCursor.getColumnIndex("_id"))
                         val values = ContentValues()
                         values.put("photo_url", imageUrl)
-                        TreeTrackerApplication.getDatabaseManager().update("planter_identifications", values, "_id = ?", arrayOf(planterIdentificationsId))
+                        TreeTrackerApplication.getDatabaseManager().update("planter_identifications",
+                                values, "_id = ?", arrayOf(planterIdentificationsId))
                     }
                 }
 
@@ -203,7 +207,7 @@ class DataFragment : Fragment(), View.OnClickListener {
         val authenticationRequest = AuthenticationRequest()
         authenticationRequest.clientId = BuildConfig.TREETRACKER_CLIENT_ID
         authenticationRequest.clientSecret = BuildConfig.TREETRACKER_CLIENT_SECRET
-        authenticationRequest.deviceAndroidId = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID);
+        authenticationRequest.deviceAndroidId = Settings.Secure.getString(activity!!.contentResolver, Settings.Secure.ANDROID_ID);
 
         try {
             val signInReponse = Api.instance().api!!.signIn(authenticationRequest).execute()
@@ -382,7 +386,8 @@ class DataFragment : Fragment(), View.OnClickListener {
             val values = ContentValues()
             values.put("is_synced", "Y")
             values.put("main_db_id", treeIdResponse)
-            val isMissingCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT is_missing FROM tree WHERE is_missing = 'Y' AND _id = $localTreeId", null)
+            val isMissingCursor = TreeTrackerApplication.getDatabaseManager()
+                    .queryCursor("SELECT is_missing FROM tree WHERE is_missing = 'Y' AND _id = $localTreeId", null)
             if (isMissingCursor.moveToNext()) {
                 TreeTrackerApplication.getDatabaseManager().delete("tree", "_id = ?", arrayOf(localTreeId))
                 val photoQuery = "SELECT name FROM photo left outer join tree_photo on photo_id = photo._id where tree_id = $localTreeId"
@@ -405,7 +410,8 @@ class DataFragment : Fragment(), View.OnClickListener {
                         val file = File(outDatedPhotoCursor.getString(outDatedPhotoCursor.getColumnIndex("name")))
                         val deleted = file.delete()
                         if (deleted)
-                            Timber.tag("DataFragment").d("delete file: " + outDatedPhotoCursor.getString(outDatedPhotoCursor.getColumnIndex("name")))
+                            Timber.tag("DataFragment").d("delete file: "
+                                    + outDatedPhotoCursor.getString(outDatedPhotoCursor.getColumnIndex("name")))
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -470,12 +476,14 @@ class DataFragment : Fragment(), View.OnClickListener {
         Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")));
         */
 
-        treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null)
+        treeCursor = TreeTrackerApplication.getDatabaseManager()
+                .queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null)
         treeCursor.moveToFirst()
         locatedTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("located"))
         Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")))
 
-        treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
+        treeCursor = TreeTrackerApplication.getDatabaseManager()
+                .queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
         treeCursor.moveToFirst()
         tosyncTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("tosync"))
         Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
@@ -486,7 +494,8 @@ class DataFragment : Fragment(), View.OnClickListener {
         updateData()
         TreeTrackerApplication.getDatabaseManager().openDatabase()
 
-        val treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT DISTINCT tree_id FROM pending_updates WHERE tree_id NOT NULL and tree_id <> 0", null)
+        val treeCursor = TreeTrackerApplication.getDatabaseManager()
+                .queryCursor("SELECT DISTINCT tree_id FROM pending_updates WHERE tree_id NOT NULL and tree_id <> 0", null)
         val trees = (activity as MainActivity).userTrees
 
         if (trees != null && treeCursor.moveToFirst()) {
