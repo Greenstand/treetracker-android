@@ -86,7 +86,9 @@ class UserDetailsFragment : Fragment() {
                 editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
                 editor!!.commit()
 
-               activity!!.supportFragmentManager.popBackStack()
+
+                activity!!.supportFragmentManager.popBackStack()
+
                 val fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
                 val fragment = MapsFragment()

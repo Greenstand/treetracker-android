@@ -98,7 +98,7 @@ class UserIdentificationFragment : Fragment() {
                         "planter_identifications", null, identificationContentValues)
 
 
-                mSharedPreferences = activity.getSharedPreferences(
+                mSharedPreferences = activity!!.getSharedPreferences(
                         ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
                 val editor = mSharedPreferences!!.edit()
 
@@ -110,8 +110,8 @@ class UserIdentificationFragment : Fragment() {
 
                 // TODO consider returning to MapFragment and pushing this new fragment from there
 
-                activity.supportFragmentManager.popBackStack()
-                val fragmentTransaction = activity.supportFragmentManager
+                activity!!.supportFragmentManager.popBackStack()
+                val fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
                 if(planterDetailsId == null){
                     val fragment = UserDetailsFragment()
@@ -138,7 +138,8 @@ class UserIdentificationFragment : Fragment() {
     }
 
     private fun takePicture() {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {

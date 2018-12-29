@@ -115,28 +115,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_data_located"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding_forty_eight"
+        android:paddingTop="@dimen/padding_five"
+        android:paddingRight="@dimen/padding_forty_eight"
+        android:paddingBottom="@dimen/padding_five">
 
-	    >
-	    
        	<TextView
 	    	android:layout_width="0dp"
-	        android:layout_height="40dp"
-	        android:textSize="17sp"
+	        android:layout_height="@dimen/height_forty"
+	        android:textSize="@dimen/text_size_seventeen"
 	        android:layout_weight="3"
-	        android:textColor="#FF000000"
-	        android:layout_marginTop="12dp"
+	        android:textColor="@color/black"
+	        android:layout_marginTop="@dimen/margin_twenty"
 	        android:text="@string/to_sync"
         />
        	
        	<TextView
        	    android:id="@+id/fragment_data_to_sync_value"
 	    	android:layout_width="0dp"
-	        android:layout_height="40dp"
-	        android:textSize="17sp"
+	        android:layout_height="@dimen/height_forty"
+	        android:textSize="@dimen/text_size_seventeen"
 	        android:layout_weight="1"
 	        android:gravity="right"
-	        android:textColor="#FF000000"
-	        android:layout_marginTop="12dp"
+	        android:textColor="@color/black"
+	        android:layout_marginTop="@dimen/margin_twenty"
         />
 	    
 	</LinearLayout>	        
@@ -145,10 +148,10 @@
 	        android:id="@+id/fragment_data_sync"
 	    	android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_margin="16dp"
+	        android:layout_margin="@dimen/activity_vertical_margin"
 	        android:text="@string/sync"
-	        android:textColor="#FF000000"
-	        android:textSize="17sp"
+	        android:textColor="@color/black"
+	        android:textSize="@dimen/text_size_seventeen"
 	        android:textStyle="normal"
 	        android:background="@drawable/white_gray_gradient"
 	        android:layout_alignParentBottom="true"/>
