@@ -161,7 +161,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         var v : View? = view
 
         try {
-             v = inflater!!.inflate(R.layout.fragment_map, container, false)
+            v = inflater!!.inflate(R.layout.fragment_map, container, false)
         } catch (e: InflateException) {
             Timber.d(e.localizedMessage);
         }
