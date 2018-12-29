@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         mSharedPreferences = this.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
+
         if (mSharedPreferences!!.getBoolean(ValueHelper.FIRST_RUN, true)) {
 
             if (mSharedPreferences!!.getBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
@@ -82,13 +83,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             mSharedPreferences!!.edit().putBoolean(ValueHelper.FIRST_RUN, false).commit()
         }
 
-          setContentView(R.layout.activity_main)
-
+        setContentView(R.layout.activity_main)
 
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.title = ""
+
 
         val extras = intent.extras
         var startDataSync = false
@@ -97,7 +98,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 startDataSync = true
             }
         }
-
 
         if (startDataSync) {
             Timber.d("MainActivity startDataSync is true")
@@ -265,7 +265,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragmentTransaction = supportFragmentManager
                         .beginTransaction()
                 fragmentTransaction!!.replace(R.id.container_fragment, fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
-
             }
         }
         return super.onOptionsItemSelected(item)
@@ -546,8 +545,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
                     fragmentTransaction = supportFragmentManager
                             .beginTransaction()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment as DataFragment)
-                            .addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
+                    fragmentTransaction!!.replace(R.id.container_fragment, fragment as DataFragment).addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
 
                 }
             }
