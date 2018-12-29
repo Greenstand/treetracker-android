@@ -117,7 +117,21 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         val userIdentifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, null)
         if(  userIdentifier == null){
-            openChangeUser()
+            val editor = mSharedPreferences!!.edit()
+            editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+            editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+            editor.putString(ValueHelper.PLANTER_PHOTO, null)
+            editor.commit()
+
+            (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+
+
+            fragment = UserIdentificationFragment()
+            fragmentTransaction = supportFragmentManager
+                    .beginTransaction()
+            fragmentTransaction!!.replace(R.id.container_fragment, fragment as UserIdentificationFragment)
+                    .addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+
         }else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
             Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
             var bundle = intent.extras
@@ -152,7 +166,22 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                         .beginTransaction()
                 fragmentTransaction.replace(R.id.container_fragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
                 fragmentTransaction.commit()
-            }else openChangeUser()
+            }else {
+                val editor = mSharedPreferences!!.edit()
+                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor.putString(ValueHelper.PLANTER_PHOTO, null)
+                editor.commit()
+
+                (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+
+
+                fragment = UserIdentificationFragment()
+                fragmentTransaction = supportFragmentManager
+                        .beginTransaction()
+                fragmentTransaction!!.replace(R.id.container_fragment,
+                        fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+            }
         }
     }
 
@@ -222,26 +251,26 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 return true
             }
 
-            R.id.action_change_user -> openChangeUser()
+            R.id.action_change_user -> {
+                val editor = mSharedPreferences!!.edit()
+                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor.putString(ValueHelper.PLANTER_PHOTO, null)
+                editor.commit()
+
+                (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+
+
+                fragment = UserIdentificationFragment()
+                fragmentTransaction = supportFragmentManager
+                        .beginTransaction()
+                fragmentTransaction!!.replace(R.id.container_fragment, fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    fun openChangeUser(){
-        val editor = mSharedPreferences!!.edit()
-        editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-        editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-        editor.putString(ValueHelper.PLANTER_PHOTO, null)
-        editor.commit()
-
-        (findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
-
-
-        fragment = UserIdentificationFragment()
-        fragmentTransaction = supportFragmentManager
-                .beginTransaction()
-        fragmentTransaction!!.replace(R.id.container_fragment, fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
-    }
 
     /*
      * Called when the Activity is no longer visible at all.
