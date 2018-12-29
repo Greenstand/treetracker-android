@@ -86,11 +86,13 @@ class UserDetailsFragment : Fragment() {
                 editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
                 editor!!.commit()
 
+
                 activity!!.supportFragmentManager.popBackStack()
+
                 val fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
-                val fragment = NewTreeFragment()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
+                val fragment = MapsFragment()
+                fragmentTransaction!!.replace(R.id.container_fragment, fragment).commit()
             }
 
         }

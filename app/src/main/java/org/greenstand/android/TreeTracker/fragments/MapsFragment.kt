@@ -98,21 +98,28 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
         if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
             (activity!!.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+            //reset all sharedPreferences
+            val editor = mSharedPreferences!!.edit()
+            editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+            editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+            editor.putString(ValueHelper.PLANTER_PHOTO, null)
+            editor.apply()
         } else {
             val identifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
-
+            //
             val cursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null)
             if(cursor.count == 0){
                 (activity!!.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
                 // And time them out
                 val editor = mSharedPreferences!!.edit()
                 editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor.putString(ValueHelper.PLANTER_PHOTO, null)
                 editor.commit()
             } else {
                 cursor.moveToFirst()
-                val title = cursor.getString(cursor.getColumnIndex("first_name")) + " "+
-                        cursor.getString(cursor.getColumnIndex("last_name"))
-                (activity?.findViewById(R.id.toolbar_title) as TextView).text = title
+                val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
+                (activity!!.findViewById(R.id.toolbar_title) as TextView).text = title
 
                 val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
                 val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
@@ -135,7 +142,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         super.onDestroyView()
 
         try {
-            val fragment = activity?.supportFragmentManager!!.findFragmentById(
+            val fragment = activity!!
+                    .supportFragmentManager.findFragmentById(
                     R.id.map) as SupportMapFragment?
             if (fragment != null)
                 activity!!.supportFragmentManager.beginTransaction().remove(fragment).commit()
@@ -153,7 +161,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         var v : View? = view
 
         try {
-             v = inflater.inflate(R.layout.fragment_map, container, false)
+            v = inflater!!.inflate(R.layout.fragment_map, container, false)
         } catch (e: InflateException) {
             Timber.d(e.localizedMessage);
         }
@@ -213,8 +221,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                     }
                 }
             } else {
-                if (ActivityCompat.checkSelfPermission(activity as AppCompatActivity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(activity as AppCompatActivity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(
                             arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
                             Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION)
@@ -347,7 +355,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
             var photoId: Long = -1
             try {
                 val myInput = activity!!.assets.open("testtreeimage.jpg")
-                val f = ImageUtils.createImageFile(this.activity!!)
+                val f = ImageUtils.createImageFile(activity!!)
                 val fos = FileOutputStream(f)
                 fos.write(IOUtils.toByteArray(myInput))
                 fos.close()
@@ -407,9 +415,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     override fun onMapReady(map: GoogleMap) {
 
 
-        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
