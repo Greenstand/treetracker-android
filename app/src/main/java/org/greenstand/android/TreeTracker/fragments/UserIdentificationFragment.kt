@@ -70,15 +70,17 @@ class UserIdentificationFragment : Fragment() {
             }
 
             if(mUserIdentifier == null) {
-                Toast.makeText(activity, "Invalid Identifier.  Please enter an email or a phone number", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Invalid Identifier.  Please enter an email or a phone " +
+                        "number", Toast.LENGTH_LONG).show()
             } else if(mPhotoPath == null){
                 takePicture()
             } else {
                 // do the login
-                TreeTrackerApplication.getDatabaseManager().openDatabase();
+                TreeTrackerApplication. getDatabaseManager().openDatabase();
 
                 val identifier = mUserIdentifier.toString()
-                val planterDetailsCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null);
+                val planterDetailsCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(
+                        "SELECT * FROM planter_details WHERE identifier = '$identifier'", null);
                 var planterDetailsId : Int? = null
                 if(planterDetailsCursor.count > 0){
                     planterDetailsCursor.moveToFirst()
@@ -92,10 +94,11 @@ class UserIdentificationFragment : Fragment() {
                 identificationContentValues.put("photo_path", mPhotoPath)
                 identificationContentValues.put("planter_details_id", planterDetailsId)
 
-                val identificationId = TreeTrackerApplication.getDatabaseManager().insert("planter_identifications", null, identificationContentValues)
+                val identificationId = TreeTrackerApplication.getDatabaseManager().insert(
+                        "planter_identifications", null, identificationContentValues)
 
 
-                mSharedPreferences = activity.getSharedPreferences(
+                mSharedPreferences = activity!!.getSharedPreferences(
                         ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
                 val editor = mSharedPreferences!!.edit()
 
@@ -107,8 +110,8 @@ class UserIdentificationFragment : Fragment() {
 
                 // TODO consider returning to MapFragment and pushing this new fragment from there
 
-                activity.supportFragmentManager.popBackStack()
-                val fragmentTransaction = activity.supportFragmentManager
+                activity!!.supportFragmentManager.popBackStack()
+                val fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
                 if(planterDetailsId == null){
                     val fragment = UserDetailsFragment()
@@ -120,8 +123,8 @@ class UserIdentificationFragment : Fragment() {
                     editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
                     editor!!.commit()
 
-                    val fragment = NewTreeFragment()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
+                    val fragment = UserDetailsFragment()
+                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).commit()
                 }
             }
         }
@@ -135,7 +138,8 @@ class UserIdentificationFragment : Fragment() {
     }
 
     private fun takePicture() {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {

@@ -82,7 +82,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
             if (Environment.MEDIA_MOUNTED == Environment
                             .getExternalStorageState()) {
 
-                val cw = ContextWrapper(activity.applicationContext)
+                val cw = ContextWrapper(activity!!.applicationContext)
                 storageDir = cw.getDir("treeImages", Context.MODE_PRIVATE)
 
                 if (storageDir != null) {
@@ -115,21 +115,20 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         menu!!.clear()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val v = inflater!!.inflate(R.layout.fragment_note, container, false)
+        val v = inflater.inflate(R.layout.fragment_note, container, false)
 
-        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.tree_preview)
+        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.tree_preview)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val extras = arguments
 
-        treeIdStr = extras.getString(ValueHelper.TREE_ID)
+        treeIdStr = extras!!.getString(ValueHelper.TREE_ID)
 
-        mSharedPreferences = activity.getSharedPreferences(
+        mSharedPreferences = (activity as AppCompatActivity).getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
@@ -198,7 +197,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
 
                         Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT)
                                 .show()
-                        val manager = activity.supportFragmentManager
+                        val manager = activity!!.supportFragmentManager
                         val second = manager.getBackStackEntryAt(1)
                         manager.popBackStack(second.id, FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
@@ -221,7 +220,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
                     Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT)
                             .show()
 
-                    val manager = activity.supportFragmentManager
+                    val manager = activity!!.supportFragmentManager
                     val second = manager.getBackStackEntryAt(1)
                     manager.popBackStack(second.id, FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
@@ -234,8 +233,9 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
 
 
     private fun takePicture() {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA),
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.CAMERA),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
@@ -276,7 +276,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
             mCurrentPhotoPath = data!!.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
             if (mCurrentPhotoPath != null) {
-                (activity.findViewById(R.id.fragment_note) as RelativeLayout).visibility = View.VISIBLE
+                (activity!!.findViewById(R.id.fragment_note) as RelativeLayout).visibility = View.VISIBLE
                 setPic()
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -308,7 +308,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         Timber.d("locationId " + java.lang.Long.toString(locationId))
 
         // note
-        val content = (activity.findViewById(R.id.fragment_note_note) as EditText).text.toString()
+        val content = (activity!!.findViewById(R.id.fragment_note_note) as EditText).text.toString()
         contentValues = ContentValues()
         contentValues.put("user_id", userId)
         contentValues.put("content", content)
@@ -434,12 +434,12 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         when (buttonView.id) {
             R.id.fragment_note_missing_tree_checkbox -> {
                 mTreeIsMissing = isChecked
-                val noteTxt = activity.findViewById(R.id.fragment_note_note) as EditText
+                val noteTxt = activity!!.findViewById(R.id.fragment_note_note) as EditText
 
                 if (isChecked) {
-                    noteTxt.hint = activity.resources.getString(R.string.cause_of_death)
+                    noteTxt.hint = activity!!.resources.getString(R.string.cause_of_death)
                 } else {
-                    noteTxt.hint = activity.resources.getString(R.string.add_text_note)
+                    noteTxt.hint = activity!!.resources.getString(R.string.add_text_note)
                 }
             }
 

@@ -97,21 +97,29 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         val currentTimestamp = System.currentTimeMillis() / 1000
         val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
         if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
-            (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+            (activity!!.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+            //reset all sharedPreferences
+            val editor = mSharedPreferences!!.edit()
+            editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+            editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+            editor.putString(ValueHelper.PLANTER_PHOTO, null)
+            editor.apply()
         } else {
             val identifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, resources.getString(R.string.user_not_identified))
-
+            //
             val cursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT * FROM planter_details WHERE identifier = '$identifier'", null)
             if(cursor.count == 0){
-                (activity.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
+                (activity!!.findViewById(R.id.toolbar_title) as TextView).text = resources.getString(R.string.user_not_identified)
                 // And time them out
                 val editor = mSharedPreferences!!.edit()
                 editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor.putString(ValueHelper.PLANTER_PHOTO, null)
                 editor.commit()
             } else {
                 cursor.moveToFirst()
                 val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
-                (activity.findViewById(R.id.toolbar_title) as TextView).text = title
+                (activity!!.findViewById(R.id.toolbar_title) as TextView).text = title
 
                 val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
                 val imageView = view!!.findViewById(R.id.map_user_image) as ImageView
@@ -134,11 +142,11 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         super.onDestroyView()
 
         try {
-            val fragment = activity
+            val fragment = activity!!
                     .supportFragmentManager.findFragmentById(
                     R.id.map) as SupportMapFragment?
             if (fragment != null)
-                activity.supportFragmentManager.beginTransaction().remove(fragment).commit()
+                activity!!.supportFragmentManager.beginTransaction().remove(fragment).commit()
 
         } catch (e: IllegalStateException) {
             //handle this situation because you are necessary will get
@@ -148,13 +156,12 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         var v : View? = view
 
         try {
-             v = inflater!!.inflate(R.layout.fragment_map, container, false)
+            v = inflater!!.inflate(R.layout.fragment_map, container, false)
         } catch (e: InflateException) {
             Timber.d(e.localizedMessage);
         }
@@ -162,12 +169,12 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         if(mapFragment == null) {
             mapFragment = SupportMapFragment()
             childFragmentManager.beginTransaction().apply {
-                add(R.id.map, mapFragment)
+                add(R.id.map, mapFragment!!)
                 commit()
             }
         }
 
-        mSharedPreferences = activity.getSharedPreferences(
+        mSharedPreferences = activity!!.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
         if (!(activity as AppCompatActivity).supportActionBar!!.isShowing) {
@@ -214,8 +221,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                     }
                 }
             } else {
-                if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(
                             arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
                             Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION)
@@ -257,19 +264,19 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
                     if(currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT){
 
                         fragment = UserIdentificationFragment()
-                        fragmentTransaction = activity.supportFragmentManager
+                        fragmentTransaction = activity!!.supportFragmentManager
                                 .beginTransaction()
-                        fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+                        fragmentTransaction!!.replace(R.id.container_fragment, fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
 
                     } else {
 
                         fragment = NewTreeFragment()
-                        bundle = activity.intent.extras
+                        bundle = activity!!.intent.extras
                         fragment!!.arguments = bundle
 
-                        fragmentTransaction = activity.supportFragmentManager
+                        fragmentTransaction = activity!!.supportFragmentManager
                                 .beginTransaction()
-                        fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
+                        fragmentTransaction!!.replace(R.id.container_fragment, fragment as NewTreeFragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
 
 
                     }
@@ -347,8 +354,8 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
             var photoId: Long = -1
             try {
-                val myInput = activity.assets.open("testtreeimage.jpg")
-                val f = ImageUtils.createImageFile(activity)
+                val myInput = activity!!.assets.open("testtreeimage.jpg")
+                val f = ImageUtils.createImageFile(activity!!)
                 val fos = FileOutputStream(f)
                 fos.write(IOUtils.toByteArray(myInput))
                 fos.close()
@@ -390,7 +397,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
 
     override fun onMarkerClick(marker: Marker): Boolean {
         fragment = TreePreviewFragment()
-        bundle = activity.intent.extras
+        bundle = activity!!.intent.extras
 
         if (bundle == null)
             bundle = Bundle()
@@ -398,9 +405,9 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
         bundle!!.putString(ValueHelper.TREE_ID, marker.title)
         fragment!!.arguments = bundle
 
-        fragmentTransaction = activity.supportFragmentManager
+        fragmentTransaction = activity!!.supportFragmentManager
                 .beginTransaction()
-        fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT).commit()
+        fragmentTransaction!!.replace(R.id.container_fragment, fragment as TreePreviewFragment).addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT).commit()
         return true
     }
 
@@ -408,7 +415,7 @@ class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapRe
     override fun onMapReady(map: GoogleMap) {
 
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
