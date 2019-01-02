@@ -1,17 +1,12 @@
 package org.greenstand.android.TreeTracker.camera
 
-import java.io.IOException
-
 import android.content.Context
 import android.hardware.Camera
-
-import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
-
 import timber.log.Timber
-import kotlin.math.sqrt
+import java.io.IOException
 
 
 /** A basic Camera preview class  */
@@ -143,6 +138,8 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         // empty. Take care of releasing the Camera preview in your activity.
+        this.getHolder().removeCallback(this)
+        camera?.release()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, w: Int, h: Int) {
