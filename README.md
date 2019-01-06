@@ -8,9 +8,9 @@ paying planters on a per planting basis.
 For more on design intent and the app's user story see the [wiki in this repository](https://github.com/Greenstand/treetracker-android/wiki/User-Story)
 
 ## Project Setup
-Developers will need to ask the #android channel in Slack for treetracker.keys.properties file to build gradle for the application.
+Developers will need to ask the #android channel in Slack for the treetracker.keys.properties file to build gradle for the application.
 
-For development, selected the build variant _dev_. This build varient is configured to allow trees to be added without a specific accuracy.  
+For development, select the build variant _dev_. This build variant is configured to allow trees to be added without a specific accuracy.  
 
 ## Deployment
 
@@ -18,7 +18,7 @@ There is one prerequisite to using the appropriate gradle tasks:
 
 1) Placing the relevant keys.json from the PlayStore in the ./app folder [example here](https://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials)
 
-Once this is done, you can then proceed by running one of the following tasks to run the release:
+Once this is done, you can proceed by running one of the following tasks to run the release:
 
 * `bootstrapReleasePlayResources` | Downloads the play store listing for the Release build. No download of image resources. See #18.
 * `generateReleasePlayResources`  | Collects play store resources for the Release build
@@ -27,6 +27,8 @@ Once this is done, you can then proceed by running one of the following tasks to
 ## Contributing
 
  See [Contributing in the Development-Overview README](https://github.com/Greenstand/Development-Overview/blob/master/README.md)
+
+Review the project board for current priorities [Android Project](https://github.com/orgs/Greenstand/projects/5)
 
 Please review the [issue tracker](https://github.com/Greenstand/treetracker-android/issues) here on this github repository 
 

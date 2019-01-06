@@ -55,15 +55,14 @@ class AboutFragment : Fragment(), OnClickListener {
         menu!!.clear()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val v = inflater!!.inflate(R.layout.fragment_about, container, false)
         //	    ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.information));
         //	    ((ActionBarActivity)getActivity()).getSupportActionBar().show();
 
 
-        (activity.findViewById(R.id.toolbar_title) as TextView).setText(R.string.information)
+        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.information)
         //		((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.about);
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 

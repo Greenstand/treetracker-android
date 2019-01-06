@@ -6,11 +6,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
-
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-
 import android.hardware.Camera
 import android.media.ExifInterface
 import android.net.Uri
@@ -18,21 +16,18 @@ import android.os.Bundle
 import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
-
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
-
+import kotlinx.android.synthetic.main.camera_preview.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.android.UI
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-
 import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
@@ -68,7 +63,10 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         if(intent.extras != null) {
             captureSelfie = intent.extras.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
         operationAttempt?.cancel()
         operationAttempt = launch(UI) {
 
@@ -98,15 +96,13 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
                 }
                 delay(250)
             }
-
             mPreview = CameraPreview(this@CameraActivity, mCamera)
-            val preview = findViewById(R.id.camera_preview) as FrameLayout
-            preview.addView(mPreview)
+
+            camera_preview.removeAllViews()
+            camera_preview.addView(mPreview)
             captureButton?.visibility = View.VISIBLE
         }
-
     }
-
     /** Check if this device has a camera  */
     private fun checkCameraHardware(context: Context): Boolean {
         return if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
