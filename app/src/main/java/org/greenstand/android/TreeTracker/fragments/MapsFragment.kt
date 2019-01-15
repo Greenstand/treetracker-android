@@ -9,10 +9,10 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AppCompatActivity
 import android.view.HapticFeedbackConstants
 import android.view.InflateException
 import android.view.LayoutInflater
@@ -47,18 +47,18 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-class MapsFragment : Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback, View.OnLongClickListener {
+class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback, View.OnLongClickListener {
 
     private var mSettingCallback: LocationDialogListener? = null
 
     private var mSharedPreferences: SharedPreferences? = null
     private var paused = false
 
-    private var fragment: Fragment? = null
+    private var fragment: androidx.fragment.app.Fragment? = null
 
     private var bundle: Bundle? = null
 
-    private var fragmentTransaction: FragmentTransaction? = null
+    private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var mapFragment: SupportMapFragment? = null
 
 

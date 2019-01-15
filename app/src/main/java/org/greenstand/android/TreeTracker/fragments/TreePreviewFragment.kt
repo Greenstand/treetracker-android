@@ -10,9 +10,9 @@ import android.location.Location
 import android.location.LocationManager
 import android.media.ExifInterface
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
@@ -36,14 +36,14 @@ import java.util.Date
 
 import timber.log.Timber
 
-class TreePreviewFragment : Fragment(), OnClickListener {
+class TreePreviewFragment : androidx.fragment.app.Fragment(), OnClickListener {
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private val mImageBitmap: Bitmap? = null
     private var treeIdStr: String? = ""
-    private var fragment: Fragment? = null
-    private var fragmentTransaction: FragmentTransaction? = null
+    private var fragment: androidx.fragment.app.Fragment? = null
+    private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var bundle: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -4,9 +4,9 @@ package org.greenstand.android.TreeTracker.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
@@ -20,11 +20,11 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 
 
-class AboutFragment : Fragment(), OnClickListener {
+class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
 
-    private val fragment: Fragment? = null
+    private val fragment: androidx.fragment.app.Fragment? = null
     private val bundle: Bundle? = null
-    private val fragmentTransaction: FragmentTransaction? = null
+    private val fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private val mSharedPreferences: SharedPreferences? = null
 
     private var versionCode: Int = 0

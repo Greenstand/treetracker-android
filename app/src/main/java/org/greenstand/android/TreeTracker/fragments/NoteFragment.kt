@@ -20,11 +20,11 @@ import android.location.LocationManager
 import android.media.ExifInterface
 import android.os.Bundle
 import android.os.Environment
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
@@ -58,14 +58,14 @@ import java.util.Date
 
 import timber.log.Timber
 
-class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
+class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCheckedChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private val mImageBitmap: Bitmap? = null
-    private val fragment: Fragment? = null
+    private val fragment: androidx.fragment.app.Fragment? = null
     private val bundle: Bundle? = null
-    private val fragmentTransaction: FragmentTransaction? = null
+    private val fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var userId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private var treeIdStr: String? = null
@@ -199,7 +199,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
                                 .show()
                         val manager = activity!!.supportFragmentManager
                         val second = manager.getBackStackEntryAt(1)
-                        manager.popBackStack(second.id, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        manager.popBackStack(second.id, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
                         dialog.dismiss()
                     }
@@ -222,7 +222,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
 
                     val manager = activity!!.supportFragmentManager
                     val second = manager.getBackStackEntryAt(1)
-                    manager.popBackStack(second.id, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    manager.popBackStack(second.id, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
                 }
             R.id.fragment_note_tree_missing -> {

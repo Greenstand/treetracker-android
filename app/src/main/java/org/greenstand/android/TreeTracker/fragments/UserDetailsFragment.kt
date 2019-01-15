@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +34,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class UserDetailsFragment : Fragment() {
+class UserDetailsFragment : androidx.fragment.app.Fragment() {
 
     private var mSharedPreferences: SharedPreferences? = null
 

@@ -14,9 +14,9 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
@@ -60,7 +60,7 @@ import java.lang.Integer.valueOf
  * Created by lei on 11/9/17.
  */
 
-class DataFragment : Fragment(), View.OnClickListener {
+class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
 
     private var totalTrees: TextView? = null
     private var updateTrees: TextView? = null

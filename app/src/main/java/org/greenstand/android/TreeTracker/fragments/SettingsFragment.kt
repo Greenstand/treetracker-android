@@ -4,9 +4,9 @@ package org.greenstand.android.TreeTracker.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -31,11 +31,11 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
-class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, TextWatcher {
+class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCheckedChangeListener, TextWatcher {
 
-    private val fragment: Fragment? = null
+    private val fragment: androidx.fragment.app.Fragment? = null
     private val bundle: Bundle? = null
-    private val fragmentTransaction: FragmentTransaction? = null
+    private val fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var mSharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

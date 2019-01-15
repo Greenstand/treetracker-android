@@ -17,12 +17,12 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     private var mSharedPreferences: SharedPreferences? = null
 
-    private var fragment: Fragment? = null
+    private var fragment: androidx.fragment.app.Fragment? = null
 
-    private var fragmentTransaction: FragmentTransaction? = null
+    private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
 
     private var mDataManager: DataManager<*>? = null
     var userTrees: List<UserTree>? = null
