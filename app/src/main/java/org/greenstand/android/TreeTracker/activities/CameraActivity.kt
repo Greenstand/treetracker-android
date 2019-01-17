@@ -53,9 +53,8 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_preview)
 
-        mImageView = findViewById(R.id.camera_preview_taken) as ImageView
-
-        captureButton = findViewById(R.id.button_capture) as ImageButton
+        mImageView = cameraPreviewTaken
+        captureButton = buttonCapture
 
         // Add a listener to the buttons
         captureButton!!.setOnClickListener(this@CameraActivity)

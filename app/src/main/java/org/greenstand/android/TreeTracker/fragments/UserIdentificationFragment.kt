@@ -15,12 +15,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.android.synthetic.main.fragment_user_identification.view.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
-import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.database.DatabaseManager
 
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Validation
@@ -45,12 +44,12 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_user_identification, container, false)
 
-        val loginButton: Button = v.findViewById(R.id.fragment_user_identification_login)
+        val loginButton = v.fragmentUserIdentificationLogin
         loginButton.setOnClickListener {
             // check if we got a photo already
             // if not go get the photo
             // other wise got forward
-            val identifierTextView = v.findViewById(R.id.fragment_user_identification_email_address) as TextView
+            val identifierTextView = v.fragmentUserIdentificationEmailAddress
             mUserIdentifier = null
             val identifier = identifierTextView.text.toString()
 
@@ -115,7 +114,7 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                         .beginTransaction()
                 if(planterDetailsId == null){
                     val fragment = UserDetailsFragment()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.USER_DETAILS_FRAGMENT).commit()
+                    fragmentTransaction!!.replace(R.id.containerFragment, fragment).addToBackStack(ValueHelper.USER_DETAILS_FRAGMENT).commit()
 
                 } else {
 
@@ -124,12 +123,12 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                     editor!!.commit()
 
                     val fragment = UserDetailsFragment()
-                    fragmentTransaction!!.replace(R.id.container_fragment, fragment).commit()
+                    fragmentTransaction!!.replace(R.id.containerFragment, fragment).commit()
                 }
             }
         }
 
-        val cameraButton: ImageButton = v.findViewById(R.id.fragment_user_identification_photo)
+        val cameraButton: ImageButton = v.fragmentUserIdentificationPhoto
         cameraButton.setOnClickListener {
             takePicture()
         }
@@ -165,10 +164,10 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                  mPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
                 if (mPhotoPath != null) {
-                    val imageButton = view!!.findViewById(R.id.fragment_user_identification_photo) as ImageButton
+                    val imageButton = view?.fragmentUserIdentificationPhoto
                     val rotatedBitmap = ImageUtils.decodeBitmap(mPhotoPath, resources.displayMetrics.density)
                     if(rotatedBitmap != null){
-                        imageButton.setImageBitmap(rotatedBitmap)
+                        imageButton?.setImageBitmap(rotatedBitmap)
                     }
                 }
 

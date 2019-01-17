@@ -6,24 +6,17 @@ import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
-import android.location.LocationManager
 import android.media.ExifInterface
 import android.os.Bundle
 import android.os.Environment
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.HapticFeedbackConstants
@@ -33,15 +26,15 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_note.*
+import kotlinx.android.synthetic.main.fragment_note.view.*
 
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
@@ -58,12 +51,12 @@ import java.util.Date
 
 import timber.log.Timber
 
-class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCheckedChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
+class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private val mImageBitmap: Bitmap? = null
-    private val fragment: androidx.fragment.app.Fragment? = null
+    private val fragment: Fragment? = null
     private val bundle: Bundle? = null
     private val fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var userId: Long = 0
@@ -119,9 +112,9 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
 
         val v = inflater.inflate(R.layout.fragment_note, container, false)
 
-        activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.tree_preview)
+        activity?.toolbarTitle?.setText(R.string.tree_preview)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val extras = arguments
@@ -133,17 +126,13 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
 
-        val saveBtn = v.findViewById(R.id.fragment_note_save) as Button
-        saveBtn.setOnClickListener(this@NoteFragment)
+        fragmentNoteSave.setOnClickListener(this@NoteFragment)
 
-        val treeMissingBtn = v
-                .findViewById(R.id.fragment_note_tree_missing) as Button
-        treeMissingBtn.setOnClickListener(this@NoteFragment)
+        fragmentNoteTreeMissing.setOnClickListener(this@NoteFragment)
 
-        val treeMissingChk = v.findViewById(R.id.fragment_note_missing_tree_checkbox) as CheckBox
-        treeMissingChk.setOnCheckedChangeListener(this@NoteFragment)
+        fragmentNoteMissingTreeCheckbox.setOnCheckedChangeListener(this@NoteFragment)
 
-        mImageView = v.findViewById(R.id.fragment_note_image) as ImageView
+        mImageView = v.fragmentNoteImage
 
         val query = "select * from tree " +
                 "left outer join location on location._id = tree.location_id " +
@@ -156,7 +145,7 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
         do {
             mCurrentPhotoPath = photoCursor.getString(photoCursor.getColumnIndex("name"))
 
-            val noImage = v.findViewById(R.id.fragment_note_no_image) as TextView
+            val noImage = v.fragmentNoteNoImage
 
             if (mCurrentPhotoPath != null) {
                 setPic()
@@ -184,7 +173,7 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
 
         when (v.id) {
 
-            R.id.fragment_note_save ->
+            R.id.fragmentNoteSave ->
 
                 if (mTreeIsMissing) {
                     val builder = AlertDialog.Builder(activity)
@@ -225,7 +214,7 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
                     manager.popBackStack(second.id, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
                 }
-            R.id.fragment_note_tree_missing -> {
+            R.id.fragmentNoteTreeMissing -> {
             }
         }//			takePicture();
 
@@ -276,7 +265,7 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
             mCurrentPhotoPath = data!!.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
             if (mCurrentPhotoPath != null) {
-                (activity!!.findViewById(R.id.fragment_note) as RelativeLayout).visibility = View.VISIBLE
+                activity?.fragmentNote?.visibility = View.VISIBLE
                 setPic()
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -308,10 +297,9 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
         Timber.d("locationId " + java.lang.Long.toString(locationId))
 
         // note
-        val content = (activity!!.findViewById(R.id.fragment_note_note) as EditText).text.toString()
         contentValues = ContentValues()
         contentValues.put("user_id", userId)
-        contentValues.put("content", content)
+        contentValues.put("content", activity?.fragmentNoteNote?.text.toString())
 
         val noteId = TreeTrackerApplication.getDatabaseManager().insert("note", null, contentValues)
         Timber.d("noteId " + java.lang.Long.toString(noteId))
@@ -432,14 +420,14 @@ class NoteFragment : androidx.fragment.app.Fragment(), OnClickListener, OnChecke
 
     override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
         when (buttonView.id) {
-            R.id.fragment_note_missing_tree_checkbox -> {
+            R.id.fragmentNoteMissingTreeCheckbox -> {
                 mTreeIsMissing = isChecked
-                val noteTxt = activity!!.findViewById(R.id.fragment_note_note) as EditText
+                val noteTxt = activity?.fragmentNoteNote
 
                 if (isChecked) {
-                    noteTxt.hint = activity!!.resources.getString(R.string.cause_of_death)
+                    noteTxt?.hint = activity!!.resources.getString(R.string.cause_of_death)
                 } else {
-                    noteTxt.hint = activity!!.resources.getString(R.string.add_text_note)
+                    noteTxt?.hint = activity!!.resources.getString(R.string.add_text_note)
                 }
             }
 

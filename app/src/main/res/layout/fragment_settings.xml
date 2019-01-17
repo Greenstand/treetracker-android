@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <RadioGroup
-            android:id="@+id/fragment_settings_which_settings"
+            android:id="@+id/fragmentSettingsWhichSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -58,7 +58,7 @@
             android:textSize="@dimen/text_size_seventeen" />
 
         <TextView
-            android:id="@+id/fragment_settings_gps_accuracy"
+            android:id="@+id/fragmentSettingsGpsAccuracy"
             android:layout_width="0dp"
             android:layout_height="@dimen/height_forty"
             android:layout_marginTop="@dimen/margin_twelve"
@@ -70,7 +70,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/fragment_settings_manual_settings"
+        android:id="@+id/fragmentSettingsManualSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_settings_gps_accuracy_layout"
@@ -78,7 +78,7 @@
         android:visibility="gone">
 
         <RadioGroup
-            android:id="@+id/fragment_settings_manual_settings_radio_group"
+            android:id="@+id/fragmentSettingsManualSettingsRadioGroup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -116,7 +116,7 @@
         android:id="@+id/fragment_settings_next_update_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_settings_manual_settings"
+        android:layout_below="@+id/fragmentSettingsManualSettings"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/padding_forty_eight"
         android:paddingRight="@dimen/padding_thirty_two"
@@ -133,7 +133,7 @@
             android:textSize="@dimen/text_size_seventeen" />
 
         <EditText
-            android:id="@+id/fragment_settings_next_update"
+            android:id="@+id/fragmentSettingsNextUpdate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -146,7 +146,7 @@
     </LinearLayout>
 
     <CheckBox
-        android:id="@+id/fragment_settings_save_and_edit"
+        android:id="@+id/fragmentSettingsSaveAndEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_settings_next_update_layout"
@@ -157,7 +157,7 @@
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/fragment_settings_submit"
+        android:id="@+id/fragmentSettingsSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -24,7 +24,7 @@
             android:textSize="@dimen/text_size_thirty_six" />
 
         <EditText
-            android:id="@+id/fragment_user_details_first_name"
+            android:id="@+id/fragmentUserDetailsFirstName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_forty"
             android:layout_below="@+id/fragment_user_details_header"
@@ -40,10 +40,10 @@
             android:visibility="visible" />
 
         <EditText
-            android:id="@+id/fragment_user_details_last_name"
+            android:id="@+id/fragmentUserDetailsLastName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_forty"
-            android:layout_below="@+id/fragment_user_details_first_name"
+            android:layout_below="@+id/fragmentUserDetailsFirstName"
             android:layout_marginLeft="@dimen/margin_twenty_four"
             android:layout_marginTop="@dimen/margin_twenty"
             android:layout_marginRight="@dimen/margin_twenty_four"
@@ -54,10 +54,10 @@
             android:visibility="visible" />
 
         <EditText
-            android:id="@+id/fragment_user_details_organization"
+            android:id="@+id/fragmentUserDetailsOrganization"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_forty"
-            android:layout_below="@+id/fragment_user_details_last_name"
+            android:layout_below="@+id/fragmentUserDetailsLastName"
             android:layout_marginLeft="@dimen/margin_twenty_four"
             android:layout_marginTop="@dimen/margin_twenty"
             android:layout_marginRight="@dimen/margin_twenty_four"
@@ -68,29 +68,29 @@
             android:visibility="visible" />
 
         <CheckBox
-            android:id="@+id/fragment_signup_privacy_policy_checkbox"
+            android:id="@+id/fragmentSignupPrivacyPolicyCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/height_forty"
-            android:layout_below="@+id/fragment_user_details_organization"
+            android:layout_below="@+id/fragmentUserDetailsOrganization"
             android:layout_marginLeft="@dimen/margin_twenty_four"
             android:layout_marginBottom="@dimen/margin_ten"
             android:textColorLink="@color/link_color"
             android:textSize="@dimen/text_size_sixty" />
 
         <TextView
-            android:id="@+id/fragment_signup_privacy_policy_link"
+            android:id="@+id/fragmentSignupPrivacyPolicyLink"
             android:layout_width="@dimen/two_hundred_fifty"
             android:layout_height="@dimen/height_forty"
-            android:layout_below="@+id/fragment_user_details_organization"
-            android:layout_toRightOf="@id/fragment_signup_privacy_policy_checkbox"
+            android:layout_below="@+id/fragmentUserDetailsOrganization"
+            android:layout_toRightOf="@id/fragmentSignupPrivacyPolicyCheckbox"
             android:linksClickable="true"
             android:text="@string/privacy_policy" />
 
         <Button
-            android:id="@+id/fragment_user_details_continue"
+            android:id="@+id/fragmentUserDetailsContinue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_signup_privacy_policy_checkbox"
+            android:layout_below="@+id/fragmentSignupPrivacyPolicyCheckbox"
             android:layout_marginLeft="@dimen/margin_twenty_five"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/margin_twenty_five"

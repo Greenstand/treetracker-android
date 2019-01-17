@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_note"
+    android:id="@+id/fragmentNote"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/fragment_note_image"
+        android:id="@+id/fragmentNoteImage"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_new_tree_image"
         android:layout_alignParentTop="true"
@@ -18,7 +18,7 @@
         android:id="@+id/fragment_note_take_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/fragment_note_image"
+        android:layout_alignBottom="@+id/fragmentNoteImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/margin_eight"
         android:background="@null"
@@ -27,10 +27,10 @@
         android:visibility="gone" />
 
     <EditText
-        android:id="@+id/fragment_note_note"
+        android:id="@+id/fragmentNoteNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_note_image"
+        android:layout_below="@+id/fragmentNoteImage"
         android:layout_marginLeft="@dimen/margin_twenty_four"
         android:layout_marginTop="@dimen/two_dp"
         android:layout_marginRight="@dimen/margin_twenty_four"
@@ -44,10 +44,10 @@
         android:textSize="@dimen/text_size_sixty" />
 
     <CheckBox
-        android:id="@+id/fragment_note_missing_tree_checkbox"
+        android:id="@+id/fragmentNoteMissingTreeCheckbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_note_note"
+        android:layout_below="@+id/fragmentNoteNote"
         android:layout_marginLeft="@dimen/margin_twenty_four"
         android:layout_marginRight="@dimen/margin_twenty_four"
         android:text="@string/tree_missing"
@@ -62,7 +62,7 @@
         android:padding="@dimen/padding_five">
 
         <Button
-            android:id="@+id/fragment_note_save"
+            android:id="@+id/fragmentNoteSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -76,7 +76,7 @@
 
 
         <Button
-            android:id="@+id/fragment_note_tree_missing"
+            android:id="@+id/fragmentNoteTreeMissing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -92,10 +92,10 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/fragment_note_no_image"
+        android:id="@+id/fragmentNoteNoImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/fragment_note_image"
+        android:layout_alignTop="@+id/fragmentNoteImage"
         android:layout_centerHorizontal="true"
         android:paddingTop="@dimen/padding_five"
         android:text="@string/no_image_preview_available"
