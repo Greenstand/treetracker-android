@@ -11,9 +11,8 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.HapticFeedbackConstants
@@ -23,12 +22,12 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_new_tree.*
+import kotlinx.android.synthetic.main.fragment_new_tree.view.*
 
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
@@ -44,7 +43,7 @@ import java.util.Date
 
 import timber.log.Timber
 
-class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat.OnRequestPermissionsResultCallback {
+class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextWatcher, ActivityCompat.OnRequestPermissionsResultCallback {
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private var userId: Long = 0
@@ -69,7 +68,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
         activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.new_tree)
+        activity!!.toolbarTitle.setText(R.string.new_tree)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         mSharedPreferences = (activity as AppCompatActivity).getSharedPreferences(
@@ -77,15 +76,15 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
 
-        val saveBtn = v.findViewById(R.id.fragment_new_tree_save) as Button
+        val saveBtn = v.fragmentNewTreeSave
         saveBtn.setOnClickListener(this@NewTreeFragment)
 
-        mImageView = v.findViewById(R.id.fragment_new_tree_image) as ImageView
+        mImageView = v.fragmentNewTreeImage
 
-        val newTreeDistance = v.findViewById(R.id.fragment_new_tree_distance) as TextView
+        val newTreeDistance = v.fragmentNewTreeDistance
         newTreeDistance.text = Integer.toString(0) + " " + resources.getString(R.string.meters)
 
-        val newTreeGpsAccuracy = v.findViewById(R.id.fragment_new_tree_gps_accuracy) as TextView
+        val newTreeGpsAccuracy = v.fragmentNewTreeGpsAccuracy
         if (MainActivity.mCurrentLocation != null) {
             newTreeGpsAccuracy.text = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
         } else {
@@ -98,7 +97,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
                 ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
                 ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING))
 
-        val newTreetimeToNextUpdate = v.findViewById(R.id.fragment_new_tree_next_update) as EditText
+        val newTreetimeToNextUpdate = v.fragmentNewTreeNextUpdate
         newTreetimeToNextUpdate.setText(Integer.toString(timeToNextUpdate))
 
         if (mSharedPreferences!!.getBoolean(ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT, false)) {
@@ -131,7 +130,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
         when (v.id) {
 
-            R.id.fragment_new_tree_save -> {
+            R.id.fragmentNewTreeSave -> {
 
                 saveToDb()
 
@@ -228,7 +227,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
                     ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
                     ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
 
-            val newTreetimeToNextUpdate = activity!!.findViewById(R.id.fragment_new_tree_next_update) as EditText
+            val newTreetimeToNextUpdate = activity!!.fragmentNewTreeNextUpdate
             val timeToNextUpdate = Integer.parseInt(if (newTreetimeToNextUpdate.text.toString() == "")
                 "0"
             else
@@ -244,7 +243,7 @@ class NewTreeFragment : Fragment(), OnClickListener, TextWatcher, ActivityCompat
 
 
             // note
-            val content = (activity!!.findViewById(R.id.fragment_new_tree_note) as EditText).text.toString()
+            val content = activity!!.fragmentNewTreeNote.text.toString()
             val noteContentValues = ContentValues()
             noteContentValues.put("user_id", userId)
             noteContentValues.put("content", content)

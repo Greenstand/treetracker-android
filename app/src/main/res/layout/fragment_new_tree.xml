@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/fragment_new_tree_image"
+        android:id="@+id/fragmentNewTreeImage"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_new_tree_image"
         android:layout_alignParentTop="true"
@@ -30,7 +30,7 @@
         android:id="@+id/fragment_new_tree_distance_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_new_tree_image"
+        android:layout_below="@+id/fragmentNewTreeImage"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_twenty_four"
         android:paddingTop="@dimen/one_dp"
@@ -47,7 +47,7 @@
             android:visibility="invisible" />
 
         <TextView
-            android:id="@+id/fragment_new_tree_distance"
+            android:id="@+id/fragmentNewTreeDistance"
             android:layout_width="@dimen/zero_dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_twelve"
@@ -79,7 +79,7 @@
             android:textSize="@dimen/text_size_seventeen" />
 
         <TextView
-            android:id="@+id/fragment_new_tree_gps_accuracy"
+            android:id="@+id/fragmentNewTreeGpsAccuracy"
             android:layout_width="@dimen/zero_dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_twelve"
@@ -112,7 +112,7 @@
             android:visibility="invisible" />
 
         <EditText
-            android:id="@+id/fragment_new_tree_next_update"
+            android:id="@+id/fragmentNewTreeNextUpdate"
             android:layout_width="@dimen/zero_dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_twelve"
@@ -127,7 +127,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/fragment_new_tree_note"
+        android:id="@+id/fragmentNewTreeNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_new_tree_next_update_layout"
@@ -147,7 +147,7 @@
         android:id="@+id/fragment_new_tree_three_digits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_new_tree_note"
+        android:layout_below="@+id/fragmentNewTreeNote"
         android:layout_marginLeft="@dimen/margin_twenty_four"
         android:layout_marginRight="@dimen/margin_twenty_four"
         android:hint="@string/three_digit_number"
@@ -165,7 +165,7 @@
         android:padding="@dimen/padding_five">
 
         <Button
-            android:id="@+id/fragment_new_tree_save"
+            android:id="@+id/fragmentNewTreeSave"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
