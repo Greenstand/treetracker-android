@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/fragment_tree_preview_image"
+        android:id="@+id/fragmentTreePreviewImage"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_new_tree_image"
         android:layout_alignParentTop="true"
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/fragment_tree_preview_buttons"
-        android:layout_below="@+id/fragment_tree_preview_image"
+        android:layout_below="@+id/fragmentTreePreviewImage"
         android:layout_marginTop="@dimen/margin_twelve"
         android:background="@color/white"
         android:fadingEdgeLength="@dimen/fifty_dp"
@@ -47,7 +47,7 @@
                     android:textSize="@dimen/text_size_seventeen" />
 
                 <TextView
-                    android:id="@+id/fragment_tree_preview_distance"
+                    android:id="@+id/fragmentTreePreviewDistance"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_twelve"
@@ -79,7 +79,7 @@
                     android:textSize="@dimen/text_size_seventeen" />
 
                 <TextView
-                    android:id="@+id/fragment_tree_preview_gps_accuracy"
+                    android:id="@+id/fragmentTreePreviewGpsAccuracy"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_twelve"
@@ -111,7 +111,7 @@
                     android:textSize="@dimen/text_size_seventeen" />
 
                 <TextView
-                    android:id="@+id/fragment_tree_preview_image_status"
+                    android:id="@+id/fragmentTreePreviewImageStatus"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_twelve"
@@ -143,7 +143,7 @@
                     android:textSize="@dimen/text_size_seventeen" />
 
                 <TextView
-                    android:id="@+id/fragment_tree_preview_last_update"
+                    android:id="@+id/fragmentTreePreviewLastUpdate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_twelve"
@@ -175,7 +175,7 @@
                     android:textSize="@dimen/text_size_seventeen" />
 
                 <TextView
-                    android:id="@+id/fragment_tree_preview_created"
+                    android:id="@+id/fragmentTreePreviewCreated"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_twelve"
@@ -208,7 +208,7 @@
                     android:textSize="@dimen/text_size_seventeen" />
 
                 <TextView
-                    android:id="@+id/fragment_tree_preview_notes"
+                    android:id="@+id/fragmentTreePreviewNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_twenty_four"
@@ -231,7 +231,7 @@
         android:padding="@dimen/fifty_dp">
 
         <Button
-            android:id="@+id/fragment_tree_preview_more"
+            android:id="@+id/fragmentTreePreviewMore"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -247,10 +247,10 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/fragment_tree_preview_no_image"
+        android:id="@+id/fragmentTreePreviewNoImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/fragment_tree_preview_image"
+        android:layout_alignTop="@+id/fragmentTreePreviewImage"
         android:layout_centerHorizontal="true"
         android:paddingTop="@dimen/padding_five"
         android:text="@string/no_image_preview_available"

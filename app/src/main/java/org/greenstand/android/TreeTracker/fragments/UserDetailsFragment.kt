@@ -3,20 +3,17 @@ package org.greenstand.android.TreeTracker.fragments
 import android.content.ContentValues
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.TextView
+import kotlinx.android.synthetic.main.fragment_user_details.view.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.database.DatabaseManager
 
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
@@ -34,7 +31,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class UserDetailsFragment : Fragment() {
+class UserDetailsFragment : androidx.fragment.app.Fragment() {
 
     private var mSharedPreferences: SharedPreferences? = null
 
@@ -46,13 +43,13 @@ class UserDetailsFragment : Fragment() {
         mSharedPreferences = activity!!.getSharedPreferences(
                 ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
 
-        val continueButton: Button = v.findViewById(R.id.fragment_user_details_continue)
+        val continueButton: Button = v.fragmentUserDetailsContinue
         continueButton.setOnClickListener {
-            val firstNameTextView = v.findViewById(R.id.fragment_user_details_first_name) as TextView
-            val lastNameTextView = v.findViewById(R.id.fragment_user_details_last_name) as TextView
-            val organizationTextView = v.findViewById(R.id.fragment_user_details_organization) as TextView
-            var privacyPolicyCheckbox = v.findViewById(R.id.fragment_signup_privacy_policy_checkbox) as CheckBox
-            val planterIdentifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, null)
+            val firstNameTextView = v.fragmentUserDetailsFirstName
+            val lastNameTextView = v.fragmentUserDetailsLastName
+            val organizationTextView = v.fragmentUserDetailsOrganization
+            var privacyPolicyCheckbox = v.fragmentSignupPrivacyPolicyCheckbox
+            val planterIdentifier = mSharedPreferences?.getString(ValueHelper.PLANTER_IDENTIFIER, null)
 
             var dataReady = true // TODO: handle form errors and required fields
             if(firstNameTextView.text == null || firstNameTextView.text.isEmpty()){
@@ -92,12 +89,12 @@ class UserDetailsFragment : Fragment() {
                 val fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
                 val fragment = MapsFragment()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment).commit()
+                fragmentTransaction.replace(R.id.containerFragment, fragment).commit()
             }
 
         }
 
-        val fragment_signup_privacy_policy_link = v.findViewById(R.id.fragment_signup_privacy_policy_link) as TextView
+        val fragment_signup_privacy_policy_link = v.fragmentSignupPrivacyPolicyLink
         fragment_signup_privacy_policy_link.movementMethod = LinkMovementMethod.getInstance()
 
         return v

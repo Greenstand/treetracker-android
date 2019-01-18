@@ -3,21 +3,13 @@ package org.greenstand.android.TreeTracker.fragments
 import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.SharedPreferences
 import android.database.Cursor
 import android.database.DatabaseUtils
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.Settings
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.Menu
@@ -27,6 +19,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.amazonaws.AmazonClientException
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_data.*
+import kotlinx.android.synthetic.main.fragment_data.view.*
 import kotlinx.coroutines.Job
 
 
@@ -36,7 +31,6 @@ import kotlinx.coroutines.launch
 
 import org.greenstand.android.TreeTracker.BuildConfig
 
-import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.Api
@@ -60,7 +54,7 @@ import java.lang.Integer.valueOf
  * Created by lei on 11/9/17.
  */
 
-class DataFragment : Fragment(), View.OnClickListener {
+class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
 
     private var totalTrees: TextView? = null
     private var updateTrees: TextView? = null
@@ -89,23 +83,17 @@ class DataFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater!!.inflate(R.layout.fragment_data, container, false)
-        totalTrees = v.findViewById(R.id.fragment_data_total_trees_value) as TextView
-        updateTrees = v.findViewById(R.id.fragment_data_update_value) as TextView
-        locatedTrees = v.findViewById(R.id.fragment_data_located_value) as TextView
-        tosyncTrees = v.findViewById(R.id.fragment_data_to_sync_value) as TextView
+        val v = inflater.inflate(R.layout.fragment_data, container, false)
+        totalTrees = v.fragmentDataTotalTreesValue
+        updateTrees = v.fragmentDataUpdateValue
+        locatedTrees = v.fragmentDataLocatedValue
+        tosyncTrees = v.fragmentDataToSyncValue
 
-        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.data)
+        activity?.toolbarTitle?.setText(R.string.data)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        syncBtn = v.findViewById(R.id.fragment_data_sync) as Button
-        syncBtn!!.setOnClickListener(this)
-
-//        val pauseBtn = v.findViewById(R.id.fragment_data_pause) as Button
-//        pauseBtn.setOnClickListener(this)
-//
-//        val resumeBtn = v.findViewById(R.id.fragment_data_resume) as Button
-//        resumeBtn.setOnClickListener(this)
+        syncBtn = v.fragmentDataSync
+        syncBtn?.setOnClickListener(this)
 
         return v
     }
@@ -462,7 +450,7 @@ class DataFragment : Fragment(), View.OnClickListener {
 
         var treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS total FROM tree", null)
         treeCursor.moveToFirst()
-        totalTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("total"))
+        totalTrees?.text = treeCursor.getString(treeCursor.getColumnIndex("total"))
         Timber.d("total " + treeCursor.getString(treeCursor.getColumnIndex("total")))
 
         /*treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS updated FROM tree WHERE is_synced = 'Y' AND time_for_update < DATE('NOW')", null);
@@ -479,13 +467,13 @@ class DataFragment : Fragment(), View.OnClickListener {
         treeCursor = TreeTrackerApplication.getDatabaseManager()
                 .queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null)
         treeCursor.moveToFirst()
-        locatedTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("located"))
+        locatedTrees?.text = treeCursor.getString(treeCursor.getColumnIndex("located"))
         Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")))
 
         treeCursor = TreeTrackerApplication.getDatabaseManager()
                 .queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
         treeCursor.moveToFirst()
-        tosyncTrees!!.text = treeCursor.getString(treeCursor.getColumnIndex("tosync"))
+        tosyncTrees?.text = treeCursor.getString(treeCursor.getColumnIndex("tosync"))
         Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
 
     }

@@ -1,13 +1,9 @@
 package org.greenstand.android.TreeTracker.fragments
 
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.Menu
@@ -15,16 +11,18 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_about.*
 
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 
 
-class AboutFragment : Fragment(), OnClickListener {
+class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
 
-    private val fragment: Fragment? = null
+    private val fragment: androidx.fragment.app.Fragment? = null
     private val bundle: Bundle? = null
-    private val fragmentTransaction: FragmentTransaction? = null
+    private val fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private val mSharedPreferences: SharedPreferences? = null
 
     private var versionCode: Int = 0
@@ -57,22 +55,22 @@ class AboutFragment : Fragment(), OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val v = inflater!!.inflate(R.layout.fragment_about, container, false)
+        val v = inflater.inflate(R.layout.fragment_about, container, false)
         //	    ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.information));
         //	    ((ActionBarActivity)getActivity()).getSupportActionBar().show();
 
 
-        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.information)
+        activity?.toolbarTitle?.setText(R.string.information)
         //		((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.about);
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
 
-        versioncode = v.findViewById(R.id.fragment_about_versioncode) as TextView
-        versionname = v.findViewById(R.id.fragment_about_versionname) as TextView
+        versioncode = fragmentAboutVersioncode
+        versionname = fragmentAboutVersionname
 
         //setting version code and versionname
-        versioncode!!.text = "Build version  " + versionCode_string!!
-        versionname!!.text = "Tree Tracker(debug) " + versionName!!
+        versioncode?.text = "Build version  " + versionCode_string!!
+        versionname?.text = "Tree Tracker(debug) " + versionName!!
 
 
 
