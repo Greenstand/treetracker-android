@@ -1,28 +1,24 @@
 package org.greenstand.android.TreeTracker.fragments
 
 
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
-import android.location.LocationManager
 import android.media.ExifInterface
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_tree_preview.view.*
 
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.R
@@ -42,8 +38,8 @@ class TreePreviewFragment : Fragment(), OnClickListener {
     private var mCurrentPhotoPath: String? = null
     private val mImageBitmap: Bitmap? = null
     private var treeIdStr: String? = ""
-    private var fragment: Fragment? = null
-    private var fragmentTransaction: FragmentTransaction? = null
+    private var fragment: androidx.fragment.app.Fragment? = null
+    private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var bundle: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,16 +60,16 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
         val v = inflater.inflate(R.layout.fragment_tree_preview, container, false)
 
-        (activity!!.findViewById(R.id.toolbar_title) as TextView).setText(R.string.tree_preview)
+        activity?.toolbarTitle?.setText(R.string.tree_preview)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val extras = arguments
 
         treeIdStr = extras!!.getString(ValueHelper.TREE_ID)
 
-        mImageView = v.findViewById(R.id.fragment_tree_preview_image) as ImageView
+        mImageView = v.fragmentTreePreviewImage
 
-        (v.findViewById(R.id.fragment_tree_preview_more) as Button).setOnClickListener(this@TreePreviewFragment)
+        v.fragmentTreePreviewMore.setOnClickListener(this@TreePreviewFragment)
 
 
         val query = "select * from tree " +
@@ -95,7 +91,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                 photoCursor.getString(photoCursor.getColumnIndex("is_outdated")) == "Y"
 
 
-            val noImage = v.findViewById(R.id.fragment_tree_preview_no_image) as TextView
+            val noImage = v.fragmentTreePreviewNoImage
 
             if (mCurrentPhotoPath != null && !isOutdated) {
                 setPic()
@@ -118,21 +114,21 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                         MainActivity.mCurrentTreeLocation!!.latitude, MainActivity.mCurrentTreeLocation!!.longitude, results)
             }
 
-            val distanceTxt = v.findViewById(R.id.fragment_tree_preview_distance) as TextView
+            val distanceTxt = v.fragmentTreePreviewDistance
             distanceTxt.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
 
-            val accuracyTxt = v.findViewById(R.id.fragment_tree_preview_gps_accuracy) as TextView
+            val accuracyTxt = v.fragmentTreePreviewGpsAccuracy
             val treeAccuracy = photoCursor.getString(photoCursor.getColumnIndex("accuracy")).toFloat()
             accuracyTxt.text = treeAccuracy.toString() + " " + resources.getString(R.string.meters)
 
 
-            val createdTxt = v.findViewById(R.id.fragment_tree_preview_created) as TextView
+            val createdTxt = v.fragmentTreePreviewCreated
             createdTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_created")).substring(0, photoCursor.getString(photoCursor.getColumnIndex("time_created")).lastIndexOf(":"))
 
-            val updatedTxt = v.findViewById(R.id.fragment_tree_preview_last_update) as TextView
+            val updatedTxt = v.fragmentTreePreviewLastUpdate
             updatedTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_updated")).substring(0, photoCursor.getString(photoCursor.getColumnIndex("time_updated")).lastIndexOf(":"))
 
-            val statusTxt = v.findViewById(R.id.fragment_tree_preview_image_status) as TextView
+            val statusTxt = v.fragmentTreePreviewImageStatus
 
             var dateForUpdate = Date()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -156,7 +152,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             val noteCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(noteQuery, null)
 
 
-            val notesTxt = v.findViewById(R.id.fragment_tree_preview_notes) as TextView
+            val notesTxt = v.fragmentTreePreviewNotes
 
             notesTxt.text = " "
 
@@ -186,7 +182,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
 
         when (v.id) {
-            R.id.fragment_tree_preview_more -> {
+            R.id.fragmentTreePreviewMore -> {
                 fragment = NoteFragment()
 
                 bundle = activity!!.intent.extras
@@ -199,7 +195,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
                 fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
-                fragmentTransaction!!.replace(R.id.container_fragment, fragment as NoteFragment)
+                fragmentTransaction!!.replace(R.id.containerFragment, fragment as NoteFragment)
                         .addToBackStack(ValueHelper.NOTE_FRAGMENT).commit()
             }
 
