@@ -1,3 +1,5 @@
+[![Build Status](https://app.bitrise.io/app/26ed633acc077bbe/status.svg?token=m-rsQnNZGxgqrDa2u78bpg&branch=master)](https://app.bitrise.io/app/26ed633acc077bbe)
+
 # TreeTracker Android
 
 This is the Android app for the TreeTracker open source project (www.treetracker.org). 
