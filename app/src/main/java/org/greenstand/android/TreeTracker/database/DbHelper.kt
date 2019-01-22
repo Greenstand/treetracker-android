@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.database
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -29,6 +30,7 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
     /**
      * Creates a empty database on the system and rewrites it with your own database.
      */
+    @SuppressLint("Recycle")
     @Throws(IOException::class)
     fun createDataBase() {
 
@@ -80,9 +82,9 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
                 while (treesCursor.moveToNext()) {
 
 
-                    val sharedPreferences = myContext.getSharedPreferences(
+                    val sharedPreferences1 = myContext.getSharedPreferences(
                             ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
-                    val email = sharedPreferences.getString(ValueHelper.USERNAME, "Unknown")
+                    val email = sharedPreferences1.getString(ValueHelper.USERNAME, "Unknown")
 
 
                     val locationContentValues = ContentValues()
@@ -93,7 +95,8 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
                     locationContentValues.put("long",
                             treesCursor.getDouble(treesCursor.getColumnIndex("long")))
 
-                    val locationId = db2Helper.writableDatabase.insert("location", null, locationContentValues)
+                    val locationId = db2Helper.writableDatabase.insert("location", null,
+                        locationContentValues)
 
                     Timber.d("locationId " + java.lang.Long.toString(locationId))
 
@@ -116,17 +119,18 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
                     val noteId = db2Helper.writableDatabase.insert("note", null, noteContentValues)
                     Timber.d("noteId " + java.lang.Long.toString(noteId))
 
-
-
                     val treeContentValues = ContentValues()
                     treeContentValues.put("location_id", locationId)
                     treeContentValues.put("planter_identification_id", email)
 
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-                    treeContentValues.put("time_created", treesCursor.getString(treesCursor.getColumnIndex("time_created")))
-                    treeContentValues.put("time_updated", treesCursor.getString(treesCursor.getColumnIndex("time_updated")))
-                    treeContentValues.put("time_for_update", treesCursor.getString(treesCursor.getColumnIndex("time_for_update")))
+                    treeContentValues.put("time_created", treesCursor.getString(treesCursor
+                        .getColumnIndex("time_created")))
+                    treeContentValues.put("time_updated", treesCursor.getString(treesCursor
+                        .getColumnIndex("time_updated")))
+                    treeContentValues.put("time_for_update", treesCursor.getString(treesCursor
+                        .getColumnIndex("time_for_update")))
 
                     val treeId = db2Helper.writableDatabase.insert("tree", null, treeContentValues)
                     Timber.d("treeId", java.lang.Long.toString(treeId))
@@ -135,15 +139,16 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
                     val treePhotoContentValues = ContentValues()
                     treePhotoContentValues.put("tree_id", treeId)
                     treePhotoContentValues.put("photo_id", photoId)
-                    val treePhotoId = db2Helper.writableDatabase.insert("tree_photo", null, treePhotoContentValues)
+                    val treePhotoId = db2Helper.writableDatabase.insert("tree_photo", null,
+                        treePhotoContentValues)
                     Timber.d("treePhotoId " + java.lang.Long.toString(treePhotoId))
-
 
                     // tree_note
                     val treeNoteContentValues = ContentValues()
                     treeNoteContentValues.put("tree_id", treeId)
                     treeNoteContentValues.put("note_id", noteId)
-                    val treeNoteId = db2Helper.writableDatabase.insert("tree_note", null, treeNoteContentValues)
+                    val treeNoteId = db2Helper.writableDatabase.insert("tree_note", null,
+                        treeNoteContentValues)
                     Timber.d("treeNoteId " + java.lang.Long.toString(treeNoteId))
 
 
@@ -248,7 +253,6 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
         private const val DB_NAME_V1 = "treetracker.db"
         private const val DB_NAME_V2 = "treetracker.v2.db"
 
-
         fun getDbHelper(context: Context): DbHelper {
             return DbHelper(context, DB_NAME_V2, null, 1)
         }
@@ -257,6 +261,4 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
             return DbHelper(context, DB_NAME_V1, null, 1)
         }
     }
-
-
 }

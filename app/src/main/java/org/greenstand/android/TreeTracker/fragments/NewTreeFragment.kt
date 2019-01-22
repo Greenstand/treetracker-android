@@ -58,8 +58,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
 
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -280,7 +280,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
             val treePhotoContentValues = ContentValues()
             treePhotoContentValues.put("tree_id", treeId)
             treePhotoContentValues.put("photo_id", photoId)
-            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null, treePhotoContentValues)
+            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null,
+                treePhotoContentValues)
             Timber.d("treePhotoId " + java.lang.Long.toString(treePhotoId))
 
 

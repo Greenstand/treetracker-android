@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_user_details.view.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
@@ -48,7 +47,7 @@ class UserDetailsFragment : androidx.fragment.app.Fragment() {
             val firstNameTextView = v.fragmentUserDetailsFirstName
             val lastNameTextView = v.fragmentUserDetailsLastName
             val organizationTextView = v.fragmentUserDetailsOrganization
-            var privacyPolicyCheckbox = v.fragmentSignupPrivacyPolicyCheckbox
+            val privacyPolicyCheckbox = v.fragmentSignupPrivacyPolicyCheckbox
             val planterIdentifier = mSharedPreferences?.getString(ValueHelper.PLANTER_IDENTIFIER, null)
 
             var dataReady = true // TODO: handle form errors and required fields
@@ -59,7 +58,6 @@ class UserDetailsFragment : androidx.fragment.app.Fragment() {
             } else if (!privacyPolicyCheckbox.isChecked){
                 dataReady = false
             }
-
 
             if(!dataReady || planterIdentifier == null){
                 // data inconsistency
@@ -72,17 +70,18 @@ class UserDetailsFragment : androidx.fragment.app.Fragment() {
                 detailsContentValues.put("last_name", lastNameTextView.text.toString())
                 detailsContentValues.put("organization", organizationTextView.text.toString())
 
-                val planterDetailsId = TreeTrackerApplication.getDatabaseManager().insert("planter_details", null, detailsContentValues)
+                val planterDetailsId = TreeTrackerApplication.getDatabaseManager().insert("planter_details",
+                    null, detailsContentValues)
                 val identifierContentValues = ContentValues();
                 identifierContentValues.put("planter_details_id", planterDetailsId)
                 val args = arrayOf(planterIdentifier)
-                TreeTrackerApplication.getDatabaseManager().update("planter_identifications", identifierContentValues, "identifier = ?",  args)
+                TreeTrackerApplication.getDatabaseManager().update("planter_identifications", identifierContentValues,
+                    "identifier = ?",  args)
 
-                val editor = mSharedPreferences!!.edit()
+                val editor = mSharedPreferences?.edit()
                 val tsLong = System.currentTimeMillis() / 1000
-                editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
-                editor!!.commit()
-
+                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
+                editor?.apply()
 
                 activity!!.supportFragmentManager.popBackStack()
 
@@ -91,16 +90,10 @@ class UserDetailsFragment : androidx.fragment.app.Fragment() {
                 val fragment = MapsFragment()
                 fragmentTransaction.replace(R.id.containerFragment, fragment).commit()
             }
-
         }
-
         val fragment_signup_privacy_policy_link = v.fragmentSignupPrivacyPolicyLink
         fragment_signup_privacy_policy_link.movementMethod = LinkMovementMethod.getInstance()
 
         return v
     }
-
-
-
-
 }

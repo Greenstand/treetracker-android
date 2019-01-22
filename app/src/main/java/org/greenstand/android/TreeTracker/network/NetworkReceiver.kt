@@ -29,7 +29,6 @@ import java.util.Calendar
 
 class NetworkReceiver : BroadcastReceiver() {
 
-
     private var mSharedPreferences: SharedPreferences? = null
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -37,11 +36,11 @@ class NetworkReceiver : BroadcastReceiver() {
         mSharedPreferences = context.getSharedPreferences(
                 "org.greenstand.android", Context.MODE_PRIVATE)
 
-        if (mSharedPreferences!!.getBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false) || mSharedPreferences!!.getBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false)) {
+        if (mSharedPreferences!!.getBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false) ||
+            mSharedPreferences!!.getBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false)) {
 
             return
         }
-
 
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -66,7 +65,6 @@ class NetworkReceiver : BroadcastReceiver() {
             treeCursor.moveToFirst()   //this
             val tosync = Integer.parseInt(treeCursor.getString(treeCursor.getColumnIndex("tosync")))
             Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
-
 
             var notification: Uri? = null
             try {

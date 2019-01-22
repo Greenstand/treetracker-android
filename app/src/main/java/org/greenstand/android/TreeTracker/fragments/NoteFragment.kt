@@ -51,7 +51,8 @@ import java.util.Date
 
 import timber.log.Timber
 
-class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
+class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
+    ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
@@ -104,8 +105,8 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
         super.onResume()
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -200,7 +201,6 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
                         dialog.dismiss()
                     }
 
-
                     val alert = builder.create()
                     alert.show()
                 } else {
@@ -223,7 +223,8 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
 
     private fun takePicture() {
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.CAMERA),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
@@ -303,7 +304,6 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener, Activ
 
         val noteId = TreeTrackerApplication.getDatabaseManager().insert("note", null, contentValues)
         Timber.d("noteId " + java.lang.Long.toString(noteId))
-
 
         // tree
         contentValues = ContentValues()

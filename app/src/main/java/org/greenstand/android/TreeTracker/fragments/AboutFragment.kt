@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.fragments
 
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -41,7 +42,6 @@ class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
         versionName = BuildConfig.VERSION_NAME
         versionCode_string = Integer.toString(versionCode)
 
-
     }
 
     override fun onResume() {
@@ -49,14 +49,16 @@ class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
         //updateTextView();
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val v = inflater.inflate(R.layout.fragment_about, container, false)
-        //	    ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.information));
+        //	    ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(getActivity().getResources()
+        // .getString(R.string.information));
         //	    ((ActionBarActivity)getActivity()).getSupportActionBar().show();
 
 
@@ -69,21 +71,15 @@ class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
         versionname = fragmentAboutVersionname
 
         //setting version code and versionname
-        versioncode?.text = "Build version  " + versionCode_string!!
-        versionname?.text = "Tree Tracker(debug) " + versionName!!
-
-
+        versioncode?.text = getString(R.string.build_version_title) + versionCode_string!!
+        versionname?.text = getString(R.string.tree_tracker_title) + versionName!!
 
         return v
     }
 
     override fun onClick(v: View) {
-
-
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
 
-
     }
-
 
 }//some overrides and settings go here

@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.api
 
+import android.annotation.SuppressLint
 import com.amazonaws.AmazonClientException
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3
@@ -31,6 +32,7 @@ class DOSpaces private constructor() {
         s3Client.setEndpoint(String.format("https://%s.digitaloceanspaces.com/", BuildConfig.DO_SPACES_ENDPOINT))
     }
 
+    @SuppressLint("SimpleDateFormat")
     @Throws(AmazonClientException::class)
     fun put(path: String): String {
         val acl = AccessControlList()
@@ -43,7 +45,8 @@ class DOSpaces private constructor() {
         val poRequest = PutObjectRequest(BuildConfig.DO_SPACES_BUCKET, dosKey, image)
         poRequest.withAccessControlList(acl)
         val poResult = s3Client.putObject(poRequest)
-        return String.format("https://%s.%s.digitaloceanspaces.com/%s",  BuildConfig.DO_SPACES_BUCKET, BuildConfig.DO_SPACES_ENDPOINT, dosKey)
+        return String.format("https://%s.%s.digitaloceanspaces.com/%s",  BuildConfig.DO_SPACES_BUCKET,
+            BuildConfig.DO_SPACES_ENDPOINT, dosKey)
     }
 
     companion object {

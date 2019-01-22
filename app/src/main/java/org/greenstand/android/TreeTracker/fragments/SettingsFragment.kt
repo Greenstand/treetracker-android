@@ -23,6 +23,8 @@ import android.widget.RadioGroup
 import android.widget.RadioGroup.OnCheckedChangeListener
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
@@ -31,11 +33,11 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
-class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCheckedChangeListener, TextWatcher {
+class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, TextWatcher {
 
-    private val fragment: androidx.fragment.app.Fragment? = null
+    private val fragment: Fragment? = null
     private val bundle: Bundle? = null
-    private val fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
+    private val fragmentTransaction: FragmentTransaction? = null
     private var mSharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,8 +49,8 @@ class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCh
         super.onResume()
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -76,10 +78,11 @@ class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCh
         val nextUpdate = v.fragmentSettingsNextUpdate
         nextUpdate.addTextChangedListener(this@SettingsFragment)
 
-        nextUpdate.setText(Integer.toString(mSharedPreferences!!.getInt(
-                ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
+        val nextUpdateString1 = Integer.toString(mSharedPreferences!!.getInt(
+            ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
                 ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
-                ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING))))
+                ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING)))
+        nextUpdate.setText(nextUpdateString1)
 
         val gpsAcc = v.fragmentSettingsGpsAccuracy
         if (mSharedPreferences!!.getBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
@@ -89,13 +92,14 @@ class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCh
             val accServer = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_MIN_ACCURACY, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
             val nextUpdateServer = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_NEXT_UPDATE, ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING)
 
-            mSharedPreferences!!.edit().putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, accServer).commit()
-            mSharedPreferences!!.edit().putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING, nextUpdateServer).commit()
+            mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, accServer)?.apply()
+            mSharedPreferences?.edit()?.putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING, nextUpdateServer)?.apply()
 
             //TODO replace with data from server
-            nextUpdate.setText(Integer.toString(nextUpdateServer))
-
-            gpsAcc.text = Integer.toString(accServer) + " " + (activity as AppCompatActivity).resources.getString(R.string.meters)
+            val nextUpdateString2 = Integer.toString(nextUpdateServer)
+            nextUpdate.setText(nextUpdateString2)
+            val gpsAccString = Integer.toString(accServer) + " " + (activity as AppCompatActivity).resources.getString(R.string.meters)
+            gpsAcc.text = gpsAccString
 
             nextUpdate.isEnabled = false
         } else {
@@ -115,7 +119,8 @@ class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCh
             if (rb != null) {
 
 
-                if (Integer.parseInt(rb.text.toString()) == mSharedPreferences!!.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) {
+                if (Integer.parseInt(rb.text.toString()) == mSharedPreferences!!.getInt(
+                        ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) {
                     manualRadioSettings.check(rb.id)
                     break
                 }
@@ -146,35 +151,36 @@ class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCh
                 val saveAndEdit = activity!!.fragmentSettingsSaveAndEdit
 
                 if (radioGroup?.checkedRadioButtonId == R.id.fragment_settings_treetracker) {
-                    mSharedPreferences?.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.commit()
+                    mSharedPreferences?.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
 
                     val acc = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_MIN_ACCURACY, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
                     val nextUpdate = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_NEXT_UPDATE, ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING)
 
-                    mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, acc)?.commit()
-                    mSharedPreferences?.edit()?.putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING, nextUpdate)?.commit()
+                    mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, acc)?.apply()
+                    mSharedPreferences?.edit()?.putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING, nextUpdate)?.apply()
 
                 } else {
-                    mSharedPreferences?.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, false)?.commit()
+                    mSharedPreferences?.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, false)?.apply()
 
 
                     val nextUpdate = activity!!.fragmentSettingsNextUpdate
 
                     mSharedPreferences?.edit()?.putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
-                        Integer.parseInt(nextUpdate.text.toString()))?.commit()
+                        Integer.parseInt(nextUpdate.text.toString()))?.apply()
 
                     val accuracyRadioGroup = activity!!.fragmentSettingsManualSettingsRadioGroup
                     val selectedRadioButton = activity!!.findViewById(accuracyRadioGroup.checkedRadioButtonId) as RadioButton
 
                     if (selectedRadioButton != null) {
-                        mSharedPreferences!!.edit().putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-                                Integer.parseInt(selectedRadioButton.text.toString().substring(0, selectedRadioButton.text.toString().lastIndexOf(" ")))).commit()
+                        mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
+                                Integer.parseInt(selectedRadioButton.text.toString().substring(0,
+                                    selectedRadioButton.text.toString().lastIndexOf(" "))))?.apply()
                     }
 
                     if (saveAndEdit.isChecked) {
-                        mSharedPreferences!!.edit().putBoolean(ValueHelper.SAVE_AND_EDIT, true).commit()
+                        mSharedPreferences?.edit()?.putBoolean(ValueHelper.SAVE_AND_EDIT, true)?.apply()
                     } else {
-                        mSharedPreferences!!.edit().putBoolean(ValueHelper.SAVE_AND_EDIT, false).commit()
+                        mSharedPreferences?.edit()?.putBoolean(ValueHelper.SAVE_AND_EDIT, false)?.apply()
                     }
 
 
@@ -205,10 +211,13 @@ class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCh
                 gpsAcc.visibility = View.VISIBLE
 
                 val accServer = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_MIN_ACCURACY, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
-                val nextUpdateServer = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_NEXT_UPDATE, ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING)
+                val nextUpdateServer = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_NEXT_UPDATE,
+                    ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING)
 
-                nextUpdate.setText(Integer.toString(accServer))
-                gpsAcc.text = Integer.toString(nextUpdateServer) + " " + activity!!.resources.getString(R.string.meters)
+                val nextUpdateString3 = Integer.toString(accServer)
+                nextUpdate.setText(nextUpdateString3)
+                val gpsAccString1 = Integer.toString(nextUpdateServer) + " " + activity!!.resources.getString(R.string.meters)
+                gpsAcc.text = gpsAccString1
             }
 
             R.id.fragment_settings_manual -> {
@@ -217,15 +226,16 @@ class SettingsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnCh
                 nextUpdate.isEnabled = true
                 gpsAcc.visibility = View.INVISIBLE
 
-                nextUpdate.setText(Integer.toString(mSharedPreferences!!.getInt(
-                        ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
+                val nextUpdateString4 = Integer.toString(mSharedPreferences!!.getInt(
+                    ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
                         ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
-                        ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING))))
+                        ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING)))
+                nextUpdate.setText(nextUpdateString4)
 
-                gpsAcc.text = Integer.toString(mSharedPreferences!!.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-                        ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) + " " + activity!!.resources.getString(R.string.meters)
+                val gpsAccString2 = Integer.toString(mSharedPreferences!!.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
+                    ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) + " " + activity!!.resources.getString(R.string.meters)
+                gpsAcc.text = gpsAccString2
             }
-
 
             else -> {
             }
