@@ -200,7 +200,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 if (MainActivity.mCurrentLocation!!.hasAccuracy() && MainActivity.mCurrentLocation!!.accuracy < minAccuracy) {
                     fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracyValue.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyValue.text = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    val fragmentMapGpsAccuracyValueString1 = Integer.toString(Math.round(MainActivity
+                        .mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString1
                     MainActivity.mAllowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracy.setTextColor(Color.RED)
@@ -208,15 +210,18 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
                     if (MainActivity.mCurrentLocation!!.hasAccuracy()) {
                         fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyValue.text = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        val fragmentMapGpsAccuracyValueString2 = Integer.toString(Math.round(MainActivity
+                            .mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString2
                     } else {
                         fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
                         fragmentMapGpsAccuracyValue.text = "N/A"
                     }
                 }
             } else {
-                if (ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(activity!!,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(
                             arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
                             Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION)
@@ -404,7 +409,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     override fun onMapReady(map: GoogleMap) {
 
-        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

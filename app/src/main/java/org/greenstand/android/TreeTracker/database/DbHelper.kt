@@ -253,6 +253,7 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
         private const val DB_NAME_V1 = "treetracker.db"
         private const val DB_NAME_V2 = "treetracker.v2.db"
 
+
         fun getDbHelper(context: Context): DbHelper {
             return DbHelper(context, DB_NAME_V2, null, 1)
         }
@@ -261,4 +262,6 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
             return DbHelper(context, DB_NAME_V1, null, 1)
         }
     }
+
+
 }
