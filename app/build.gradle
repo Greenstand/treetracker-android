@@ -18,7 +18,11 @@ apply plugin: 'com.github.triplet.play'
 
 def loadExtraProperties(String fileName) {
     def props = new Properties()
-    props.load(new FileInputStream(fileName))
+    if (System.getenv('CI_BITRISE') == "true") {
+        props.load(new FileInputStream("$BITRISEIO_treetracker_URL"))
+    } else {
+        props.load(new FileInputStream(fileName))
+    }
 
     props.each { key, val ->
         project.setProperty(key, val)
@@ -130,7 +134,6 @@ dependencies {
         transitive = true
     }
     api 'com.google.firebase:firebase-core:16.0.6'
-
 
 
     implementation "androidx.legacy:legacy-support-v4:${androidSupportVersion}"
