@@ -19,7 +19,7 @@ apply plugin: 'com.github.triplet.play'
 def loadExtraProperties(String fileName) {
     def props = new Properties()
     if (System.getenv('CI_BITRISE') == "true") {
-        props.load(new FileInputStream("$BITRISEIO_treetracker_URL"))
+        props.load(new FileInputStream(System.getenv("BITRISEIO_treetracker_URL")))
     } else {
         props.load(new FileInputStream(fileName))
     }
