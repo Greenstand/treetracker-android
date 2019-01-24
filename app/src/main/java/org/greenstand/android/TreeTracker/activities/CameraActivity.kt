@@ -14,10 +14,10 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import androidx.core.app.ActivityCompat
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.camera_preview.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.android.UI
@@ -298,13 +298,13 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
             tmpImageFile!!.delete()
             compressImage()
         } catch (e: FileNotFoundException) {
-            Timber.d(TAG, "File not found: " + e.message)
+            Timber.tag(TAG).d("File not found: " + e.message)
             saved = false
         } catch (e: IOException) {
-            Timber.d(TAG, "Error accessing file: " + e.message)
+            Timber.tag(TAG).d("Error accessing file: " + e.message)
             saved = false
         } catch (e: Exception) {
-            Timber.d(TAG, "Error accessing file: " + e.message)
+            Timber.tag(TAG).d("Error accessing file: " + e.message)
             saved = false
         }
 
@@ -346,7 +346,7 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
             // Create the storage directory if it does not exist
             if (!mediaStorageDir.exists()) {
                 if (!mediaStorageDir.mkdirs()) {
-                    Timber.d("MyCameraApp", "failed to create directory")
+                    Timber.d("MyCameraApp failed to create directory")
                     return null
                 }
             }
