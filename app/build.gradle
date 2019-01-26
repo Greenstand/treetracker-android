@@ -18,7 +18,14 @@ apply plugin: 'com.github.triplet.play'
 
 def loadExtraProperties(String fileName) {
     def props = new Properties()
-    props.load(new FileInputStream(fileName))
+    if (System.getenv('CI_BITRISE') == "true") {
+        URL propFile = new URL(System.getenv("BITRISEIO_treetracker_URL"))
+        BufferedReader input = new BufferedReader(
+                new InputStreamReader(propFile.openStream()))
+        props.load(input)
+    } else {
+        props.load(new FileInputStream(fileName))
+    }
 
     props.each { key, val ->
         project.setProperty(key, val)
@@ -125,13 +132,12 @@ dependencies {
     api 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     api "com.squareup.retrofit2:retrofit:${retrofit2Version}"
     api "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
-    api 'com.jakewharton.timber:timber:4.6.1'
+    api 'com.jakewharton.timber:timber:4.7.1'
     api 'com.amazonaws:aws-android-sdk-s3:2.2.22'
     api('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
     }
     api 'com.google.firebase:firebase-core:16.0.6'
-
 
 
     implementation "androidx.legacy:legacy-support-v4:${androidSupportVersion}"

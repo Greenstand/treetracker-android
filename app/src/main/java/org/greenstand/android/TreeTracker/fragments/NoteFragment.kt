@@ -405,7 +405,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
             rotationAngle = 270
 
-        Timber.d("rotationAngle", Integer.toString(rotationAngle))
+        Timber.tag("rotationAngle").d(rotationAngle.toString())
 
         val matrix = Matrix()
         matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,

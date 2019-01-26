@@ -133,7 +133,7 @@ class DbHelper(private val myContext: Context, name: String, factory: CursorFact
                         .getColumnIndex("time_for_update")))
 
                     val treeId = db2Helper.writableDatabase.insert("tree", null, treeContentValues)
-                    Timber.d("treeId", java.lang.Long.toString(treeId))
+                    Timber.tag("treeId").d( treeId.toString())
 
                     // tree_photo
                     val treePhotoContentValues = ContentValues()
