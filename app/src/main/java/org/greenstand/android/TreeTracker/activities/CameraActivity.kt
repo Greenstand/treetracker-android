@@ -60,7 +60,7 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         // Add a listener to the buttons
         captureButton!!.setOnClickListener(this@CameraActivity)
 
-        if(intent.extras != null) {
+        intent.extras?.let {
             captureSelfie = intent.extras!!.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
         }
     }
