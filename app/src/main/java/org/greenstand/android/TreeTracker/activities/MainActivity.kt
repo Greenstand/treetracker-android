@@ -82,8 +82,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar!!.title = ""
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.title = ""
 
 
         val extras = intent.extras
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         }
 
-        val userIdentifier = mSharedPreferences!!.getString(ValueHelper.PLANTER_IDENTIFIER, null)
+        val userIdentifier = mSharedPreferences?.getString(ValueHelper.PLANTER_IDENTIFIER, null)
         if(  userIdentifier == null){
             val editor = mSharedPreferences?.edit()
             editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
@@ -124,20 +124,20 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             fragment = UserIdentificationFragment()
             fragmentTransaction = supportFragmentManager
                     .beginTransaction()
-            fragmentTransaction!!.replace(R.id.containerFragment, fragment as UserIdentificationFragment)
-                    .addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+            fragmentTransaction?.replace(R.id.containerFragment, fragment as UserIdentificationFragment)
+                    ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
         }else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
             Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
             var bundle = intent.extras
 
             fragment = MapsFragment()
-            fragment!!.arguments = bundle
+            fragment?.arguments = bundle
 
             fragmentTransaction = supportFragmentManager
                     .beginTransaction()
-            fragmentTransaction!!.replace(R.id.containerFragment, fragment as MapsFragment)
-                .addToBackStack(ValueHelper.MAP_FRAGMENT).commit()
+            fragmentTransaction?.replace(R.id.containerFragment, fragment as MapsFragment)
+                ?.addToBackStack(ValueHelper.MAP_FRAGMENT)?.commit()
 
             if (bundle == null)
                 bundle = Bundle()
@@ -146,12 +146,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
 
             fragment = DataFragment()
-            fragment!!.arguments = bundle
+            fragment?.arguments = bundle
 
             fragmentTransaction = supportFragmentManager
                     .beginTransaction()
-            fragmentTransaction!!.replace(R.id.containerFragment, fragment as DataFragment)
-                .addToBackStack(ValueHelper.DATA_FRAGMENT).commit()
+            fragmentTransaction?.replace(R.id.containerFragment, fragment as DataFragment)
+                ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
 
         } else {
             if (userIdentifier != getString(R.string.user_not_identified)) {
@@ -164,11 +164,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragmentTransaction.replace(R.id.containerFragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
                 fragmentTransaction.commit()
             }else {
-                val editor = mSharedPreferences!!.edit()
-                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor.commit()
+                val editor = mSharedPreferences?.edit()
+                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor?.putString(ValueHelper.PLANTER_PHOTO, null)
+                editor?.commit()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
@@ -176,8 +176,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragment = UserIdentificationFragment()
                 fragmentTransaction = supportFragmentManager
                         .beginTransaction()
-                fragmentTransaction!!.replace(R.id.containerFragment,
-                        fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+                fragmentTransaction?.replace(R.id.containerFragment,
+                        fragment as UserIdentificationFragment)?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
             }
         }
     }
@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             R.id.action_data -> {
                 fragment = DataFragment()
                 bundle = intent.extras
-                fragment!!.arguments = bundle
+                fragment?.arguments = bundle
 
                 fragmentTransaction = supportFragmentManager.beginTransaction()
                 fragmentTransaction?.replace(R.id.containerFragment, fragment as DataFragment)
@@ -252,11 +252,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
 
             R.id.action_change_user -> {
-                val editor = mSharedPreferences!!.edit()
-                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor.commit()
+                val editor = mSharedPreferences?.edit()
+                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                editor?.putString(ValueHelper.PLANTER_PHOTO, null)
+                editor?.commit()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
@@ -503,7 +503,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     private fun stopPeriodicUpdates() {
         if (locationManager != null) {
-            locationManager!!.removeUpdates(mLocationListener)
+            locationManager?.removeUpdates(mLocationListener)
             mLocationListener = null
         }
         mLocationUpdatesStarted = false
@@ -540,7 +540,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true)
 
                     fragment = DataFragment()
-                    fragment!!.arguments = bundle
+                    fragment?.arguments = bundle
 
                     fragmentTransaction = supportFragmentManager
                             .beginTransaction()
@@ -555,7 +555,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
         }
         Timber.d("getMyTrees")
-        mDataManager!!.loadUserTrees()
+        mDataManager?.loadUserTrees()
     }
 
 
