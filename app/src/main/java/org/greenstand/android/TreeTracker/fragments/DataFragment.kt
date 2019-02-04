@@ -18,9 +18,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.amazonaws.AmazonClientException
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_data.*
 import kotlinx.android.synthetic.main.fragment_data.view.*
 import kotlinx.coroutines.Job
 
@@ -54,7 +54,7 @@ import java.lang.Integer.valueOf
  * Created by lei on 11/9/17.
  */
 
-class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
+class DataFragment : Fragment(), View.OnClickListener {
 
     private var totalTrees: TextView? = null
     private var updateTrees: TextView? = null
@@ -75,11 +75,10 @@ class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
 
         mSharedPreferences = activity!!.getSharedPreferences(
                 ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
-
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -126,7 +125,6 @@ class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
             Toast.makeText(activity, "Sync stopped", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     private fun startDataSynchronization() {
         syncBtn?.setText(R.string.stop)
@@ -195,7 +193,8 @@ class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
         val authenticationRequest = AuthenticationRequest()
         authenticationRequest.clientId = BuildConfig.TREETRACKER_CLIENT_ID
         authenticationRequest.clientSecret = BuildConfig.TREETRACKER_CLIENT_SECRET
-        authenticationRequest.deviceAndroidId = Settings.Secure.getString(activity!!.contentResolver, Settings.Secure.ANDROID_ID);
+        authenticationRequest.deviceAndroidId = Settings.Secure.getString(activity!!.contentResolver,
+            Settings.Secure.ANDROID_ID)
 
         try {
             val signInReponse = Api.instance().api!!.signIn(authenticationRequest).execute()
@@ -226,8 +225,6 @@ class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
         } catch ( e: IOException) {
             return@async false
         }
-
-
     }
 
     private fun getTreesToUploadCursor() = async {
@@ -272,16 +269,21 @@ class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
 
     private fun uploadPlanterRegistration(registrationsCursor: Cursor) = async {
         val registration = RegistrationRequest()
-        registration.planterIdentifier = registrationsCursor.getString(registrationsCursor.getColumnIndex("identifier"))
-        registration.firstName = registrationsCursor.getString(registrationsCursor.getColumnIndex("first_name"))
-        registration.lastName = registrationsCursor.getString(registrationsCursor.getColumnIndex("last_name"))
-        registration.organization = registrationsCursor.getString(registrationsCursor.getColumnIndex("organization"))
+        registration.planterIdentifier = registrationsCursor.getString(registrationsCursor
+            .getColumnIndex("identifier"))
+        registration.firstName = registrationsCursor.getString(registrationsCursor
+            .getColumnIndex("first_name"))
+        registration.lastName = registrationsCursor.getString(registrationsCursor
+            .getColumnIndex("last_name"))
+        registration.organization = registrationsCursor.getString(registrationsCursor
+            .getColumnIndex("organization"))
         val result = Api.instance().api!!.createPlanterRegistration(registration).execute()
         if(result != null) {
             val id = registrationsCursor.getString(registrationsCursor.getColumnIndex("_id"))
             val values = ContentValues()
             values.put("uploaded", "Y")
-            TreeTrackerApplication.getDatabaseManager().update("planter_details", values, "_id = ?", arrayOf(id))
+            TreeTrackerApplication.getDatabaseManager().update("planter_details", values, "_id = ?",
+                arrayOf(id))
             return@async true
         } else {
             return@async false
@@ -375,7 +377,8 @@ class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
             values.put("is_synced", "Y")
             values.put("main_db_id", treeIdResponse)
             val isMissingCursor = TreeTrackerApplication.getDatabaseManager()
-                    .queryCursor("SELECT is_missing FROM tree WHERE is_missing = 'Y' AND _id = $localTreeId", null)
+                    .queryCursor("SELECT is_missing FROM tree WHERE is_missing = 'Y' AND _id = $localTreeId",
+                        null)
             if (isMissingCursor.moveToNext()) {
                 TreeTrackerApplication.getDatabaseManager().delete("tree", "_id = ?", arrayOf(localTreeId))
                 val photoQuery = "SELECT name FROM photo left outer join tree_photo on photo_id = photo._id where tree_id = $localTreeId"
@@ -390,7 +393,8 @@ class DataFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
 
                 }
             } else {
-                TreeTrackerApplication.getDatabaseManager().update("tree", values, "_id = ?", arrayOf(localTreeId))
+                TreeTrackerApplication.getDatabaseManager().update("tree", values, "_id = ?",
+                    arrayOf(localTreeId))
                 val outDatedQuery = "SELECT name FROM photo left outer join tree_photo on photo_id = photo._id where is_outdated = 'Y' and tree_id = $localTreeId"
                 val outDatedPhotoCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(outDatedQuery, null)
                 while (outDatedPhotoCursor.moveToNext()) {

@@ -58,8 +58,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
 
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -82,13 +82,17 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
         mImageView = v.fragmentNewTreeImage
 
         val newTreeDistance = v.fragmentNewTreeDistance
-        newTreeDistance.text = Integer.toString(0) + " " + resources.getString(R.string.meters)
+        val newTreeDistanceString = Integer.toString(0) + " " + resources.getString(R.string.meters)
+        newTreeDistance.text = newTreeDistanceString
 
         val newTreeGpsAccuracy = v.fragmentNewTreeGpsAccuracy
         if (MainActivity.mCurrentLocation != null) {
-            newTreeGpsAccuracy.text = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+            val newTreeGpsAccuracyString1 = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) +
+                    " " + resources.getString(R.string.meters)
+            newTreeGpsAccuracy.text = newTreeGpsAccuracyString1
         } else {
-            newTreeGpsAccuracy.text = "0 " + resources.getString(R.string.meters)
+            val newTreeGpsAccuracyString2 = "0 " + resources.getString(R.string.meters)
+            newTreeGpsAccuracy.text = newTreeGpsAccuracyString2
         }
 
 
@@ -98,7 +102,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
                 ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING))
 
         val newTreetimeToNextUpdate = v.fragmentNewTreeNextUpdate
-        newTreetimeToNextUpdate.setText(Integer.toString(timeToNextUpdate))
+        val newTreeTimeToNextUpdateString = Integer.toString(timeToNextUpdate)
+        newTreetimeToNextUpdate.setText(newTreeTimeToNextUpdateString)
 
         if (mSharedPreferences!!.getBoolean(ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT, false)) {
             newTreetimeToNextUpdate.isEnabled = false
@@ -146,7 +151,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
 
     private fun takePicture() {
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
@@ -280,7 +286,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
             val treePhotoContentValues = ContentValues()
             treePhotoContentValues.put("tree_id", treeId)
             treePhotoContentValues.put("photo_id", photoId)
-            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null, treePhotoContentValues)
+            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null,
+                treePhotoContentValues)
             Timber.d("treePhotoId " + java.lang.Long.toString(treePhotoId))
 
 

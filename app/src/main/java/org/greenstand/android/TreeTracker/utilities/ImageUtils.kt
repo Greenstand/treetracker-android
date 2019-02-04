@@ -1,13 +1,14 @@
 package org.greenstand.android.TreeTracker.utilities
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
 import android.util.Log
 import android.widget.Toast
+import androidx.exifinterface.media.ExifInterface
 import timber.log.Timber
 
 import java.io.File
@@ -17,6 +18,7 @@ import java.util.Date
 
 object ImageUtils {
 
+    @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
     fun createImageFile(context: Context): File {
         // Create an image file name
@@ -39,7 +41,7 @@ object ImageUtils {
         // Calculate your sampleSize based on the requiredWidth and
         // originalWidth
         // For e.g you want the width to stay consistent at 500dp
-        val requiredWidth = (500 * density!!).toInt()
+        val requiredWidth = (500 * density).toInt()
 
         var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
@@ -61,7 +63,7 @@ object ImageUtils {
 
         var exif: ExifInterface? = null
         try {
-            exif = ExifInterface(photoPath)
+            exif = ExifInterface(photoPath!!)
         } catch (e: IOException) {
             // TODO Auto-generated catch block
             e.printStackTrace()
@@ -83,7 +85,7 @@ object ImageUtils {
         Timber.d("rotationAngle " + Integer.toString(rotationAngle))
 
         val matrix = Matrix()
-        matrix.setRotate(rotationAngle.toFloat(), bitmap!!.width.toFloat() / 2,
+        matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
                 bitmap.height.toFloat() / 2)
         return Bitmap.createBitmap(bitmap, 0, 0,
                 bmOptions.outWidth, bmOptions.outHeight, matrix, true)

@@ -77,9 +77,9 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                 // do the login
                 TreeTrackerApplication. getDatabaseManager().openDatabase();
 
-                val identifier = mUserIdentifier.toString()
+                val identifier1 = mUserIdentifier.toString()
                 val planterDetailsCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(
-                        "SELECT * FROM planter_details WHERE identifier = '$identifier'", null);
+                        "SELECT * FROM planter_details WHERE identifier = '$identifier1'", null);
                 var planterDetailsId : Int? = null
                 if(planterDetailsCursor.count > 0){
                     planterDetailsCursor.moveToFirst()
@@ -89,7 +89,7 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
 
                 // photo
                 val identificationContentValues = ContentValues()
-                identificationContentValues.put("identifier", identifier)
+                identificationContentValues.put("identifier", identifier1)
                 identificationContentValues.put("photo_path", mPhotoPath)
                 identificationContentValues.put("planter_details_id", planterDetailsId)
 
@@ -99,13 +99,13 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
 
                 mSharedPreferences = activity!!.getSharedPreferences(
                         ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
-                val editor = mSharedPreferences!!.edit()
+                val editor = mSharedPreferences?.edit()
 
                 val tsLong = System.currentTimeMillis() / 1000
-                editor!!.putString(ValueHelper.PLANTER_IDENTIFIER, mUserIdentifier.toString())
-                editor!!.putString(ValueHelper.PLANTER_PHOTO, mPhotoPath)
-                editor!!.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
-                editor!!.commit()
+                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, mUserIdentifier.toString())
+                editor?.putString(ValueHelper.PLANTER_PHOTO, mPhotoPath)
+                editor?.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
+                editor?.apply()
 
                 // TODO consider returning to MapFragment and pushing this new fragment from there
 
@@ -114,16 +114,17 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                         .beginTransaction()
                 if(planterDetailsId == null){
                     val fragment = UserDetailsFragment()
-                    fragmentTransaction!!.replace(R.id.containerFragment, fragment).addToBackStack(ValueHelper.USER_DETAILS_FRAGMENT).commit()
+                    fragmentTransaction.replace(R.id.containerFragment, fragment)
+                        .addToBackStack(ValueHelper.USER_DETAILS_FRAGMENT).commit()
 
                 } else {
 
                     // We only fully verify the user identification if we have already collected the details
-                    editor!!.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
-                    editor!!.commit()
+                    editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
+                    editor?.apply()
 
                     val fragment = UserDetailsFragment()
-                    fragmentTransaction!!.replace(R.id.containerFragment, fragment).commit()
+                    fragmentTransaction.replace(R.id.containerFragment, fragment).commit()
                 }
             }
         }
@@ -138,7 +139,8 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
 
     private fun takePicture() {
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context!!,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     Permissions.MY_PERMISSION_CAMERA)
         } else {
@@ -154,7 +156,6 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
             takePicture()
         }
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
@@ -177,6 +178,4 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
           
         }
     }
-
-
 }

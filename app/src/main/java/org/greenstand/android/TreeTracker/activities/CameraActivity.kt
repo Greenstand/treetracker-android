@@ -10,13 +10,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.hardware.Camera
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.exifinterface.media.ExifInterface
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.camera_preview.*
 import kotlinx.coroutines.Job
@@ -34,7 +34,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
+    ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mCamera: Camera? = null
     private var mPreview: CameraPreview? = null
@@ -59,8 +60,8 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         // Add a listener to the buttons
         captureButton!!.setOnClickListener(this@CameraActivity)
 
-        if(intent.extras != null) {
-            captureSelfie = intent.extras.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
+        intent.extras?.let {
+            captureSelfie = intent.extras!!.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
         }
     }
 

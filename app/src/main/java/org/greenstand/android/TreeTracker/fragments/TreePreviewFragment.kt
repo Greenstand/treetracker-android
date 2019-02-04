@@ -1,11 +1,11 @@
 package org.greenstand.android.TreeTracker.fragments
 
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
-import android.media.ExifInterface
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.HapticFeedbackConstants
@@ -15,7 +15,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.view.*
@@ -52,10 +52,11 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         super.onResume()
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.clear()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
     }
 
+    @SuppressLint("SimpleDateFormat")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val v = inflater.inflate(R.layout.fragment_tree_preview, container, false)
@@ -102,8 +103,10 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             }
 
             MainActivity.mCurrentTreeLocation = Location("")
-            MainActivity.mCurrentTreeLocation!!.latitude = java.lang.Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("lat")))
-            MainActivity.mCurrentTreeLocation!!.longitude = java.lang.Double.parseDouble(photoCursor.getString(photoCursor.getColumnIndex("long")))
+            MainActivity.mCurrentTreeLocation!!.latitude = java.lang.Double.parseDouble(photoCursor.getString(
+                photoCursor.getColumnIndex("lat")))
+            MainActivity.mCurrentTreeLocation!!.longitude = java.lang.Double.parseDouble(photoCursor.getString(
+                photoCursor.getColumnIndex("long")))
 
             // No GPS accuracy info from new api.
             //			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
@@ -115,18 +118,22 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             }
 
             val distanceTxt = v.fragmentTreePreviewDistance
-            distanceTxt.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
+            val distanceTxtString = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
+            distanceTxt.text = distanceTxtString
 
             val accuracyTxt = v.fragmentTreePreviewGpsAccuracy
             val treeAccuracy = photoCursor.getString(photoCursor.getColumnIndex("accuracy")).toFloat()
-            accuracyTxt.text = treeAccuracy.toString() + " " + resources.getString(R.string.meters)
+            val accuracyTxtString = treeAccuracy.toString() + " " + resources.getString(R.string.meters)
+            accuracyTxt.text = accuracyTxtString
 
 
             val createdTxt = v.fragmentTreePreviewCreated
-            createdTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_created")).substring(0, photoCursor.getString(photoCursor.getColumnIndex("time_created")).lastIndexOf(":"))
+            createdTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_created")).substring(0,
+                photoCursor.getString(photoCursor.getColumnIndex("time_created")).lastIndexOf(":"))
 
             val updatedTxt = v.fragmentTreePreviewLastUpdate
-            updatedTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_updated")).substring(0, photoCursor.getString(photoCursor.getColumnIndex("time_updated")).lastIndexOf(":"))
+            updatedTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_updated")).substring(0,
+                photoCursor.getString(photoCursor.getColumnIndex("time_updated")).lastIndexOf(":"))
 
             val statusTxt = v.fragmentTreePreviewImageStatus
 
@@ -151,7 +158,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
             val noteCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(noteQuery, null)
 
-
             val notesTxt = v.fragmentTreePreviewNotes
 
             notesTxt.text = " "
@@ -166,9 +172,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                 val text = noteCursor.getString(noteCursor.getColumnIndex("notetext")) + "\n\n" + currentText
 
                 notesTxt.text = text
-
             }
-
 
         } while (photoCursor.moveToNext())
 
@@ -177,7 +181,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
     }
 
     override fun onClick(v: View) {
-
 
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
 
@@ -195,15 +198,13 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
                 fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
-                fragmentTransaction!!.replace(R.id.containerFragment, fragment as NoteFragment)
-                        .addToBackStack(ValueHelper.NOTE_FRAGMENT).commit()
+                fragmentTransaction?.replace(R.id.containerFragment, fragment as NoteFragment)
+                        ?.addToBackStack(ValueHelper.NOTE_FRAGMENT)?.commit()
             }
 
             else -> {
             }
         }
-
-
     }
 
     private fun setPic() {
@@ -240,7 +241,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
         var exif: ExifInterface? = null
         try {
-            exif = ExifInterface(mCurrentPhotoPath)
+            exif = ExifInterface(mCurrentPhotoPath!!)
 
             val orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION)
             val orientation = if (orientString != null)
@@ -268,8 +269,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             e.printStackTrace()
             mImageView!!.setImageBitmap(bitmap)
         }
-
-
 
         mImageView!!.visibility = View.VISIBLE
     }

@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.fragments
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.SharedPreferences
@@ -17,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import com.amazonaws.util.IOUtils
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -46,7 +46,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback, View.OnLongClickListener {
+class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback,
+    View.OnLongClickListener {
 
     private var mSettingCallback: LocationDialogListener? = null
 
@@ -65,13 +66,13 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         fun refreshMap()
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         try {
             mSettingCallback = context as LocationDialogListener?
         } catch (e: ClassCastException) {
-            throw ClassCastException(context!!.toString() + " must implement LocationDialogListener")
+            throw ClassCastException(context.toString() + " must implement LocationDialogListener")
         }
 
     }
@@ -114,11 +115,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
                 editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
                 editor.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor.commit()
+                editor.apply()
             } else {
                 cursor.moveToFirst()
-                val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(cursor.getColumnIndex("last_name"))
-                activity!!.toolbarTitle.text = title
+                val title = cursor.getString(cursor.getColumnIndex("first_name")) + " " + cursor.getString(
+                    cursor.getColumnIndex("last_name"))
+                activity?.toolbarTitle?.text = title
 
                 val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
                 val imageView = view!!.mapUserImage
@@ -198,7 +200,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 if (MainActivity.mCurrentLocation!!.hasAccuracy() && MainActivity.mCurrentLocation!!.accuracy < minAccuracy) {
                     fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracyValue.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyValue.text = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    val fragmentMapGpsAccuracyValueString1 = Integer.toString(Math.round(MainActivity
+                        .mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString1
                     MainActivity.mAllowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracy.setTextColor(Color.RED)
@@ -206,15 +210,18 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
                     if (MainActivity.mCurrentLocation!!.hasAccuracy()) {
                         fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyValue.text = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        val fragmentMapGpsAccuracyValueString2 = Integer.toString(Math.round(MainActivity
+                            .mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString2
                     } else {
                         fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
                         fragmentMapGpsAccuracyValue.text = "N/A"
                     }
                 }
             } else {
-                if (ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(activity!!,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(
                             arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
                             Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION)
@@ -247,8 +254,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             R.id.addTreeButton -> {
                 Timber.d("fab click")
 
-
-
                 if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY == "off") {
 
                     val currentTimestamp = System.currentTimeMillis() / 1000
@@ -258,18 +263,18 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                         fragment = UserIdentificationFragment()
                         fragmentTransaction = activity!!.supportFragmentManager
                                 .beginTransaction()
-                        fragmentTransaction!!.replace(R.id.containerFragment, fragment as UserIdentificationFragment).addToBackStack(ValueHelper.IDENTIFY_FRAGMENT).commit()
+                        fragmentTransaction?.replace(R.id.containerFragment, fragment as UserIdentificationFragment)
+                            ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
                     } else {
-
                         fragment = NewTreeFragment()
                         bundle = activity!!.intent.extras
-                        fragment!!.arguments = bundle
+                        fragment?.arguments = bundle
 
-                        fragmentTransaction = activity!!.supportFragmentManager
-                                .beginTransaction()
-                        fragmentTransaction!!.replace(R.id.containerFragment, fragment as NewTreeFragment).addToBackStack(ValueHelper.NEW_TREE_FRAGMENT).commit()
-
+                        fragmentTransaction = activity?.supportFragmentManager
+                                ?.beginTransaction()
+                        fragmentTransaction?.replace(R.id.containerFragment, fragment as NewTreeFragment)
+                            ?.addToBackStack(ValueHelper.NEW_TREE_FRAGMENT)?.commit()
 
                     }
                 } else {
@@ -317,15 +322,13 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         //
         //				break;
 
-
     }
 
     // For debug analysis purposes only
+    @SuppressLint("SimpleDateFormat")
     override fun onLongClick(view: View): Boolean {
 
         Toast.makeText(activity, "Adding lot of trees", Toast.LENGTH_LONG).show()
-
-
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
 
@@ -364,7 +367,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 e.printStackTrace()
             }
 
-
             val treeContentValues = ContentValues()
             treeContentValues.put("user_id", userId)
             treeContentValues.put("location_id", locationId)
@@ -374,11 +376,11 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
             val treeId = TreeTrackerApplication.getDatabaseManager().insert("tree", null, treeContentValues)
 
-
             val treePhotoContentValues = ContentValues()
             treePhotoContentValues.put("tree_id", treeId)
             treePhotoContentValues.put("photo_id", photoId)
-            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null, treePhotoContentValues)
+            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null,
+                treePhotoContentValues)
             //Timber.d("treePhotoId " + Long.toString(treePhotoId));
         }
 
@@ -399,15 +401,17 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         fragmentTransaction = activity!!.supportFragmentManager
                 .beginTransaction()
-        fragmentTransaction!!.replace(R.id.containerFragment, fragment as TreePreviewFragment).addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT).commit()
+        fragmentTransaction?.replace(R.id.containerFragment, fragment as TreePreviewFragment)
+            ?.addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT)?.commit()
         return true
     }
 
 
     override fun onMapReady(map: GoogleMap) {
 
-
-        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -419,8 +423,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         }
         map.isMyLocationEnabled = true
 
-
-        val treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null)
+        val treeCursor = TreeTrackerApplication.getDatabaseManager()
+            .queryCursor("select *, tree._id as tree_id from tree left outer join location on location_id = location._id where is_missing = 'N'", null)
         treeCursor.moveToFirst()
 
         if (treeCursor.count > 0) {
@@ -433,7 +437,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 latLng = LatLng(java.lang.Double.parseDouble(treeCursor.getString(treeCursor.getColumnIndex("lat"))),
                         java.lang.Double.parseDouble(treeCursor.getString(treeCursor.getColumnIndex("long"))))
 
-
                 val markerOptions = MarkerOptions()
                         .title(java.lang.Long.toString(treeCursor.getLong(treeCursor.getColumnIndex("tree_id"))))// set Id instead of title
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
@@ -441,7 +444,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 map.addMarker(markerOptions)
 
             } while (treeCursor.moveToNext())
-
 
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
 
@@ -459,6 +461,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     companion object {
         private val TAG = "MapsFragment"
+        @SuppressLint("StaticFieldLeak")
         private var view: View? = null
     }
 }

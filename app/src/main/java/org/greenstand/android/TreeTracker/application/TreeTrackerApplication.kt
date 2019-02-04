@@ -31,7 +31,6 @@ class TreeTrackerApplication : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-
     }
 
     override fun attachBaseContext(base: Context) {
@@ -44,7 +43,7 @@ class TreeTrackerApplication : Application() {
         val dbHelper = DbHelper.getDbHelper(this)
 
         try {
-            dbHelper!!.createDataBase()
+            dbHelper.createDataBase()
         } catch (e: IOException) {
             // This should be a fatal error
             e.printStackTrace()
@@ -65,9 +64,6 @@ class TreeTrackerApplication : Application() {
             }
             return databaseManager!!
         }
-
-
-
 
     }
 }

@@ -65,7 +65,6 @@ class Utils {
             }
         }
 
-
         /**
          * @param inputStream
          * InputStream which is to be converted into String
@@ -115,9 +114,7 @@ class Utils {
 
             return ""
 
-
         }
-
 
         fun sendJson(json: JSONObject, where: String) {
             val t = object : Thread() {
@@ -153,7 +150,6 @@ class Utils {
                                 rsp = Utils.convertStreamToString(`in`)
                             }
 
-
                         }
 
                     } catch (e: Exception) {
@@ -167,7 +163,6 @@ class Utils {
 
             t.start()
         }
-
 
         fun resizedImage(path: String): Bitmap {
 
