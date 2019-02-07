@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.greenstand.android.TreeTracker"
-    android:installLocation="auto">
+          package="org.greenstand.android.TreeTracker"
+          android:installLocation="auto">
 
     <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true"/>
-
-    <uses-feature
-        android:name="android.hardware.camera" />
+            android:glEsVersion="0x00020000"
+            android:required="true"/>
+    <uses-feature android:name="android.hardware.camera"/>
 
     <supports-screens
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:xlargeScreens="true"
-        android:anyDensity="true" />
+            android:anyDensity="true"
+            android:largeScreens="true"
+            android:normalScreens="true"
+            android:smallScreens="true"
+            android:xlargeScreens="true"/>
 
-
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
@@ -27,52 +24,57 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <permission
-        android:name="com.greenstand.android.TreeTracker.MAPS_RECEIVE"
-        android:protectionLevel="signature"/>
+            android:name="com.greenstand.android.TreeTracker.MAPS_RECEIVE"
+            android:protectionLevel="signature"/>
+
     <uses-permission android:name="com.greenstand.android.TreeTracker.MAPS_RECEIVE"/>
 
     <application
-        android:name=".application.TreeTrackerApplication"
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:supportsRtl="true"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true">
-
-
-        <activity android:name=".activities.CameraActivity"
-            android:configChanges="orientation"
+            android:name=".application.TreeTrackerApplication"
+            android:allowBackup="true"
+            android:hardwareAccelerated="true"
+            android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="portrait">
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+        <activity
+                android:name=".activities.SignUpActivity"
+                android:configChanges="locale"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:windowSoftInputMode="adjustPan"
+        >
+        </activity>
+        <activity
+                android:name=".activities.CameraActivity"
+                android:configChanges="orientation"
+                android:label="@string/app_name"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+
             <!-- configure this activity to use portrait orientation -->
         </activity>
-
-
         <activity
-            android:name=".activities.MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:configChanges="locale"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+                android:name=".activities.MainActivity"
+                android:configChanges="locale"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:windowSoftInputMode="adjustPan">
         </activity>
-
         <activity
-            android:name=".activities.SplashActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:configChanges="locale"
-            android:launchMode="singleTask"
-            android:noHistory="true"
-            android:theme="@android:style/Theme.Black.NoTitleBar"
-            >
+                android:name=".activities.SplashActivity"
+                android:configChanges="locale"
+                android:launchMode="singleTask"
+                android:noHistory="true"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
+                android:windowSoftInputMode="adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -82,37 +84,30 @@
             </intent-filter>
         </receiver>
 
-
         <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version"/>
         <meta-data
-           android:name="com.google.android.maps.v2.API_KEY"
-           android:value="AIzaSyCw3J04DQgxglY8D5OwRgqVR_IVDOhI7yc"/>
-
+                android:name="com.google.android.maps.v2.API_KEY"
+                android:value="AIzaSyCw3J04DQgxglY8D5OwRgqVR_IVDOhI7yc"/>
         <!--
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD-kTHgZzm7Cx18yyqQjMeQV3an3cuyqnc"/>
-            -->
-
+        -->
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="a1a27770fb1f13f8ce4a3939116272205df62792" />
+                android:name="io.fabric.ApiKey"
+                android:value="a1a27770fb1f13f8ce4a3939116272205df62792"/>
+
         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/provider_paths"/>
         </provider>
-
     </application>
-
-
-
 
 </manifest>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/fifty_dp"
+            android:background="@color/greenColor">
+
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/fifty_dp">
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/eleven_dp"
+                    android:layout_marginBottom="@dimen/fifteen_dp"
+                    style="@style/TextTitleStyle"
+                    android:text="@string/greenstand_welcome_text"/>
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:id="@+id/logo_greenstand"
+                android:contentDescription="@string/greenstand_welcome_text"
+                android:layout_width="@dimen/logo_width"
+                android:layout_height="@dimen/logo_height"
+                android:layout_gravity="center_horizontal"
+                android:baselineAlignBottom="true"
+                app:layout_anchorGravity="center_horizontal"
+                android:src="@drawable/greenstandlogo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/logo_top_margins"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        <include
+                layout="@layout/fragment_sign_up"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/login_fragment_top_margin"
+                app:layout_constraintTop_toBottomOf="@+id/logo_greenstand"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

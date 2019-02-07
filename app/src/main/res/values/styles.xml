@@ -33,12 +33,13 @@
     <style name="TextTitleStyle">
         <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textColor">@color/blackColor</item>
+        <item name="android:textStyle">bold</item>
     </style>
+
     
     <style name="TextBodyStyle">
         <item name="android:textSize">@dimen/body_text_size</item>
         <item name="android:textColor">@color/blackColor</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextInactiveStyle">
@@ -47,11 +48,13 @@
     </style>
 
     <style name="InactiveButtonStyle" parent="TextInactiveStyle">
-       <item name="android:background">@drawable/button_border</item>
+       <item name="android:background">@drawable/button_inactive</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="ActiveButtonStyle" parent="TextBodyStyle">
-        <item name="android:background">@color/greenColor</item>
+        <item name="android:background">@drawable/button_active</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>
