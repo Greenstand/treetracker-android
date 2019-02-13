@@ -4,11 +4,14 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/nineteen_dp"
+            android:background="@color/white">
         <ImageView
                 android:id="@+id/logo_greenstand"
                 android:contentDescription="@string/greenstand_welcome_text"
@@ -99,7 +102,7 @@
                 android:layout_marginTop="@dimen/nineteen_dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toEndOf="@+id/guideline4"
-                style="@style/InactiveButtonStyle"
+                style="@style/ActiveButtonStyle"
                 android:text="@string/login_button_title"
                 app:layout_constraintTop_toBottomOf="@+id/line2"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"

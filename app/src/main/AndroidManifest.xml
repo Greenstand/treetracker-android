@@ -43,8 +43,12 @@
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar"
-                android:windowSoftInputMode="adjustPan"
-        >
+                android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
         <activity
                 android:name=".activities.CameraActivity"
@@ -71,11 +75,7 @@
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.Black.NoTitleBar"
                 android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
 
         <receiver android:name=".network.NetworkReceiver">
