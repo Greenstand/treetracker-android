@@ -112,7 +112,7 @@ class DataFragment : Fragment(), View.OnClickListener {
             }
 
             if (extras.getBoolean(ValueHelper.RUN_FROM_NOTIFICATION_SYNC)) {
-                Toast.makeText(activity, "Start syncing", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, R.string.sync_started, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -122,7 +122,7 @@ class DataFragment : Fragment(), View.OnClickListener {
         super.onPause()
         if (operationAttempt != null) {
             operationAttempt!!.cancel()
-            Toast.makeText(activity, "Sync stopped", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, R.string.sync_stopped, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -139,7 +139,7 @@ class DataFragment : Fragment(), View.OnClickListener {
             }
 
             if(!success){
-                Toast.makeText(activity, "Start Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, R.string.sync_failed, Toast.LENGTH_SHORT).show()
             } else {
 
                 val registrationsCursor = getPlanterRegistrationsToUploadCursor().await()
@@ -179,9 +179,9 @@ class DataFragment : Fragment(), View.OnClickListener {
                 if(activity != null) {
                     syncBtn?.setText(R.string.sync)
                     if (success) {
-                        Toast.makeText(activity, "Sync Successful", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, R.string.sync_successful, Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(activity, "Sync Failed, Please try again", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, R.string.sync_failed, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -424,11 +424,11 @@ class DataFragment : Fragment(), View.OnClickListener {
         when(numbersOfTreesToSync) {
             0 -> {
                 operationAttempt?.cancel();
-                Toast.makeText(activity, "Pause syncing", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, R.string.nothing_to_sync, Toast.LENGTH_SHORT).show()
                 syncBtn?.setText(R.string.sync)
             }
             else -> {
-                Toast.makeText(activity, "Start syncing", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, R.string.sync_started, Toast.LENGTH_SHORT).show()
                 startDataSynchronization()
             }
         }
