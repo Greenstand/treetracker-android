@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.fragments
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Context
@@ -22,12 +23,10 @@ import androidx.fragment.app.Fragment
 import com.amazonaws.AmazonClientException
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_data.view.*
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 
 
 import kotlinx.coroutines.android.UI
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 import org.greenstand.android.TreeTracker.BuildConfig
 
@@ -55,10 +54,11 @@ import java.lang.Integer.valueOf
 
 class DataFragment : Fragment(), View.OnClickListener {
 
-    private var totalTrees: TextView? = null
-    private var updateTrees: TextView? = null
-    private var locatedTrees: TextView? = null
-    private var tosyncTrees: TextView? = null
+    lateinit var totalTrees: TextView
+    lateinit var updateTrees: TextView
+    lateinit var locatedTrees: TextView
+    lateinit var tosyncTrees: TextView
+
     private var progressDialog: ProgressDialog? = null
     private var mSharedPreferences: SharedPreferences? = null
     private var userId: Long = -1
@@ -174,12 +174,14 @@ class DataFragment : Fragment(), View.OnClickListener {
                     val uploadSuccess = if (treeRequest != null) {
                         uploadNextTreeAsync(localTreeId, treeRequest).await()
                     } else {
+                        Timber.e("TreeRequest creation failed")
                         false
                     }
 
                     if (uploadSuccess) {
                         updateData()
                     } else {
+                        Timber.e("NewTree upload failed")
                         break
                     }
                 }
@@ -198,11 +200,8 @@ class DataFragment : Fragment(), View.OnClickListener {
 
     private fun identifyDevice() = async {
 
-        val authenticationRequest = AuthenticationRequest()
-        authenticationRequest.clientId = BuildConfig.TREETRACKER_CLIENT_ID
-        authenticationRequest.clientSecret = BuildConfig.TREETRACKER_CLIENT_SECRET
-        authenticationRequest.deviceAndroidId = Settings.Secure.getString(activity!!.contentResolver,
-            Settings.Secure.ANDROID_ID)
+        val deviceId = Settings.Secure.getString(activity!!.contentResolver, Settings.Secure.ANDROID_ID)
+        val authenticationRequest = AuthenticationRequest(deviceAndroidId = deviceId)
 
         try {
             val signInReponse = Api.instance().api!!.signIn(authenticationRequest).execute()
@@ -215,20 +214,13 @@ class DataFragment : Fragment(), View.OnClickListener {
             return@async false
         }
 
-    val deviceRequest = DeviceRequest()
-        deviceRequest.app_version = BuildConfig.VERSION_NAME
-        deviceRequest.app_build = BuildConfig.VERSION_CODE
-        deviceRequest.brand = Build.BRAND
-        deviceRequest.hardware = Build.HARDWARE
-        deviceRequest.device = Build.DEVICE
-        deviceRequest.model = Build.MODEL
-        deviceRequest.serial = Build.SERIAL
-        deviceRequest.manufacturer = Build.MANUFACTURER
-        deviceRequest.androidRelease = Build.VERSION.RELEASE
-        deviceRequest.androidSdkVersion = Build.VERSION.SDK_INT
-
         try {
-            val response = Api.instance().api!!.updateDevice(deviceRequest).execute()
+            val response = Api.instance().api!!.updateDevice(DeviceRequest()).execute()
+            if (!response.isSuccessful) {
+                Timber.e("Device Message: ${response.message()}")
+                Timber.e("Device Code: ${response.code()}")
+                Timber.e("Device Code: ${response.errorBody()?.string()}")
+            }
             return@async response.isSuccessful
         } catch ( e: IOException) {
             return@async false
@@ -276,15 +268,13 @@ class DataFragment : Fragment(), View.OnClickListener {
     }
 
     private fun uploadPlanterRegistration(registrationsCursor: Cursor) = async {
-        val registration = RegistrationRequest()
-        registration.planterIdentifier = registrationsCursor.getString(registrationsCursor
-            .getColumnIndex("identifier"))
-        registration.firstName = registrationsCursor.getString(registrationsCursor
-            .getColumnIndex("first_name"))
-        registration.lastName = registrationsCursor.getString(registrationsCursor
-            .getColumnIndex("last_name"))
-        registration.organization = registrationsCursor.getString(registrationsCursor
-            .getColumnIndex("organization"))
+        val registration = RegistrationRequest(
+            planterIdentifier = registrationsCursor.loadString("identifier"),
+            firstName = registrationsCursor.loadString("first_name"),
+            lastName = registrationsCursor.loadString("last_name"),
+            organization = registrationsCursor.loadString("organization")
+        )
+
         val result = Api.instance().api!!.createPlanterRegistration(registration).execute()
         if(result != null) {
             val id = registrationsCursor.getString(registrationsCursor.getColumnIndex("_id"))
@@ -325,26 +315,28 @@ class DataFragment : Fragment(), View.OnClickListener {
 
     }
 
-    private fun createTreeRequest(treeCursor: Cursor): NewTreeRequest? {
+    private suspend fun createTreeRequest(treeCursor: Cursor): NewTreeRequest? {
 
-        fun getImageUrl(): String? {
+        suspend fun getImageUrl(): String? {
             /**
              * Implementation for saving image into DigitalOcean Spaces.
              */
             val imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"))
 
-            if (!imagePath.isNullOrEmpty()) return null
+            if (imagePath.isNullOrEmpty()) return null
 
             // don't crash if image path is empty
             return try {
-                DOSpaces.instance().put(imagePath).also { Timber.d("imageUrl: $it") }
+                withContext(Dispatchers.IO) {
+                    DOSpaces.instance().put(imagePath).also { Timber.d("imageUrl: $it") }
+                }
             } catch (ace: AmazonClientException) {
-                Timber.d("Caught an AmazonClientException, which " +
+                Timber.e("Caught an AmazonClientException, which " +
                                  "means the client encountered " +
                                  "an internal error while trying to " +
                                  "communicate with S3, " +
                                  "such as not being able to access the network.")
-                Timber.d("Error Message: ${ace.message}")
+                Timber.e("Error Message: ${ace.message}")
                 null
             }
         }
@@ -430,7 +422,7 @@ class DataFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
         val userId = mSharedPreferences!!.getString(ValueHelper.MAIN_DB_USER_ID, "-1")
-        numbersOfTreesToSync = valueOf(tosyncTrees!!.text.toString())
+        numbersOfTreesToSync = valueOf(tosyncTrees.text.toString())
         when(numbersOfTreesToSync) {
             0 -> {
                 operationAttempt?.cancel();
@@ -464,8 +456,8 @@ class DataFragment : Fragment(), View.OnClickListener {
 
         var treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS total FROM tree", null)
         treeCursor.moveToFirst()
-        totalTrees?.text = treeCursor.getString(treeCursor.getColumnIndex("total"))
-        Timber.d("total " + treeCursor.getString(treeCursor.getColumnIndex("total")))
+        totalTrees.text = treeCursor.getString(treeCursor.getColumnIndex("total"))
+        Timber.d("total ${treeCursor.loadString("total")}")
 
         /*treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS updated FROM tree WHERE is_synced = 'Y' AND time_for_update < DATE('NOW')", null);
         treeCursor.moveToFirst();
@@ -481,13 +473,13 @@ class DataFragment : Fragment(), View.OnClickListener {
         treeCursor = TreeTrackerApplication.getDatabaseManager()
                 .queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null)
         treeCursor.moveToFirst()
-        locatedTrees?.text = treeCursor.getString(treeCursor.getColumnIndex("located"))
+        locatedTrees.text = treeCursor.getString(treeCursor.getColumnIndex("located"))
         Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")))
 
         treeCursor = TreeTrackerApplication.getDatabaseManager()
                 .queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
         treeCursor.moveToFirst()
-        tosyncTrees?.text = treeCursor.getString(treeCursor.getColumnIndex("tosync"))
+        tosyncTrees.text = treeCursor.getString(treeCursor.getColumnIndex("tosync"))
         Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
 
     }
