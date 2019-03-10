@@ -41,8 +41,7 @@ import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.greenstand.android.TreeTracker.utilities.Utils
+import org.greenstand.android.TreeTracker.utilities.*
 import retrofit2.Response
 
 import java.io.File
@@ -317,48 +316,54 @@ class DataFragment : Fragment(), View.OnClickListener {
 
     }
 
+    private fun createTreeRequest(treeCursor: Cursor): NewTreeRequest? {
+
+        fun getImageUrl(): String? {
+            /**
+             * Implementation for saving image into DigitalOcean Spaces.
+             */
+            val imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"))
+
+            if (!imagePath.isNullOrEmpty()) return null
+
+            // don't crash if image path is empty
+            return try {
+                DOSpaces.instance().put(imagePath).also { Timber.d("imageUrl: $it") }
+            } catch (ace: AmazonClientException) {
+                Timber.d("Caught an AmazonClientException, which " +
+                                 "means the client encountered " +
+                                 "an internal error while trying to " +
+                                 "communicate with S3, " +
+                                 "such as not being able to access the network.")
+                Timber.d("Error Message: ${ace.message}")
+                null
+            }
+        }
+
+        val imageUrl = getImageUrl() ?: return null
+
+        return with(treeCursor) {
+            NewTreeRequest(
+                imageUrl = imageUrl,
+                userId = userId.toInt(),
+                sequenceId = loadLong("tree_id"),
+                lat = loadDouble("lat"),
+                lon = loadDouble("long"),
+                gpsAccuracy = loadFloat("accuracy").toInt(),
+                planterIdentifier = loadString("planter_identifier"),
+                planterPhotoUrl = loadString("planter_photo_url"),
+                timestamp = Utils.convertDateToTimestamp(loadString("tree_time_created")!!),
+                note = loadString("content").orEmpty()
+            )
+        }
+    }
+
     private fun uploadNextTree(treeCursor: Cursor) = async{
         val localTreeId = treeCursor.getLong(treeCursor.getColumnIndex("tree_id")).toString()
         Timber.tag("DataFragment").d("tree_id: $localTreeId")
 
-        val newTree = NewTreeRequest()
-        newTree.userId = userId.toInt()
-        newTree.sequenceId = treeCursor.getLong(treeCursor.getColumnIndex("tree_id"))
-        newTree.lat = treeCursor.getDouble(treeCursor.getColumnIndex("lat"))
-        newTree.lon = treeCursor.getDouble(treeCursor.getColumnIndex("long"))
-        newTree.setGpsAccuracy(treeCursor.getFloat(treeCursor.getColumnIndex("accuracy")).toInt())
-        var note: String? = treeCursor.getString(treeCursor.getColumnIndex("content"))
-        if (note == null) {
-            note = ""
-        }
-        newTree.note = note
-        val timeCreated = treeCursor.getString(treeCursor.getColumnIndex("tree_time_created"))
-        newTree.timestamp = Utils.convertDateToTimestamp(timeCreated)
+        val newTree = createTreeRequest(treeCursor) ?: return@async
 
-        newTree.planterPhotoUrl = treeCursor.getString(treeCursor.getColumnIndex("planter_photo_url"))
-        newTree.planterIdentifier = treeCursor.getString(treeCursor.getColumnIndex("planter_identifier"))
-
-        /**
-         * Implementation for saving image into DigitalOcean Spaces.
-         */
-        val imagePath = treeCursor.getString(treeCursor.getColumnIndex("name"))
-        val imageUrl: String
-        if (imagePath != null && imagePath != "") { // don't crash if image path is empty
-            try {
-                imageUrl = DOSpaces.instance().put(imagePath)
-            } catch (ace: AmazonClientException) {
-                Timber.d("Caught an AmazonClientException, which " +
-                        "means the client encountered " +
-                        "an internal error while trying to " +
-                        "communicate with S3, " +
-                        "such as not being able to access the network.")
-                Timber.d("Error Message: " + ace.message)
-                return@async false;
-            }
-
-            Timber.d("imageUrl: $imageUrl")
-            newTree.imageUrl = imageUrl
-        }
         /*
         * Save to the API
         */
