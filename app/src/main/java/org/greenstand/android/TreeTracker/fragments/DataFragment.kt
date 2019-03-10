@@ -167,11 +167,20 @@ class DataFragment : Fragment(), View.OnClickListener {
 
                 while (treeCursor.moveToNext()) {
 
-                    success = uploadNextTree(treeCursor).await()
-                    if (success) {
+                    val localTreeId = treeCursor.loadLong("tree_id").toString()
+
+                    val treeRequest = createTreeRequest(treeCursor)
+
+                    val uploadSuccess = if (treeRequest != null) {
+                        uploadNextTreeAsync(localTreeId, treeRequest).await()
+                    } else {
+                        false
+                    }
+
+                    if (uploadSuccess) {
                         updateData()
                     } else {
-                        break;
+                        break
                     }
                 }
 
@@ -358,19 +367,15 @@ class DataFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun uploadNextTree(treeCursor: Cursor) = async{
-        val localTreeId = treeCursor.getLong(treeCursor.getColumnIndex("tree_id")).toString()
+    private fun uploadNextTreeAsync(localTreeId: String, newTreeRequest: NewTreeRequest) = async{
         Timber.tag("DataFragment").d("tree_id: $localTreeId")
-
-        val newTree = createTreeRequest(treeCursor) ?: return@async
-
         /*
         * Save to the API
         */
         var postResult: PostResult? = null
         try {
             var treeResponse: Response<PostResult>? = null
-            treeResponse = Api.instance().api!!.createTree(newTree).execute()
+            treeResponse = Api.instance().api!!.createTree(newTreeRequest).execute()
             postResult = treeResponse!!.body()
         } catch (e: IOException) {
             e.printStackTrace()
