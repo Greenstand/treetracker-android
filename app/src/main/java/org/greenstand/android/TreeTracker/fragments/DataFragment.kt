@@ -458,7 +458,7 @@ class DataFragment : Fragment(), View.OnClickListener {
 
         var treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS total FROM tree", null)
         treeCursor.moveToFirst()
-        totalTrees.text = treeCursor.getString(treeCursor.getColumnIndex("total"))
+        totalTrees.text = treeCursor.loadString("total")
         Timber.d("total ${treeCursor.loadString("total")}")
 
         /*treeCursor = mDatabaseManager.queryCursor("SELECT COUNT(*) AS updated FROM tree WHERE is_synced = 'Y' AND time_for_update < DATE('NOW')", null);
@@ -475,14 +475,14 @@ class DataFragment : Fragment(), View.OnClickListener {
         treeCursor = TreeTrackerApplication.getDatabaseManager()
                 .queryCursor("SELECT COUNT(*) AS located FROM tree WHERE is_synced = 'Y'", null)
         treeCursor.moveToFirst()
-        locatedTrees.text = treeCursor.getString(treeCursor.getColumnIndex("located"))
-        Timber.d("located " + treeCursor.getString(treeCursor.getColumnIndex("located")))
+        locatedTrees.text = treeCursor.loadString("located")
+        Timber.d("located ${treeCursor.loadString("located")}")
 
         treeCursor = TreeTrackerApplication.getDatabaseManager()
                 .queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
         treeCursor.moveToFirst()
-        tosyncTrees.text = treeCursor.getString(treeCursor.getColumnIndex("tosync"))
-        Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
+        tosyncTrees.text = treeCursor.loadString("tosync")
+        Timber.d("to sync ${treeCursor.loadString("tosync")}")
 
     }
 
