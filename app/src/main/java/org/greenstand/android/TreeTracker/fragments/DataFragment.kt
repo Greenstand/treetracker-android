@@ -268,12 +268,14 @@ class DataFragment : Fragment(), View.OnClickListener {
     }
 
     private fun uploadPlanterRegistration(registrationsCursor: Cursor) = async {
-        val registration = RegistrationRequest(
-            planterIdentifier = registrationsCursor.loadString("identifier"),
-            firstName = registrationsCursor.loadString("first_name"),
-            lastName = registrationsCursor.loadString("last_name"),
-            organization = registrationsCursor.loadString("organization")
-        )
+        val registration = with(registrationsCursor) {
+            RegistrationRequest(
+                planterIdentifier = loadString("identifier"),
+                firstName = loadString("first_name"),
+                lastName = loadString("last_name"),
+                organization = loadString("organization")
+            )
+        }
 
         val result = Api.instance().api!!.createPlanterRegistration(registration).execute()
         if(result != null) {
