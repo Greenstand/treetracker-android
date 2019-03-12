@@ -139,7 +139,17 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
                 saveToDb()
 
                 Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT).show()
-                activity!!.supportFragmentManager.popBackStack()
+
+                if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+                    requireActivity()
+                        .supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.containerFragment, TreeHeightFragment())
+                        .addToBackStack(ValueHelper.TREE_HEIGHT_FRAGMENT)
+                        .commit()
+                } else {
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
             }
         }//      Solution 35
         //		case R.id.fragment_new_tree_take_photo:
