@@ -16,6 +16,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_tree_height.view.*
 import org.greenstand.android.TreeTracker.R
 
@@ -38,7 +39,7 @@ class TreeHeightFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-
+        val parentView = view as ConstraintLayout
         val colorDrawable: ColorDrawable = view.height_button_five.background as ColorDrawable
 
         val toColor = context!!.resources.getColor(R.color.error_color_material_light)
@@ -50,7 +51,38 @@ class TreeHeightFragment : Fragment() {
 
         // biases 1->0, 2->.275, 3->.5, 4->0.725, 5->1
 
+
+        listOf(
+               view.height_button_five,
+               view.height_button_four,
+               view.height_button_three,
+               view.height_button_two,
+               view.height_button_one
+        )
+            //.map { it to (it.background as ColorDrawable).color }
+            .forEachIndexed { index, view ->
+                view.setOnClickListener {
+                    moveToHeight(parentView, index)
+                    //animateColors(it, color, toColor)
+                }
+            }
+    }
+    // biases 1->0, 2->.275, 3->.5, 4->0.725, 5->1
+    fun indexToBias(index: Int): Float {
+        return when(index) {
+            0 -> 0f
+            1 -> .275f
+            2 -> .5f
+            3 -> .725f
+            4 -> 1f
+            else -> 0f
+        }
+    }
+
+    fun moveToHeight(view: ConstraintLayout, index: Int) {
         view.post {
+
+            val bias = indexToBias(index)
 
             val height = view.stick_container.height / 5
             val width = view.stick_container.width
@@ -58,31 +90,20 @@ class TreeHeightFragment : Fragment() {
             val selectedHeight = (height * 1.1).toInt()
             val selectedWidth = (width * 2).toInt()
 
+            TransitionManager.beginDelayedTransition(view)
+
             ConstraintSet().apply {
-                clone(view as ConstraintLayout)
+                clone(view)
                 connect(R.id.floating_button, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 32)
                 connect(R.id.floating_button, ConstraintSet.BOTTOM, R.id.fragmentTreeHeightSave, ConstraintSet.TOP, 32)
                 centerHorizontally(R.id.floating_button, ConstraintSet.PARENT_ID)
-                setVerticalBias(R.id.floating_button, 0.725f)
+                setVerticalBias(R.id.floating_button, bias)
                 constrainHeight(R.id.floating_button, selectedHeight)
                 constrainWidth(R.id.floating_button, selectedWidth)
                 applyTo(view)
             }
 
         }
-
-
-        listOf(view.height_button_one,
-               view.height_button_two,
-               view.height_button_three,
-               view.height_button_four,
-               view.height_button_five)
-            .map { it to (it.background as ColorDrawable).color }
-            .forEach { (heightView, color) ->
-                heightView.setOnClickListener {
-                    animateColors(it, color, toColor)
-                }
-            }
     }
 
     fun animateColors(view: View, fromColor: Int, toColor: Int) {
