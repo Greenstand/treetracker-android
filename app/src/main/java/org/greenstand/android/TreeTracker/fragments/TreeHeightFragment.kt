@@ -12,23 +12,28 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.android.UI
 import kotlin.coroutines.CoroutineContext
 import android.animation.ValueAnimator
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.transition.TransitionManager
+import kotlinx.android.synthetic.main.fragment_tree_height.*
 import kotlinx.android.synthetic.main.fragment_tree_height.view.*
 import org.greenstand.android.TreeTracker.R
 
-
+import android.animation.ArgbEvaluator
 
 
 class TreeHeightFragment : Fragment() {
 
     lateinit var viewModel: TreeHeightViewModel
 
+    var isInitialState = true
+    var lastColor = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(TreeHeightViewModelImpl::class.java)
+        viewModel = ViewModelProviders.of(this).get(TreeHeightViewModel::class.java)
         super.onCreate(savedInstanceState)
 
     }
@@ -40,9 +45,6 @@ class TreeHeightFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val parentView = view as ConstraintLayout
-        val colorDrawable: ColorDrawable = view.height_button_five.background as ColorDrawable
-
-        val toColor = context!!.resources.getColor(R.color.error_color_material_light)
 
         // NOTE TO SELF
         // USE constraint layout sets to make a chain (the 5 colors)
@@ -62,7 +64,7 @@ class TreeHeightFragment : Fragment() {
             //.map { it to (it.background as ColorDrawable).color }
             .forEachIndexed { index, view ->
                 view.setOnClickListener {
-                    moveToHeight(parentView, index)
+                    moveToHeight(parentView, view, index)
                     //animateColors(it, color, toColor)
                 }
             }
@@ -70,80 +72,100 @@ class TreeHeightFragment : Fragment() {
     // biases 1->0, 2->.275, 3->.5, 4->0.725, 5->1
     fun indexToBias(index: Int): Float {
         return when(index) {
-            0 -> 0f
+            0 -> .025f
             1 -> .275f
             2 -> .5f
             3 -> .725f
-            4 -> 1f
+            4 -> .975f
             else -> 0f
         }
     }
 
-    fun moveToHeight(view: ConstraintLayout, index: Int) {
-        view.post {
+    fun moveToHeight(view: ConstraintLayout, colorView: View, index: Int) {
 
-            val bias = indexToBias(index)
+        fun animatedUpdate(view: ConstraintLayout, index: Int) {
+            view.post {
 
-            val height = view.stick_container.height / 5
-            val width = view.stick_container.width
+                val bias = indexToBias(index)
 
-            val selectedHeight = (height * 1.1).toInt()
-            val selectedWidth = (width * 2).toInt()
+                val height = view.stick_container.height / 5
+                val width = view.stick_container.width
 
-            TransitionManager.beginDelayedTransition(view)
+                val selectedHeight = (height * 1.1).toInt()
+                val selectedWidth = (width * 2)
 
-            ConstraintSet().apply {
-                clone(view)
-                connect(R.id.floating_button, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 32)
-                connect(R.id.floating_button, ConstraintSet.BOTTOM, R.id.fragmentTreeHeightSave, ConstraintSet.TOP, 32)
-                centerHorizontally(R.id.floating_button, ConstraintSet.PARENT_ID)
-                setVerticalBias(R.id.floating_button, bias)
-                constrainHeight(R.id.floating_button, selectedHeight)
-                constrainWidth(R.id.floating_button, selectedWidth)
-                applyTo(view)
+                TransitionManager.beginDelayedTransition(view)
+
+                ConstraintSet().apply {
+                    clone(view)
+                    connect(R.id.floating_button, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 32)
+                    connect(R.id.floating_button, ConstraintSet.BOTTOM, R.id.fragmentTreeHeightSave, ConstraintSet.TOP, 32)
+                    centerHorizontally(R.id.floating_button, ConstraintSet.PARENT_ID)
+                    setVerticalBias(R.id.floating_button, bias)
+                    constrainHeight(R.id.floating_button, selectedHeight)
+                    constrainWidth(R.id.floating_button, selectedWidth)
+                    colorLerp(floating_button, floating_button.color, colorView.color)
+                    applyTo(view)
+                }
+
             }
+        }
 
+        if (isInitialState) {
+            // move view to position of tapped color, size it, color it, make visible all without animations
+            view.post {
+
+                val bias = indexToBias(index)
+
+                val height = view.stick_container.height / 5
+                val width = view.stick_container.width
+
+
+                ConstraintSet().apply {
+                    clone(view)
+                    connect(R.id.floating_button, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 32)
+                    connect(R.id.floating_button, ConstraintSet.BOTTOM, R.id.fragmentTreeHeightSave, ConstraintSet.TOP, 32)
+                    centerHorizontally(R.id.floating_button, ConstraintSet.PARENT_ID)
+                    setVerticalBias(R.id.floating_button, bias)
+                    constrainHeight(R.id.floating_button, height)
+                    constrainWidth(R.id.floating_button, width)
+                    setVisibility(R.id.floating_button, ConstraintSet.VISIBLE)
+                    floating_button.setCardBackgroundColor(colorView.color)
+                    applyTo(view)
+                }
+                isInitialState = false
+
+                animatedUpdate(view, index)
+            }
+        } else {
+            animatedUpdate(view, index)
         }
     }
 
-    fun animateColors(view: View, fromColor: Int, toColor: Int) {
-        val stringFromColor = String.format("#%06X", 0xFFFFFF and fromColor)
-        val stringToColor = String.format("#%06X", 0xFFFFFF and toColor)
-
-        val from = FloatArray(3)
-        val to = FloatArray(3)
-
-        Color.colorToHSV(Color.parseColor(stringFromColor), from)
-        Color.colorToHSV(Color.parseColor(stringToColor), to)
-
-        val anim = ValueAnimator.ofFloat(0F, 1F)
-        anim.duration = 1000
-
-        val hsv = FloatArray(3)
-        anim.addUpdateListener { animation ->
-            // Transition along each axis of HSV (hue, saturation, value)
-            hsv[0] = from[0] + (to[0] - from[0]) * animation.animatedFraction
-            hsv[1] = from[1] + (to[1] - from[1]) * animation.animatedFraction
-            hsv[2] = from[2] + (to[2] - from[2]) * animation.animatedFraction
-
-            view.setBackgroundColor(Color.HSVToColor(hsv))
+    val View.color: Int
+        get() {
+            val back = background
+            return when(back) {
+                is ColorDrawable -> back.color
+                is ColorStateList -> (back.current as ColorDrawable).color
+                else -> 0
+            }
         }
 
-        anim.start()
+
+
+    fun colorLerp(view: View, colorFrom: Int, colorTo: Int) {
+        ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
+            duration = 300 // milliseconds
+            addUpdateListener { animator -> view.setBackgroundColor(animator.animatedValue as Int) }
+            start()
+        }
     }
 
 }
 
 
-
-
-
-
-interface TreeHeightViewModel {
-
-}
-
-class TreeHeightViewModelImpl : CoroutineViewModel(), TreeHeightViewModel {
+class TreeHeightViewModel : CoroutineViewModel() {
 
 
 
