@@ -27,7 +27,6 @@ class TreeHeightFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(TreeHeightViewModel::class.java)
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,19 +37,19 @@ class TreeHeightFragment : Fragment() {
 
         val parentView = view as ConstraintLayout
 
-        listOf(view.height_button_five,
-               view.height_button_four,
-               view.height_button_three,
-               view.height_button_two,
-               view.height_button_one)
+        listOf(height_button_five,
+               height_button_four,
+               height_button_three,
+               height_button_two,
+               height_button_one)
             .forEachIndexed { index, colorView ->
                 colorView.setOnClickListener {
-                    moveToHeight(parentView, colorView, index)
+                    moveSelection(parentView, colorView, index)
                 }
             }
     }
 
-    fun indexToBias(index: Int): Float {
+    private fun indexToBias(index: Int): Float {
         return when(index) {
             0 -> .025f
             1 -> .275f
@@ -61,7 +60,7 @@ class TreeHeightFragment : Fragment() {
         }
     }
 
-    fun moveToHeight(view: ConstraintLayout, colorView: View, index: Int) {
+    private fun moveSelection(view: ConstraintLayout, colorView: View, index: Int) {
 
         fun animatedUpdate(view: ConstraintLayout, index: Int) {
             view.post {
@@ -96,7 +95,6 @@ class TreeHeightFragment : Fragment() {
 
                 val height = view.stick_container.height / 5
                 val width = view.stick_container.width
-
 
                 ConstraintSet().apply {
                     clone(view)
