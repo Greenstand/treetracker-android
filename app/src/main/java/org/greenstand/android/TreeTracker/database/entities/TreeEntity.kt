@@ -12,10 +12,10 @@ import androidx.room.PrimaryKey
                    parentColumns = [SettingsEntity.ID],
                    childColumns = [TreeEntity.SETTINGS_OVERRIDE_ID],
                    onUpdate = ForeignKey.CASCADE),
-//        ForeignKey(entity = SettingsEntity::class,
-//                   parentColumns = [SettingsEntity.ID],
-//                   childColumns = [TreeEntity.SETTINGS_ID],
-//                   onUpdate = ForeignKey.CASCADE),
+        ForeignKey(entity = SettingsEntity::class,
+                   parentColumns = [SettingsEntity.ID],
+                   childColumns = [TreeEntity.SETTINGS_ID],
+                   onUpdate = ForeignKey.CASCADE),
         ForeignKey(entity = LocationEntity::class,
                    parentColumns = [LocationEntity.ID],
                    childColumns = [TreeEntity.LOCATION_ID],
@@ -30,37 +30,40 @@ import androidx.room.PrimaryKey
                    onUpdate = ForeignKey.CASCADE)
     ]
 )
-data class TreeEntity(@PrimaryKey
-                      @ColumnInfo(name = ID)
-                      var id: Long,
-                      @ColumnInfo(name = LOCATION_ID)
-                      var locationId: Long?,
-                      @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
-                      var planterId: Long?,
+data class TreeEntity(@ColumnInfo(name = MAIN_DB_ID)
+                      var mainDbId: Long?,
                       @ColumnInfo(name = TIME_CREATED)
                       var timeCreated: Long?,
                       @ColumnInfo(name = TIME_UPDATED)
                       var timeUpdated: Long?,
                       @ColumnInfo(name = TIME_FOR_UPDATE)
                       var timeForUpdate: Long?,
+                      @ColumnInfo(name = THREE_DIGIT_NUMBER)
+                      var threeDigitNumber: Long?,
+                      @ColumnInfo(name = LOCATION_ID)
+                      var locationId: Long?,
+                      @ColumnInfo(name = IS_MISSING)
+                      var isMissing: Boolean?,
                       @ColumnInfo(name = IS_SYNCED)
                       var isSynced: Boolean?,
                       @ColumnInfo(name = IS_PRIORITY)
                       var isPriority: Boolean?,
                       @ColumnInfo(name = CAUSE_OF_DEATH_ID)
                       var causeOfDeath: Int?,
-                      @ColumnInfo(name = MAIN_DB_ID)
-                      var mainDbId: Long?,
                       @ColumnInfo(name = SETTINGS_ID)
                       var settingId: Long?,
-                      @ColumnInfo(name = USER_ID)
-                      var userId: Long?,
-                      @ColumnInfo(name = IS_MISSING)
-                      var isMissing: Boolean?,
                       @ColumnInfo(name = SETTINGS_OVERRIDE_ID)
                       var settingsOverrideId: Long?,
-                      @ColumnInfo(name = THREE_DIGIT_NUMBER)
-                      var threeDigitNumber: Long?) {
+                      @ColumnInfo(name = USER_ID)
+                      var userId: Long?,
+                      @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
+                      var planterId: Long?) {
+
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = ID)
+    var id: Long? = null
+
 
     companion object {
         const val TABLE = "tree"
