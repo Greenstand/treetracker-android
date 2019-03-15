@@ -2,28 +2,69 @@ package org.greenstand.android.TreeTracker.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "tree")
+@Entity(
+    tableName = TreeEntity.TABLE,
+    foreignKeys = [
+        ForeignKey(entity = LocationEntity::class,
+                   parentColumns = ["_id"],
+                   childColumns = [TreeEntity.LOCATION_ID]),
+        ForeignKey(entity = LocationEntity::class,
+                   parentColumns = [LocationEntity.ID],
+                   childColumns = [TreeEntity.LOCATION_ID],
+                   onUpdate = ForeignKey.CASCADE)
+    ]
+)
 data class TreeEntity(@PrimaryKey
-                      @ColumnInfo(name = "id")
+                      @ColumnInfo(name = ID)
                       var id: Long,
-                      @ColumnInfo(name = "location_id")
+                      @ColumnInfo(name = LOCATION_ID)
                       var locationId: Long,
-                      @ColumnInfo(name = "planter_identification_id")
+                      @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
                       var planterId: Long,
-                      @ColumnInfo(name = "time_created")
+                      @ColumnInfo(name = TIME_CREATED)
                       var timeCreated: Long,
-                      @ColumnInfo(name = "time_updated")
+                      @ColumnInfo(name = TIME_UPDATED)
                       var timeUpdated: Long,
-                      @ColumnInfo(name = "time_for_update")
+                      @ColumnInfo(name = TIME_FOR_UPDATE)
                       var timeForUpdate: Long,
-                      @ColumnInfo(name = "is_synced")
+                      @ColumnInfo(name = IS_SYNCED)
                       var isSynced: Boolean,
-                      @ColumnInfo(name = "is_priority")
+                      @ColumnInfo(name = IS_PRIORITY)
                       var isPriority: Boolean,
-                      @ColumnInfo(name = "cause_of_death_id")
+                      @ColumnInfo(name = CAUSE_OF_DEATH)
                       var causeOfDeath: Int,
-                      @ColumnInfo(name = "main_db_id")
+                      @ColumnInfo(name = MAIN_DB_ID)
                       var mainDbId: Long,
-                      @ColumnInfo(name = "settings_id"))
+                      @ColumnInfo(name = SETTINGS_ID)
+                      var settingId: Long,
+                      @ColumnInfo(name = USER_ID)
+                      var userId: Long,
+                      @ColumnInfo(name = IS_MISSING)
+                      var isMissing: Boolean,
+                      @ColumnInfo(name = SETTINGS_OVERRIDE_ID)
+                      var settingsOverrideId: Long,
+                      @ColumnInfo(name = THREE_DIGIT_NUMBER)
+                      var threeDigitNumber: Long) {
+
+    companion object {
+        const val TABLE = "tree"
+        const val ID = "_id"
+        const val LOCATION_ID = "location_id"
+        const val PLANTER_IDENTIFICATION_ID = "planter_identification_id"
+        const val TIME_CREATED = "time_created"
+        const val TIME_UPDATED = "time_updated"
+        const val TIME_FOR_UPDATE = "time_for_update"
+        const val IS_SYNCED = "is_synced"
+        const val IS_PRIORITY = "is_priority"
+        const val CAUSE_OF_DEATH = "cause_of_death_id"
+        const val MAIN_DB_ID = "main_db_id"
+        const val SETTINGS_ID = "settings_id"
+        const val USER_ID = "user_id"
+        const val IS_MISSING = "is_missing"
+        const val SETTINGS_OVERRIDE_ID = "settings_override_id"
+        const val THREE_DIGIT_NUMBER = "three_digit_number"
+    }
+}

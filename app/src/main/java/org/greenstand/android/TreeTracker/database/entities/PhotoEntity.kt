@@ -4,11 +4,19 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "photo")
+@Entity(tableName = PhotoEntity.TABLE)
 data class PhotoEntity(@PrimaryKey
-                       @ColumnInfo(name = "id")
+                       @ColumnInfo(name = ID)
                        var id: Long,
-                       @ColumnInfo(name = "name")
+                       @ColumnInfo(name = NAME)
                        var name: Short,
-                       @ColumnInfo(name = "location_id")
-                       var locationId: Long)
+                       @ColumnInfo(name = LOCATION_ID)
+                       var locationId: Long) {
+
+    companion object {
+        const val TABLE = "photo"
+        const val ID = "_id"
+        const val NAME = "name"
+        const val LOCATION_ID = "location_Id"
+    }
+}

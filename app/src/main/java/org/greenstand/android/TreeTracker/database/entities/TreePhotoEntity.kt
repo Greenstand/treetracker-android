@@ -4,11 +4,19 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "tree_photo")
+@Entity(tableName = TreePhotoEntity.TABLE)
 data class TreePhotoEntity(@PrimaryKey
-                           @ColumnInfo(name = "id")
+                           @ColumnInfo(name = ID)
                            var id: Long,
-                           @ColumnInfo(name = "tree_id")
+                           @ColumnInfo(name = TREE_ID)
                            var treeId: Long,
-                           @ColumnInfo(name = "photo_id")
-                           var photoId: Long)
+                           @ColumnInfo(name = PHOTO_ID)
+                           var photoId: Long) {
+
+    companion object {
+        const val TABLE = "tree_photo"
+        const val ID = "_id"
+        const val TREE_ID = "tree_id"
+        const val PHOTO_ID = "photo_id"
+    }
+}
