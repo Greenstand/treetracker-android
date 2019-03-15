@@ -9,9 +9,9 @@ data class TreePhotoEntity(@PrimaryKey
                            @ColumnInfo(name = ID)
                            var id: Long,
                            @ColumnInfo(name = TREE_ID)
-                           var treeId: Long,
+                           var treeId: Long?,
                            @ColumnInfo(name = PHOTO_ID)
-                           var photoId: Long) {
+                           var photoId: Long?) {
 
     companion object {
         const val TABLE = "tree_photo"

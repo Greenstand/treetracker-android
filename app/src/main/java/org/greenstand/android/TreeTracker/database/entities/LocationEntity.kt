@@ -10,15 +10,15 @@ data class LocationEntity(@PrimaryKey
                           @ColumnInfo(name = ID)
                           var id: Long,
                           @ColumnInfo(name = ACCURACY)
-                          var accuracy: Float,
+                          var accuracy: Float?,
                           @ColumnInfo(name = LAT)
-                          var latitude: Double,
+                          var latitude: Double?,
                           @ColumnInfo(name = LONG)
-                          var longitude: Double,
+                          var longitude: Double?,
                           @ColumnInfo(name = USER_ID)
-                          var userId: Long,
+                          var userId: Long?,
                           @ColumnInfo(name = MAIN_DB_ID)
-                          var mainDbId: Long) {
+                          var mainDbId: Long?) {
 
     companion object {
         const val TABLE = "location"

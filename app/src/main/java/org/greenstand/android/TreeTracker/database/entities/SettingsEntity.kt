@@ -9,14 +9,14 @@ data class SettingsEntity(@PrimaryKey
                           @ColumnInfo(name = ID)
                           var id: Long,
                           @ColumnInfo(name = MAIN_DB_ID)
-                          var mainDbId: Long,
+                          var mainDbId: Long?,
                           @ColumnInfo(name = TIME_TO_NEXT_UPDATE)
-                          var timeToNextUpdate: Long,
+                          var timeToNextUpdate: Long?,
                           @ColumnInfo(name = MIN_ACCURACY)
-                          var minAccuracy: Long) {
+                          var minAccuracy: Int?) {
 
     companion object {
-        const val TABLE = "photo"
+        const val TABLE = "settings"
         const val ID = "_id"
         const val MAIN_DB_ID = "main_db_id"
         const val TIME_TO_NEXT_UPDATE = "time_to_next_update"

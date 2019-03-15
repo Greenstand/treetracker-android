@@ -9,21 +9,21 @@ data class PlanterDetails(@PrimaryKey
                           @ColumnInfo(name = ID)
                           var id: Long,
                           @ColumnInfo(name = INDENTIFIER)
-                          var indentifier: String,
+                          var indentifier: String?,
                           @ColumnInfo(name = FIRST_NAME)
-                          var firstName: String,
+                          var firstName: String?,
                           @ColumnInfo(name = LAST_NAME)
-                          var lastName: String,
+                          var lastName: String?,
                           @ColumnInfo(name = ORGANIZATION)
-                          var organization: String,
+                          var organization: String?,
                           @ColumnInfo(name = PHONE)
-                          var phone: String,
+                          var phone: String?,
                           @ColumnInfo(name = EMAIL)
-                          var email: String,
+                          var email: String?,
                           @ColumnInfo(name = UPLOADED)
-                          var uploaded: Boolean,
+                          var uploaded: Boolean?,
                           @ColumnInfo(name = TIME_CREATED)
-                          var timeCreated: Long) {
+                          var timeCreated: Long?) {
 
     companion object {
         const val TABLE = "planter_details"

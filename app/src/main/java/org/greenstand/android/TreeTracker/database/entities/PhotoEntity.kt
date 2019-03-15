@@ -9,17 +9,17 @@ data class PhotoEntity(@PrimaryKey
                        @ColumnInfo(name = ID)
                        var id: Long,
                        @ColumnInfo(name = NAME)
-                       var name: String,
+                       var name: String?,
                        @ColumnInfo(name = LOCATION_ID)
-                       var locationId: Long,
+                       var locationId: Long?,
                        @ColumnInfo(name = MAIN_DB_ID)
-                       var mainDbId: Long,
+                       var mainDbId: Long?,
                        @ColumnInfo(name = IS_OUTDATED)
-                       var isOutdated: Long,
+                       var isOutdated: Long?,
                        @ColumnInfo(name = TIME_TAKEN)
-                       var timeTaken: Long,
+                       var timeTaken: Long?,
                        @ColumnInfo(name = USER_ID)
-                       var userId: Long) {
+                       var userId: Long?) {
 
     companion object {
         const val TABLE = "photo"

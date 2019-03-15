@@ -20,7 +20,13 @@ import androidx.room.Room
     TreeEntity::class,
     TreeNoteEntity::class,
     TreePhotoEntity::class,
+    GlobalSettingEntity::class,
     LocationEntity::class,
+    NoteEntity::class,
+    PlanterDetails::class,
+    PlantIndentifications::class,
+    SettingsEntity::class,
+    SqliteSequenceEntity::class,
     PhotoEntity::class
 ], version = 2)
 abstract class AppDatabase : RoomDatabase() {

@@ -8,12 +8,25 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = TreeEntity.TABLE,
     foreignKeys = [
-        ForeignKey(entity = LocationEntity::class,
-                   parentColumns = ["_id"],
-                   childColumns = [TreeEntity.LOCATION_ID]),
+        ForeignKey(entity = SettingsEntity::class,
+                   parentColumns = [SettingsEntity.ID],
+                   childColumns = [TreeEntity.SETTINGS_OVERRIDE_ID],
+                   onUpdate = ForeignKey.CASCADE),
+//        ForeignKey(entity = SettingsEntity::class,
+//                   parentColumns = [SettingsEntity.ID],
+//                   childColumns = [TreeEntity.SETTINGS_ID],
+//                   onUpdate = ForeignKey.CASCADE),
         ForeignKey(entity = LocationEntity::class,
                    parentColumns = [LocationEntity.ID],
                    childColumns = [TreeEntity.LOCATION_ID],
+                   onUpdate = ForeignKey.CASCADE),
+        ForeignKey(entity = NoteEntity::class,
+                   parentColumns = [NoteEntity.ID],
+                   childColumns = [TreeEntity.CAUSE_OF_DEATH_ID],
+                   onUpdate = ForeignKey.CASCADE),
+        ForeignKey(entity = PlantIndentifications::class,
+                   parentColumns = [PlantIndentifications.ID],
+                   childColumns = [TreeEntity.PLANTER_IDENTIFICATION_ID],
                    onUpdate = ForeignKey.CASCADE)
     ]
 )
@@ -21,33 +34,33 @@ data class TreeEntity(@PrimaryKey
                       @ColumnInfo(name = ID)
                       var id: Long,
                       @ColumnInfo(name = LOCATION_ID)
-                      var locationId: Long,
+                      var locationId: Long?,
                       @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
-                      var planterId: Long,
+                      var planterId: Long?,
                       @ColumnInfo(name = TIME_CREATED)
-                      var timeCreated: Long,
+                      var timeCreated: Long?,
                       @ColumnInfo(name = TIME_UPDATED)
-                      var timeUpdated: Long,
+                      var timeUpdated: Long?,
                       @ColumnInfo(name = TIME_FOR_UPDATE)
-                      var timeForUpdate: Long,
+                      var timeForUpdate: Long?,
                       @ColumnInfo(name = IS_SYNCED)
-                      var isSynced: Boolean,
+                      var isSynced: Boolean?,
                       @ColumnInfo(name = IS_PRIORITY)
-                      var isPriority: Boolean,
-                      @ColumnInfo(name = CAUSE_OF_DEATH)
-                      var causeOfDeath: Int,
+                      var isPriority: Boolean?,
+                      @ColumnInfo(name = CAUSE_OF_DEATH_ID)
+                      var causeOfDeath: Int?,
                       @ColumnInfo(name = MAIN_DB_ID)
-                      var mainDbId: Long,
+                      var mainDbId: Long?,
                       @ColumnInfo(name = SETTINGS_ID)
-                      var settingId: Long,
+                      var settingId: Long?,
                       @ColumnInfo(name = USER_ID)
-                      var userId: Long,
+                      var userId: Long?,
                       @ColumnInfo(name = IS_MISSING)
-                      var isMissing: Boolean,
+                      var isMissing: Boolean?,
                       @ColumnInfo(name = SETTINGS_OVERRIDE_ID)
-                      var settingsOverrideId: Long,
+                      var settingsOverrideId: Long?,
                       @ColumnInfo(name = THREE_DIGIT_NUMBER)
-                      var threeDigitNumber: Long) {
+                      var threeDigitNumber: Long?) {
 
     companion object {
         const val TABLE = "tree"
@@ -59,7 +72,7 @@ data class TreeEntity(@PrimaryKey
         const val TIME_FOR_UPDATE = "time_for_update"
         const val IS_SYNCED = "is_synced"
         const val IS_PRIORITY = "is_priority"
-        const val CAUSE_OF_DEATH = "cause_of_death_id"
+        const val CAUSE_OF_DEATH_ID = "cause_of_death_id"
         const val MAIN_DB_ID = "main_db_id"
         const val SETTINGS_ID = "settings_id"
         const val USER_ID = "user_id"

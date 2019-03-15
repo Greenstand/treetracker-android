@@ -9,9 +9,9 @@ data class TreeNoteEntity(@PrimaryKey
                           @ColumnInfo(name = ID)
                           var id: Long,
                           @ColumnInfo(name = NOTE_ID)
-                          var noteId: Long,
+                          var noteId: Long?,
                           @ColumnInfo(name = TREE_ID)
-                          var treeId: Long) {
+                          var treeId: Long?) {
 
     companion object {
         const val TABLE = "tree_note"

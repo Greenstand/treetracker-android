@@ -9,15 +9,15 @@ data class TreeAttributeEntity(@PrimaryKey
                                @ColumnInfo(name = ID)
                                var id: Long,
                                @ColumnInfo(name = TREE_ID)
-                               var treeId: Long,
+                               var treeId: Long?,
                                @ColumnInfo(name = HEIGHT_COLOR)
-                               var heightColor: String,
+                               var heightColor: String?,
                                @ColumnInfo(name = FLAVOR_ID)
-                               var flavorId: String,
+                               var flavorId: String?,
                                @ColumnInfo(name = APP_VERSION)
-                               var appVersion: String,
+                               var appVersion: String?,
                                @ColumnInfo(name = APP_BUILD)
-                               var appBuild: String) {
+                               var appBuild: String?) {
 
     companion object {
         const val TABLE = "tree_attributes"
