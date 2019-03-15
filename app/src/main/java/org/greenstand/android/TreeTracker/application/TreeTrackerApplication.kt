@@ -10,6 +10,7 @@ import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 
 import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.DatabaseManager
 import org.greenstand.android.TreeTracker.database.DbHelper
 import java.io.IOException
@@ -40,16 +41,16 @@ class TreeTrackerApplication : Application() {
     }
 
     fun getDatabaseManager(): DatabaseManager{
-        val dbHelper = DbHelper.getDbHelper(this)
+//        val dbHelper = DbHelper.getDbHelper(this)
+//
+//        try {
+//            dbHelper.createDataBase()
+//        } catch (e: IOException) {
+//            // This should be a fatal error
+//            e.printStackTrace()
+//        }
 
-        try {
-            dbHelper.createDataBase()
-        } catch (e: IOException) {
-            // This should be a fatal error
-            e.printStackTrace()
-        }
-
-        return DatabaseManager(dbHelper)
+        return DatabaseManager(AppDatabase.getInstance(applicationContext).openHelper)
     }
 
     companion object {

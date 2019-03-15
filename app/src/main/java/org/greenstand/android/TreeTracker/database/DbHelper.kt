@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CursorFactory
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.room.RoomDatabase
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 import java.io.FileOutputStream
@@ -14,7 +15,9 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 
 
-class DbHelper(private val myContext: Context, name: String, factory: CursorFactory?,
+class DbHelper(private val myContext: Context,
+               name: String,
+               factory: CursorFactory?,
                version: Int) : SQLiteOpenHelper(myContext, name, null, 1) {
 
     override fun onCreate(db: SQLiteDatabase) {
