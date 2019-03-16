@@ -136,7 +136,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
 
             R.id.fragmentNewTreeSave -> {
 
-                saveToDb()
+                val treeId: Long? = saveToDb()
 
                 Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT).show()
 
@@ -144,7 +144,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
                     requireActivity()
                         .supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.containerFragment, TreeHeightFragment())
+                        .replace(R.id.containerFragment, TreeHeightFragment.newInstance(treeId!!))
                         .addToBackStack(ValueHelper.TREE_HEIGHT_FRAGMENT)
                         .commit()
                 } else {
@@ -214,11 +214,12 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
         }
     }
 
-    private fun saveToDb() {
+    private fun saveToDb(): Long? {
 
-        if (MainActivity.mCurrentLocation == null) {
+        return if (MainActivity.mCurrentLocation == null) {
             Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
             activity!!.supportFragmentManager.popBackStack()
+            null
         } else {
 
             GlobalScope.launch {

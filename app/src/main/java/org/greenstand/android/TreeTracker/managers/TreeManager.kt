@@ -6,24 +6,37 @@ import timber.log.Timber
 
 object TreeManager {
 
-    private object TreeHeightTable {
-        const val NAME = "tree_height"
 
-        const val COL_HEIGHT = "tree_height"
-        const val COL_TREE_ID = "tree_id"
-    }
 
-    fun addTreeHeight(treeId: String, height: Int) {
+    fun addAttributes(treeId: Long, attributes: Attributes) {
 
         val contentValues = ContentValues().apply {
-            put(TreeHeightTable.COL_TREE_ID, treeId)
-            put(TreeHeightTable.COL_HEIGHT, height)
+            put(AttributesTable.TREE_ID, treeId)
+            put(AttributesTable.HEIGHT_COLOR, attributes.heightColor)
+            put(AttributesTable.APP_BUILD, attributes.appBuild)
+            put(AttributesTable.APP_FLAVOR, attributes.appFlavor)
         }
 
-        TreeTrackerApplication.getDatabaseManager().insert(table = TreeHeightTable.NAME,
+        TreeTrackerApplication.getDatabaseManager().insert(table = AttributesTable.NAME,
                                                            contentValues = contentValues)
 
-        Timber.d("Inserted height $height for tree id $treeId")
+
+        Timber.d("Inserted $attributes into Attributes Table")
     }
 
+}
+
+data class Attributes(val heightColor: String,
+                      val appFlavor: String,
+                      val appBuild: String)
+
+
+object AttributesTable {
+    const val NAME = "attributes"
+
+    const val ID = "_id"
+    const val TREE_ID = "tree_id"
+    const val HEIGHT_COLOR = "height_color"
+    const val APP_FLAVOR = "app_flavor"
+    const val APP_BUILD = "app_build"
 }
