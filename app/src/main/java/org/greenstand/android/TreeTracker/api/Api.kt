@@ -13,7 +13,6 @@ import timber.log.Timber
 
 class Api {
     private var apiService: ApiService? = null
-    private var mOkHttpClient: OkHttpClient? = null
     private var authToken: String? = null
 
     val api: ApiService?
@@ -32,13 +31,13 @@ class Api {
     }
 
     private fun createApi() {
-        mOkHttpClient = OkHttpClient.Builder()
+        val client = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor())
                 .addInterceptor(AuthenticationInterceptor())
                 .build()
 
         apiService = Retrofit.Builder()
-                .client(mOkHttpClient!!)
+                .client(client)
                 .baseUrl(ApiService.ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -54,9 +53,9 @@ class Api {
             val original = chain.request()
 
             if (authToken != null) {
-                val builder = original.newBuilder()
-                        .header("Authorization", "Bearer " + authToken!!)
-                val request = builder.build()
+                val request = original.newBuilder()
+                    .header("Authorization", "Bearer $authToken")
+                    .build()
                 return chain.proceed(request)
             } else {
                 return chain.proceed(original)

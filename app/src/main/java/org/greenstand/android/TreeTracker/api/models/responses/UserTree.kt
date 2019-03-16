@@ -3,20 +3,20 @@ package org.greenstand.android.TreeTracker.api.models.responses
 import com.google.gson.annotations.SerializedName
 
 
-class UserTree {
-
-    @SerializedName("id")
-    var id: String? = null
-    @SerializedName("created")
-    var created: String? = null
-    @SerializedName("updated")
-    var updated: String? = null
-    @SerializedName("priority")
-    var priority: String? = null
-    @SerializedName("lat")
-    var lat: String? = null
-    @SerializedName("lng")
-    var lng: String? = null
+data class UserTree(@SerializedName("id")
+                    val id: String? = null,
+                    @SerializedName("created")
+                    val created: String? = null,
+                    @SerializedName("updated")
+                    val updated: String? = null,
+                    @SerializedName("priority")
+                    val priority: String? = null,
+                    @SerializedName("lat")
+                    val lat: String? = null,
+                    @SerializedName("lng")
+                    val lng: String? = null,
+                    @SerializedName("image_url")
+                    val imageUrl: String? = null)
     //    @SerializedName("gps")
     //    private String gps;
     //    @SerializedName("next_update")
@@ -36,7 +36,3 @@ class UserTree {
     //    public void setNextUpdate(String nextUpdate) {
     //        this.nextUpdate = nextUpdate;
     //    }
-
-    @SerializedName("image_url")
-    var imageUrl: String? = null
-}
