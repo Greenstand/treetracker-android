@@ -6,10 +6,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(tableName = LocationEntity.TABLE)
-data class LocationEntity(@PrimaryKey
-                          @ColumnInfo(name = ID)
-                          var id: Long,
-                          @ColumnInfo(name = ACCURACY)
+data class LocationEntity(@ColumnInfo(name = ACCURACY)
                           var accuracy: Float?,
                           @ColumnInfo(name = LAT)
                           var latitude: Double?,
@@ -19,6 +16,10 @@ data class LocationEntity(@PrimaryKey
                           var userId: Long?,
                           @ColumnInfo(name = MAIN_DB_ID)
                           var mainDbId: Long?) {
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = ID)
+    var id: Long? = null
 
     companion object {
         const val TABLE = "location"

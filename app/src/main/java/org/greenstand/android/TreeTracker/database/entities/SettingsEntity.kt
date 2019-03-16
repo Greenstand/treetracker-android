@@ -5,15 +5,16 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = SettingsEntity.TABLE)
-data class SettingsEntity(@PrimaryKey
-                          @ColumnInfo(name = ID)
-                          var id: Long,
-                          @ColumnInfo(name = MAIN_DB_ID)
+data class SettingsEntity(@ColumnInfo(name = MAIN_DB_ID)
                           var mainDbId: Long?,
                           @ColumnInfo(name = TIME_TO_NEXT_UPDATE)
                           var timeToNextUpdate: Long?,
                           @ColumnInfo(name = MIN_ACCURACY)
                           var minAccuracy: Int?) {
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = ID)
+    var id: Long? = null
 
     companion object {
         const val TABLE = "settings"

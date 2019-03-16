@@ -2,13 +2,19 @@ package org.greenstand.android.TreeTracker.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = PhotoEntity.TABLE)
-data class PhotoEntity(@PrimaryKey
-                       @ColumnInfo(name = ID)
-                       var id: Long,
-                       @ColumnInfo(name = NAME)
+@Entity(
+    tableName = PhotoEntity.TABLE,
+    foreignKeys = [
+        ForeignKey(entity = LocationEntity::class,
+                   parentColumns = [LocationEntity.ID],
+                   childColumns = [PhotoEntity.LOCATION_ID],
+                   onUpdate = ForeignKey.CASCADE)
+    ]
+)
+data class PhotoEntity(@ColumnInfo(name = NAME)
                        var name: String?,
                        @ColumnInfo(name = LOCATION_ID)
                        var locationId: Long?,
@@ -21,11 +27,15 @@ data class PhotoEntity(@PrimaryKey
                        @ColumnInfo(name = USER_ID)
                        var userId: Long?) {
 
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = ID)
+    var id: Long? = null
+
     companion object {
         const val TABLE = "photo"
         const val ID = "_id"
         const val NAME = "name"
-        const val LOCATION_ID = "location_Id"
+        const val LOCATION_ID = "location_id"
         const val MAIN_DB_ID = "main_db_id"
         const val IS_OUTDATED = "is_outdated"
         const val TIME_TAKEN = "time_taken"
