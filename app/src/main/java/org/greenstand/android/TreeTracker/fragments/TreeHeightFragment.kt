@@ -12,8 +12,7 @@ import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_tree_height.*
 import kotlinx.android.synthetic.main.fragment_tree_height.view.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.managers.Attributes
-import org.greenstand.android.TreeTracker.managers.TreeManager
+import org.greenstand.android.TreeTracker.data.NewTree
 
 import org.greenstand.android.TreeTracker.utilities.animateColor
 import org.greenstand.android.TreeTracker.utilities.color
@@ -28,12 +27,12 @@ class TreeHeightFragment : Fragment() {
 
     companion object {
 
-        private const val TREE_ID_KEY = "tree_id_key"
+        private const val NEW_TREE_KEY = "new_tree_key"
 
-        fun newInstance(treeId: Long): TreeHeightFragment {
+        fun newInstance(treeId: NewTree): TreeHeightFragment {
             return TreeHeightFragment().apply {
                 val bundle = Bundle()
-                bundle.putLong(TREE_ID_KEY, treeId)
+                bundle.putParcelable(NEW_TREE_KEY, treeId)
                 arguments = bundle
             }
         }
@@ -53,15 +52,15 @@ class TreeHeightFragment : Fragment() {
 
         val parentView = view as ConstraintLayout
 
-        val treeId: Long? = arguments?.getLong(TREE_ID_KEY)
-
-        TreeManager.addAttributes(treeId!!,
-                                  Attributes(
-                                      heightColor = "Blue",
-                                      appFlavor = "Super Flavor",
-                                      appBuild = "Build 1.2.3"
-                                  )
-        )
+//        val treeId: NewTree? = arguments?.getParcelable(NEW_TREE_KEY)
+//
+//        TreeManager.addAttributes(treeId?.,
+//                                  TreeAttributes(
+//                                      heightColor = TreeColor.BLUE,
+//                                      appFlavor = "Super Flavor",
+//                                      appBuild = "Build 1.2.3"
+//                                  )
+//        )
 
         listOf(height_button_five,
                height_button_four,
