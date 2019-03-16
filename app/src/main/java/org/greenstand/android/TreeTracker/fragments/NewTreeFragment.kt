@@ -34,6 +34,7 @@ import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.entities.TreeEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
@@ -278,6 +279,10 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
             treeContentValues.put("time_created", dateFormat.format(Date()))
             treeContentValues.put("time_updated", dateFormat.format(Date()))
             treeContentValues.put("time_for_update", dateFormat.format(date))
+
+            treeContentValues.put(TreeEntity.IS_SYNCED, "N")
+            treeContentValues.put(TreeEntity.IS_MISSING, "N")
+            treeContentValues.put(TreeEntity.IS_PRIORITY, "N")
 
             val treeId = TreeTrackerApplication.getDatabaseManager().insert("tree", null, treeContentValues)
             Timber.d("treeId " + java.lang.Long.toString(treeId))
