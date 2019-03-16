@@ -23,7 +23,7 @@ data class NewTreeRequest(@SerializedName("user_id")
                           @SerializedName("planter_identifier")
                           val planterIdentifier: String? = null,
                           @SerializedName("attributes")
-                          val attributes: AttributesRequest?)
+                          val attributes: AttributesRequest? = null)
 
 data class AttributesRequest(@SerializedName("height_color")
                              val heightColor: Int = 0,

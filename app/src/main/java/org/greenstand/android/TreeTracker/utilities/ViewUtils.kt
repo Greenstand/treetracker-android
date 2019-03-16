@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.view.View
+import com.google.android.material.card.MaterialCardView
 
 
 fun View.animateColor(toColor: Int, fromColor: Int = color, durationMsec: Long = 300) {
@@ -24,4 +25,9 @@ val View.color: Int
             is ColorStateList -> (back.current as ColorDrawable).color
             else -> 0
         }
+    }
+
+val MaterialCardView.cardColor: Int
+    get() {
+        return cardBackgroundColor.defaultColor
     }

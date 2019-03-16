@@ -11,7 +11,7 @@ import java.util.*
 
 object TreeManager {
 
-    fun addAttributes(treeId: Long, attributes: TreeAttributes): Long? {
+    suspend fun addAttributes(treeId: Long, attributes: TreeAttributes): Long? {
 
         val contentValues = ContentValues().apply {
             put(AttributesTable.TREE_ID, treeId)
@@ -25,13 +25,12 @@ object TreeManager {
             .also { Timber.d("Inserted $attributes into Attributes Table") }
     }
 
-    fun addTree(photoPath: String,
-                minAccuracy: Int,
-                timeToNextUpdate: Int,
-                content: String,
-                userId: Long,
-                planterIdentifierId: Long,
-                attributes: TreeAttributes? = null): Long? {
+    suspend fun addTree(photoPath: String,
+                        minAccuracy: Int,
+                        timeToNextUpdate: Int,
+                        content: String,
+                        userId: Long,
+                        planterIdentifierId: Long): Long? {
 
         val locationId = insertLocation()!!
 
