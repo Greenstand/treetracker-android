@@ -21,7 +21,7 @@ data class PlanterDetails(@PrimaryKey
                           @ColumnInfo(name = EMAIL)
                           var email: String?,
                           @ColumnInfo(name = UPLOADED)
-                          var uploaded: Boolean?,
+                          var uploaded: String? = "N",
                           @ColumnInfo(name = TIME_CREATED)
                           var timeCreated: Long?) {
 

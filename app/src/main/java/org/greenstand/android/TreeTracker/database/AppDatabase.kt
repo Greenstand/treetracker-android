@@ -20,9 +20,9 @@ import androidx.room.Room
     LocationEntity::class,
     NoteEntity::class,
     PlanterDetails::class,
-    PlantIndentifications::class,
+    PlanterIndentifications::class,
     SettingsEntity::class,
-    SqliteSequenceEntity::class,
+    //SqliteSequenceEntity::class,
     PhotoEntity::class
 ], version = 2)
 abstract class AppDatabase : RoomDatabase() {
@@ -50,11 +50,11 @@ class MigrationV1ToV2 : Migration(1, 2) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
         // WIP to convert Y/N boolean values to integers for Room to use
-        database.beginTransaction()
-
-        val isSyncedInts: List<Pair<Long, Int>> = database.loadBooleans(TreeEntity.TABLE, TreeEntity.IS_SYNCED)
-
-        database.endTransaction()
+//        database.beginTransaction()
+//
+//        val isSyncedInts: List<Pair<Long, Int>> = database.loadBooleans(TreeEntity.TABLE, TreeEntity.IS_SYNCED)
+//
+//        database.endTransaction()
     }
 
     fun <T> SupportSQLiteDatabase.loadColumn(table: String, column: String, block: Cursor.(column: String) -> T): List<Pair<Long, T>> {

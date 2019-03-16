@@ -24,8 +24,8 @@ import androidx.room.PrimaryKey
                    parentColumns = [NoteEntity.ID],
                    childColumns = [TreeEntity.CAUSE_OF_DEATH_ID],
                    onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = PlantIndentifications::class,
-                   parentColumns = [PlantIndentifications.ID],
+        ForeignKey(entity = PlanterIndentifications::class,
+                   parentColumns = [PlanterIndentifications.ID],
                    childColumns = [TreeEntity.PLANTER_IDENTIFICATION_ID],
                    onUpdate = ForeignKey.CASCADE)
     ]
@@ -43,11 +43,11 @@ data class TreeEntity(@ColumnInfo(name = MAIN_DB_ID)
                       @ColumnInfo(name = LOCATION_ID)
                       var locationId: Long?,
                       @ColumnInfo(name = IS_MISSING)
-                      var isMissing: Boolean?,
+                      var isMissing: String? = "N",
                       @ColumnInfo(name = IS_SYNCED)
-                      var isSynced: Boolean?,
+                      var isSynced: String? = "N",
                       @ColumnInfo(name = IS_PRIORITY)
-                      var isPriority: Boolean?,
+                      var isPriority: String? = "N",
                       @ColumnInfo(name = CAUSE_OF_DEATH_ID)
                       var causeOfDeath: Int?,
                       @ColumnInfo(name = SETTINGS_ID)
