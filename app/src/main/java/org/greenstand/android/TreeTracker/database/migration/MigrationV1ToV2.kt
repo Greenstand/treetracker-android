@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.migrations
+package org.greenstand.android.TreeTracker.database.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -74,7 +74,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
         database.execSQL("alter table new_tree_photo RENAME TO  tree_photo")
 
         //migrate location table
-        database.execSQL("CREATE TABLE IF NOT EXISTS `new_location` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `accuracy` REAL, `lat` REAL, `long` REAL, `user_id` INTEGER, `main_db_id` INTEGER NOT NULL)")
+        database.execSQL("CREATE TABLE IF NOT EXISTS `new_location` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `accuracy` INTEGER, `lat` REAL, `long` REAL, `user_id` INTEGER, `main_db_id` INTEGER NOT NULL)")
         database.execSQL(
             "INSERT INTO new_location\n" +
                     "(_id,accuracy, lat, long, user_id, main_db_id)\n" +
@@ -89,7 +89,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
         database.execSQL(
             "INSERT INTO new_note\n" +
                     "(_id, main_db_id, content, time_created, user_id)\n" +
-                    "SELECT \"_id\", main_db_id, content, time_created, user_id\n" +
+                    "SELECT \"_id\", cast(accuracy AS INTEGER), lat, long,  user_id,main_db_id\n" +
                     "FROM note"
         )
         database.execSQL("drop table note")

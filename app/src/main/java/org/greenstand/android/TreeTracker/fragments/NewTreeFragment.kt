@@ -22,7 +22,6 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,7 +33,7 @@ import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.database.entities.TreeEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 

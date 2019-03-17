@@ -4,7 +4,6 @@ package org.greenstand.android.TreeTracker.activities
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.NotificationManager
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -15,27 +14,27 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
-
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.managers.DataManager
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.fragments.*
+import org.greenstand.android.TreeTracker.fragments.AboutFragment
+import org.greenstand.android.TreeTracker.fragments.DataFragment
+import org.greenstand.android.TreeTracker.fragments.MapsFragment
+import org.greenstand.android.TreeTracker.fragments.UserIdentificationFragment
+import org.greenstand.android.TreeTracker.managers.DataManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback,
@@ -514,50 +513,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun refreshMap() {
         startPeriodicUpdates()
     }
-
-    private fun getMyTrees() {
-
-        mDataManager = object : DataManager<List<UserTree>>() {
-            override fun onDataLoaded(data: List<UserTree>) {
-                userTrees = data
-                TreeTrackerApplication.getDatabaseManager().openDatabase()
-                val userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
-                for (userTree in data) {
-                    val values = ContentValues()
-                    values.put("tree_id", userTree.id)
-                    values.put("user_id", java.lang.Long.toString(userId))
-                    TreeTrackerApplication.getDatabaseManager().insert("pending_updates", null, values)
-                }
-
-                if (data.isNotEmpty()) {
-                    Timber.d("MainActivity GetMyTreesTask onPostExecute jsonReponseArray.length() > 0")
-
-                    var bundle = intent.extras
-
-                    if (bundle == null)
-                        bundle = Bundle()
-
-                    bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true)
-
-                    fragment = DataFragment()
-                    fragment?.arguments = bundle
-
-                    fragmentTransaction = supportFragmentManager
-                            .beginTransaction()
-                    fragmentTransaction?.replace(R.id.containerFragment, fragment as DataFragment)
-                        ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
-
-                }
-            }
-
-            override fun onRequestFailed(message: String) {
-                Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-            }
-        }
-        Timber.d("getMyTrees")
-        mDataManager?.loadUserTrees()
-    }
-
 
     // TODO: implementing this as a static companion object is not necessarily a good design
     companion object {

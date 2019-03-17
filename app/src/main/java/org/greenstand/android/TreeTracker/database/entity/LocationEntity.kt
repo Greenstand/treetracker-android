@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.entities
+package org.greenstand.android.TreeTracker.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = LocationEntity.TABLE)
 data class LocationEntity(
     @ColumnInfo(name = ACCURACY)
-    var accuracy: Double?,
+    var accuracy: Int,
     @ColumnInfo(name = LAT)
     var latitude: Double?,
     @ColumnInfo(name = LONG)

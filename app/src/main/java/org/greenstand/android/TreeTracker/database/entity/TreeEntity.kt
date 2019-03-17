@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.entities
+package org.greenstand.android.TreeTracker.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -33,8 +33,8 @@ import androidx.room.PrimaryKey
             onUpdate = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = PlanterIndentificationsEntity::class,
-            parentColumns = [PlanterIndentificationsEntity.ID],
+            entity = PlanterIdentificationsEntity::class,
+            parentColumns = [PlanterIdentificationsEntity.ID],
             childColumns = [TreeEntity.PLANTER_IDENTIFICATION_ID],
             onUpdate = ForeignKey.CASCADE
         )
@@ -52,7 +52,7 @@ data class TreeEntity(
     @ColumnInfo(name = THREE_DIGIT_NUMBER)
     var threeDigitNumber: Long?,
     @ColumnInfo(name = LOCATION_ID)
-    var locationId: Long?,
+    var locationId: Int?,
     @ColumnInfo(name = IS_MISSING)
     var isMissing: Boolean = false,
     @ColumnInfo(name = IS_SYNCED)

@@ -7,7 +7,6 @@ import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.database.AppDatabase
-import org.greenstand.android.TreeTracker.database.DatabaseManager
 import timber.log.Timber
 
 
@@ -46,21 +45,12 @@ class TreeTrackerApplication : Application() {
 
     }
 
-    fun getDatabaseManager(): DatabaseManager{
-        return DatabaseManager(AppDatabase.getInstance(applicationContext).openHelper)
-    }
-
     companion object {
 
         private var application: TreeTrackerApplication? = null
-        private var databaseManager: DatabaseManager? = null
 
-        fun getDatabaseManager() : DatabaseManager{
-            if(databaseManager == null){
-                databaseManager = application!!.getDatabaseManager()
-                databaseManager!!.openDatabase()
-            }
-            return databaseManager!!
+        fun getAppDatabase(): AppDatabase {
+            return AppDatabase.getInstance(application!!.applicationContext)
         }
 
     }

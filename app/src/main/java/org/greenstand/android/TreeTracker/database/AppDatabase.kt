@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import org.greenstand.android.TreeTracker.database.entities.*
-import org.greenstand.android.TreeTracker.database.migrations.MigrationV1ToV2
+import org.greenstand.android.TreeTracker.database.dao.TreeDao
+import org.greenstand.android.TreeTracker.database.entity.*
+import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
 
 
 @Database(
@@ -17,13 +18,15 @@ import org.greenstand.android.TreeTracker.database.migrations.MigrationV1ToV2
         LocationEntity::class,
         NoteEntity::class,
         PlanterDetailsEntity::class,
-        PlanterIndentificationsEntity::class,
+        PlanterIdentificationsEntity::class,
         SettingsEntity::class,
         PendingUpdateEntity::class,
         PhotoEntity::class
     ], version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
+
+    abstract fun treeDao(): TreeDao;
 
     companion object {
 
@@ -45,5 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private const val DB_NAME_V2 = "treetracker.v2.db"
     }
+
+
 }
 
