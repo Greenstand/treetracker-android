@@ -1,8 +1,7 @@
 package org.greenstand.android.TreeTracker.database.dao
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
+import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 
 @Dao
 interface TreeDao {
@@ -32,7 +31,37 @@ interface TreeDao {
                 "WHERE " +
                 "is_synced = 0"
     )
-    suspend fun getTreesToUpload(): List<TreeDto>
+    fun getTreesToUpload(): List<TreeDto>
+
+    @Transaction
+    @Query("SELECT * FROM tree WHERE is_missing = 1 AND _id = :tree_id")
+    fun getMissingTreeByID(tree_id: Long): List<TreeEntity>
+
+    @Delete
+    fun deleteTree(missingTree: TreeEntity)
+
+    @Transaction
+    @Query("SELECT * FROM tree WHERE _id = :tree_id")
+    fun getTreeByID(tree_id: Long): List<TreeEntity>
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun updateTree(treeEntity: TreeEntity)
+
+    @Transaction
+    @Query("SELECT COUNT(*)  FROM tree")
+    fun getTotalTreeCount(): Int
+
+    @Transaction
+    @Query("SELECT COUNT(*)  FROM tree WHERE is_synced = 1")
+    fun getSyncedTreeCount(): Int
+
+    @Transaction
+    @Query("SELECT COUNT(*)  FROM tree WHERE is_synced = 0")
+    fun getNotSyncedTreeCount(): Int
+
+    @Transaction
+    @Query("SELECT DISTINCT tree_id FROM pending_updates WHERE tree_id NOT NULL and tree_id <> 0")
+    fun getPendingUpdates(): List<Int>
 
 
 }

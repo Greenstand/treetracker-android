@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import org.greenstand.android.TreeTracker.database.dao.PhotoDao
+import org.greenstand.android.TreeTracker.database.dao.PlanterDao
 import org.greenstand.android.TreeTracker.database.dao.TreeDao
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
@@ -26,7 +28,9 @@ import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun treeDao(): TreeDao;
+    abstract fun treeDao(): TreeDao
+    abstract fun planterDao(): PlanterDao
+    abstract fun photoDao(): PhotoDao
 
     companion object {
 

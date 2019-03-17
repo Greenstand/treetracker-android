@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = PlanterDetailsEntity.TABLE)
 data class PlanterDetailsEntity(
-    @ColumnInfo(name = INDENTIFIER)
-    var indentifier: String?,
+    @ColumnInfo(name = IDENTIFIER)
+    var identifier: String?,
     @ColumnInfo(name = FIRST_NAME)
     var firstName: String?,
     @ColumnInfo(name = LAST_NAME)
@@ -31,7 +31,7 @@ data class PlanterDetailsEntity(
     companion object {
         const val TABLE = "planter_details"
         const val ID = "_id"
-        const val INDENTIFIER = "identifier"
+        const val IDENTIFIER = "identifier"
         const val FIRST_NAME = "first_name"
         const val LAST_NAME = "last_name"
         const val ORGANIZATION = "organization"
