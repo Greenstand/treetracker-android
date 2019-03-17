@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import org.greenstand.android.TreeTracker.database.dao.LocationDao
 import org.greenstand.android.TreeTracker.database.dao.PhotoDao
 import org.greenstand.android.TreeTracker.database.dao.PlanterDao
 import org.greenstand.android.TreeTracker.database.dao.TreeDao
@@ -31,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun treeDao(): TreeDao
     abstract fun planterDao(): PlanterDao
     abstract fun photoDao(): PhotoDao
+    abstract fun locationDao(): LocationDao
 
     companion object {
 

@@ -19,4 +19,8 @@ interface PlanterDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updatePlanterIdentification(it: PlanterIdentificationsEntity)
+
+    @Transaction
+    @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
+    fun getPlantersByIdentifier(identifier: String?): List<PlanterDetailsEntity>
 }
