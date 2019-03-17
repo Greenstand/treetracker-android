@@ -82,6 +82,10 @@ class TreeHeightFragment : Fragment() {
         viewModel.onFinishedLiveData().observe(this, Observer {
             fragmentManager?.popBackStack(ValueHelper.NEW_TREE_FRAGMENT, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         })
+
+        viewModel.onEnableButtonLiveData().observe(this, Observer {
+            save_tree_height.isEnabled = it
+        })
     }
 
     private fun indexToBias(index: Int): Float {

@@ -16,9 +16,14 @@ class TreeHeightViewModel : CoroutineViewModel() {
 
     var newTree: NewTree? = null
     var treeColor: TreeColor? = null
+        set(value) {
+            field = value
+            onEnableButtonLiveData.postValue(value != null)
+        }
 
     private val toastMessageLiveData = MutableLiveData<Int>()
     private val onFinishedLiveData = MutableLiveData<Unit>()
+    private val onEnableButtonLiveData = MutableLiveData<Boolean>()
 
     fun saveNewTree() {
         launch {
@@ -56,4 +61,5 @@ class TreeHeightViewModel : CoroutineViewModel() {
 
     fun onFinishedLiveData(): LiveData<Unit> = onFinishedLiveData
 
+    fun onEnableButtonLiveData(): LiveData<Boolean> = onEnableButtonLiveData
 }
