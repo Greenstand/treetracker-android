@@ -5,26 +5,28 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = PlanterDetailsEntity.TABLE)
-data class PlanterDetailsEntity(@ColumnInfo(name = INDENTIFIER)
-                                var indentifier: String?,
-                                @ColumnInfo(name = FIRST_NAME)
-                                var firstName: String?,
-                                @ColumnInfo(name = LAST_NAME)
-                                var lastName: String?,
-                                @ColumnInfo(name = ORGANIZATION)
-                                var organization: String?,
-                                @ColumnInfo(name = PHONE)
-                                var phone: String?,
-                                @ColumnInfo(name = EMAIL)
-                                var email: String?,
-                                @ColumnInfo(name = UPLOADED)
-                                var uploaded: String? = "N",
-                                @ColumnInfo(name = TIME_CREATED)
-                                var timeCreated: Long?) {
+data class PlanterDetailsEntity(
+    @ColumnInfo(name = INDENTIFIER)
+    var indentifier: String?,
+    @ColumnInfo(name = FIRST_NAME)
+    var firstName: String?,
+    @ColumnInfo(name = LAST_NAME)
+    var lastName: String?,
+    @ColumnInfo(name = ORGANIZATION)
+    var organization: String?,
+    @ColumnInfo(name = PHONE)
+    var phone: String?,
+    @ColumnInfo(name = EMAIL)
+    var email: String?,
+    @ColumnInfo(name = UPLOADED)
+    var uploaded: Int = 0,
+    @ColumnInfo(name = TIME_CREATED)
+    var timeCreated: String
+) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: Long? = null
+    var id: Int = 0
 
     companion object {
         const val TABLE = "planter_details"

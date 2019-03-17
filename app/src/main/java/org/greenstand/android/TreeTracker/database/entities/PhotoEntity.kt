@@ -8,28 +8,32 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = PhotoEntity.TABLE,
     foreignKeys = [
-        ForeignKey(entity = LocationEntity::class,
-                   parentColumns = [LocationEntity.ID],
-                   childColumns = [PhotoEntity.LOCATION_ID],
-                   onUpdate = ForeignKey.CASCADE)
+        ForeignKey(
+            entity = LocationEntity::class,
+            parentColumns = [LocationEntity.ID],
+            childColumns = [PhotoEntity.LOCATION_ID],
+            onUpdate = ForeignKey.CASCADE
+        )
     ]
 )
-data class PhotoEntity(@ColumnInfo(name = NAME)
-                       var name: String?,
-                       @ColumnInfo(name = LOCATION_ID)
-                       var locationId: Long?,
-                       @ColumnInfo(name = MAIN_DB_ID)
-                       var mainDbId: Long?,
-                       @ColumnInfo(name = IS_OUTDATED)
-                       var isOutdated: Long?,
-                       @ColumnInfo(name = TIME_TAKEN)
-                       var timeTaken: Long?,
-                       @ColumnInfo(name = USER_ID)
-                       var userId: Long?) {
+data class PhotoEntity(
+    @ColumnInfo(name = NAME)
+    var name: String?,
+    @ColumnInfo(name = LOCATION_ID)
+    var locationId: Int?,
+    @ColumnInfo(name = MAIN_DB_ID)
+    var mainDbId: Int = 0,
+    @ColumnInfo(name = IS_OUTDATED)
+    var isOutdated: Int = 0,
+    @ColumnInfo(name = TIME_TAKEN)
+    var timeTaken: String,
+    @ColumnInfo(name = USER_ID)
+    var userId: Long?
+) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: Long? = null
+    var id: Int = 0
 
     companion object {
         const val TABLE = "photo"

@@ -8,61 +8,73 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = TreeEntity.TABLE,
     foreignKeys = [
-        ForeignKey(entity = SettingsEntity::class,
-                   parentColumns = [SettingsEntity.ID],
-                   childColumns = [TreeEntity.SETTINGS_OVERRIDE_ID],
-                   onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = SettingsEntity::class,
-                   parentColumns = [SettingsEntity.ID],
-                   childColumns = [TreeEntity.SETTINGS_ID],
-                   onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = LocationEntity::class,
-                   parentColumns = [LocationEntity.ID],
-                   childColumns = [TreeEntity.LOCATION_ID],
-                   onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = NoteEntity::class,
-                   parentColumns = [NoteEntity.ID],
-                   childColumns = [TreeEntity.CAUSE_OF_DEATH_ID],
-                   onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = PlanterIndentificationsEntity::class,
-                   parentColumns = [PlanterIndentificationsEntity.ID],
-                   childColumns = [TreeEntity.PLANTER_IDENTIFICATION_ID],
-                   onUpdate = ForeignKey.CASCADE)
+        ForeignKey(
+            entity = SettingsEntity::class,
+            parentColumns = [SettingsEntity.ID],
+            childColumns = [TreeEntity.SETTINGS_OVERRIDE_ID],
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = SettingsEntity::class,
+            parentColumns = [SettingsEntity.ID],
+            childColumns = [TreeEntity.SETTINGS_ID],
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = LocationEntity::class,
+            parentColumns = [LocationEntity.ID],
+            childColumns = [TreeEntity.LOCATION_ID],
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = NoteEntity::class,
+            parentColumns = [NoteEntity.ID],
+            childColumns = [TreeEntity.CAUSE_OF_DEATH_ID],
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = PlanterIndentificationsEntity::class,
+            parentColumns = [PlanterIndentificationsEntity.ID],
+            childColumns = [TreeEntity.PLANTER_IDENTIFICATION_ID],
+            onUpdate = ForeignKey.CASCADE
+        )
     ]
 )
-data class TreeEntity(@ColumnInfo(name = MAIN_DB_ID)
-                      var mainDbId: Long?,
-                      @ColumnInfo(name = TIME_CREATED)
-                      var timeCreated: Long?,
-                      @ColumnInfo(name = TIME_UPDATED)
-                      var timeUpdated: Long?,
-                      @ColumnInfo(name = TIME_FOR_UPDATE)
-                      var timeForUpdate: Long?,
-                      @ColumnInfo(name = THREE_DIGIT_NUMBER)
-                      var threeDigitNumber: Long?,
-                      @ColumnInfo(name = LOCATION_ID)
-                      var locationId: Long?,
-                      @ColumnInfo(name = IS_MISSING)
-                      var isMissing: String? = "N",
-                      @ColumnInfo(name = IS_SYNCED)
-                      var isSynced: String? = "N",
-                      @ColumnInfo(name = IS_PRIORITY)
-                      var isPriority: String? = "N",
-                      @ColumnInfo(name = CAUSE_OF_DEATH_ID)
-                      var causeOfDeath: Int?,
-                      @ColumnInfo(name = SETTINGS_ID)
-                      var settingId: Long?,
-                      @ColumnInfo(name = SETTINGS_OVERRIDE_ID)
-                      var settingsOverrideId: Long?,
-                      @ColumnInfo(name = USER_ID)
-                      var userId: Long?,
-                      @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
-                      var planterId: Long?) {
+data class TreeEntity(
+    @ColumnInfo(name = MAIN_DB_ID)
+    var mainDbId: Long = 0,
+    @ColumnInfo(name = TIME_CREATED)
+    var timeCreated: String,
+    @ColumnInfo(name = TIME_UPDATED)
+    var timeUpdated: String,
+    @ColumnInfo(name = TIME_FOR_UPDATE)
+    var timeForUpdate: String,
+    @ColumnInfo(name = THREE_DIGIT_NUMBER)
+    var threeDigitNumber: Long?,
+    @ColumnInfo(name = LOCATION_ID)
+    var locationId: Long?,
+    @ColumnInfo(name = IS_MISSING)
+    var isMissing: Boolean = false,
+    @ColumnInfo(name = IS_SYNCED)
+    var isSynced: Boolean = false,
+    @ColumnInfo(name = IS_PRIORITY)
+    var isPriority: Boolean = false,
+    @ColumnInfo(name = CAUSE_OF_DEATH_ID)
+    var causeOfDeath: Int?,
+    @ColumnInfo(name = SETTINGS_ID)
+    var settingId: Long?,
+    @ColumnInfo(name = SETTINGS_OVERRIDE_ID)
+    var settingsOverrideId: Long?,
+    @ColumnInfo(name = USER_ID)
+    var userId: Long?,
+    @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
+    var planterId: Long?
+) {
 
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: Long? = null
+    var id: Int = 0
 
 
     companion object {

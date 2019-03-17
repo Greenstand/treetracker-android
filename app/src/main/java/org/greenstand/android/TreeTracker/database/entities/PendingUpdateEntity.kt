@@ -8,36 +8,44 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = PendingUpdateEntity.TABLE,
     foreignKeys = [
-        ForeignKey(entity = SettingsEntity::class,
-                   parentColumns = [SettingsEntity.ID],
-                   childColumns = [PendingUpdateEntity.SETTINGS_ID],
-                   onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = TreeEntity::class,
-                   parentColumns = [TreeEntity.ID],
-                   childColumns = [PendingUpdateEntity.TREE_ID],
-                   onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = LocationEntity::class,
-                   parentColumns = [LocationEntity.ID],
-                   childColumns = [PendingUpdateEntity.LOCATION_ID],
-                   onUpdate = ForeignKey.CASCADE)
+        ForeignKey(
+            entity = SettingsEntity::class,
+            parentColumns = [SettingsEntity.ID],
+            childColumns = [PendingUpdateEntity.SETTINGS_ID],
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = TreeEntity::class,
+            parentColumns = [TreeEntity.ID],
+            childColumns = [PendingUpdateEntity.TREE_ID],
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = LocationEntity::class,
+            parentColumns = [LocationEntity.ID],
+            childColumns = [PendingUpdateEntity.LOCATION_ID],
+            onUpdate = ForeignKey.CASCADE
+        )
     ]
 )
-data class PendingUpdateEntity(@ColumnInfo(name = MAIN_DB_ID)
-                               var mainDbId: Long?,
-                               @ColumnInfo(name = USER_ID)
-                               var userId: Long?,
-                               @ColumnInfo(name = SETTINGS_ID)
-                               var settingsId: Long?,
-                               @ColumnInfo(name = TREE_ID)
-                               var treeId: Long?,
-                               @ColumnInfo(name = LOCATION_ID)
-                               var locationId: Long?,
-                               @ColumnInfo(name = RADIUS)
-                               var radius: Long?) {
+data class PendingUpdateEntity(
+    @ColumnInfo(name = MAIN_DB_ID)
+    var mainDbId: Int = 0,
+    @ColumnInfo(name = USER_ID)
+    var userId: Int?,
+    @ColumnInfo(name = SETTINGS_ID)
+    var settingsId: Int?,
+    @ColumnInfo(name = TREE_ID)
+    var treeId: Int?,
+    @ColumnInfo(name = LOCATION_ID)
+    var locationId: Int?,
+    @ColumnInfo(name = RADIUS)
+    var radius: Int?
+) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: Long? = null
+    var id: Int = 0
 
     companion object {
         const val TABLE = "pending_updates"

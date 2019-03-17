@@ -6,23 +6,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.media.RingtoneManager
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
-import android.util.Log
 import android.widget.Toast
 
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.database.DbHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.database.DatabaseManager
 import timber.log.Timber
 
 import java.util.Calendar

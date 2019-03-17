@@ -8,26 +8,30 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = PlanterIndentificationsEntity.TABLE,
     foreignKeys = [
-        ForeignKey(entity = PlanterDetailsEntity::class,
-                   parentColumns = [PlanterDetailsEntity.ID],
-                   childColumns = [PlanterIndentificationsEntity.PLANTER_DETAILS_ID],
-                   onUpdate = ForeignKey.CASCADE)
+        ForeignKey(
+            entity = PlanterDetailsEntity::class,
+            parentColumns = [PlanterDetailsEntity.ID],
+            childColumns = [PlanterIndentificationsEntity.PLANTER_DETAILS_ID],
+            onUpdate = ForeignKey.CASCADE
+        )
     ]
 )
-data class PlanterIndentificationsEntity(@ColumnInfo(name = PLANTER_DETAILS_ID)
-                                         var planterDetailsId: Long?,
-                                         @ColumnInfo(name = INDENTIFIER)
-                                         var indentifier: String?,
-                                         @ColumnInfo(name = PHOTO_PATH)
-                                         var photoPath: String?,
-                                         @ColumnInfo(name = PHOTO_URL)
-                                         var photoUrl: String?,
-                                         @ColumnInfo(name = TIME_CREATED)
-                                         var timeCreated: Long?) {
+data class PlanterIndentificationsEntity(
+    @ColumnInfo(name = PLANTER_DETAILS_ID)
+    var planterDetailsId: Int?,
+    @ColumnInfo(name = INDENTIFIER)
+    var identifier: String?,
+    @ColumnInfo(name = PHOTO_PATH)
+    var photoPath: String?,
+    @ColumnInfo(name = PHOTO_URL)
+    var photoUrl: String?,
+    @ColumnInfo(name = TIME_CREATED)
+    var timeCreated: String
+) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: Long? = null
+    var id: Int=0
 
     companion object {
         const val TABLE = "planter_identifications"
