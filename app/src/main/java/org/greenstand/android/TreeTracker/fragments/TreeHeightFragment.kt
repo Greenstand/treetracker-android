@@ -130,7 +130,7 @@ class TreeHeightFragment : Fragment() {
                     setVerticalBias(R.id.floating_button, bias)
                     constrainHeight(R.id.floating_button, selectedHeight)
                     constrainWidth(R.id.floating_button, selectedWidth)
-                    floating_button.animateColor(toColor = colorView.color)
+                    floating_button_inner.animateColor(toColor = colorView.color)
                     applyTo(view)
                 }
 
@@ -155,7 +155,7 @@ class TreeHeightFragment : Fragment() {
                     constrainHeight(R.id.floating_button, height)
                     constrainWidth(R.id.floating_button, width)
                     setVisibility(R.id.floating_button, ConstraintSet.VISIBLE)
-                    floating_button.setCardBackgroundColor(colorView.color)
+                    floating_button_inner.setBackgroundColor(colorView.color)
                     applyTo(view)
                 }
                 isInitialState = false
