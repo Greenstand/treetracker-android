@@ -3,24 +3,27 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_user_identification.view.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-
+import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Validation
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -39,8 +42,10 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
     private var mUserIdentifier: CharSequence? = null
     private var mSharedPreferences: SharedPreferences? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_user_identification, container, false)
 
@@ -55,7 +60,7 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
 
             val phoneNumberPattern = Pattern.compile("\\d{7,15}")
 
-            if(Validation.isEmailValid(identifier)){
+            if (Validation.isEmailValid(identifier)) {
                 mUserIdentifier = identifier
             } else {
                 identifier.replace(" ", "")
@@ -63,69 +68,83 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                 identifier.replace(")", "")
                 identifier.replace("-", "")
 
-                if(phoneNumberPattern.matcher(identifier).matches()) {
+                if (phoneNumberPattern.matcher(identifier).matches()) {
                     mUserIdentifier = identifier
                 }
             }
 
-            if(mUserIdentifier == null) {
-                Toast.makeText(activity, "Invalid Identifier.  Please enter an email or a phone " +
-                        "number", Toast.LENGTH_LONG).show()
-            } else if(mPhotoPath == null){
+            if (mUserIdentifier == null) {
+                Toast.makeText(
+                    activity, "Invalid Identifier.  Please enter an email or a phone " +
+                            "number", Toast.LENGTH_LONG
+                ).show()
+            } else if (mPhotoPath == null) {
                 takePicture()
             } else {
                 // do the login
-                TreeTrackerApplication. getDatabaseManager().openDatabase();
+                runBlocking {
+                    val identifier1 = mUserIdentifier.toString()
 
-                val identifier1 = mUserIdentifier.toString()
-                val planterDetailsCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(
-                        "SELECT * FROM planter_details WHERE identifier = '$identifier1'", null);
-                var planterDetailsId : Int? = null
-                if(planterDetailsCursor.count > 0){
-                    planterDetailsCursor.moveToFirst()
-                    planterDetailsId = planterDetailsCursor.getInt(planterDetailsCursor.getColumnIndex("_id"))
-
-                }
-
-                // photo
-                val identificationContentValues = ContentValues()
-                identificationContentValues.put("identifier", identifier1)
-                identificationContentValues.put("photo_path", mPhotoPath)
-                identificationContentValues.put("planter_details_id", planterDetailsId)
-
-                val identificationId = TreeTrackerApplication.getDatabaseManager().insert(
-                        "planter_identifications", null, identificationContentValues)
+                    val planterDetailsId = GlobalScope.async {
+                        val planterDetailsEntity =
+                            TreeTrackerApplication.getAppDatabase().planterDao().getPlantersByIdentifier(identifier1)
 
 
-                mSharedPreferences = activity!!.getSharedPreferences(
-                        ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
-                val editor = mSharedPreferences?.edit()
+                        var planterDetailsId: Long? = null
+                        if (planterDetailsEntity.isNotEmpty()) {
+                            planterDetailsId = planterDetailsEntity.first().id.toLong()
+                        }
+                        return@async planterDetailsId
+                    }.await()
 
-                val tsLong = System.currentTimeMillis() / 1000
-                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, mUserIdentifier.toString())
-                editor?.putString(ValueHelper.PLANTER_PHOTO, mPhotoPath)
-                editor?.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
-                editor?.apply()
+                    val identificationId = GlobalScope.async {
 
-                // TODO consider returning to MapFragment and pushing this new fragment from there
 
-                activity!!.supportFragmentManager.popBackStack()
-                val fragmentTransaction = activity!!.supportFragmentManager
-                        .beginTransaction()
-                if(planterDetailsId == null){
-                    val fragment = UserDetailsFragment()
-                    fragmentTransaction.replace(R.id.containerFragment, fragment)
-                        .addToBackStack(ValueHelper.USER_DETAILS_FRAGMENT).commit()
+                        // photo
 
-                } else {
+                        val identification =
+                            PlanterIdentificationsEntity(
+                                planterDetailsId,
+                                identifier1,
+                                mPhotoPath,
+                                null,
+                                planterDetailsId.toString()
+                            )
 
-                    // We only fully verify the user identification if we have already collected the details
-                    editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
+                        return@async TreeTrackerApplication.getAppDatabase().planterDao().insert(identification)
+                    }.await()
+                    mSharedPreferences = activity!!.getSharedPreferences(
+                        ValueHelper.NAME_SPACE, Context.MODE_PRIVATE
+                    )
+                    val editor = mSharedPreferences?.edit()
+
+                    val tsLong = System.currentTimeMillis() / 1000
+                    editor?.putString(ValueHelper.PLANTER_IDENTIFIER, mUserIdentifier.toString())
+                    editor?.putString(ValueHelper.PLANTER_PHOTO, mPhotoPath)
+                    editor?.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
                     editor?.apply()
 
-                    val fragment = UserDetailsFragment()
-                    fragmentTransaction.replace(R.id.containerFragment, fragment).commit()
+                    // TODO consider returning to MapFragment and pushing this new fragment from there
+
+                    activity!!.supportFragmentManager.popBackStack()
+                    val fragmentTransaction = activity!!.supportFragmentManager
+                        .beginTransaction()
+                    if (planterDetailsId == null) {
+                        val fragment = UserDetailsFragment()
+                        fragmentTransaction.replace(R.id.containerFragment, fragment)
+                            .addToBackStack(ValueHelper.USER_DETAILS_FRAGMENT).commit()
+
+                    } else {
+
+                        // We only fully verify the user identification if we have already collected the details
+                        editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
+                        editor?.apply()
+
+                        val fragment = UserDetailsFragment()
+                        fragmentTransaction.replace(R.id.containerFragment, fragment).commit()
+                    }
                 }
+
             }
         }
 
@@ -139,10 +158,15 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
 
     private fun takePicture() {
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context!!,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    Permissions.MY_PERMISSION_CAMERA)
+            != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                Permissions.MY_PERMISSION_CAMERA
+            )
         } else {
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
             takePictureIntent.putExtra(ValueHelper.TAKE_SELFIE_EXTRA, true)
@@ -162,12 +186,12 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
         if (data != null && resultCode != Activity.RESULT_CANCELED) {
             if (resultCode == Activity.RESULT_OK) {
 
-                 mPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+                mPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
                 if (mPhotoPath != null) {
                     val imageButton = view?.fragmentUserIdentificationPhoto
                     val rotatedBitmap = ImageUtils.decodeBitmap(mPhotoPath, resources.displayMetrics.density)
-                    if(rotatedBitmap != null){
+                    if (rotatedBitmap != null) {
                         imageButton?.setImageBitmap(rotatedBitmap)
                     }
                 }
@@ -175,7 +199,7 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
-          
+
         }
     }
 }

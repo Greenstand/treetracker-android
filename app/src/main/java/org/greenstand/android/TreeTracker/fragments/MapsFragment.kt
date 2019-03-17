@@ -27,6 +27,10 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_map.view.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
@@ -37,11 +41,11 @@ import org.greenstand.android.TreeTracker.database.entity.PhotoEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreePhotoEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -107,31 +111,35 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 resources.getString(R.string.user_not_identified)
             )
             //
-            val planterList = TreeTrackerApplication.getAppDatabase().planterDao().getPlantersByIdentifier(identifier)
-            if (planterList.isEmpty()) {
-                activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
-                // And time them out
-                val editor = mSharedPreferences!!.edit()
-                editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor.apply()
-            } else {
-                val planter = planterList.first()
-                val title = "${planter.firstName} ${planter.lastName}"
-                activity?.toolbarTitle?.text = title
-
-                val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
-                val imageView = view!!.mapUserImage
-                if (photoPath != null) {
-                    val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
-                    if (rotatedBitmap != null) {
-                        imageView.setImageBitmap(rotatedBitmap)
-                        imageView.visibility = View.VISIBLE
-
-                    }
+            runBlocking {
+                val planterList = GlobalScope.async {
+                    TreeTrackerApplication.getAppDatabase().planterDao().getPlantersByIdentifier(identifier)
+                }.await()
+                if (planterList.isEmpty()) {
+                    activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
+                    // And time them out
+                    val editor = mSharedPreferences!!.edit()
+                    editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+                    editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                    editor.putString(ValueHelper.PLANTER_PHOTO, null)
+                    editor.apply()
                 } else {
-                    imageView.visibility = View.GONE
+                    val planter = planterList.first()
+                    val title = "${planter.firstName} ${planter.lastName}"
+                    activity?.toolbarTitle?.text = title
+
+                    val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
+                    val imageView = view!!.mapUserImage
+                    if (photoPath != null) {
+                        val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
+                        if (rotatedBitmap != null) {
+                            imageView.setImageBitmap(rotatedBitmap)
+                            imageView.visibility = View.VISIBLE
+
+                        }
+                    } else {
+                        imageView.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -348,62 +356,68 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
 
-        val userId = -1
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        GlobalScope.launch {
+            val userId = -1
 
-        for (i in 0..499) {
+            for (i in 0..499) {
 
-            val location = LocationEntity(
-                MainActivity.mCurrentLocation!!.accuracy.toInt(),
-                MainActivity.mCurrentLocation!!.latitude + (Math.random() - .5) / 1000,
-                MainActivity.mCurrentLocation!!.longitude + (Math.random() - .5) / 1000,
-                userId.toLong()
-            )
+                val location = LocationEntity(
+                    MainActivity.mCurrentLocation!!.accuracy.toInt(),
+                    MainActivity.mCurrentLocation!!.latitude + (Math.random() - .5) / 1000,
+                    MainActivity.mCurrentLocation!!.longitude + (Math.random() - .5) / 1000,
+                    userId.toLong()
+                )
 
-            val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(location)
+                val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(location)
 
-            var photoId: Long = -1
-            try {
-                val myInput = activity!!.assets.open("testtreeimage.jpg")
-                val f = ImageUtils.createImageFile(activity!!)
-                val fos = FileOutputStream(f)
-                fos.write(IOUtils.toByteArray(myInput))
-                fos.close()
+                var photoId: Long = -1
+                try {
+                    val myInput = activity!!.assets.open("testtreeimage.jpg")
+                    val f = ImageUtils.createImageFile(activity!!)
+                    val fos = FileOutputStream(f)
+                    fos.write(IOUtils.toByteArray(myInput))
+                    fos.close()
 
-                val photo =
-                    PhotoEntity(f.absolutePath, locationId.toInt(), 0, 0, dateFormat.format(Date()), userId.toLong())
-                photoId = TreeTrackerApplication.getAppDatabase().photoDao().insertPhoto(photo)
+                    val photo =
+                        PhotoEntity(
+                            f.absolutePath,
+                            locationId.toInt(),
+                            0,
+                            false,
+                            Utils.dateFormat.format(Date()),
+                            userId.toLong()
+                        )
+                    photoId = TreeTrackerApplication.getAppDatabase().photoDao().insertPhoto(photo)
 
-            } catch (e: IOException) {
-                e.printStackTrace()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                val treeEntity = TreeEntity(
+                    0,
+                    Utils.dateFormat.format(Date()),
+                    Utils.dateFormat.format(Date()),
+                    "",
+                    null,
+                    locationId.toInt(),
+                    false,
+                    false,
+                    false,
+                    null,
+                    null,
+                    null,
+                    userId.toLong(),
+                    null
+                )
+
+                val treeId = TreeTrackerApplication.getAppDatabase().treeDao().insert(treeEntity)
+
+                val treePhotoEntity = TreePhotoEntity(treeId, photoId)
+                TreeTrackerApplication.getAppDatabase().photoDao().insert(treePhotoEntity)
+                //Timber.d("treePhotoId " + Long.toString(treePhotoId));
             }
-
-            val treeEntity: TreeEntity = TreeEntity(
-                0,
-                dateFormat.format(Date()),
-                dateFormat.format(Date()),
-                "",
-                null,
-                locationId.toInt(),
-                false,
-                false,
-                false,
-                null,
-                null,
-                null,
-                userId.toLong(),
-                null
-            )
-
-            val treeId = TreeTrackerApplication.getAppDatabase().treeDao().insert(treeEntity)
-
-            val treePhotoEntity = TreePhotoEntity(treeId, photoId)
-            TreeTrackerApplication.getAppDatabase().photoDao().insert(treePhotoEntity)
-            //Timber.d("treePhotoId " + Long.toString(treePhotoId));
         }
-
         Toast.makeText(activity, "Lots of trees added", Toast.LENGTH_LONG).show()
-
         return true
     }
 
@@ -444,32 +458,37 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         }
         map.isMyLocationEnabled = true
 
-        val trees = TreeTrackerApplication.getAppDatabase().treeDao().getTreesToDisplay()
+        runBlocking {
+            val trees = GlobalScope.async {
+                return@async TreeTrackerApplication.getAppDatabase().treeDao().getTreesToDisplay()
+            }.await()
 
-        if (trees.isNotEmpty()) {
-            Timber.d("Adding markers")
+            if (trees.isNotEmpty()) {
+                Timber.d("Adding markers")
 
-            var latLng: LatLng? = null
+                var latLng: LatLng? = null
 
-            for (tree in trees) {
-                latLng = LatLng(tree.latitude, tree.longitude)
+                for (tree in trees) {
+                    latLng = LatLng(tree.latitude, tree.longitude)
 
-                val markerOptions = MarkerOptions()
-                    .title(tree.tree_id.toString())// set Id instead of title
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
-                    .position(latLng)
-                map.addMarker(markerOptions)
+                    val markerOptions = MarkerOptions()
+                        .title(tree.tree_id.toString())// set Id instead of title
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
+                        .position(latLng)
+                    map.addMarker(markerOptions)
 
+                }
+
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
+
+            } else {
+                if (MainActivity.mCurrentLocation != null) {
+                    val myLatLng =
+                        LatLng(MainActivity.mCurrentLocation!!.latitude, MainActivity.mCurrentLocation!!.longitude)
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
+                }
             }
 
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
-
-        } else {
-            if (MainActivity.mCurrentLocation != null) {
-                val myLatLng =
-                    LatLng(MainActivity.mCurrentLocation!!.latitude, MainActivity.mCurrentLocation!!.longitude)
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
-            }
         }
 
         map.setOnMarkerClickListener(this@MapsFragment)

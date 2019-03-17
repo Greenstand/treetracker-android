@@ -19,7 +19,7 @@ data class PlanterDetailsEntity(
     @ColumnInfo(name = EMAIL)
     var email: String?,
     @ColumnInfo(name = UPLOADED)
-    var uploaded: Int = 0,
+    var uploaded: Boolean = false,
     @ColumnInfo(name = TIME_CREATED)
     var timeCreated: String
 ) {

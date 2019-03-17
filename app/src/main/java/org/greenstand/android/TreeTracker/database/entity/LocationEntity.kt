@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = LocationEntity.TABLE)
 data class LocationEntity(
     @ColumnInfo(name = ACCURACY)
-    var accuracy: Int,
+    var accuracy: Int?=0,
     @ColumnInfo(name = LAT)
     var latitude: Double?,
     @ColumnInfo(name = LONG)

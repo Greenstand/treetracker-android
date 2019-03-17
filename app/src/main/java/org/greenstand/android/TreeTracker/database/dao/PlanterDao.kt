@@ -14,13 +14,23 @@ interface PlanterDao {
     fun updatePlanterDetails(planterDetailsEntity: PlanterDetailsEntity)
 
     @Transaction
+    @Query("SELECT * FROM planter_identifications WHERE identifier = :identifier")
+    fun getPlanterIdentificationsByID(identifier: String?): List<PlanterIdentificationsEntity>
+
+    @Transaction
     @Query("SELECT * FROM planter_identifications WHERE photo_url IS NULL")
     fun getPlanterIdentificationsToUpload(): List<PlanterIdentificationsEntity>
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updatePlanterIdentification(it: PlanterIdentificationsEntity)
+    fun updatePlanterIdentification(planterIdentificationsEntity: PlanterIdentificationsEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(planterIdentificationsEntity: PlanterIdentificationsEntity): Long
 
     @Transaction
     @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
     fun getPlantersByIdentifier(identifier: String?): List<PlanterDetailsEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(planterDetailsEntity: PlanterDetailsEntity): Long
 }

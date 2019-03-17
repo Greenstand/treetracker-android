@@ -58,7 +58,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
         //migrate location table
         database.execSQL("CREATE TABLE IF NOT EXISTS `new_location` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `accuracy` INTEGER, `lat` REAL, `long` REAL, `user_id` INTEGER, `main_db_id` INTEGER NOT NULL)")
         database.execSQL(
-            "INSERT INTO new_location(_id,accuracy, lat, long, user_id, main_db_id) SELECT _id, accuracy, lat, long,  user_id,main_db_id FROM location"
+            "INSERT INTO new_location(_id,accuracy, lat, long, user_id, main_db_id) SELECT _id, cast(accuracy AS INTEGER), lat, long,  user_id,main_db_id FROM location"
         )
         database.execSQL("drop table location")
         database.execSQL("alter table new_location RENAME TO  location")
@@ -66,7 +66,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
         //migrate table note
         database.execSQL("CREATE TABLE IF NOT EXISTS `new_note` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `main_db_id` INTEGER NOT NULL, `content` TEXT, `time_created` TEXT NOT NULL, `user_id` INTEGER)")
         database.execSQL(
-            "INSERT INTO new_note(_id, main_db_id, content, time_created, user_id) SELECT _id, cast(accuracy AS INTEGER), lat, long,  user_id,main_db_id FROM note"
+            "INSERT INTO new_note(_id, main_db_id, content, time_created, user_id) SELECT _id, main_db_id, content, time_created, user_id FROM note"
         )
         database.execSQL("drop table note")
         database.execSQL("alter table new_note RENAME TO  note")

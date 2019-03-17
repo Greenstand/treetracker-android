@@ -7,30 +7,26 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import android.view.HapticFeedbackConstants
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
+import android.view.*
 import android.view.View.OnClickListener
-import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.view.*
-
-import org.greenstand.android.TreeTracker.activities.MainActivity
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-
+import timber.log.Timber
 import java.io.IOException
 import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Date
-
-import timber.log.Timber
+import java.util.*
 
 class TreePreviewFragment : Fragment(), OnClickListener {
 
@@ -72,109 +68,104 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
         v.fragmentTreePreviewMore.setOnClickListener(this@TreePreviewFragment)
 
+        runBlocking {
 
-        val query = "select * from tree " +
-                "left outer join location on location._id = tree.location_id " +
-                "left outer join tree_photo on tree._id = tree_id " +
-                "left outer join photo on photo._id = photo_id where tree._id =" + treeIdStr
+            val trees = GlobalScope.async {
+                TreeTrackerApplication.getAppDatabase().treeDao().getTreeDtoByID(treeIdStr!!.toLong())
+            }.await()
 
-        val photoCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(query, null)
-
-        photoCursor.moveToFirst()
-
-        do {
-
-            mCurrentPhotoPath = photoCursor.getString(photoCursor.getColumnIndex("name"))
-
-            val isOutdated = if (photoCursor.getString(photoCursor.getColumnIndex("is_outdated")) == null)
-                false
-            else
-                photoCursor.getString(photoCursor.getColumnIndex("is_outdated")) == "Y"
+            trees.forEach {
 
 
-            val noImage = v.fragmentTreePreviewNoImage
+                mCurrentPhotoPath = it.name
 
-            if (mCurrentPhotoPath != null && !isOutdated) {
-                setPic()
+                val isOutdated = it.isOutdated == true
 
-                noImage.visibility = View.INVISIBLE
-            } else {
-                noImage.visibility = View.VISIBLE
-            }
+                val noImage = v.fragmentTreePreviewNoImage
 
-            MainActivity.mCurrentTreeLocation = Location("")
-            MainActivity.mCurrentTreeLocation!!.latitude = java.lang.Double.parseDouble(photoCursor.getString(
-                photoCursor.getColumnIndex("lat")))
-            MainActivity.mCurrentTreeLocation!!.longitude = java.lang.Double.parseDouble(photoCursor.getString(
-                photoCursor.getColumnIndex("long")))
+                if (mCurrentPhotoPath != null && !isOutdated) {
+                    setPic()
 
-            // No GPS accuracy info from new api.
-            //			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
-
-            val results = floatArrayOf(0f, 0f, 0f)
-            if (MainActivity.mCurrentLocation != null) {
-                Location.distanceBetween(MainActivity.mCurrentLocation!!.latitude, MainActivity.mCurrentLocation!!.longitude,
-                        MainActivity.mCurrentTreeLocation!!.latitude, MainActivity.mCurrentTreeLocation!!.longitude, results)
-            }
-
-            val distanceTxt = v.fragmentTreePreviewDistance
-            val distanceTxtString = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
-            distanceTxt.text = distanceTxtString
-
-            val accuracyTxt = v.fragmentTreePreviewGpsAccuracy
-            val treeAccuracy = photoCursor.getString(photoCursor.getColumnIndex("accuracy")).toFloat()
-            val accuracyTxtString = treeAccuracy.toString() + " " + resources.getString(R.string.meters)
-            accuracyTxt.text = accuracyTxtString
-
-
-            val createdTxt = v.fragmentTreePreviewCreated
-            createdTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_created")).substring(0,
-                photoCursor.getString(photoCursor.getColumnIndex("time_created")).lastIndexOf(":"))
-
-            val updatedTxt = v.fragmentTreePreviewLastUpdate
-            updatedTxt.text = photoCursor.getString(photoCursor.getColumnIndex("time_updated")).substring(0,
-                photoCursor.getString(photoCursor.getColumnIndex("time_updated")).lastIndexOf(":"))
-
-            val statusTxt = v.fragmentTreePreviewImageStatus
-
-            var dateForUpdate = Date()
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            try {
-                dateForUpdate = dateFormat.parse(photoCursor.getString(photoCursor.getColumnIndex("time_for_update")))
-            } catch (e: ParseException) {
-                // TODO Auto-generated catch block
-                e.printStackTrace()
-            }
-
-            if (dateForUpdate.before(Date())) {
-                statusTxt.setText(R.string.outdated)
-            }
-
-
-            val noteQuery = "select tree_id, note.*, content as notetext from tree " +
-                    "left outer join tree_note on tree_id = tree._id " +
-                    "left outer join note on note_id = note._id " +
-                    "where content is not null and tree_id = " + treeIdStr + " order by note.time_created asc"
-
-            val noteCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(noteQuery, null)
-
-            val notesTxt = v.fragmentTreePreviewNotes
-
-            notesTxt.text = " "
-
-            while (noteCursor.moveToNext()) {
-                val currentText = notesTxt.text.toString()
-
-                if (noteCursor.getString(noteCursor.getColumnIndex("notetext")).trim { it <= ' ' }.length == 0) {
-                    continue
+                    noImage.visibility = View.INVISIBLE
+                } else {
+                    noImage.visibility = View.VISIBLE
                 }
 
-                val text = noteCursor.getString(noteCursor.getColumnIndex("notetext")) + "\n\n" + currentText
+                MainActivity.mCurrentTreeLocation = Location("")
+                MainActivity.mCurrentTreeLocation!!.latitude = it.latitude
+                MainActivity.mCurrentTreeLocation!!.longitude = it.longitude
 
-                notesTxt.text = text
+                // No GPS accuracy info from new api.
+                //			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
+
+                val results = floatArrayOf(0f, 0f, 0f)
+                if (MainActivity.mCurrentLocation != null) {
+                    Location.distanceBetween(
+                        MainActivity.mCurrentLocation!!.latitude,
+                        MainActivity.mCurrentLocation!!.longitude,
+                        MainActivity.mCurrentTreeLocation!!.latitude,
+                        MainActivity.mCurrentTreeLocation!!.longitude,
+                        results
+                    )
+                }
+
+                val distanceTxt = v.fragmentTreePreviewDistance
+                val distanceTxtString =
+                    Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
+                distanceTxt.text = distanceTxtString
+
+                val accuracyTxt = v.fragmentTreePreviewGpsAccuracy
+                val treeAccuracy = it.accuracy
+                val accuracyTxtString = treeAccuracy.toString() + " " + resources.getString(R.string.meters)
+                accuracyTxt.text = accuracyTxtString
+
+
+                val createdTxt = v.fragmentTreePreviewCreated
+                createdTxt.text = it.tree_time_created!!.substring(
+                    0,
+                    it.tree_time_created!!.lastIndexOf(":")
+                )
+
+                val updatedTxt = v.fragmentTreePreviewLastUpdate
+                updatedTxt.text = it.tree_time_updated!!.substring(
+                    0,
+                    it.tree_time_updated!!.lastIndexOf(":")
+                )
+
+                val statusTxt = v.fragmentTreePreviewImageStatus
+
+                var dateForUpdate = Date()
+                try {
+                    dateForUpdate = Utils.dateFormat.parse(it.time_for_update)
+                } catch (e: ParseException) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace()
+                }
+
+                if (dateForUpdate.before(Date())) {
+                    statusTxt.setText(R.string.outdated)
+                }
+
+
+                val notes = GlobalScope.async {
+                    return@async TreeTrackerApplication.getAppDatabase().noteDao().getNotesByTreeID(treeIdStr!!)
+                }.await()
+
+                val notesTxt = v.fragmentTreePreviewNotes
+
+                notesTxt.text = " "
+
+                for (note in notes) {
+                    val currentText = notesTxt.text.toString()
+
+                    if (note.content?.isBlank() == true) {
+                        continue
+                    }
+
+                    notesTxt.text = "${note.content}\n\n$currentText"
+                }
             }
-
-        } while (photoCursor.moveToNext())
+        }
 
 
         return v
@@ -197,9 +188,9 @@ class TreePreviewFragment : Fragment(), OnClickListener {
                 fragment!!.arguments = bundle
 
                 fragmentTransaction = activity!!.supportFragmentManager
-                        .beginTransaction()
+                    .beginTransaction()
                 fragmentTransaction?.replace(R.id.containerFragment, fragment as NoteFragment)
-                        ?.addToBackStack(ValueHelper.NOTE_FRAGMENT)?.commit()
+                    ?.addToBackStack(ValueHelper.NOTE_FRAGMENT)?.commit()
             }
 
             else -> {
@@ -259,10 +250,14 @@ class TreePreviewFragment : Fragment(), OnClickListener {
             Timber.d("rotationAngle " + Integer.toString(rotationAngle))
 
             val matrix = Matrix()
-            matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
-                    bitmap.height.toFloat() / 2)
-            val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                    bmOptions.outWidth, bmOptions.outHeight, matrix, true)
+            matrix.setRotate(
+                rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
+                bitmap.height.toFloat() / 2
+            )
+            val rotatedBitmap = Bitmap.createBitmap(
+                bitmap, 0, 0,
+                bmOptions.outWidth, bmOptions.outHeight, matrix, true
+            )
             /* Associate the Bitmap to the ImageView */
             mImageView!!.setImageBitmap(rotatedBitmap)
         } catch (e: IOException) {

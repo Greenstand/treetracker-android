@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
 )
 data class PlanterIdentificationsEntity(
     @ColumnInfo(name = PLANTER_DETAILS_ID)
-    var planterDetailsId: Int?,
+    var planterDetailsId: Long?,
     @ColumnInfo(name = IDENTIFIER)
     var identifier: String?,
     @ColumnInfo(name = PHOTO_PATH)

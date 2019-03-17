@@ -36,6 +36,8 @@ import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.NoteEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeNoteEntity
+import org.greenstand.android.TreeTracker.utilities.Utils
+import org.greenstand.android.TreeTracker.utilities.Utils.Companion.dateFormat
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 import java.io.File
@@ -276,8 +278,6 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
     }
 
     private fun saveToDb() {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
         var date = Date()
         val calendar = Calendar.getInstance()
         calendar.time = date
@@ -305,7 +305,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
         Timber.d("locationId " + java.lang.Long.toString(locationId))
 
         // note
-        val noteEntity = NoteEntity(0, activity?.fragmentNoteNote?.text.toString(), dateFormat.format(Date()), userId)
+        val noteEntity = NoteEntity(0, activity?.fragmentNoteNote?.text.toString(), Utils.dateFormat.format(Date()), userId)
 
         val noteId = TreeTrackerApplication.getAppDatabase().noteDao().insert(noteEntity)
         Timber.d("noteId " + java.lang.Long.toString(noteId))

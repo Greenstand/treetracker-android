@@ -54,6 +54,5 @@ abstract class AppDatabase : RoomDatabase() {
         private const val DB_NAME_V2 = "treetracker.v2.db"
     }
 
-
 }
 

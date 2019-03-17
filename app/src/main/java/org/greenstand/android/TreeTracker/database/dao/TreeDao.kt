@@ -57,6 +57,9 @@ interface TreeDao {
     )
     fun getUpdatedTrees(treeIdStr: String?): List<TreeDto>
 
+    @Transaction
+    @Query("SELECT tree._id as tree_id, tree.time_created as tree_time_created,tree.time_updated as tree_time_updated,tree.time_for_update, tree.is_synced as isTreeSynced, location.lat as latitude, location.long as longitude, location.accuracy, photo.name,photo.is_outdated as isOutdated from tree left outer join location on location._id = tree.location_id left outer join tree_photo on tree._id = tree_id left outer join photo on photo._id = photo_id where tree._id =:tree_id")
+    fun getTreeDtoByID(tree_id: Long): List<TreeDto>
 
 }
 

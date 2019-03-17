@@ -24,7 +24,7 @@ data class PhotoEntity(
     @ColumnInfo(name = MAIN_DB_ID)
     var mainDbId: Int = 0,
     @ColumnInfo(name = IS_OUTDATED)
-    var isOutdated: Int = 0,
+    var isOutdated: Boolean = false,
     @ColumnInfo(name = TIME_TAKEN)
     var timeTaken: String,
     @ColumnInfo(name = USER_ID)

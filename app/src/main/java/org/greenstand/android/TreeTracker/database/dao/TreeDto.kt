@@ -2,12 +2,15 @@ package org.greenstand.android.TreeTracker.database.dao
 
 class TreeDto {
     var tree_id: Long = 0
-    lateinit var tree_time_created: String
+    var tree_time_created: String? = null
+    var tree_time_updated: String? = null
+    var time_for_update: String? = null
     var isTreeSynced: Boolean = false
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var accuracy: Int = 0
     var name: String? = null
+    var isOutdated: Boolean? = false
     var content: String? = null
     var planter_identifier: String? = null
     var planter_photo_path: String? = null

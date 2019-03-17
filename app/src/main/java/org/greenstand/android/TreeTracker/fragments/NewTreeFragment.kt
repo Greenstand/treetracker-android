@@ -21,6 +21,8 @@ import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_new_tree.view.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
@@ -28,9 +30,10 @@ import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.Utils
+import org.greenstand.android.TreeTracker.utilities.Utils.Companion.dateFormat
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextWatcher,
@@ -208,94 +211,100 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
             activity!!.supportFragmentManager.popBackStack()
         } else {
 
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
-            val locationEntity = LocationEntity(
-                MainActivity.mCurrentLocation!!.accuracy.toInt(),
-                MainActivity.mCurrentLocation!!.latitude,
-                MainActivity.mCurrentLocation!!.longitude, userId, 0
-            )
-
-            val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(locationEntity)
-
-            Timber.d("locationId $locationId")
-
-            var photoId: Long = -1
-
-            // photo
-            val photoEntity =
-                PhotoEntity(mCurrentPhotoPath, locationId.toInt(), 0, 0, dateFormat.format(Date()), userId)
-
-            photoId = TreeTrackerApplication.getAppDatabase().photoDao().insertPhoto(photoEntity)
-
-            Timber.d("photoId $photoId")
-
-            val minAccuracy = mSharedPreferences!!.getInt(
-                ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-                ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
-            )
-
-            val newTreetimeToNextUpdate = activity!!.fragmentNewTreeNextUpdate
-            val timeToNextUpdate = Integer.parseInt(
-                if (newTreetimeToNextUpdate.text.toString() == "")
-                    "0"
-                else
-                    newTreetimeToNextUpdate.text.toString()
-            )
-
-            // settings
-            val settingsEntity = SettingsEntity(0, timeToNextUpdate, minAccuracy)
-            val settingsId = TreeTrackerApplication.getAppDatabase().settingsDao().insert(settingsEntity)
-            Timber.d("settingsId $settingsId")
-
-
-            // note
-            val content = activity!!.fragmentNewTreeNote.text.toString()
-            val noteEntity = NoteEntity(0, content, dateFormat.format(Date()), userId)
-
-            val noteId = TreeTrackerApplication.getAppDatabase().noteDao().insert(noteEntity)
-            Timber.d("noteId $noteId")
-
-
-            // tree
-            val planterIdentifierId = mSharedPreferences?.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
-
-            var date = Date()
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-            calendar.add(Calendar.DAY_OF_MONTH, timeToNextUpdate)
-            date = calendar.time
-
-            val treeEntity =
-                TreeEntity(
-                    0,
-                    dateFormat.format(Date()),
-                    dateFormat.format(Date()),
-                    dateFormat.format(date),
-                    null,
-                    locationId.toInt(),
-                    false,
-                    false,
-                    false,
-                    null,
-                    settingsId,
-                    null,
-                    userId, planterIdentifierId
+            GlobalScope.launch {
+                val locationEntity = LocationEntity(
+                    MainActivity.mCurrentLocation!!.accuracy.toInt(),
+                    MainActivity.mCurrentLocation!!.latitude,
+                    MainActivity.mCurrentLocation!!.longitude, userId, 0
                 )
 
+                val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(locationEntity)
 
-            val treeId = TreeTrackerApplication.getAppDatabase().treeDao().insert(treeEntity)
-            Timber.d("treeId $treeId")
+                Timber.d("locationId $locationId")
 
-            // tree_photo
-            val treePhotoEntity = TreePhotoEntity(treeId, photoId)
-            TreeTrackerApplication.getAppDatabase().photoDao().insert(treePhotoEntity)
+                var photoId: Long = -1
 
-            // tree_note
-            val treeNoteEntity = TreeNoteEntity(noteId, treeId)
-            TreeTrackerApplication.getAppDatabase().noteDao().insert(treeNoteEntity)
+                // photo
+                val photoEntity =
+                    PhotoEntity(
+                        mCurrentPhotoPath,
+                        locationId.toInt(),
+                        0,
+                        false,
+                        Utils.dateFormat.format(Date()),
+                        userId
+                    )
+
+                photoId = TreeTrackerApplication.getAppDatabase().photoDao().insertPhoto(photoEntity)
+
+                Timber.d("photoId $photoId")
+
+                val minAccuracy = mSharedPreferences!!.getInt(
+                    ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
+                    ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
+                )
+
+                val newTreetimeToNextUpdate = activity!!.fragmentNewTreeNextUpdate
+                val timeToNextUpdate = Integer.parseInt(
+                    if (newTreetimeToNextUpdate.text.toString() == "")
+                        "0"
+                    else
+                        newTreetimeToNextUpdate.text.toString()
+                )
+
+                // settings
+                val settingsEntity = SettingsEntity(0, timeToNextUpdate, minAccuracy)
+                val settingsId = TreeTrackerApplication.getAppDatabase().settingsDao().insert(settingsEntity)
+                Timber.d("settingsId $settingsId")
+
+
+                // note
+                val content = activity!!.fragmentNewTreeNote.text.toString()
+                val noteEntity = NoteEntity(0, content, dateFormat.format(Date()), userId)
+
+                val noteId = TreeTrackerApplication.getAppDatabase().noteDao().insert(noteEntity)
+                Timber.d("noteId $noteId")
+
+
+                // tree
+                val planterIdentifierId = mSharedPreferences?.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
+
+                var date = Date()
+                val calendar = Calendar.getInstance()
+                calendar.time = date
+                calendar.add(Calendar.DAY_OF_MONTH, timeToNextUpdate)
+                date = calendar.time
+
+                val treeEntity =
+                    TreeEntity(
+                        0,
+                        dateFormat.format(Date()),
+                        dateFormat.format(Date()),
+                        dateFormat.format(date),
+                        null,
+                        locationId.toInt(),
+                        false,
+                        false,
+                        false,
+                        null,
+                        settingsId,
+                        null,
+                        userId, planterIdentifierId
+                    )
+
+
+                val treeId = TreeTrackerApplication.getAppDatabase().treeDao().insert(treeEntity)
+                Timber.d("treeId $treeId")
+
+                // tree_photo
+                val treePhotoEntity = TreePhotoEntity(treeId, photoId)
+                TreeTrackerApplication.getAppDatabase().photoDao().insert(treePhotoEntity)
+
+                // tree_note
+                val treeNoteEntity = TreeNoteEntity(noteId, treeId)
+                TreeTrackerApplication.getAppDatabase().noteDao().insert(treeNoteEntity)
+            }
         }
-
     }
 
     private fun setPic() {
