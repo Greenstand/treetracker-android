@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.fragments
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -16,40 +15,33 @@ import android.location.Location
 import android.media.ExifInterface
 import android.os.Bundle
 import android.os.Environment
-import androidx.core.app.ActivityCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
-import android.view.HapticFeedbackConstants
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
+import android.view.*
 import android.view.View.OnClickListener
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_note.*
 import kotlinx.android.synthetic.main.fragment_note.view.*
-
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.entity.LocationEntity
+import org.greenstand.android.TreeTracker.database.entity.NoteEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeNoteEntity
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-
-import timber.log.Timber
+import java.util.*
 
 class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
     ActivityCompat.OnRequestPermissionsResultCallback {
@@ -74,7 +66,8 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
             var storageDir: File? = null
 
             if (Environment.MEDIA_MOUNTED == Environment
-                            .getExternalStorageState()) {
+                    .getExternalStorageState()
+            ) {
 
                 val cw = ContextWrapper(activity!!.applicationContext)
                 storageDir = cw.getDir("treeImages", Context.MODE_PRIVATE)
@@ -89,8 +82,10 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
                 }
 
             } else {
-                Log.v(getString(R.string.app_name),
-                        "External storage is not mounted READ/WRITE.")
+                Log.v(
+                    getString(R.string.app_name),
+                    "External storage is not mounted READ/WRITE."
+                )
             }
 
             return storageDir
@@ -123,7 +118,8 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
         treeIdStr = extras!!.getString(ValueHelper.TREE_ID)
 
         mSharedPreferences = (activity as AppCompatActivity).getSharedPreferences(
-                "org.greenstand.android", Context.MODE_PRIVATE)
+            "org.greenstand.android", Context.MODE_PRIVATE
+        )
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
 
@@ -135,16 +131,10 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
 
         mImageView = v.fragmentNoteImage
 
-        val query = "select * from tree " +
-                "left outer join location on location._id = tree.location_id " +
-                "left outer join tree_photo on tree._id = tree_id " +
-                "left outer join photo on photo._id = photo_id where is_outdated = 'N' and tree._id =" + treeIdStr
+        val updatedTrees = TreeTrackerApplication.getAppDatabase().treeDao().getUpdatedTrees(treeIdStr)
 
-        val photoCursor = TreeTrackerApplication.getDatabaseManager().queryCursor(query, null)
-        photoCursor.moveToFirst()
-
-        do {
-            mCurrentPhotoPath = photoCursor.getString(photoCursor.getColumnIndex("name"))
+        updatedTrees.forEach {
+            mCurrentPhotoPath = it.name
 
             val noImage = v.fragmentNoteNoImage
 
@@ -155,22 +145,23 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
                 noImage.visibility = View.VISIBLE
             }
 
-            val lat = photoCursor.getString(photoCursor.getColumnIndex("lat"))
-            val lon = photoCursor.getString(photoCursor.getColumnIndex("long"))
+            val lat = it.latitude
+            val lon = it.longitude
 
             MainActivity.mCurrentTreeLocation = Location("") // Empty location
-            MainActivity.mCurrentTreeLocation!!.latitude = java.lang.Double.parseDouble(lat)
-            MainActivity.mCurrentTreeLocation!!.longitude = java.lang.Double.parseDouble(lon)
-
-        } while (photoCursor.moveToNext())
+            MainActivity.mCurrentTreeLocation!!.latitude = lat
+            MainActivity.mCurrentTreeLocation!!.longitude = lon
+        }
 
         return v
     }
 
     override fun onClick(v: View) {
 
-        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+        v.performHapticFeedback(
+            HapticFeedbackConstants.VIRTUAL_KEY,
+            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+        )
 
         when (v.id) {
 
@@ -186,7 +177,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
                         saveToDb()
 
                         Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT)
-                                .show()
+                            .show()
                         val manager = activity!!.supportFragmentManager
                         val second = manager.getBackStackEntryAt(1)
                         manager.popBackStack(second.id, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
@@ -207,7 +198,7 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
                     saveToDb()
 
                     Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT)
-                            .show()
+                        .show()
 
                     val manager = activity!!.supportFragmentManager
                     val second = manager.getBackStackEntryAt(1)
@@ -223,10 +214,15 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
 
     private fun takePicture() {
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!,
-                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.CAMERA),
-                    Permissions.MY_PERMISSION_CAMERA)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity!!, arrayOf(Manifest.permission.CAMERA),
+                Permissions.MY_PERMISSION_CAMERA
+            )
         } else {
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
             startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
@@ -253,11 +249,13 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
     private fun createImageFile(): File {
         // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss")
-                .format(Date())
+            .format(Date())
         val imageFileName = ValueHelper.JPEG_FILE_PREFIX + timeStamp + "_"
         val albumF = albumDir
-        return File.createTempFile(imageFileName,
-                ValueHelper.JPEG_FILE_SUFFIX, albumF)
+        return File.createTempFile(
+            imageFileName,
+            ValueHelper.JPEG_FILE_SUFFIX, albumF
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -278,44 +276,6 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
     }
 
     private fun saveToDb() {
-
-        var contentValues = ContentValues()
-
-        // location
-        contentValues.put("user_id", userId)
-
-        MainActivity.mCurrentLocation!!.accuracy
-        contentValues.put("user_id", userId)
-        contentValues.put("accuracy",
-                java.lang.Float.toString(MainActivity.mCurrentLocation!!.accuracy))
-        contentValues.put("lat",
-                java.lang.Double.toString(MainActivity.mCurrentLocation!!.latitude))
-        contentValues.put("long",
-                java.lang.Double.toString(MainActivity.mCurrentLocation!!.longitude))
-
-        val locationId = TreeTrackerApplication.getDatabaseManager().insert("location", null, contentValues)
-
-        Timber.d("locationId " + java.lang.Long.toString(locationId))
-
-        // note
-        contentValues = ContentValues()
-        contentValues.put("user_id", userId)
-        contentValues.put("content", activity?.fragmentNoteNote?.text.toString())
-
-        val noteId = TreeTrackerApplication.getDatabaseManager().insert("note", null, contentValues)
-        Timber.d("noteId " + java.lang.Long.toString(noteId))
-
-        // tree
-        contentValues = ContentValues()
-        contentValues.put("location_id", locationId)
-        contentValues.put("is_synced", "N")
-        contentValues.put("is_priority", "N")
-
-        if (mTreeIsMissing) {
-            contentValues.put("is_missing", "Y")
-            contentValues.put("cause_of_death_id", noteId)
-        }
-
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
         var date = Date()
@@ -323,28 +283,53 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
         calendar.time = date
 
         val timeToNextUpdate = mSharedPreferences!!.getInt(
-                ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
+            ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
                 ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
-                ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING))
+                ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING
+            )
+        )
 
         calendar.add(Calendar.DAY_OF_MONTH, timeToNextUpdate)
         date = calendar.time as Date
 
-        Timber.d("date " + date.toString())
+        // location
+        val location = LocationEntity(
+            MainActivity.mCurrentLocation!!.accuracy.toInt(),
+            MainActivity.mCurrentLocation!!.latitude,
+            MainActivity.mCurrentLocation!!.longitude,
+            userId
+        )
 
-        contentValues.put("time_for_update", dateFormat.format(date))
-        contentValues.put("time_updated", dateFormat.format(Date()))
+        val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(location)
 
-        TreeTrackerApplication.getDatabaseManager().update("tree", contentValues, "_id = ?", arrayOf<String>(treeIdStr!!))
+        Timber.d("locationId " + java.lang.Long.toString(locationId))
+
+        // note
+        val noteEntity = NoteEntity(0, activity?.fragmentNoteNote?.text.toString(), dateFormat.format(Date()), userId)
+
+        val noteId = TreeTrackerApplication.getAppDatabase().noteDao().insert(noteEntity)
+        Timber.d("noteId " + java.lang.Long.toString(noteId))
+
+
+        // tree
+        val treeEntity = TreeTrackerApplication.getAppDatabase().treeDao().getTreeByID(treeIdStr!!.toLong()).first()
+        treeEntity.locationId = locationId.toInt()
+        treeEntity.isSynced = false
+        treeEntity.isPriority = false
+
+        if (mTreeIsMissing) {
+            treeEntity.isMissing = true
+            treeEntity.causeOfDeath = noteId.toInt()
+        }
+        treeEntity.timeForUpdate = dateFormat.format(date)
+
+        treeEntity.timeUpdated = dateFormat.format(Date())
+
+        TreeTrackerApplication.getAppDatabase().treeDao().updateTree(treeEntity)
 
         // tree_note
-        contentValues = ContentValues()
-        contentValues.put("tree_id", treeIdStr)
-        contentValues.put("note_id", noteId)
-
-        val treeNoteId = TreeTrackerApplication.getDatabaseManager().insert("tree_note", null, contentValues)
-        Timber.d("treeNoteId " +java.lang.Long.toString(treeNoteId))
-
+        val treeNoteEntity = TreeNoteEntity(noteId, treeIdStr!!.toLong())
+        TreeTrackerApplication.getAppDatabase().noteDao().insert(treeNoteEntity)
     }
 
     private fun setPic() {
@@ -408,10 +393,14 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
         Timber.tag("rotationAngle").d(rotationAngle.toString())
 
         val matrix = Matrix()
-        matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
-                bitmap.height.toFloat() / 2)
-        val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                bmOptions.outWidth, bmOptions.outHeight, matrix, true)
+        matrix.setRotate(
+            rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
+            bitmap.height.toFloat() / 2
+        )
+        val rotatedBitmap = Bitmap.createBitmap(
+            bitmap, 0, 0,
+            bmOptions.outWidth, bmOptions.outHeight, matrix, true
+        )
 
         /* Associate the Bitmap to the ImageView */
         mImageView!!.setImageBitmap(rotatedBitmap)
@@ -439,8 +428,10 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
 
     companion object {
 
-        fun calculateInSampleSize(options: BitmapFactory.Options,
-                                  reqWidth: Int, reqHeight: Int): Int {
+        fun calculateInSampleSize(
+            options: BitmapFactory.Options,
+            reqWidth: Int, reqHeight: Int
+        ): Int {
             // Raw height and width of image
             val height = options.outHeight
             val width = options.outWidth

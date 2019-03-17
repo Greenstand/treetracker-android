@@ -9,17 +9,15 @@ import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
-import android.widget.Toast
-
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
-
-import java.util.Calendar
+import java.util.*
 
 class NetworkReceiver : BroadcastReceiver() {
 
@@ -28,10 +26,12 @@ class NetworkReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         mSharedPreferences = context.getSharedPreferences(
-                "org.greenstand.android", Context.MODE_PRIVATE)
+            "org.greenstand.android", Context.MODE_PRIVATE
+        )
 
         if (mSharedPreferences!!.getBoolean(ValueHelper.SHOW_SIGNUP_FRAGMENT, false) ||
-            mSharedPreferences!!.getBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false)) {
+            mSharedPreferences!!.getBoolean(ValueHelper.SHOW_LOGIN_FRAGMENT, false)
+        ) {
 
             return
         }
@@ -54,11 +54,8 @@ class NetworkReceiver : BroadcastReceiver() {
         if (isConnected && isWiFi || timeOfDay == 6) {
             Toast.makeText(context, "WIFI CONNECTED", Toast.LENGTH_LONG).show()
 
-            val treeCursor = TreeTrackerApplication.getDatabaseManager().queryCursor("SELECT COUNT(*) AS tosync FROM tree WHERE is_synced = 'N'", null)
-            //this too
-            treeCursor.moveToFirst()   //this
-            val tosync = Integer.parseInt(treeCursor.getString(treeCursor.getColumnIndex("tosync")))
-            Timber.d("to sync " + treeCursor.getString(treeCursor.getColumnIndex("tosync")))
+            val tosync = TreeTrackerApplication.getAppDatabase().treeDao().getToSyncTreeCount()
+            Timber.d("to sync $tosync")
 
             var notification: Uri? = null
             try {
@@ -67,11 +64,11 @@ class NetworkReceiver : BroadcastReceiver() {
             }
 
             val mBuilder = NotificationCompat.Builder(context)
-                    .setSmallIcon(R.drawable.ic_launcher)
-                    .setContentTitle(context.resources.getString(R.string.treetracker))
-                    .setTicker(context.resources.getString(R.string.wifi_connected))
-                    .setSound(notification)
-                    .setContentText(context.resources.getString(R.string.touch_to_sync))
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(context.resources.getString(R.string.treetracker))
+                .setTicker(context.resources.getString(R.string.wifi_connected))
+                .setSound(notification)
+                .setContentText(context.resources.getString(R.string.touch_to_sync))
 
             if (tosync != 0) {                                                    //if to sync has any data to sync
                 // Creates an explicit intent for an Activity in your app
@@ -88,8 +85,8 @@ class NetworkReceiver : BroadcastReceiver() {
                 // Adds the Intent that starts the Activity to the top of the stack
                 stackBuilder.addNextIntent(resultIntent)
                 val resultPendingIntent = stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                    0,
+                    PendingIntent.FLAG_UPDATE_CURRENT
                 )
                 mBuilder.setContentIntent(resultPendingIntent)
                 val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

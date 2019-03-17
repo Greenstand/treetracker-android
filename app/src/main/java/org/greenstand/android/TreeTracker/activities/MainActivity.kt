@@ -33,7 +33,6 @@ import org.greenstand.android.TreeTracker.fragments.AboutFragment
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragment
 import org.greenstand.android.TreeTracker.fragments.UserIdentificationFragment
-import org.greenstand.android.TreeTracker.managers.DataManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     private var fragmentTransaction: FragmentTransaction? = null
 
-    private var mDataManager: DataManager<*>? = null
     var userTrees: List<UserTree>? = null
         private set
 

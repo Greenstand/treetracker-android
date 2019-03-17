@@ -409,7 +409,7 @@ class DataFragment : Fragment(), View.OnClickListener {
         Timber.d("located $syncedTreeCount")
 
         val notSyncedTreeCount =
-            TreeTrackerApplication.getAppDatabase().treeDao().getNotSyncedTreeCount()
+            TreeTrackerApplication.getAppDatabase().treeDao().getToSyncTreeCount()
 
         tosyncTrees.text = notSyncedTreeCount.toString()
         Timber.d("to sync $notSyncedTreeCount")

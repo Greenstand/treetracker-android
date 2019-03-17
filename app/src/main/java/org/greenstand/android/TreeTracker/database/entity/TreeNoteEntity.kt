@@ -19,9 +19,9 @@ import androidx.room.ForeignKey
     ]
 )
 data class TreeNoteEntity(@ColumnInfo(name = NOTE_ID)
-                          var noteId: Int,
+                          var noteId: Long,
                           @ColumnInfo(name = TREE_ID)
-                          var treeId: Int) {
+                          var treeId: Long) {
 
     companion object {
         const val TABLE = "tree_note"

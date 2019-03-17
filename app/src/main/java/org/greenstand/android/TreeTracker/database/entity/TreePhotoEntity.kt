@@ -24,9 +24,9 @@ import androidx.room.ForeignKey
 )
 data class TreePhotoEntity(
     @ColumnInfo(name = TREE_ID)
-    var treeId: Int,
+    var treeId: Long,
     @ColumnInfo(name = PHOTO_ID)
-    var photoId: Int
+    var photoId: Long
 ) {
 
     companion object {

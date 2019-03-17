@@ -397,7 +397,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
             val treeId = TreeTrackerApplication.getAppDatabase().treeDao().insert(treeEntity)
 
-            val treePhotoEntity = TreePhotoEntity(treeId.toInt(), photoId.toInt())
+            val treePhotoEntity = TreePhotoEntity(treeId, photoId)
             TreeTrackerApplication.getAppDatabase().photoDao().insert(treePhotoEntity)
             //Timber.d("treePhotoId " + Long.toString(treePhotoId));
         }

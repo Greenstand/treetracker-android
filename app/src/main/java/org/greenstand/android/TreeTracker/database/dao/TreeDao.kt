@@ -42,7 +42,7 @@ interface TreeDao {
 
     @Transaction
     @Query("SELECT COUNT(*)  FROM tree WHERE is_synced = 0")
-    fun getNotSyncedTreeCount(): Int
+    fun getToSyncTreeCount(): Int
 
     @Transaction
     @Query("SELECT DISTINCT tree_id FROM pending_updates WHERE tree_id NOT NULL and tree_id <> 0")
@@ -50,6 +50,12 @@ interface TreeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(treeEntity: TreeEntity): Long
+
+    @Transaction
+    @Query(
+        "SELECT tree._id as tree_id, tree.time_created as tree_time_created, tree.is_synced as isTreeSynced, location.lat as latitude, location.long as longitude, location.accuracy, photo.name from tree left outer join location on location._id = tree.location_id left outer join tree_photo on tree._id = tree_id left outer join photo on photo._id = photo_id where is_outdated = 0 and tree._id = :treeIdStr"
+    )
+    fun getUpdatedTrees(treeIdStr: String?): List<TreeDto>
 
 
 }
