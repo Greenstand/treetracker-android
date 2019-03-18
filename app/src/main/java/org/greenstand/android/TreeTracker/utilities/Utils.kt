@@ -7,16 +7,13 @@ import android.graphics.Typeface
 import android.media.ExifInterface
 import android.os.Looper
 import android.util.Base64
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-
 import org.apache.http.HttpResponse
 import org.apache.http.HttpStatus
-import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.DefaultHttpClient
@@ -25,18 +22,11 @@ import org.apache.http.params.HttpConnectionParams
 import org.apache.http.protocol.HTTP
 import org.json.JSONObject
 import timber.log.Timber
-
-import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.security.MessageDigest
+import java.io.*
 import java.security.NoSuchAlgorithmException
-import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 class Utils {
 
@@ -44,6 +34,7 @@ class Utils {
 
         var httpResponseCode = -1
 
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         /*
      * Sets the font on all TextViews in the ViewGroup. Searches
      * recursively for all inner ViewGroups as well. Just add a
@@ -242,10 +233,9 @@ class Utils {
         }
 
         fun convertDateToTimestamp(str: String): Long {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
             var date: Date? = null
             try {
-                date = dateFormat.parse(str)
+                date = Utils.dateFormat.parse(str)
             } catch (e: ParseException) {
                 e.printStackTrace()
             }
