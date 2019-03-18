@@ -150,6 +150,13 @@ dependencies {
 
     implementation "androidx.legacy:legacy-support-v4:${androidSupportVersion}"
 }
+configurations.all {
+    resolutionStrategy {
+        preferProjectModules()
+        force 'com.google.code.gson:gson:2.8.5'
+    }
+}
+
 play {
     track = 'beta' // or 'rollout' or 'production' or 'alpha'
 }
