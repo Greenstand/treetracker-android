@@ -72,6 +72,13 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
 
         val saveBtn = v.fragmentNewTreeSave
+
+        saveBtn.text = if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+            getString(R.string.next)
+        } else {
+            getString(R.string.save)
+        }
+
         saveBtn.setOnClickListener(this@NewTreeFragment)
 
         mImageView = v.fragmentNewTreeImage
