@@ -7,4 +7,5 @@ import org.greenstand.android.TreeTracker.BuildConfig
 @Parcelize
 data class TreeAttributes(val heightColor: TreeColor,
                           val appFlavor: String = BuildConfig.FLAVOR,
-                          val appBuild: String = BuildConfig.VERSION_NAME): Parcelable
+                          val appBuild: String = BuildConfig.VERSION_NAME,
+                          val appVersion: String = BuildConfig.VERSION_CODE.toString()): Parcelable

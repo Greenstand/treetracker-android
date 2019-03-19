@@ -1,27 +1,28 @@
 package org.greenstand.android.TreeTracker.managers
 
-import android.content.ContentValues
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.data.TreeAttributes
-import org.greenstand.android.TreeTracker.database.AttributesTable
+import org.greenstand.android.TreeTracker.database.entity.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
 object TreeManager {
 
+    private val db = TreeTrackerApplication.getAppDatabase()
+
     suspend fun addAttributes(treeId: Long, attributes: TreeAttributes): Long? {
 
-        val contentValues = ContentValues().apply {
-            put(AttributesTable.TREE_ID, treeId)
-            put(AttributesTable.HEIGHT_COLOR, attributes.heightColor.name)
-            put(AttributesTable.APP_BUILD, attributes.appBuild)
-            put(AttributesTable.APP_FLAVOR, attributes.appFlavor)
-        }
+        val attributesEntity = TreeAttributesEntity(
+            treeId = treeId,
+            heightColor = attributes.heightColor.name,
+            appBuild = attributes.appBuild,
+            appVersion = attributes.appVersion,
+            flavorId = attributes.appFlavor
+        )
 
-        return TreeTrackerApplication.getDatabaseManager().insert(table = AttributesTable.NAME,
-                                                                  contentValues = contentValues)
+        return db.treeAttributesDao().insert(attributesEntity)
             .also { Timber.d("Inserted $attributes into Attributes Table") }
     }
 
@@ -30,35 +31,42 @@ object TreeManager {
                         timeToNextUpdate: Int,
                         content: String,
                         userId: Long,
-                        planterIdentifierId: Long): Long? {
+                        planterIdentifierId: Long): Long {
 
-        val locationId = insertLocation()!!
+        val locationId = insertLocation(userId)
 
-        val photoId = insertPhoto(locationId, photoPath)!!
+        val photoId = insertPhoto(locationId, photoPath)
 
-        val settingsId = insertSettings(timeToNextUpdate, minAccuracy)!!
+        val settingsId = insertSettings(timeToNextUpdate, minAccuracy)
 
-        val noteId = insertNote(userId, content)!!
+        val noteId = insertNote(userId, content)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val calendar = Calendar.getInstance().apply {
             time = Date()
             add(Calendar.DAY_OF_MONTH, timeToNextUpdate)
         }
-        val date: Date = calendar.time
 
-        // tree
-        val treeContentValues = ContentValues().apply {
-            put("user_id", userId)
-            put("location_id", locationId)
-            put("settings_id", settingsId)
-            put("planter_identification_id", planterIdentifierId)
-            put("time_created", dateFormat.format(Date()))
-            put("time_updated", dateFormat.format(Date()))
-            put("time_for_update", dateFormat.format(date))
-        }
+        val dateString = dateFormat.format(calendar.time)
 
-        val treeId = TreeTrackerApplication.getDatabaseManager().insert("tree", contentValues = treeContentValues)
+        val treeEntity = TreeEntity(
+            userId = userId,
+            locationId = locationId.toInt(),
+            settingId = settingsId,
+            planterId = planterIdentifierId,
+            timeCreated = dateString,
+            timeForUpdate = dateString,
+            timeUpdated = dateString,
+            causeOfDeath = null,
+            isSynced = false,
+            isMissing = false,
+            isPriority = false,
+            settingsOverrideId = null,
+            mainDbId = 0,
+            threeDigitNumber = null
+        )
+
+        val treeId = db.treeDao().insert(treeEntity)
         Timber.d("treeId $treeId")
 
         insertTreePhoto(treeId, photoId)
@@ -68,63 +76,53 @@ object TreeManager {
         return treeId
     }
 
-    fun insertLocation(): Long? {
-        val locationContentValues = ContentValues().apply {
-            put("accuracy", MainActivity.mCurrentLocation!!.accuracy.toString())
-            put("lat", MainActivity.mCurrentLocation!!.latitude.toString())
-            put("long", MainActivity.mCurrentLocation!!.longitude.toString())
-        }
+    fun insertLocation(userId: Long): Long {
+        val locationEntity = LocationEntity(
+            MainActivity.mCurrentLocation!!.accuracy.toInt(),
+            MainActivity.mCurrentLocation!!.latitude,
+            MainActivity.mCurrentLocation!!.longitude,
+            userId
+        )
 
-        return TreeTrackerApplication.getDatabaseManager().insert("location", contentValues = locationContentValues)
+        return db.locationDao().insert(locationEntity)
             .also { Timber.d("locationId $it") }
     }
 
-    fun insertTreeNote(treeId: Long, noteId: Long): Long? {
-        val treeNoteContentValues = ContentValues().apply {
-            put("tree_id", treeId)
-            put("note_id", noteId)
-        }
-
-        return TreeTrackerApplication.getDatabaseManager().insert("tree_note", null, treeNoteContentValues)
+    fun insertTreeNote(treeId: Long, noteId: Long): Long {
+        return db.noteDao().insert(TreeNoteEntity(treeId, noteId))
             .also { Timber.d("treeNoteId $it") }
     }
 
-    fun insertTreePhoto(treeId: Long, photoId: Long): Long? {
-        val treePhotoContentValues = ContentValues().apply {
-            put("tree_id", treeId)
-            put("photo_id", photoId)
-        }
-        return TreeTrackerApplication.getDatabaseManager().insert("tree_photo", contentValues = treePhotoContentValues)
+    fun insertTreePhoto(treeId: Long, photoId: Long): Long {
+        return db.photoDao().insert(TreePhotoEntity(treeId, photoId))
             .also { Timber.d("treePhotoId $it") }
     }
 
-    fun insertPhoto(locationId: Long, photoPath: String): Long? {
-        val photoContentValues = ContentValues().apply {
-            put("location_id", locationId)
-            put("name", photoPath)
-        }
-
-        return TreeTrackerApplication.getDatabaseManager().insert("photo", contentValues = photoContentValues)
+    fun insertPhoto(locationId: Long, photoPath: String): Long {
+        val photoEntity = PhotoEntity(
+            locationId = locationId.toInt(),
+            name = photoPath,
+            timeTaken = "",
+            userId = 0
+        )
+        return db.photoDao().insertPhoto(photoEntity)
             .also { Timber.d("photoId $it") }
     }
 
-    fun insertSettings(timeToNextUpdate: Int, minAccuracy: Int): Long? {
-        val settingsContentValues = ContentValues().apply {
-            put("time_to_next_update", timeToNextUpdate)
-            put("min_accuracy", minAccuracy)
-        }
+    fun insertSettings(timeToNextUpdate: Int, minAccuracy: Int): Long {
+        val settingsEntity = SettingsEntity(timeToNextUpdate = timeToNextUpdate,
+                                            minAccuracy = minAccuracy)
 
-        return TreeTrackerApplication.getDatabaseManager().insert("settings", contentValues = settingsContentValues)
+        return db.settingsDao().insert(settingsEntity)
             .also { Timber.d("settingsId $it") }
     }
 
-    fun insertNote(userId: Long, content: String): Long? {
-        val noteContentValues = ContentValues().apply {
-            put("user_id", userId)
-            put("content", content)
-        }
+    fun insertNote(userId: Long, content: String): Long {
+        val noteEntity = NoteEntity(userId = userId,
+                                    content = content,
+                                    timeCreated = "")
 
-        return TreeTrackerApplication.getDatabaseManager().insert("note", contentValues = noteContentValues)
+        return db.noteDao().insert(noteEntity)
             .also { Timber.d("noteId $it") }
     }
 }
