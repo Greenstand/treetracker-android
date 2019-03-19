@@ -34,17 +34,14 @@ class TreeHeightViewModel : CoroutineViewModel() {
             newTree
                 ?.let {
                     withContext(Dispatchers.IO) {
+                        val attributesId = TreeManager.addAttributes(TreeAttributes(heightColor = treeColor!!))
                         TreeManager.addTree(photoPath = it.photoPath,
-                                            minAccuracy = it.minAccuracy,
-                                            timeToNextUpdate = it.timeToNextUpdate,
-                                            content = it.content,
-                                            userId = it.userId,
-                                            planterIdentifierId = it.planterIdentifierId)
-                    }
-                }
-                ?.let {
-                    withContext(Dispatchers.IO) {
-                        TreeManager.addAttributes(it, TreeAttributes(heightColor = treeColor!!))
+                                                        minAccuracy = it.minAccuracy,
+                                                        timeToNextUpdate = it.timeToNextUpdate,
+                                                        content = it.content,
+                                                        userId = it.userId,
+                                                        planterIdentifierId = it.planterIdentifierId,
+                                                        attributesId = attributesId)
                     }
                 }
                 ?.also {

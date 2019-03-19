@@ -12,11 +12,10 @@ object TreeManager {
 
     private val db = TreeTrackerApplication.getAppDatabase()
 
-    suspend fun addAttributes(treeId: Long, attributes: TreeAttributes): Long? {
+    suspend fun addAttributes(attributes: TreeAttributes): Long {
 
         val attributesEntity = TreeAttributesEntity(
-            treeId = treeId,
-            heightColor = attributes.heightColor.name,
+            heightColor = attributes.heightColor.value,
             appBuild = attributes.appBuild,
             appVersion = attributes.appVersion,
             flavorId = attributes.appFlavor
@@ -31,7 +30,8 @@ object TreeManager {
                         timeToNextUpdate: Int,
                         content: String,
                         userId: Long,
-                        planterIdentifierId: Long): Long {
+                        planterIdentifierId: Long,
+                        attributesId: Long? = null): Long {
 
         val locationId = insertLocation(userId)
 
@@ -63,7 +63,8 @@ object TreeManager {
             isPriority = false,
             settingsOverrideId = null,
             mainDbId = 0,
-            threeDigitNumber = null
+            threeDigitNumber = null,
+            attributeId = attributesId
         )
 
         val treeId = db.treeDao().insert(treeEntity)

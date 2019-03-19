@@ -26,10 +26,10 @@ data class NewTreeRequest(@SerializedName("user_id")
                           val attributes: AttributesRequest? = null)
 
 data class AttributesRequest(@SerializedName("height_color")
-                             val heightColor: Int = 0,
+                             val heightColor: String,
                              @SerializedName("flavor_id")
-                             val flavorId: Int = 0,
+                             val flavorId: String,
                              @SerializedName("app_version")
-                             val appVersion: Int = 0,
+                             val appVersion: String,
                              @SerializedName("app_build")
-                             val appBuild: Int = 0)
+                             val appBuild: String)
