@@ -79,6 +79,12 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
             getString(R.string.save)
         }
 
+        v.fragmentNewTreeNote.visibility = if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+
         saveBtn.setOnClickListener(this@NewTreeFragment)
 
         mImageView = v.fragmentNewTreeImage
@@ -247,7 +253,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         )
 
         // note
-        val content = activity!!.fragmentNewTreeNote.text.toString()
+        val content = requireActivity().fragmentNewTreeNote.text.toString()
 
         // tree
         val planterIdentifierId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
