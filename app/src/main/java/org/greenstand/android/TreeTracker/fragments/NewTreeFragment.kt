@@ -159,7 +159,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
 
             R.id.fragmentNewTreeSave -> {
 
-                GlobalScope.launch {
+                GlobalScope.launch(Dispatchers.Main) {
 
                     val newTree = createNewTreeData() ?: run {
                         Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
