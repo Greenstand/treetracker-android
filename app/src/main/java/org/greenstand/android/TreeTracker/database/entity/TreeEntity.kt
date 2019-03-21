@@ -69,7 +69,7 @@ data class TreeEntity(
     var userId: Long?,
     @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
     var planterId: Long?,
-    @ColumnInfo(name = ATTRIBUTES)
+    @ColumnInfo(name = ATTRIBUTES_ID)
     var attributeId: Long?
 ) {
 
@@ -96,6 +96,6 @@ data class TreeEntity(
         const val IS_MISSING = "is_missing"
         const val SETTINGS_OVERRIDE_ID = "settings_override_id"
         const val THREE_DIGIT_NUMBER = "three_digit_number"
-        const val ATTRIBUTES = "attributes_id"
+        const val ATTRIBUTES_ID = "attributes_id"
     }
 }
