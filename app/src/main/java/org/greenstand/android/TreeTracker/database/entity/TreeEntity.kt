@@ -37,6 +37,12 @@ import androidx.room.PrimaryKey
             parentColumns = [PlanterIdentificationsEntity.ID],
             childColumns = [TreeEntity.PLANTER_IDENTIFICATION_ID],
             onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = TreeAttributesEntity::class,
+            parentColumns = [TreeAttributesEntity.ID],
+            childColumns = [TreeEntity.ATTRIBUTES_ID],
+            onUpdate = ForeignKey.CASCADE
         )
     ]
 )
