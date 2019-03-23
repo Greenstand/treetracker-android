@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -27,6 +26,7 @@ import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.SharedPrefsManager
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.AboutFragment
@@ -38,10 +38,6 @@ import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback,
     MapsFragment.LocationDialogListener {
-
-    var map: Map<String, String>? = null
-
-    private var mSharedPreferences: SharedPreferences? = null
 
     private var fragment: Fragment? = null
 
@@ -63,17 +59,14 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mSharedPreferences = this.getSharedPreferences(
-                "org.greenstand.android", Context.MODE_PRIVATE)
+        if (SharedPrefsManager.isFirstRun) {
 
 
-        if (mSharedPreferences!!.getBoolean(ValueHelper.FIRST_RUN, true)) {
-
-            if (mSharedPreferences!!.getBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
-                mSharedPreferences?.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
+            if (SharedPrefsManager.areSettingsUsed) {
+                SharedPrefsManager.areSettingsUsed = true
             }
 
-            mSharedPreferences?.edit()?.putBoolean(ValueHelper.FIRST_RUN, false)?.apply()
+            SharedPrefsManager.isFirstRun = false
         }
 
         setContentView(R.layout.activity_main)
@@ -107,13 +100,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         }
 
-        val userIdentifier = mSharedPreferences?.getString(ValueHelper.PLANTER_IDENTIFIER, null)
-        if(  userIdentifier == null){
-            val editor = mSharedPreferences?.edit()
-            editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-            editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-            editor?.putString(ValueHelper.PLANTER_PHOTO, null)
-            editor?.apply()
+        if (SharedPrefsManager.planterIdentifier == null) {
+
+            clearUser()
 
             toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
@@ -124,7 +113,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             fragmentTransaction?.replace(R.id.containerFragment, fragment as UserIdentificationFragment)
                     ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
-        }else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
+        } else if (SharedPrefsManager.treesToBeDownloadedFirst) {
             Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
             var bundle = intent.extras
 
@@ -151,7 +140,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
 
         } else {
-            if (userIdentifier != getString(R.string.user_not_identified)) {
+            if (SharedPrefsManager.planterIdentifier != getString(R.string.user_not_identified)) {
                 Timber.d("MainActivity" + " startDataSync is false")
                 val homeFragment = MapsFragment()
                 homeFragment.arguments = intent.extras
@@ -160,12 +149,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                         .beginTransaction()
                 fragmentTransaction.replace(R.id.containerFragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
                 fragmentTransaction.commit()
-            }else {
-                val editor = mSharedPreferences?.edit()
-                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor?.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor?.commit()
+            } else {
+                clearUser()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
@@ -208,20 +193,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 }
                 return true
             }
-        /*
-            case R.id.action_settings:
-                fragment = new SettingsFragment();
-                bundle = getIntent().getExtras();
-                fragment.setArguments(bundle);
-
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container_fragment, fragment)
-                .addToBackStack(ValueHelper.SETTINGS_FRAGMENT).commit();
-                for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                    Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
-                }
-                return true;
-                */
             R.id.action_about -> {
                 val someFragment = supportFragmentManager.findFragmentById(R.id.containerFragment)
 
@@ -249,11 +220,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
 
             R.id.action_change_user -> {
-                val editor = mSharedPreferences?.edit()
-                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor?.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor?.commit()
+                clearUser()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
@@ -268,25 +235,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         return super.onOptionsItemSelected(item)
     }
 
-
-    /*
-     * Called when the Activity is no longer visible at all.
-     * Stop updates and disconnect.
-     */
-    public override fun onRestart() {
-        super.onRestart()
-    }
-
-    /*
-     * Called when the Activity is no longer visible at all.
-     * Stop updates and disconnect.
-     */
-    public override fun onStop() {
-        super.onStop()
-    }
-
-    public override fun onDestroy() {
-        super.onDestroy()
+    private fun clearUser() {
+        with(SharedPrefsManager) {
+            lastTimeUserIdentified = 0
+            planterPhoto = null
+            planterIdentifier = null
+        }
     }
 
 
@@ -299,14 +253,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onPause()
 
         stopPeriodicUpdates()
-    }
-
-    /*
-     * Called when the Activity is restarted, even before it becomes visible.
-     */
-    public override fun onStart() {
-        Timber.d("onStart")
-        super.onStart()
     }
 
     /*
@@ -344,7 +290,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location
 
-        //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         val minAccuracy = 10
 
         if (fragmentMapGpsAccuracy != null) {

@@ -1,7 +1,5 @@
 package org.greenstand.android.TreeTracker.fragments
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -13,16 +11,11 @@ import kotlinx.android.synthetic.main.fragment_user_details.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.SharedPrefsManager
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.utilities.Utils
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import java.util.*
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -35,8 +28,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class UserDetailsFragment : androidx.fragment.app.Fragment() {
 
-    private var mSharedPreferences: SharedPreferences? = null
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,17 +35,13 @@ class UserDetailsFragment : androidx.fragment.app.Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_user_details, container, false)
 
-        mSharedPreferences = activity!!.getSharedPreferences(
-            ValueHelper.NAME_SPACE, Context.MODE_PRIVATE
-        )
-
         val continueButton: Button = v.fragmentUserDetailsContinue
         continueButton.setOnClickListener {
             val firstNameTextView = v.fragmentUserDetailsFirstName
             val lastNameTextView = v.fragmentUserDetailsLastName
             val organizationTextView = v.fragmentUserDetailsOrganization
             val privacyPolicyCheckbox = v.fragmentSignupPrivacyPolicyCheckbox
-            val planterIdentifier = mSharedPreferences?.getString(ValueHelper.PLANTER_IDENTIFIER, null)
+            val planterIdentifier = SharedPrefsManager.planterIdentifier
 
             var dataReady = true // TODO: handle form errors and required fields
             if (firstNameTextView.text == null || firstNameTextView.text.isEmpty()) {
@@ -93,10 +80,7 @@ class UserDetailsFragment : androidx.fragment.app.Fragment() {
                         .updatePlanterIdentification(planterIdentifications)
                 }
 
-                val editor = mSharedPreferences?.edit()
-                val tsLong = System.currentTimeMillis() / 1000
-                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
-                editor?.apply()
+                SharedPrefsManager.lastTimeUserIdentified = System.currentTimeMillis() / 1000
 
                 activity!!.supportFragmentManager.popBackStack()
 

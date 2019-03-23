@@ -30,23 +30,17 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.SharedPrefsManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
 class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, TextWatcher {
 
-    private val fragment: Fragment? = null
-    private val bundle: Bundle? = null
-    private val fragmentTransaction: FragmentTransaction? = null
     private var mSharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -73,7 +67,7 @@ class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, T
         manualRadioSettings.setOnCheckedChangeListener(this@SettingsFragment)
 
         val saveAndEdit = v.fragmentSettingsSaveAndEdit
-        saveAndEdit.isChecked = mSharedPreferences!!.getBoolean(ValueHelper.SAVE_AND_EDIT, false)
+        saveAndEdit.isChecked = SharedPrefsManager.saveAndEdit
 
         val nextUpdate = v.fragmentSettingsNextUpdate
         nextUpdate.addTextChangedListener(this@SettingsFragment)
@@ -92,8 +86,8 @@ class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, T
             val accServer = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_MIN_ACCURACY, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
             val nextUpdateServer = mSharedPreferences!!.getInt(ValueHelper.MAIN_DB_NEXT_UPDATE, ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING)
 
-            mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, accServer)?.apply()
-            mSharedPreferences?.edit()?.putInt(ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING, nextUpdateServer)?.apply()
+            SharedPrefsManager.timeToNextUpdateGlobalSetting = nextUpdateServer
+            SharedPrefsManager.minAccuracyGlobalSetting = accServer
 
             //TODO replace with data from server
             val nextUpdateString2 = Integer.toString(nextUpdateServer)
@@ -116,14 +110,10 @@ class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, T
         for (i in 0 until manualRadioSettings.childCount) {
             val rb = manualRadioSettings.getChildAt(i) as RadioButton
 
-            if (rb != null) {
-
-
-                if (Integer.parseInt(rb.text.toString()) == mSharedPreferences!!.getInt(
-                        ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) {
-                    manualRadioSettings.check(rb.id)
-                    break
-                }
+            if (Integer.parseInt(rb.text.toString()) == mSharedPreferences!!.getInt(
+                    ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) {
+                manualRadioSettings.check(rb.id)
+                break
             }
         }
 
@@ -171,19 +161,11 @@ class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, T
                     val accuracyRadioGroup = activity!!.fragmentSettingsManualSettingsRadioGroup
                     val selectedRadioButton = activity!!.findViewById(accuracyRadioGroup.checkedRadioButtonId) as RadioButton
 
-                    if (selectedRadioButton != null) {
-                        mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-                                Integer.parseInt(selectedRadioButton.text.toString().substring(0,
-                                    selectedRadioButton.text.toString().lastIndexOf(" "))))?.apply()
-                    }
+                    mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
+                            Integer.parseInt(selectedRadioButton.text.toString().substring(0,
+                                selectedRadioButton.text.toString().lastIndexOf(" "))))?.apply()
 
-                    if (saveAndEdit.isChecked) {
-                        mSharedPreferences?.edit()?.putBoolean(ValueHelper.SAVE_AND_EDIT, true)?.apply()
-                    } else {
-                        mSharedPreferences?.edit()?.putBoolean(ValueHelper.SAVE_AND_EDIT, false)?.apply()
-                    }
-
-
+                    SharedPrefsManager.saveAndEdit = saveAndEdit.isChecked
                 }
 
                 Toast.makeText(activity, activity!!.resources.getString(R.string.settings_saved), Toast.LENGTH_SHORT).show()

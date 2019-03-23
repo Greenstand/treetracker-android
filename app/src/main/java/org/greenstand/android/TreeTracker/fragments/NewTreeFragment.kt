@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.fragment_new_tree.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.SharedPrefsManager
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
@@ -267,7 +268,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
 
 
                 // tree
-                val planterIdentifierId = mSharedPreferences?.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
+                val planterIdentifierId = SharedPrefsManager.planterIdentifier
 
                 var date = Date()
                 val calendar = Calendar.getInstance()

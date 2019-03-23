@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -20,6 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.SharedPrefsManager
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
@@ -113,16 +113,12 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
 
                         return@async TreeTrackerApplication.getAppDatabase().planterDao().insert(identification)
                     }.await()
-                    mSharedPreferences = activity!!.getSharedPreferences(
-                        ValueHelper.NAME_SPACE, Context.MODE_PRIVATE
-                    )
-                    val editor = mSharedPreferences?.edit()
 
-                    val tsLong = System.currentTimeMillis() / 1000
-                    editor?.putString(ValueHelper.PLANTER_IDENTIFIER, mUserIdentifier.toString())
-                    editor?.putString(ValueHelper.PLANTER_PHOTO, mPhotoPath)
-                    editor?.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
-                    editor?.apply()
+                    with(SharedPrefsManager) {
+                        planterIdentifier = mUserIdentifier.toString()
+                        planterPhoto = mPhotoPath
+                        planterId = identificationId
+                    }
 
                     // TODO consider returning to MapFragment and pushing this new fragment from there
 
@@ -137,8 +133,7 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                     } else {
 
                         // We only fully verify the user identification if we have already collected the details
-                        editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, tsLong)
-                        editor?.apply()
+                        SharedPrefsManager.lastTimeUserIdentified = System.currentTimeMillis() / 1000
 
                         val fragment = UserDetailsFragment()
                         fragmentTransaction.replace(R.id.containerFragment, fragment).commit()

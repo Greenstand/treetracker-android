@@ -49,6 +49,8 @@ class TreeTrackerApplication : Application() {
 
         private var application: TreeTrackerApplication? = null
 
+        fun appContext(): Context = application!!.applicationContext
+
         fun getAppDatabase(): AppDatabase {
             return AppDatabase.getInstance(application!!.applicationContext)
         }
