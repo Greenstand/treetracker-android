@@ -29,10 +29,7 @@ import kotlinx.android.synthetic.main.fragment_tree_preview.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.fragments.AboutFragment
-import org.greenstand.android.TreeTracker.fragments.DataFragment
-import org.greenstand.android.TreeTracker.fragments.MapsFragment
-import org.greenstand.android.TreeTracker.fragments.UserIdentificationFragment
+import org.greenstand.android.TreeTracker.fragments.*
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
@@ -115,14 +112,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             editor?.putString(ValueHelper.PLANTER_PHOTO, null)
             editor?.apply()
 
-            toolbarTitle.text = resources.getString(R.string.user_not_identified)
+            toolbarTitle.text = resources.getString(R.string.greenstand_welcome_text)
 
-
-            fragment = UserIdentificationFragment()
+            fragment = LoginFragment()
             fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction?.replace(R.id.containerFragment, fragment as UserIdentificationFragment)
-                    ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
+                .beginTransaction()
+            fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
+                ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
         }else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
             Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
