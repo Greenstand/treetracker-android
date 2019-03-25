@@ -21,6 +21,10 @@ interface PlanterDao {
     @Query("SELECT * FROM planter_identifications WHERE photo_url IS NULL")
     fun getPlanterIdentificationsToUpload(): List<PlanterIdentificationsEntity>
 
+    @Transaction
+    @Query("SELECT * FROM planter_identifications WHERE identifier = :identifier")
+    fun getPlanterIDByIdentifier(identifier: String?): Int
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updatePlanterIdentification(planterIdentificationsEntity: PlanterIdentificationsEntity)
 

@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             editor?.putString(ValueHelper.PLANTER_PHOTO, null)
             editor?.apply()
 
-            toolbarTitle.text = resources.getString(R.string.greenstand_welcome_text)
+            toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
             fragment = LoginFragment()
             fragmentTransaction = supportFragmentManager
