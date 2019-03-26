@@ -32,14 +32,14 @@ import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
 class LoginFragment : Fragment(){
-    var phoneNumberEntered: String? = null
-    var emailEntered: String? = null
+    private var phoneNumberEntered: String? = null
+    private var emailEntered: String? = null
     private var mPhotoPath: String? = null
-    private var planterId: Int = -1
+    private var planterId: Int? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_login, container, false)
-        activity?.toolbarTitle?.setText(R.string.greenstand_welcome_text)
+        requireActivity().toolbarTitle?.setText(R.string.greenstand_welcome_text)
 
         v.sign_up_button?.visibility = View.INVISIBLE
 //Here we will watch the phone edit text to check if the input number(#phoneNumberInput) is in our database already.
@@ -47,15 +47,15 @@ class LoginFragment : Fragment(){
     // ClickListener on this button to go on further with the login feature
      v.phoneEditTextLogin.addTextChangedListener(object: TextWatcher {
         @SuppressLint("NewApi")
-        override fun afterTextChanged(p0: Editable?) {
-            phoneNumberEntered = p0.toString()
+        override fun afterTextChanged(editTextInputs: Editable) {
+            phoneNumberEntered = editTextInputs.toString()
             if(isExistingUser(phoneNumberEntered!!)) {
                 activateLoginButton()
             }else {
                 v.emailEditText.addTextChangedListener(object: TextWatcher {
                     @SuppressLint("NewApi")
-                    override fun afterTextChanged(p0: Editable?) {
-                        emailEntered = p0.toString()
+                    override fun afterTextChanged(editTextInputs: Editable) {
+                        emailEntered = editTextInputs.toString()
                         if (isExistingUser(emailEntered!!) || isExistingUser(phoneNumberEntered!!)) {
                             activateLoginButton()
                         }else
@@ -67,11 +67,11 @@ class LoginFragment : Fragment(){
                             }
                     }
 
-                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int){
+                    override fun beforeTextChanged(editTextInputs: CharSequence?, p1: Int, p2: Int, p3: Int){
                         inactivateLoginButton()
                     }
 
-                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    override fun onTextChanged(editTextInputs: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         inactivateLoginButton()
                     }
                 })
@@ -86,11 +86,11 @@ class LoginFragment : Fragment(){
 
         }
 
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        override fun beforeTextChanged(editTextInputs: CharSequence?, p1: Int, p2: Int, p3: Int) {
             inactivateLoginButton()
         }
 
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        override fun onTextChanged(editTextInputs: CharSequence?, p1: Int, p2: Int, p3: Int) {
             inactivateLoginButton()
         }
 
@@ -119,7 +119,7 @@ private fun isExistingUser(textEntered: String): Boolean {
         }.await()
 
     }
-        return planterId != -1
+        return planterId != null
 
 }
 
