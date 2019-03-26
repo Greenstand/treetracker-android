@@ -81,6 +81,17 @@ android {
             buildConfigField 'String', 'ENABLE_FABRIC', '"false"'
         }
 
+        prerelease {
+            initWith(debug)
+            applicationIdSuffix ".prerelease"
+            resValue "string", "app_name", "Tree Tracker"
+            buildConfigField "String", "GPS_ACCURACY", '"off"'
+            buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
+            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
+        }
+
         staging {
             initWith(debug)
             applicationIdSuffix ".staging"
