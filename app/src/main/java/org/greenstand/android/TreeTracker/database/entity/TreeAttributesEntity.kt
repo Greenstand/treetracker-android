@@ -5,9 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = TreeAttributesEntity.TABLE)
-data class TreeAttributesEntity(@ColumnInfo(name = TREE_ID)
-                                var treeId: Long,
-                                @ColumnInfo(name = HEIGHT_COLOR)
+data class TreeAttributesEntity(@ColumnInfo(name = HEIGHT_COLOR)
                                 var heightColor: String?,
                                 @ColumnInfo(name = FLAVOR_ID)
                                 var flavorId: String,
@@ -23,7 +21,6 @@ data class TreeAttributesEntity(@ColumnInfo(name = TREE_ID)
     companion object {
         const val TABLE = "tree_attributes"
         const val ID = "_id"
-        const val TREE_ID = "tree_id"
         const val HEIGHT_COLOR = "height_color"
         const val FLAVOR_ID = "flavor_id"
         const val APP_VERSION = "app_version"

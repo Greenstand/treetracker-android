@@ -25,6 +25,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MaterialAppTheme" parent="Theme.MaterialComponents">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -52,6 +59,13 @@
 
     <style name="ActiveButtonStyle" parent="TextBodyStyle">
         <item name="android:background">@color/greenColor</item>
+    </style>
+
+    <style name="ButtonStyle">
+        <item name="android:textColor">@drawable/button_text_color</item>
+        <item name="android:textSize">@dimen/text_size_seventeen</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/white_gray_gradient</item>
     </style>
 
 </resources>

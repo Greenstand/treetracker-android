@@ -18,6 +18,6 @@ interface PhotoDao {
     fun insertPhoto(photo: PhotoEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(treePhotoEntity: TreePhotoEntity)
+    fun insert(treePhotoEntity: TreePhotoEntity): Long
 
 }

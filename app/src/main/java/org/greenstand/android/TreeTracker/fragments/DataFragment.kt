@@ -21,10 +21,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.api.Api
 import org.greenstand.android.TreeTracker.api.DOSpaces
-import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest
-import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
-import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
-import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
+import org.greenstand.android.TreeTracker.api.models.requests.*
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.dao.TreeDto
@@ -119,7 +116,7 @@ class DataFragment : Fragment(), View.OnClickListener {
     private fun startDataSynchronization() {
         syncBtn?.setText(R.string.stop)
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
-        operationAttempt = GlobalScope.launch(Dispatchers.Main) {
+        operationAttempt = GlobalScope.launch(Dispatchers.IO) {
 
             var success: Boolean
             if (Api.instance().api != null) {
@@ -132,16 +129,14 @@ class DataFragment : Fragment(), View.OnClickListener {
                 Toast.makeText(activity, R.string.sync_failed, Toast.LENGTH_SHORT).show()
             } else {
 
-                val registrations =
-                    TreeTrackerApplication.getAppDatabase().planterDao().getPlanterRegistrationsToUpload()
+                val registrations = TreeTrackerApplication.getAppDatabase().planterDao().getPlanterRegistrationsToUpload()
 
                 registrations.forEach {
                     success = uploadPlanterRegistration(it).await()
                 }
 
                 // Get all planter_identifications without a photo_url
-                val planterCursor: List<PlanterIdentificationsEntity> =
-                    TreeTrackerApplication.getAppDatabase().planterDao().getPlanterIdentificationsToUpload()
+                val planterCursor: List<PlanterIdentificationsEntity> = TreeTrackerApplication.getAppDatabase().planterDao().getPlanterIdentificationsToUpload()
                 planterCursor.forEach {
                     val imageUrl = uploadPlanterPhoto(it).await()
                     if (imageUrl != null) {
@@ -177,10 +172,12 @@ class DataFragment : Fragment(), View.OnClickListener {
 
                 if (activity != null) {
                     syncBtn?.setText(R.string.sync)
-                    if (success) {
-                        Toast.makeText(activity, R.string.sync_successful, Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(activity, R.string.sync_failed, Toast.LENGTH_SHORT).show()
+                    withContext(Dispatchers.Main) {
+                        if (success) {
+                            Toast.makeText(activity, R.string.sync_successful, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(activity, R.string.sync_failed, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -293,6 +290,15 @@ class DataFragment : Fragment(), View.OnClickListener {
 
         val imageUrl = getImageUrl() ?: return null
 
+        val attributesRequest = treeDto.height_color?.let {
+            AttributesRequest(
+                heightColor = treeDto.height_color!!,
+                appVersion = treeDto.app_version!!,
+                appBuild = treeDto.app_build!!,
+                flavorId = treeDto.flavor_id!!
+            )
+        }
+
         return NewTreeRequest(
             imageUrl = imageUrl,
             userId = userId.toInt(),
@@ -303,7 +309,8 @@ class DataFragment : Fragment(), View.OnClickListener {
             planterIdentifier = treeDto.planter_identifier,
             planterPhotoUrl = treeDto.planter_photo_url,
             timestamp = Utils.convertDateToTimestamp(treeDto.tree_time_created!!),
-            note = treeDto.content.orEmpty()
+            note = treeDto.content.orEmpty(),
+            attributes = attributesRequest
         )
     }
 
