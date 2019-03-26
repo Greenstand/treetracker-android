@@ -2,7 +2,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,44 +10,39 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.HapticFeedbackConstants
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
+import android.view.*
 import android.view.View.OnClickListener
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_new_tree.view.*
-
+import kotlinx.coroutines.*
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.data.NewTree
+import org.greenstand.android.TreeTracker.database.entity.*
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
+import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.Utils
+import org.greenstand.android.TreeTracker.utilities.Utils.Companion.dateFormat
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-
 import timber.log.Timber
+import java.util.*
 
-class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextWatcher, ActivityCompat.OnRequestPermissionsResultCallback {
+class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private var userId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
-    private val mPhotoUri: Uri? = null
     private var takePictureInvoked: Boolean = false
 
 
@@ -72,11 +66,25 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         mSharedPreferences = (activity as AppCompatActivity).getSharedPreferences(
-                "org.greenstand.android", Context.MODE_PRIVATE)
+            "org.greenstand.android", Context.MODE_PRIVATE
+        )
 
         userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
 
         val saveBtn = v.fragmentNewTreeSave
+
+        saveBtn.text = if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+            getString(R.string.next)
+        } else {
+            getString(R.string.save)
+        }
+
+        v.fragmentNewTreeNote.visibility = if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+
         saveBtn.setOnClickListener(this@NewTreeFragment)
 
         mImageView = v.fragmentNewTreeImage
@@ -97,9 +105,11 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
 
 
         val timeToNextUpdate = mSharedPreferences!!.getInt(
-                ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
+            ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
                 ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
-                ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING))
+                ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING
+            )
+        )
 
         val newTreetimeToNextUpdate = v.fragmentNewTreeNextUpdate
         val newTreeTimeToNextUpdateString = Integer.toString(timeToNextUpdate)
@@ -109,8 +119,20 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
             newTreetimeToNextUpdate.isEnabled = false
         }
 
-        newTreetimeToNextUpdate.addTextChangedListener(this@NewTreeFragment)
+        newTreetimeToNextUpdate.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                Timber.d("days " + s.toString())
+            }
 
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+        })
 
         return v
     }
@@ -124,37 +146,54 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
         } else if (!takePictureInvoked) {
             takePicture()
         }
-
-
     }
 
     override fun onClick(v: View) {
 
-        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+        v.performHapticFeedback(
+            HapticFeedbackConstants.VIRTUAL_KEY,
+            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+        )
 
         when (v.id) {
 
             R.id.fragmentNewTreeSave -> {
 
-                saveToDb()
+                GlobalScope.launch(Dispatchers.Main) {
 
-                Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT).show()
-                activity!!.supportFragmentManager.popBackStack()
+                    val newTree = createNewTreeData() ?: run {
+                        Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
+                        activity!!.supportFragmentManager.popBackStack()
+                        return@launch
+                    }
+
+                    if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+                        requireActivity()
+                            .supportFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.containerFragment, TreeHeightFragment.newInstance(newTree))
+                            .addToBackStack(ValueHelper.TREE_HEIGHT_FRAGMENT)
+                            .commit()
+                    } else {
+                        withContext(Dispatchers.IO) { saveToDb(newTree) }
+                        Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT).show()
+                        requireActivity().supportFragmentManager.popBackStack()
+                    }
+                }
             }
-        }//      Solution 35
-        //		case R.id.fragment_new_tree_take_photo:
-        //			takePicture();
-        //			break;
-
+        }
     }
 
     private fun takePicture() {
-        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    Permissions.MY_PERMISSION_CAMERA)
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                Permissions.MY_PERMISSION_CAMERA
+            )
         } else {
             takePictureInvoked = true
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
@@ -164,7 +203,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(grantResults.isNotEmpty()) {
+        if (grantResults.isNotEmpty()) {
             if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 takePicture()
             }
@@ -199,106 +238,43 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
         }
     }
 
-    private fun saveToDb() {
+    private fun createNewTreeData(): NewTree? {
+        val minAccuracy = mSharedPreferences!!.getInt(
+            ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
+            ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
+        )
 
-        if (MainActivity.mCurrentLocation == null) {
-            Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
-            activity!!.supportFragmentManager.popBackStack()
-        } else {
-
-            val locationContentValues = ContentValues()
-            locationContentValues.put("accuracy",
-                    java.lang.Float.toString(MainActivity.mCurrentLocation!!.accuracy))
-            locationContentValues.put("lat",
-                    java.lang.Double.toString(MainActivity.mCurrentLocation!!.latitude))
-            locationContentValues.put("long",
-                    java.lang.Double.toString(MainActivity.mCurrentLocation!!.longitude))
-
-            val locationId = TreeTrackerApplication.getDatabaseManager().insert("location", null, locationContentValues)
-
-            Timber.d("locationId " + java.lang.Long.toString(locationId))
-
-            var photoId: Long = -1
-
-            // photo
-            val photoContentValues = ContentValues()
-            photoContentValues.put("location_id", locationId)
-            photoContentValues.put("name", mCurrentPhotoPath)
-
-            photoId = TreeTrackerApplication.getDatabaseManager().insert("photo", null, photoContentValues)
-            Timber.d("photoId " + java.lang.Long.toString(photoId))
-
-
-            val minAccuracy = mSharedPreferences!!.getInt(
-                    ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-                    ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)
-
-            val newTreetimeToNextUpdate = activity!!.fragmentNewTreeNextUpdate
-            val timeToNextUpdate = Integer.parseInt(if (newTreetimeToNextUpdate.text.toString() == "")
+        val newTreetimeToNextUpdate = activity!!.fragmentNewTreeNextUpdate
+        val timeToNextUpdate = Integer.parseInt(
+            if (newTreetimeToNextUpdate.text.isEmpty())
                 "0"
             else
-                newTreetimeToNextUpdate.text.toString())
+                newTreetimeToNextUpdate.text.toString()
+        )
 
-            // settings
-            val settingsContentValues = ContentValues()
-            settingsContentValues.put("time_to_next_update", timeToNextUpdate)
-            settingsContentValues.put("min_accuracy", minAccuracy)
+        // note
+        val content = requireActivity().fragmentNewTreeNote.text.toString()
 
-            val settingsId = TreeTrackerApplication.getDatabaseManager().insert("settings", null, settingsContentValues)
-            Timber.d("settingsId "+ java.lang.Long.toString(settingsId))
+        // tree
+        val planterIdentifierId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
 
-
-            // note
-            val content = activity!!.fragmentNewTreeNote.text.toString()
-            val noteContentValues = ContentValues()
-            noteContentValues.put("user_id", userId)
-            noteContentValues.put("content", content)
-
-            val noteId = TreeTrackerApplication.getDatabaseManager().insert("note", null, noteContentValues)
-            Timber.d("noteId " + java.lang.Long.toString(noteId))
-
-
-            // tree
-            val planterIdentifierId = mSharedPreferences?.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
-
-            val treeContentValues = ContentValues()
-            treeContentValues.put("user_id", userId)
-            treeContentValues.put("location_id", locationId)
-            treeContentValues.put("settings_id", settingsId)
-            treeContentValues.put("planter_identification_id", planterIdentifierId)
-
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
-            var date = Date()
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-            calendar.add(Calendar.DAY_OF_MONTH, timeToNextUpdate)
-            date = calendar.time
-
-            treeContentValues.put("time_created", dateFormat.format(Date()))
-            treeContentValues.put("time_updated", dateFormat.format(Date()))
-            treeContentValues.put("time_for_update", dateFormat.format(date))
-
-            val treeId = TreeTrackerApplication.getDatabaseManager().insert("tree", null, treeContentValues)
-            Timber.d("treeId " + java.lang.Long.toString(treeId))
-
-            // tree_photo
-            val treePhotoContentValues = ContentValues()
-            treePhotoContentValues.put("tree_id", treeId)
-            treePhotoContentValues.put("photo_id", photoId)
-            val treePhotoId = TreeTrackerApplication.getDatabaseManager().insert("tree_photo", null,
-                treePhotoContentValues)
-            Timber.d("treePhotoId " + java.lang.Long.toString(treePhotoId))
-
-
-            // tree_note
-            val treeNoteContentValues = ContentValues()
-            treeNoteContentValues.put("tree_id", treeId)
-            treeNoteContentValues.put("note_id", noteId)
-            val treeNoteId = TreeTrackerApplication.getDatabaseManager().insert("tree_note", null, treeNoteContentValues)
-            Timber.d("treeNoteId " + java.lang.Long.toString(treeNoteId))
+        return mCurrentPhotoPath?.let {
+            NewTree(it,
+                    minAccuracy,
+                    timeToNextUpdate,
+                    content,
+                    userId,
+                    planterIdentifierId)
         }
+    }
 
+    private suspend fun saveToDb(newTree: NewTree): Long {
+        return TreeManager.addTree(newTree.photoPath,
+                                   newTree.minAccuracy,
+                                   newTree.timeToNextUpdate,
+                                   newTree.content,
+                                   newTree.userId,
+                                   newTree.planterIdentifierId)
     }
 
     private fun setPic() {
@@ -307,7 +283,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
         /* So pre-scale the target bitmap into which the file is decoded */
 
         val rotatedBitmap = ImageUtils.decodeBitmap(mCurrentPhotoPath, resources.displayMetrics.density)
-        if(rotatedBitmap == null) {
+        if (rotatedBitmap == null) {
             Toast.makeText(activity, "Error setting image. Please try again.", Toast.LENGTH_SHORT).show()
             activity!!.supportFragmentManager.popBackStack()
         }
@@ -316,30 +292,14 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, TextW
         mImageView!!.visibility = View.VISIBLE
     }
 
-
-    override fun afterTextChanged(s: Editable) {
-        Timber.d("days "+ s.toString())
-
-
-    }
-
-    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int,
-                                   after: Int) {
-        // TODO Auto-generated method stub
-
-    }
-
-    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        // TODO Auto-generated method stub
-
-    }
-
     companion object {
 
         private val TAG = "NewTreeFragment"
 
-        fun calculateInSampleSize(options: BitmapFactory.Options,
-                                  reqWidth: Int, reqHeight: Int): Int {
+        fun calculateInSampleSize(
+            options: BitmapFactory.Options,
+            reqWidth: Int, reqHeight: Int
+        ): Int {
             // Raw height and width of image
             val height = options.outHeight
             val width = options.outWidth

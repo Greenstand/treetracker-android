@@ -16,13 +16,10 @@ import android.os.Environment
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
-import androidx.exifinterface.media.ExifInterface
 import androidx.core.app.ActivityCompat
+import androidx.exifinterface.media.ExifInterface
 import kotlinx.android.synthetic.main.camera_preview.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.android.UI
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -68,7 +65,7 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
     override fun onStart() {
         super.onStart()
         operationAttempt?.cancel()
-        operationAttempt = launch(UI) {
+        operationAttempt = GlobalScope.launch(Dispatchers.Main) {
 
             Timber.i("Opening Camera")
 

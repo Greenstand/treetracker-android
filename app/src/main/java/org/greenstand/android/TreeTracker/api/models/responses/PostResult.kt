@@ -6,8 +6,5 @@ import com.google.gson.annotations.SerializedName
  * Created by lei on 11/10/17.
  */
 
-class PostResult {
-
-    @SerializedName("status")
-    var status: Int = 0
-}
+data class PostResult(@SerializedName("status")
+                      var status: Int = 0)

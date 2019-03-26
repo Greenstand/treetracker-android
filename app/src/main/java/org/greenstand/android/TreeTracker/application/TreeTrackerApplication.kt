@@ -3,22 +3,16 @@ package org.greenstand.android.TreeTracker.application
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
-
 import com.crashlytics.android.Crashlytics
-
 import io.fabric.sdk.android.Fabric
-import timber.log.Timber
-
 import org.greenstand.android.TreeTracker.BuildConfig
-import org.greenstand.android.TreeTracker.database.DatabaseManager
-import org.greenstand.android.TreeTracker.database.DbHelper
-import java.io.IOException
+import org.greenstand.android.TreeTracker.database.AppDatabase
+import timber.log.Timber
 
 
 class TreeTrackerApplication : Application() {
 
     override fun onCreate() {
-
         application = this
 
         // The following line triggers the initialization of ACRA
@@ -31,6 +25,17 @@ class TreeTrackerApplication : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
+        if (BuildConfig.DEBUG) {
+            try {
+                val debugDB = Class.forName("com.amitshekhar.DebugDB")
+                val getAddressLog = debugDB.getMethod("getAddressLog")
+                val value = getAddressLog.invoke(null)
+                Timber.tag(TreeTrackerApplication::class.toString()).d("you can see DB contents at %s", value)
+            } catch (e: Exception) {
+                //e.printStackTrace();
+            }
+        }
+
     }
 
     override fun attachBaseContext(base: Context) {
@@ -39,30 +44,12 @@ class TreeTrackerApplication : Application() {
 
     }
 
-    fun getDatabaseManager(): DatabaseManager{
-        val dbHelper = DbHelper.getDbHelper(this)
-
-        try {
-            dbHelper.createDataBase()
-        } catch (e: IOException) {
-            // This should be a fatal error
-            e.printStackTrace()
-        }
-
-        return DatabaseManager(dbHelper)
-    }
-
     companion object {
 
         private var application: TreeTrackerApplication? = null
-        private var databaseManager: DatabaseManager? = null
 
-        fun getDatabaseManager() : DatabaseManager{
-            if(databaseManager == null){
-                databaseManager = application!!.getDatabaseManager()
-                databaseManager!!.openDatabase()
-            }
-            return databaseManager!!
+        fun getAppDatabase(): AppDatabase {
+            return AppDatabase.getInstance(application!!.applicationContext)
         }
 
     }
