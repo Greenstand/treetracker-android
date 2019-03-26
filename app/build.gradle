@@ -58,6 +58,7 @@ android {
         buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
         buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
+        buildConfigField 'String', 'TREE_HEIGHT_FEATURE_ENABLED', '"false"'
     }
 
 
@@ -102,6 +103,19 @@ android {
             buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
         }
 
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        treetracker {
+            dimension "version"
+        }
+
+        justdigit {
+            dimension "version"
+            applicationIdSuffix ".justdigit"
+            buildConfigField 'String', 'TREE_HEIGHT_FEATURE_ENABLED', '"true"'
+        }
     }
 
     useLibrary 'org.apache.http.legacy'
