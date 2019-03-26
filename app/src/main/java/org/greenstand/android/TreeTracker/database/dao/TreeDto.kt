@@ -10,6 +10,7 @@ class TreeDto {
     var longitude: Double = 0.0
     var accuracy: Int = 0
     var name: String? = null
+    var note: String? = null
     var isOutdated: Boolean? = false
     var content: String? = null
     var planter_identifier: String? = null

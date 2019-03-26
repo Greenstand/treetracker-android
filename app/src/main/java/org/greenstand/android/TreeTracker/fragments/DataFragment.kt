@@ -126,7 +126,10 @@ class DataFragment : Fragment(), View.OnClickListener {
             }
 
             if (!success) {
-                Toast.makeText(activity, R.string.sync_failed, Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    syncBtn?.setText(R.string.sync)
+                    Toast.makeText(activity, R.string.sync_failed, Toast.LENGTH_SHORT).show()
+                }
             } else {
 
                 val registrations = TreeTrackerApplication.getAppDatabase().planterDao().getPlanterRegistrationsToUpload()
@@ -171,8 +174,8 @@ class DataFragment : Fragment(), View.OnClickListener {
                 }
 
                 if (activity != null) {
-                    syncBtn?.setText(R.string.sync)
                     withContext(Dispatchers.Main) {
+                        syncBtn?.setText(R.string.sync)
                         if (success) {
                             Toast.makeText(activity, R.string.sync_successful, Toast.LENGTH_SHORT).show()
                         } else {
@@ -309,7 +312,7 @@ class DataFragment : Fragment(), View.OnClickListener {
             planterIdentifier = treeDto.planter_identifier,
             planterPhotoUrl = treeDto.planter_photo_url,
             timestamp = Utils.convertDateToTimestamp(treeDto.tree_time_created!!),
-            note = treeDto.content.orEmpty(),
+            note = treeDto.note,
             attributes = attributesRequest
         )
     }
@@ -407,20 +410,20 @@ class DataFragment : Fragment(), View.OnClickListener {
             val treeCount =
                 TreeTrackerApplication.getAppDatabase().treeDao().getTotalTreeCount()
 
-            totalTrees.text = treeCount.toString()
-            Timber.d("total $treeCount")
-
             val syncedTreeCount =
                 TreeTrackerApplication.getAppDatabase().treeDao().getSyncedTreeCount()
-
-            locatedTrees.text = syncedTreeCount.toString()
-            Timber.d("located $syncedTreeCount")
 
             val notSyncedTreeCount =
                 TreeTrackerApplication.getAppDatabase().treeDao().getToSyncTreeCount()
 
-            tosyncTrees.text = notSyncedTreeCount.toString()
-            Timber.d("to sync $notSyncedTreeCount")
+            withContext(Dispatchers.Main) {
+                totalTrees.text = treeCount.toString()
+                Timber.d("total $treeCount")
+                locatedTrees.text = syncedTreeCount.toString()
+                Timber.d("located $syncedTreeCount")
+                tosyncTrees.text = notSyncedTreeCount.toString()
+                Timber.d("to sync $notSyncedTreeCount")
+            }
         }
     }
 
