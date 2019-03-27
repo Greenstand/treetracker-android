@@ -12,6 +12,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -21,12 +22,14 @@ import kotlinx.android.synthetic.main.fragment_login.view.*
 import kotlinx.android.synthetic.main.fragment_user_identification.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
@@ -58,7 +61,7 @@ class LoginFragment : Fragment(){
                         emailEntered = editTextInputs.toString()
                         if (isExistingUser(emailEntered!!) || isExistingUser(phoneNumberEntered!!)) {
                             activateLoginButton()
-                        }else
+                                }else
                             when (isExistingUser(emailEntered!!)) {
                                 true -> activateLoginButton()
                                 else -> {
@@ -96,13 +99,10 @@ class LoginFragment : Fragment(){
 
     })
 
-    v.sign_up_button.setOnClickListener(object : View.OnClickListener{
-        override fun onClick(v: View?) {
+    v.sign_up_button.setOnClickListener{
+        //Open the Terms and Condition fragment
 
-
-        }
-
-    })
+    }
 
  return v
 }
@@ -113,41 +113,36 @@ class LoginFragment : Fragment(){
 // planterId is different than -1 ( this is the initial value given to var planterId), this var will receive
 // the planterId from the DB if the user already exists
 private fun isExistingUser(textEntered: String): Boolean {
-    runBlocking {
-        planterId = GlobalScope.async {
-            TreeTrackerApplication.getAppDatabase().planterDao().getPlanterIDByIdentifier(textEntered)
-        }.await()
+    GlobalScope.launch{
+        planterId = TreeTrackerApplication.getAppDatabase().planterDao().getPlanterIDByIdentifier(textEntered)
 
     }
-        return planterId != null
-
+    return planterId != null
 }
 
 
 @SuppressLint("NewApi")
 fun activateLoginButton(){
-    login_button.setTextAppearance(R.style.ActiveButtonStyle)
-    login_button.setBackgroundResource(R.drawable.button_active)
-    if(sign_up_button.visibility == View.VISIBLE) sign_up_button?.visibility = View.INVISIBLE
-    login_button.setOnClickListener(object : View.OnClickListener{
-        override fun onClick(v: View?) {
+    login_button.apply {
+        setTextAppearance(R.style.ActiveButtonStyle)
+        setBackgroundResource(R.drawable.button_active)
+    }
+        if(sign_up_button.visibility == View.VISIBLE) sign_up_button?.visibility = View.INVISIBLE
+        login_button.setOnClickListener {
             //Like the user_flow says if the user has already an account the camera for taking a selfie should open
             takePicture()
 
-        }
-
-
-    })
-
-
+    }
 
 }
 
 @SuppressLint("NewApi")
 fun inactivateLoginButton(){
-    login_button.setTextAppearance(R.style.InactiveButtonStyle)
-    login_button.setBackgroundResource(R.drawable.button_inactive)
-    login_button.setOnClickListener(null)
+    login_button.apply{
+        setTextAppearance(R.style.InactiveButtonStyle)
+        setBackgroundResource(R.drawable.button_inactive)
+        setOnClickListener(null)
+    }
 
 }
 
