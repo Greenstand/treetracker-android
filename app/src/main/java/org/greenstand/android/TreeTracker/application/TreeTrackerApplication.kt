@@ -13,7 +13,6 @@ import timber.log.Timber
 class TreeTrackerApplication : Application() {
 
     override fun onCreate() {
-
         application = this
 
         // The following line triggers the initialization of ACRA

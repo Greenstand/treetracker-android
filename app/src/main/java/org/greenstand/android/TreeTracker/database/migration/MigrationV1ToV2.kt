@@ -7,16 +7,67 @@ class MigrationV1ToV2 : Migration(1, 2) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
         //new table
-        database.execSQL("CREATE TABLE IF NOT EXISTS `tree_attributes` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `tree_id` INTEGER NOT NULL, `height_color` TEXT, `flavor_id` TEXT NOT NULL, `app_version` TEXT NOT NULL, `app_build` TEXT NOT NULL)")
+        database.execSQL(
+            """CREATE TABLE IF NOT EXISTS
+            `tree_attributes`
+            (`_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `height_color` TEXT,
+            `flavor_id` TEXT NOT NULL,
+            `app_version` TEXT NOT NULL,
+            `app_build` TEXT NOT NULL)""")
 
         //deprecated tables
         database.execSQL("drop table global_settings")
 
         //migrate data to tree table
         database.execSQL(
-            "CREATE TABLE IF NOT EXISTS `new_tree` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `main_db_id` INTEGER NOT NULL, `time_created` TEXT NOT NULL, `time_updated` TEXT NOT NULL, `time_for_update` TEXT NOT NULL, `three_digit_number` INTEGER, `location_id` INTEGER, `is_missing` INTEGER NOT NULL, `is_synced` INTEGER NOT NULL, `is_priority` INTEGER NOT NULL, `cause_of_death_id` INTEGER, `settings_id` INTEGER, `settings_override_id` INTEGER, `user_id` INTEGER, `planter_identification_id` INTEGER, FOREIGN KEY(`settings_override_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`settings_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`cause_of_death_id`) REFERENCES `note`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )"
+            """CREATE TABLE IF NOT EXISTS `new_tree`
+                (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `main_db_id` INTEGER NOT NULL,
+                `time_created` TEXT NOT NULL,
+                `time_updated` TEXT NOT NULL,
+                `time_for_update` TEXT NOT NULL,
+                `three_digit_number` INTEGER,
+                `location_id` INTEGER,
+                `is_missing` INTEGER NOT NULL,
+                `is_synced` INTEGER NOT NULL,
+                `is_priority` INTEGER NOT NULL,
+                `cause_of_death_id` INTEGER,
+                `settings_id` INTEGER,
+                `settings_override_id` INTEGER,
+                `user_id` INTEGER,
+                `planter_identification_id` INTEGER,
+                `attributes_id` INTEGER,
+                FOREIGN KEY(`settings_override_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+                FOREIGN KEY(`settings_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+                FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+                FOREIGN KEY(`cause_of_death_id`) REFERENCES `note`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+                FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+                FOREIGN KEY(`attributes_id`) REFERENCES `tree_attributes`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION)"""
         )
-        database.execSQL("CREATE TABLE IF NOT EXISTS `tree` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `main_db_id` INTEGER, `time_created` INTEGER, `time_updated` INTEGER, `time_for_update` INTEGER, `three_digit_number` INTEGER, `location_id` INTEGER, `is_missing` INTEGER NOT NULL, `is_synced` INTEGER NOT NULL, `is_priority` INTEGER NOT NULL, `cause_of_death_id` INTEGER, `settings_id` INTEGER, `settings_override_id` INTEGER, `user_id` INTEGER, `planter_identification_id` INTEGER, FOREIGN KEY(`settings_override_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`settings_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`cause_of_death_id`) REFERENCES `note`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )")
+
+        database.execSQL("""CREATE TABLE IF NOT EXISTS `tree`
+            (`_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `main_db_id` INTEGER,
+            `time_created` INTEGER,
+            `time_updated` INTEGER,
+            `time_for_update` INTEGER,
+            `three_digit_number` INTEGER,
+            `location_id` INTEGER,
+            `is_missing` INTEGER NOT NULL,
+            `is_synced` INTEGER NOT NULL,
+            `is_priority` INTEGER NOT NULL,
+            `cause_of_death_id` INTEGER,
+            `settings_id` INTEGER,
+            `settings_override_id` INTEGER,
+            `user_id` INTEGER,
+            `planter_identification_id` INTEGER,
+            FOREIGN KEY(`settings_override_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+            FOREIGN KEY(`settings_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+            FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+            FOREIGN KEY(`cause_of_death_id`) REFERENCES `note`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
+            FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION)""")
+
         database.execSQL(
             "INSERT INTO new_tree(_id,main_db_id, time_created, time_updated, time_for_update, three_digit_number, location_id, is_missing, is_synced, is_priority, cause_of_death_id, settings_id, settings_override_id, user_id, planter_identification_id)  SELECT _id, main_db_id, time_created, time_updated, time_for_update, three_digit_number, location_id, CASE WHEN (is_missing = 'N') THEN 0 ELSE 1 END, CASE WHEN (is_synced like 'N') THEN 0 ELSE 1 END, CASE WHEN (is_priority like 'N') THEN 0 ELSE 1 END, cause_of_death_id, settings_id, settings_override_id, user_id, planter_identification_id FROM tree"
         )

@@ -32,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun locationDao(): LocationDao
     abstract fun noteDao(): NoteDao
     abstract fun settingsDao(): SettingsDao
+    abstract fun treeAttributesDao(): TreeAttributesDao
 
     companion object {
 

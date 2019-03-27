@@ -50,7 +50,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 45
-        versionName "1.2.3"
+        versionName "1.2.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
@@ -58,7 +58,11 @@ android {
         buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
         buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
+        buildConfigField 'String', 'TREE_HEIGHT_FEATURE_ENABLED', '"false"'
     }
+
+
+
     buildTypes {
         release {
             minifyEnabled true
@@ -90,6 +94,17 @@ android {
             buildConfigField 'String', 'ENABLE_FABRIC', '"false"'
         }
 
+        prerelease {
+            initWith(debug)
+            applicationIdSuffix ".prerelease"
+            resValue "string", "app_name", "Tree Tracker"
+            buildConfigField "String", "GPS_ACCURACY", '"off"'
+            buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
+            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
+        }
+
         staging {
             initWith(debug)
             applicationIdSuffix ".staging"
@@ -100,10 +115,25 @@ android {
         }
 
     }
-    productFlavors {
 
+    flavorDimensions "version"
+    productFlavors {
+        treetracker {
+            dimension "version"
+        }
+
+        justdigit {
+            dimension "version"
+            applicationIdSuffix ".justdigit"
+            buildConfigField 'String', 'TREE_HEIGHT_FEATURE_ENABLED', '"true"'
+        }
     }
+
     useLibrary 'org.apache.http.legacy'
+}
+
+androidExtensions {
+    experimental = true
 }
 
 repositories {
@@ -116,27 +146,26 @@ repositories {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-
-    implementation "androidx.appcompat:appcompat:1.1.0-alpha02"
-    implementation "com.google.android.material:material:1.1.0-alpha04"
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
+    implementation 'com.google.android.material:material:1.1.0-alpha04'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.amazonaws:aws-android-sdk-core:2.2.22'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
-
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
-
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
     //Database
-    implementation "androidx.room:room-runtime:2.1.0-alpha04"
-    implementation "androidx.room:room-coroutines:2.1.0-alpha04"
+    implementation 'androidx.room:room-runtime:2.1.0-alpha04'
+    implementation 'androidx.room:room-coroutines:2.1.0-alpha04'
     kapt "android.arch.persistence.room:compiler:2.1.0-alpha04"
-    androidTestImplementation "android.arch.persistence.room:testing:2.1.0-alpha05"
+    androidTestImplementation 'android.arch.persistence.room:testing:2.1.0-alpha05'
     devImplementation 'com.amitshekhar.android:debug-db:1.0.6'
-
     api 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     api "com.squareup.retrofit2:retrofit:${retrofit2Version}"
     api "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
@@ -146,7 +175,6 @@ dependencies {
         transitive = true
     }
     api 'com.google.firebase:firebase-core:16.0.6'
-
 
     implementation "androidx.legacy:legacy-support-v4:${androidSupportVersion}"
 }

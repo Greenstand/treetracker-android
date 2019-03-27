@@ -17,5 +17,9 @@ class TreeDto {
     var planter_photo_url: String? = null
     var planter_identifications_id: String? = null
 
+    var height_color: String? = null
+    var flavor_id: String? = null
+    var app_version: String? = null
+    var app_build: String? = null
 }
 
