@@ -11,7 +11,7 @@ interface NoteDao {
     fun insert(note: NoteEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(note: TreeNoteEntity)
+    fun insert(note: TreeNoteEntity): Long
 
     @Transaction
     @Query(

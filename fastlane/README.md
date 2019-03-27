@@ -26,11 +26,21 @@ Runs all the tests
 fastlane android beta
 ```
 Submit a new Beta Build to Crashlytics Beta
+### android justdigit_beta
+```
+fastlane android justdigit_beta
+```
+Submit a new JustDigIt Beta Build to Crashlytics Beta
 ### android deploy
 ```
 fastlane android deploy
 ```
 Deploy a new version to the Google Play
+### android bump_version_code
+```
+fastlane android bump_version_code
+```
+Bump version code
 
 ----
 

@@ -23,16 +23,47 @@ platform :android do
 
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
-    gradle(task: "clean assembleDebug")
+  
+    bump_version_code()
+
+    gradle(task: "clean assembleTreetrackerDebug")
     crashlytics(groups: "all-testers")
   
     # sh "your_script.sh"
     # You can also use other beta testing services here
   end
 
+
+  desc "Submit a new JustDigIt Beta Build to Crashlytics Beta"
+  lane :justdigit_beta do
+  
+    bump_version_code()
+
+    gradle(task: "clean assembleJustdigitDebug")
+    crashlytics(groups: "all-testers")
+  
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean assembleRelease")
     upload_to_play_store
+  end
+
+  desc "Bump version code"
+  lane :bump_version_code do
+    path = '../app/build.gradle'
+    re = /versionCode\s+(\d+)/
+
+    s = File.read(path)
+    versionCode = s[re, 1].to_i
+    s[re, 1] = (versionCode + 1).to_s
+
+    f = File.new(path, 'w')
+    f.write(s)
+    f.close
   end
 end
