@@ -12,7 +12,6 @@ class TreeDto {
     var name: String? = null
     var note: String? = null
     var isOutdated: Boolean? = false
-    var content: String? = null
     var planter_identifier: String? = null
     var planter_photo_path: String? = null
     var planter_photo_url: String? = null
