@@ -58,7 +58,7 @@ android {
         buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
         buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
-        buildConfigField 'String', 'TREE_HEIGHT_FEATURE_ENABLED', '"false"'
+        buildConfigField 'Boolean', 'TREE_HEIGHT_FEATURE_ENABLED', "false"
     }
 
 
@@ -67,51 +67,51 @@ android {
         release {
             minifyEnabled true
             resValue "string", "app_name", "Tree Tracker"
-            buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
-            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
-            buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"ams3"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test"'
-            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
         }
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
-            buildConfigField "String", "GPS_ACCURACY", '"off"'
+            buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-dev"'
-            buildConfigField 'String', 'ENABLE_FABRIC', '"false"'
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
         }
 
         prerelease {
             initWith(debug)
             applicationIdSuffix ".prerelease"
             resValue "string", "app_name", "Tree Tracker"
-            buildConfigField "String", "GPS_ACCURACY", '"off"'
+            buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
             buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
-            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
         }
 
         staging {
             initWith(debug)
             applicationIdSuffix ".staging"
             resValue "string", "app_name", "Tree Tracker(staging)"
-            buildConfigField "String", "GPS_ACCURACY", '"on"'
+            buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"http://staging.treetracker.org"'
-            buildConfigField 'String', 'ENABLE_FABRIC', '"true"'
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
         }
 
     }
@@ -125,7 +125,7 @@ android {
         justdigit {
             dimension "version"
             applicationIdSuffix ".justdigit"
-            buildConfigField 'String', 'TREE_HEIGHT_FEATURE_ENABLED', '"true"'
+            buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
         }
     }
 

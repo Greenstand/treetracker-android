@@ -7,6 +7,7 @@ import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import timber.log.Timber
 
 
@@ -17,7 +18,7 @@ class TreeTrackerApplication : Application() {
 
         // The following line triggers the initialization of ACRA
         super.onCreate()
-        if (BuildConfig.ENABLE_FABRIC == "true") {
+        if (FeatureFlags.FABRIC_ENABLED) {
             Fabric.with(this, Crashlytics())
         }
 
