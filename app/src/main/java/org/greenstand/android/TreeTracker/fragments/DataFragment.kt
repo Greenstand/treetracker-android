@@ -42,7 +42,6 @@ import java.lang.Integer.valueOf
 class DataFragment : Fragment(), View.OnClickListener {
 
     lateinit var totalTrees: TextView
-    lateinit var updateTrees: TextView
     lateinit var locatedTrees: TextView
     lateinit var tosyncTrees: TextView
 
@@ -71,7 +70,6 @@ class DataFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_data, container, false)
         totalTrees = v.fragmentDataTotalTreesValue
-        updateTrees = v.fragmentDataUpdateValue
         locatedTrees = v.fragmentDataLocatedValue
         tosyncTrees = v.fragmentDataToSyncValue
 
