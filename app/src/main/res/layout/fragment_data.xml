@@ -46,43 +46,12 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/fragment_data_update"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_data_total_trees"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/padding_forty_eight"
-        android:paddingTop="@dimen/padding_five"
-        android:paddingRight="@dimen/padding_forty_eight"
-        android:paddingBottom="@dimen/padding_five">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/height_forty"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="3"
-            android:text="@string/update"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
-
-        <TextView
-            android:id="@+id/fragmentDataUpdateValue"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/height_forty"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fragment_data_located"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_data_update"
+        android:layout_below="@+id/fragment_data_total_trees"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/padding_forty_eight"
         android:paddingTop="@dimen/padding_five"
