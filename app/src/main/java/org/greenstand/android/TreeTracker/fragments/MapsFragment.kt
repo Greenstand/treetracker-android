@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.PhotoEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreePhotoEntity
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -269,16 +270,13 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
 
     override fun onClick(v: View) {
-
-
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
 
-        val photoCursor: Cursor
         when (v.id) {
             R.id.addTreeButton -> {
                 Timber.d("fab click")
 
-                if (MainActivity.mAllowNewTreeOrUpdate || BuildConfig.GPS_ACCURACY == "off") {
+                if (MainActivity.mAllowNewTreeOrUpdate || !FeatureFlags.HIGH_GPS_ACCURACY) {
 
                     val currentTimestamp = System.currentTimeMillis() / 1000
                     val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
