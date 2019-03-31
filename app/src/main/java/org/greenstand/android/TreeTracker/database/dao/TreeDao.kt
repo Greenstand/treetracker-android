@@ -16,7 +16,7 @@ interface TreeDao {
             location.long as longitude,
             location.accuracy,
             photo.name,
-            note.content,
+            note.content as note,
             planter_identifications.identifier as planter_identifier,
             planter_identifications.photo_path as planter_photo_path,
             planter_identifications.photo_url as planter_photo_url,
