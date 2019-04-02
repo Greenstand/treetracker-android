@@ -59,6 +59,7 @@ android {
         buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
         buildConfigField 'Boolean', 'TREE_HEIGHT_FEATURE_ENABLED', "false"
+        buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "true"
     }
 
 
@@ -126,6 +127,7 @@ android {
             dimension "version"
             applicationIdSuffix ".justdigit"
             buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
+            buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
         }
     }
 
