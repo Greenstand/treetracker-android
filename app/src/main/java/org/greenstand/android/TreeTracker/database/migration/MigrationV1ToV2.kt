@@ -11,10 +11,10 @@ class MigrationV1ToV2 : Migration(1, 2) {
             """CREATE TABLE IF NOT EXISTS
             `tree_attributes`
             (`_id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `height_color` TEXT,
-            `flavor_id` TEXT NOT NULL,
-            `app_version` TEXT NOT NULL,
-            `app_build` TEXT NOT NULL)""")
+            `key` TEXT,
+            `value` TEXT NOT NULL,
+            `tree_id` INTEGER NOT NULL,
+            FOREIGN KEY(`tree_id`) REFERENCES `tree`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION)""")
 
         //deprecated tables
         database.execSQL("drop table global_settings")
@@ -37,13 +37,11 @@ class MigrationV1ToV2 : Migration(1, 2) {
                 `settings_override_id` INTEGER,
                 `user_id` INTEGER,
                 `planter_identification_id` INTEGER,
-                `attributes_id` INTEGER,
                 FOREIGN KEY(`settings_override_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
                 FOREIGN KEY(`settings_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
                 FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
                 FOREIGN KEY(`cause_of_death_id`) REFERENCES `note`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
-                FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION ,
-                FOREIGN KEY(`attributes_id`) REFERENCES `tree_attributes`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION)"""
+                FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION)"""
         )
 
         database.execSQL("""CREATE TABLE IF NOT EXISTS `tree`
