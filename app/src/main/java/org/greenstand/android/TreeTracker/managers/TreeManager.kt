@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.managers
 
+import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.data.TreeAttributes
@@ -125,5 +127,10 @@ object TreeManager {
 
         return db.noteDao().insert(noteEntity)
             .also { Timber.d("noteId $it") }
+    }
+
+
+    fun getPlanterByInputtedText(identifier: String): LiveData<PlanterDetailsEntity>{
+       return db.planterDao().getPlanterDetailsByIdentifier(identifier)
     }
 }

@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
@@ -22,8 +23,11 @@ interface PlanterDao {
     fun getPlanterIdentificationsToUpload(): List<PlanterIdentificationsEntity>
 
     @Transaction
-    @Query("SELECT * FROM planter_identifications WHERE identifier = :identifier")
-    fun getPlanterIDByIdentifier(identifier: String?): Int
+    @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
+    fun getPlanterDetailsByIdentifier(identifier: String): LiveData<PlanterDetailsEntity>
+    @Transaction
+    @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
+    fun getPlanterDetailsIDByIdentifier(identifier: String): Int
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updatePlanterIdentification(planterIdentificationsEntity: PlanterIdentificationsEntity)
