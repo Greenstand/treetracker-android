@@ -72,6 +72,8 @@ class LoginFragment : Fragment(){
 
             override fun afterTextChanged(editTextInputs: Editable) {
                 phoneNumberEntered = editTextInputs.toString()
+                if(!viewModel.isNumberValid(phoneNumberEntered!!))
+                    Toast.makeText(context,"Please enter valid phone number or email", Toast.LENGTH_SHORT).show()
                 viewModel.isUserPresentOnDevice(phoneNumberEntered!!).observe(this@LoginFragment,
                     Observer {
                         if (it != null && it.identifier == phoneNumberEntered) {
@@ -80,15 +82,21 @@ class LoginFragment : Fragment(){
                             emailEditText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(editTextInputs: Editable?) {
                                     emailEntered = editTextInputs.toString()
+                                    if (!isEmailValid(emailEntered!!))
+                                        Toast.makeText(context,"Please enter valid phone number or email", Toast.LENGTH_SHORT).show()
                                     viewModel.isUserPresentOnDevice(emailEntered!!).observe(this@LoginFragment,
                                         Observer {
                                             if (it != null){
-                                                when(it.identifier == emailEntered || it.identifier == phoneNumberEntered) {
+                                                if (it.identifier == emailEntered || it.identifier == phoneNumberEntered) {
+                                                    activateLoginButton()
+                                                }else{
+                                                   when(it.identifier == emailEntered){
                                                     true -> activateLoginButton()
                                                     else -> sign_up_button?.visibility = View.VISIBLE
                                                 }
                                             }
-                                        })
+                                        }
+                                })
                                 }
                                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                                     inactivateLoginButton()
@@ -104,6 +112,7 @@ class LoginFragment : Fragment(){
 
         sign_up_button.setOnClickListener{
             //Open the Terms and Condition fragment
+
 
         }
     }
