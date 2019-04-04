@@ -10,7 +10,17 @@ import org.greenstand.android.TreeTracker.utilities.Validation.isEmailValid
 
 class PlanterDetailsViewModel: CoroutineViewModel()  {
 
-    fun isNumberValid(phoneNumber: String) = if(phoneNumber.matches(Regex("^\\+[0-9]{10,13}\$"))) true else false
+    val phoneNumber = MutableLiveData<String>()
+    val emailAddress = MutableLiveData<String>()
+
+    fun phoneNumberEntered(input: String){
+        phoneNumber.value = input
+    }
+
+    fun emailAddressEntered(input: String){
+        emailAddress.value = input
+    }
+    fun isNumberValid(phoneNumber: String) = if(!phoneNumber.matches(Regex("^\\+[0-9]{10,13}\$"))) true else false
 
     fun isUserPresentOnDevice(userInputted: String): LiveData<PlanterDetailsEntity>{
         return TreeManager.getPlanterByInputtedText(userInputted)

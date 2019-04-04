@@ -12,32 +12,21 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.fragment_login.view.*
 import kotlinx.android.synthetic.main.fragment_user_identification.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
-import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.Validation
-import org.greenstand.android.TreeTracker.utilities.Validation.isEmailValid
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.utilities.ValueHelper.EMAIL_ADDRESS
+import org.greenstand.android.TreeTracker.utilities.ValueHelper.PHONE_NUMBER
 import org.greenstand.android.TreeTracker.viewmodels.PlanterDetailsViewModel
 import timber.log.Timber
 
@@ -46,6 +35,9 @@ class LoginFragment : Fragment(){
     var emailEntered: String? = null
     private var mPhotoPath: String? = null
     lateinit var viewModel: PlanterDetailsViewModel
+    private var fragment: Fragment? = null
+    private var fragmentTransaction: FragmentTransaction? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(PlanterDetailsViewModel::class.java)
@@ -72,31 +64,24 @@ class LoginFragment : Fragment(){
 
             override fun afterTextChanged(editTextInputs: Editable) {
                 phoneNumberEntered = editTextInputs.toString()
-                if(!viewModel.isNumberValid(phoneNumberEntered!!))
-                    Toast.makeText(context,"Please enter valid phone number or email", Toast.LENGTH_SHORT).show()
                 viewModel.isUserPresentOnDevice(phoneNumberEntered!!).observe(this@LoginFragment,
                     Observer {
                         if (it != null && it.identifier == phoneNumberEntered) {
                             activateLoginButton()
                         } else {
+                            sign_up_button.visibility = View.VISIBLE
                             emailEditText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(editTextInputs: Editable?) {
                                     emailEntered = editTextInputs.toString()
-                                    if (!isEmailValid(emailEntered!!))
-                                        Toast.makeText(context,"Please enter valid phone number or email", Toast.LENGTH_SHORT).show()
                                     viewModel.isUserPresentOnDevice(emailEntered!!).observe(this@LoginFragment,
                                         Observer {
-                                            if (it != null){
-                                                if (it.identifier == emailEntered || it.identifier == phoneNumberEntered) {
-                                                    activateLoginButton()
-                                                }else{
-                                                   when(it.identifier == emailEntered){
-                                                    true -> activateLoginButton()
-                                                    else -> sign_up_button?.visibility = View.VISIBLE
-                                                }
+                                            if (it != null && (it.identifier == emailEntered)) {
+                                                activateLoginButton()
+                                            } else {
+                                                inactivateLoginButton()
+                                                sign_up_button.visibility = View.VISIBLE
                                             }
-                                        }
-                                })
+                                        })
                                 }
                                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                                     inactivateLoginButton()
@@ -109,10 +94,16 @@ class LoginFragment : Fragment(){
                     })
             }
         })
-
         sign_up_button.setOnClickListener{
-            //Open the Terms and Condition fragment
-
+            val termsFragment = TermsPolicyFragment()
+            val extras = Bundle()
+            extras.apply {
+                putString(PHONE_NUMBER, phoneNumberEntered)
+                putString(EMAIL_ADDRESS, emailEntered)}
+            termsFragment.arguments = extras
+            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
+            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, termsFragment)
+            fragmentTransaction?.commit()
 
         }
     }
