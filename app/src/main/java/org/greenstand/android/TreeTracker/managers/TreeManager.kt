@@ -10,6 +10,12 @@ import java.util.*
 
 object TreeManager {
 
+
+    const val TREE_COLOR_ATTR_KEY = "height_color"
+    const val APP_BUILD_ATTR_KEY = "app_build"
+    const val APP_FLAVOR_ATTR_KEY = "app_flavor"
+    const val APP_VERSION_ATTR_KEY = "app_version"
+
     private val db = TreeTrackerApplication.getAppDatabase()
 
     fun addTreeAttribute(treeId: Long,
@@ -24,6 +30,12 @@ object TreeManager {
             .also { Timber.d("Inserted $attribute into Attributes Table") }
     }
 
+    fun getTreeAttribute(treeId: Long,
+                         key: String): String? {
+
+        return db.treeAttributesDao().getTreeAttributeByTreeAndKey(treeId, key)?.value
+    }
+
     suspend fun addTree(photoPath: String,
                         minAccuracy: Int,
                         timeToNextUpdate: Int,
@@ -31,7 +43,7 @@ object TreeManager {
                         userId: Long,
                         planterIdentifierId: Long): Long {
 
-        val uuid = UUID.fromString("$userId $planterIdentifierId $photoPath")
+        val uuid = UUID.randomUUID()
 
         val locationId = insertLocation(userId)
 

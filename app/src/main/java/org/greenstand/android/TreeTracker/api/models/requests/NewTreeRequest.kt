@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class NewTreeRequest(@SerializedName("user_id")
                           val userId: Int = 0,
+                          @SerializedName("uuid")
+                          val uuid: String? = null,
                           @SerializedName("lat")
                           val lat: Double = 0.toDouble(),
                           @SerializedName("lon")

@@ -42,7 +42,7 @@ import androidx.room.PrimaryKey
 )
 data class TreeEntity(
     @ColumnInfo(name = UUID)
-    var uuid: String,
+    var uuid: String? = null,
     @ColumnInfo(name = MAIN_DB_ID)
     var mainDbId: Int = 0,
     @ColumnInfo(name = TIME_CREATED)

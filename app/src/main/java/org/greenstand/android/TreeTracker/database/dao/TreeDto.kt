@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.database.dao
 
 class TreeDto {
+    var uuid: String? = null
     var tree_id: Long = 0
     var tree_time_created: String? = null
     var tree_time_updated: String? = null
@@ -16,10 +17,5 @@ class TreeDto {
     var planter_photo_path: String? = null
     var planter_photo_url: String? = null
     var planter_identifications_id: String? = null
-
-    var height_color: String? = null
-    var flavor_id: String? = null
-    var app_version: String? = null
-    var app_build: String? = null
 }
 

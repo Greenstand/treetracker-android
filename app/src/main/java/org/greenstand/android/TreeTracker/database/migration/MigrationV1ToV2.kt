@@ -2,19 +2,19 @@ package org.greenstand.android.TreeTracker.database.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import java.util.*
 
 class MigrationV1ToV2 : Migration(1, 2) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
         //new table
         database.execSQL(
-            """CREATE TABLE IF NOT EXISTS
-            `tree_attributes`
-            (`_id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `key` TEXT,
-            `value` TEXT NOT NULL,
-            `tree_id` INTEGER NOT NULL,
-            FOREIGN KEY(`tree_id`) REFERENCES `tree`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION)""")
+            """CREATE TABLE IF NOT EXISTS `tree_attributes`
+                (`_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `key` TEXT NOT NULL,
+                `value` TEXT NOT NULL,
+                `tree_id` INTEGER NOT NULL,
+                FOREIGN KEY(`tree_id`) REFERENCES `tree`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )""")
 
         //deprecated tables
         database.execSQL("drop table global_settings")
@@ -23,6 +23,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
         database.execSQL(
             """CREATE TABLE IF NOT EXISTS `new_tree`
                 (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `uuid` TEXT,
                 `main_db_id` INTEGER NOT NULL,
                 `time_created` TEXT NOT NULL,
                 `time_updated` TEXT NOT NULL,
@@ -67,7 +68,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
             FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION)""")
 
         database.execSQL(
-            "INSERT INTO new_tree(_id,main_db_id, time_created, time_updated, time_for_update, three_digit_number, location_id, is_missing, is_synced, is_priority, cause_of_death_id, settings_id, settings_override_id, user_id, planter_identification_id)  SELECT _id, main_db_id, time_created, time_updated, time_for_update, three_digit_number, location_id, CASE WHEN (is_missing = 'N') THEN 0 ELSE 1 END, CASE WHEN (is_synced like 'N') THEN 0 ELSE 1 END, CASE WHEN (is_priority like 'N') THEN 0 ELSE 1 END, cause_of_death_id, settings_id, settings_override_id, user_id, planter_identification_id FROM tree"
+            "INSERT INTO new_tree(_id, main_db_id, time_created, time_updated, time_for_update, three_digit_number, location_id, is_missing, is_synced, is_priority, cause_of_death_id, settings_id, settings_override_id, user_id, planter_identification_id)  SELECT _id, main_db_id, time_created, time_updated, time_for_update, three_digit_number, location_id, CASE WHEN (is_missing = 'N') THEN 0 ELSE 1 END, CASE WHEN (is_synced like 'N') THEN 0 ELSE 1 END, CASE WHEN (is_priority like 'N') THEN 0 ELSE 1 END, cause_of_death_id, settings_id, settings_override_id, user_id, planter_identification_id FROM tree"
         )
         database.execSQL("drop table tree")
         database.execSQL("alter table new_tree RENAME TO  tree")

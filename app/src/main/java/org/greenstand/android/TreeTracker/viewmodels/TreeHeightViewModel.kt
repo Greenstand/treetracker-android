@@ -44,10 +44,10 @@ class TreeHeightViewModel : CoroutineViewModel() {
                         fun addKeyValueAttribute(key: String, value: String) = TreeManager.addTreeAttribute(treeId, key, value)
 
                         with(TreeHeightAttributes(treeId = treeId, heightColor = treeColor!!)) {
-                            addKeyValueAttribute("height_color", heightColor.value)
-                            addKeyValueAttribute("app_build", appBuild)
-                            addKeyValueAttribute("app_flavor", appFlavor)
-                            addKeyValueAttribute("app_version", appVersion)
+                            addKeyValueAttribute(TreeManager.TREE_COLOR_ATTR_KEY, heightColor.value)
+                            addKeyValueAttribute(TreeManager.APP_BUILD_ATTR_KEY, appBuild)
+                            addKeyValueAttribute(TreeManager.APP_FLAVOR_ATTR_KEY, appFlavor)
+                            addKeyValueAttribute(TreeManager.APP_VERSION_ATTR_KEY, appVersion)
                         }
                     }
                 }
