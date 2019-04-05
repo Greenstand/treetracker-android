@@ -27,6 +27,7 @@ import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.dao.TreeDto
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
+import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import retrofit2.Response
@@ -291,16 +292,17 @@ class DataFragment : Fragment(), View.OnClickListener {
 
         val imageUrl = getImageUrl() ?: return null
 
-        val attributesRequest = treeDto.height_color?.let {
+        val attributesRequest = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.TREE_COLOR_ATTR_KEY)?.let {
             AttributesRequest(
-                heightColor = treeDto.height_color!!,
-                appVersion = treeDto.app_version!!,
-                appBuild = treeDto.app_build!!,
-                flavorId = treeDto.flavor_id!!
+                heightColor = it,
+                appVersion = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.APP_VERSION_ATTR_KEY)!!,
+                appBuild = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.APP_BUILD_ATTR_KEY)!!,
+                flavorId = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.APP_FLAVOR_ATTR_KEY)!!
             )
         }
 
         return NewTreeRequest(
+            uuid = treeDto.uuid,
             imageUrl = imageUrl,
             userId = userId.toInt(),
             sequenceId = treeDto.tree_id,
