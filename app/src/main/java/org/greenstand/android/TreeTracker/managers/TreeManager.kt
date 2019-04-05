@@ -133,4 +133,23 @@ object TreeManager {
     fun getPlanterByInputtedText(identifier: String): LiveData<PlanterDetailsEntity>{
        return db.planterDao().getPlanterDetailsByIdentifier(identifier)
     }
+
+    suspend fun insertPlanter(identifier: String, firstName: String, lastName: String, organization: String,
+                              phone: String, email: String, uploaded: Boolean = false, timeCreated: String): Long {
+
+        val planterEntity = PlanterDetailsEntity(
+            identifier = identifier,
+            firstName = firstName,
+            lastName = lastName,
+            organization = organization,
+            phone = phone,
+            email = email,
+            uploaded = uploaded,
+            timeCreated = timeCreated
+        )
+
+        return db.planterDao().insert(planterEntity)
+            .also { Timber.d("PlanterDetails $it") }
+    }
 }
+

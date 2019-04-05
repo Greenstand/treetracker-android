@@ -35,8 +35,6 @@ class LoginFragment : Fragment(){
     var emailEntered: String? = null
     private var mPhotoPath: String? = null
     lateinit var viewModel: PlanterDetailsViewModel
-    private var fragment: Fragment? = null
-    private var fragmentTransaction: FragmentTransaction? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

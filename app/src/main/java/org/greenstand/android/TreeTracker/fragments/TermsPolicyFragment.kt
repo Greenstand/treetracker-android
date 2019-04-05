@@ -76,14 +76,23 @@ class TermsPolicyFragment: Fragment(){
         view.text_agreement.text = spannableString
         view.text_agreement.movementMethod = LinkMovementMethod.getInstance()
 
-        view.show_details_text.setOnClickListener(object :View.OnClickListener{
-            override fun onClick(v: View?) {
+        view.show_details_text.setOnClickListener {
                 terms_text?.visibility = View.VISIBLE
                 policy_text?.visibility = View.VISIBLE
                 cookies_text?.visibility = View.VISIBLE
             }
-        })
 
+
+        view.accept_terms_button.setOnClickListener(object :View.OnClickListener{
+            override fun onClick(v: View?) {
+                val signupFragment = SignUpFragment()
+                signupFragment.arguments = extras
+                val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
+                fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, signupFragment)
+                fragmentTransaction?.commit()
+
+            }
+        })
 
         return view
 
