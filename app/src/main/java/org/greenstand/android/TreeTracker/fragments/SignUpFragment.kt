@@ -1,21 +1,21 @@
 package org.greenstand.android.TreeTracker.fragments
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_signup.*
 import kotlinx.android.synthetic.main.fragment_signup.view.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.PlanterDetailsViewModel
@@ -41,7 +41,11 @@ class SignUpFragment:Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_signup, container, false)
-        activity?.title = getString(R.string.sign_up_title)
+        requireActivity().toolbarTitle?.apply {
+            setText(R.string.sign_up_title)
+            setTextColor(resources.getColor(R.color.blackColor))
+        }
+
         val extras = arguments
         if (extras != null) {
             newPhoneNumberEntered = extras.getString(ValueHelper.PHONE_NUMBER)
@@ -77,22 +81,27 @@ class SignUpFragment:Fragment() {
 
     @SuppressLint("NewApi")
     private fun inactivateSigupButton() {
-        signUpFragmentButton.setTextAppearance(R.style.InactiveButtonStyle)
-        signUpFragmentButton.setBackgroundResource(R.drawable.button_inactive)
-        signUpFragmentButton.setOnClickListener(null)
+        signUpFragmentButton.apply {
+            setTextAppearance(R.style.InactiveButtonStyle)
+            setBackgroundResource(R.drawable.button_inactive)
+            setOnClickListener(null)
+        }
     }
 
     @SuppressLint("NewApi")
     fun activateSignupButton() {
-        signUpFragmentButton.setTextAppearance(R.style.ActiveButtonStyle)
-        signUpFragmentButton.setBackgroundResource(R.drawable.button_active)
+        signUpFragmentButton.apply {
+            setTextAppearance(R.style.ActiveButtonStyle)
+            setBackgroundResource(R.drawable.button_active)
+            setOnClickListener {
+                organizationName = organizationEditText?.text.toString()
+                saveNewUsersDetails()
+                makeNoEditableText()
 
-        signUpFragmentButton.setOnClickListener {
-            organizationName = organizationEditText?.text.toString()
-            saveNewUsersDetails()
-
+            }
         }
     }
+
 
     //This was taken from TreeManager.kt
     fun getTime(): String{

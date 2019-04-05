@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.view.*
 import org.greenstand.android.TreeTracker.R
@@ -21,9 +22,10 @@ class TermsPolicyFragment: Fragment(){
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_terms_policy, container,false)
-        activity?.title = getString(R.string.sign_up_title)
+        requireActivity().toolbarTitle?.apply {
+            setText(R.string.sign_up_title)
+            setTextColor(resources.getColor(R.color.blackColor)) }
         val extras = arguments
-
 
         //Make parts of the text_agreement to be clickable
         val spannableString = SpannableString(getString(R.string.agreement_text_test))

@@ -48,7 +48,10 @@ class LoginFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        requireActivity().toolbarTitle?.setText(R.string.greenstand_welcome_text)
+        requireActivity().toolbarTitle?.apply {
+            setText(R.string.greenstand_welcome_text)
+            setTextColor(resources.getColor(R.color.blackColor))
+        }
 
         sign_up_button?.visibility = View.INVISIBLE
 
@@ -109,14 +112,12 @@ class LoginFragment : Fragment(){
 fun activateLoginButton(){
     login_button.apply {
         setTextAppearance(R.style.ActiveButtonStyle)
-        setBackgroundResource(R.drawable.button_active)
-    }
-        if(sign_up_button.visibility == View.VISIBLE) sign_up_button?.visibility = View.INVISIBLE
-        login_button.setOnClickListener {
+        setOnClickListener {
             //Like the user_flow says if the user has already an account the camera for taking a selfie should open
             takePicture()
-
+        }
     }
+        if(sign_up_button.visibility == View.VISIBLE) sign_up_button?.visibility = View.INVISIBLE
 
 }
 
@@ -125,7 +126,6 @@ fun activateLoginButton(){
 fun inactivateLoginButton(){
     login_button.apply{
         setTextAppearance(R.style.InactiveButtonStyle)
-        setBackgroundResource(R.drawable.button_inactive)
         setOnClickListener(null)
     }
 
