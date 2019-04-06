@@ -392,6 +392,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 }
 
                 val treeEntity = TreeEntity(
+                    UUID.randomUUID().toString(),
                     0,
                     Utils.dateFormat.format(Date()),
                     Utils.dateFormat.format(Date()),
@@ -405,7 +406,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     null,
                     null,
                     userId.toLong(),
-                    null,
                     null
                 )
 

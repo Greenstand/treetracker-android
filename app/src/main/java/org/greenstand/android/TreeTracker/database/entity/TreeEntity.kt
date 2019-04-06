@@ -37,16 +37,12 @@ import androidx.room.PrimaryKey
             parentColumns = [PlanterIdentificationsEntity.ID],
             childColumns = [TreeEntity.PLANTER_IDENTIFICATION_ID],
             onUpdate = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = TreeAttributesEntity::class,
-            parentColumns = [TreeAttributesEntity.ID],
-            childColumns = [TreeEntity.ATTRIBUTES_ID],
-            onUpdate = ForeignKey.CASCADE
         )
     ]
 )
 data class TreeEntity(
+    @ColumnInfo(name = UUID)
+    var uuid: String? = null,
     @ColumnInfo(name = MAIN_DB_ID)
     var mainDbId: Int = 0,
     @ColumnInfo(name = TIME_CREATED)
@@ -74,16 +70,12 @@ data class TreeEntity(
     @ColumnInfo(name = USER_ID)
     var userId: Long?,
     @ColumnInfo(name = PLANTER_IDENTIFICATION_ID)
-    var planterId: Long?,
-    @ColumnInfo(name = ATTRIBUTES_ID)
-    var attributeId: Long?
+    var planterId: Long?
 ) {
-
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
     var id: Int = 0
-
 
     companion object {
         const val TABLE = "tree"
@@ -97,11 +89,11 @@ data class TreeEntity(
         const val IS_PRIORITY = "is_priority"
         const val CAUSE_OF_DEATH_ID = "cause_of_death_id"
         const val MAIN_DB_ID = "main_db_id"
+        const val UUID = "uuid"
         const val SETTINGS_ID = "settings_id"
         const val USER_ID = "user_id"
         const val IS_MISSING = "is_missing"
         const val SETTINGS_OVERRIDE_ID = "settings_override_id"
         const val THREE_DIGIT_NUMBER = "three_digit_number"
-        const val ATTRIBUTES_ID = "attributes_id"
     }
 }

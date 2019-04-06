@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.data.NewTree
-import org.greenstand.android.TreeTracker.data.TreeAttributes
+import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
 import org.greenstand.android.TreeTracker.data.TreeColor
 import org.greenstand.android.TreeTracker.managers.TreeManager
 
@@ -34,14 +34,21 @@ class TreeHeightViewModel : CoroutineViewModel() {
             newTree
                 ?.let {
                     withContext(Dispatchers.IO) {
-                        val attributesId = TreeManager.addAttributes(TreeAttributes(heightColor = treeColor!!))
-                        TreeManager.addTree(photoPath = it.photoPath,
-                                                        minAccuracy = it.minAccuracy,
-                                                        timeToNextUpdate = it.timeToNextUpdate,
-                                                        content = it.content,
-                                                        userId = it.userId,
-                                                        planterIdentifierId = it.planterIdentifierId,
-                                                        attributesId = attributesId)
+                        val treeId = TreeManager.addTree(photoPath = it.photoPath,
+                                                         minAccuracy = it.minAccuracy,
+                                                         timeToNextUpdate = it.timeToNextUpdate,
+                                                         content = it.content,
+                                                         userId = it.userId,
+                                                         planterIdentifierId = it.planterIdentifierId)
+
+                        fun addKeyValueAttribute(key: String, value: String) = TreeManager.addTreeAttribute(treeId, key, value)
+
+                        with(TreeHeightAttributes(treeId = treeId, heightColor = treeColor!!)) {
+                            addKeyValueAttribute(TreeManager.TREE_COLOR_ATTR_KEY, heightColor.value)
+                            addKeyValueAttribute(TreeManager.APP_BUILD_ATTR_KEY, appBuild)
+                            addKeyValueAttribute(TreeManager.APP_FLAVOR_ATTR_KEY, appFlavor)
+                            addKeyValueAttribute(TreeManager.APP_VERSION_ATTR_KEY, appVersion)
+                        }
                     }
                 }
                 ?.also {
