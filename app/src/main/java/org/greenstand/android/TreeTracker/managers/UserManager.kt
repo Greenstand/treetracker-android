@@ -23,21 +23,21 @@ object UserManager {
     val userId: Long
         get() = TreeTrackerApplication.appContext.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)
 
-    fun authenticateDevice(): Deferred<Boolean> = GlobalScope.async {
+    suspend fun authenticateDevice(): Boolean {
 
         try {
-            if (!Api.authenticate(DeviceUtils.deviceId)) {
-                return@async false
-            }
+            Api.authenticate(DeviceUtils.deviceId)
         } catch (e: IOException) {
-            return@async false
+            return false
         }
 
         try {
-            return@async Api.updateDevice()
+            Api.updateDevice()
         } catch (e: IOException) {
-            return@async false
+            return false
         }
+
+        return true
     }
 
 }

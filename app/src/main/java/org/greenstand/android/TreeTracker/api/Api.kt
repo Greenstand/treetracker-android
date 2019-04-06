@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.api
 
 import android.content.ContentValues
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import java.io.IOException
 
 import okhttp3.Interceptor
@@ -35,6 +36,7 @@ object Api {
                 .client(client)
                 .baseUrl(ApiService.ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .build()
                 .create(ApiService::class.java)
     }
@@ -47,41 +49,21 @@ object Api {
     }
 
 
-    suspend fun authenticate(deviceId: String): Boolean {
-
-        val result = api.signIn(AuthenticationRequest(deviceAndroidId = deviceId)).execute()
-
-        if (!result.isSuccessful) {
-            return false
-        }
-
-        authToken = result.body()?.token!!
-
-        return true
+    suspend fun authenticate(deviceId: String) {
+        api.signIn(AuthenticationRequest(deviceAndroidId = deviceId)).await()
+            .also { authToken = it.token }
     }
 
-    suspend fun updateDevice(): Boolean {
-        val result = api.updateDevice(DeviceRequest()).execute()
-
-        Timber.e("Device Message: ${result.message()}")
-        Timber.e("Device Code: ${result.code()}")
-        Timber.e("Device Code: ${result.errorBody()?.string()}")
-
-        return result.isSuccessful
+    suspend fun updateDevice() {
+        api.updateDevice(DeviceRequest()).await()
     }
 
-    suspend fun createPlanterRegistration(registrationRequest: RegistrationRequest): retrofit2.Response<PostResult> {
-        return api.createPlanterRegistration(registrationRequest).execute()
+    suspend fun createPlanterRegistration(registrationRequest: RegistrationRequest): PostResult {
+        return api.createPlanterRegistration(registrationRequest).await()
     }
 
-    suspend fun createTree(newTreeRequest: NewTreeRequest): Int? {
-        val result = api.createTree(newTreeRequest).execute()
-
-        if (result.isSuccessful) {
-            return result.body()!!.status
-        }
-
-        return null
+    suspend fun createTree(newTreeRequest: NewTreeRequest): Int {
+        return api.createTree(newTreeRequest).await().status
     }
 }
 
