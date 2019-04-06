@@ -15,8 +15,6 @@ import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 
 class DataFragment : Fragment() {
 
-//    private var progressDialog: ProgressDialog? = null
-
     private lateinit var viewModel: DataViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +30,8 @@ class DataFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_data, container, false)
 
-        activity?.toolbarTitle?.setText(R.string.data)
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        requireActivity().toolbarTitle?.setText(R.string.data)
+        (requireActivity() as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         return v
     }
@@ -62,25 +60,6 @@ class DataFragment : Fragment() {
             viewModel.sync()
         }
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//
-//        val extras = arguments
-//        if (extras != null) {
-//            if (extras.getBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN)) {
-//                progressDialog = ProgressDialog(activity)
-//                progressDialog!!.setCancelable(false)
-//                progressDialog!!.setMessage(activity!!.getString(R.string.downloading_your_trees))
-//                progressDialog!!.show()
-//            }
-//
-//            if (extras.getBoolean(ValueHelper.RUN_FROM_NOTIFICATION_SYNC)) {
-//                Toast.makeText(activity, R.string.sync_started, Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-//    }
 
     override fun onPause() {
         super.onPause()
