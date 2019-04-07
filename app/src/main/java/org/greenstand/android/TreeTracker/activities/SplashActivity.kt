@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 import timber.log.Timber
 
@@ -21,7 +22,7 @@ class SplashActivity : Activity() {
         Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}, url: ${BuildConfig.BASE_URL}")
 
         GlobalScope.launch {
-            delay(1000)
+            delay(ValueHelper.SPLASH_SCREEN_DURATION)
 
             val intent = Intent(this@SplashActivity, MainActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
