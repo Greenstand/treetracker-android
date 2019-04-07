@@ -15,7 +15,7 @@ class TreeTrackerApplication : Application() {
 
     override fun onCreate() {
         application = this
-
+        appContext = applicationContext
         // The following line triggers the initialization of ACRA
         super.onCreate()
         if (FeatureFlags.FABRIC_ENABLED) {
@@ -47,6 +47,7 @@ class TreeTrackerApplication : Application() {
 
     companion object {
 
+        lateinit var appContext: Context
         private var application: TreeTrackerApplication? = null
 
         fun getAppDatabase(): AppDatabase {

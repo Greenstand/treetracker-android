@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.api
 
+import kotlinx.coroutines.Deferred
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.api.models.requests.*
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
@@ -15,16 +16,16 @@ interface ApiService {
     val treesForUser: Call<List<UserTree>>
 
     @POST("trees/create")
-    fun createTree(@Body newTree: NewTreeRequest): Call<PostResult>
+    fun createTree(@Body newTree: NewTreeRequest): Deferred<PostResult>
 
     @POST("auth/token")
-    fun signIn(@Body authenticationRequest: AuthenticationRequest): Call<TokenResponse>
+    fun signIn(@Body authenticationRequest: AuthenticationRequest): Deferred<TokenResponse>
 
     @PUT("devices/")
-    fun updateDevice(@Body deviceRequest: DeviceRequest): Call<PostResult>
+    fun updateDevice(@Body deviceRequest: DeviceRequest): Deferred<PostResult>
 
     @POST("planters/registration")
-    fun createPlanterRegistration(@Body registration: RegistrationRequest): Call<PostResult>
+    fun createPlanterRegistration(@Body registration: RegistrationRequest): Deferred<PostResult>
 
     companion object {
 
