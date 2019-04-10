@@ -52,8 +52,6 @@ class NetworkReceiver : BroadcastReceiver() {
 
 
         if (isConnected && isWiFi || timeOfDay == 6) {
-            Toast.makeText(context, "WIFI CONNECTED", Toast.LENGTH_LONG).show()
-
             val tosync = TreeTrackerApplication.getAppDatabase().treeDao().getToSyncTreeCount()
             Timber.d("to sync $tosync")
 
@@ -94,8 +92,6 @@ class NetworkReceiver : BroadcastReceiver() {
 
                 mNotificationManager.notify(ValueHelper.WIFI_NOTIFICATION_ID, mBuilder.build())
             }
-        } else {
-            Toast.makeText(context, "WIFI DISCONNECTED", Toast.LENGTH_LONG).show()
         }
 
     }

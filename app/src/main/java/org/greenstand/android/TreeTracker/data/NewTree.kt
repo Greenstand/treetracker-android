@@ -9,5 +9,4 @@ data class NewTree(val photoPath: String,
                    val timeToNextUpdate: Int,
                    val content: String,
                    val userId: Long,
-                   val planterIdentifierId: Long,
-                   val attributes: TreeAttributes? = null) : Parcelable
+                   val planterIdentifierId: Long) : Parcelable

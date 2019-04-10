@@ -73,16 +73,16 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
 
         val saveBtn = v.fragmentNewTreeSave
 
-        saveBtn.text = if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
-            getString(R.string.next)
-        } else {
+        saveBtn.text = if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
             getString(R.string.save)
+        } else {
+            getString(R.string.next)
         }
 
-        v.fragmentNewTreeNote.visibility = if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
-            View.GONE
-        } else {
+        v.fragmentNewTreeNote.visibility = if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
             View.VISIBLE
+        } else {
+            View.GONE
         }
 
         saveBtn.setOnClickListener(this@NewTreeFragment)

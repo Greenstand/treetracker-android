@@ -22,7 +22,9 @@ import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
         SettingsEntity::class,
         PendingUpdateEntity::class,
         PhotoEntity::class
-    ], version = 2
+    ],
+    version = 2,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 

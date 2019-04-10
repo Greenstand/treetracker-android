@@ -36,16 +36,11 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback,
     MapsFragment.LocationDialogListener {
 
-    var map: Map<String, String>? = null
-
     private var mSharedPreferences: SharedPreferences? = null
 
     private var fragment: Fragment? = null
 
     private var fragmentTransaction: FragmentTransaction? = null
-
-    var userTrees: List<UserTree>? = null
-        private set
 
     private var locationManager: LocationManager? = null
     private var mLocationListener: android.location.LocationListener? = null
