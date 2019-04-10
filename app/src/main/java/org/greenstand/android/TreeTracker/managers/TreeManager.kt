@@ -151,5 +151,19 @@ object TreeManager {
         return db.planterDao().insert(planterEntity)
             .also { Timber.d("PlanterDetails $it") }
     }
-}
 
+    suspend fun insertPlanterIdentification(planterDetailsId: Long, identifier: String, photoPath: String,
+                                            photoUrl: String, timeCreated: String): Long {
+
+        val planterIdentificationsEntity = PlanterIdentificationsEntity(
+            planterDetailsId = planterDetailsId,
+            identifier = identifier,
+            photoPath =  photoPath,
+            photoUrl = photoUrl,
+            timeCreated = timeCreated
+        )
+
+        return db.planterDao().insertPlanterIdentifications(planterIdentificationsEntity)
+            .also { Timber.d("PlanterDetails $it") }
+    }
+}

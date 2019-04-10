@@ -41,4 +41,7 @@ interface PlanterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(planterDetailsEntity: PlanterDetailsEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPlanterIdentifications(planterIdentificationsEntity: PlanterIdentificationsEntity): Long
 }

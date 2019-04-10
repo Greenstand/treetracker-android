@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.resources.MaterialResources.getDrawable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_user_identification.*
@@ -108,10 +109,11 @@ class LoginFragment : Fragment(){
 
         }
     }
-@SuppressLint("NewApi")
+@SuppressLint("NewApi", "ResourceType")
 fun activateLoginButton(){
     login_button.apply {
         setTextAppearance(R.style.ActiveButtonStyle)
+        setBackgroundResource(R.drawable.button_active)
         setOnClickListener {
             //Like the user_flow says if the user has already an account the camera for taking a selfie should open
             takePicture()
@@ -126,6 +128,7 @@ fun activateLoginButton(){
 fun inactivateLoginButton(){
     login_button.apply{
         setTextAppearance(R.style.InactiveButtonStyle)
+        setBackgroundResource(R.drawable.button_inactive)
         setOnClickListener(null)
     }
 
