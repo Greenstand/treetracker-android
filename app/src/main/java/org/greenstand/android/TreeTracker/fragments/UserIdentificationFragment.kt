@@ -124,9 +124,6 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                     editor?.putLong(ValueHelper.PLANTER_IDENTIFIER_ID, identificationId)
                     editor?.apply()
 
-                    // TODO consider returning to MapFragment and pushing this new fragment from there
-
-                    activity!!.supportFragmentManager.popBackStack()
                     val fragmentTransaction = activity!!.supportFragmentManager
                         .beginTransaction()
                     if (planterDetailsId == null) {
