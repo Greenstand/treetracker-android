@@ -109,10 +109,10 @@ class LoginFragment : Fragment(){
 
         }
     }
-@SuppressLint("NewApi", "ResourceType")
+//@SuppressLint("NewApi", "ResourceType")
 fun activateLoginButton(){
     login_button.apply {
-        setTextAppearance(R.style.ActiveButtonStyle)
+       // setTextAppearance(R.style.ActiveButtonStyle)
         setBackgroundResource(R.drawable.button_active)
         setOnClickListener {
             //Like the user_flow says if the user has already an account the camera for taking a selfie should open
@@ -124,10 +124,10 @@ fun activateLoginButton(){
 }
 
 
-@SuppressLint("NewApi")
+//@SuppressLint("NewApi")
 fun inactivateLoginButton(){
     login_button.apply{
-        setTextAppearance(R.style.InactiveButtonStyle)
+       // setTextAppearance(R.style.InactiveButtonStyle)
         setBackgroundResource(R.drawable.button_inactive)
         setOnClickListener(null)
     }

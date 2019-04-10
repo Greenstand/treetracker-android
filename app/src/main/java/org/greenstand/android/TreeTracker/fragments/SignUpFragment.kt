@@ -93,19 +93,19 @@ class SignUpFragment:Fragment() {
         return view
     }
 
-    @SuppressLint("NewApi")
+   // @SuppressLint("NewApi")
     private fun inactivateSigupButton() {
         signUpFragmentButton.apply {
-            setTextAppearance(R.style.InactiveButtonStyle)
+           // setTextAppearance(R.style.InactiveButtonStyle)
             setBackgroundResource(R.drawable.button_inactive)
             setOnClickListener(null)
         }
     }
 
-    @SuppressLint("NewApi")
+  //  @SuppressLint("NewApi")
     fun activateSignupButton() {
         signUpFragmentButton.apply {
-            setTextAppearance(R.style.ActiveButtonStyle)
+         //   setTextAppearance(R.style.ActiveButtonStyle)
             setBackgroundResource(R.drawable.button_active)
             setOnClickListener {
                 organizationName = organizationEditText?.text.toString()
