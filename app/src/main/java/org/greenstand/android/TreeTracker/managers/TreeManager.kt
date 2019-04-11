@@ -142,7 +142,7 @@ object TreeManager {
     }
 
 
-    fun getPlanterByInputtedText(identifier: String): LiveData<PlanterDetailsEntity>{
+    fun getPlanterByInputtedText(identifier: String): PlanterDetailsEntity{
        return db.planterDao().getPlanterDetailsByIdentifier(identifier)
     }
 

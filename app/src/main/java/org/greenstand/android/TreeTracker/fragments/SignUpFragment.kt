@@ -119,21 +119,37 @@ class SignUpFragment:Fragment() {
 
     private fun storagePermissionCheck() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ((checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                || (checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                || (checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                ||(checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
+            if ((checkSelfPermission(
+                    context!!,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED)
+                || (checkSelfPermission(
+                    context!!,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED)
+                || (checkSelfPermission(
+                    context!!,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED)
+                || (checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ) {
                 requireActivity().toolbarTitle?.apply {
                     setText(R.string.storage_permission_title)
                 }
-                requireActivity().requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA),
-                    RECORD_REQUEST_CODE)
-            } else {
-                // Permission already granted.
-                takePicture()
-
+                requireActivity().requestPermissions(
+                    arrayOf(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.CAMERA
+                    ),
+                    RECORD_REQUEST_CODE
+                )
             }
+        }else {
+            // Permission already granted.
+            takePicture()
+
         }
 
     }
@@ -193,7 +209,7 @@ class SignUpFragment:Fragment() {
     }
 
     fun saveNewUsersDetails() {
-        val identifier = if(newPhoneNumberEntered != null) newPhoneNumberEntered!! else newEmailEntered!!
+        val identifier = if(newPhoneNumberEntered != null) newPhoneNumberEntered else newEmailEntered
         val firstName = fullName.substringBefore(' ', fullName)
         val lastName = fullName.substringAfter(' ', "")
         val organization = if(organizationName != null) organizationName else null

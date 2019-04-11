@@ -12,6 +12,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_user_identification.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
+import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper.EMAIL_ADDRESS
@@ -36,6 +38,7 @@ class LoginFragment : Fragment(){
     var emailEntered: String? = null
     private var mPhotoPath: String? = null
     lateinit var viewModel: PlanterDetailsViewModel
+    var planterDetails: PlanterDetailsEntity? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,46 +59,95 @@ class LoginFragment : Fragment(){
 
         sign_up_button?.visibility = View.INVISIBLE
 
-        phoneEditTextLogin.addTextChangedListener(object: TextWatcher {
+        phoneEditTextLogin.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(phoneNumberEdited: Editable) {
+               phoneNumberEntered = phoneNumberEdited.toString()
+            }
+
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 inactivateLoginButton()
             }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+           inactivateLoginButton()
+            }
+
+        })
+
+        emailEditText.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(emailEdited: Editable) {
+               emailEntered = emailEdited.toString()
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                inactivateLoginButton()
+            }
+
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 inactivateLoginButton()
             }
 
-            override fun afterTextChanged(editTextInputs: Editable) {
-                phoneNumberEntered = editTextInputs.toString()
-                viewModel.isUserPresentOnDevice(phoneNumberEntered!!).observe(this@LoginFragment,
-                    Observer {
-                        if (it != null && it.identifier == phoneNumberEntered) {
-                            activateLoginButton()
-                        } else {
-                            sign_up_button.visibility = View.VISIBLE
-                            emailEditText.addTextChangedListener(object : TextWatcher {
-                                override fun afterTextChanged(editTextInputs: Editable?) {
-                                    emailEntered = editTextInputs.toString()
-                                    viewModel.isUserPresentOnDevice(emailEntered!!).observe(this@LoginFragment,
-                                        Observer {
-                                            if (it != null && (it.identifier == emailEntered)) {
-                                                activateLoginButton()
-                                            } else {
-                                                inactivateLoginButton()
-                                                sign_up_button.visibility = View.VISIBLE
-                                            }
-                                        })
-                                }
-                                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                                    inactivateLoginButton()
-                                }
-                                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                                    inactivateLoginButton()
-                                }
-                            })
-                        }
-                    })
-            }
         })
+
+        if(phoneNumberEntered != null) {
+            viewModel.updatePhoneNumber(phoneNumberEntered!!)
+        }else if ( emailEntered != null) {
+            viewModel.updateEmail(emailEntered.toString())
+        }
+        if(planterDetails == null) {
+            planterDetails = viewModel.isUserPresentOnDevice()
+            if (planterDetails?.identifier == phoneNumberEntered || planterDetails?.identifier == emailEntered) {
+                activateLoginButton()
+                Toast.makeText(
+                    context, "the user is " + planterDetails?.firstName + " with the identifier: " +
+                            planterDetails?.identifier, Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                inactivateLoginButton()
+                sign_up_button.visibility = View.VISIBLE
+            }
+        }
+
+        /*  phoneEditTextLogin.addTextChangedListener(object: TextWatcher {
+              override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                  inactivateLoginButton()
+              }
+              override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                  inactivateLoginButton()
+              }
+
+              override fun afterTextChanged(editTextInputs: Editable) {
+                  phoneNumberEntered = editTextInputs.toString()
+                  viewModel.isUserPresentOnDevice(phoneNumberEntered!!).observe(this@LoginFragment,
+                      Observer {
+                          if (it != null && it.identifier == phoneNumberEntered) {
+                              activateLoginButton()
+                          } else {
+                              sign_up_button.visibility = View.VISIBLE
+                              emailEditText.addTextChangedListener(object : TextWatcher {
+                                  override fun afterTextChanged(editTextInputs: Editable?) {
+                                      emailEntered = editTextInputs.toString()
+                                      viewModel.isUserPresentOnDevice(emailEntered!!).observe(this@LoginFragment,
+                                          Observer {
+                                              if (it != null && (it.identifier == emailEntered)) {
+                                                  activateLoginButton()
+                                              } else {
+                                                  inactivateLoginButton()
+                                                  sign_up_button.visibility = View.VISIBLE
+                                              }
+                                          })
+                                  }
+                                  override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                                      inactivateLoginButton()
+                                  }
+                                  override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                                      inactivateLoginButton()
+                                  }
+                              })
+                          }
+                      })
+              }
+          })*/
         sign_up_button.setOnClickListener{
             val termsFragment = TermsPolicyFragment()
             val extras = Bundle()
