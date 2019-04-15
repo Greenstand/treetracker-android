@@ -17,24 +17,10 @@ class PlanterDetailsViewModel: CoroutineViewModel()  {
     var planter: PlanterIdentificationsEntity? = null
     var planter_id: Long = -1
     var identifier: MutableLiveData<String>? = null
-    var planterDetails:PlanterDetailsEntity? = null
 
-    /*This is code for further improvement*/
-//    val phoneNumber = MutableLiveData<String>()
-//    val emailAddress = MutableLiveData<String>()
-//
-//    fun phoneNumberEntered(input: String){
-//        phoneNumber.value = input
-//    }
-//
-//    fun emailAddressEntered(input: String){
-//        emailAddress.value = input
-//    }
-//    fun isNumberValid(phoneNumber: String) = if(!phoneNumber.matches(Regex("^\\+[0-9]{10,13}\$"))) true else false
-
-  /*  fun isUserPresentOnDevice(userInputted: String): LiveData<PlanterDetailsEntity>{
+    fun isUserPresentOnDevice(userInputted: String): LiveData<PlanterDetailsEntity>{
         return TreeManager.getPlanterByInputtedText(userInputted)
-    }*/
+    }
 
     fun addNewPlanter(){
         launch {
@@ -59,22 +45,5 @@ class PlanterDetailsViewModel: CoroutineViewModel()  {
             }
 
         }
-    }
-
-    fun updatePhoneNumber(phoneNumber: String){
-       identifier?.value = phoneNumber
-    }
-    fun updateEmail(email: String){
-        identifier?.value = email
-    }
-    fun isUserPresentOnDevice(): PlanterDetailsEntity{
-        launch {
-            withContext(Dispatchers.IO) {
-            if(planterDetails == null) {
-                planterDetails = TreeManager.getPlanterByInputtedText(identifier?.value.toString())
-            }
-        }
-        }
-        return planterDetails!!
     }
 }

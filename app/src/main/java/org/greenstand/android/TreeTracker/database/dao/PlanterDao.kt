@@ -24,7 +24,7 @@ interface PlanterDao {
 
     @Transaction
     @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
-    fun getPlanterDetailsByIdentifier(identifier: String): PlanterDetailsEntity
+    fun getPlanterDetailsByIdentifier(identifier: String): LiveData<PlanterDetailsEntity>
     @Transaction
     @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
     fun getPlanterDetailsIDByIdentifier(identifier: String): Int

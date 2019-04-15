@@ -27,7 +27,9 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.PlanterDetailsViewModel
 import timber.log.Timber
@@ -41,7 +43,7 @@ class SignUpFragment:Fragment() {
     var organizationName: String? = null
     lateinit var viewModel: PlanterDetailsViewModel
     private var mPhotoPath: String? = null
-    private val RECORD_REQUEST_CODE = 101
+    var planterDetailsEntity:PlanterDetailsEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(PlanterDetailsViewModel::class.java)
@@ -93,25 +95,25 @@ class SignUpFragment:Fragment() {
         return view
     }
 
-   // @SuppressLint("NewApi")
+
     private fun inactivateSigupButton() {
         signUpFragmentButton.apply {
-           // setTextAppearance(R.style.InactiveButtonStyle)
             setBackgroundResource(R.drawable.button_inactive)
             setOnClickListener(null)
         }
     }
 
-  //  @SuppressLint("NewApi")
     fun activateSignupButton() {
         signUpFragmentButton.apply {
-         //   setTextAppearance(R.style.ActiveButtonStyle)
             setBackgroundResource(R.drawable.button_active)
             setOnClickListener {
                 organizationName = organizationEditText?.text.toString()
                 saveNewUsersDetails()
                 makeNoEditableText()
                 storagePermissionCheck()
+                if(mPhotoPath == null){
+                    takePicture()
+                }else  saveNewUsersIdentifications()
 
             }
         }
@@ -133,9 +135,6 @@ class SignUpFragment:Fragment() {
                 ) != PackageManager.PERMISSION_GRANTED)
                 || (checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             ) {
-                requireActivity().toolbarTitle?.apply {
-                    setText(R.string.storage_permission_title)
-                }
                 requireActivity().requestPermissions(
                     arrayOf(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -143,7 +142,7 @@ class SignUpFragment:Fragment() {
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.CAMERA
                     ),
-                    RECORD_REQUEST_CODE
+                    Permissions.NECESSARY_PERMISSIONS
                 )
             }
         }else {
@@ -155,16 +154,12 @@ class SignUpFragment:Fragment() {
     }
 
     fun takePicture() {
-        if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this.context!!,
+        if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context!!,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-                requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    Permissions.MY_PERMISSION_CAMERA)
-            }
         } else {
-            val takePictureIntent = Intent(this.context!!, CameraActivity::class.java)
+            val takePictureIntent = Intent(context!!, CameraActivity::class.java)
             takePictureIntent.putExtra(ValueHelper.TAKE_SELFIE_EXTRA, true)
             startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
         }
@@ -172,8 +167,11 @@ class SignUpFragment:Fragment() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == RECORD_REQUEST_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            takePicture()
+
+        if (grantResults.size > 0){
+            if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePicture()
+            }
         }
     }
 
@@ -199,13 +197,18 @@ class SignUpFragment:Fragment() {
         }
     }
 
-    //This was taken from TreeManager.kt
-    fun getTime(): String{
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val calendar = Calendar.getInstance().apply {
-            time = Date()
-        }
-        return dateFormat.format(calendar.time)
+    fun saveNewUsersIdentifications(){
+        val planterDetailsId = viewModel.planter?.id
+        val identifier = viewModel.planter?.identifier
+        val photoPath = mPhotoPath
+        val photoUrl = null
+        val timeCreated = Utils.dateFormat.format(Date())
+        viewModel.planter = PlanterIdentificationsEntity(
+            planterDetailsId = planterDetailsId?.toLong(), identifier = identifier,
+            photoPath = photoPath, photoUrl = photoUrl, timeCreated = timeCreated
+        )
+        viewModel.addPlanterIdentifications()
+
     }
 
     fun saveNewUsersDetails() {
@@ -215,7 +218,7 @@ class SignUpFragment:Fragment() {
         val organization = if(organizationName != null) organizationName else null
         val phoneNumber = if(newPhoneNumberEntered != null) newPhoneNumberEntered else null
         val email = if(newEmailEntered != null) newEmailEntered else null
-        val timeCreated = getTime()
+        val timeCreated = Utils.dateFormat.format(Date())
        viewModel.newPlanter = PlanterDetailsEntity(identifier = identifier, firstName = firstName, lastName = lastName,
            organization = organization, phone = phoneNumber, email = email, uploaded = false, timeCreated = timeCreated )
         viewModel.addNewPlanter()
