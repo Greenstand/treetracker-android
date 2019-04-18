@@ -88,4 +88,8 @@ object ValueHelper {
 
     const val TAKE_SELFIE_EXTRA = "TAKE_SELFIE_EXTRA"
     const val V1_DATABASE_CHECKED = "V1_DATABASE_CHECKED"
+
+    /*Login and SignUp feature const*/
+    const val PHONE_NUMBER = "PHONE_NUMBER"
+    const val EMAIL_ADDRESS = "EMAIL_ADDRESS"
 }

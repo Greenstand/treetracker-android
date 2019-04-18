@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.managers
 
+import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
@@ -137,5 +139,43 @@ object TreeManager {
 
         return db.noteDao().insert(noteEntity)
             .also { Timber.d("noteId $it") }
+    }
+
+
+    fun getPlanterByInputtedText(identifier: String): LiveData<PlanterDetailsEntity>{
+       return db.planterDao().getPlanterDetailsByIdentifier(identifier)
+    }
+
+    suspend fun insertPlanter(identifier: String, firstName: String, lastName: String, organization: String,
+                              phone: String, email: String, uploaded: Boolean = false, timeCreated: String): Long {
+
+        val planterEntity = PlanterDetailsEntity(
+            identifier = identifier,
+            firstName = firstName,
+            lastName = lastName,
+            organization = organization,
+            phone = phone,
+            email = email,
+            uploaded = uploaded,
+            timeCreated = timeCreated
+        )
+
+        return db.planterDao().insert(planterEntity)
+            .also { Timber.d("PlanterDetails $it") }
+    }
+
+    suspend fun insertPlanterIdentification(planterDetailsId: Long, identifier: String, photoPath: String,
+                                            photoUrl: String, timeCreated: String): Long {
+
+        val planterIdentificationsEntity = PlanterIdentificationsEntity(
+            planterDetailsId = planterDetailsId,
+            identifier = identifier,
+            photoPath =  photoPath,
+            photoUrl = photoUrl,
+            timeCreated = timeCreated
+        )
+
+        return db.planterDao().insertPlanterIdentifications(planterIdentificationsEntity)
+            .also { Timber.d("PlanterDetails $it") }
     }
 }
