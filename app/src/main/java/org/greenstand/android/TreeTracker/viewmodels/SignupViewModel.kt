@@ -9,7 +9,9 @@ class SignupViewModel : CoroutineViewModel() {
 
     lateinit var userIdentification: String
 
-    private val signupButtonStateMutableLiveData = MutableLiveData<Boolean>()
+    private val signupButtonStateMutableLiveData = MutableLiveData<Boolean>().apply {
+        value = false
+    }
 
     val signupButtonStateLiveDate: LiveData<Boolean> = signupButtonStateMutableLiveData
 

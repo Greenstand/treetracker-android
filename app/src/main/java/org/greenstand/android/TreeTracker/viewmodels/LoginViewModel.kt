@@ -13,7 +13,9 @@ class LoginViewModel: CoroutineViewModel()  {
     private var phone: String? = null
 
     private val errorMessageMutableLiveData = MutableLiveData<Int>()
-    private val loginButtonStateMutableLiveData = MutableLiveData<Boolean>()
+    private val loginButtonStateMutableLiveData = MutableLiveData<Boolean>().apply {
+        value = false
+    }
 
     val errorMessageLiveDate: LiveData<Int> = errorMessageMutableLiveData
     val loginButtonStateLiveDate: LiveData<Boolean> = loginButtonStateMutableLiveData
