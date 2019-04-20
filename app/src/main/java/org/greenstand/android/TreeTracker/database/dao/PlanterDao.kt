@@ -33,15 +33,12 @@ interface PlanterDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updatePlanterIdentification(planterIdentificationsEntity: PlanterIdentificationsEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(planterIdentificationsEntity: PlanterIdentificationsEntity): Long
-
     @Transaction
     @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
     fun getPlantersByIdentifier(identifier: String?): List<PlanterDetailsEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(planterDetailsEntity: PlanterDetailsEntity): Long
+    fun insertPlanterDetails(planterDetailsEntity: PlanterDetailsEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPlanterIdentifications(planterIdentificationsEntity: PlanterIdentificationsEntity): Long

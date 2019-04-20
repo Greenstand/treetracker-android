@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.utilities.Validation
 
@@ -51,7 +52,7 @@ class LoginViewModel: CoroutineViewModel()  {
 
         val userIdentification: String = email ?: phone ?: return false
 
-        return TreeManager.getPlanterByInputtedText(userIdentification) != null
+        return PlanterManager.getPlanterByInputtedText(userIdentification) != null
     }
 //
 //    fun addNewPlanter(){

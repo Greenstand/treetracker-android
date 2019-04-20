@@ -23,6 +23,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Validation
@@ -111,7 +112,7 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                                 planterDetailsId.toString()
                             )
 
-                        return@async TreeTrackerApplication.getAppDatabase().planterDao().insert(identification)
+                        return@async TreeTrackerApplication.getAppDatabase().planterDao().insertPlanterIdentifications(identification)
                     }.await()
                     mSharedPreferences = activity!!.getSharedPreferences(
                         ValueHelper.NAME_SPACE, Context.MODE_PRIVATE
