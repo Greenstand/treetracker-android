@@ -25,16 +25,16 @@
                 android:layout_marginRight="8dp"/>
 
         <EditText
-                android:id="@+id/nameEditText"
+                android:id="@+id/signupFirstNameEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/person_red"
                 android:drawablePadding="@dimen/sixteen_dp"
                 android:background="@null"
-                android:hint="@string/name_text_hint"
+                android:hint="@string/first_name_hint"
                 android:layout_marginTop="@dimen/twenty_eight_dp"
                 android:inputType="textPersonName"
-                android:textColorHint="@color/redColor"
+                android:textColorHint="@color/black"
                 style="@style/TextBodyStyle"
                 android:drawableStart="@drawable/person_red"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -48,27 +48,27 @@
                 app:layout_constraintStart_toEndOf="@+id/guideline4"
                 android:layout_height="@dimen/one_dp"
                 android:background="@color/lightGrey"
-                app:layout_constraintTop_toBottomOf="@+id/nameEditText"
+                app:layout_constraintTop_toBottomOf="@+id/signupFirstNameEditText"
                 android:layout_marginTop="@dimen/nine_dp"
                 tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
-                app:layout_constraintEnd_toEndOf="@id/nameEditText"
+                app:layout_constraintEnd_toEndOf="@id/signupFirstNameEditText"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
 
         <EditText
-                android:id="@+id/phoneEditTextSignup"
+                android:id="@+id/signupLastNameEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/phone"
                 android:drawablePadding="@dimen/sixteen_dp"
                 android:background="@null"
-                android:hint="@string/phone_text_hint"
+                android:hint="@string/last_name_hint"
                 android:inputType="phone"
                 android:textColorHint="@color/blackColor"
                 style="@style/TextBodyStyle"
                 android:drawableStart="@drawable/phone"
                 app:layout_constraintTop_toBottomOf="@id/line1"
                 android:layout_marginTop="@dimen/nine_dp"
-                app:layout_constraintStart_toStartOf="@+id/nameEditText"/>
+                app:layout_constraintStart_toStartOf="@+id/signupFirstNameEditText"/>
 
         <View
                 android:id="@+id/line2"
@@ -77,42 +77,14 @@
                 app:layout_constraintStart_toEndOf="@+id/guideline4"
                 android:layout_height="@dimen/one_dp"
                 android:background="@color/lightGrey"
-                app:layout_constraintTop_toBottomOf="@+id/phoneEditTextSignup"
+                app:layout_constraintTop_toBottomOf="@+id/signupLastNameEditText"
                 android:layout_marginTop="@dimen/nine_dp"
                 tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
 
         <EditText
-                android:id="@+id/emailEditTextSignup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/email"
-                android:drawablePadding="@dimen/sixteen_dp"
-                android:background="@null"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/blackWithOpacity54Opacity"
-                android:hint="@string/email_text_hint"
-                android:textColorHint="@color/blackWithOpacity54Opacity"
-                style="@style/TextBodyStyle"
-                android:drawableStart="@drawable/email"
-                app:layout_constraintTop_toBottomOf="@+id/line2"
-                android:layout_marginTop="@dimen/nine_dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline"/>
-
-        <View
-                android:id="@+id/line3"
-                android:layout_width="0dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                android:layout_height="@dimen/one_dp"
-                android:background="@color/lightGrey"
-                tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
-                android:layout_marginTop="@dimen/nine_dp"
-                app:layout_constraintStart_toEndOf="@+id/guideline4"
-                app:layout_constraintTop_toBottomOf="@+id/emailEditTextSignup"
-                app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
-        <EditText
-                android:id="@+id/organizationEditText"
+                android:id="@+id/signupOrganizationEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/people"
@@ -124,7 +96,7 @@
                 android:textColorHint="@color/blackWithOpacity54Opacity"
                 style="@style/TextBodyStyle"
                 android:drawableStart="@drawable/people"
-                app:layout_constraintTop_toBottomOf="@+id/line3"
+                app:layout_constraintTop_toBottomOf="@+id/line2"
                 android:layout_marginTop="@dimen/nine_dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"/>
         <View
@@ -136,7 +108,7 @@
                 tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
                 android:layout_marginTop="@dimen/nine_dp"
                 app:layout_constraintStart_toEndOf="@+id/guideline4"
-                app:layout_constraintTop_toBottomOf="@+id/organizationEditText"
+                app:layout_constraintTop_toBottomOf="@+id/signupOrganizationEditText"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
 
         <androidx.constraintlayout.widget.Guideline

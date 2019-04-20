@@ -19,6 +19,10 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_user_identification.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
@@ -27,28 +31,23 @@ import org.greenstand.android.TreeTracker.database.entity.PlanterIdentifications
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.greenstand.android.TreeTracker.utilities.ValueHelper.EMAIL_ADDRESS
-import org.greenstand.android.TreeTracker.utilities.ValueHelper.PHONE_NUMBER
-import org.greenstand.android.TreeTracker.viewmodels.PlanterDetailsViewModel
+import org.greenstand.android.TreeTracker.utilities.onTextChanged
+import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import timber.log.Timber
 import java.util.*
 
 class LoginFragment : Fragment(){
-    var phoneNumberEntered: String? = null
-    var emailEntered: String? = null
-    private var mPhotoPath: String? = null
-    lateinit var viewModel: PlanterDetailsViewModel
-    var planterDetails: PlanterDetailsEntity? = null
 
+    lateinit var viewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(PlanterDetailsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
-}
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -57,143 +56,127 @@ class LoginFragment : Fragment(){
             setTextColor(resources.getColor(R.color.blackColor))
         }
 
-        sign_up_button?.visibility = View.INVISIBLE
+        viewModel.errorMessageLiveDate.observe(this, Observer {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        })
 
-        phoneEditTextLogin.addTextChangedListener(object: TextWatcher {
-              override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                  inactivateLoginButton()
-              }
-              override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                  inactivateLoginButton()
-              }
+        viewModel.loginButtonStateLiveDate.observe(this, Observer {
+            login_button.isEnabled = it
+        })
 
-              override fun afterTextChanged(editTextInputs: Editable) {
-                  phoneNumberEntered = editTextInputs.toString()
-                  viewModel.isUserPresentOnDevice(phoneNumberEntered!!).observe(this@LoginFragment,
-                      Observer {
-                          if (it != null && it.identifier == phoneNumberEntered) {
-                              planterDetails = it
-                              activateLoginButton()
-                          } else {
-                              sign_up_button.visibility = View.VISIBLE
-                              emailEditText.addTextChangedListener(object : TextWatcher {
-                                  override fun afterTextChanged(editTextInputs: Editable?) {
-                                      emailEntered = editTextInputs.toString()
-                                      viewModel.isUserPresentOnDevice(emailEntered!!).observe(this@LoginFragment,
-                                          Observer {
-                                              if (it != null && (it.identifier == emailEntered)) {
-                                                  activateLoginButton()
-                                              } else {
-                                                  inactivateLoginButton()
-                                                  sign_up_button.visibility = View.VISIBLE
-                                              }
-                                          })
-                                  }
-                                  override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                                      inactivateLoginButton()
-                                  }
-                                  override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                                      inactivateLoginButton()
-                                  }
-                              })
-                          }
-                      })
-              }
-          })
+        loginPhoneEditText.onTextChanged { viewModel.updatePhone(it) }
+        loginEmailEditText.onTextChanged { viewModel.updateEmail(it) }
 
-        sign_up_button.setOnClickListener{
-            val termsFragment = TermsPolicyFragment()
-            val extras = Bundle()
-            extras.apply {
-                putString(PHONE_NUMBER, phoneNumberEntered)
-                putString(EMAIL_ADDRESS, emailEntered)}
-            termsFragment.arguments = extras
-            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
-            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, termsFragment)
-            fragmentTransaction?.commit()
-
-        }
-    }
-
-fun activateLoginButton(){
-    login_button.apply {
-        setBackgroundResource(R.drawable.button_active)
-        setOnClickListener {
-            //Like the user_flow says if the user has already an account the camera for taking a selfie should open
-            if(mPhotoPath == null){
-                takePicture()
-            }else saveNewUsersIdentifications()
-        }
-    }
-        if(sign_up_button.visibility == View.VISIBLE) sign_up_button?.visibility = View.INVISIBLE
-
-}
-
-fun inactivateLoginButton(){
-    login_button.apply{
-        setBackgroundResource(R.drawable.button_inactive)
-        setOnClickListener(null)
-    }
-
-}
-
-//This  method is a copy of the one that is in UserIdentificationFragment
-fun takePicture() {
-    if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA)
-        != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this.context!!,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                Permissions.MY_PERMISSION_CAMERA)
-        }
-    } else {
-        val takePictureIntent = Intent(this.context!!, CameraActivity::class.java)
-        takePictureIntent.putExtra(ValueHelper.TAKE_SELFIE_EXTRA, true)
-        startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
-    }
-}
-
-
-override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        takePicture()
-    }
-}
-
-    fun saveNewUsersIdentifications(){
-            val planterDetailsId = viewModel.planter?.id
-            val identifier = viewModel.planter?.identifier
-            val photoPath = mPhotoPath
-            val photoUrl = null
-            val timeCreated = Utils.dateFormat.format(Date())
-            viewModel.planter = PlanterIdentificationsEntity(
-                planterDetailsId = planterDetailsId?.toLong(), identifier = identifier,
-                photoPath = photoPath, photoUrl = photoUrl, timeCreated = timeCreated
-            )
-            viewModel.addPlanterIdentifications()
-
-    }
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-    if (data != null && resultCode != Activity.RESULT_CANCELED) {
-        if (resultCode == Activity.RESULT_OK) {
-
-            mPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
-
-            if (mPhotoPath != null) {
-                val imageButton = fragmentUserIdentificationPhoto
-                val rotatedBitmap = ImageUtils.decodeBitmap(mPhotoPath, resources.displayMetrics.density)
-                if(rotatedBitmap != null){
-                    imageButton?.setImageBitmap(rotatedBitmap)
+        login_button.setOnClickListener {
+            GlobalScope.launch(Dispatchers.IO) {
+                if (viewModel.isUserPresentOnDevice()) {
+                    // User already has their info on device, skip the sign up and just update photo
+                } else {
+                    // User has no info on device, go through the sign up process
+                    withContext(Dispatchers.Main) {
+                        val fragment = SignUpFragment.getInstance(viewModel.userIdentification)
+                        activity?.supportFragmentManager?.beginTransaction()?.run {
+                            addToBackStack(null).replace(R.id.containerFragment, fragment)
+                            commit()
+                        }
+                    }
                 }
             }
-
         }
-    } else if (resultCode == Activity.RESULT_CANCELED) {
-        Timber.d("Photo was cancelled")
 
+//        sign_up_button.setOnClickListener{
+//            val termsFragment = TermsPolicyFragment()
+//            val extras = Bundle()
+//            extras.apply {
+//                putString(PHONE_NUMBER, phoneNumberEntered)
+//                putString(EMAIL_ADDRESS, emailEntered)}
+//            termsFragment.arguments = extras
+//            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
+//            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, termsFragment)
+//            fragmentTransaction?.commit()
+//
+//        }
     }
-}
+
+//    fun activateLoginButton(){
+//        login_button.apply {
+//            setBackgroundResource(R.drawable.button_active)
+//            setOnClickListener {
+//                //Like the user_flow says if the user has already an account the camera for taking a selfie should open
+//                if(mPhotoPath == null){
+//                    takePicture()
+//                }else saveNewUsersIdentifications()
+//            }
+//        }
+//
+//    }
+
+//    fun inactivateLoginButton(){
+//        login_button.apply{
+//            setBackgroundResource(R.drawable.button_inactive)
+//            setOnClickListener(null)
+//        }
+//
+//    }
+
+    //This  method is a copy of the one that is in UserIdentificationFragment
+    fun takePicture() {
+        if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this.context!!,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    Permissions.MY_PERMISSION_CAMERA)
+            }
+        } else {
+            val takePictureIntent = Intent(this.context!!, CameraActivity::class.java)
+            takePictureIntent.putExtra(ValueHelper.TAKE_SELFIE_EXTRA, true)
+            startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            takePicture()
+        }
+    }
+
+//    fun saveNewUsersIdentifications(){
+//            val planterDetailsId = viewModel.planter?.id
+//            val identifier = viewModel.planter?.identifier
+//            val photoPath = mPhotoPath
+//            val photoUrl = null
+//            val timeCreated = Utils.dateFormat.format(Date())
+//            viewModel.planter = PlanterIdentificationsEntity(
+//                planterDetailsId = planterDetailsId?.toLong(), identifier = identifier,
+//                photoPath = photoPath, photoUrl = photoUrl, timeCreated = timeCreated
+//            )
+//            //viewModel.addPlanterIdentifications()
+//
+//    }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//
+//        if (data != null && resultCode != Activity.RESULT_CANCELED) {
+//            if (resultCode == Activity.RESULT_OK) {
+//
+//                mPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+//
+//                if (mPhotoPath != null) {
+//                    val imageButton = fragmentUserIdentificationPhoto
+//                    val rotatedBitmap = ImageUtils.decodeBitmap(mPhotoPath, resources.displayMetrics.density)
+//                    if(rotatedBitmap != null){
+//                        imageButton?.setImageBitmap(rotatedBitmap)
+//                    }
+//                }
+//
+//            }
+//        } else if (resultCode == Activity.RESULT_CANCELED) {
+//            Timber.d("Photo was cancelled")
+//
+//        }
+//    }
 }
 

@@ -7,15 +7,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -31,93 +28,86 @@ import org.greenstand.android.TreeTracker.database.entity.PlanterIdentifications
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.greenstand.android.TreeTracker.viewmodels.PlanterDetailsViewModel
+import org.greenstand.android.TreeTracker.utilities.onTextChanged
+import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
+import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 
-class SignUpFragment:Fragment() {
-    var newPhoneNumberEntered: String? = null
-    var newEmailEntered: String? = null
-    lateinit var fullName: String
-    var organizationName: String? = null
-    lateinit var viewModel: PlanterDetailsViewModel
-    private var mPhotoPath: String? = null
-    var planterDetailsEntity:PlanterDetailsEntity? = null
+class SignUpFragment : Fragment() {
+
+    lateinit var viewModel: SignupViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(PlanterDetailsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(SignupViewModel::class.java)
         super.onCreate(savedInstanceState)
-
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_signup, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_signup, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         requireActivity().toolbarTitle?.apply {
             setText(R.string.sign_up_title)
             setTextColor(resources.getColor(R.color.blackColor))
         }
 
         val extras = arguments
+
         if (extras != null) {
-            newPhoneNumberEntered = extras.getString(ValueHelper.PHONE_NUMBER)
-            newEmailEntered = extras.getString(ValueHelper.EMAIL_ADDRESS)
+            viewModel.userIdentification = extras.getString(USER_IDENTIFICATION_KEY)!!
+        } else {
+            throw IllegalStateException("User Identification must be present from Login")
         }
-        view.phoneEditTextSignup.setText(newPhoneNumberEntered)
-        view.emailEditTextSignup.setText(newEmailEntered)
 
-        view.nameEditText.addTextChangedListener(object : TextWatcher {
-            @SuppressLint("NewApi")
-            override fun afterTextChanged(textInputted: Editable?) {
-                fullName = textInputted.toString()
-                activateSignupButton()
-                view.nameEditText.setCompoundDrawablesWithIntrinsicBounds(
-                    resources.getDrawable(R.drawable.person_black),
-                    null, null, null
-                )
-                view.nameEditText.setTextColor(resources.getColor(R.color.blackColor))
-
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                inactivateSigupButton()
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                inactivateSigupButton()
-            }
+        viewModel.signupButtonStateLiveDate.observe(this, androidx.lifecycle.Observer {
+            signUpFragmentButton.isEnabled = it
         })
 
-        return view
-    }
+        signupFirstNameEditText.onTextChanged { viewModel.firstName = it }
+        signupLastNameEditText.onTextChanged { viewModel.lastName = it }
+        signupOrganizationEditText.onTextChanged { viewModel.organization = it }
 
-
-    private fun inactivateSigupButton() {
-        signUpFragmentButton.apply {
-            setBackgroundResource(R.drawable.button_inactive)
-            setOnClickListener(null)
-        }
-    }
-
-    fun activateSignupButton() {
-        signUpFragmentButton.apply {
-            setBackgroundResource(R.drawable.button_active)
-            setOnClickListener {
-                organizationName = organizationEditText?.text.toString()
-                saveNewUsersDetails()
-                makeNoEditableText()
-                storagePermissionCheck()
-                if(mPhotoPath == null){
-                    takePicture()
-                }else  saveNewUsersIdentifications()
-
+        signUpFragmentButton.setOnClickListener {
+            val termsFragment = TermsPolicyFragment.getInstance(viewModel.userInfo)
+            activity?.supportFragmentManager?.beginTransaction()?.run {
+                addToBackStack(null).replace(R.id.containerFragment, termsFragment)
+                commit()
             }
         }
     }
+
+
+//    private fun inactivateSigupButton() {
+//        signUpFragmentButton.apply {
+//            setBackgroundResource(R.drawable.button_inactive)
+//            setOnClickListener(null)
+//        }
+//    }
+
+//    fun activateSignupButton() {
+//        signUpFragmentButton.apply {
+//            setBackgroundResource(R.drawable.button_active)
+//            setOnClickListener {
+//                organizationName = organizationEditText?.text.toString()
+//                saveNewUsersDetails()
+//                makeNoEditableText()
+//                storagePermissionCheck()
+//                if(mPhotoPath == null){
+//                    takePicture()
+//                }else  saveNewUsersIdentifications()
+//
+//            }
+//        }
+//    }
+
+    // eel avacado roll
+    // alaska roll
+    // shrimp tempura
+    // philidelpha roll
+    // spicy kani
+    // salmon roll
 
     private fun storagePermissionCheck() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -175,62 +165,74 @@ class SignUpFragment:Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//
+//        if (data != null && resultCode != Activity.RESULT_CANCELED) {
+//            if (resultCode == Activity.RESULT_OK) {
+//
+//                mPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+//
+//                if (mPhotoPath != null) {
+//                    val imageButton = fragmentUserIdentificationPhoto
+//                    val rotatedBitmap = ImageUtils.decodeBitmap(mPhotoPath, resources.displayMetrics.density)
+//                    if(rotatedBitmap != null){
+//                        imageButton?.setImageBitmap(rotatedBitmap)
+//                    }
+//                }
+//
+//            }
+//        } else if (resultCode == Activity.RESULT_CANCELED) {
+//            Timber.d("Photo was cancelled")
+//
+//        }
+//    }
 
-        if (data != null && resultCode != Activity.RESULT_CANCELED) {
-            if (resultCode == Activity.RESULT_OK) {
+//    fun saveNewUsersIdentifications(){
+//        val planterDetailsId = viewModel.planter?.id
+//        val identifier = viewModel.planter?.identifier
+//        val photoPath = mPhotoPath
+//        val photoUrl = null
+//        val timeCreated = Utils.dateFormat.format(Date())
+//        viewModel.planter = PlanterIdentificationsEntity(
+//            planterDetailsId = planterDetailsId?.toLong(), identifier = identifier,
+//            photoPath = photoPath, photoUrl = photoUrl, timeCreated = timeCreated
+//        )
+//        viewModel.addPlanterIdentifications()
+//
+//    }
 
-                mPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+//    fun saveNewUsersDetails() {
+//        val identifier = if(newPhoneNumberEntered != null) newPhoneNumberEntered else newEmailEntered
+//        val firstName = fullName.substringBefore(' ', fullName)
+//        val lastName = fullName.substringAfter(' ', "")
+//        val organization = if(organizationName != null) organizationName else null
+//        val phoneNumber = if(newPhoneNumberEntered != null) newPhoneNumberEntered else null
+//        val email = if(newEmailEntered != null) newEmailEntered else null
+//        val timeCreated = Utils.dateFormat.format(Date())
+//       viewModel.newPlanter = PlanterDetailsEntity(identifier = identifier, firstName = firstName, lastName = lastName,
+//           organization = organization, phone = phoneNumber, email = email, uploaded = false, timeCreated = timeCreated )
+//        viewModel.addNewPlanter()
+//    }
 
-                if (mPhotoPath != null) {
-                    val imageButton = fragmentUserIdentificationPhoto
-                    val rotatedBitmap = ImageUtils.decodeBitmap(mPhotoPath, resources.displayMetrics.density)
-                    if(rotatedBitmap != null){
-                        imageButton?.setImageBitmap(rotatedBitmap)
-                    }
-                }
+//    fun makeNoEditableText() {
+//        organizationEditText.keyListener = null
+//        nameEditText.keyListener = null
+//        phoneEditTextSignup.keyListener = null
+//        emailEditTextSignup.keyListener = null
+//        signUpFragmentButton.setOnClickListener(null)
+//    }
 
+    companion object {
+
+        private const val USER_IDENTIFICATION_KEY = "USER_IDENTIFICATION_KEY"
+
+        fun getInstance(userIdentification: String): SignUpFragment {
+            val bundle = Bundle().apply {
+                putString(USER_IDENTIFICATION_KEY, userIdentification)
             }
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-            Timber.d("Photo was cancelled")
-
+            return SignUpFragment().apply {
+                arguments = bundle
+            }
         }
     }
-
-    fun saveNewUsersIdentifications(){
-        val planterDetailsId = viewModel.planter?.id
-        val identifier = viewModel.planter?.identifier
-        val photoPath = mPhotoPath
-        val photoUrl = null
-        val timeCreated = Utils.dateFormat.format(Date())
-        viewModel.planter = PlanterIdentificationsEntity(
-            planterDetailsId = planterDetailsId?.toLong(), identifier = identifier,
-            photoPath = photoPath, photoUrl = photoUrl, timeCreated = timeCreated
-        )
-        viewModel.addPlanterIdentifications()
-
-    }
-
-    fun saveNewUsersDetails() {
-        val identifier = if(newPhoneNumberEntered != null) newPhoneNumberEntered else newEmailEntered
-        val firstName = fullName.substringBefore(' ', fullName)
-        val lastName = fullName.substringAfter(' ', "")
-        val organization = if(organizationName != null) organizationName else null
-        val phoneNumber = if(newPhoneNumberEntered != null) newPhoneNumberEntered else null
-        val email = if(newEmailEntered != null) newEmailEntered else null
-        val timeCreated = Utils.dateFormat.format(Date())
-       viewModel.newPlanter = PlanterDetailsEntity(identifier = identifier, firstName = firstName, lastName = lastName,
-           organization = organization, phone = phoneNumber, email = email, uploaded = false, timeCreated = timeCreated )
-        viewModel.addNewPlanter()
-    }
-
-    fun makeNoEditableText() {
-        organizationEditText.keyListener = null
-        nameEditText.keyListener = null
-        phoneEditTextSignup.keyListener = null
-        emailEditTextSignup.keyListener = null
-        signUpFragmentButton.setOnClickListener(null)
-    }
-
-
 }

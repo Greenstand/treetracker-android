@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
-            android:id="@+id/phoneEditTextLogin"
+            android:id="@+id/loginPhoneEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/phone"
@@ -47,14 +47,14 @@
             app:layout_constraintStart_toEndOf="@+id/guideline4"
             android:layout_height="@dimen/one_dp"
             android:background="@color/lightGrey"
-            app:layout_constraintTop_toBottomOf="@+id/phoneEditTextLogin"
+            app:layout_constraintTop_toBottomOf="@+id/loginPhoneEditText"
             android:layout_marginTop="@dimen/nine_dp"
             tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
 
     <EditText
-            android:id="@+id/emailEditText"
+            android:id="@+id/loginEmailEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/email"
@@ -81,7 +81,7 @@
             tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
             android:layout_marginTop="@dimen/nine_dp"
             app:layout_constraintStart_toEndOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/emailEditText"
+            app:layout_constraintTop_toBottomOf="@+id/loginEmailEditText"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
 
     <androidx.constraintlayout.widget.Guideline
@@ -98,7 +98,7 @@
             android:layout_marginTop="@dimen/nineteen_dp"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintStart_toEndOf="@+id/guideline4"
-            style="@style/InactiveButtonStyle"
+            style="@style/ActiveButtonStyle"
             android:text="@string/login_button_title"
             app:layout_constraintTop_toBottomOf="@+id/line2"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -110,19 +110,5 @@
             android:layout_height="wrap_content"
             app:layout_constraintGuide_end="@dimen/margin_eight"
             android:orientation="vertical"/>
-
-    <Button
-            android:id="@+id/sign_up_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_ten"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toEndOf="@+id/guideline4"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            android:background="@drawable/button_active"
-            style="@style/ActiveButtonStyle"
-            android:text="@string/signup_button_titile"
-            app:layout_constraintTop_toBottomOf="@+id/login_button"
-            app:layout_constraintHorizontal_bias="0.0"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
