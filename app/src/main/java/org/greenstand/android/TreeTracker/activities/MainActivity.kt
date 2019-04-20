@@ -261,27 +261,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
 
     /*
-     * Called when the Activity is no longer visible at all.
-     * Stop updates and disconnect.
-     */
-    public override fun onRestart() {
-        super.onRestart()
-    }
-
-    /*
-     * Called when the Activity is no longer visible at all.
-     * Stop updates and disconnect.
-     */
-    public override fun onStop() {
-        super.onStop()
-    }
-
-    public override fun onDestroy() {
-        super.onDestroy()
-    }
-
-
-    /*
      * Called when the Activity is going into the background.
      * Parts of the UI may be visible, but the Activity is inactive.
      */
@@ -290,14 +269,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onPause()
 
         stopPeriodicUpdates()
-    }
-
-    /*
-     * Called when the Activity is restarted, even before it becomes visible.
-     */
-    public override fun onStart() {
-        Timber.d("onStart")
-        super.onStart()
     }
 
     /*
@@ -400,8 +371,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
         }
     }
-
-
 
     /**
      * In response to a request to start updates, send a request

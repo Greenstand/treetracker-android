@@ -1,6 +1,8 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.data.UserInfo
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.managers.PlanterManager
@@ -11,9 +13,17 @@ class TermsPolicyViewModel : CoroutineViewModel() {
 
     lateinit var userInfo: UserInfo
     var photoPath: String? = null
+        set(value) {
+            field = value
+            if (!field.isNullOrEmpty()) {
+                confirm(onNavigateToMap)
+            }
+        }
 
-    fun confirm() {
-        launch {
+    var onNavigateToMap: () -> Unit = { }
+
+    private fun confirm(onConfirmationComplete: () -> Unit) {
+        launch(Dispatchers.IO) {
 
             val planterIdentificationsId = PlanterManager.addPlanterIdentification(userInfo.identification, "PHOTO_PATH")
 
@@ -25,6 +35,8 @@ class TermsPolicyViewModel : CoroutineViewModel() {
                                                                     Utils.dateFormat.format(Date()))
 
             PlanterManager.updateIdentifierId(userInfo.identification, planterIdentificationsId)
+
+            withContext(Dispatchers.Main) { onConfirmationComplete() }
         }
     }
 

@@ -23,7 +23,6 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
-import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Validation
@@ -37,7 +36,7 @@ import java.util.regex.Pattern
  * create an instance of this fragment.
  *
  */
-class UserIdentificationFragment : androidx.fragment.app.Fragment() {
+class UserIdentificationFragment : Fragment() {
 
     private var mPhotoPath: String? = null
     private var mUserIdentifier: CharSequence? = null

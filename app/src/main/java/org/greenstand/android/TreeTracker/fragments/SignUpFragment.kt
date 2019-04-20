@@ -40,6 +40,11 @@ class SignUpFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(SignupViewModel::class.java)
+
+        arguments?.let {
+            viewModel.userIdentification = it.getString(USER_IDENTIFICATION_KEY)!!
+        } ?: run { throw IllegalStateException("User Identification must be present from Login") }
+
         super.onCreate(savedInstanceState)
     }
 
@@ -51,14 +56,6 @@ class SignUpFragment : Fragment() {
         requireActivity().toolbarTitle?.apply {
             setText(R.string.sign_up_title)
             setTextColor(resources.getColor(R.color.blackColor))
-        }
-
-        val extras = arguments
-
-        if (extras != null) {
-            viewModel.userIdentification = extras.getString(USER_IDENTIFICATION_KEY)!!
-        } else {
-            throw IllegalStateException("User Identification must be present from Login")
         }
 
         viewModel.signupButtonStateLiveDate.observe(this, androidx.lifecycle.Observer {
@@ -230,6 +227,7 @@ class SignUpFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString(USER_IDENTIFICATION_KEY, userIdentification)
             }
+
             return SignUpFragment().apply {
                 arguments = bundle
             }

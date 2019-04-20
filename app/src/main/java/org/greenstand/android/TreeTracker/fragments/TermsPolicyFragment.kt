@@ -1,27 +1,32 @@
 package org.greenstand.android.TreeTracker.fragments
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.view.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.CameraActivity
+import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.data.UserInfo
-import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
+import org.greenstand.android.TreeTracker.utilities.CameraHelper
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
-import java.io.Serializable
+import timber.log.Timber
 
-
-class TermsPolicyFragment: Fragment(){
+class TermsPolicyFragment: Fragment() {
 
     lateinit var viewModel: TermsPolicyViewModel
 
@@ -29,6 +34,11 @@ class TermsPolicyFragment: Fragment(){
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         viewModel = ViewModelProviders.of(this).get(TermsPolicyViewModel::class.java)
+
+        arguments?.let {
+            viewModel.userInfo = it.getParcelable(USER_INFO_KEY)!!
+        } ?: run { throw IllegalStateException("UserInfo must be present from Signup") }
+
         return inflater.inflate(R.layout.fragment_terms_policy, container,false)
     }
 
@@ -96,14 +106,33 @@ class TermsPolicyFragment: Fragment(){
             cookies_text?.visibility = View.VISIBLE
         }
 
+        viewModel.onNavigateToMap = {
+            val fragment = MapsFragment()
+            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
+            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, fragment)
+            fragmentTransaction?.commit()
+        }
 
         accept_terms_button.setOnClickListener {
-            viewModel.confirm()
-            //            val signupFragment = SignUpFragment()
-//            signupFragment.arguments = extras
-//            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
-//            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, signupFragment)
-//            fragmentTransaction?.commit()
+            CameraHelper.takePictureForResult(this)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            CameraHelper.takePictureForResult(this)
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data != null && resultCode != Activity.RESULT_CANCELED) {
+            if (resultCode == Activity.RESULT_OK) {
+                viewModel.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+            }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            Timber.d("Photo was cancelled")
+
         }
     }
 
@@ -112,11 +141,11 @@ class TermsPolicyFragment: Fragment(){
 
         private const val USER_INFO_KEY = "USER_INFO_KEY"
 
-        fun getInstance(userInfo: UserInfo): SignUpFragment {
+        fun getInstance(userInfo: UserInfo): TermsPolicyFragment {
             val bundle = Bundle().apply {
                 putParcelable(USER_INFO_KEY, userInfo)
             }
-            return SignUpFragment().apply {
+            return TermsPolicyFragment().apply {
                 arguments = bundle
             }
         }
