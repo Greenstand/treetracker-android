@@ -1,12 +1,10 @@
 package org.greenstand.android.TreeTracker.api
 
-import android.content.ContentValues
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import java.io.IOException
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest
@@ -14,7 +12,6 @@ import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
-import org.greenstand.android.TreeTracker.api.models.responses.TokenResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
@@ -50,8 +47,8 @@ object Api {
 
 
     suspend fun authenticate(deviceId: String) {
-        api.signIn(AuthenticationRequest(deviceAndroidId = deviceId)).await()
-            .also { authToken = it.token }
+        val result = api.signIn(AuthenticationRequest(deviceAndroidId = deviceId)).await()
+        authToken = result.token
     }
 
     suspend fun updateDevice() {
@@ -82,7 +79,5 @@ private class AuthenticationInterceptor : Interceptor {
         } else {
             return chain.proceed(original)
         }
-
     }
-
 }
