@@ -9,6 +9,8 @@ import timber.log.Timber
 
 object PlanterManager {
 
+    private val log = Timber.tag("PlanterManager")
+
     private val sharedPrefs by lazy {
         TreeTrackerApplication.appContext.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
     }
@@ -18,7 +20,11 @@ object PlanterManager {
     suspend fun addPlanterIdentification(identifier: String,
                                          photoPath: String): Long {
 
+        log.d("Adding Planter Identification: $identifier")
+
         val planterDetailsId: Int? = getPlantersByIdentifier(identifier).firstOrNull()?.id
+
+        log.d("Found planter details ID = $planterDetailsId")
 
         val entity = PlanterIdentificationsEntity(
                 planterDetailsId?.toLong(),
@@ -28,12 +34,15 @@ object PlanterManager {
                 System.currentTimeMillis().toString()
         )
 
+        log.d("Adding PlanterIdentification to DB:")
+        log.d(entity.toString())
+
         val planterIndentifiedId = db.planterDao().insertPlanterIdentifications(entity)
 
         sharedPrefs.edit()
             .putString(ValueHelper.PLANTER_IDENTIFIER, identifier)
             .putLong(ValueHelper.PLANTER_IDENTIFIER_ID, planterIndentifiedId)
-            .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis())
+            .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)
             .putString(ValueHelper.PLANTER_PHOTO, "PHOTO_PATH")
             .apply()
 
@@ -112,12 +121,14 @@ object PlanterManager {
     }
 
     suspend fun updateIdentifierId(identifier: String, planterDetailsId: Long) {
+        log.d("Updating Planter Identifier: $identifier with planterDetailsId: $planterDetailsId")
+
         val planterIdentifications = db.planterDao().getPlanterIdentificationsByID(identifier).first()
         planterIdentifications.planterDetailsId = planterDetailsId
         db.planterDao().updatePlanterIdentification(planterIdentifications)
 
         sharedPrefs.edit()
-            .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis())
+            .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)
             .apply()
     }
 }

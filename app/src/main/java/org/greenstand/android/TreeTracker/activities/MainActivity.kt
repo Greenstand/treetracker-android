@@ -249,10 +249,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
 
-                fragment = UserIdentificationFragment()
+                fragment = LoginFragment()
                 fragmentTransaction = supportFragmentManager
                         .beginTransaction()
-                fragmentTransaction?.replace(R.id.containerFragment, fragment as UserIdentificationFragment)
+                fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
                     ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
             }
         }

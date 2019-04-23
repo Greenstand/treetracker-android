@@ -2,15 +2,30 @@ package org.greenstand.android.TreeTracker.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
+import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.Validation
+import java.util.*
 
 class LoginViewModel: CoroutineViewModel()  {
 
     private var email: String? = null
     private var phone: String? = null
+
+    var photoPath: String? = null
+        set(value) {
+            field = value
+            if (!field.isNullOrEmpty()) {
+                confirm(onNavigateToMap)
+            }
+        }
+
+    var onNavigateToMap: () -> Unit = { }
 
     private val errorMessageMutableLiveData = MutableLiveData<Int>()
     private val loginButtonStateMutableLiveData = MutableLiveData<Boolean>().apply {
@@ -51,34 +66,15 @@ class LoginViewModel: CoroutineViewModel()  {
     }
 
     fun isUserPresentOnDevice(): Boolean {
-
-        val userIdentification: String = email ?: phone ?: return false
-
         return PlanterManager.getPlanterByInputtedText(userIdentification) != null
     }
-//
-//    fun addNewPlanter(){
-//        launch {
-//            newPlanter?.let {
-//                withContext(Dispatchers.IO) {
-//                    planter_id = TreeManager.insertPlanter(newPlanter?.identifier!!,newPlanter?.firstName!!,
-//                         newPlanter?.lastName!!,newPlanter?.organization!!, newPlanter?.phone!!, newPlanter?.email!!,
-//                        newPlanter?.uploaded!!, newPlanter?.timeCreated!!)
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    fun addPlanterIdentifications(){
-//        launch {
-//            planter?.let {
-//                withContext(Dispatchers.IO) {
-//                    TreeManager.insertPlanterIdentification(planter?.id!!.toLong(),planter?.identifier!!, planter?.photoPath!!,
-//                        planter?.photoUrl!!, planter?.timeCreated!!)
-//                }
-//            }
-//
-//        }
-//    }
+
+    private fun confirm(onConfirmationComplete: () -> Unit) {
+        launch(Dispatchers.IO) {
+
+            PlanterManager.addPlanterIdentification(userIdentification, photoPath!!)
+
+            withContext(Dispatchers.Main) { onConfirmationComplete() }
+        }
+    }
 }
