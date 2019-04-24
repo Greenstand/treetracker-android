@@ -43,7 +43,7 @@ object PlanterManager {
             .putString(ValueHelper.PLANTER_IDENTIFIER, identifier)
             .putLong(ValueHelper.PLANTER_IDENTIFIER_ID, planterIndentifiedId)
             .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)
-            .putString(ValueHelper.PLANTER_PHOTO, "PHOTO_PATH")
+            .putString(ValueHelper.PLANTER_PHOTO, photoPath)
             .apply()
 
         return planterIndentifiedId
@@ -123,9 +123,12 @@ object PlanterManager {
     suspend fun updateIdentifierId(identifier: String, planterDetailsId: Long) {
         log.d("Updating Planter Identifier: $identifier with planterDetailsId: $planterDetailsId")
 
-        val planterIdentifications = db.planterDao().getPlanterIdentificationsByID(identifier).first()
-        planterIdentifications.planterDetailsId = planterDetailsId
-        db.planterDao().updatePlanterIdentification(planterIdentifications)
+        val planterIdentification: PlanterIdentificationsEntity = db.planterDao().getPlanterIdentificationsByID(identifier).first()
+
+        log.d("Loaded PlanterIdentification: $planterIdentification")
+
+        planterIdentification.planterDetailsId = planterDetailsId
+        db.planterDao().updatePlanterIdentification(planterIdentification)
 
         sharedPrefs.edit()
             .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)

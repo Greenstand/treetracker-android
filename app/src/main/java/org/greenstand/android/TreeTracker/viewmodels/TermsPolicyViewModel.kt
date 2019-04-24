@@ -34,7 +34,7 @@ class TermsPolicyViewModel : CoroutineViewModel() {
                                                                     userInfo.organization,
                                                                     Utils.dateFormat.format(Date()))
 
-            PlanterManager.updateIdentifierId(userInfo.identification, planterIdentificationsId)
+            PlanterManager.updateIdentifierId(userInfo.identification, planterDetailsId)
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }
