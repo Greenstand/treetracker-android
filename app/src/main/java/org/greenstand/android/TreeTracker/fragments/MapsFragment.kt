@@ -282,10 +282,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
                     if (currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
 
-                        fragment = UserIdentificationFragment()
+                        fragment = LoginFragment()
                         fragmentTransaction = activity!!.supportFragmentManager
                             .beginTransaction()
-                        fragmentTransaction?.replace(R.id.containerFragment, fragment as UserIdentificationFragment)
+                        fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
                             ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
                     } else {
