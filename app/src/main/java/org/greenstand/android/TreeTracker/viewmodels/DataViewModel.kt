@@ -7,7 +7,7 @@ import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.Api
 import org.greenstand.android.TreeTracker.api.DOSpaces
-import org.greenstand.android.TreeTracker.api.models.requests.AttributesRequest
+import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
@@ -278,13 +278,10 @@ class DataViewModel : CoroutineViewModel() {
 
         val imageUrl = getImageUrl() ?: return null
 
-        val attributesRequest = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.TREE_COLOR_ATTR_KEY)?.let {
-            AttributesRequest(
-                heightColor = it,
-                appVersion = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.APP_VERSION_ATTR_KEY)!!,
-                appBuild = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.APP_BUILD_ATTR_KEY)!!,
-                flavorId = TreeManager.getTreeAttribute(treeDto.tree_id, TreeManager.APP_FLAVOR_ATTR_KEY)!!
-            )
+        val attributesList = TreeTrackerApplication.getAppDatabase().treeAttributesDao().getTreeAttributesByTree(treeDto.tree_id)
+        var attributesRequest =  mutableListOf<AttributeRequest>()
+        for(attribute in attributesList){
+            attributesRequest.add( AttributeRequest(key=attribute.key, value=attribute.value))
         }
 
         return NewTreeRequest(
