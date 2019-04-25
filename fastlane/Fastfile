@@ -45,10 +45,10 @@ platform :android do
     crashlytics(groups: "all-testers")
 
     slack(message: "A new JustDigIt Beta Build has been released on Fabric",
-        default_payloads: ['git_branch', 'last_git_commit_hash'])
+        default_payloads: ['git_branch'])
 
     slack(message: "A new JustDigIt Beta Build has been released on Fabric",
-        channel: "#quality_control",
+        slack_url: ENV["SLACK_URL_QC”],
         default_payloads: ['git_branch'])
   
     # sh "your_script.sh"
