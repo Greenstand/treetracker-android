@@ -39,6 +39,8 @@ platform :android do
   
     bump_version_code()
 
+    git_commit(path: "./app/build.gradle", message: "Version Bump")
+
     gradle(task: "clean assembleJustdigitDebug")
     crashlytics(groups: "all-testers")
   
