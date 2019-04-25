@@ -64,7 +64,6 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         }
 
         setSupportActionBar(camera_toolbar)
-        supportActionBar?.title = "Take a Selfie"
     }
 
     override fun onStart() {
