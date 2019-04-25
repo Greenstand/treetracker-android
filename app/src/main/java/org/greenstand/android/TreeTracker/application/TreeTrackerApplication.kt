@@ -24,25 +24,15 @@ class TreeTrackerApplication : Application() {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-        }
 
-        if (BuildConfig.DEBUG) {
-            try {
-                val debugDB = Class.forName("com.amitshekhar.DebugDB")
-                val getAddressLog = debugDB.getMethod("getAddressLog")
-                val value = getAddressLog.invoke(null)
-                Timber.tag(TreeTrackerApplication::class.toString()).d("you can see DB contents at %s", value)
-            } catch (e: Exception) {
-                //e.printStackTrace();
-            }
+            Timber.tag("DebugDB").d("To forward DebugDB from emulator to browser use the command 'adb forward tcp:8080 tcp:8080' from terminal")
+            Timber.tag("DebugDB").d("For more information visit: https://github.com/amitshekhariitbhu/Android-Debug-Database")
         }
-
     }
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
-
     }
 
     companion object {
