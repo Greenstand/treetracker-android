@@ -27,11 +27,6 @@ object UserManager {
 
         try {
             Api.authenticate(DeviceUtils.deviceId)
-        } catch (e: IOException) {
-            return false
-        }
-
-        try {
             Api.updateDevice()
         } catch (e: IOException) {
             return false
