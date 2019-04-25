@@ -56,7 +56,7 @@ class LoginViewModel: CoroutineViewModel()  {
     fun updatePhone(phone: String) {
         if (Validation.isValidPhoneNumber(phone)) {
             this.phone = phone
-            loginButtonStateMutableLiveData.value = false
+            loginButtonStateMutableLiveData.value = true
         } else {
             if (!Validation.isEmailValid(email.orEmpty())) {
                 loginButtonStateMutableLiveData.value = false
