@@ -45,7 +45,7 @@ platform :android do
     crashlytics(groups: "all-testers")
 
     slack(message: "A new JustDigIt Beta Build has been released on Fabric",
-        default_payloads: [])
+        default_payloads: ['git_branch', 'last_git_commit_hash'])
   
     # sh "your_script.sh"
     # You can also use other beta testing services here
