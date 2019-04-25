@@ -25,6 +25,7 @@ object Validation {
     }
 
     fun cleanPhoneNumber(phoneNumber: String): String {
+        phoneNumber.replace("+", "")
         phoneNumber.replace(" ", "")
         phoneNumber.replace("(", "")
         phoneNumber.replace(")", "")
