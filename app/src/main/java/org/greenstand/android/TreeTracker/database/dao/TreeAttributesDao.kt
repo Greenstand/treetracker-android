@@ -13,6 +13,9 @@ interface TreeAttributesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(treeAttributesEntity: TreeAttributesEntity): Long
 
+    @Query("SELECT * FROM tree_attributes WHERE tree_id = :treeId")
+    fun getTreeAttributesByTree(treeId: Long): List<TreeAttributesEntity>
+
     @Query("SELECT * FROM tree_attributes WHERE tree_id = :treeId AND `key` = :key")
     fun getTreeAttributeByTreeAndKey(treeId: Long, key: String): TreeAttributesEntity?
 
