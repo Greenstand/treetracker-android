@@ -278,7 +278,7 @@ class DataViewModel : CoroutineViewModel() {
 
         val imageUrl = getImageUrl() ?: return null
 
-        val attributesList = TreeTrackerApplication.getAppDatabase().treeAttributesDao().getTreeAttributesByTree(treeDto.tree_id)
+        val attributesList = TreeManager.getTreeAttributes(treeDto.tree_id)
         var attributesRequest =  mutableListOf<AttributeRequest>()
         for(attribute in attributesList){
             attributesRequest.add( AttributeRequest(key=attribute.key, value=attribute.value))
