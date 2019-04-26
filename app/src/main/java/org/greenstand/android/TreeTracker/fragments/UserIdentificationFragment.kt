@@ -36,7 +36,7 @@ import java.util.regex.Pattern
  * create an instance of this fragment.
  *
  */
-class UserIdentificationFragment : androidx.fragment.app.Fragment() {
+class UserIdentificationFragment : Fragment() {
 
     private var mPhotoPath: String? = null
     private var mUserIdentifier: CharSequence? = null
@@ -111,7 +111,7 @@ class UserIdentificationFragment : androidx.fragment.app.Fragment() {
                                 planterDetailsId.toString()
                             )
 
-                        return@async TreeTrackerApplication.getAppDatabase().planterDao().insert(identification)
+                        return@async TreeTrackerApplication.getAppDatabase().planterDao().insertPlanterIdentifications(identification)
                     }.await()
                     mSharedPreferences = activity!!.getSharedPreferences(
                         ValueHelper.NAME_SPACE, Context.MODE_PRIVATE

@@ -16,9 +16,11 @@ import android.os.Environment
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
-import kotlinx.android.synthetic.main.camera_preview.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
@@ -31,7 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
+class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClickListener,
     ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mCamera: Camera? = null
@@ -49,7 +51,7 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.camera_preview)
+        setContentView(R.layout.activity_camera)
 
         mImageView = cameraPreviewTaken
         captureButton = buttonCapture
@@ -60,6 +62,8 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
         intent.extras?.let {
             captureSelfie = intent.extras!!.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false)
         }
+
+        setSupportActionBar(camera_toolbar)
     }
 
     override fun onStart() {
@@ -95,7 +99,7 @@ class CameraActivity : Activity(), Camera.PictureCallback, View.OnClickListener,
             }
             mPreview = CameraPreview(this@CameraActivity, mCamera)
 
-            camera_preview.removeAllViews()
+            //activity_camera.removeAllViews()
             camera_preview.addView(mPreview)
             captureButton?.visibility = View.VISIBLE
         }

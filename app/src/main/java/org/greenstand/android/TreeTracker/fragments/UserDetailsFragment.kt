@@ -84,7 +84,7 @@ class UserDetailsFragment : androidx.fragment.app.Fragment() {
                 GlobalScope.launch {
 
                     val planterDetailsId =
-                        TreeTrackerApplication.getAppDatabase().planterDao().insert(planterDetailsEntity)
+                        TreeTrackerApplication.getAppDatabase().planterDao().insertPlanterDetails(planterDetailsEntity)
 
                     val planterIdentifications = TreeTrackerApplication.getAppDatabase().planterDao()
                         .getPlanterIdentificationsByID(planterIdentifier).first()
