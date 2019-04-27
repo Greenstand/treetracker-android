@@ -25,8 +25,7 @@ class TermsPolicyViewModel : CoroutineViewModel() {
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            val planterIdentificationsId = PlanterManager.addPlanterIdentification(userInfo.identification, photoPath!!)
-
+            PlanterManager.addPlanterIdentification(userInfo.identification, photoPath!!)
 
             val planterDetailsId = PlanterManager.addPlanterDetails(userInfo.identification,
                                                                     userInfo.firstName,
