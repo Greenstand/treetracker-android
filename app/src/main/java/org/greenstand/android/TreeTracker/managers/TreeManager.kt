@@ -35,6 +35,12 @@ object TreeManager {
         return db.treeAttributesDao().getTreeAttributeByTreeAndKey(treeId, key)?.value
     }
 
+    fun getTreeAttributes(treeId: Long): List<TreeAttributesEntity> {
+
+        return db.treeAttributesDao().getTreeAttributesByTree(treeId);
+    }
+
+
     suspend fun addTree(photoPath: String,
                         minAccuracy: Int,
                         timeToNextUpdate: Int,

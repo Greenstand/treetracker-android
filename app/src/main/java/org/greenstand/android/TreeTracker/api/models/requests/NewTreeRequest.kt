@@ -25,13 +25,9 @@ data class NewTreeRequest(@SerializedName("user_id")
                           @SerializedName("planter_identifier")
                           val planterIdentifier: String? = null,
                           @SerializedName("attributes")
-                          val attributes: AttributesRequest? = null)
+                          val attributes: List<AttributeRequest>? = null)
 
-data class AttributesRequest(@SerializedName("height_color")
-                             val heightColor: String,
-                             @SerializedName("flavor_id")
-                             val flavorId: String,
-                             @SerializedName("app_version")
-                             val appVersion: String,
-                             @SerializedName("app_build")
-                             val appBuild: String)
+data class AttributeRequest(@SerializedName("key")
+                             val key: String,
+                             @SerializedName("value")
+                             val value: String)
