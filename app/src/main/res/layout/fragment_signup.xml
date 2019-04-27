@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -12,130 +13,76 @@
                 android:layout_width="@dimen/logo_width"
                 android:layout_height="157dp"
                 android:layout_gravity="center_horizontal"
-                android:baselineAlignBottom="true"
-                app:layout_anchorGravity="center_horizontal"
                 android:src="@drawable/greenstandlogo"
                 android:layout_marginTop="@dimen/twenty_eight_dp"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginLeft="8dp"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/guideline4"
-                android:layout_marginRight="8dp"/>
+                android:layout_marginStart="8dp"
+                android:layout_margin="8dp"
+            />
 
-        <EditText
-                android:id="@+id/signupFirstNameEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/person_black"
-                android:drawablePadding="@dimen/sixteen_dp"
-                android:background="@null"
-                android:hint="@string/first_name_hint"
-                android:layout_marginTop="@dimen/twenty_eight_dp"
-                android:inputType="textPersonName"
-                android:textColorHint="@color/black"
-                style="@style/TextBodyStyle"
-                android:drawableStart="@drawable/person_black"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/logo_greenstand"
-        />
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="28dp"
+            android:layout_width="match_parent"
+            android:hint="@string/first_name_hint"
+            android:layout_height="wrap_content">
 
-        <View
-                android:id="@+id/line1"
-                android:layout_width="0dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintStart_toEndOf="@+id/guideline4"
-                android:layout_height="@dimen/one_dp"
-                android:background="@color/lightGrey"
-                app:layout_constraintTop_toBottomOf="@+id/signupFirstNameEditText"
-                android:layout_marginTop="@dimen/nine_dp"
-                tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
-                app:layout_constraintEnd_toEndOf="@id/signupFirstNameEditText"
-                app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/signupFirstNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/person_black"
+                    android:drawableStart="@drawable/person_black"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionNext"
+                    android:drawablePadding="16dp"
+                    />
 
-        <EditText
-                android:id="@+id/signupLastNameEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/person_black"
-                android:drawablePadding="@dimen/sixteen_dp"
-                android:background="@null"
-                android:hint="@string/last_name_hint"
-                android:inputType="textPersonName"
-                android:textColorHint="@color/blackColor"
-                style="@style/TextBodyStyle"
-                android:drawableStart="@drawable/person_black"
-                app:layout_constraintTop_toBottomOf="@id/line1"
-                android:layout_marginTop="@dimen/nine_dp"
-                app:layout_constraintStart_toStartOf="@+id/signupFirstNameEditText"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <View
-                android:id="@+id/line2"
-                android:layout_width="0dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintStart_toEndOf="@+id/guideline4"
-                android:layout_height="@dimen/one_dp"
-                android:background="@color/lightGrey"
-                app:layout_constraintTop_toBottomOf="@+id/signupLastNameEditText"
-                android:layout_marginTop="@dimen/nine_dp"
-                tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:hint="@string/last_name_hint"
+            android:layout_height="wrap_content">
 
-        <EditText
-                android:id="@+id/signupOrganizationEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/people"
-                android:drawablePadding="@dimen/sixteen_dp"
-                android:background="@null"
-                android:inputType="textPersonName"
-                android:textColor="@color/blackWithOpacity54Opacity"
-                android:hint="@string/organization_text_hint"
-                android:textColorHint="@color/blackWithOpacity54Opacity"
-                style="@style/TextBodyStyle"
-                android:drawableStart="@drawable/people"
-                app:layout_constraintTop_toBottomOf="@+id/line2"
-                android:layout_marginTop="@dimen/nine_dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline"/>
-        <View
-                android:id="@+id/line4"
-                android:layout_width="0dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                android:layout_height="@dimen/one_dp"
-                android:background="@color/lightGrey"
-                tools:layout_editor_absoluteX="@dimen/twenty_eight_dp"
-                android:layout_marginTop="@dimen/nine_dp"
-                app:layout_constraintStart_toEndOf="@+id/guideline4"
-                app:layout_constraintTop_toBottomOf="@+id/signupOrganizationEditText"
-                app:layout_constraintEnd_toStartOf="@+id/guideline4"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/signupLastNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/person_black"
+                    android:drawableStart="@drawable/person_black"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionNext"
+                    android:drawablePadding="16dp"
+                    />
 
-        <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintGuide_begin="@dimen/margin_eight"
-                android:orientation="vertical"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintGuide_end="@dimen/margin_eight"
-                android:orientation="vertical"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:hint="@string/organization_text_hint"
+            android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/signupOrganizationEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/people"
+                    android:drawableStart="@drawable/people"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionDone"
+                    android:drawablePadding="16dp"
+                    />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
                 android:id="@+id/signUpFragmentButton"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/nineteen_dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintStart_toEndOf="@+id/guideline4"
-                app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 style="@style/NewButtonStyle"
-                android:text="@string/signup_button_titile"
-                app:layout_constraintTop_toBottomOf="@+id/line4"
-                app:layout_constraintHorizontal_bias="0.0"/>
+                android:text="@string/signup_button_titile"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
