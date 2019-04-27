@@ -24,10 +24,11 @@ allprojects {
         maven {
             url "https://maven.google.com" // Google's Maven repository
         }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     ext {
         androidSupportVersion = '1.0.0-beta01'
-        retrofit2Version = '2.3.0'
+        retrofit2Version = '2.5.1-SNAPSHOT'
         dos_access_key = "configure in treetracker.keys.properties"
         dos_secret_key = "configure in treetracker.keys.properties"
         treetracker_client_id = "configure in treetracker.keys.properties"
