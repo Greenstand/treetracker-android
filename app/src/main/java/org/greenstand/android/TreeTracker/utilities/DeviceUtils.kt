@@ -1,7 +1,5 @@
 package org.greenstand.android.TreeTracker.utilities
 
-import android.app.Application
-import android.content.Context
 import android.provider.Settings
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 

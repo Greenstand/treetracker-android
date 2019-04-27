@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.api
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import java.io.IOException
 
 import okhttp3.Interceptor
@@ -33,7 +32,6 @@ object Api {
                 .client(client)
                 .baseUrl(ApiService.ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .build()
                 .create(ApiService::class.java)
     }
@@ -47,20 +45,20 @@ object Api {
 
 
     suspend fun authenticate(deviceId: String) {
-        val result = api.signIn(AuthenticationRequest(deviceAndroidId = deviceId)).await()
+        val result = api.signIn(AuthenticationRequest(deviceAndroidId = deviceId))
         authToken = result.token
     }
 
     suspend fun updateDevice() {
-        api.updateDevice(DeviceRequest()).await()
+        api.updateDevice(DeviceRequest())
     }
 
     suspend fun createPlanterRegistration(registrationRequest: RegistrationRequest): PostResult {
-        return api.createPlanterRegistration(registrationRequest).await()
+        return api.createPlanterRegistration(registrationRequest)
     }
 
     suspend fun createTree(newTreeRequest: NewTreeRequest): Int {
-        return api.createTree(newTreeRequest).await().status
+        return api.createTree(newTreeRequest).status
     }
 }
 
