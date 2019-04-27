@@ -47,7 +47,7 @@ class NetworkReceiver : BroadcastReceiver() {
         }
 
         val c = Calendar.getInstance()
-        val timeOfDay = c.get(Calendar.HOUR_OF_DAY)   // to pop up  notication if anything is there to sync at 6am
+        val timeOfDay = c.get(Calendar.HOUR_OF_DAY)   // to pop up  notification if anything is there to sync at 6am
 
 
 
