@@ -62,7 +62,7 @@ class NetworkReceiver : BroadcastReceiver() {
             }
 
             val mBuilder = NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(context.resources.getString(R.string.treetracker))
                 .setTicker(context.resources.getString(R.string.wifi_connected))
                 .setSound(notification)
