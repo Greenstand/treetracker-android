@@ -3,25 +3,8 @@ package org.greenstand.android.TreeTracker.utilities
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.graphics.Typeface
 import android.media.ExifInterface
-import android.os.Looper
 import android.util.Base64
-import android.util.TypedValue
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import org.apache.http.HttpResponse
-import org.apache.http.HttpStatus
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.message.BasicHeader
-import org.apache.http.params.HttpConnectionParams
-import org.apache.http.protocol.HTTP
-import org.json.JSONObject
-import timber.log.Timber
 import java.io.*
 import java.security.NoSuchAlgorithmException
 import java.text.ParseException
@@ -32,54 +15,7 @@ class Utils {
 
     companion object {
 
-        var httpResponseCode = -1
-
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        /*
-     * Sets the font on all TextViews in the ViewGroup. Searches
-     * recursively for all inner ViewGroups as well. Just add a
-     * check for any other views you want to set as well (EditText,
-     * etc.)
-     */
-        fun setFont(group: ViewGroup, font: Typeface, textSize: Int) {
-            val count = group.childCount
-            var v: View
-            for (i in 0 until count) {
-                v = group.getChildAt(i)
-                if (v is TextView || v is Button /*etc.*/) {
-                    (v as TextView).typeface = font
-                    v.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize.toFloat())
-                } else if (v is ViewGroup) {
-                    setFont(v, font, textSize)
-                }
-
-            }
-        }
-
-        /**
-         * @param inputStream
-         * InputStream which is to be converted into String
-         * @return String by encoding the given InputStream (or) <br></br>
-         * null if InputStream is null or cannot convert the InputStream.<br></br>
-         */
-        fun convertStreamToString(inputStream: InputStream): String {
-            val sb = StringBuilder()
-            try {
-
-                val r = BufferedReader(InputStreamReader(
-                        inputStream), 1024 * 8)
-                var line: String? = r.readLine()
-                while (line != null) {
-                    sb.append(line)
-                    line = r.readLine()
-                }
-            } catch (e: Exception) {
-
-            }
-
-            return sb.toString()
-        }
-
 
         fun computeMD5Hash(password: String): String {
 
@@ -107,54 +43,6 @@ class Utils {
 
         }
 
-        fun sendJson(json: JSONObject, where: String) {
-            val t = object : Thread() {
-
-                private var rsp: String? = null
-
-                override fun run() {
-                    Looper.prepare() //For Preparing Message Pool for the child Thread
-                    val client = DefaultHttpClient()
-                    HttpConnectionParams.setConnectionTimeout(client.params, 10000) //Timeout Limit
-                    val response: HttpResponse?
-
-                    try {
-                        val post = HttpPost(where)
-
-                        val se = StringEntity(json.toString())
-
-                        Timber.d("json string " + json.toString())
-
-                        se.contentType = BasicHeader(HTTP.CONTENT_TYPE, "application/json")
-                        post.entity = se
-                        response = client.execute(post)
-
-                        /*Checking response */
-                        if (response != null) {
-                            val `in` = response.entity.content //Get the data in the entity
-
-                            Utils.httpResponseCode = response.statusLine.statusCode
-
-                            if (response.statusLine.statusCode == HttpStatus.SC_OK) {
-                                rsp = Utils.convertStreamToString(`in`)
-                            } else {
-                                rsp = Utils.convertStreamToString(`in`)
-                            }
-
-                        }
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        //createDialog("Error", "Cannot Estabilish Connection");
-                    }
-
-                    Looper.loop() //Loop in the message queue
-                }
-            }
-
-            t.start()
-        }
-
         fun resizedImage(path: String): Bitmap {
 
             /* There isn't enough memory to open up more than a couple camera photos */
@@ -166,7 +54,6 @@ class Utils {
             BitmapFactory.decodeFile(path, bmOptions)
             val imageHeight = bmOptions.outHeight
             val imageWidth = bmOptions.outWidth
-            val imageType = bmOptions.outMimeType
 
             var exif: ExifInterface? = null
             try {
@@ -222,7 +109,6 @@ class Utils {
 
 
             val compressionQuality = 100
-            val encodedImage: String
             val byteArrayBitmapStream = ByteArrayOutputStream()
             rotatedBitmap.compress(Bitmap.CompressFormat.PNG, compressionQuality,
                     byteArrayBitmapStream)

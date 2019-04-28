@@ -116,14 +116,10 @@ class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, T
         for (i in 0 until manualRadioSettings.childCount) {
             val rb = manualRadioSettings.getChildAt(i) as RadioButton
 
-            if (rb != null) {
-
-
-                if (Integer.parseInt(rb.text.toString()) == mSharedPreferences!!.getInt(
-                        ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) {
-                    manualRadioSettings.check(rb.id)
-                    break
-                }
+            if (Integer.parseInt(rb.text.toString()) == mSharedPreferences!!.getInt(
+                    ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, ValueHelper.MIN_ACCURACY_DEFAULT_SETTING)) {
+                manualRadioSettings.check(rb.id)
+                break
             }
         }
 
@@ -171,11 +167,9 @@ class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, T
                     val accuracyRadioGroup = activity!!.fragmentSettingsManualSettingsRadioGroup
                     val selectedRadioButton = activity!!.findViewById(accuracyRadioGroup.checkedRadioButtonId) as RadioButton
 
-                    if (selectedRadioButton != null) {
-                        mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-                                Integer.parseInt(selectedRadioButton.text.toString().substring(0,
-                                    selectedRadioButton.text.toString().lastIndexOf(" "))))?.apply()
-                    }
+                    mSharedPreferences?.edit()?.putInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
+                            Integer.parseInt(selectedRadioButton.text.toString().substring(0,
+                                selectedRadioButton.text.toString().lastIndexOf(" "))))?.apply()
 
                     if (saveAndEdit.isChecked) {
                         mSharedPreferences?.edit()?.putBoolean(ValueHelper.SAVE_AND_EDIT, true)?.apply()

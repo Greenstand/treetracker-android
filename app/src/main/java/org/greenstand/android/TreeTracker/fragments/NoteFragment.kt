@@ -338,16 +338,12 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
         /* So pre-scale the target bitmap into which the file is decoded */
 
         /* Get the size of the ImageView */
-        val targetW = mImageView!!.width
-        val targetH = mImageView!!.height
 
         /* Get the size of the image */
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        val imageHeight = bmOptions.outHeight
         val imageWidth = bmOptions.outWidth
-        val imageType = bmOptions.outMimeType
 
         // Calculate your sampleSize based on the requiredWidth and
         // originalWidth

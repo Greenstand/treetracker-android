@@ -16,16 +16,16 @@ interface ApiService {
     val treesForUser: Call<List<UserTree>>
 
     @POST("trees/create")
-    fun createTree(@Body newTree: NewTreeRequest): Deferred<PostResult>
+    suspend fun createTree(@Body newTree: NewTreeRequest): PostResult
 
     @POST("auth/token")
-    fun signIn(@Body authenticationRequest: AuthenticationRequest): Deferred<TokenResponse>
+    suspend fun signIn(@Body authenticationRequest: AuthenticationRequest): TokenResponse
 
     @PUT("devices/")
-    fun updateDevice(@Body deviceRequest: DeviceRequest): Deferred<PostResult>
+    suspend fun updateDevice(@Body deviceRequest: DeviceRequest): PostResult
 
     @POST("planters/registration")
-    fun createPlanterRegistration(@Body registration: RegistrationRequest): Deferred<PostResult>
+    suspend fun createPlanterRegistration(@Body registration: RegistrationRequest): PostResult
 
     companion object {
 
