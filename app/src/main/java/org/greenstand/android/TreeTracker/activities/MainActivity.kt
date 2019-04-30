@@ -14,6 +14,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -309,6 +310,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         val minAccuracy = 10
 
+
         if (fragmentMapGpsAccuracy != null) {
             if (mCurrentLocation != null) {
                 if (mCurrentLocation!!.hasAccuracy() && mCurrentLocation!!.accuracy < minAccuracy) {
@@ -358,6 +360,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     fragmentTreePreviewDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
                 }
             }
+        } else {
+            Timber.d("fragmentMapGpsAccuracy NULL" );
         }
     }
 
