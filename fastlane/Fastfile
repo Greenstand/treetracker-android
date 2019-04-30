@@ -21,16 +21,23 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
+  desc "Submit a new Greenstand Beta Build to Crashlytics Beta"
   lane :beta do
   
     bump_version_code()
 
-    gradle(task: "clean assembleTreetrackerDebug")
+    git_commit(path: "./app/build.gradle", message: "Version Bump")
+
+    gradle(task: "clean assembleGreenstandDebug")
     crashlytics(groups: "all-testers")
   
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
+    slack(message: "A new Greenstand Beta Build has been released on Fabric",
+        default_payloads: ['git_branch'])
+
+    slack(message: "A new Greenstand Beta Build has been released on Fabric",
+        slack_url: ENV["SLACK_URL_QC”],
+        default_payloads: ['git_branch'])
+  
   end
 
 
@@ -51,8 +58,6 @@ platform :android do
         slack_url: ENV["SLACK_URL_QC”],
         default_payloads: ['git_branch'])
   
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
   end
 
 
