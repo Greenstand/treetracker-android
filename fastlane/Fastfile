@@ -70,7 +70,7 @@ platform :android do
 
     add_git_tag()
 
-    gradle(task: "clean assembleRelease")
+    gradle(task: "clean assembleGreenstandRelease")
     upload_to_play_store
 
   end
