@@ -19,7 +19,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
@@ -64,10 +63,11 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         }
 
         setSupportActionBar(camera_toolbar)
+        supportActionBar?.title = ""
         if(captureSelfie) {
-            supportActionBar?.title = getString(R.string.take_a_selfie)
+            cameraToolbarTitle.text = getString(R.string.take_a_selfie)
         } else {
-            supportActionBar?.title = ""
+            cameraToolbarTitle.text = getString(R.string.add_a_tree)
         }
 
     }

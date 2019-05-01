@@ -203,8 +203,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
 
-        val targetH = mImageView!!.height
-
         /* Get the size of the image */
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true

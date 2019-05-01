@@ -47,7 +47,7 @@ class NetworkReceiver : BroadcastReceiver() {
         }
 
         val c = Calendar.getInstance()
-        val timeOfDay = c.get(Calendar.HOUR_OF_DAY)   // to pop up  notication if anything is there to sync at 6am
+        val timeOfDay = c.get(Calendar.HOUR_OF_DAY)   // to pop up  notification if anything is there to sync at 6am
 
 
 
@@ -62,7 +62,7 @@ class NetworkReceiver : BroadcastReceiver() {
             }
 
             val mBuilder = NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(context.resources.getString(R.string.treetracker))
                 .setTicker(context.resources.getString(R.string.wifi_connected))
                 .setSound(notification)
