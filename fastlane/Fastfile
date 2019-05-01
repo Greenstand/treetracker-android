@@ -63,8 +63,16 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
+
+    bump_version_code()
+
+    git_commit(path: "./app/build.gradle", message: "Release to PLay Store: Version Bump")
+
+    add_git_tag()
+
     gradle(task: "clean assembleRelease")
     upload_to_play_store
+
   end
 
   desc "Bump version code"
