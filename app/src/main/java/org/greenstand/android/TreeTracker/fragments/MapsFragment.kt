@@ -167,15 +167,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
+    }
 
-        var v: View? = view
-
-        try {
-            v = inflater.inflate(R.layout.fragment_map, container, false)
-        } catch (e: InflateException) {
-            Timber.d(e.localizedMessage);
-        }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (mapFragment == null) {
             mapFragment = SupportMapFragment()
             childFragmentManager.beginTransaction().apply {
@@ -195,10 +190,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
 
-        val fab = v!!.addTreeButton
-        fab.setOnClickListener(this)
-        if (BuildConfig.BUILD_TYPE === "dev") {
-            fab.setOnLongClickListener(this)
+        addTreeButton.setOnClickListener(this)
+        if (FeatureFlags.DEBUG_ENABLED) {
+            addTreeButton.setOnLongClickListener(this)
         }
 
         mapFragment!!.getMapAsync(this)
@@ -258,8 +252,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             }
 
         }
-
-        return v
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -303,47 +295,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
                 }
             }
-        }//			case R.id.fragment_map_update_tree:
-        //
-        //				if (MainActivity.mAllowNewTreeOrUpdate) {
-        //					SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();
-        //
-        ////					String query = "select * from tree_photo " +
-        ////							"left outer join tree on tree._id = tree_id " +
-        ////							"left outer join photo on photo._id = photo_id " +
-        ////							"left outer join location on location._id = photo.location_id " +
-        ////							"where is_outdated = 'N'";
-        //
-        //					String query = "select * from tree " +
-        //							"left outer join location on location._id = tree.location_id " +
-        //							"left outer join tree_photo on tree._id = tree_id " +
-        //							"left outer join photo on photo._id = photo_id ";
-        //
-        //					Log.e("query", query);
-        //
-        //					photoCursor = db.rawQuery(query, null);
-        //
-        //					if (photoCursor.getCount() <= 0) {
-        //						Toast.makeText(getActivity(), "No trees to update", Toast.LENGTH_SHORT).show();
-        //						db.close();
-        //						return;
-        //					}
-        //
-        //					db.close();
-        //
-        //					fragment = new UpdateTreeFragment();
-        //					bundle = getActivity().getIntent().getExtras();
-        //					fragment.setArguments(bundle);
-        //
-        //					fragmentTransaction = getActivity().getSupportFragmentManager()
-        //							.beginTransaction();
-        //					fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.UPDATE_TREE_FRAGMENT).commit();
-        //				} else {
-        //					Toast.makeText(getActivity(), "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show();
-        //				}
-        //
-        //				break;
-
+        }
     }
 
     // For debug analysis purposes only
