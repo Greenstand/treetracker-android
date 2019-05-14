@@ -7,7 +7,13 @@ import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.di.appModule
+import org.greenstand.android.TreeTracker.di.networkModule
+import org.greenstand.android.TreeTracker.di.userModule
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import timber.log.Timber
 
 
@@ -18,6 +24,17 @@ class TreeTrackerApplication : Application() {
         appContext = applicationContext
         // The following line triggers the initialization of ACRA
         super.onCreate()
+
+        startKoin {
+            androidLogger()
+            androidContext(applicationContext)
+            modules(
+                appModule,
+                networkModule,
+                userModule
+            )
+        }
+
         if (FeatureFlags.FABRIC_ENABLED) {
             Fabric.with(this, Crashlytics())
         }

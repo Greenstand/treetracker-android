@@ -1,24 +1,18 @@
 package org.greenstand.android.TreeTracker.managers
 
 import android.content.Context
-import android.provider.Settings
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import org.greenstand.android.TreeTracker.api.Api
-import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest
-import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
+import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import timber.log.Timber
 import java.io.IOException
 
-object UserManager {
+class UserManager(val api: RetrofitApi) {
 
+    var authToken: String? = null
 
     val isLoggedIn: Boolean
-        get() = Api.authToken != null
+        get() = authToken != null
 
     val userId: Long
         get() = TreeTrackerApplication.appContext.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)
@@ -26,8 +20,8 @@ object UserManager {
     suspend fun authenticateDevice(): Boolean {
 
         try {
-            Api.authenticate(DeviceUtils.deviceId)
-            Api.updateDevice()
+            api.authenticate(DeviceUtils.deviceId)
+            api.updateDevice()
         } catch (e: IOException) {
             return false
         }

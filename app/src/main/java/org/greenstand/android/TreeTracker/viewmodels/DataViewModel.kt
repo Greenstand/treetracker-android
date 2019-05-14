@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.amazonaws.AmazonClientException
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.api.Api
+import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.api.DOSpaces
 import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
@@ -21,7 +21,8 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 
-class DataViewModel : CoroutineViewModel() {
+class DataViewModel(private val userManager: UserManager,
+                    private val api: RetrofitApi) : CoroutineViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
     private val toastLiveData = MutableLiveData<Int>()
@@ -72,7 +73,7 @@ class DataViewModel : CoroutineViewModel() {
         isSyncingLiveData.value = true
         currentJob = launch {
 
-            val isAuthenticated = withContext(Dispatchers.IO) { UserManager.authenticateDevice() }
+            val isAuthenticated = withContext(Dispatchers.IO) { userManager.authenticateDevice() }
 
             if (!isAuthenticated) {
                 toastLiveData.value = R.string.sync_failed
@@ -152,7 +153,7 @@ class DataViewModel : CoroutineViewModel() {
         )
 
         return try {
-            Api.createPlanterRegistration(registration)
+            api.createPlanterRegistration(registration)
             planterDetailsEntity.uploaded = true
             TreeTrackerApplication.getAppDatabase().planterDao().updatePlanterDetails(planterDetailsEntity)
             true
@@ -196,7 +197,7 @@ class DataViewModel : CoroutineViewModel() {
         * Save to the API
         */
         val treeIdResponse: Int? = try {
-            Api.createTree(newTreeRequest)
+            api.createTree(newTreeRequest)
         } catch (e: IOException) {
             e.printStackTrace()
             null
@@ -287,7 +288,7 @@ class DataViewModel : CoroutineViewModel() {
         return NewTreeRequest(
             uuid = treeDto.uuid,
             imageUrl = imageUrl,
-            userId = UserManager.userId.toInt(),
+            userId = userManager.userId.toInt(),
             sequenceId = treeDto.tree_id,
             lat = treeDto.latitude,
             lon = treeDto.longitude,
