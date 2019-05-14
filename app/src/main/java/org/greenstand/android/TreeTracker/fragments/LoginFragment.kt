@@ -21,16 +21,12 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.utilities.*
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class LoginFragment : Fragment(){
 
-    lateinit var viewModel: LoginViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
-        super.onCreate(savedInstanceState)
-    }
+    private val vm: LoginViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -43,27 +39,27 @@ class LoginFragment : Fragment(){
             setTextColor(resources.getColor(R.color.blackColor))
         }
 
-        viewModel.errorMessageLiveDate.observe(this, Observer {
+        vm.errorMessageLiveDate.observe(this, Observer {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.loginButtonStateLiveDate.observe(this, Observer {
+        vm.loginButtonStateLiveDate.observe(this, Observer {
             login_button.isEnabled = it
         })
 
-        viewModel.onNavigateToMap = {
+        vm.onNavigateToMap = {
             val fragment = MapsFragment()
             val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
             fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, fragment)
             fragmentTransaction?.commit()
         }
 
-        loginPhoneEditText.onTextChanged { viewModel.updatePhone(it) }
-        loginEmailEditText.onTextChanged { viewModel.updateEmail(it) }
+        loginPhoneEditText.onTextChanged { vm.updatePhone(it) }
+        loginEmailEditText.onTextChanged { vm.updateEmail(it) }
 
         login_button.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
-                if (viewModel.isUserPresentOnDevice()) {
+                if (vm.isUserPresentOnDevice()) {
                     withContext(Dispatchers.Main) {
                         CameraHelper.takePictureForResult(this@LoginFragment)
                     }
@@ -73,7 +69,7 @@ class LoginFragment : Fragment(){
                     // User has no info on device, go through the sign up process
                     Timber.d("User not on device, going to signup flow")
                     withContext(Dispatchers.Main) {
-                        val fragment = SignUpFragment.getInstance(viewModel.userIdentification)
+                        val fragment = SignUpFragment.getInstance(vm.userIdentification)
                         activity?.supportFragmentManager?.beginTransaction()?.run {
                             addToBackStack(null).replace(R.id.containerFragment, fragment)
                             commit()
@@ -94,7 +90,7 @@ class LoginFragment : Fragment(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && resultCode != Activity.RESULT_CANCELED) {
             if (resultCode == Activity.RESULT_OK) {
-                viewModel.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+                vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")

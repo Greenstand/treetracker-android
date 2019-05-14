@@ -35,6 +35,7 @@ import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.Utils.Companion.dateFormat
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.util.*
 
@@ -269,12 +270,12 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     }
 
     private suspend fun saveToDb(newTree: NewTree): Long {
-        return TreeManager.addTree(newTree.photoPath,
-                                   newTree.minAccuracy,
-                                   newTree.timeToNextUpdate,
-                                   newTree.content,
-                                   newTree.userId,
-                                   newTree.planterIdentifierId)
+        return getKoin().get<TreeManager>().addTree(newTree.photoPath,
+                                                    newTree.minAccuracy,
+                                                    newTree.timeToNextUpdate,
+                                                    newTree.content,
+                                                    newTree.userId,
+                                                    newTree.planterIdentifierId)
     }
 
     private fun setPic() {

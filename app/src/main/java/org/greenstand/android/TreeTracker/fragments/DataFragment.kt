@@ -12,13 +12,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_data.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class DataFragment : Fragment() {
 
-    private lateinit var viewModel: DataViewModel
+    private val viewModel: DataViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(DataViewModel::class.java)
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }

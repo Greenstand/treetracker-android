@@ -36,6 +36,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.PhotoEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
@@ -44,6 +45,7 @@ import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.io.FileOutputStream
 import java.io.IOException
@@ -81,6 +83,13 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     }
 
+    lateinit var database: AppDatabase
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        database = getKoin().get()
+    }
+
     override fun onPause() {
         super.onPause()
 
@@ -114,7 +123,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             //
             runBlocking {
                 val planterList = GlobalScope.async {
-                    TreeTrackerApplication.getAppDatabase().planterDao().getPlantersByIdentifier(identifier)
+                    database.planterDao().getPlantersByIdentifier(identifier)
                 }.await()
                 if (planterList.isEmpty()) {
                     activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
@@ -167,15 +176,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
+    }
 
-        var v: View? = view
-
-        try {
-            v = inflater.inflate(R.layout.fragment_map, container, false)
-        } catch (e: InflateException) {
-            Timber.d(e.localizedMessage);
-        }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (mapFragment == null) {
             mapFragment = SupportMapFragment()
             childFragmentManager.beginTransaction().apply {
@@ -195,10 +199,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
 
-        val fab = v!!.addTreeButton
-        fab.setOnClickListener(this)
-        if (BuildConfig.BUILD_TYPE === "dev") {
-            fab.setOnLongClickListener(this)
+        addTreeButton.setOnClickListener(this)
+        if (FeatureFlags.DEBUG_ENABLED) {
+            addTreeButton.setOnLongClickListener(this)
         }
 
         mapFragment!!.getMapAsync(this)
@@ -258,8 +261,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             }
 
         }
-
-        return v
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -303,47 +304,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
                 }
             }
-        }//			case R.id.fragment_map_update_tree:
-        //
-        //				if (MainActivity.mAllowNewTreeOrUpdate) {
-        //					SQLiteDatabase db = MainActivity.dbHelper.getReadableDatabase();
-        //
-        ////					String query = "select * from tree_photo " +
-        ////							"left outer join tree on tree._id = tree_id " +
-        ////							"left outer join photo on photo._id = photo_id " +
-        ////							"left outer join location on location._id = photo.location_id " +
-        ////							"where is_outdated = 'N'";
-        //
-        //					String query = "select * from tree " +
-        //							"left outer join location on location._id = tree.location_id " +
-        //							"left outer join tree_photo on tree._id = tree_id " +
-        //							"left outer join photo on photo._id = photo_id ";
-        //
-        //					Log.e("query", query);
-        //
-        //					photoCursor = db.rawQuery(query, null);
-        //
-        //					if (photoCursor.getCount() <= 0) {
-        //						Toast.makeText(getActivity(), "No trees to update", Toast.LENGTH_SHORT).show();
-        //						db.close();
-        //						return;
-        //					}
-        //
-        //					db.close();
-        //
-        //					fragment = new UpdateTreeFragment();
-        //					bundle = getActivity().getIntent().getExtras();
-        //					fragment.setArguments(bundle);
-        //
-        //					fragmentTransaction = getActivity().getSupportFragmentManager()
-        //							.beginTransaction();
-        //					fragmentTransaction.replace(R.id.container_fragment, fragment).addToBackStack(ValueHelper.UPDATE_TREE_FRAGMENT).commit();
-        //				} else {
-        //					Toast.makeText(getActivity(), "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show();
-        //				}
-        //
-        //				break;
-
+        }
     }
 
     // For debug analysis purposes only
@@ -366,7 +327,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     userId.toLong()
                 )
 
-                val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(location)
+                val locationId = database.locationDao().insert(location)
 
                 var photoId: Long = -1
                 try {
@@ -385,7 +346,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                             Utils.dateFormat.format(Date()),
                             userId.toLong()
                         )
-                    photoId = TreeTrackerApplication.getAppDatabase().photoDao().insertPhoto(photo)
+                    photoId = database.photoDao().insertPhoto(photo)
 
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -409,10 +370,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     null
                 )
 
-                val treeId = TreeTrackerApplication.getAppDatabase().treeDao().insert(treeEntity)
+                val treeId = database.treeDao().insert(treeEntity)
 
                 val treePhotoEntity = TreePhotoEntity(treeId, photoId)
-                TreeTrackerApplication.getAppDatabase().photoDao().insert(treePhotoEntity)
+                database.photoDao().insert(treePhotoEntity)
                 //Timber.d("treePhotoId " + Long.toString(treePhotoId));
             }
         }
@@ -459,7 +420,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         runBlocking {
             val trees = GlobalScope.async {
-                return@async TreeTrackerApplication.getAppDatabase().treeDao().getTreesToDisplay()
+                return@async database.treeDao().getTreesToDisplay()
             }.await()
 
             if (trees.isNotEmpty()) {

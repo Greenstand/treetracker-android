@@ -2,20 +2,21 @@ package org.greenstand.android.TreeTracker.managers
 
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-object TreeManager {
+class TreeManager(private val db: AppDatabase) {
 
+    companion object {
+        const val TREE_COLOR_ATTR_KEY = "height_color"
+        const val APP_BUILD_ATTR_KEY = "app_build"
+        const val APP_FLAVOR_ATTR_KEY = "app_flavor"
+        const val APP_VERSION_ATTR_KEY = "app_version"
+    }
 
-    const val TREE_COLOR_ATTR_KEY = "height_color"
-    const val APP_BUILD_ATTR_KEY = "app_build"
-    const val APP_FLAVOR_ATTR_KEY = "app_flavor"
-    const val APP_VERSION_ATTR_KEY = "app_version"
-
-    private val db = TreeTrackerApplication.getAppDatabase()
 
     fun addTreeAttribute(treeId: Long,
                          key: String,
