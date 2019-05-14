@@ -15,11 +15,13 @@ import androidx.core.app.TaskStackBuilder
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.core.KoinComponent
 import timber.log.Timber
 import java.util.*
 
-class NetworkReceiver : BroadcastReceiver() {
+class NetworkReceiver : BroadcastReceiver(), KoinComponent {
 
     private var mSharedPreferences: SharedPreferences? = null
 
@@ -52,7 +54,8 @@ class NetworkReceiver : BroadcastReceiver() {
 
 
         if (isConnected && isWiFi || timeOfDay == 6) {
-            val tosync = TreeTrackerApplication.getAppDatabase().treeDao().getToSyncTreeCount()
+
+            val tosync = getKoin().get<AppDatabase>().treeDao().getToSyncTreeCount()
             Timber.d("to sync $tosync")
 
             var notification: Uri? = null

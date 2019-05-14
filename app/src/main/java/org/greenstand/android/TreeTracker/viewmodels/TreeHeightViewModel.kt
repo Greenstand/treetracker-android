@@ -11,7 +11,7 @@ import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
 import org.greenstand.android.TreeTracker.data.TreeColor
 import org.greenstand.android.TreeTracker.managers.TreeManager
 
-class TreeHeightViewModel : CoroutineViewModel() {
+class TreeHeightViewModel(private val treeManager: TreeManager) : CoroutineViewModel() {
 
     var newTree: NewTree? = null
     var treeColor: TreeColor? = null
@@ -34,14 +34,14 @@ class TreeHeightViewModel : CoroutineViewModel() {
             newTree
                 ?.let {
                     withContext(Dispatchers.IO) {
-                        val treeId = TreeManager.addTree(photoPath = it.photoPath,
+                        val treeId = treeManager.addTree(photoPath = it.photoPath,
                                                          minAccuracy = it.minAccuracy,
                                                          timeToNextUpdate = it.timeToNextUpdate,
                                                          content = it.content,
                                                          userId = it.userId,
                                                          planterIdentifierId = it.planterIdentifierId)
 
-                        fun addKeyValueAttribute(key: String, value: String) = TreeManager.addTreeAttribute(treeId, key, value)
+                        fun addKeyValueAttribute(key: String, value: String) = treeManager.addTreeAttribute(treeId, key, value)
 
                         with(TreeHeightAttributes(treeId = treeId, heightColor = treeColor!!)) {
                             addKeyValueAttribute(TreeManager.TREE_COLOR_ATTR_KEY, heightColor.value)

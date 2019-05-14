@@ -5,12 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import com.amazonaws.AmazonClientException
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.api.Api
+import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.api.DOSpaces
 import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.dao.TreeDto
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
@@ -21,7 +22,10 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 
-class DataViewModel : CoroutineViewModel() {
+class DataViewModel(private val userManager: UserManager,
+                    private val api: RetrofitApi,
+                    private val treeManager: TreeManager,
+                    private val appDatabase: AppDatabase) : CoroutineViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
     private val toastLiveData = MutableLiveData<Int>()
@@ -31,7 +35,7 @@ class DataViewModel : CoroutineViewModel() {
     val toasts: LiveData<Int> = toastLiveData
     val isSyncing: LiveData<Boolean> = isSyncingLiveData
 
-    var currentJob: Job? = null
+    private var currentJob: Job? = null
 
     init {
         updateData()
@@ -39,7 +43,7 @@ class DataViewModel : CoroutineViewModel() {
 
     fun sync() {
         launch {
-            val treesToSync = withContext(Dispatchers.IO) { TreeTrackerApplication.getAppDatabase().treeDao().getToSyncTreeCount() }
+            val treesToSync = withContext(Dispatchers.IO) { appDatabase.treeDao().getToSyncTreeCount() }
             when (treesToSync) {
                 0 -> {
                     currentJob?.cancel()
@@ -56,9 +60,9 @@ class DataViewModel : CoroutineViewModel() {
     private fun updateData() {
         launch(Dispatchers.IO) {
 
-            val treeCount = TreeTrackerApplication.getAppDatabase().treeDao().getTotalTreeCount()
-            val syncedTreeCount = TreeTrackerApplication.getAppDatabase().treeDao().getSyncedTreeCount()
-            val notSyncedTreeCount = TreeTrackerApplication.getAppDatabase().treeDao().getToSyncTreeCount()
+            val treeCount = appDatabase.treeDao().getTotalTreeCount()
+            val syncedTreeCount = appDatabase.treeDao().getSyncedTreeCount()
+            val notSyncedTreeCount = appDatabase.treeDao().getToSyncTreeCount()
 
             withContext(Dispatchers.Main) {
                 treeInfoLiveData.value = TreeData(totalTrees = treeCount,
@@ -72,7 +76,7 @@ class DataViewModel : CoroutineViewModel() {
         isSyncingLiveData.value = true
         currentJob = launch {
 
-            val isAuthenticated = withContext(Dispatchers.IO) { UserManager.authenticateDevice() }
+            val isAuthenticated = withContext(Dispatchers.IO) { api.authenticateDevice() }
 
             if (!isAuthenticated) {
                 toastLiveData.value = R.string.sync_failed
@@ -96,7 +100,7 @@ class DataViewModel : CoroutineViewModel() {
 
     private suspend fun uploadUserIdentifications() {
         // Upload all user registration data that hasn't been uploaded yet
-        val registrations = TreeTrackerApplication.getAppDatabase().planterDao().getPlanterRegistrationsToUpload()
+        val registrations = appDatabase.planterDao().getPlanterRegistrationsToUpload()
         registrations.forEach {
             runCatching {
                 async(Dispatchers.IO) { uploadPlanterRegistration(it) }.await()
@@ -106,13 +110,13 @@ class DataViewModel : CoroutineViewModel() {
 
     private suspend fun uploadPlanterIdentifications() {
         // Get all planter_identifications without a photo_url
-        val planterCursor: List<PlanterIdentificationsEntity> = TreeTrackerApplication.getAppDatabase().planterDao().getPlanterIdentificationsToUpload()
+        val planterCursor: List<PlanterIdentificationsEntity> = appDatabase.planterDao().getPlanterIdentificationsToUpload()
 
         planterCursor.forEach { planterIndentification ->
             try {
                 val imageUrl = async(Dispatchers.IO) { uploadPlanterPhoto(planterIndentification) }.await()
                 planterIndentification.photoUrl = imageUrl
-                TreeTrackerApplication.getAppDatabase().planterDao().updatePlanterIdentification(planterIndentification)
+                appDatabase.planterDao().updatePlanterIdentification(planterIndentification)
             } catch (e: Exception) {
                 Timber.e(e)
             }
@@ -120,7 +124,7 @@ class DataViewModel : CoroutineViewModel() {
     }
 
     private suspend fun uploadNewTrees() {
-        val treeList = TreeTrackerApplication.getAppDatabase().treeDao().getTreesToUpload()
+        val treeList = appDatabase.treeDao().getTreesToUpload()
 
         Timber.tag("DataFragment").d("treeCursor: $treeList")
         Timber.tag("DataFragment").d("treeCursor: " + treeList.size)
@@ -152,9 +156,9 @@ class DataViewModel : CoroutineViewModel() {
         )
 
         return try {
-            Api.createPlanterRegistration(registration)
+            api.createPlanterRegistration(registration)
             planterDetailsEntity.uploaded = true
-            TreeTrackerApplication.getAppDatabase().planterDao().updatePlanterDetails(planterDetailsEntity)
+            appDatabase.planterDao().updatePlanterDetails(planterDetailsEntity)
             true
         } catch (e: Exception) {
             false
@@ -196,17 +200,17 @@ class DataViewModel : CoroutineViewModel() {
         * Save to the API
         */
         val treeIdResponse: Int? = try {
-            Api.createTree(newTreeRequest)
+            api.createTree(newTreeRequest)
         } catch (e: IOException) {
             e.printStackTrace()
             null
         }
 
         if (treeIdResponse != null) {
-            val missingTrees = TreeTrackerApplication.getAppDatabase().treeDao().getMissingTreeByID(uploadedtree.tree_id)
+            val missingTrees = appDatabase.treeDao().getMissingTreeByID(uploadedtree.tree_id)
             if (missingTrees.isNotEmpty()) {
-                TreeTrackerApplication.getAppDatabase().treeDao().deleteTree(missingTrees.first())
-                val photos = TreeTrackerApplication.getAppDatabase().photoDao().getPhotosByTreeId(uploadedtree.tree_id)
+                appDatabase.treeDao().deleteTree(missingTrees.first())
+                val photos = appDatabase.photoDao().getPhotosByTreeId(uploadedtree.tree_id)
 
                 photos.forEach {
                     try {
@@ -218,15 +222,15 @@ class DataViewModel : CoroutineViewModel() {
 
                 }
             } else {
-                val treeList = TreeTrackerApplication.getAppDatabase().treeDao().getTreeByID(uploadedtree.tree_id)
+                val treeList = appDatabase.treeDao().getTreeByID(uploadedtree.tree_id)
                 val treeEntity = treeList.first()
                 treeEntity.isSynced = true
                 treeEntity.mainDbId = treeIdResponse
-                TreeTrackerApplication.getAppDatabase().treeDao().updateTree(treeEntity)
+                appDatabase.treeDao().updateTree(treeEntity)
 
 
                 val outdatedPhotos =
-                    TreeTrackerApplication.getAppDatabase().photoDao().getOutdatedPhotos(uploadedtree.tree_id)
+                    appDatabase.photoDao().getOutdatedPhotos(uploadedtree.tree_id)
 
                 outdatedPhotos.forEach {
 
@@ -278,7 +282,7 @@ class DataViewModel : CoroutineViewModel() {
 
         val imageUrl = getImageUrl() ?: return null
 
-        val attributesList = TreeManager.getTreeAttributes(treeDto.tree_id)
+        val attributesList = treeManager.getTreeAttributes(treeDto.tree_id)
         var attributesRequest =  mutableListOf<AttributeRequest>()
         for(attribute in attributesList){
             attributesRequest.add( AttributeRequest(key=attribute.key, value=attribute.value))
@@ -287,7 +291,7 @@ class DataViewModel : CoroutineViewModel() {
         return NewTreeRequest(
             uuid = treeDto.uuid,
             imageUrl = imageUrl,
-            userId = UserManager.userId.toInt(),
+            userId = userManager.userId.toInt(),
             sequenceId = treeDto.tree_id,
             lat = treeDto.latitude,
             lon = treeDto.longitude,
