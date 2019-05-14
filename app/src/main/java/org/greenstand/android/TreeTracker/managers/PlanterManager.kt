@@ -2,20 +2,19 @@ package org.greenstand.android.TreeTracker.managers
 
 import android.content.Context
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
-object PlanterManager {
+class PlanterManager(private val db: AppDatabase) {
 
     private val log = Timber.tag("PlanterManager")
 
     private val sharedPrefs by lazy {
         TreeTrackerApplication.appContext.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
     }
-
-    private val db = TreeTrackerApplication.getAppDatabase()
 
     suspend fun addPlanterIdentification(identifier: String,
                                          photoPath: String): Long {

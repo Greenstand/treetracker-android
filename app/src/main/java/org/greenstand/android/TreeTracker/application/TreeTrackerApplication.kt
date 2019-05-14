@@ -9,6 +9,7 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.di.appModule
 import org.greenstand.android.TreeTracker.di.networkModule
+import org.greenstand.android.TreeTracker.di.roomModule
 import org.greenstand.android.TreeTracker.di.userModule
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.koin.android.ext.koin.androidContext
@@ -31,7 +32,8 @@ class TreeTrackerApplication : Application() {
             modules(
                 appModule,
                 networkModule,
-                userModule
+                userModule,
+                roomModule
             )
         }
 
@@ -56,10 +58,6 @@ class TreeTrackerApplication : Application() {
 
         lateinit var appContext: Context
         private var application: TreeTrackerApplication? = null
-
-        fun getAppDatabase(): AppDatabase {
-            return AppDatabase.getInstance(application!!.applicationContext)
-        }
 
     }
 }

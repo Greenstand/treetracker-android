@@ -7,7 +7,7 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import java.io.IOException
 
-class UserManager(val api: RetrofitApi) {
+class UserManager() {
 
     var authToken: String? = null
 
@@ -16,17 +16,5 @@ class UserManager(val api: RetrofitApi) {
 
     val userId: Long
         get() = TreeTrackerApplication.appContext.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)
-
-    suspend fun authenticateDevice(): Boolean {
-
-        try {
-            api.authenticate(DeviceUtils.deviceId)
-            api.updateDevice()
-        } catch (e: IOException) {
-            return false
-        }
-
-        return true
-    }
 
 }

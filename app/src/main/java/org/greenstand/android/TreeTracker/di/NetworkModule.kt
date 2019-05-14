@@ -17,23 +17,23 @@ val networkModule = module {
     single { RetrofitApi(get(), get()) }
 
     // Create OkHttp instance
-    single {
+    factory {
         OkHttpClient.Builder()
             .addInterceptor(get<HttpLoggingInterceptor>())
             .addInterceptor(get<AuthenticationInterceptor>())
             .build()
     }
 
-    single {
+    factory {
         val httpLoggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message -> Timber.tag("OkHttp").d(message) })
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         httpLoggingInterceptor
     }
 
-    single { AuthenticationInterceptor(get()) }
+    factory { AuthenticationInterceptor(get()) }
 
     // Create ApiService instance using Retrofit
-    single {
+    factory {
         Retrofit.Builder()
             .client(get())
             .baseUrl(ApiService.ENDPOINT)

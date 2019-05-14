@@ -26,6 +26,7 @@ import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
     version = 2,
     exportSchema = true
 )
+
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun treeDao(): TreeDao

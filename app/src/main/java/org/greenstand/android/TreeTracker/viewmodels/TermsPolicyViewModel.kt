@@ -9,7 +9,7 @@ import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.utilities.Utils
 import java.util.*
 
-class TermsPolicyViewModel : CoroutineViewModel() {
+class TermsPolicyViewModel(private val planterManager: PlanterManager) : CoroutineViewModel() {
 
     lateinit var userInfo: UserInfo
     var photoPath: String? = null
@@ -25,15 +25,15 @@ class TermsPolicyViewModel : CoroutineViewModel() {
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            PlanterManager.addPlanterIdentification(userInfo.identification, photoPath!!)
+            planterManager.addPlanterIdentification(userInfo.identification, photoPath!!)
 
-            val planterDetailsId = PlanterManager.addPlanterDetails(userInfo.identification,
+            val planterDetailsId = planterManager.addPlanterDetails(userInfo.identification,
                                                                     userInfo.firstName,
                                                                     userInfo.lastName,
                                                                     userInfo.organization,
                                                                     Utils.dateFormat.format(Date()))
 
-            PlanterManager.updateIdentifierId(userInfo.identification, planterDetailsId)
+            planterManager.updateIdentifierId(userInfo.identification, planterDetailsId)
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }

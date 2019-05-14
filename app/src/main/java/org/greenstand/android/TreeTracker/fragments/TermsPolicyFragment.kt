@@ -21,19 +21,19 @@ import org.greenstand.android.TreeTracker.data.UserInfo
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class TermsPolicyFragment: Fragment() {
 
-    lateinit var viewModel: TermsPolicyViewModel
+    private val vm: TermsPolicyViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        viewModel = ViewModelProviders.of(this).get(TermsPolicyViewModel::class.java)
 
         arguments?.let {
-            viewModel.userInfo = it.getParcelable(USER_INFO_KEY)!!
+            vm.userInfo = it.getParcelable(USER_INFO_KEY)!!
         } ?: run { throw IllegalStateException("UserInfo must be present from Signup") }
 
         return inflater.inflate(R.layout.fragment_terms_policy, container,false)
@@ -103,7 +103,7 @@ class TermsPolicyFragment: Fragment() {
             cookies_text?.visibility = View.VISIBLE
         }
 
-        viewModel.onNavigateToMap = {
+        vm.onNavigateToMap = {
             val fragment = MapsFragment()
             val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
             fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, fragment)
@@ -125,7 +125,7 @@ class TermsPolicyFragment: Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && resultCode != Activity.RESULT_CANCELED) {
             if (resultCode == Activity.RESULT_OK) {
-                viewModel.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+                vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")

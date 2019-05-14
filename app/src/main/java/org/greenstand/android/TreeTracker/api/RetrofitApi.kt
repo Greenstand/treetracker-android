@@ -6,6 +6,8 @@ import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
 import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import java.io.IOException
 
 class RetrofitApi(private val api: ApiService,
                   private val userManager: UserManager) {
@@ -25,5 +27,17 @@ class RetrofitApi(private val api: ApiService,
 
     suspend fun createTree(newTreeRequest: NewTreeRequest): Int {
         return api.createTree(newTreeRequest).status
+    }
+
+    suspend fun authenticateDevice(): Boolean {
+
+        try {
+            authenticate(DeviceUtils.deviceId)
+            updateDevice()
+        } catch (e: IOException) {
+            return false
+        }
+
+        return true
     }
 }

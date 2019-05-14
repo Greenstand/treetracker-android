@@ -12,7 +12,7 @@ import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.Validation
 import java.util.*
 
-class LoginViewModel: CoroutineViewModel()  {
+class LoginViewModel(private val planterManager: PlanterManager): CoroutineViewModel()  {
 
     private var email: String? = null
     private var phone: String? = null
@@ -66,13 +66,13 @@ class LoginViewModel: CoroutineViewModel()  {
     }
 
     fun isUserPresentOnDevice(): Boolean {
-        return PlanterManager.getPlanterByInputtedText(userIdentification) != null
+        return planterManager.getPlanterByInputtedText(userIdentification) != null
     }
 
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            PlanterManager.addPlanterIdentification(userIdentification, photoPath!!)
+            planterManager.addPlanterIdentification(userIdentification, photoPath!!)
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }
