@@ -7,7 +7,7 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import java.io.IOException
 
-class UserManager() {
+class UserManager(private val context: Context) {
 
     var authToken: String? = null
 
@@ -15,6 +15,6 @@ class UserManager() {
         get() = authToken != null
 
     val userId: Long
-        get() = TreeTrackerApplication.appContext.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)
+        get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)
 
 }

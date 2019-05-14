@@ -35,7 +35,7 @@ class DataViewModel(private val userManager: UserManager,
     val toasts: LiveData<Int> = toastLiveData
     val isSyncing: LiveData<Boolean> = isSyncingLiveData
 
-    var currentJob: Job? = null
+    private var currentJob: Job? = null
 
     init {
         updateData()

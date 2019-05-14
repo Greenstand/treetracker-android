@@ -1,5 +1,8 @@
 package org.greenstand.android.TreeTracker.di
 
+import org.greenstand.android.TreeTracker.managers.PlanterManager
+import org.greenstand.android.TreeTracker.managers.TreeManager
+import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
@@ -16,4 +19,10 @@ val appModule = module {
     viewModel { TreeHeightViewModel(get()) }
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
+
+    single { TreeManager(get()) }
+
+    single { UserManager(get()) }
+
+    single { PlanterManager(get(), get()) }
 }
