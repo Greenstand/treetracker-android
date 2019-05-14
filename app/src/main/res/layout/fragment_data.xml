@@ -9,13 +9,15 @@
 
     <ImageView
         android:id="@+id/fragment_data_logo"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-    		android:layout_centerHorizontal="true"
+		android:layout_width="@dimen/logo_width"
+		android:layout_height="157dp"
+		android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-	    	tools:src="@drawable/treetracker_logo"
+		tools:src="@drawable/logo"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/treetracker_logo" />
+        android:src="@drawable/logo"
+		android:layout_marginTop="@dimen/twenty_eight_dp"
+		/>
 
     <LinearLayout
         android:id="@+id/fragment_data_total_trees"

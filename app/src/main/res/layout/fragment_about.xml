@@ -8,11 +8,13 @@
 
     <ImageView
         android:id="@+id/fragment_about_logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/logo_width"
+        android:layout_height="157dp"
         android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/treetracker_logo" />
+        android:src="@drawable/logo" />
 
     <TextView
         android:id="@+id/fragment_about_welcome"
