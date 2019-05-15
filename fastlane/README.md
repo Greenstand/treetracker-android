@@ -25,7 +25,7 @@ Runs all the tests
 ```
 fastlane android beta
 ```
-Submit a new Beta Build to Crashlytics Beta
+Submit a new Greenstand Beta Build to Crashlytics Beta
 ### android justdigit_beta
 ```
 fastlane android justdigit_beta

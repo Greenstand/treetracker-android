@@ -33,12 +33,14 @@ import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.NoteEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeNoteEntity
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.Utils.Companion.dateFormat
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -93,8 +95,11 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
             return storageDir
         }
 
+    private lateinit var appDatabase: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appDatabase = getKoin().get()
         setHasOptionsMenu(true)
     }
 
@@ -133,7 +138,8 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
 
         mImageView = v.fragmentNoteImage
 
-        val updatedTrees = TreeTrackerApplication.getAppDatabase().treeDao().getUpdatedTrees(treeIdStr)
+
+        val updatedTrees = appDatabase.treeDao().getUpdatedTrees(treeIdStr)
 
         updatedTrees.forEach {
             mCurrentPhotoPath = it.name
@@ -300,19 +306,19 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
             userId
         )
 
-        val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(location)
+        val locationId = appDatabase.locationDao().insert(location)
 
         Timber.d("locationId " + java.lang.Long.toString(locationId))
 
         // note
         val noteEntity = NoteEntity(0, activity?.fragmentNoteNote?.text.toString(), Utils.dateFormat.format(Date()), userId)
 
-        val noteId = TreeTrackerApplication.getAppDatabase().noteDao().insert(noteEntity)
+        val noteId = appDatabase.noteDao().insert(noteEntity)
         Timber.d("noteId " + java.lang.Long.toString(noteId))
 
 
         // tree
-        val treeEntity = TreeTrackerApplication.getAppDatabase().treeDao().getTreeByID(treeIdStr!!.toLong()).first()
+        val treeEntity = appDatabase.treeDao().getTreeByID(treeIdStr!!.toLong()).first()
         treeEntity.locationId = locationId.toInt()
         treeEntity.isSynced = false
         treeEntity.isPriority = false
@@ -325,11 +331,11 @@ class NoteFragment : Fragment(), OnClickListener, OnCheckedChangeListener,
 
         treeEntity.timeUpdated = dateFormat.format(Date())
 
-        TreeTrackerApplication.getAppDatabase().treeDao().updateTree(treeEntity)
+        appDatabase.treeDao().updateTree(treeEntity)
 
         // tree_note
         val treeNoteEntity = TreeNoteEntity(noteId, treeIdStr!!.toLong())
-        TreeTrackerApplication.getAppDatabase().noteDao().insert(treeNoteEntity)
+        appDatabase.noteDao().insert(treeNoteEntity)
     }
 
     private fun setPic() {

@@ -6,18 +6,32 @@ import androidx.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import org.greenstand.android.TreeTracker.BuildConfig
-import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.di.appModule
+import org.greenstand.android.TreeTracker.di.networkModule
+import org.greenstand.android.TreeTracker.di.roomModule
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import timber.log.Timber
-
 
 class TreeTrackerApplication : Application() {
 
     override fun onCreate() {
-        application = this
         appContext = applicationContext
         // The following line triggers the initialization of ACRA
         super.onCreate()
+
+        startKoin {
+            androidLogger()
+            androidContext(applicationContext)
+            modules(
+                appModule,
+                networkModule,
+                roomModule
+            )
+        }
+
         if (FeatureFlags.FABRIC_ENABLED) {
             Fabric.with(this, Crashlytics())
         }
@@ -36,13 +50,6 @@ class TreeTrackerApplication : Application() {
     }
 
     companion object {
-
         lateinit var appContext: Context
-        private var application: TreeTrackerApplication? = null
-
-        fun getAppDatabase(): AppDatabase {
-            return AppDatabase.getInstance(application!!.applicationContext)
-        }
-
     }
 }

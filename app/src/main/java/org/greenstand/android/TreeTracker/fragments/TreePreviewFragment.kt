@@ -21,8 +21,10 @@ import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.io.IOException
 import java.text.ParseException
@@ -38,14 +40,13 @@ class TreePreviewFragment : Fragment(), OnClickListener {
     private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var bundle: Bundle? = null
 
+    lateinit var appDatabase: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appDatabase = getKoin().get()
         setHasOptionsMenu(true)
 
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -71,7 +72,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         runBlocking {
 
             val trees = GlobalScope.async {
-                TreeTrackerApplication.getAppDatabase().treeDao().getTreeDtoByID(treeIdStr!!.toLong())
+                appDatabase.treeDao().getTreeDtoByID(treeIdStr!!.toLong())
             }.await()
 
             trees.forEach {
@@ -148,7 +149,7 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
 
                 val notes = GlobalScope.async {
-                    return@async TreeTrackerApplication.getAppDatabase().noteDao().getNotesByTreeID(treeIdStr!!)
+                    return@async appDatabase.noteDao().getNotesByTreeID(treeIdStr!!)
                 }.await()
 
                 val notesTxt = v.fragmentTreePreviewNotes

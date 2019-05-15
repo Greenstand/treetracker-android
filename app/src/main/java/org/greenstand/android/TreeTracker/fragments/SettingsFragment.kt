@@ -35,18 +35,11 @@ import timber.log.Timber
 
 class SettingsFragment : Fragment(), OnClickListener, OnCheckedChangeListener, TextWatcher {
 
-    private val fragment: Fragment? = null
-    private val bundle: Bundle? = null
-    private val fragmentTransaction: FragmentTransaction? = null
     private var mSharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

@@ -36,6 +36,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
+import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.PhotoEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
@@ -44,6 +45,7 @@ import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.io.FileOutputStream
 import java.io.IOException
@@ -81,6 +83,13 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     }
 
+    lateinit var database: AppDatabase
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        database = getKoin().get()
+    }
+
     override fun onPause() {
         super.onPause()
 
@@ -114,7 +123,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             //
             runBlocking {
                 val planterList = GlobalScope.async {
-                    TreeTrackerApplication.getAppDatabase().planterDao().getPlantersByIdentifier(identifier)
+                    database.planterDao().getPlantersByIdentifier(identifier)
                 }.await()
                 if (planterList.isEmpty()) {
                     activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
@@ -318,7 +327,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     userId.toLong()
                 )
 
-                val locationId = TreeTrackerApplication.getAppDatabase().locationDao().insert(location)
+                val locationId = database.locationDao().insert(location)
 
                 var photoId: Long = -1
                 try {
@@ -337,7 +346,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                             Utils.dateFormat.format(Date()),
                             userId.toLong()
                         )
-                    photoId = TreeTrackerApplication.getAppDatabase().photoDao().insertPhoto(photo)
+                    photoId = database.photoDao().insertPhoto(photo)
 
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -361,10 +370,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     null
                 )
 
-                val treeId = TreeTrackerApplication.getAppDatabase().treeDao().insert(treeEntity)
+                val treeId = database.treeDao().insert(treeEntity)
 
                 val treePhotoEntity = TreePhotoEntity(treeId, photoId)
-                TreeTrackerApplication.getAppDatabase().photoDao().insert(treePhotoEntity)
+                database.photoDao().insert(treePhotoEntity)
                 //Timber.d("treePhotoId " + Long.toString(treePhotoId));
             }
         }
@@ -411,7 +420,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         runBlocking {
             val trees = GlobalScope.async {
-                return@async TreeTrackerApplication.getAppDatabase().treeDao().getTreesToDisplay()
+                return@async database.treeDao().getTreesToDisplay()
             }.await()
 
             if (trees.isNotEmpty()) {

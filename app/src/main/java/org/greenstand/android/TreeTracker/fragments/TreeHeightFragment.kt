@@ -22,13 +22,13 @@ import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.animateColor
 import org.greenstand.android.TreeTracker.utilities.color
 import org.greenstand.android.TreeTracker.viewmodels.TreeHeightViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class TreeHeightFragment : Fragment() {
 
-    lateinit var viewModel: TreeHeightViewModel
-
-    var isInitialState = true
+    private val vm: TreeHeightViewModel by viewModel()
+    private var isInitialState = true
 
     companion object {
 
@@ -43,12 +43,6 @@ class TreeHeightFragment : Fragment() {
         }
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(TreeHeightViewModel::class.java)
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tree_height, container, false)
     }
@@ -57,7 +51,7 @@ class TreeHeightFragment : Fragment() {
 
         val parentView = view as ConstraintLayout
 
-        viewModel.newTree = arguments?.getParcelable(NEW_TREE_KEY)
+        vm.newTree = arguments?.getParcelable(NEW_TREE_KEY)
 
         listOf(height_button_five,
                height_button_four,
@@ -67,23 +61,23 @@ class TreeHeightFragment : Fragment() {
             .forEachIndexed { index, colorView ->
                 colorView.setOnClickListener {
                     moveSelection(parentView, colorView, index)
-                    viewModel.treeColor = indexToTreeColor(index)
+                    vm.treeColor = indexToTreeColor(index)
                 }
             }
 
         save_tree_height.setOnClickListener {
-            viewModel.saveNewTree()
+            vm.saveNewTree()
         }
 
-        viewModel.toastMessagesLiveData().observe(this, Observer {
+        vm.toastMessagesLiveData().observe(this, Observer {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.onFinishedLiveData().observe(this, Observer {
+        vm.onFinishedLiveData().observe(this, Observer {
             fragmentManager?.popBackStack(ValueHelper.NEW_TREE_FRAGMENT, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         })
 
-        viewModel.onEnableButtonLiveData().observe(this, Observer {
+        vm.onEnableButtonLiveData().observe(this, Observer {
             save_tree_height.isEnabled = it
         })
     }
