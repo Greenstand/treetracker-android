@@ -24,7 +24,7 @@ import org.greenstand.android.TreeTracker.database.migration.MigrationV2ToV3
         PendingUpdateEntity::class,
         PhotoEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 
