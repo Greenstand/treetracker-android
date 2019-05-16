@@ -21,7 +21,9 @@ data class PlanterDetailsEntity(
     @ColumnInfo(name = UPLOADED)
     var uploaded: Boolean = false,
     @ColumnInfo(name = TIME_CREATED)
-    var timeCreated: String
+    var timeCreated: String,
+    @ColumnInfo(name = LOCATION)
+    var location: String?
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -39,5 +41,6 @@ data class PlanterDetailsEntity(
         const val EMAIL = "email"
         const val UPLOADED = "uploaded"
         const val TIME_CREATED = "time_created"
+        const val LOCATION = "location"
     }
 }

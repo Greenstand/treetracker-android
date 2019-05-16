@@ -1,6 +1,8 @@
 package org.greenstand.android.TreeTracker.managers
 
 import android.content.Context
+import android.location.Location
+import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
@@ -18,7 +20,8 @@ class PlanterManager(private val db: AppDatabase,
     }
 
     suspend fun addPlanterIdentification(identifier: String,
-                                         photoPath: String): Long {
+                                         photoPath: String,
+                                         location: Location?): Long {
 
         log.d("Adding Planter Identification: $identifier")
 
@@ -31,7 +34,8 @@ class PlanterManager(private val db: AppDatabase,
                 identifier,
                 photoPath,
                 null,
-                System.currentTimeMillis().toString()
+                System.currentTimeMillis().toString(),
+                location = location?.let { "${it.latitude},${it.longitude}" }
         )
 
         log.d("Adding PlanterIdentification to DB:")
@@ -53,7 +57,8 @@ class PlanterManager(private val db: AppDatabase,
                                   firstName: String,
                                   lastName: String,
                                   organization: String?,
-                                  timeCreated: String): Long {
+                                  timeCreated: String,
+                                  location: Location?): Long {
 
 
         val planterDetailsEntity = PlanterDetailsEntity(
@@ -64,7 +69,8 @@ class PlanterManager(private val db: AppDatabase,
             null,
             null,
             false,
-            timeCreated
+            timeCreated,
+            location?.let { "${it.latitude},${it.longitude}" }
         )
 
         return db.planterDao().insertPlanterDetails(planterDetailsEntity)
@@ -76,48 +82,6 @@ class PlanterManager(private val db: AppDatabase,
 
     fun getPlanterByInputtedText(identifier: String): PlanterDetailsEntity? {
         return db.planterDao().getPlanterDetailsByIdentifier(identifier)
-    }
-
-    suspend fun insertPlanter(identifier: String,
-                              firstName: String,
-                              lastName: String,
-                              organization: String,
-                              phone: String,
-                              email: String,
-                              uploaded: Boolean = false,
-                              timeCreated: String): Long {
-
-        val planterEntity = PlanterDetailsEntity(
-            identifier = identifier,
-            firstName = firstName,
-            lastName = lastName,
-            organization = organization,
-            phone = phone,
-            email = email,
-            uploaded = uploaded,
-            timeCreated = timeCreated
-        )
-
-        return db.planterDao().insertPlanterDetails(planterEntity)
-            .also { Timber.d("PlanterDetails $it") }
-    }
-
-    suspend fun insertPlanterIdentification(planterDetailsId: Long,
-                                            identifier: String,
-                                            photoPath: String,
-                                            photoUrl: String,
-                                            timeCreated: String): Long {
-
-        val planterIdentificationsEntity = PlanterIdentificationsEntity(
-            planterDetailsId = planterDetailsId,
-            identifier = identifier,
-            photoPath =  photoPath,
-            photoUrl = photoUrl,
-            timeCreated = timeCreated
-        )
-
-        return db.planterDao().insertPlanterIdentifications(planterIdentificationsEntity)
-            .also { Timber.d("PlanterDetails $it") }
     }
 
     suspend fun updateIdentifierId(identifier: String, planterDetailsId: Long) {
