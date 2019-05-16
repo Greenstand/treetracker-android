@@ -83,8 +83,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
             `phone` TEXT,
             `email` TEXT,
             `uploaded` INTEGER NOT NULL,
-            `time_created` TEXT NOT NULL,
-            `location` TEXT)""")
+            `time_created` TEXT NOT NULL)""")
 
         database.execSQL(
             "INSERT INTO new_planter_details(_id,identifier, first_name, last_name, organization, phone, email, uploaded, time_created) SELECT _id, identifier, first_name, last_name, organization, phone, email, CASE WHEN (uploaded = 'N') THEN 0 ELSE 1 END, time_created FROM planter_details"
@@ -139,8 +138,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
             `identifier` TEXT,
             `photo_path` TEXT,
             `photo_url` TEXT,
-            `time_created` TEXT NOT NULL,
-            `location` TEXT,
+            `time_created` TEXT NOT NULL
             FOREIGN KEY(`planter_details_id`) REFERENCES `planter_details`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )""")
 
         database.execSQL(
