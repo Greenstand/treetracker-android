@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "79b5bec1e1f9f7d4906b07b160f0210a",
+    "identityHash": "15348b337f92600443a71188434c46e7",
     "entities": [
       {
         "tableName": "tree_attributes",
@@ -416,7 +416,7 @@
       },
       {
         "tableName": "planter_details",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identifier` TEXT, `first_name` TEXT, `last_name` TEXT, `organization` TEXT, `phone` TEXT, `email` TEXT, `uploaded` INTEGER NOT NULL, `time_created` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identifier` TEXT, `first_name` TEXT, `last_name` TEXT, `organization` TEXT, `phone` TEXT, `email` TEXT, `uploaded` INTEGER NOT NULL, `time_created` TEXT NOT NULL, `location` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -471,6 +471,12 @@
             "columnName": "time_created",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -484,7 +490,7 @@
       },
       {
         "tableName": "planter_identifications",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planter_details_id` INTEGER, `identifier` TEXT, `photo_path` TEXT, `photo_url` TEXT, `time_created` TEXT NOT NULL, FOREIGN KEY(`planter_details_id`) REFERENCES `planter_details`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planter_details_id` INTEGER, `identifier` TEXT, `photo_path` TEXT, `photo_url` TEXT, `time_created` TEXT NOT NULL, `location` TEXT, FOREIGN KEY(`planter_details_id`) REFERENCES `planter_details`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -521,6 +527,12 @@
             "columnName": "time_created",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -743,7 +755,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"79b5bec1e1f9f7d4906b07b160f0210a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"15348b337f92600443a71188434c46e7\")"
     ]
   }
 }
