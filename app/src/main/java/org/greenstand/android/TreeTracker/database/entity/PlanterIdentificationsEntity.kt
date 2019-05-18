@@ -26,7 +26,9 @@ data class PlanterIdentificationsEntity(
     @ColumnInfo(name = PHOTO_URL)
     var photoUrl: String?,
     @ColumnInfo(name = TIME_CREATED)
-    var timeCreated: String
+    var timeCreated: String,
+    @ColumnInfo(name = LOCATION)
+    var location: String?
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -41,5 +43,6 @@ data class PlanterIdentificationsEntity(
         const val PHOTO_PATH = "photo_path"
         const val PHOTO_URL = "photo_url"
         const val TIME_CREATED = "time_created"
+        const val LOCATION = "location"
     }
 }

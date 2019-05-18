@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.utilities.Utils
@@ -72,7 +73,9 @@ class LoginViewModel(private val planterManager: PlanterManager): CoroutineViewM
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            planterManager.addPlanterIdentification(userIdentification, photoPath!!)
+            planterManager.addPlanterIdentification(userIdentification,
+                                                    photoPath!!,
+                                                    MainActivity.mCurrentLocation)
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }

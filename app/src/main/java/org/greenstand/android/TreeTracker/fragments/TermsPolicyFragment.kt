@@ -47,61 +47,61 @@ class TermsPolicyFragment: Fragment() {
         }
 
         //Make parts of the text_agreement to be clickable
-        val spannableString = SpannableString(getString(R.string.agreement_text_test))
+//        val spannableString = SpannableString(getString(R.string.agreement_text_test))
+//
+//        val clickableTermsCond = object : ClickableSpan(){
+//            override fun onClick(widget: View) {
+//                if(view.terms_text.visibility == View.VISIBLE){
+//                    view.terms_text.visibility = View.GONE
+//                }else view.terms_text.visibility = View.VISIBLE
+//            }
+//            override fun updateDrawState(drawState: TextPaint) {
+//                super.updateDrawState(drawState)
+//                drawState.isUnderlineText = true
+//                drawState.color = resources.getColor(R.color.redColor)
+//            }
+//
+//        }
+//        val clickablePolicy = object : ClickableSpan(){
+//            override fun onClick(widget: View) {
+//                if(view.policy_text.visibility == View.VISIBLE){
+//                    view.policy_text.visibility = View.GONE
+//                }else view.policy_text.visibility = View.VISIBLE
+//
+//            }
+//            override fun updateDrawState(drawState: TextPaint) {
+//                super.updateDrawState(drawState)
+//                drawState.isUnderlineText = true
+//                drawState.color = resources.getColor(R.color.redColor)
+//            }
+//
+//        }
+//
+//        val clickableCookies = object : ClickableSpan(){
+//            override fun onClick(widget: View) {
+//                if(view.cookies_text.visibility == View.VISIBLE){
+//                    view.cookies_text.visibility = View.GONE
+//                }else view.cookies_text.visibility = View.VISIBLE
+//
+//            }
+//            override fun updateDrawState(drawState: TextPaint) {
+//                super.updateDrawState(drawState)
+//                drawState.isUnderlineText = true
+//                drawState.color = resources.getColor(R.color.redColor)
+//            }
+//        }
 
-        val clickableTermsCond = object : ClickableSpan(){
-            override fun onClick(widget: View) {
-                if(view.terms_text.visibility == View.VISIBLE){
-                    view.terms_text.visibility = View.GONE
-                }else view.terms_text.visibility = View.VISIBLE
-            }
-            override fun updateDrawState(drawState: TextPaint) {
-                super.updateDrawState(drawState)
-                drawState.isUnderlineText = true
-                drawState.color = resources.getColor(R.color.redColor)
-            }
-
-        }
-        val clickablePolicy = object : ClickableSpan(){
-            override fun onClick(widget: View) {
-                if(view.policy_text.visibility == View.VISIBLE){
-                    view.policy_text.visibility = View.GONE
-                }else view.policy_text.visibility = View.VISIBLE
-
-            }
-            override fun updateDrawState(drawState: TextPaint) {
-                super.updateDrawState(drawState)
-                drawState.isUnderlineText = true
-                drawState.color = resources.getColor(R.color.redColor)
-            }
-
-        }
-
-        val clickableCookies = object : ClickableSpan(){
-            override fun onClick(widget: View) {
-                if(view.cookies_text.visibility == View.VISIBLE){
-                    view.cookies_text.visibility = View.GONE
-                }else view.cookies_text.visibility = View.VISIBLE
-
-            }
-            override fun updateDrawState(drawState: TextPaint) {
-                super.updateDrawState(drawState)
-                drawState.isUnderlineText = true
-                drawState.color = resources.getColor(R.color.redColor)
-            }
-        }
-
-        spannableString.setSpan(clickableTermsCond, 32,48,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(clickablePolicy, 53,67,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(clickableCookies, 79,90,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        text_agreement.text = spannableString
-        text_agreement.movementMethod = LinkMovementMethod.getInstance()
-
-        show_details_text.setOnClickListener {
-            terms_text?.visibility = View.VISIBLE
-            policy_text?.visibility = View.VISIBLE
-            cookies_text?.visibility = View.VISIBLE
-        }
+//        spannableString.setSpan(clickableTermsCond, 32,48,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        spannableString.setSpan(clickablePolicy, 53,67,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        spannableString.setSpan(clickableCookies, 79,90,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        text_agreement.text = spannableString
+//        text_agreement.movementMethod = LinkMovementMethod.getInstance()
+//
+//        show_details_text.setOnClickListener {
+//            terms_text?.visibility = View.VISIBLE
+//            policy_text?.visibility = View.VISIBLE
+//            cookies_text?.visibility = View.VISIBLE
+//        }
 
         vm.onNavigateToMap = {
             val fragment = MapsFragment()

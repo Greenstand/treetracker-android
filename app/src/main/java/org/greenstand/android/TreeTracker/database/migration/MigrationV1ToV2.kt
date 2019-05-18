@@ -74,7 +74,17 @@ class MigrationV1ToV2 : Migration(1, 2) {
         database.execSQL("alter table new_tree RENAME TO  tree")
 
         //migrate planter details table
-        database.execSQL("CREATE TABLE IF NOT EXISTS `new_planter_details` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identifier` TEXT, `first_name` TEXT, `last_name` TEXT, `organization` TEXT, `phone` TEXT, `email` TEXT, `uploaded` INTEGER NOT NULL, `time_created` TEXT NOT NULL)")
+        database.execSQL("""CREATE TABLE IF NOT EXISTS `new_planter_details`
+            (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            `identifier` TEXT,
+            `first_name` TEXT,
+            `last_name` TEXT,
+            `organization` TEXT,
+            `phone` TEXT,
+            `email` TEXT,
+            `uploaded` INTEGER NOT NULL,
+            `time_created` TEXT NOT NULL)""")
+
         database.execSQL(
             "INSERT INTO new_planter_details(_id,identifier, first_name, last_name, organization, phone, email, uploaded, time_created) SELECT _id, identifier, first_name, last_name, organization, phone, email, CASE WHEN (uploaded = 'N') THEN 0 ELSE 1 END, time_created FROM planter_details"
         )
@@ -122,7 +132,15 @@ class MigrationV1ToV2 : Migration(1, 2) {
         database.execSQL("alter table new_note RENAME TO  note")
 
         //migrate planter ids table
-        database.execSQL("CREATE TABLE IF NOT EXISTS `new_planter_identifications` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planter_details_id` INTEGER, `identifier` TEXT, `photo_path` TEXT, `photo_url` TEXT, `time_created` TEXT NOT NULL, FOREIGN KEY(`planter_details_id`) REFERENCES `planter_details`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )")
+        database.execSQL("""CREATE TABLE IF NOT EXISTS `new_planter_identifications`
+            (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            `planter_details_id` INTEGER,
+            `identifier` TEXT,
+            `photo_path` TEXT,
+            `photo_url` TEXT,
+            `time_created` TEXT NOT NULL
+            FOREIGN KEY(`planter_details_id`) REFERENCES `planter_details`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )""")
+
         database.execSQL(
             "INSERT INTO new_planter_identifications(_id,planter_details_id, identifier, photo_path, photo_url, time_created) SELECT _id, planter_details_id, identifier, photo_path, photo_url, time_created FROM planter_identifications"
         )

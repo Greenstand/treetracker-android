@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import org.greenstand.android.TreeTracker.database.dao.*
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
+import org.greenstand.android.TreeTracker.database.migration.MigrationV2ToV3
 
 
 @Database(
@@ -23,7 +24,7 @@ import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
         PendingUpdateEntity::class,
         PhotoEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 
@@ -44,11 +45,11 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        AppDatabase::class.java,
-                        DB_NAME_V2
-                    ).addMigrations(MigrationV1ToV2())
+                    INSTANCE = Room.databaseBuilder(context.applicationContext,
+                                                    AppDatabase::class.java,
+                                                    DB_NAME_V2)
+                        .addMigrations(MigrationV1ToV2())
+                        .addMigrations(MigrationV2ToV3())
                         .build()
                 }
             }

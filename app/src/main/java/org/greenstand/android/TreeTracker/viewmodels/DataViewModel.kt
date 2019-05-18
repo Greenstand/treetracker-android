@@ -152,7 +152,8 @@ class DataViewModel(private val userManager: UserManager,
             planterIdentifier = planterDetailsEntity.identifier,
             firstName = planterDetailsEntity.firstName,
             lastName = planterDetailsEntity.lastName,
-            organization = planterDetailsEntity.organization
+            organization = planterDetailsEntity.organization,
+            location = planterDetailsEntity.location
         )
 
         return try {

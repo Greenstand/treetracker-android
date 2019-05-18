@@ -9,4 +9,6 @@ data class RegistrationRequest(@SerializedName("planter_identifier")
                                @SerializedName("last_name")
                                val lastName: String?,
                                @SerializedName("organization")
-                               val organization: String?)
+                               val organization: String?,
+                               @SerializedName("location")
+                               val location: String?)

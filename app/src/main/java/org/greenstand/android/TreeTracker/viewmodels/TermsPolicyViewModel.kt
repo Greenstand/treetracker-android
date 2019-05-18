@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.viewmodels
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.data.UserInfo
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.managers.PlanterManager
@@ -25,13 +26,16 @@ class TermsPolicyViewModel(private val planterManager: PlanterManager) : Corouti
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            planterManager.addPlanterIdentification(userInfo.identification, photoPath!!)
+            planterManager.addPlanterIdentification(userInfo.identification,
+                                                    photoPath!!,
+                                                    MainActivity.mCurrentLocation)
 
             val planterDetailsId = planterManager.addPlanterDetails(userInfo.identification,
                                                                     userInfo.firstName,
                                                                     userInfo.lastName,
                                                                     userInfo.organization,
-                                                                    Utils.dateFormat.format(Date()))
+                                                                    Utils.dateFormat.format(Date()),
+                                                                    MainActivity.mCurrentLocation)
 
             planterManager.updateIdentifierId(userInfo.identification, planterDetailsId)
 
