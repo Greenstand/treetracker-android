@@ -66,7 +66,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var mapFragment: SupportMapFragment? = null
-
+    private var map: GoogleMap? = null
 
     interface LocationDialogListener {
         fun refreshMap()
@@ -92,6 +92,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     override fun onPause() {
         super.onPause()
+
+        if(this.map != null){
+            this.map?.isMyLocationEnabled = false
+        }
 
         paused = true
     }
@@ -400,6 +404,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
 
     override fun onMapReady(map: GoogleMap) {
+
+        this.map = map
 
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
