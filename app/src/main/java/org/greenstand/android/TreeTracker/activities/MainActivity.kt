@@ -17,6 +17,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -311,25 +312,27 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         val minAccuracy = 10
 
 
-        if (fragmentMapGpsAccuracy != null) {
+        val fragmentMapGpsAccuracyView : TextView? = findViewById(R.id.fragmentMapGpsAccuracy)
+        val fragmentMapGpsAccuracyViewValue : TextView? = findViewById(R.id.fragmentMapGpsAccuracyValue)
+        if (fragmentMapGpsAccuracyView != null) {
             if (mCurrentLocation != null) {
                 if (mCurrentLocation!!.hasAccuracy() && mCurrentLocation!!.accuracy < minAccuracy) {
-                    fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyValue?.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyValue?.text = Integer.toString(
+                    fragmentMapGpsAccuracyView.setTextColor(Color.GREEN)
+                    fragmentMapGpsAccuracyViewValue?.setTextColor(Color.GREEN)
+                    fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
                         Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
                     MainActivity.mAllowNewTreeOrUpdate = true
                 } else {
-                    fragmentMapGpsAccuracy.setTextColor(Color.RED)
+                    fragmentMapGpsAccuracyView.setTextColor(Color.RED)
                     MainActivity.mAllowNewTreeOrUpdate = false
 
                     if (mCurrentLocation!!.hasAccuracy()) {
-                        fragmentMapGpsAccuracyValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyValue?.text = Integer.toString(
+                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
                             Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
                     } else {
-                        fragmentMapGpsAccuracyValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyValue?.text = "N/A"
+                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracyViewValue?.text = "N/A"
                     }
                 }
 
@@ -340,9 +343,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     }
                 }
             } else {
-                fragmentMapGpsAccuracy.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyValue?.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyValue?.text = "N/A"
+                fragmentMapGpsAccuracyView.setTextColor(Color.RED)
+                fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
+                fragmentMapGpsAccuracyViewValue?.text = "N/A"
                 MainActivity.mAllowNewTreeOrUpdate = false
             }
 
