@@ -16,6 +16,13 @@
 default_platform(:android)
 
 platform :android do
+
+
+  before_all do |lane, options|
+    ensure_git_status_clean(show_uncommitted_changes: true)
+  end
+
+
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
@@ -89,3 +96,4 @@ platform :android do
     f.close
   end
 end
+
