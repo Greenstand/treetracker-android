@@ -43,7 +43,7 @@ class TermsPolicyFragment: Fragment() {
 
         requireActivity().toolbarTitle?.apply {
             setText(R.string.sign_up_title)
-            setTextColor(resources.getColor(R.color.blackColor))
+            setTextColor(resources.getColor(R.color.black))
         }
 
         //Make parts of the text_agreement to be clickable
