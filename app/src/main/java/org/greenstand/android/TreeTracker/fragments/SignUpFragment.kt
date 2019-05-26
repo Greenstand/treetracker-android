@@ -43,6 +43,7 @@ class SignUpFragment : Fragment() {
         signupFirstNameEditText.onTextChanged { viewModel.firstName = it }
         signupLastNameEditText.onTextChanged { viewModel.lastName = it }
         signupOrganizationEditText.onTextChanged { viewModel.organization = it }
+        viewModel.organization = signupOrganizationEditText.text.toString()
 
         signUpFragmentButton.setOnClickListener {
             val termsFragment = TermsPolicyFragment.getInstance(viewModel.userInfo)
