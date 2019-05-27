@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#f5f5f5</color>
+    <color name="colorPrimary">#1B5E20</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#1B5E20</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>
-    <color name="link_color">#1B5E20</color>
 
     <!--New color palette-->
-    <color name="backgroundWhite">#FFFFFF</color>
-    <color name="greenColor">#AED581</color>
-    <color name="blackColor">#000000</color>
-    <color name="redColor">#D90000</color>
-    <color name="blackWithOpacity54Opacity">#8A000000</color>
+    <color name="green">#AED581</color>
+    <color name="black54">#8A000000</color>
     <color name="lightGrey">#D3D3D3</color>
+
+    <!-- Component Colors (These should NEVER reference a hash color directly)-->
+    <color name="toolbar">@color/green</color>
+    <color name="new_tree_button">@color/green</color>
+    <color name="button">@color/green</color>
+    <color name="button_text">@color/black54</color>
+    <color name="background">@color/white</color>
 
 </resources>

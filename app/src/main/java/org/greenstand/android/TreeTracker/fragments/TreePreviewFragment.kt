@@ -30,15 +30,11 @@ import java.io.IOException
 import java.text.ParseException
 import java.util.*
 
-class TreePreviewFragment : Fragment(), OnClickListener {
+class TreePreviewFragment : Fragment() {
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
-    private val mImageBitmap: Bitmap? = null
     private var treeIdStr: String? = ""
-    private var fragment: androidx.fragment.app.Fragment? = null
-    private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
-    private var bundle: Bundle? = null
 
     lateinit var appDatabase: AppDatabase
 
@@ -66,8 +62,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
         treeIdStr = extras!!.getString(ValueHelper.TREE_ID)
 
         mImageView = v.fragmentTreePreviewImage
-
-        v.fragmentTreePreviewMore.setOnClickListener(this@TreePreviewFragment)
 
         runBlocking {
 
@@ -170,33 +164,6 @@ class TreePreviewFragment : Fragment(), OnClickListener {
 
 
         return v
-    }
-
-    override fun onClick(v: View) {
-
-        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
-
-        when (v.id) {
-            R.id.fragmentTreePreviewMore -> {
-                fragment = NoteFragment()
-
-                bundle = activity!!.intent.extras
-
-                if (bundle == null)
-                    bundle = Bundle()
-
-                bundle!!.putString(ValueHelper.TREE_ID, treeIdStr)
-                fragment!!.arguments = bundle
-
-                fragmentTransaction = activity!!.supportFragmentManager
-                    .beginTransaction()
-                fragmentTransaction?.replace(R.id.containerFragment, fragment as NoteFragment)
-                    ?.addToBackStack(ValueHelper.NOTE_FRAGMENT)?.commit()
-            }
-
-            else -> {
-            }
-        }
     }
 
     private fun setPic() {

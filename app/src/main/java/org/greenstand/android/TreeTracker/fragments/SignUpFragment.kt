@@ -33,7 +33,7 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         requireActivity().toolbarTitle?.apply {
             setText(R.string.sign_up_title)
-            setTextColor(resources.getColor(R.color.blackColor))
+            setTextColor(resources.getColor(R.color.black))
         }
 
         viewModel.signupButtonStateLiveDate.observe(this, androidx.lifecycle.Observer {

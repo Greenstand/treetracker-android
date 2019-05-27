@@ -36,7 +36,7 @@ class LoginFragment : Fragment(){
 
         requireActivity().toolbarTitle?.apply {
             setText(R.string.greenstand_welcome_text)
-            setTextColor(resources.getColor(R.color.blackColor))
+            setTextColor(resources.getColor(R.color.black))
         }
 
         vm.errorMessageLiveDate.observe(this, Observer {
