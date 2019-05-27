@@ -8,7 +8,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.location.Location
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,18 +25,14 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.data.NewTree
-import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.Utils
-import org.greenstand.android.TreeTracker.utilities.Utils.Companion.dateFormat
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.view.CustomToast
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
-import java.util.*
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
     private var mImageView: ImageView? = null
@@ -163,7 +158,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                 GlobalScope.launch(Dispatchers.Main) {
 
                     val newTree = createNewTreeData() ?: run {
-                        Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
+                        CustomToast.showToast("Insufficient GPS accuracy")
                         activity!!.supportFragmentManager.popBackStack()
                         return@launch
                     }
@@ -177,7 +172,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                             .commit()
                     } else {
                         withContext(Dispatchers.IO) { saveToDb(newTree) }
-                        Toast.makeText(activity, "Tree saved", Toast.LENGTH_SHORT).show()
+                        CustomToast.showToast("Tree saved")
                         requireActivity().supportFragmentManager.popBackStack()
                     }
                 }
