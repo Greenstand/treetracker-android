@@ -72,9 +72,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     override fun onPause() {
         super.onPause()
 
-        map?.let {
-            it.isMyLocationEnabled = false
-        }
+        map?.isMyLocationEnabled = false
     }
 
     override fun onResume() {
