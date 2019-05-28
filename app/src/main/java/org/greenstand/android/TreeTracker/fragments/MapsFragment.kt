@@ -316,8 +316,11 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
 
+        MainActivity.mCurrentLocation ?: return true
+
         GlobalScope.launch {
             val userId = -1
+
 
             for (i in 0..499) {
 
