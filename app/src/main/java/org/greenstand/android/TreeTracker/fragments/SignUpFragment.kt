@@ -33,7 +33,7 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         requireActivity().toolbarTitle?.apply {
             setText(R.string.sign_up_title)
-            setTextColor(resources.getColor(R.color.blackColor))
+            setTextColor(resources.getColor(R.color.black))
         }
 
         viewModel.signupButtonStateLiveDate.observe(this, androidx.lifecycle.Observer {
@@ -43,6 +43,7 @@ class SignUpFragment : Fragment() {
         signupFirstNameEditText.onTextChanged { viewModel.firstName = it }
         signupLastNameEditText.onTextChanged { viewModel.lastName = it }
         signupOrganizationEditText.onTextChanged { viewModel.organization = it }
+        viewModel.organization = signupOrganizationEditText.text.toString()
 
         signUpFragmentButton.setOnClickListener {
             val termsFragment = TermsPolicyFragment.getInstance(viewModel.userInfo)

@@ -76,33 +76,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
-
-        val extras = intent.extras
-        var startDataSync = false
-        if (extras != null) {
-            if (extras.getBoolean(ValueHelper.RUN_FROM_NOTIFICATION_SYNC)) {
-                startDataSync = true
-            }
-        }
-
-        if (startDataSync) {
-            Timber.d("MainActivity startDataSync is true")
-            val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            mNotificationManager.cancel(ValueHelper.WIFI_NOTIFICATION_ID)
-
-            val dataFragment = DataFragment()
-            dataFragment.arguments = intent.extras
-
-            val fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction.add(R.id.containerFragment, dataFragment, ValueHelper.DATA_FRAGMENT)
-
-            fragmentTransaction.commit()
-
-        }
-
         val userIdentifier = mSharedPreferences?.getString(ValueHelper.PLANTER_IDENTIFIER, null)
-        if(  userIdentifier == null){
+        if (userIdentifier == null) {
             val editor = mSharedPreferences?.edit()
             editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
             editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
@@ -117,7 +92,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
                 ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
-        }else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
+        } else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
             Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
             var bundle = intent.extras
 
@@ -153,7 +128,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                         .beginTransaction()
                 fragmentTransaction.replace(R.id.containerFragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
                 fragmentTransaction.commit()
-            }else {
+            } else {
                 val editor = mSharedPreferences?.edit()
                 editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
                 editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
@@ -261,23 +236,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         return super.onOptionsItemSelected(item)
     }
 
-
-    /*
-     * Called when the Activity is going into the background.
-     * Parts of the UI may be visible, but the Activity is inactive.
-     */
     public override fun onPause() {
-        Timber.d("onPause")
         super.onPause()
 
         stopPeriodicUpdates()
     }
 
-    /*
-     * Called when the system detects that this Activity is now visible.
-     */
     public override fun onResume() {
-        Timber.d("onResume")
         super.onResume()
 
         if(necessaryPermissionsGranted()) {
@@ -301,15 +266,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Permissions.NECESSARY_PERMISSIONS)
     }
 
-
     fun onLocationChanged(location: Location) {
-        //Timber.d("onLocationChanged", location.toString());
-
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location
 
         //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         val minAccuracy = 10
+
 
 
         val fragmentMapGpsAccuracyView : TextView? = findViewById(R.id.fragmentMapGpsAccuracy)
