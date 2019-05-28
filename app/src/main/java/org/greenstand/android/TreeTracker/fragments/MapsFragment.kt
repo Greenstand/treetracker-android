@@ -52,10 +52,7 @@ import java.util.*
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
 
-    private var mSettingCallback: LocationDialogListener? = null
-
     private var mSharedPreferences: SharedPreferences? = null
-    private var paused = false
 
     private var fragment: androidx.fragment.app.Fragment? = null
 
@@ -64,21 +61,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
-
-    interface LocationDialogListener {
-        fun refreshMap()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        try {
-            mSettingCallback = context as LocationDialogListener?
-        } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement LocationDialogListener")
-        }
-
-    }
 
     lateinit var database: AppDatabase
 
@@ -90,21 +72,11 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     override fun onPause() {
         super.onPause()
 
-        if(this.map != null){
-            this.map?.isMyLocationEnabled = false
-        }
-
-        paused = true
+        map?.isMyLocationEnabled = false
     }
 
     override fun onResume() {
         super.onResume()
-
-        if (paused) {
-            (childFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment).getMapAsync(this)
-        }
-        paused = false
 
         val currentTimestamp = System.currentTimeMillis() / 1000
         val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
@@ -157,25 +129,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        try {
-            val fragment = activity!!
-                .supportFragmentManager.findFragmentById(
-                R.id.map
-            ) as SupportMapFragment?
-            if (fragment != null)
-                activity!!.supportFragmentManager.beginTransaction().remove(fragment).commit()
-
-        } catch (e: IllegalStateException) {
-            //handle this situation because you are necessary will get
-            //an exception here :-(
-        }
-
-    }
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map, container, false)
     }
@@ -201,6 +154,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
 
         addTreeButton.setOnClickListener(this)
+
         if (FeatureFlags.DEBUG_ENABLED) {
             addTreeButton.setOnLongClickListener(this)
         }
@@ -263,13 +217,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         }
     }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION) {
-            mSettingCallback?.refreshMap()
-        }
-    }
-
 
     override fun onClick(v: View) {
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
@@ -442,7 +389,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
                         .position(latLng)
                     map.addMarker(markerOptions)
-
                 }
 
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
@@ -460,11 +406,5 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         map.setOnMarkerClickListener(this@MapsFragment)
 
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
-    }
-
-    companion object {
-        private val TAG = "MapsFragment"
-        @SuppressLint("StaticFieldLeak")
-        private var view: View? = null
     }
 }
