@@ -31,7 +31,7 @@ platform :android do
   desc "Submit a new Greenstand Beta Build to Crashlytics Beta"
   lane :beta do
   
-    bump_version_code()
+    versionReleased = bump_version_code()
 
     git_commit(path: "./app/build.gradle", message: "Version Bump")
 
@@ -43,6 +43,10 @@ platform :android do
 
     slack(message: "A new Greenstand Beta Build has been released on Fabric",
         slack_url: ENV["SLACK_URL_QC”],
+        payload: {
+                     "Build Number" => versionReleased,
+                     "Message" => "This is a test",
+                   },
         default_payloads: ['git_branch'])
   
   end
@@ -94,6 +98,8 @@ platform :android do
     f = File.new(path, 'w')
     f.write(s)
     f.close
+
+    versionCode += 1
   end
 end
 
