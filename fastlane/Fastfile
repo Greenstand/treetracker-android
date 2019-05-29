@@ -33,7 +33,7 @@ platform :android do
   
     versionReleased = bump_version_code()
 
-    git_commit(path: "./app/build.gradle", message: "Version Bump")
+    git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
     gradle(task: "clean assembleGreenstandDebug")
     crashlytics(groups: "all-testers")
