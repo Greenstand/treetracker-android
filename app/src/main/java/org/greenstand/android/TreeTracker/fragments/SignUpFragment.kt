@@ -5,25 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.onTextChanged
 import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class SignUpFragment : Fragment() {
 
-    lateinit var viewModel: SignupViewModel
+    private val vm: SignupViewModel by viewModel()
+
+    private val args by navArgs<SignUpFragmentArgs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(SignupViewModel::class.java)
-
-        arguments?.let {
-            viewModel.userIdentification = it.getString(USER_IDENTIFICATION_KEY)!!
-        } ?: run { throw IllegalStateException("User Identification must be present from Login") }
-
         super.onCreate(savedInstanceState)
+        vm.userIdentification = args.userIdentification
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,36 +35,17 @@ class SignUpFragment : Fragment() {
             setTextColor(resources.getColor(R.color.black))
         }
 
-        viewModel.signupButtonStateLiveDate.observe(this, androidx.lifecycle.Observer {
+        vm.signupButtonStateLiveDate.observe(this, androidx.lifecycle.Observer {
             signUpFragmentButton.isEnabled = it
         })
 
-        signupFirstNameEditText.onTextChanged { viewModel.firstName = it }
-        signupLastNameEditText.onTextChanged { viewModel.lastName = it }
-        signupOrganizationEditText.onTextChanged { viewModel.organization = it }
-        viewModel.organization = signupOrganizationEditText.text.toString()
+        signupFirstNameEditText.onTextChanged { vm.firstName = it }
+        signupLastNameEditText.onTextChanged { vm.lastName = it }
+        signupOrganizationEditText.onTextChanged { vm.organization = it }
+        vm.organization = signupOrganizationEditText.text.toString()
 
         signUpFragmentButton.setOnClickListener {
-//            val termsFragment = TermsPolicyFragment.getInstance(viewModel.userInfo)
-//            activity?.supportFragmentManager?.beginTransaction()?.run {
-//                addToBackStack(null).replace(R.id.containerFragment, termsFragment)
-//                commit()
-//            }
-        }
-    }
-
-    companion object {
-
-        private const val USER_IDENTIFICATION_KEY = "USER_IDENTIFICATION_KEY"
-
-        fun getInstance(userIdentification: String): SignUpFragment {
-            val bundle = Bundle().apply {
-                putString(USER_IDENTIFICATION_KEY, userIdentification)
-            }
-
-            return SignUpFragment().apply {
-                arguments = bundle
-            }
+            findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToTermsPolicyFragment(vm.userInfo))
         }
     }
 }

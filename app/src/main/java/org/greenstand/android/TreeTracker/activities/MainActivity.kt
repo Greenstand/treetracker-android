@@ -25,6 +25,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
@@ -41,8 +43,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private var mSharedPreferences: SharedPreferences? = null
 
     private var fragment: Fragment? = null
-
-    private var fragmentTransaction: FragmentTransaction? = null
 
     private var locationManager: LocationManager? = null
     private var mLocationListener: android.location.LocationListener? = null
@@ -71,8 +71,15 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
 
         setContentView(R.layout.activity_main)
-
         setSupportActionBar(toolbar)
+
+
+//        setupActionBarWithNavController(
+//            navController = findNavController(R.id.nav_host_fragment),
+//            configuration = AppBarConfiguration(topLevelDestinationIds = setOf(R.id.mapsFragment),
+//                                                fallbackOnNavigateUpListener = { findNavController(R.id.nav_host_fragment).navigateUp() }))
+
+
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
@@ -206,6 +213,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_login_flow_graph)
 
 //                fragment = LoginFragment()
 //                fragmentTransaction = supportFragmentManager

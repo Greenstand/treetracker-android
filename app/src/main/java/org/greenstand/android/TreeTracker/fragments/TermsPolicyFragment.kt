@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.view.*
@@ -28,13 +30,13 @@ class TermsPolicyFragment: Fragment() {
 
     private val vm: TermsPolicyViewModel by viewModel()
 
+    private val args: TermsPolicyFragmentArgs by navArgs()
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        arguments?.let {
-            vm.userInfo = it.getParcelable(USER_INFO_KEY)!!
-        } ?: run { throw IllegalStateException("UserInfo must be present from Signup") }
+        vm.userInfo = args.userInfo
 
         return inflater.inflate(R.layout.fragment_terms_policy, container,false)
     }
@@ -104,10 +106,7 @@ class TermsPolicyFragment: Fragment() {
 //        }
 
         vm.onNavigateToMap = {
-//            val fragment = MapsFragment()
-//            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
-//            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, fragment)
-//            fragmentTransaction?.commit()
+            findNavController().navigate(TermsPolicyFragmentDirections.actionTermsPolicyFragmentToMapsFragment())
         }
 
         accept_terms_button.setOnClickListener {
@@ -129,22 +128,6 @@ class TermsPolicyFragment: Fragment() {
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
-
-        }
-    }
-
-
-    companion object {
-
-        private const val USER_INFO_KEY = "USER_INFO_KEY"
-
-        fun getInstance(userInfo: UserInfo): TermsPolicyFragment {
-            val bundle = Bundle().apply {
-                putParcelable(USER_INFO_KEY, userInfo)
-            }
-            return TermsPolicyFragment().apply {
-                arguments = bundle
-            }
         }
     }
 

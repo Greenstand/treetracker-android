@@ -32,4 +32,49 @@
         android:id="@+id/aboutFragment"
         android:name="org.greenstand.android.TreeTracker.fragments.AboutFragment"
         android:label="AboutFragment"/>
+    <navigation android:id="@+id/login_flow_graph"
+                app:startDestination="@id/loginFragment">
+        <fragment
+            android:id="@+id/termsPolicyFragment"
+            android:name="org.greenstand.android.TreeTracker.fragments.TermsPolicyFragment"
+            android:label="TermsPolicyFragment">
+            <argument
+                android:name="userInfo"
+                app:argType="org.greenstand.android.TreeTracker.data.UserInfo"/>
+            <action
+                android:id="@+id/action_termsPolicyFragment_to_mapsFragment"
+                app:destination="@id/mapsFragment"
+                app:popUpTo="@id/mapsFragment"/>
+        </fragment>
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="org.greenstand.android.TreeTracker.fragments.LoginFragment"
+            android:label="LoginFragment">
+            <action
+                android:id="@+id/action_loginFragment_to_signUpFragment"
+                app:destination="@id/signUpFragment"/>
+            <action
+                android:id="@+id/action_loginFragment_to_mapsFragment"
+                app:destination="@id/mapsFragment"
+                app:popUpTo="@id/mapsFragment"/>
+        </fragment>
+        <fragment
+            android:id="@+id/signUpFragment"
+            android:name="org.greenstand.android.TreeTracker.fragments.SignUpFragment"
+            android:label="SignUpFragment">
+            <action
+                android:id="@+id/action_signUpFragment_to_termsPolicyFragment"
+                app:destination="@id/termsPolicyFragment"/>
+            <argument
+                android:name="userIdentification"
+                app:argType="string"/>
+        </fragment>
+        <action
+            android:id="@+id/action_global_mapsFragment"
+            app:destination="@id/mapsFragment"
+            app:popUpTo="@id/mapsFragment"/>
+    </navigation>
+    <action
+        android:id="@+id/action_global_login_flow_graph"
+        app:destination="@id/login_flow_graph"/>
 </navigation>

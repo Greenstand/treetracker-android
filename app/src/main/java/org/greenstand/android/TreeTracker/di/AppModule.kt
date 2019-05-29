@@ -1,18 +1,19 @@
 package org.greenstand.android.TreeTracker.di
 
+import android.content.Context
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
-import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
-import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
-import org.greenstand.android.TreeTracker.viewmodels.TreeHeightViewModel
+import org.greenstand.android.TreeTracker.viewmodels.*
+import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
 
     viewModel { LoginViewModel(get()) }
+
+    viewModel { SignupViewModel() }
 
     viewModel { TermsPolicyViewModel(get()) }
 
@@ -22,7 +23,9 @@ val appModule = module {
 
     single { TreeManager(get()) }
 
-    single { UserManager(get()) }
+    single { UserManager(get(), get()) }
 
     single { PlanterManager(get(), get()) }
+
+    single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
 }
