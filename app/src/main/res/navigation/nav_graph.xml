@@ -23,6 +23,12 @@
         <action
             android:id="@+id/action_mapsFragment_to_dataFragment"
             app:destination="@id/dataFragment"/>
+        <action
+            android:id="@+id/action_mapsFragment_to_new_tree_graph"
+            app:destination="@id/new_tree_graph"/>
+        <action
+            android:id="@+id/action_mapsFragment_to_treePreviewFragment"
+            app:destination="@id/treePreviewFragment"/>
     </fragment>
     <fragment
         android:id="@+id/dataFragment"
@@ -77,4 +83,31 @@
     <action
         android:id="@+id/action_global_login_flow_graph"
         app:destination="@id/login_flow_graph"/>
+    <navigation android:id="@+id/new_tree_graph"
+                app:startDestination="@id/newTreeFragment">
+        <fragment
+            android:id="@+id/treeHeightFragment"
+            android:name="org.greenstand.android.TreeTracker.fragments.TreeHeightFragment"
+            android:label="TreeHeightFragment">
+            <argument
+                android:name="newTree"
+                app:argType="org.greenstand.android.TreeTracker.data.NewTree"/>
+        </fragment>
+        <fragment
+            android:id="@+id/newTreeFragment"
+            android:name="org.greenstand.android.TreeTracker.fragments.NewTreeFragment"
+            android:label="NewTreeFragment">
+            <action
+                android:id="@+id/action_newTreeFragment_to_treeHeightFragment"
+                app:destination="@id/treeHeightFragment"/>
+        </fragment>
+    </navigation>
+    <fragment
+        android:id="@+id/treePreviewFragment"
+        android:name="org.greenstand.android.TreeTracker.fragments.TreePreviewFragment"
+        android:label="TreePreviewFragment">
+        <argument
+            android:name="treeId"
+            app:argType="string"/>
+    </fragment>
 </navigation>

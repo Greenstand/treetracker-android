@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_new_tree.view.*
@@ -35,17 +36,16 @@ import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private var userId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private var takePictureInvoked: Boolean = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -138,7 +138,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
 
         if (MainActivity.mCurrentLocation == null) {
             Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
-            activity!!.supportFragmentManager.popBackStack()
+            findNavController().popBackStack()
         } else if (!takePictureInvoked) {
             takePicture()
         }
@@ -159,21 +159,16 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
 
                     val newTree = createNewTreeData() ?: run {
                         CustomToast.showToast("Insufficient GPS accuracy")
-                        activity!!.supportFragmentManager.popBackStack()
+                        findNavController().popBackStack()
                         return@launch
                     }
 
                     if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
-//                        requireActivity()
-//                            .supportFragmentManager
-//                            .beginTransaction()
-//                            .replace(R.id.containerFragment, TreeHeightFragment.newInstance(newTree))
-//                            .addToBackStack(ValueHelper.TREE_HEIGHT_FRAGMENT)
-//                            .commit()
+                        findNavController().navigate(NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(newTree))
                     } else {
                         withContext(Dispatchers.IO) { saveToDb(newTree) }
                         CustomToast.showToast("Tree saved")
-                        requireActivity().supportFragmentManager.popBackStack()
+                        findNavController().popBackStack()
                     }
                 }
             }
@@ -281,7 +276,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         val rotatedBitmap = ImageUtils.decodeBitmap(mCurrentPhotoPath, resources.displayMetrics.density)
         if (rotatedBitmap == null) {
             Toast.makeText(activity, "Error setting image. Please try again.", Toast.LENGTH_SHORT).show()
-            activity!!.supportFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
         /* Associate the Bitmap to the ImageView */
         mImageView!!.setImageBitmap(rotatedBitmap)

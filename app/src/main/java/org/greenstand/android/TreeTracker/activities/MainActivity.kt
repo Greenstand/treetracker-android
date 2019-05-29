@@ -143,7 +143,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 editor?.commit()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
-
 //
 //                fragment = LoginFragment()
 //                fragmentTransaction = supportFragmentManager
@@ -161,45 +160,16 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val bundle: Bundle?
-        val fm = supportFragmentManager
         when (item.itemId) {
             R.id.action_data -> {
                 fragment = DataFragment()
                 bundle = intent.extras
                 fragment?.arguments = bundle
 
-//                fragmentTransaction = supportFragmentManager.beginTransaction()
-//                fragmentTransaction?.add(R.id.containerFragment, fragment as DataFragment)
-//                    ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
-//                for (entry in 0 until fm.backStackEntryCount) {
-//                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
-//                }
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_dataFragment)
                 return true
             }
             R.id.action_about -> {
-//                val someFragment = supportFragmentManager.findFragmentById(R.id.containerFragment)
-//
-//                var aboutIsRunning = false
-//
-//                if (someFragment != null) {
-//                    if (someFragment is AboutFragment) {
-//                        aboutIsRunning = true
-//                    }
-//                }
-//
-//                if (!aboutIsRunning) {
-//                    fragment = AboutFragment()
-//                    fragment?.arguments = intent.extras
-//
-//                    fragmentTransaction = supportFragmentManager
-//                            .beginTransaction()
-//                    fragmentTransaction?.add(R.id.containerFragment, fragment as AboutFragment)
-//                        ?.addToBackStack(ValueHelper.ABOUT_FRAGMENT)?.commit()
-//                }
-//                for (entry in 0 until fm.backStackEntryCount) {
-//                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
-//                }
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_aboutFragment)
                 return true
             }
@@ -209,17 +179,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
                 editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
                 editor?.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor?.commit()
+                editor?.apply()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_login_flow_graph)
-
-//                fragment = LoginFragment()
-//                fragmentTransaction = supportFragmentManager
-//                        .beginTransaction()
-//                fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-//                    ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
             }
         }
         return super.onOptionsItemSelected(item)

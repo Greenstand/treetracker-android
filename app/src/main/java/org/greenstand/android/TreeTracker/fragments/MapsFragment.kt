@@ -13,6 +13,7 @@ import android.view.View.OnClickListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.fragment.findNavController
 import com.amazonaws.util.IOUtils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -54,11 +55,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     private var mSharedPreferences: SharedPreferences? = null
 
-    private var fragment: androidx.fragment.app.Fragment? = null
-
-    private var bundle: Bundle? = null
-
-    private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
@@ -69,6 +65,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         database = getKoin().get()
     }
 
+    @SuppressLint("MissingPermission")
     override fun onPause() {
         super.onPause()
 
@@ -230,23 +227,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     val currentTimestamp = System.currentTimeMillis() / 1000
                     val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
                     if (currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
-
-//                        fragment = LoginFragment()
-//                        fragmentTransaction = activity!!.supportFragmentManager
-//                            .beginTransaction()
-//                        fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-//                            ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
-
+                        findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
-//                        fragment = NewTreeFragment()
-//                        bundle = activity!!.intent.extras
-//                        fragment?.arguments = bundle
-//
-//                        fragmentTransaction = activity?.supportFragmentManager
-//                            ?.beginTransaction()
-//                        fragmentTransaction?.replace(R.id.containerFragment, fragment as NewTreeFragment)
-//                            ?.addToBackStack(ValueHelper.NEW_TREE_FRAGMENT)?.commit()
-
+                        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                     }
                 } else {
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
@@ -333,19 +316,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-//        fragment = TreePreviewFragment()
-//        bundle = activity!!.intent.extras
-//
-//        if (bundle == null)
-//            bundle = Bundle()
-//
-//        bundle!!.putString(ValueHelper.TREE_ID, marker.title)
-//        fragment!!.arguments = bundle
-//
-//        fragmentTransaction = activity!!.supportFragmentManager
-//            .beginTransaction()
-//        fragmentTransaction?.replace(R.id.containerFragment, fragment as TreePreviewFragment)
-//            ?.addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT)?.commit()
+        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
         return true
     }
 

@@ -13,6 +13,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.view.*
 import kotlinx.coroutines.GlobalScope
@@ -34,7 +35,9 @@ class TreePreviewFragment : Fragment() {
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
-    private var treeIdStr: String? = ""
+    private var treeIdStr: String = ""
+
+    private val args: TreePreviewFragmentArgs by navArgs()
 
     lateinit var appDatabase: AppDatabase
 
@@ -57,9 +60,7 @@ class TreePreviewFragment : Fragment() {
         activity?.toolbarTitle?.setText(R.string.tree_preview)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        val extras = arguments
-
-        treeIdStr = extras!!.getString(ValueHelper.TREE_ID)
+        treeIdStr = args.treeId
 
         mImageView = v.fragmentTreePreviewImage
 
@@ -70,7 +71,6 @@ class TreePreviewFragment : Fragment() {
             }.await()
 
             trees.forEach {
-
 
                 mCurrentPhotoPath = it.name
 
