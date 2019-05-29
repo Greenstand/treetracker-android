@@ -35,8 +35,7 @@ import org.greenstand.android.TreeTracker.fragments.*
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback,
-    MapsFragment.LocationDialogListener {
+class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private var mSharedPreferences: SharedPreferences? = null
 
@@ -169,27 +168,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragment?.arguments = bundle
 
                 fragmentTransaction = supportFragmentManager.beginTransaction()
-                fragmentTransaction?.replace(R.id.containerFragment, fragment as DataFragment)
+                fragmentTransaction?.add(R.id.containerFragment, fragment as DataFragment)
                     ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
                 for (entry in 0 until fm.backStackEntryCount) {
                     Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
                 }
                 return true
             }
-        /*
-            case R.id.action_settings:
-                fragment = new SettingsFragment();
-                bundle = getIntent().getExtras();
-                fragment.setArguments(bundle);
-
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container_fragment, fragment)
-                .addToBackStack(ValueHelper.SETTINGS_FRAGMENT).commit();
-                for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                    Timber.d("MainActivity", "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
-                }
-                return true;
-                */
             R.id.action_about -> {
                 val someFragment = supportFragmentManager.findFragmentById(R.id.containerFragment)
 
@@ -207,7 +192,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
                     fragmentTransaction = supportFragmentManager
                             .beginTransaction()
-                    fragmentTransaction?.replace(R.id.containerFragment, fragment as AboutFragment)
+                    fragmentTransaction?.add(R.id.containerFragment, fragment as AboutFragment)
                         ?.addToBackStack(ValueHelper.ABOUT_FRAGMENT)?.commit()
                 }
                 for (entry in 0 until fm.backStackEntryCount) {
@@ -435,11 +420,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
         mLocationUpdatesStarted = false
 
-    }
-
-
-    override fun refreshMap() {
-        startPeriodicUpdates()
     }
 
     // TODO: implementing this as a static companion object is not necessarily a good design
