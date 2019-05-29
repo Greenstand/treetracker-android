@@ -231,21 +231,21 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
                     if (currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
 
-                        fragment = LoginFragment()
-                        fragmentTransaction = activity!!.supportFragmentManager
-                            .beginTransaction()
-                        fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-                            ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
+//                        fragment = LoginFragment()
+//                        fragmentTransaction = activity!!.supportFragmentManager
+//                            .beginTransaction()
+//                        fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
+//                            ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
                     } else {
-                        fragment = NewTreeFragment()
-                        bundle = activity!!.intent.extras
-                        fragment?.arguments = bundle
-
-                        fragmentTransaction = activity?.supportFragmentManager
-                            ?.beginTransaction()
-                        fragmentTransaction?.replace(R.id.containerFragment, fragment as NewTreeFragment)
-                            ?.addToBackStack(ValueHelper.NEW_TREE_FRAGMENT)?.commit()
+//                        fragment = NewTreeFragment()
+//                        bundle = activity!!.intent.extras
+//                        fragment?.arguments = bundle
+//
+//                        fragmentTransaction = activity?.supportFragmentManager
+//                            ?.beginTransaction()
+//                        fragmentTransaction?.replace(R.id.containerFragment, fragment as NewTreeFragment)
+//                            ?.addToBackStack(ValueHelper.NEW_TREE_FRAGMENT)?.commit()
 
                     }
                 } else {
@@ -333,19 +333,19 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        fragment = TreePreviewFragment()
-        bundle = activity!!.intent.extras
-
-        if (bundle == null)
-            bundle = Bundle()
-
-        bundle!!.putString(ValueHelper.TREE_ID, marker.title)
-        fragment!!.arguments = bundle
-
-        fragmentTransaction = activity!!.supportFragmentManager
-            .beginTransaction()
-        fragmentTransaction?.replace(R.id.containerFragment, fragment as TreePreviewFragment)
-            ?.addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT)?.commit()
+//        fragment = TreePreviewFragment()
+//        bundle = activity!!.intent.extras
+//
+//        if (bundle == null)
+//            bundle = Bundle()
+//
+//        bundle!!.putString(ValueHelper.TREE_ID, marker.title)
+//        fragment!!.arguments = bundle
+//
+//        fragmentTransaction = activity!!.supportFragmentManager
+//            .beginTransaction()
+//        fragmentTransaction?.replace(R.id.containerFragment, fragment as TreePreviewFragment)
+//            ?.addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT)?.commit()
         return true
     }
 

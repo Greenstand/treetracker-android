@@ -104,10 +104,10 @@ class TermsPolicyFragment: Fragment() {
 //        }
 
         vm.onNavigateToMap = {
-            val fragment = MapsFragment()
-            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
-            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, fragment)
-            fragmentTransaction?.commit()
+//            val fragment = MapsFragment()
+//            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
+//            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, fragment)
+//            fragmentTransaction?.commit()
         }
 
         accept_terms_button.setOnClickListener {

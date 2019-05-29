@@ -46,11 +46,11 @@ class SignUpFragment : Fragment() {
         viewModel.organization = signupOrganizationEditText.text.toString()
 
         signUpFragmentButton.setOnClickListener {
-            val termsFragment = TermsPolicyFragment.getInstance(viewModel.userInfo)
-            activity?.supportFragmentManager?.beginTransaction()?.run {
-                addToBackStack(null).replace(R.id.containerFragment, termsFragment)
-                commit()
-            }
+//            val termsFragment = TermsPolicyFragment.getInstance(viewModel.userInfo)
+//            activity?.supportFragmentManager?.beginTransaction()?.run {
+//                addToBackStack(null).replace(R.id.containerFragment, termsFragment)
+//                commit()
+//            }
         }
     }
 

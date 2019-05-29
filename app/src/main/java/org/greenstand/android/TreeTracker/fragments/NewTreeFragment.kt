@@ -164,12 +164,12 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     }
 
                     if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
-                        requireActivity()
-                            .supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.containerFragment, TreeHeightFragment.newInstance(newTree))
-                            .addToBackStack(ValueHelper.TREE_HEIGHT_FRAGMENT)
-                            .commit()
+//                        requireActivity()
+//                            .supportFragmentManager
+//                            .beginTransaction()
+//                            .replace(R.id.containerFragment, TreeHeightFragment.newInstance(newTree))
+//                            .addToBackStack(ValueHelper.TREE_HEIGHT_FRAGMENT)
+//                            .commit()
                     } else {
                         withContext(Dispatchers.IO) { saveToDb(newTree) }
                         CustomToast.showToast("Tree saved")

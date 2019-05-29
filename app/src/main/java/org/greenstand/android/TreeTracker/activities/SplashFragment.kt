@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -32,6 +33,8 @@ class SplashFragment : Fragment() {
 
         GlobalScope.launch {
             delay(ValueHelper.SPLASH_SCREEN_DURATION)
+
+            findNavController().navigate(R.id.action_splashFragment2_to_mapsFragment)
 
 //            val intent = Intent(this@SplashActivity, MainActivity::class.java).apply {
 //                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or

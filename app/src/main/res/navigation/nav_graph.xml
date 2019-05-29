@@ -6,5 +6,30 @@
     <fragment
         android:id="@+id/splashFragment2"
         android:name="org.greenstand.android.TreeTracker.activities.SplashFragment"
-        android:label="SplashFragment"/>
+        android:label="SplashFragment">
+        <action
+            android:id="@+id/action_splashFragment2_to_mapsFragment"
+            app:destination="@id/mapsFragment"
+            app:popUpTo="@+id/splashFragment2"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="org.greenstand.android.TreeTracker.fragments.MapsFragment"
+        android:label="MapsFragment">
+        <action
+            android:id="@+id/action_mapsFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment"/>
+        <action
+            android:id="@+id/action_mapsFragment_to_dataFragment"
+            app:destination="@id/dataFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/dataFragment"
+        android:name="org.greenstand.android.TreeTracker.fragments.DataFragment"
+        android:label="DataFragment"/>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="org.greenstand.android.TreeTracker.fragments.AboutFragment"
+        android:label="AboutFragment"/>
 </navigation>

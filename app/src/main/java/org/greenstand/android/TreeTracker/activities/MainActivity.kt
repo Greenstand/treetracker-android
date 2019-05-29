@@ -86,11 +86,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
             toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
-            fragment = LoginFragment()
-            fragmentTransaction = supportFragmentManager
-                .beginTransaction()
-            fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-                ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
+//            fragment = LoginFragment()
+//            fragmentTransaction = supportFragmentManager
+//                .beginTransaction()
+//            fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
+//                ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
 
         } else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
             Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
@@ -99,10 +99,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             fragment = MapsFragment()
             fragment?.arguments = bundle
 
-            fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction?.replace(R.id.containerFragment, fragment as MapsFragment)
-                ?.addToBackStack(ValueHelper.MAP_FRAGMENT)?.commit()
+//            fragmentTransaction = supportFragmentManager
+//                    .beginTransaction()
+//            fragmentTransaction?.replace(R.id.containerFragment, fragment as MapsFragment)
+//                ?.addToBackStack(ValueHelper.MAP_FRAGMENT)?.commit()
 
             if (bundle == null)
                 bundle = Bundle()
@@ -110,24 +110,24 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true)
 
 
-            fragment = DataFragment()
-            fragment?.arguments = bundle
-
-            fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction?.replace(R.id.containerFragment, fragment as DataFragment)
-                ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
+//            fragment = DataFragment()
+//            fragment?.arguments = bundle
+//
+//            fragmentTransaction = supportFragmentManager
+//                    .beginTransaction()
+//            fragmentTransaction?.replace(R.id.containerFragment, fragment as DataFragment)
+//                ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
 
         } else {
             if (userIdentifier != getString(R.string.user_not_identified)) {
                 Timber.d("MainActivity" + " startDataSync is false")
-                val homeFragment = MapsFragment()
-                homeFragment.arguments = intent.extras
-
-                val fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction.replace(R.id.containerFragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
-                fragmentTransaction.commit()
+//                val homeFragment = MapsFragment()
+//                homeFragment.arguments = intent.extras
+//
+//                val fragmentTransaction = supportFragmentManager
+//                        .beginTransaction()
+//                fragmentTransaction.replace(R.id.containerFragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
+//                fragmentTransaction.commit()
             } else {
                 val editor = mSharedPreferences?.edit()
                 editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
@@ -137,12 +137,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
-
-                fragment = LoginFragment()
-                fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction?.replace(R.id.containerFragment,
-                        fragment as LoginFragment)?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
+//
+//                fragment = LoginFragment()
+//                fragmentTransaction = supportFragmentManager
+//                        .beginTransaction()
+//                fragmentTransaction?.replace(R.id.containerFragment,
+//                        fragment as LoginFragment)?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
             }
         }
     }
@@ -156,49 +156,44 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         val bundle: Bundle?
         val fm = supportFragmentManager
         when (item.itemId) {
-            android.R.id.home -> {
-
-                if (fm.backStackEntryCount > 0) {
-                    fm.popBackStack()
-                }
-                return true
-            }
             R.id.action_data -> {
                 fragment = DataFragment()
                 bundle = intent.extras
                 fragment?.arguments = bundle
 
-                fragmentTransaction = supportFragmentManager.beginTransaction()
-                fragmentTransaction?.add(R.id.containerFragment, fragment as DataFragment)
-                    ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
-                for (entry in 0 until fm.backStackEntryCount) {
-                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
-                }
+//                fragmentTransaction = supportFragmentManager.beginTransaction()
+//                fragmentTransaction?.add(R.id.containerFragment, fragment as DataFragment)
+//                    ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
+//                for (entry in 0 until fm.backStackEntryCount) {
+//                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
+//                }
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_dataFragment)
                 return true
             }
             R.id.action_about -> {
-                val someFragment = supportFragmentManager.findFragmentById(R.id.containerFragment)
-
-                var aboutIsRunning = false
-
-                if (someFragment != null) {
-                    if (someFragment is AboutFragment) {
-                        aboutIsRunning = true
-                    }
-                }
-
-                if (!aboutIsRunning) {
-                    fragment = AboutFragment()
-                    fragment?.arguments = intent.extras
-
-                    fragmentTransaction = supportFragmentManager
-                            .beginTransaction()
-                    fragmentTransaction?.add(R.id.containerFragment, fragment as AboutFragment)
-                        ?.addToBackStack(ValueHelper.ABOUT_FRAGMENT)?.commit()
-                }
-                for (entry in 0 until fm.backStackEntryCount) {
-                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
-                }
+//                val someFragment = supportFragmentManager.findFragmentById(R.id.containerFragment)
+//
+//                var aboutIsRunning = false
+//
+//                if (someFragment != null) {
+//                    if (someFragment is AboutFragment) {
+//                        aboutIsRunning = true
+//                    }
+//                }
+//
+//                if (!aboutIsRunning) {
+//                    fragment = AboutFragment()
+//                    fragment?.arguments = intent.extras
+//
+//                    fragmentTransaction = supportFragmentManager
+//                            .beginTransaction()
+//                    fragmentTransaction?.add(R.id.containerFragment, fragment as AboutFragment)
+//                        ?.addToBackStack(ValueHelper.ABOUT_FRAGMENT)?.commit()
+//                }
+//                for (entry in 0 until fm.backStackEntryCount) {
+//                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
+//                }
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_aboutFragment)
                 return true
             }
 
@@ -212,11 +207,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
 
-                fragment = LoginFragment()
-                fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-                    ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
+//                fragment = LoginFragment()
+//                fragmentTransaction = supportFragmentManager
+//                        .beginTransaction()
+//                fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
+//                    ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
             }
         }
         return super.onOptionsItemSelected(item)
