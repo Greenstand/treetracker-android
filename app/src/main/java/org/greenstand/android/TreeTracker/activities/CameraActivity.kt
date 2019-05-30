@@ -151,6 +151,9 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
                 // TODO Auto-generated catch block
                 e.printStackTrace()
             }
+        } else {
+            val focusMetric = testFocusQuality()
+            println(focusMetric)
         }
 
         setPic()
@@ -200,6 +203,103 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         mCurrentPhotoPath = f.absolutePath
 
         return f
+    }
+
+    /**
+     * // Compute average of sum of squares of the gradient in H and V directions.
+     */
+	private  fun brennersFocusMetric(input: Array<Array<Int>>,rows: Int,cols: Int ) : Double {
+
+        var V = Array(rows) {Array(cols) {0} }
+        var H = Array(rows) {Array(cols) {0} }
+		for(row in 0 until rows)
+		{
+			for (col in 0 until cols-2) {
+				val grad = input[row][col+2] - input[row][col];
+				H[row][col] = grad;
+			}
+		}
+
+		for(row in 0 until rows-2)
+		{
+			for (col in 0 until cols) {
+				val grad = input[row+2][col] - input[row][col];
+				V[row][col] = grad;
+			}
+		}
+
+		var sum = 0;
+		for(row in 0 until rows)
+		{
+			for (col in 0 until cols) {
+                val HRC = H[row][col];
+                val VRC = V[row][col];
+                if (kotlin.math.abs(HRC) > kotlin.math.abs(VRC)) {
+                    sum += HRC * HRC
+                }
+                else {
+                    sum += VRC * VRC
+                }
+			}
+		}
+		return sum / (rows * cols).toDouble();
+	}
+
+    /**
+     *  Get grayscale image using standard formula.
+     */
+    private fun getGrayPixels(image: Array<Array<Int>>,rows: Int,cols: Int) : Array<Array<Int>> {
+        var result = Array(rows) { Array(cols) { 0 } }
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                var B = image[r][c] and 0x000000FF
+                var G = (image[r][c] and 0x0000FF00) shr 8
+                var R = (image[r][c] and 0x00FF0000) shr 16
+
+                val gray = (0.2990 * R + 0.5870 * G + 0.1140 * B)
+                result[r][c] = gray.toInt()
+            }
+        }
+        return result
+
+    }
+
+    /**
+     *  use Brenner's focus metric.
+     */
+    private fun  testFocusQuality() : Double {
+        try {
+            val bmOptions = BitmapFactory.Options()
+
+            bmOptions.inSampleSize = 1
+            bmOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            bmOptions.inJustDecodeBounds = false
+
+            /* Decode the JPEG file into a Bitmap */
+            val bitmap = BitmapFactory.decodeFile(tmpImageFile!!.absolutePath, bmOptions) ?: return 0.0;
+            val rows = bitmap.height
+            val cols = bitmap.width
+            val bc = bitmap.byteCount
+            val pix = IntArray(rows * cols)
+            bitmap.getPixels(pix, 0, cols, 0, 0, cols, rows)
+            var img = Array(rows) { Array(cols) { 0 } }
+            // need to get a grid to calculate gradients.
+            var index = 0;
+            for (r in 0 until rows) {
+                for (c in 0 until cols) {
+                    img[r][c] = pix[index++]
+                }
+            }
+            // metric only cares about luminance.
+            val grayImage = getGrayPixels(img, rows, cols)
+            return brennersFocusMetric(grayImage, rows, cols)
+        }
+        catch(e: java.lang.Exception)
+        {
+            println(e);
+        }
+        // TODO on an error, we return very bad focus.
+        return 0.0;
     }
 
     private fun setPic() {
