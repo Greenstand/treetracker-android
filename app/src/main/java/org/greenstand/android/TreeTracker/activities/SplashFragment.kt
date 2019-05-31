@@ -10,13 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
-
 import timber.log.Timber
 
 class SplashFragment : Fragment() {
@@ -36,7 +34,7 @@ class SplashFragment : Fragment() {
             if (userManager.isUserLoggedIn()) {
                 findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToMapsFragment())
             } else {
-                findNavController().navigate(SplashFragmentDirections.actionGlobalLoginFlowGraph())
+                findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
             }
         }
     }

@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.activities
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -14,27 +13,24 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.fragments.*
+import org.greenstand.android.TreeTracker.fragments.DataFragment
+import org.greenstand.android.TreeTracker.fragments.MapsFragment
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
@@ -73,12 +69,21 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        findViewById<View>(R.id.appbar_layout).visibility = View.GONE
 
-//        setupActionBarWithNavController(
-//            navController = findNavController(R.id.nav_host_fragment),
-//            configuration = AppBarConfiguration(topLevelDestinationIds = setOf(R.id.mapsFragment),
-//                                                fallbackOnNavigateUpListener = { findNavController(R.id.nav_host_fragment).navigateUp() }))
+        val navController = findNavController(R.id.nav_host_fragment)
 
+        val listener = NavController.OnDestinationChangedListener { controller, destination, arguments ->
+            if (destination.id != R.id.splashFragment2) {
+                findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
+            }
+        }
+
+        navController.addOnDestinationChangedListener(listener)
+
+        toolbar.setNavigationOnClickListener {
+            navController.popBackStack()
+        }
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
