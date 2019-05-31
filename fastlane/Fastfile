@@ -79,7 +79,7 @@ platform :android do
 
     versionReleased = bump_version_code()
 
-    git_commit(path: "./app/build.gradle", message: "Release to PLay Store: Version Bump to to " + versionReleased.to_s)
+    git_commit(path: "./app/build.gradle", message: "Release to Play Store: Version Bump to to " + versionReleased.to_s)
 
     add_git_tag()
 
