@@ -45,7 +45,6 @@ platform :android do
         slack_url: ENV["SLACK_URL_QC”],
         payload: {
                      "Build Number" => versionReleased,
-                     "Message" => "This is a test",
                    },
         default_payloads: ['git_branch'])
   
@@ -55,9 +54,9 @@ platform :android do
   desc "Submit a new JustDigIt Beta Build to Crashlytics Beta"
   lane :justdigit_beta do
   
-    bump_version_code()
+    versionReleased = bump_version_code()
 
-    git_commit(path: "./app/build.gradle", message: "Version Bump")
+    git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
     gradle(task: "clean assembleJustdigitDebug")
     crashlytics(groups: "all-testers")
@@ -67,6 +66,9 @@ platform :android do
 
     slack(message: "A new JustDigIt Beta Build has been released on Fabric",
         slack_url: ENV["SLACK_URL_QC”],
+        payload: {
+                     "Build Number" => versionReleased,
+                   },
         default_payloads: ['git_branch'])
   
   end
@@ -75,9 +77,9 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
 
-    bump_version_code()
+    versionReleased = bump_version_code()
 
-    git_commit(path: "./app/build.gradle", message: "Release to PLay Store: Version Bump")
+    git_commit(path: "./app/build.gradle", message: "Release to PLay Store: Version Bump to to " + versionReleased.to_s)
 
     add_git_tag()
 
