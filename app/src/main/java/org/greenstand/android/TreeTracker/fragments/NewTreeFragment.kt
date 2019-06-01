@@ -7,12 +7,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.OnClickListener
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -40,7 +42,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     private var userId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private var takePictureInvoked: Boolean = false
-
+    private var frameLayout: FrameLayout?  = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +86,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         saveBtn.setOnClickListener(this@NewTreeFragment)
 
         mImageView = v.fragmentNewTreeImage
+
+        frameLayout = v.fragment_new_tree_frame_layout
 
         val newTreeDistance = v.fragmentNewTreeDistance
         val newTreeDistanceString = Integer.toString(0) + " " + resources.getString(R.string.meters)
@@ -225,6 +229,11 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     }
 
                     setPic()
+
+
+                    println(MainActivity.mImageQuality)
+                    frameLayout?.setBackgroundColor(Color.RED)
+
                 }
 
             }

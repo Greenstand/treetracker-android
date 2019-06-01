@@ -8,12 +8,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Matrix
 import android.hardware.Camera
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -48,11 +50,15 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
     private var captureSelfie: Boolean = false
 
+
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
         mImageView = cameraPreviewTaken
+
+
         captureButton = buttonCapture
 
         // Add a listener to the buttons
@@ -152,8 +158,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
                 e.printStackTrace()
             }
         } else {
-            val focusMetric = testFocusQuality()
-            println(focusMetric)
+            MainActivity.mImageQuality = testFocusQuality()
         }
 
         setPic()

@@ -251,6 +251,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Permissions.NECESSARY_PERMISSIONS)
     }
 
+    @SuppressLint("SetTextI18n")
     fun onLocationChanged(location: Location) {
         // In the UI, set the latitude and longitude to the value received
         mCurrentLocation = location
@@ -403,7 +404,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
 
         // Register the listener with Location Manager's network provider
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, mLocationListener)
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, mLocationListener)
 
         mLocationUpdatesStarted = true
     }
@@ -429,7 +430,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         var mCurrentTreeLocation: Location? = null
 
         var mAllowNewTreeOrUpdate = false
-
+        var mImageQuality: Double = 0.0
     }
 
 }
