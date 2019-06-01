@@ -5,13 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.managers.PlanterManager
-import org.greenstand.android.TreeTracker.managers.TreeManager
-import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.Validation
-import java.util.*
 
 class LoginViewModel(private val planterManager: PlanterManager): CoroutineViewModel()  {
 
@@ -75,7 +71,7 @@ class LoginViewModel(private val planterManager: PlanterManager): CoroutineViewM
 
             planterManager.addPlanterIdentification(userIdentification,
                                                     photoPath!!,
-                                                    MainActivity.mCurrentLocation)
+                                                    MainActivity.currentLocation)
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }

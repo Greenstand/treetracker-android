@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
 import android.os.Bundle
-import android.view.*
-import android.view.View.OnClickListener
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
@@ -21,10 +23,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.utilities.Utils
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.io.IOException
@@ -86,20 +86,20 @@ class TreePreviewFragment : Fragment() {
                     noImage.visibility = View.VISIBLE
                 }
 
-                MainActivity.mCurrentTreeLocation = Location("")
-                MainActivity.mCurrentTreeLocation!!.latitude = it.latitude
-                MainActivity.mCurrentTreeLocation!!.longitude = it.longitude
+                MainActivity.currentTreeLocation = Location("")
+                MainActivity.currentTreeLocation!!.latitude = it.latitude
+                MainActivity.currentTreeLocation!!.longitude = it.longitude
 
                 // No GPS accuracy info from new api.
-                //			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
+                //			MainActivity.currentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
 
                 val results = floatArrayOf(0f, 0f, 0f)
-                if (MainActivity.mCurrentLocation != null) {
+                if (MainActivity.currentLocation != null) {
                     Location.distanceBetween(
-                        MainActivity.mCurrentLocation!!.latitude,
-                        MainActivity.mCurrentLocation!!.longitude,
-                        MainActivity.mCurrentTreeLocation!!.latitude,
-                        MainActivity.mCurrentTreeLocation!!.longitude,
+                        MainActivity.currentLocation!!.latitude,
+                        MainActivity.currentLocation!!.longitude,
+                        MainActivity.currentTreeLocation!!.latitude,
+                        MainActivity.currentTreeLocation!!.longitude,
                         results
                     )
                 }

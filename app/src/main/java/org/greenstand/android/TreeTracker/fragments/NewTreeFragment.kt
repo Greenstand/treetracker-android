@@ -21,7 +21,10 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_new_tree.view.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
@@ -90,8 +93,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         newTreeDistance.text = newTreeDistanceString
 
         val newTreeGpsAccuracy = v.fragmentNewTreeGpsAccuracy
-        if (MainActivity.mCurrentLocation != null) {
-            val newTreeGpsAccuracyString1 = Integer.toString(Math.round(MainActivity.mCurrentLocation!!.accuracy)) +
+        if (MainActivity.currentLocation != null) {
+            val newTreeGpsAccuracyString1 = Integer.toString(Math.round(MainActivity.currentLocation!!.accuracy)) +
                     " " + resources.getString(R.string.meters)
             newTreeGpsAccuracy.text = newTreeGpsAccuracyString1
         } else {
@@ -136,7 +139,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     override fun onStart() {
         super.onStart()
 
-        if (MainActivity.mCurrentLocation == null) {
+        if (MainActivity.currentLocation == null) {
             Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
         } else if (!takePictureInvoked) {
@@ -213,10 +216,10 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
 
                 if (mCurrentPhotoPath != null) {
 
-                    MainActivity.mCurrentTreeLocation = Location("") // Just a blank location
-                    if (MainActivity.mCurrentLocation != null) {
-                        MainActivity.mCurrentTreeLocation!!.latitude = MainActivity.mCurrentLocation!!.latitude
-                        MainActivity.mCurrentTreeLocation!!.longitude = MainActivity.mCurrentLocation!!.longitude
+                    MainActivity.currentTreeLocation = Location("") // Just a blank location
+                    if (MainActivity.currentLocation != null) {
+                        MainActivity.currentTreeLocation!!.latitude = MainActivity.currentLocation!!.latitude
+                        MainActivity.currentTreeLocation!!.longitude = MainActivity.currentLocation!!.longitude
                     }
 
                     setPic()
