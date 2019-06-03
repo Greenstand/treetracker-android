@@ -307,6 +307,22 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         return 0.0;
     }
 
+    /**
+     * TODO make a gaussian kernel
+     */
+    private fun makeKernel(rows:Int, cols: Int) :  Array<Array<Int>>{
+        var result = Array(rows) { Array(cols) { 0 } }
+        return result
+    }
+    /**
+     *  TODO To test the focus detection, we need to blur some images.
+     */
+    private fun applyKernel(image: Array<Array<Int>>,rows: Int,cols: Int,kernek: Array<Array<Int>>,kRows: Int,kCols: Int ) {
+
+
+    }
+
+
     private fun setPic() {
 
         /* There isn't enough memory to open up more than a couple camera photos */
