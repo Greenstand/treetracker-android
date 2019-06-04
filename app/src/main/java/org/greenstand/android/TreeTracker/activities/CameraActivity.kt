@@ -307,20 +307,34 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         return 0.0;
     }
 
+
+
+    private fun linspace(start: Double, end: Double, n: Int) : Array<Double>
+    {
+        val result = Array<Double>(n){0.0}
+        val nMinus1 = n - 1
+        for (i in 0..nMinus1 )
+        {
+             result[i] = start + (i * (((end - start) /nMinus1) ));
+        }
+        return result
+    }
+
+    private fun grid(start: Double, end: Double, n: Int): Array<Array<Double>>{
+
+        val space =  linspace(start,end,n);
+        return Array<Array<Double>>(n) { space }
+    }
+
     /**
      * TODO make a gaussian kernel
      */
-    private fun makeKernel(rows:Int, cols: Int) :  Array<Array<Int>>{
-        var result = Array(rows) { Array(cols) { 0 } }
-        return result
-    }
+
+
     /**
      *  TODO To test the focus detection, we need to blur some images.
      */
-    private fun applyKernel(image: Array<Array<Int>>,rows: Int,cols: Int,kernek: Array<Array<Int>>,kRows: Int,kCols: Int ) {
-
-
-    }
+   
 
 
     private fun setPic() {
