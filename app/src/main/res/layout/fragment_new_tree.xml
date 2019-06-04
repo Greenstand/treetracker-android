@@ -27,10 +27,32 @@
             />
     </FrameLayout>
     <LinearLayout
+            android:id="@+id/fragment_new_tree_focus_warning_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_new_tree_frame_layout"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin_twenty_four"
+            android:paddingTop="@dimen/one_dp"
+            android:paddingRight="@dimen/margin_twenty_four">
+        <TextView
+                android:id="@+id/fragment_new_tree_focus_warning_text"
+                android:layout_width="@dimen/zero_dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                android:text=""
+                android:gravity="center"
+                android:textColor="@color/red"
+                android:textSize="@dimen/text_size_seventeen"
+                android:visibility="gone" />
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/fragment_new_tree_distance_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_new_tree_frame_layout"
+        android:layout_below="@+id/fragment_new_tree_focus_warning_layout"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_twenty_four"
         android:paddingTop="@dimen/one_dp"

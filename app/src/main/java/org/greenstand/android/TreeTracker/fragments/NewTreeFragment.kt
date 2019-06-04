@@ -43,6 +43,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     private var mSharedPreferences: SharedPreferences? = null
     private var takePictureInvoked: Boolean = false
     private var frameLayout: FrameLayout?  = null
+    private var focusWarning: android.widget.TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +89,9 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         mImageView = v.fragmentNewTreeImage
 
         frameLayout = v.fragment_new_tree_frame_layout
+
+        focusWarning = v.fragment_new_tree_focus_warning_text
+
 
         val newTreeDistance = v.fragmentNewTreeDistance
         val newTreeDistanceString = Integer.toString(0) + " " + resources.getString(R.string.meters)
@@ -229,10 +233,16 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     }
 
                     setPic()
+                    if (MainActivity.mImageQuality < FOCUS_THRESHOLD) {
+                        frameLayout?.setBackgroundColor(Color.RED)
+                        focusWarning?.visibility = View.VISIBLE
+                        focusWarning?.setText(R.string.focus_warning)
+                    } else{
+                        focusWarning?.visibility = View.GONE
+                        focusWarning?.text = ""
+                        frameLayout?.setBackgroundColor(Color.WHITE)
 
-
-                    println(MainActivity.mImageQuality)
-                    frameLayout?.setBackgroundColor(Color.RED)
+                    }
 
                 }
 
@@ -298,6 +308,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     }
 
     companion object {
+        const val FOCUS_THRESHOLD = 950.0
 
         private val TAG = "NewTreeFragment"
 

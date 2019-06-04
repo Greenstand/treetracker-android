@@ -51,7 +51,6 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
     private var captureSelfie: Boolean = false
 
 
-
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
@@ -70,7 +69,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
         setSupportActionBar(camera_toolbar)
         supportActionBar?.title = ""
-        if(captureSelfie) {
+        if (captureSelfie) {
             cameraToolbarTitle.text = getString(R.string.take_a_selfie)
         } else {
             cameraToolbarTitle.text = getString(R.string.add_a_tree)
@@ -87,10 +86,10 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
             captureButton?.visibility = View.INVISIBLE
 
-            while(mCamera == null){
+            while (mCamera == null) {
                 try {
 
-                    if(captureSelfie) {
+                    if (captureSelfie) {
 
                         val numberOfCameras = Camera.getNumberOfCameras()
                         if (numberOfCameras > 1) {
@@ -116,6 +115,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
             captureButton?.visibility = View.VISIBLE
         }
     }
+
     /** Check if this device has a camera  */
     private fun checkCameraHardware(context: Context): Boolean {
         return if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -146,7 +146,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
             e.printStackTrace()
         }
 
-        if(captureSelfie){
+        if (captureSelfie) {
 
             var exif: ExifInterface? = null
             try {
@@ -169,7 +169,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
     private fun compressImage() {
 
-        if(mCurrentPhotoPath != null) {
+        if (mCurrentPhotoPath != null) {
             val photo = Utils.resizedImage(mCurrentPhotoPath!!)
 
             val bytes = ByteArrayOutputStream()
@@ -206,54 +206,55 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         val cw = ContextWrapper(applicationContext)
         val f = ImageUtils.createImageFile(cw)
         mCurrentPhotoPath = f.absolutePath
-
         return f
     }
 
     /**
      * // Compute average of sum of squares of the gradient in H and V directions.
      */
-	private  fun brennersFocusMetric(input: Array<Array<Int>>,rows: Int,cols: Int ) : Double {
+    private fun brennersFocusMetric(input: Array<Array<Int>>): Double {
 
-        var V = Array(rows) {Array(cols) {0} }
-        var H = Array(rows) {Array(cols) {0} }
-		for(row in 0 until rows)
-		{
-			for (col in 0 until cols-2) {
-				val grad = input[row][col+2] - input[row][col];
-				H[row][col] = grad;
-			}
-		}
+        val rows = input.lastIndex + 1;
+        val cols = input.get(0).lastIndex + 1;
 
-		for(row in 0 until rows-2)
-		{
-			for (col in 0 until cols) {
-				val grad = input[row+2][col] - input[row][col];
-				V[row][col] = grad;
-			}
-		}
+        var V = Array(rows) { Array(cols) { 0 } }
+        var H = Array(rows) { Array(cols) { 0 } }
+        for (row in 0 until rows) {
+            for (col in 0 until cols - 2) {
+                val grad = input[row][col + 2] - input[row][col];
+                H[row][col] = grad;
+            }
+        }
 
-		var sum = 0;
-		for(row in 0 until rows)
-		{
-			for (col in 0 until cols) {
+        for (row in 0 until rows - 2) {
+            for (col in 0 until cols) {
+                val grad = input[row + 2][col] - input[row][col];
+                V[row][col] = grad;
+            }
+        }
+
+        var sum = 0;
+        for (row in 0 until rows) {
+            for (col in 0 until cols) {
                 val HRC = H[row][col];
                 val VRC = V[row][col];
                 if (kotlin.math.abs(HRC) > kotlin.math.abs(VRC)) {
                     sum += HRC * HRC
-                }
-                else {
+                } else {
                     sum += VRC * VRC
                 }
-			}
-		}
-		return sum / (rows * cols).toDouble();
-	}
+            }
+        }
+        return sum / (rows * cols).toDouble();
+    }
 
     /**
      *  Get grayscale image using standard formula.
      */
-    private fun getGrayPixels(image: Array<Array<Int>>,rows: Int,cols: Int) : Array<Array<Int>> {
+    private fun getGrayPixels(image: Array<Array<Int>>): Array<Array<Int>> {
+        val rows = image.lastIndex + 1;
+        val cols = image.get(0).lastIndex + 1;
+
         var result = Array(rows) { Array(cols) { 0 } }
         for (r in 0 until rows) {
             for (c in 0 until cols) {
@@ -266,13 +267,14 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
             }
         }
         return result
-
     }
+
+
 
     /**
      *  use Brenner's focus metric.
      */
-    private fun  testFocusQuality() : Double {
+    private fun testFocusQuality(): Double {
         try {
             val bmOptions = BitmapFactory.Options()
 
@@ -296,46 +298,16 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
                 }
             }
             // metric only cares about luminance.
-            val grayImage = getGrayPixels(img, rows, cols)
-            return brennersFocusMetric(grayImage, rows, cols)
+            val grayImage = getGrayPixels(img)
+
+            return brennersFocusMetric(grayImage)
+
+        } catch (e: java.lang.Exception) {
+            println(e)
         }
-        catch(e: java.lang.Exception)
-        {
-            println(e);
-        }
-        // TODO on an error, we return very bad focus.
+        // on an error, we return very bad focus.
         return 0.0;
     }
-
-
-
-    private fun linspace(start: Double, end: Double, n: Int) : Array<Double>
-    {
-        val result = Array<Double>(n){0.0}
-        val nMinus1 = n - 1
-        for (i in 0..nMinus1 )
-        {
-             result[i] = start + (i * (((end - start) /nMinus1) ));
-        }
-        return result
-    }
-
-    private fun grid(start: Double, end: Double, n: Int): Array<Array<Double>>{
-
-        val space =  linspace(start,end,n);
-        return Array<Array<Double>>(n) { space }
-    }
-
-    /**
-     * TODO make a gaussian kernel
-     */
-
-
-    /**
-     *  TODO To test the focus detection, we need to blur some images.
-     */
-   
-
 
     private fun setPic() {
 
@@ -463,6 +435,98 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
     }
 
 
+/** UNIT TEST CODE FOR FOCUS METRIC
+    private fun printImage(image: Array<Array<Int>> ) {
+        var counter = 0.0
+        val rows = image.lastIndex + 1
+        val cols = image.get(0).lastIndex + 1
+        println()
+        for (r in 0 until rows)
+        {
+            for (c in 0 until cols) {
+                print(image[r][c])
+                print(",")
+
+            }
+            print(counter)
+            counter++
+            println()
+            System.out.flush()
+        }
+    }
+
+
+    /**
+     * make a gaussian kernel
+     */
+    private fun gaussian(width: Int, sigma: Double): Pair<Array<Array<Double>>, Double> {
+
+        var result = Array<Array<Double>>(width) { Array<Double>(width) { 0.0 } }
+
+        val center = width / 2
+        val sigmaSquared = sigma * sigma
+        for (c in 0 until width) {
+            for (r in 0 until width) {
+                val distanceSquared = (c - center) * (c - center) + (r - center) * (r - center);
+                val numerator = kotlin.math.exp(-distanceSquared / (2.0 * sigmaSquared));
+                result[r][c] = numerator / (2.0 * kotlin.math.PI * sigmaSquared);
+            }
+        }
+        var normalFactor = 0.0;
+        for (c in 0 until width) {
+            for (r in 0 until width) {
+                normalFactor = normalFactor + result[r][c]
+            }
+        }
+
+        return Pair(result, normalFactor)
+    }
+
+
+    /**
+     *  correlation (or convolution since the kernel should be symmetrical)
+     */
+    private fun performCorrelation(image: Array<Array<Int>>, kernel: Array<Array<Double>>,pixRow:Int,pixCol: Int,kernelWidth: Int,normal: Double) : Double {
+        val rowOffset = kernelWidth / 2;
+        val colOffset = kernelWidth / 2;
+        var sum = 0.0;
+        var computedPixRow = pixRow - rowOffset;
+        for (kr in 0 until kernelWidth) {
+            var computedPixCol = pixCol - colOffset;
+            for (kc in 0 until kernelWidth) {
+                val pix = image[computedPixRow][computedPixCol]
+                sum = sum + pix  * kernel[kr][kc]
+                computedPixCol++
+            }
+            computedPixRow++
+        }
+        return sum / normal
+    }
+
+
+    /**
+     *  To test the focus detection, we need to blur some images.
+     */
+
+    private fun applyKernel(image: Array<Array<Int>>, kWidth : Int,sigma: Double): Array<Array<Int>> {
+        val imRows = image.lastIndex + 1;
+        val imCols = image.get(0).lastIndex + 1;
+
+        var result = Array<Array<Int>>(imRows) { Array<Int>(imCols) { 0 } }
+        val kernelAndNorm  = gaussian(kWidth,sigma)
+        val rowStart = kWidth / 2
+        val rowEnd = imRows - rowStart
+        val colStart = kWidth / 2
+        val colEnd = imCols - colStart
+
+        for (r in rowStart until rowEnd){
+            for (c in colStart until colEnd){
+                result[r][c] = performCorrelation(image,kernelAndNorm.first,r,c,kWidth,kernelAndNorm.second).toInt()
+            }
+        }
+        return result
+    }
+**/
 
 
     companion object {
