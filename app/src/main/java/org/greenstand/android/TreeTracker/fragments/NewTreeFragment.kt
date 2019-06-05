@@ -37,13 +37,11 @@ import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
-    private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private var userId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private var takePictureInvoked: Boolean = false
-    private var frameLayout: FrameLayout?  = null
-    private var focusWarning: android.widget.TextView? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,13 +83,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         }
 
         saveBtn.setOnClickListener(this@NewTreeFragment)
-
-        mImageView = v.fragmentNewTreeImage
-
-        frameLayout = v.fragment_new_tree_frame_layout
-
-        focusWarning = v.fragment_new_tree_focus_warning_text
-
 
         val newTreeDistance = v.fragmentNewTreeDistance
         val newTreeDistanceString = Integer.toString(0) + " " + resources.getString(R.string.meters)
@@ -236,13 +227,13 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE,0.0);
 
                     if (imageQuality < FOCUS_THRESHOLD) {
-                        frameLayout?.setBackgroundColor(Color.RED)
-                        focusWarning?.visibility = View.VISIBLE
-                        focusWarning?.setText(R.string.focus_warning)
+                        fragment_new_tree_frame_layout?.setBackgroundColor(Color.RED)
+                        fragment_new_tree_focus_warning_text?.visibility = View.VISIBLE
+                        fragment_new_tree_focus_warning_text?.setText(R.string.focus_warning)
                     } else{
-                        focusWarning?.visibility = View.GONE
-                        focusWarning?.text = ""
-                        frameLayout?.setBackgroundColor(Color.WHITE)
+                        fragment_new_tree_focus_warning_text?.visibility = View.GONE
+                        fragment_new_tree_focus_warning_text?.text = ""
+                        fragment_new_tree_frame_layout?.setBackgroundColor(Color.WHITE)
 
                     }
 
@@ -305,8 +296,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
             activity!!.supportFragmentManager.popBackStack()
         }
         /* Associate the Bitmap to the ImageView */
-        mImageView!!.setImageBitmap(rotatedBitmap)
-        mImageView!!.visibility = View.VISIBLE
+        fragmentNewTreeImage!!.setImageBitmap(rotatedBitmap)
+        fragmentNewTreeImage!!.visibility = View.VISIBLE
     }
 
     companion object {
