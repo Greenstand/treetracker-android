@@ -430,7 +430,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         var mCurrentTreeLocation: Location? = null
 
         var mAllowNewTreeOrUpdate = false
-        var mImageQuality: Double = 0.0
+
     }
 
 }

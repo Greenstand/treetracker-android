@@ -233,7 +233,9 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     }
 
                     setPic()
-                    if (MainActivity.mImageQuality < FOCUS_THRESHOLD) {
+                    val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE,0.0);
+
+                    if (imageQuality < FOCUS_THRESHOLD) {
                         frameLayout?.setBackgroundColor(Color.RED)
                         focusWarning?.visibility = View.VISIBLE
                         focusWarning?.setText(R.string.focus_warning)

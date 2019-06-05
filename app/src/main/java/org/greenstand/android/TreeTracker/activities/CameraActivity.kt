@@ -8,14 +8,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.Matrix
 import android.hardware.Camera
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -49,7 +47,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
     private var operationAttempt: Job? = null
 
     private var captureSelfie: Boolean = false
-
+    private var imageQuality: Double = 0.0
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,7 +156,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
                 e.printStackTrace()
             }
         } else {
-            MainActivity.mImageQuality = testFocusQuality()
+            this.imageQuality = testFocusQuality()
         }
 
         setPic()
@@ -217,31 +215,31 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         val rows = input.lastIndex + 1;
         val cols = input.get(0).lastIndex + 1;
 
-        var V = Array(rows) { Array(cols) { 0 } }
-        var H = Array(rows) { Array(cols) { 0 } }
+        var verticalGradients = Array(rows) { Array(cols) { 0 } }
+        var horizontalGradients = Array(rows) { Array(cols) { 0 } }
         for (row in 0 until rows) {
             for (col in 0 until cols - 2) {
                 val grad = input[row][col + 2] - input[row][col];
-                H[row][col] = grad;
+                horizontalGradients[row][col] = grad;
             }
         }
 
         for (row in 0 until rows - 2) {
             for (col in 0 until cols) {
                 val grad = input[row + 2][col] - input[row][col];
-                V[row][col] = grad;
+                verticalGradients[row][col] = grad;
             }
         }
 
         var sum = 0;
         for (row in 0 until rows) {
             for (col in 0 until cols) {
-                val HRC = H[row][col];
-                val VRC = V[row][col];
-                if (kotlin.math.abs(HRC) > kotlin.math.abs(VRC)) {
-                    sum += HRC * HRC
+                val horizontalGradientAtRowColumn = horizontalGradients[row][col];
+                val verticalGradientAtRowColumn = verticalGradients[row][col];
+                if (kotlin.math.abs(horizontalGradientAtRowColumn) > kotlin.math.abs(verticalGradientAtRowColumn)) {
+                    sum += horizontalGradientAtRowColumn * horizontalGradientAtRowColumn
                 } else {
-                    sum += VRC * VRC
+                    sum += verticalGradientAtRowColumn * verticalGradientAtRowColumn
                 }
             }
         }
@@ -258,11 +256,11 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         var result = Array(rows) { Array(cols) { 0 } }
         for (r in 0 until rows) {
             for (c in 0 until cols) {
-                var B = image[r][c] and 0x000000FF
-                var G = (image[r][c] and 0x0000FF00) shr 8
-                var R = (image[r][c] and 0x00FF0000) shr 16
+                var blueElement = image[r][c] and 0x000000FF
+                var greenElement = (image[r][c] and 0x0000FF00) shr 8
+                var redElement = (image[r][c] and 0x00FF0000) shr 16
 
-                val gray = (0.2990 * R + 0.5870 * G + 0.1140 * B)
+                val gray = (0.2990 * redElement + 0.5870 * greenElement + 0.1140 * blueElement)
                 result[r][c] = gray.toInt()
             }
         }
@@ -426,6 +424,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         if (saved) {
             val data = Intent()
             data.putExtra(ValueHelper.TAKEN_IMAGE_PATH, mCurrentPhotoPath)
+            data.putExtra(ValueHelper.FOCUS_METRIC_VALUE,imageQuality)
             setResult(Activity.RESULT_OK, data)
 
         } else {
