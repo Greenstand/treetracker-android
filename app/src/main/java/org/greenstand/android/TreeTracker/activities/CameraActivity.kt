@@ -207,65 +207,8 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         return f
     }
 
-    /**
-     * // Compute average of sum of squares of the gradient in H and V directions.
-     */
-    private fun brennersFocusMetric(input: Array<Array<Int>>): Double {
 
-        val rows = input.lastIndex + 1;
-        val cols = input.get(0).lastIndex + 1;
 
-        var verticalGradients = Array(rows) { Array(cols) { 0 } }
-        var horizontalGradients = Array(rows) { Array(cols) { 0 } }
-        for (row in 0 until rows) {
-            for (col in 0 until cols - 2) {
-                val grad = input[row][col + 2] - input[row][col];
-                horizontalGradients[row][col] = grad;
-            }
-        }
-
-        for (row in 0 until rows - 2) {
-            for (col in 0 until cols) {
-                val grad = input[row + 2][col] - input[row][col];
-                verticalGradients[row][col] = grad;
-            }
-        }
-
-        var sum = 0;
-        for (row in 0 until rows) {
-            for (col in 0 until cols) {
-                val horizontalGradientAtRowColumn = horizontalGradients[row][col];
-                val verticalGradientAtRowColumn = verticalGradients[row][col];
-                if (kotlin.math.abs(horizontalGradientAtRowColumn) > kotlin.math.abs(verticalGradientAtRowColumn)) {
-                    sum += horizontalGradientAtRowColumn * horizontalGradientAtRowColumn
-                } else {
-                    sum += verticalGradientAtRowColumn * verticalGradientAtRowColumn
-                }
-            }
-        }
-        return sum / (rows * cols).toDouble();
-    }
-
-    /**
-     *  Get grayscale image using standard formula.
-     */
-    private fun getGrayPixels(image: Array<Array<Int>>): Array<Array<Int>> {
-        val rows = image.lastIndex + 1;
-        val cols = image.get(0).lastIndex + 1;
-
-        var result = Array(rows) { Array(cols) { 0 } }
-        for (r in 0 until rows) {
-            for (c in 0 until cols) {
-                var blueElement = image[r][c] and 0x000000FF
-                var greenElement = (image[r][c] and 0x0000FF00) shr 8
-                var redElement = (image[r][c] and 0x00FF0000) shr 16
-
-                val gray = (0.2990 * redElement + 0.5870 * greenElement + 0.1140 * blueElement)
-                result[r][c] = gray.toInt()
-            }
-        }
-        return result
-    }
 
 
 
@@ -296,10 +239,8 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
                 }
             }
             // metric only cares about luminance.
-            val grayImage = getGrayPixels(img)
-
-            return brennersFocusMetric(grayImage)
-
+            val grayImage = ImageUtils.getGrayPixels(img)
+            return ImageUtils.brennersFocusMetric(grayImage)
         } catch (e: java.lang.Exception) {
             println(e)
         }
@@ -433,99 +374,6 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         finish()
     }
 
-
-/** UNIT TEST CODE FOR FOCUS METRIC
-    private fun printImage(image: Array<Array<Int>> ) {
-        var counter = 0.0
-        val rows = image.lastIndex + 1
-        val cols = image.get(0).lastIndex + 1
-        println()
-        for (r in 0 until rows)
-        {
-            for (c in 0 until cols) {
-                print(image[r][c])
-                print(",")
-
-            }
-            print(counter)
-            counter++
-            println()
-            System.out.flush()
-        }
-    }
-
-
-    /**
-     * make a gaussian kernel
-     */
-    private fun gaussian(width: Int, sigma: Double): Pair<Array<Array<Double>>, Double> {
-
-        var result = Array<Array<Double>>(width) { Array<Double>(width) { 0.0 } }
-
-        val center = width / 2
-        val sigmaSquared = sigma * sigma
-        for (c in 0 until width) {
-            for (r in 0 until width) {
-                val distanceSquared = (c - center) * (c - center) + (r - center) * (r - center);
-                val numerator = kotlin.math.exp(-distanceSquared / (2.0 * sigmaSquared));
-                result[r][c] = numerator / (2.0 * kotlin.math.PI * sigmaSquared);
-            }
-        }
-        var normalFactor = 0.0;
-        for (c in 0 until width) {
-            for (r in 0 until width) {
-                normalFactor = normalFactor + result[r][c]
-            }
-        }
-
-        return Pair(result, normalFactor)
-    }
-
-
-    /**
-     *  correlation (or convolution since the kernel should be symmetrical)
-     */
-    private fun performCorrelation(image: Array<Array<Int>>, kernel: Array<Array<Double>>,pixRow:Int,pixCol: Int,kernelWidth: Int,normal: Double) : Double {
-        val rowOffset = kernelWidth / 2;
-        val colOffset = kernelWidth / 2;
-        var sum = 0.0;
-        var computedPixRow = pixRow - rowOffset;
-        for (kr in 0 until kernelWidth) {
-            var computedPixCol = pixCol - colOffset;
-            for (kc in 0 until kernelWidth) {
-                val pix = image[computedPixRow][computedPixCol]
-                sum = sum + pix  * kernel[kr][kc]
-                computedPixCol++
-            }
-            computedPixRow++
-        }
-        return sum / normal
-    }
-
-
-    /**
-     *  To test the focus detection, we need to blur some images.
-     */
-
-    private fun applyKernel(image: Array<Array<Int>>, kWidth : Int,sigma: Double): Array<Array<Int>> {
-        val imRows = image.lastIndex + 1;
-        val imCols = image.get(0).lastIndex + 1;
-
-        var result = Array<Array<Int>>(imRows) { Array<Int>(imCols) { 0 } }
-        val kernelAndNorm  = gaussian(kWidth,sigma)
-        val rowStart = kWidth / 2
-        val rowEnd = imRows - rowStart
-        val colStart = kWidth / 2
-        val colEnd = imCols - colStart
-
-        for (r in rowStart until rowEnd){
-            for (c in colStart until colEnd){
-                result[r][c] = performCorrelation(image,kernelAndNorm.first,r,c,kWidth,kernelAndNorm.second).toInt()
-            }
-        }
-        return result
-    }
-**/
 
 
     companion object {
