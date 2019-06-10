@@ -94,7 +94,7 @@ object ImageUtils {
     /**
      * out put image data pixels to console
      */
-    private fun printImage(image: Array<Array<Int>> ) {
+    fun printImage(image: Array<Array<Int>> ) {
         var counter = 0.0
         val rows = image.lastIndex + 1
         val cols = image.get(0).lastIndex + 1
@@ -114,9 +114,87 @@ object ImageUtils {
     }
 
     /**
+     * out put image data pixels to console
+     */
+     fun printImage(image: IntArray,rows:Int,cols:Int ) {
+        var counter = 0.0
+
+        println()
+        for (r in 0 until rows)
+        {
+            for (c in 0 until cols) {
+                print(image[(r * cols) + cols])
+                print(",")
+
+            }
+            print(counter)
+            counter++
+            println()
+            System.out.flush()
+        }
+    }
+
+    fun getGrayPixelFromBitmap(imagePath: String?, scaleToWidth: Int):  Array<Array<Int>>? {
+
+        /* Get the size of the image */
+        val bmOptions = BitmapFactory.Options()
+        bmOptions.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(imagePath, bmOptions)
+        val imageWidth = bmOptions.outWidth
+
+
+
+
+        var sampleSize = Math.ceil((imageWidth.toFloat() / scaleToWidth.toFloat()).toDouble()).toInt()
+        // If the original image is smaller than required, don't sample
+        if (sampleSize < 1) {
+            sampleSize = 1
+        }
+
+
+        bmOptions.inSampleSize = sampleSize
+
+        bmOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        bmOptions.inJustDecodeBounds = false
+
+        val bitmap = BitmapFactory.decodeFile(imagePath, bmOptions) ?: return null
+
+        val rows = bitmap.height
+        val cols = bitmap.width
+        val bc = bitmap.byteCount
+        val pix = IntArray(rows * cols)
+        bitmap.getPixels(pix, 0, cols, 0, 0, cols, rows)
+
+        var img = Array(rows) { Array(cols) { 0 } }
+        // need to get a grid to calculate gradients.
+        var index = 0;
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                img[r][c] = pix[index++]
+            }
+        }
+
+        val gimg = ImageUtils.getGrayPixels(img)
+       return gimg
+    }
+
+    /**
+     * blur and image with gaussian kernel with random width between 0 (no blur) and 10.
+     */
+    public fun generateRandomBlurredImage(image: Array<Array<Int>>) : Array<Array<Int>>{
+
+
+        var ran = kotlin.random.Random(System.currentTimeMillis()).nextInt(0,10);
+        println(ran)
+        if (ran > 0) {
+           return ImageUtils.applyGaussianKernel(image, ran, 2.0)
+        }
+        return image
+    }
+    /**
      *  Get grayscale image using standard formula.
      */
-    fun getGrayPixels(image: Array<Array<Int>>): Array<Array<Int>> {
+    private fun getGrayPixels(image: Array<Array<Int>>): Array<Array<Int>> {
         val rows = image.lastIndex + 1;
         val cols = image.get(0).lastIndex + 1;
 

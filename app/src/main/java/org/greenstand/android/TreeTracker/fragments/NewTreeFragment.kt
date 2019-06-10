@@ -227,7 +227,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE,0.0);
 
                     if (imageQuality < FOCUS_THRESHOLD) {
-                        fragment_new_tree_frame_layout?.setBackgroundColor(Color.RED)
+                        fragment_new_tree_frame_layout?.setBackgroundColor(Color.YELLOW)
                         fragment_new_tree_focus_warning_text?.visibility = View.VISIBLE
                         fragment_new_tree_focus_warning_text?.setText(R.string.focus_warning)
                     } else{
@@ -301,7 +301,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     }
 
     companion object {
-        const val FOCUS_THRESHOLD = 950.0
+        const val FOCUS_THRESHOLD = 900.0
 
         private val TAG = "NewTreeFragment"
 

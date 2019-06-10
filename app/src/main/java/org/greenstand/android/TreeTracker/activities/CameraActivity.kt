@@ -208,39 +208,19 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
     }
 
 
-
-
-
-
     /**
      *  use Brenner's focus metric.
      */
     private fun testFocusQuality(): Double {
         try {
-            val bmOptions = BitmapFactory.Options()
-
-            bmOptions.inSampleSize = 1
-            bmOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            bmOptions.inJustDecodeBounds = false
-
-            /* Decode the JPEG file into a Bitmap */
-            val bitmap = BitmapFactory.decodeFile(tmpImageFile!!.absolutePath, bmOptions) ?: return 0.0;
-            val rows = bitmap.height
-            val cols = bitmap.width
-            val bc = bitmap.byteCount
-            val pix = IntArray(rows * cols)
-            bitmap.getPixels(pix, 0, cols, 0, 0, cols, rows)
-            var img = Array(rows) { Array(cols) { 0 } }
-            // need to get a grid to calculate gradients.
-            var index = 0;
-            for (r in 0 until rows) {
-                for (c in 0 until cols) {
-                    img[r][c] = pix[index++]
-                }
-            }
             // metric only cares about luminance.
-            val grayImage = ImageUtils.getGrayPixels(img)
-            return ImageUtils.brennersFocusMetric(grayImage)
+            // for memory limitations, and performance and metric consistency,
+            // the image is 200 pixels wide.
+            var grayImage = ImageUtils.getGrayPixelFromBitmap(tmpImageFile!!.absolutePath,200) ?: return 0.0
+
+            val q = ImageUtils.brennersFocusMetric(grayImage)
+            println(q)
+            return q
         } catch (e: java.lang.Exception) {
             println(e)
         }
