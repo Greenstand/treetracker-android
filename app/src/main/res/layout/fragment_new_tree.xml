@@ -6,18 +6,6 @@
                 android:layout_height="match_parent"
                 android:background="@color/background"
                 android:orientation="vertical">
-    <FrameLayout
-            android:id="@+id/fragment_new_tree_frame_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background= "@color/white"
-            android:visibility="visible"
-            >
         <ImageView
             android:id="@+id/fragmentNewTreeImage"
             android:layout_width="match_parent"
@@ -25,12 +13,12 @@
             android:contentDescription="@string/tree"
             android:layout_gravity="center_vertical|center_horizontal"
             />
-    </FrameLayout>
+
     <LinearLayout
             android:id="@+id/fragment_new_tree_focus_warning_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_new_tree_frame_layout"
+            android:layout_below="@+id/fragmentNewTreeImage"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/margin_twenty_four"
             android:paddingTop="@dimen/one_dp"
@@ -44,9 +32,10 @@
                 android:layout_marginRight="8dp"
                 android:text=""
                 android:gravity="center"
-                android:textColor="@color/red"
+                android:textColor = "@color/cautionOrange"
                 android:textSize="@dimen/text_size_seventeen"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:background="@drawable/caution_text_border"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/fragment_new_tree_distance_layout"

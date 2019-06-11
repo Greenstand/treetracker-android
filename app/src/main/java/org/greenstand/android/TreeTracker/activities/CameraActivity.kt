@@ -217,7 +217,6 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
             // for memory limitations, and performance and metric consistency,
             // the image is 200 pixels wide.
             var grayImage = ImageUtils.getGrayPixelFromBitmap(tmpImageFile!!.absolutePath,200) ?: return 0.0
-
             val q = ImageUtils.brennersFocusMetric(grayImage)
             println(q)
             return q

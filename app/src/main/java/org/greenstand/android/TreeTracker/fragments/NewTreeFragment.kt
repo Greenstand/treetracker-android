@@ -19,6 +19,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_new_tree.view.*
@@ -227,13 +228,12 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE,0.0);
 
                     if (imageQuality < FOCUS_THRESHOLD) {
-                        fragment_new_tree_frame_layout?.setBackgroundColor(Color.YELLOW)
                         fragment_new_tree_focus_warning_text?.visibility = View.VISIBLE
                         fragment_new_tree_focus_warning_text?.setText(R.string.focus_warning)
                     } else{
                         fragment_new_tree_focus_warning_text?.visibility = View.GONE
                         fragment_new_tree_focus_warning_text?.text = ""
-                        fragment_new_tree_frame_layout?.setBackgroundColor(Color.WHITE)
+
 
                     }
 
@@ -301,7 +301,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     }
 
     companion object {
-        const val FOCUS_THRESHOLD = 900.0
+        const val FOCUS_THRESHOLD = 700.0
 
         private val TAG = "NewTreeFragment"
 

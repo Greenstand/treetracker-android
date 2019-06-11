@@ -266,7 +266,7 @@ object ImageUtils {
         val imRows = image.lastIndex + 1;
         val imCols = image.get(0).lastIndex + 1;
 
-        var result = Array<Array<Int>>(imRows) { Array<Int>(imCols) { 0 } }
+        var result = Array<Array<Int>>(imRows) { Array<Int>(imCols) { 127 } }
         val kernelAndNorm  = gaussian(kWidth,sigma)
         val rowStart = kWidth / 2
         val rowEnd = imRows - rowStart
