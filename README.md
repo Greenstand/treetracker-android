@@ -2,6 +2,11 @@
 
 # TreeTracker Android
 
+## Current Milestones and Issue Topics
+
+
+## Project Details
+
 This is the Android app for the TreeTracker open source project (www.treetracker.org). 
 This project coordinates tree planting employment for people living in extreme poverty.
 The Android segment allows people to track and verify reforestation plantings,
