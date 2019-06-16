@@ -2,6 +2,21 @@
 
 # TreeTracker Android
 
+## Current Milestones and Issue Topics
+
+### Update for JustDigIt
+
+Priority features for one of our main whitelabel deployments
+https://github.com/Greenstand/treetracker-android/milestone/10
+
+### Next feature release
+
+Feature we are currently prioritizing
+https://github.com/Greenstand/treetracker-android/milestone/9
+
+
+## Project Details
+
 This is the Android app for the TreeTracker open source project (www.treetracker.org). 
 This project coordinates tree planting employment for people living in extreme poverty.
 The Android segment allows people to track and verify reforestation plantings,

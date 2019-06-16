@@ -8,11 +8,15 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.OnClickListener
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.fragment.findNavController
 import com.amazonaws.util.IOUtils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -54,11 +58,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     private var mSharedPreferences: SharedPreferences? = null
 
-    private var fragment: androidx.fragment.app.Fragment? = null
-
-    private var bundle: Bundle? = null
-
-    private var fragmentTransaction: androidx.fragment.app.FragmentTransaction? = null
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
@@ -69,6 +68,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         database = getKoin().get()
     }
 
+    @SuppressLint("MissingPermission")
     override fun onPause() {
         super.onPause()
 
@@ -167,28 +167,28 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         )
 
         if (fragmentMapGpsAccuracy != null) {
-            if (MainActivity.mCurrentLocation != null) {
-                if (MainActivity.mCurrentLocation!!.hasAccuracy() && MainActivity.mCurrentLocation!!.accuracy < minAccuracy) {
+            if (MainActivity.currentLocation != null) {
+                if (MainActivity.currentLocation!!.hasAccuracy() && MainActivity.currentLocation!!.accuracy < minAccuracy) {
                     fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracyValue.setTextColor(Color.GREEN)
                     val fragmentMapGpsAccuracyValueString1 = Integer.toString(
                         Math.round(
                             MainActivity
-                                .mCurrentLocation!!.accuracy
+                                .currentLocation!!.accuracy
                         )
                     ) + " " + resources.getString(R.string.meters)
                     fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString1
-                    MainActivity.mAllowNewTreeOrUpdate = true
+                    MainActivity.allowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracy.setTextColor(Color.RED)
-                    MainActivity.mAllowNewTreeOrUpdate = false
+                    MainActivity.allowNewTreeOrUpdate = false
 
-                    if (MainActivity.mCurrentLocation!!.hasAccuracy()) {
+                    if (MainActivity.currentLocation!!.hasAccuracy()) {
                         fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
                         val fragmentMapGpsAccuracyValueString2 = Integer.toString(
                             Math.round(
                                 MainActivity
-                                    .mCurrentLocation!!.accuracy
+                                    .currentLocation!!.accuracy
                             )
                         ) + " " + resources.getString(R.string.meters)
                         fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString2
@@ -212,7 +212,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 fragmentMapGpsAccuracy.setTextColor(Color.RED)
                 fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
                 fragmentMapGpsAccuracyValue.text = "N/A"
-                MainActivity.mAllowNewTreeOrUpdate = false
+                MainActivity.allowNewTreeOrUpdate = false
             }
 
         }
@@ -225,28 +225,14 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             R.id.addTreeButton -> {
                 Timber.d("fab click")
 
-                if (MainActivity.mAllowNewTreeOrUpdate || !FeatureFlags.HIGH_GPS_ACCURACY) {
+                if (MainActivity.allowNewTreeOrUpdate || !FeatureFlags.HIGH_GPS_ACCURACY) {
 
                     val currentTimestamp = System.currentTimeMillis() / 1000
                     val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
                     if (currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
-
-                        fragment = LoginFragment()
-                        fragmentTransaction = activity!!.supportFragmentManager
-                            .beginTransaction()
-                        fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-                            ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
-
+                        findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
-                        fragment = NewTreeFragment()
-                        bundle = activity!!.intent.extras
-                        fragment?.arguments = bundle
-
-                        fragmentTransaction = activity?.supportFragmentManager
-                            ?.beginTransaction()
-                        fragmentTransaction?.replace(R.id.containerFragment, fragment as NewTreeFragment)
-                            ?.addToBackStack(ValueHelper.NEW_TREE_FRAGMENT)?.commit()
-
+                        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                     }
                 } else {
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
@@ -263,7 +249,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
 
-        MainActivity.mCurrentLocation ?: return true
+        MainActivity.currentLocation ?: return true
 
         GlobalScope.launch {
             val userId = -1
@@ -272,9 +258,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             for (i in 0..499) {
 
                 val location = LocationEntity(
-                    MainActivity.mCurrentLocation!!.accuracy.toInt(),
-                    MainActivity.mCurrentLocation!!.latitude + (Math.random() - .5) / 1000,
-                    MainActivity.mCurrentLocation!!.longitude + (Math.random() - .5) / 1000,
+                    MainActivity.currentLocation!!.accuracy.toInt(),
+                    MainActivity.currentLocation!!.latitude + (Math.random() - .5) / 1000,
+                    MainActivity.currentLocation!!.longitude + (Math.random() - .5) / 1000,
                     userId.toLong()
                 )
 
@@ -333,19 +319,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        fragment = TreePreviewFragment()
-        bundle = activity!!.intent.extras
-
-        if (bundle == null)
-            bundle = Bundle()
-
-        bundle!!.putString(ValueHelper.TREE_ID, marker.title)
-        fragment!!.arguments = bundle
-
-        fragmentTransaction = activity!!.supportFragmentManager
-            .beginTransaction()
-        fragmentTransaction?.replace(R.id.containerFragment, fragment as TreePreviewFragment)
-            ?.addToBackStack(ValueHelper.TREE_PREVIEW_FRAGMENT)?.commit()
+        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
         return true
     }
 
@@ -394,9 +368,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
 
             } else {
-                if (MainActivity.mCurrentLocation != null) {
+                if (MainActivity.currentLocation != null) {
                     val myLatLng =
-                        LatLng(MainActivity.mCurrentLocation!!.latitude, MainActivity.mCurrentLocation!!.longitude)
+                        LatLng(MainActivity.currentLocation!!.latitude, MainActivity.currentLocation!!.longitude)
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
                 }
             }
