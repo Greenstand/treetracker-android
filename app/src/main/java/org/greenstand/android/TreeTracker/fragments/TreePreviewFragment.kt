@@ -24,6 +24,7 @@ import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
@@ -32,6 +33,8 @@ import java.text.ParseException
 import java.util.*
 
 class TreePreviewFragment : Fragment() {
+
+    private val userLocationManager: UserLocationManager = getKoin().get()
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
@@ -94,10 +97,10 @@ class TreePreviewFragment : Fragment() {
                 //			MainActivity.currentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
 
                 val results = floatArrayOf(0f, 0f, 0f)
-                if (MainActivity.currentLocation != null) {
+                if (userLocationManager.currentLocation != null) {
                     Location.distanceBetween(
-                        MainActivity.currentLocation!!.latitude,
-                        MainActivity.currentLocation!!.longitude,
+                        userLocationManager.currentLocation!!.latitude,
+                        userLocationManager.currentLocation!!.longitude,
                         MainActivity.currentTreeLocation!!.latitude,
                         MainActivity.currentTreeLocation!!.longitude,
                         results

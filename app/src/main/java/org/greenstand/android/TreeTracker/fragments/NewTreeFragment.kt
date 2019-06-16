@@ -31,7 +31,9 @@ import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.TreeManager
+import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
+import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.view.CustomToast
@@ -39,6 +41,8 @@ import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+
+    private val userLocationManager: UserLocationManager = getKoin().get()
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
@@ -93,8 +97,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         newTreeDistance.text = newTreeDistanceString
 
         val newTreeGpsAccuracy = v.fragmentNewTreeGpsAccuracy
-        if (MainActivity.currentLocation != null) {
-            val newTreeGpsAccuracyString1 = Integer.toString(Math.round(MainActivity.currentLocation!!.accuracy)) +
+        if (userLocationManager.currentLocation != null) {
+            val newTreeGpsAccuracyString1 = Integer.toString(Math.round(userLocationManager.currentLocation!!.accuracy)) +
                     " " + resources.getString(R.string.meters)
             newTreeGpsAccuracy.text = newTreeGpsAccuracyString1
         } else {
@@ -139,7 +143,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     override fun onStart() {
         super.onStart()
 
-        if (MainActivity.currentLocation == null) {
+        if (userLocationManager.currentLocation == null) {
             Toast.makeText(activity, "Insufficient GPS accuracy", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
         } else if (!takePictureInvoked) {
@@ -217,9 +221,9 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                 if (mCurrentPhotoPath != null) {
 
                     MainActivity.currentTreeLocation = Location("") // Just a blank location
-                    if (MainActivity.currentLocation != null) {
-                        MainActivity.currentTreeLocation!!.latitude = MainActivity.currentLocation!!.latitude
-                        MainActivity.currentTreeLocation!!.longitude = MainActivity.currentLocation!!.longitude
+                    userLocationManager.currentLocation?.let { location ->
+                        MainActivity.currentTreeLocation!!.latitude = location.latitude
+                        MainActivity.currentTreeLocation!!.longitude = location.longitude
                     }
 
                     setPic()
@@ -263,12 +267,15 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     }
 
     private suspend fun saveToDb(newTree: NewTree): Long {
-        return getKoin().get<TreeManager>().addTree(newTree.photoPath,
-                                                    newTree.minAccuracy,
-                                                    newTree.timeToNextUpdate,
-                                                    newTree.content,
-                                                    newTree.userId,
-                                                    newTree.planterIdentifierId)
+
+        val createTreeParams = CreateTreeParams(
+            userId = newTree.userId,
+            photoPath = newTree.photoPath,
+            content = newTree.content,
+            planterIdentifierId = newTree.planterIdentifierId
+        )
+
+        return getKoin().get<CreateTreeUseCase>().execute(createTreeParams)
     }
 
     private fun setPic() {

@@ -9,7 +9,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -27,9 +26,14 @@ import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
+import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
@@ -39,13 +43,15 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     private val userManager: UserManager = getKoin().get()
 
+    private val userLocationManager: UserLocationManager = getKoin().get()
+
     private var sharedPreferences: SharedPreferences? = null
 
     private var fragment: Fragment? = null
 
-    private var locationManager: LocationManager? = null
-    private var locationListener: android.location.LocationListener? = null
     private var locationUpdatesStarted: Boolean = false
+
+    private var locationUpdateJob: Job? = null
 
     /**
      * Called when the activity is first created.
@@ -131,7 +137,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onPause() {
         super.onPause()
 
-        stopPeriodicUpdates()
+        userLocationManager.stopLocationUpdates()
+        locationUpdateJob?.cancel()
     }
 
     public override fun onResume() {
@@ -162,10 +169,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         // In the UI, set the latitude and longitude to the value received
         currentLocation = location
 
-        //int minAccuracy = sharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         val minAccuracy = 10
-
-
 
         val fragmentMapGpsAccuracyView : TextView? = findViewById(R.id.fragmentMapGpsAccuracy)
         val fragmentMapGpsAccuracyViewValue : TextView? = findViewById(R.id.fragmentMapGpsAccuracyValue)
@@ -205,9 +209,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
 
 
-            if (currentTreeLocation != null && MainActivity.currentLocation != null) {
+            if (currentTreeLocation != null && userLocationManager.currentLocation != null) {
                 val results = floatArrayOf(0f, 0f, 0f)
-                Location.distanceBetween(MainActivity.currentLocation!!.latitude, MainActivity.currentLocation!!.longitude,
+                Location.distanceBetween(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude,
                                          MainActivity.currentTreeLocation!!.latitude, MainActivity.currentTreeLocation!!.longitude, results)
 
                 if (fragmentNewTreeDistance != null) {
@@ -249,10 +253,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
 
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
         // TODO this check may not longer be necessary
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!userLocationManager.isLocationEnabled()) {
             val builder = AlertDialog.Builder(this@MainActivity)
 
             builder.setTitle(R.string.enable_location_access)
@@ -293,40 +295,14 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             return
         }
 
-        if (locationUpdatesStarted) {
-            return
-        }
-
-        locationListener = object : android.location.LocationListener {
-            override fun onLocationChanged(location: Location) {
-                this@MainActivity.onLocationChanged(location)
-            }
-
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-
-            override fun onProviderEnabled(provider: String) {}
-
-            override fun onProviderDisabled(provider: String) {}
-        }
-
         // Register the listener with Location Manager's network provider
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
-
-        locationUpdatesStarted = true
-    }
-
-
-    /**
-     * In response to a request to stop updates, send a request to
-     * Location Services
-     */
-    private fun stopPeriodicUpdates() {
-        if (locationManager != null) {
-            locationManager?.removeUpdates(locationListener)
-            locationListener = null
+        locationUpdateJob = GlobalScope.launch(Dispatchers.Main) {
+            for (location in userLocationManager.locationUpdatesChannel) {
+                onLocationChanged(location)
+            }
         }
-        locationUpdatesStarted = false
 
+        userLocationManager.startLocationUpdates()
     }
 
     // TODO: implementing this as a static companion object is not necessarily a good design
