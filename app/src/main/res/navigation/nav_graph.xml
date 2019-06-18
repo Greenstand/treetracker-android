@@ -55,7 +55,8 @@
             <action
                 android:id="@+id/action_termsPolicyFragment_to_mapsFragment"
                 app:destination="@id/mapsFragment"
-                app:popUpTo="@id/mapsFragment"
+                app:launchSingleTop="true"
+                app:popUpTo="@+id/loginFragment"
                 app:popUpToInclusive="true"/>
         </fragment>
         <fragment
@@ -68,7 +69,9 @@
             <action
                 android:id="@+id/action_loginFragment_to_mapsFragment"
                 app:destination="@id/mapsFragment"
-                app:popUpTo="@id/mapsFragment"/>
+                app:launchSingleTop="true"
+                app:popUpTo="@+id/loginFragment"
+                app:popUpToInclusive="true"/>
         </fragment>
         <fragment
             android:id="@+id/signUpFragment"
@@ -84,7 +87,8 @@
         <action
             android:id="@+id/action_global_mapsFragment"
             app:destination="@id/mapsFragment"
-            app:popUpTo="@id/mapsFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/loginFragment"
             app:popUpToInclusive="true"/>
     </navigation>
     <action
