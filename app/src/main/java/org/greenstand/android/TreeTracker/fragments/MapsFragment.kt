@@ -43,6 +43,7 @@ import org.greenstand.android.TreeTracker.database.entity.PhotoEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreePhotoEntity
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
+import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -55,6 +56,8 @@ import java.util.*
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
+
+    private val userLocationManager: UserLocationManager = getKoin().get()
 
     private var mSharedPreferences: SharedPreferences? = null
 
@@ -167,8 +170,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         )
 
         if (fragmentMapGpsAccuracy != null) {
-            if (MainActivity.currentLocation != null) {
-                if (MainActivity.currentLocation!!.hasAccuracy() && MainActivity.currentLocation!!.accuracy < minAccuracy) {
+            if (userLocationManager.currentLocation != null) {
+                if (userLocationManager.currentLocation!!.hasAccuracy() && userLocationManager.currentLocation!!.accuracy < minAccuracy) {
                     fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracyValue.setTextColor(Color.GREEN)
                     val fragmentMapGpsAccuracyValueString1 = Integer.toString(
@@ -183,7 +186,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     fragmentMapGpsAccuracy.setTextColor(Color.RED)
                     MainActivity.allowNewTreeOrUpdate = false
 
-                    if (MainActivity.currentLocation!!.hasAccuracy()) {
+                    if (userLocationManager.currentLocation!!.hasAccuracy()) {
                         fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
                         val fragmentMapGpsAccuracyValueString2 = Integer.toString(
                             Math.round(
@@ -249,7 +252,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
 
-        MainActivity.currentLocation ?: return true
+        userLocationManager.currentLocation ?: return true
 
         GlobalScope.launch {
             val userId = -1
@@ -258,9 +261,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             for (i in 0..499) {
 
                 val location = LocationEntity(
-                    MainActivity.currentLocation!!.accuracy.toInt(),
-                    MainActivity.currentLocation!!.latitude + (Math.random() - .5) / 1000,
-                    MainActivity.currentLocation!!.longitude + (Math.random() - .5) / 1000,
+                    userLocationManager.currentLocation!!.accuracy.toInt(),
+                    userLocationManager.currentLocation!!.latitude + (Math.random() - .5) / 1000,
+                    userLocationManager.currentLocation!!.longitude + (Math.random() - .5) / 1000,
                     userId.toLong()
                 )
 
@@ -368,9 +371,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
 
             } else {
-                if (MainActivity.currentLocation != null) {
+                if (userLocationManager.currentLocation != null) {
                     val myLatLng =
-                        LatLng(MainActivity.currentLocation!!.latitude, MainActivity.currentLocation!!.longitude)
+                        LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
                 }
             }
