@@ -41,9 +41,8 @@ class TreeHeightFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        requireActivity().toolbarTitle?.apply {
-            setText(R.string.tree_height_title)
-        }
+        requireActivity().toolbarTitle?.setText(R.string.tree_height_title)
+
         val parentView = view as ConstraintLayout
 
         vm.newTree = args.newTree
