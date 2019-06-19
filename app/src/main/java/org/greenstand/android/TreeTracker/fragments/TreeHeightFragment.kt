@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tree_height.*
 import kotlinx.android.synthetic.main.fragment_tree_height.view.*
 import org.greenstand.android.TreeTracker.R
@@ -39,6 +40,8 @@ class TreeHeightFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        requireActivity().toolbarTitle?.setText(R.string.tree_height_title)
 
         val parentView = view as ConstraintLayout
 
