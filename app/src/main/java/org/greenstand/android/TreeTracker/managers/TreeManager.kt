@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.managers
 
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.database.dao.TreeDto
 import org.greenstand.android.TreeTracker.database.entity.*
 import timber.log.Timber
 import java.util.*
@@ -26,6 +27,14 @@ class TreeManager(private val db: AppDatabase,
 
         return db.treeAttributesDao().insert(attribute)
             .also { Timber.d("Inserted $attribute into Attributes Table") }
+    }
+
+    fun getTree(treeId: Long): TreeDto {
+        return db.treeDao().getTreeDtoByID(treeId)
+    }
+
+    fun getTreePhotoById(treeId: Long): PhotoEntity {
+        return db.photoDao().getPhotosByTreeId(treeId).first()
     }
 
     fun getTreeAttribute(treeId: Long,
