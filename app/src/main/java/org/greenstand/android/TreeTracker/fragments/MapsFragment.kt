@@ -83,7 +83,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         val currentTimestamp = System.currentTimeMillis() / 1000
         val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-        if (currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
+        if (FeatureFlags.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED
+            && currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
             activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
             //reset all sharedPreferences
             val editor = mSharedPreferences!!.edit()
