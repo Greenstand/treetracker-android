@@ -138,7 +138,7 @@ class MigrationV1ToV2 : Migration(1, 2) {
             `identifier` TEXT,
             `photo_path` TEXT,
             `photo_url` TEXT,
-            `time_created` TEXT NOT NULL
+            `time_created` TEXT NOT NULL,
             FOREIGN KEY(`planter_details_id`) REFERENCES `planter_details`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )""")
 
         database.execSQL(
