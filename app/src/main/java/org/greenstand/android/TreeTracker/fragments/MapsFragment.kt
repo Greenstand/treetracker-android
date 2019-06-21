@@ -44,6 +44,8 @@ import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreePhotoEntity
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
+import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -248,7 +250,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     @SuppressLint("SimpleDateFormat")
     override fun onLongClick(view: View): Boolean {
 
-        Toast.makeText(activity, "Adding lot of trees", Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, "Adding 500 trees", Toast.LENGTH_LONG).show()
         // programmatically add 500 trees, for analysis only
         // this is on the main thread for ease, in Kotlin just make a Coroutine
 
@@ -257,67 +259,26 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         GlobalScope.launch {
             val userId = -1
 
-
             for (i in 0..499) {
 
-                val location = LocationEntity(
-                    userLocationManager.currentLocation!!.accuracy.toInt(),
-                    userLocationManager.currentLocation!!.latitude + (Math.random() - .5) / 1000,
-                    userLocationManager.currentLocation!!.longitude + (Math.random() - .5) / 1000,
-                    userId.toLong()
+                val myInput = activity!!.assets.open("testtreeimage.jpg")
+                val f = ImageUtils.createImageFile(activity!!)
+                val fos = FileOutputStream(f)
+                fos.write(IOUtils.toByteArray(myInput))
+                fos.close()
+
+                val createTreeParams = CreateTreeParams(
+                    userId = userId.toLong(),
+                    photoPath = f.absolutePath,
+                    content = "My Note",
+                    planterIdentifierId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
                 )
 
-                val locationId = database.locationDao().insert(location)
+                getKoin().get<CreateTreeUseCase>().execute(createTreeParams)
 
-                var photoId: Long = -1
-                try {
-                    val myInput = activity!!.assets.open("testtreeimage.jpg")
-                    val f = ImageUtils.createImageFile(activity!!)
-                    val fos = FileOutputStream(f)
-                    fos.write(IOUtils.toByteArray(myInput))
-                    fos.close()
-
-                    val photo =
-                        PhotoEntity(
-                            f.absolutePath,
-                            locationId.toInt(),
-                            0,
-                            false,
-                            Utils.dateFormat.format(Date()),
-                            userId.toLong()
-                        )
-                    photoId = database.photoDao().insertPhoto(photo)
-
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-
-                val treeEntity = TreeEntity(
-                    UUID.randomUUID().toString(),
-                    0,
-                    Utils.dateFormat.format(Date()),
-                    Utils.dateFormat.format(Date()),
-                    "",
-                    null,
-                    locationId.toInt(),
-                    false,
-                    false,
-                    false,
-                    null,
-                    null,
-                    null,
-                    userId.toLong(),
-                    null
-                )
-
-                val treeId = database.treeDao().insert(treeEntity)
-
-                val treePhotoEntity = TreePhotoEntity(treeId, photoId)
-                database.photoDao().insert(treePhotoEntity)
-                //Timber.d("treePhotoId " + Long.toString(treePhotoId));
             }
         }
-        Toast.makeText(activity, "Lots of trees added", Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, "500 trees added", Toast.LENGTH_LONG).show()
         return true
     }
 
