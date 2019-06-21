@@ -61,6 +61,7 @@ android {
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
         buildConfigField 'Boolean', 'TREE_HEIGHT_FEATURE_ENABLED', "false"
         buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "true"
+        buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "true"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -135,6 +136,8 @@ android {
             applicationIdSuffix ".justdigit"
             buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
             buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
+            buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "false"
+
         }
     }
 

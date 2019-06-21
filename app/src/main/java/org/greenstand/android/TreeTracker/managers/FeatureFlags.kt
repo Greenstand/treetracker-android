@@ -8,4 +8,6 @@ object FeatureFlags {
     val TREE_NOTE_FEATURE_ENABLED: Boolean = BuildConfig.TREE_NOTE_FEATURE_ENABLED
     val FABRIC_ENABLED: Boolean = BuildConfig.ENABLE_FABRIC
     val HIGH_GPS_ACCURACY: Boolean = BuildConfig.GPS_ACCURACY
+    val AUTOMATIC_SIGN_OUT_FEATURE_ENABLED: Boolean = BuildConfig.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED
+
 }
