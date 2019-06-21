@@ -1,6 +1,6 @@
 [![Build Status](https://app.bitrise.io/app/26ed633acc077bbe/status.svg?token=m-rsQnNZGxgqrDa2u78bpg&branch=master)](https://app.bitrise.io/app/26ed633acc077bbe)
 
-# TreeTracker Android
+# Treetracker Android
 
 ## Current Milestones and Issue Topics
 
@@ -14,6 +14,8 @@ https://github.com/Greenstand/treetracker-android/milestone/10
 Feature we are currently prioritizing
 https://github.com/Greenstand/treetracker-android/milestone/9
 
+&nbsp;
+&nbsp;
 
 ## Project Details
 
@@ -24,10 +26,16 @@ paying planters on a per planting basis.
 
 For more on design intent and the app's user story see the [wiki in this repository](https://github.com/Greenstand/treetracker-android/wiki/User-Story)
 
+&nbsp;
+&nbsp;
+
 ## Project Setup
 Developers will need to ask the #android channel in Slack for the treetracker.keys.properties file to build gradle for the application.
 
 For development, select the build variant _dev_. This build variant is configured to allow trees to be added without a specific accuracy.  
+
+&nbsp;
+&nbsp;
 
 ## Deployment
 
@@ -40,6 +48,9 @@ Once this is done, you can proceed by running one of the following tasks to run 
 * `bootstrapReleasePlayResources` | Downloads the play store listing for the Release build. No download of image resources. See #18.
 * `generateReleasePlayResources`  | Collects play store resources for the Release build
 * `publishListingRelease`         | Updates the play store listing for the Release build
+
+&nbsp;
+&nbsp;
 
 ## Contributing
 
