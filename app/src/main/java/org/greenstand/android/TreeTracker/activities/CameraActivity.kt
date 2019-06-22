@@ -210,6 +210,8 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
     /**
      *  use Brenner's focus metric.
+     *  Determined by "office testing" (not real-world)
+     *  that the FOCUS_THRESHOLD == 700.
      */
     private fun testFocusQuality(): Double {
         try {
