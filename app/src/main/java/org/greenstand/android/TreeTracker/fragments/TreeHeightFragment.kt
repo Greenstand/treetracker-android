@@ -11,7 +11,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tree_height.*
 import kotlinx.android.synthetic.main.fragment_tree_height.view.*
 import org.greenstand.android.TreeTracker.R
@@ -28,20 +31,9 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class TreeHeightFragment : Fragment() {
 
     private val vm: TreeHeightViewModel by viewModel()
+    private val args: TreeHeightFragmentArgs by navArgs()
     private var isInitialState = true
 
-    companion object {
-
-        private const val NEW_TREE_KEY = "new_tree_key"
-
-        fun newInstance(treeId: NewTree): TreeHeightFragment {
-            return TreeHeightFragment().apply {
-                val bundle = Bundle()
-                bundle.putParcelable(NEW_TREE_KEY, treeId)
-                arguments = bundle
-            }
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tree_height, container, false)
@@ -49,9 +41,11 @@ class TreeHeightFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        requireActivity().toolbarTitle?.setText(R.string.tree_height_title)
+
         val parentView = view as ConstraintLayout
 
-        vm.newTree = arguments?.getParcelable(NEW_TREE_KEY)
+        vm.newTree = args.newTree
 
         listOf(height_button_five,
                height_button_four,
@@ -74,6 +68,7 @@ class TreeHeightFragment : Fragment() {
         })
 
         vm.onFinishedLiveData().observe(this, Observer {
+            findNavController().popBackStack(R.id.mapsFragment, false)
             fragmentManager?.popBackStack(ValueHelper.NEW_TREE_FRAGMENT, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         })
 

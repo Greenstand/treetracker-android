@@ -7,12 +7,15 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
 import android.os.Bundle
-import android.view.*
-import android.view.View.OnClickListener
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.view.*
 import kotlinx.coroutines.GlobalScope
@@ -20,10 +23,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.Utils
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.io.IOException
@@ -32,9 +34,13 @@ import java.util.*
 
 class TreePreviewFragment : Fragment() {
 
+    private val userLocationManager: UserLocationManager = getKoin().get()
+
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
-    private var treeIdStr: String? = ""
+    private var treeIdStr: String = ""
+
+    private val args: TreePreviewFragmentArgs by navArgs()
 
     lateinit var appDatabase: AppDatabase
 
@@ -57,9 +63,7 @@ class TreePreviewFragment : Fragment() {
         activity?.toolbarTitle?.setText(R.string.tree_preview)
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        val extras = arguments
-
-        treeIdStr = extras!!.getString(ValueHelper.TREE_ID)
+        treeIdStr = args.treeId
 
         mImageView = v.fragmentTreePreviewImage
 
@@ -70,7 +74,6 @@ class TreePreviewFragment : Fragment() {
             }.await()
 
             trees.forEach {
-
 
                 mCurrentPhotoPath = it.name
 
@@ -86,20 +89,20 @@ class TreePreviewFragment : Fragment() {
                     noImage.visibility = View.VISIBLE
                 }
 
-                MainActivity.mCurrentTreeLocation = Location("")
-                MainActivity.mCurrentTreeLocation!!.latitude = it.latitude
-                MainActivity.mCurrentTreeLocation!!.longitude = it.longitude
+                MainActivity.currentTreeLocation = Location("")
+                MainActivity.currentTreeLocation!!.latitude = it.latitude
+                MainActivity.currentTreeLocation!!.longitude = it.longitude
 
                 // No GPS accuracy info from new api.
-                //			MainActivity.mCurrentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
+                //			MainActivity.currentTreeLocation.setAccuracy(Float.parseFloat(photoCursor.getString(photoCursor.getColumnIndex("accuracy"))));
 
                 val results = floatArrayOf(0f, 0f, 0f)
-                if (MainActivity.mCurrentLocation != null) {
+                if (userLocationManager.currentLocation != null) {
                     Location.distanceBetween(
-                        MainActivity.mCurrentLocation!!.latitude,
-                        MainActivity.mCurrentLocation!!.longitude,
-                        MainActivity.mCurrentTreeLocation!!.latitude,
-                        MainActivity.mCurrentTreeLocation!!.longitude,
+                        userLocationManager.currentLocation!!.latitude,
+                        userLocationManager.currentLocation!!.longitude,
+                        MainActivity.currentTreeLocation!!.latitude,
+                        MainActivity.currentTreeLocation!!.longitude,
                         results
                     )
                 }

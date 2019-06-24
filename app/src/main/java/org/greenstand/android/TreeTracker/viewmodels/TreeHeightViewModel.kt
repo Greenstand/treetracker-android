@@ -7,11 +7,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.data.NewTree
-import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
 import org.greenstand.android.TreeTracker.data.TreeColor
+import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
 import org.greenstand.android.TreeTracker.managers.TreeManager
+import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
+import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 
-class TreeHeightViewModel(private val treeManager: TreeManager) : CoroutineViewModel() {
+class TreeHeightViewModel(private val treeManager: TreeManager,
+                          private val createTreeUseCase: CreateTreeUseCase) : CoroutineViewModel() {
 
     var newTree: NewTree? = null
     var treeColor: TreeColor? = null
@@ -32,14 +35,17 @@ class TreeHeightViewModel(private val treeManager: TreeManager) : CoroutineViewM
             }
 
             newTree
-                ?.let {
+                ?.let { tree ->
                     withContext(Dispatchers.IO) {
-                        val treeId = treeManager.addTree(photoPath = it.photoPath,
-                                                         minAccuracy = it.minAccuracy,
-                                                         timeToNextUpdate = it.timeToNextUpdate,
-                                                         content = it.content,
-                                                         userId = it.userId,
-                                                         planterIdentifierId = it.planterIdentifierId)
+
+                        val createTreeParams = CreateTreeParams(
+                            userId = tree.userId,
+                            photoPath = tree.photoPath,
+                            content = tree.content,
+                            planterIdentifierId = tree.planterIdentifierId
+                        )
+
+                        val treeId = createTreeUseCase.execute(createTreeParams)
 
                         fun addKeyValueAttribute(key: String, value: String) = treeManager.addTreeAttribute(treeId, key, value)
 

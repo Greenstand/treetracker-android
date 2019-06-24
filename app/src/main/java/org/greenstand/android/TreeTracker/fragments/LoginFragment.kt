@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.Dispatchers
@@ -48,10 +49,7 @@ class LoginFragment : Fragment(){
         })
 
         vm.onNavigateToMap = {
-            val fragment = MapsFragment()
-            val fragmentTransaction = activity?.supportFragmentManager?.beginTransaction()
-            fragmentTransaction?.addToBackStack(null)?.replace(R.id.containerFragment, fragment)
-            fragmentTransaction?.commit()
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToMapsFragment())
         }
 
         loginPhoneEditText.onTextChanged { vm.updatePhone(it) }
@@ -69,11 +67,7 @@ class LoginFragment : Fragment(){
                     // User has no info on device, go through the sign up process
                     Timber.d("User not on device, going to signup flow")
                     withContext(Dispatchers.Main) {
-                        val fragment = SignUpFragment.getInstance(vm.userIdentification)
-                        activity?.supportFragmentManager?.beginTransaction()?.run {
-                            addToBackStack(null).replace(R.id.containerFragment, fragment)
-                            commit()
-                        }
+                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment(vm.userIdentification))
                     }
                 }
             }

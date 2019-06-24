@@ -3,49 +3,55 @@ package org.greenstand.android.TreeTracker.activities
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.fragments.*
+import org.greenstand.android.TreeTracker.fragments.DataFragment
+import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private var mSharedPreferences: SharedPreferences? = null
+    private val userManager: UserManager = getKoin().get()
+
+    private val userLocationManager: UserLocationManager = getKoin().get()
+
+    private var sharedPreferences: SharedPreferences? = null
 
     private var fragment: Fragment? = null
 
-    private var fragmentTransaction: FragmentTransaction? = null
+    private var locationUpdatesStarted: Boolean = false
 
-    private var locationManager: LocationManager? = null
-    private var mLocationListener: android.location.LocationListener? = null
-    private var mLocationUpdatesStarted: Boolean = false
+    private var locationUpdateJob: Job? = null
 
     /**
      * Called when the activity is first created.
@@ -56,93 +62,43 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mSharedPreferences = this.getSharedPreferences(
-                "org.greenstand.android", Context.MODE_PRIVATE)
+        sharedPreferences = this.getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE)
 
 
-        if (mSharedPreferences!!.getBoolean(ValueHelper.FIRST_RUN, true)) {
+        if (sharedPreferences!!.getBoolean(ValueHelper.FIRST_RUN, true)) {
 
-            if (mSharedPreferences!!.getBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
-                mSharedPreferences?.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
+            if (sharedPreferences!!.getBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
+                sharedPreferences?.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
             }
 
-            mSharedPreferences?.edit()?.putBoolean(ValueHelper.FIRST_RUN, false)?.apply()
+            sharedPreferences?.edit()?.putBoolean(ValueHelper.FIRST_RUN, false)?.apply()
         }
 
         setContentView(R.layout.activity_main)
-
         setSupportActionBar(toolbar)
+
+        findViewById<View>(R.id.appbar_layout).visibility = View.GONE
+
+        val navController = findNavController(R.id.nav_host_fragment)
+
+        val listener = NavController.OnDestinationChangedListener { controller, destination, arguments ->
+            if (destination.id != R.id.splashFragment2) {
+                findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
+            }
+        }
+
+        navController.addOnDestinationChangedListener(listener)
+
+        toolbar.setNavigationOnClickListener {
+            navController.popBackStack()
+        }
+
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
-        val userIdentifier = mSharedPreferences?.getString(ValueHelper.PLANTER_IDENTIFIER, null)
-        if (userIdentifier == null) {
-            val editor = mSharedPreferences?.edit()
-            editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-            editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-            editor?.putString(ValueHelper.PLANTER_PHOTO, null)
-            editor?.apply()
-
+        if (!userManager.isLoggedIn) {
+            userManager.clearUser()
             toolbarTitle.text = resources.getString(R.string.user_not_identified)
-
-            fragment = LoginFragment()
-            fragmentTransaction = supportFragmentManager
-                .beginTransaction()
-            fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-                ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
-
-        } else if (mSharedPreferences!!.getBoolean(ValueHelper.TREES_TO_BE_DOWNLOADED_FIRST, false)) {
-            Timber.d("TREES_TO_BE_DOWNLOADED_FIRST is true")
-            var bundle = intent.extras
-
-            fragment = MapsFragment()
-            fragment?.arguments = bundle
-
-            fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction?.replace(R.id.containerFragment, fragment as MapsFragment)
-                ?.addToBackStack(ValueHelper.MAP_FRAGMENT)?.commit()
-
-            if (bundle == null)
-                bundle = Bundle()
-
-            bundle.putBoolean(ValueHelper.RUN_FROM_HOME_ON_LOGIN, true)
-
-
-            fragment = DataFragment()
-            fragment?.arguments = bundle
-
-            fragmentTransaction = supportFragmentManager
-                    .beginTransaction()
-            fragmentTransaction?.replace(R.id.containerFragment, fragment as DataFragment)
-                ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
-
-        } else {
-            if (userIdentifier != getString(R.string.user_not_identified)) {
-                Timber.d("MainActivity" + " startDataSync is false")
-                val homeFragment = MapsFragment()
-                homeFragment.arguments = intent.extras
-
-                val fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction.replace(R.id.containerFragment, homeFragment).addToBackStack(ValueHelper.MAP_FRAGMENT)
-                fragmentTransaction.commit()
-            } else {
-                val editor = mSharedPreferences?.edit()
-                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor?.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor?.commit()
-
-                toolbarTitle.text = resources.getString(R.string.user_not_identified)
-
-
-                fragment = LoginFragment()
-                fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction?.replace(R.id.containerFragment,
-                        fragment as LoginFragment)?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
-            }
         }
     }
 
@@ -153,69 +109,26 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val bundle: Bundle?
-        val fm = supportFragmentManager
         when (item.itemId) {
-            android.R.id.home -> {
-
-                if (fm.backStackEntryCount > 0) {
-                    fm.popBackStack()
-                }
-                return true
-            }
             R.id.action_data -> {
                 fragment = DataFragment()
                 bundle = intent.extras
                 fragment?.arguments = bundle
 
-                fragmentTransaction = supportFragmentManager.beginTransaction()
-                fragmentTransaction?.add(R.id.containerFragment, fragment as DataFragment)
-                    ?.addToBackStack(ValueHelper.DATA_FRAGMENT)?.commit()
-                for (entry in 0 until fm.backStackEntryCount) {
-                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
-                }
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_dataFragment)
                 return true
             }
             R.id.action_about -> {
-                val someFragment = supportFragmentManager.findFragmentById(R.id.containerFragment)
-
-                var aboutIsRunning = false
-
-                if (someFragment != null) {
-                    if (someFragment is AboutFragment) {
-                        aboutIsRunning = true
-                    }
-                }
-
-                if (!aboutIsRunning) {
-                    fragment = AboutFragment()
-                    fragment?.arguments = intent.extras
-
-                    fragmentTransaction = supportFragmentManager
-                            .beginTransaction()
-                    fragmentTransaction?.add(R.id.containerFragment, fragment as AboutFragment)
-                        ?.addToBackStack(ValueHelper.ABOUT_FRAGMENT)?.commit()
-                }
-                for (entry in 0 until fm.backStackEntryCount) {
-                    Timber.d("MainActivity " + "Found fragment: " + fm.getBackStackEntryAt(entry).name)
-                }
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_aboutFragment)
                 return true
             }
 
             R.id.action_change_user -> {
-                val editor = mSharedPreferences?.edit()
-                editor?.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                editor?.putString(ValueHelper.PLANTER_IDENTIFIER, null)
-                editor?.putString(ValueHelper.PLANTER_PHOTO, null)
-                editor?.commit()
+                userManager.clearUser()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
 
-
-                fragment = LoginFragment()
-                fragmentTransaction = supportFragmentManager
-                        .beginTransaction()
-                fragmentTransaction?.replace(R.id.containerFragment, fragment as LoginFragment)
-                    ?.addToBackStack(ValueHelper.IDENTIFY_FRAGMENT)?.commit()
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_login_flow_graph)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -224,7 +137,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onPause() {
         super.onPause()
 
-        stopPeriodicUpdates()
+        userLocationManager.stopLocationUpdates()
+        locationUpdateJob?.cancel()
     }
 
     public override fun onResume() {
@@ -254,55 +168,52 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     @SuppressLint("SetTextI18n")
     fun onLocationChanged(location: Location) {
         // In the UI, set the latitude and longitude to the value received
-        mCurrentLocation = location
+        currentLocation = location
 
-        //int minAccuracy = mSharedPreferences.getInt(ValueHelper.MIN_ACCURACY_GLOBAL_SETTING, 0);
         val minAccuracy = 10
-
-
 
         val fragmentMapGpsAccuracyView : TextView? = findViewById(R.id.fragmentMapGpsAccuracy)
         val fragmentMapGpsAccuracyViewValue : TextView? = findViewById(R.id.fragmentMapGpsAccuracyValue)
         if (fragmentMapGpsAccuracyView != null) {
-            if (mCurrentLocation != null) {
-                if (mCurrentLocation!!.hasAccuracy() && mCurrentLocation!!.accuracy < minAccuracy) {
+            if (currentLocation != null) {
+                if (currentLocation!!.hasAccuracy() && currentLocation!!.accuracy < minAccuracy) {
                     fragmentMapGpsAccuracyView.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracyViewValue?.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                        Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
-                    MainActivity.mAllowNewTreeOrUpdate = true
+                        Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    MainActivity.allowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracyView.setTextColor(Color.RED)
-                    MainActivity.mAllowNewTreeOrUpdate = false
+                    MainActivity.allowNewTreeOrUpdate = false
 
-                    if (mCurrentLocation!!.hasAccuracy()) {
+                    if (currentLocation!!.hasAccuracy()) {
                         fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
                         fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                            Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                            Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
                     } else {
                         fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
                         fragmentMapGpsAccuracyViewValue?.text = "N/A"
                     }
                 }
 
-                if (mCurrentLocation!!.hasAccuracy()) {
+                if (currentLocation!!.hasAccuracy()) {
                     if (fragmentNewTreeGpsAccuracy != null) {
                         fragmentNewTreeGpsAccuracy?.text = Integer.toString(
-                            Math.round(mCurrentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                            Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
                     }
                 }
             } else {
                 fragmentMapGpsAccuracyView.setTextColor(Color.RED)
                 fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
                 fragmentMapGpsAccuracyViewValue?.text = "N/A"
-                MainActivity.mAllowNewTreeOrUpdate = false
+                MainActivity.allowNewTreeOrUpdate = false
             }
 
 
-            if (mCurrentTreeLocation != null && MainActivity.mCurrentLocation != null) {
+            if (currentTreeLocation != null && userLocationManager.currentLocation != null) {
                 val results = floatArrayOf(0f, 0f, 0f)
-                Location.distanceBetween(MainActivity.mCurrentLocation!!.latitude, MainActivity.mCurrentLocation!!.longitude,
-                        MainActivity.mCurrentTreeLocation!!.latitude, MainActivity.mCurrentTreeLocation!!.longitude, results)
+                Location.distanceBetween(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude,
+                                         MainActivity.currentTreeLocation!!.latitude, MainActivity.currentTreeLocation!!.longitude, results)
 
                 if (fragmentNewTreeDistance != null) {
                     fragmentNewTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
@@ -343,10 +254,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
 
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
         // TODO this check may not longer be necessary
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!userLocationManager.isLocationEnabled()) {
             val builder = AlertDialog.Builder(this@MainActivity)
 
             builder.setTitle(R.string.enable_location_access)
@@ -387,51 +296,21 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             return
         }
 
-        if (mLocationUpdatesStarted) {
-            return
-        }
-
-        mLocationListener = object : android.location.LocationListener {
-            override fun onLocationChanged(location: Location) {
-                this@MainActivity.onLocationChanged(location)
-            }
-
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-
-            override fun onProviderEnabled(provider: String) {}
-
-            override fun onProviderDisabled(provider: String) {}
-        }
-
         // Register the listener with Location Manager's network provider
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, mLocationListener)
-
-        mLocationUpdatesStarted = true
-    }
-
-
-    /**
-     * In response to a request to stop updates, send a request to
-     * Location Services
-     */
-    private fun stopPeriodicUpdates() {
-        if (locationManager != null) {
-            locationManager?.removeUpdates(mLocationListener)
-            mLocationListener = null
+        locationUpdateJob = GlobalScope.launch(Dispatchers.Main) {
+            for (location in userLocationManager.locationUpdatesChannel) {
+                onLocationChanged(location)
+            }
         }
-        mLocationUpdatesStarted = false
 
+        userLocationManager.startLocationUpdates()
     }
 
     // TODO: implementing this as a static companion object is not necessarily a good design
     companion object {
-
-        var mCurrentLocation: Location? = null
-        var mCurrentTreeLocation: Location? = null
-
-        var mAllowNewTreeOrUpdate = false
-
+        var currentLocation: Location? = null
+        var currentTreeLocation: Location? = null
+        var allowNewTreeOrUpdate = false
     }
-
 }
 

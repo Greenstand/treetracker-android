@@ -1,14 +1,12 @@
 package org.greenstand.android.TreeTracker.managers
 
-import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.*
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 
-class TreeManager(private val db: AppDatabase) {
+class TreeManager(private val db: AppDatabase,
+                  private val userLocationManager: UserLocationManager) {
 
     companion object {
         const val TREE_COLOR_ATTR_KEY = "height_color"
@@ -41,41 +39,24 @@ class TreeManager(private val db: AppDatabase) {
         return db.treeAttributesDao().getTreeAttributesByTree(treeId);
     }
 
-
-    suspend fun addTree(photoPath: String,
-                        minAccuracy: Int,
-                        timeToNextUpdate: Int,
-                        content: String,
-                        userId: Long,
-                        planterIdentifierId: Long): Long {
-
-        val uuid = UUID.randomUUID()
-
-        val locationId = insertLocation(userId)
-
-        val photoId = insertPhoto(locationId, photoPath)
-
-        val settingsId = insertSettings(timeToNextUpdate, minAccuracy)
-
-        val noteId = insertNote(userId, content)
-
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val calendar = Calendar.getInstance().apply {
-            time = Date()
-            add(Calendar.DAY_OF_MONTH, timeToNextUpdate)
-        }
-
-        val dateString = dateFormat.format(calendar.time)
+    fun addNewTree(uuid: UUID,
+                   userId: Long,
+                   locationId: Long,
+                   settingsId: Long,
+                   planterId: Long,
+                   timeCreated: String,
+                   timeForUpdate: String,
+                   timeUpdated: String): Long {
 
         val treeEntity = TreeEntity(
             uuid = uuid.toString(),
             userId = userId,
             locationId = locationId.toInt(),
             settingId = settingsId,
-            planterId = planterIdentifierId,
-            timeCreated = dateString,
-            timeForUpdate = dateString,
-            timeUpdated = dateString,
+            planterId = planterId,
+            timeCreated = timeCreated,
+            timeForUpdate = timeForUpdate,
+            timeUpdated = timeUpdated,
             causeOfDeath = null,
             isSynced = false,
             isMissing = false,
@@ -88,18 +69,14 @@ class TreeManager(private val db: AppDatabase) {
         val treeId = db.treeDao().insert(treeEntity)
         Timber.d("treeId $treeId")
 
-        insertTreePhoto(treeId, photoId)
-
-        insertTreeNote(treeId, noteId)
-
         return treeId
     }
 
     fun insertLocation(userId: Long): Long {
         val locationEntity = LocationEntity(
-            MainActivity.mCurrentLocation!!.accuracy.toInt(),
-            MainActivity.mCurrentLocation!!.latitude,
-            MainActivity.mCurrentLocation!!.longitude,
+            userLocationManager.currentLocation!!.accuracy.toInt(),
+            userLocationManager.currentLocation!!.latitude,
+            userLocationManager.currentLocation!!.longitude,
             userId
         )
 
