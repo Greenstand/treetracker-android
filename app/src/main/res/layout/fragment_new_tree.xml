@@ -6,20 +6,42 @@
                 android:layout_height="match_parent"
                 android:background="@color/background"
                 android:orientation="vertical">
+        <ImageView
+            android:id="@+id/fragmentNewTreeImage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_new_tree_image"
+            android:contentDescription="@string/tree"
+            android:layout_gravity="center_vertical|center_horizontal"
+            />
 
-    <ImageView
-        android:id="@+id/fragmentNewTreeImage"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_new_tree_image"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/margin_eight"
-        android:contentDescription="@string/tree" />
-
+    <LinearLayout
+            android:id="@+id/fragment_new_tree_focus_warning_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragmentNewTreeImage"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin_twenty_four"
+            android:paddingTop="@dimen/one_dp"
+            android:paddingRight="@dimen/margin_twenty_four">
+        <TextView
+                android:id="@+id/fragment_new_tree_focus_warning_text"
+                android:layout_width="@dimen/zero_dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                android:text=""
+                android:gravity="center"
+                android:textColor = "@color/cautionOrange"
+                android:textSize="@dimen/text_size_seventeen"
+                android:visibility="gone"
+                android:background="@drawable/caution_text_border"/>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/fragment_new_tree_distance_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragmentNewTreeImage"
+        android:layout_below="@+id/fragment_new_tree_focus_warning_layout"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_twenty_four"
         android:paddingTop="@dimen/one_dp"

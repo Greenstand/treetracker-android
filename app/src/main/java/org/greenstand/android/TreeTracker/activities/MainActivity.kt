@@ -165,6 +165,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Permissions.NECESSARY_PERMISSIONS)
     }
 
+    @SuppressLint("SetTextI18n")
     fun onLocationChanged(location: Location) {
         // In the UI, set the latitude and longitude to the value received
         currentLocation = location
