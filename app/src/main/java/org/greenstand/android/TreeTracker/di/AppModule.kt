@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.di
 
 import android.content.Context
 import android.location.LocationManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -23,6 +24,8 @@ val appModule = module {
     viewModel { TreeHeightViewModel(get(), get()) }
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
+
+    single { FirebaseAnalytics.getInstance(get()) }
 
     single { TreeManager(get(), get()) }
 

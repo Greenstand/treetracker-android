@@ -4,12 +4,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.data.UserInfo
-import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.Utils
 import java.util.*
 
-class TermsPolicyViewModel(private val planterManager: PlanterManager,
+class TermsPolicyViewModel(private val userManager: UserManager,
                            private val userLocationManager: UserLocationManager) : CoroutineViewModel() {
 
     lateinit var userInfo: UserInfo
@@ -26,18 +26,16 @@ class TermsPolicyViewModel(private val planterManager: PlanterManager,
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            planterManager.addPlanterIdentification(userInfo.identification,
-                                                    photoPath!!,
-                                                    userLocationManager.currentLocation)
+            userManager.login(userInfo.identification,
+                              photoPath!!,
+                              userLocationManager.currentLocation)
 
-            val planterDetailsId = planterManager.addPlanterDetails(userInfo.identification,
-                                                                    userInfo.firstName,
-                                                                    userInfo.lastName,
-                                                                    userInfo.organization,
-                                                                    Utils.dateFormat.format(Date()),
-                                                                    userLocationManager.currentLocation)
-
-            planterManager.updateIdentifierId(userInfo.identification, planterDetailsId)
+            userManager.addLoginDetails(userInfo.identification,
+                                        userInfo.firstName,
+                                        userInfo.lastName,
+                                        userInfo.organization,
+                                        Utils.dateFormat.format(Date()),
+                                        userLocationManager.currentLocation)
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }
