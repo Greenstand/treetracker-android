@@ -16,28 +16,34 @@ class Analytics(private val userManager: UserManager,
                 private val deviceUtils: DeviceUtils) {
 
     init {
+        setupDeviceProperties()
+
+        with(firebaseAnalytics) {
+            setUserId(userManager.userId.toString())
+            setUserProperty("first_name", userManager.firstName)
+            setUserProperty("last_name", userManager.lastName)
+            setUserProperty("organization", userManager.organization)
+        }
+
         GlobalScope.launch {
             userManager.userLoginReceiveChannel.consumeEach {
-                setupUserProperties()
+                firebaseAnalytics.setUserId(userManager.userId.toString())
             }
         }
 
         GlobalScope.launch {
             userManager.userDetailsReceiveChannel.consumeEach {
-                setupUserProperties()
+                with(firebaseAnalytics) {
+                    setUserProperty("first_name", userManager.firstName)
+                    setUserProperty("last_name", userManager.lastName)
+                    setUserProperty("organization", userManager.organization)
+                }
             }
         }
     }
 
-    private fun setupUserProperties() {
+    private fun setupDeviceProperties() {
         with(firebaseAnalytics) {
-            // User
-            setUserId(userManager.userId.toString())
-            setUserProperty("first_name", userManager.firstName)
-            setUserProperty("last_name", userManager.lastName)
-            setUserProperty("organization", userManager.organization)
-
-            // Device
             setUserProperty("device_id", deviceUtils.deviceId)
             setUserProperty("device_language", deviceUtils.language)
             setUserProperty("flavor", BuildConfig.FLAVOR)
