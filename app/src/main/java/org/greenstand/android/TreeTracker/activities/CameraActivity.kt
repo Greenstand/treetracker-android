@@ -21,8 +21,10 @@ import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.coroutines.*
+import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -155,7 +157,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
                 // TODO Auto-generated catch block
                 e.printStackTrace()
             }
-        } else {
+        } else if(FeatureFlags.BLUR_DETECTION_ENABLED) {
             this.imageQuality = testFocusQuality()
         }
 
