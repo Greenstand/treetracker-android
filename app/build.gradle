@@ -63,6 +63,7 @@ android {
         buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
+        buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "false"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -112,6 +113,21 @@ android {
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
 
+        acceleration {
+            initWith(debug)
+            applicationIdSuffix ".accel"
+            resValue "string", "app_name", "Tree Tracker(accel)"
+            buildConfigField "Boolean", "GPS_ACCURACY", "false"
+            buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
+            buildConfigField "String", "DOS_ACCESS_KEY", "\"${s3_access_key}\""
+            buildConfigField "String", "DOS_SECRET_KEY", "\"${s3_secret_key}\""
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test-bucket"'
+            buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "true"
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
+        }
+
         prerelease {
             initWith(debug)
             applicationIdSuffix ".prerelease"
@@ -146,11 +162,24 @@ android {
             buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
             buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
             buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "false"
-
         }
     }
 
     useLibrary 'org.apache.http.legacy'
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/io.netty.versions.properties'
+        exclude 'META-INF/INDEX.LIST'
+
+    }
 }
 
 
@@ -169,13 +198,15 @@ repositories {
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     compile 'com.google.maps.android:android-maps-utils:0.5+'
 
-    implementation 'com.amazonaws:aws-android-sdk-core:2.2.22'
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
+    //implementation 'com.amazonaws:aws-java-sdk:1.11.584'
+    // 2.0: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-project-gradle.html
+    // android s3 sdk does not support transfer acceleration
+    implementation 'com.amazonaws:aws-android-sdk-core:2.13.6'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.13.6'
 
     implementation 'org.koin:koin-android-viewmodel:2.0.0-GA'
 
