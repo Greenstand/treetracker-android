@@ -63,6 +63,7 @@ android {
         buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
+        buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "false"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -106,6 +107,21 @@ android {
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
 
+        acceleration {
+            initWith(debug)
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "Tree Tracker(accel)"
+            buildConfigField "Boolean", "GPS_ACCURACY", "false"
+            buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
+            buildConfigField "String", "DOS_ACCESS_KEY", "\"${s3_access_key}\""
+            buildConfigField "String", "DOS_SECRET_KEY", "\"${s3_secret_key}\""
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test-bucket"'
+            buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "true"
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
+        }
+
         prerelease {
             initWith(debug)
             applicationIdSuffix ".prerelease"
@@ -140,7 +156,6 @@ android {
             buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
             buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
             buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "false"
-
         }
     }
 
@@ -164,8 +179,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
-    implementation 'com.amazonaws:aws-android-sdk-core:2.2.22'
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.13.6'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.13.6'
+    implementation 'com.amazonaws:aws-java-sdk:1.11.584'
 
     implementation 'org.koin:koin-android-viewmodel:2.0.0-GA'
 
