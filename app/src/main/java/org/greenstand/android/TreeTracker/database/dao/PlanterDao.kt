@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
@@ -25,6 +24,10 @@ interface PlanterDao {
     @Transaction
     @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
     fun getPlanterDetailsByIdentifier(identifier: String): PlanterDetailsEntity?
+
+    @Transaction
+    @Query("SELECT * FROM planter_details WHERE _id = :id")
+    fun getPlanterDetailsById(id: Int): PlanterDetailsEntity?
 
     @Transaction
     @Query("SELECT * FROM planter_details WHERE identifier = :identifier")
