@@ -69,11 +69,11 @@ class TreePreviewFragment : Fragment() {
 
         runBlocking {
 
-            val trees = GlobalScope.async {
+            val tree = GlobalScope.async {
                 appDatabase.treeDao().getTreeDtoByID(treeIdStr!!.toLong())
             }.await()
 
-            trees.forEach {
+            tree.let {
 
                 mCurrentPhotoPath = it.name
 
