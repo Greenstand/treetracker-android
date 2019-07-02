@@ -31,6 +31,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -43,13 +44,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     private val userManager: UserManager = getKoin().get()
 
+    private val analytics: Analytics = getKoin().get()
+
     private val userLocationManager: UserLocationManager = getKoin().get()
 
     private var sharedPreferences: SharedPreferences? = null
 
     private var fragment: Fragment? = null
-
-    private var locationUpdatesStarted: Boolean = false
 
     private var locationUpdateJob: Job? = null
 
@@ -85,6 +86,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             if (destination.id != R.id.splashFragment2) {
                 findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
             }
+
+            analytics.tagScreen(this, controller.currentDestination?.label.toString())
         }
 
         navController.addOnDestinationChangedListener(listener)
@@ -165,6 +168,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Permissions.NECESSARY_PERMISSIONS)
     }
 
+    @SuppressLint("SetTextI18n")
     fun onLocationChanged(location: Location) {
         // In the UI, set the latitude and longitude to the value received
         currentLocation = location

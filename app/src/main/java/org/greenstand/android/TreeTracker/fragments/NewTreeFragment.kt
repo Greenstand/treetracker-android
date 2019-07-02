@@ -7,12 +7,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.OnClickListener
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -41,6 +43,7 @@ import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+
 
     private val userLocationManager: UserLocationManager = getKoin().get()
 
@@ -89,8 +92,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         }
 
         saveBtn.setOnClickListener(this@NewTreeFragment)
-
-        mImageView = v.fragmentNewTreeImage
 
         val newTreeDistance = v.fragmentNewTreeDistance
         val newTreeDistanceString = Integer.toString(0) + " " + resources.getString(R.string.meters)
@@ -227,6 +228,18 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     }
 
                     setPic()
+                    val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE,0.0);
+
+                    if (imageQuality < FOCUS_THRESHOLD) {
+                        fragment_new_tree_focus_warning_text?.visibility = View.VISIBLE
+                        fragment_new_tree_focus_warning_text?.setText(R.string.focus_warning)
+                    } else{
+                        fragment_new_tree_focus_warning_text?.visibility = View.GONE
+                        fragment_new_tree_focus_warning_text?.text = ""
+
+
+                    }
+
                 }
 
             }
@@ -289,11 +302,12 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
             findNavController().popBackStack()
         }
         /* Associate the Bitmap to the ImageView */
-        mImageView!!.setImageBitmap(rotatedBitmap)
-        mImageView!!.visibility = View.VISIBLE
+        fragmentNewTreeImage!!.setImageBitmap(rotatedBitmap)
+        fragmentNewTreeImage!!.visibility = View.VISIBLE
     }
 
     companion object {
+        const val FOCUS_THRESHOLD = 700.0
 
         private val TAG = "NewTreeFragment"
 

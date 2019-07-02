@@ -21,8 +21,10 @@ import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.coroutines.*
+import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.CameraPreview
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -47,12 +49,15 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
     private var operationAttempt: Job? = null
 
     private var captureSelfie: Boolean = false
+    private var imageQuality: Double = 0.0
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
         mImageView = cameraPreviewTaken
+
+
         captureButton = buttonCapture
 
         // Add a listener to the buttons
@@ -64,7 +69,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
         setSupportActionBar(camera_toolbar)
         supportActionBar?.title = ""
-        if(captureSelfie) {
+        if (captureSelfie) {
             cameraToolbarTitle.text = getString(R.string.take_a_selfie)
         } else {
             cameraToolbarTitle.text = getString(R.string.add_a_tree)
@@ -81,10 +86,10 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
             captureButton?.visibility = View.INVISIBLE
 
-            while(mCamera == null){
+            while (mCamera == null) {
                 try {
 
-                    if(captureSelfie) {
+                    if (captureSelfie) {
 
                         val numberOfCameras = Camera.getNumberOfCameras()
                         if (numberOfCameras > 1) {
@@ -110,6 +115,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
             captureButton?.visibility = View.VISIBLE
         }
     }
+
     /** Check if this device has a camera  */
     private fun checkCameraHardware(context: Context): Boolean {
         return if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -140,7 +146,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
             e.printStackTrace()
         }
 
-        if(captureSelfie){
+        if (captureSelfie) {
 
             var exif: ExifInterface? = null
             try {
@@ -151,6 +157,8 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
                 // TODO Auto-generated catch block
                 e.printStackTrace()
             }
+        } else if(FeatureFlags.BLUR_DETECTION_ENABLED) {
+            this.imageQuality = testFocusQuality()
         }
 
         setPic()
@@ -161,7 +169,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
 
     private fun compressImage() {
 
-        if(mCurrentPhotoPath != null) {
+        if (mCurrentPhotoPath != null) {
             val photo = Utils.resizedImage(mCurrentPhotoPath!!)
 
             val bytes = ByteArrayOutputStream()
@@ -198,8 +206,29 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         val cw = ContextWrapper(applicationContext)
         val f = ImageUtils.createImageFile(cw)
         mCurrentPhotoPath = f.absolutePath
-
         return f
+    }
+
+
+    /**
+     *  use Brenner's focus metric.
+     *  Determined by "office testing" (not real-world)
+     *  that the FOCUS_THRESHOLD == 700.
+     */
+    private fun testFocusQuality(): Double {
+        try {
+            // metric only cares about luminance.
+            // for memory limitations, and performance and metric consistency,
+            // the image is 200 pixels wide.
+            var grayImage = ImageUtils.getGrayPixelFromBitmap(tmpImageFile!!.absolutePath,200) ?: return 0.0
+            val q = ImageUtils.brennersFocusMetric(grayImage)
+            println(q)
+            return q
+        } catch (e: java.lang.Exception) {
+            println(e)
+        }
+        // on an error, we return very bad focus.
+        return 0.0;
     }
 
     private fun setPic() {
@@ -319,6 +348,7 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         if (saved) {
             val data = Intent()
             data.putExtra(ValueHelper.TAKEN_IMAGE_PATH, mCurrentPhotoPath)
+            data.putExtra(ValueHelper.FOCUS_METRIC_VALUE,imageQuality)
             setResult(Activity.RESULT_OK, data)
 
         } else {
@@ -326,7 +356,6 @@ class CameraActivity : AppCompatActivity(), Camera.PictureCallback, View.OnClick
         }
         finish()
     }
-
 
 
 
