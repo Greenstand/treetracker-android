@@ -2,11 +2,14 @@ package org.greenstand.android.TreeTracker.di
 
 import android.content.Context
 import android.location.LocationManager
+import com.google.firebase.analytics.FirebaseAnalytics
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -14,7 +17,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    viewModel { LoginViewModel(get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get()) }
 
     viewModel { SignupViewModel() }
 
@@ -24,11 +27,17 @@ val appModule = module {
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
+    single { FirebaseAnalytics.getInstance(get()) }
+
     single { TreeManager(get(), get()) }
 
-    single { UserManager(get(), get()) }
+    single { UserManager(get(), get(), get()) }
 
     single { PlanterManager(get(), get()) }
+
+    single { Analytics(get(), get(), get()) }
+
+    single { DeviceUtils }
 
     single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
 
