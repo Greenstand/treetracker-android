@@ -54,7 +54,7 @@ val appModule = module {
 
     factory { UploadTreeUseCase(get(), get(), get(), get()) }
 
-    factory { SyncTreeUseCase(get(), get(), get(), get()) }
+    factory { SyncTreeUseCase(get(), get(), get()) }
 
     factory { UploadPlanterDetailsUseCase(get(), get(), get()) }
 }
