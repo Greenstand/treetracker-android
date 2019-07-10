@@ -1,22 +1,74 @@
 package org.greenstand.android.TreeTracker.database.v2
 
 import androidx.room.*
+import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoId
+import org.greenstand.android.TreeTracker.database.v2.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
 
 
 @Dao
 interface TreeTrackerDAO {
 
+    @Transaction
+    @Query("SELECT _id FROM planter_info WHERE identifier = :identifier")
+    fun getPlanterInfoIdByIdentifier(identifier: String): Long
+
+
     @Query("SELECT * FROM planter_info")
-    suspend fun getAllPlanterInfo(): List<PlanterInfoEntity>
+    fun getAllPlanterInfo(): List<PlanterInfoEntity>
 
     @Query("SELECT * FROM planter_info WHERE _id = :id")
-    suspend fun getPlanterInfoById(id: PlanterInfoId): PlanterInfoEntity
+    fun getPlanterInfoById(id: Long): PlanterInfoEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPlanterInfo(planterInfoEntity: PlanterInfoEntity): PlanterInfoId
+    fun insertPlanterInfo(planterInfoEntity: PlanterInfoEntity): Long
 
     @Delete
-    suspend fun deletePlanterInfo(planterInfoEntity: PlanterInfoEntity)
+    fun deletePlanterInfo(planterInfoEntity: PlanterInfoEntity)
+
+
+
+
+    @Query("SELECT * FROM planter_check_in")
+    fun getAllPlanterCheckIn(): List<PlanterCheckInEntity>
+
+    @Query("SELECT * FROM planter_check_in WHERE _id = :id")
+    fun getPlanterCheckInById(id: Long): PlanterCheckInEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPlanterCheckIn(planterCheckInEntity: PlanterCheckInEntity): Long
+
+    @Delete
+    fun deletePlanterCheckIn(planterCheckInEntity: PlanterCheckInEntity)
+
+
+
+
+    @Query("SELECT * FROM tree_capture")
+    fun getAllTreeCaptures(): List<TreeCaptureEntity>
+
+    @Query("SELECT * FROM tree_capture WHERE _id = :id")
+    fun getTreeCaptureById(id: Long): TreeCaptureEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertTreeCapture(treeCaptureEntity: TreeCaptureEntity): Long
+
+    @Delete
+    fun deleteTreeCapture(treeCaptureEntity: TreeCaptureEntity)
+
+
+
+
+    @Query("SELECT * FROM tree_attribute")
+    fun getAllTreeAttributes(): List<TreeAttributeEntity>
+
+    @Query("SELECT * FROM tree_attribute WHERE _id = :id")
+    fun getTreeAttributeById(id: Long): TreeAttributeEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertTreeAttribute(treeAttributeEntity: TreeAttributeEntity): Long
+
+    @Delete
+    fun deleteTreeAttribute(treeAttributeEntity: TreeAttributeEntity)
 }

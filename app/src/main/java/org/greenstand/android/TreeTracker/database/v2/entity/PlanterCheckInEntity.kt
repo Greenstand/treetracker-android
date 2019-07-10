@@ -18,26 +18,26 @@ inline class PlanterCheckInId(val value: Long)
         )
     ]
 )
-class PlanterCheckInEntity(
-    @ColumnInfo(name = PLANTER_INFO_ID)
-    var planterInfoId: PlanterInfoId,
+data class PlanterCheckInEntity(
+    @ColumnInfo(name = PLANTER_INFO_ID, index = true)
+    var planterInfoId: Long,
     @ColumnInfo(name = IDENTIFIER)
-    var identifier: String?,
+    var identifier: String,
     @ColumnInfo(name = LOCAL_PHOTO_PATH)
     var localPhotoPath: String,
     @ColumnInfo(name = PHOTO_URL)
     var photoUrl: String?,
     @ColumnInfo(name = LATITUDE)
-    var latitude: Long,
+    var latitude: Double,
     @ColumnInfo(name = LONGITUDE)
-    var uploaded: Boolean = false,
+    var longitude: Double,
     @ColumnInfo(name = CREATED_AT)
-    var createdAt: String
+    var createdAt: Long
 ) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: PlanterCheckInId = PlanterCheckInId(0)
+    var id: Long = 0
 
     companion object {
         const val TABLE = "planter_check_in"

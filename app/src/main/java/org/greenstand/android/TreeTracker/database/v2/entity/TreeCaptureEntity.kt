@@ -18,11 +18,11 @@ inline class TreeCaptureId(val value: Long)
         )
     ]
 )
-class TreeCaptureEntity(
+data class TreeCaptureEntity(
     @ColumnInfo(name = UUID)
     var uuid: String,
-    @ColumnInfo(name = PLANTER_CHECK_IN_ID)
-    var planterCheckInId: PlanterCheckInId,
+    @ColumnInfo(name = PLANTER_CHECK_IN_ID, index = true)
+    var planterCheckInId: Long,
     @ColumnInfo(name = LOCAL_PHOTO_PATH)
     var localPhotoPath: String,
     @ColumnInfo(name = PHOTO_URL)
@@ -30,20 +30,20 @@ class TreeCaptureEntity(
     @ColumnInfo(name = NOTE_CONTENT)
     var noteContent: String,
     @ColumnInfo(name = LATITUDE)
-    var latitude: Long,
+    var latitude: Double,
     @ColumnInfo(name = LONGITUDE)
-    var longitude: Long,
+    var longitude: Double,
     @ColumnInfo(name = ACCURACY)
-    var accuracy: Long,
+    var accuracy: Double,
     @ColumnInfo(name = UPLOADED)
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
-    var createAt: String
+    var createAt: Long
 ) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: TreeCaptureId = TreeCaptureId(0)
+    var id: Long = 0
 
     companion object {
         const val TABLE = "tree_capture"

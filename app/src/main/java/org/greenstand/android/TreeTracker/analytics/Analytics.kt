@@ -76,6 +76,14 @@ class Analytics(private val userManager: UserManager,
 
     }
 
+    fun userCheckedIn() {
+
+    }
+
+    fun userInfoCreated() {
+
+    }
+
     fun userEnteredDetails() {
 
     }
