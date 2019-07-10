@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeAttributeEntity
@@ -19,11 +20,10 @@ import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
     version = 1,
     exportSchema = true
 )
-
+@TypeConverters(Converters::class)
 abstract class AppDatabaseV2 : RoomDatabase() {
 
     abstract fun treeTrackerDao(): TreeTrackerDAO
-
 
     companion object {
 

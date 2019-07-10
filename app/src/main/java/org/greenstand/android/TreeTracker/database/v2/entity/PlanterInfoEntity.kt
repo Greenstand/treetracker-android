@@ -21,18 +21,18 @@ data class PlanterInfoEntity(
     @ColumnInfo(name = EMAIL)
     var email: String?,
     @ColumnInfo(name = LATITUDE)
-    var latitude: Long,
+    var latitude: Double,
     @ColumnInfo(name = LONGITUDE)
-    var longitude: Long,
+    var longitude: Double,
     @ColumnInfo(name = UPLOADED)
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
-    var createdAt: String
+    var createdAt: Long
 ) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
-    var id: PlanterInfoId = PlanterInfoId(0)
+    var id: Long = 0
 
     companion object {
         const val TABLE = "planter_info"
