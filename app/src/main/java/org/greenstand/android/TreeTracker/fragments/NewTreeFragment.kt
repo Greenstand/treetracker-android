@@ -7,14 +7,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.OnClickListener
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -49,7 +47,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
-    private var userId: Long = 0
+    private var planterCheckInId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private var takePictureInvoked: Boolean = false
 
@@ -75,7 +73,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
             "org.greenstand.android", Context.MODE_PRIVATE
         )
 
-        userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
+        planterCheckInId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
 
         val saveBtn = v.fragmentNewTreeSave
 
@@ -274,7 +272,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     minAccuracy,
                     timeToNextUpdate,
                     content,
-                    userId,
+                    planterCheckInId,
                     planterIdentifierId)
         }
     }
@@ -282,10 +280,9 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     private suspend fun saveToDb(newTree: NewTree): Long {
 
         val createTreeParams = CreateTreeParams(
-            userId = newTree.userId,
+            planterCheckInId = newTree.planterCheckInId,
             photoPath = newTree.photoPath,
-            content = newTree.content,
-            planterIdentifierId = newTree.planterIdentifierId
+            content = newTree.content
         )
 
         return getKoin().get<CreateTreeUseCase>().execute(createTreeParams)

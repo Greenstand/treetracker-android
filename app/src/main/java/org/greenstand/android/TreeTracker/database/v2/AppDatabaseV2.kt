@@ -9,6 +9,7 @@ import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntit
 import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.v2.views.TreeUploadDbView
 
 @Database(
     entities = [
@@ -18,7 +19,8 @@ import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
         TreeCaptureEntity::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = true,
+    views = arrayOf(TreeUploadDbView::class)
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabaseV2 : RoomDatabase() {

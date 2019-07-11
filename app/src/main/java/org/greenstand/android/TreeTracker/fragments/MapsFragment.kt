@@ -38,22 +38,15 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.AppDatabase
-import org.greenstand.android.TreeTracker.database.entity.LocationEntity
-import org.greenstand.android.TreeTracker.database.entity.PhotoEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeEntity
-import org.greenstand.android.TreeTracker.database.entity.TreePhotoEntity
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.Utils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 import java.io.FileOutputStream
-import java.io.IOException
-import java.util.*
 
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback,
@@ -258,7 +251,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         userLocationManager.currentLocation ?: return true
 
         GlobalScope.launch {
-            val userId = -1
+            val planterCheckInId = -1
 
             for (i in 0..499) {
 
@@ -269,10 +262,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 fos.close()
 
                 val createTreeParams = CreateTreeParams(
-                    userId = userId.toLong(),
+                    planterCheckInId = planterCheckInId.toLong(),
                     photoPath = f.absolutePath,
-                    content = "My Note",
-                    planterIdentifierId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
+                    content = "My Note"
                 )
 
                 getKoin().get<CreateTreeUseCase>().execute(createTreeParams)

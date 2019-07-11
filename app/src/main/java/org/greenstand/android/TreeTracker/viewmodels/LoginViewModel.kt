@@ -12,8 +12,6 @@ import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 class LoginViewModel(private val planterManager: PlanterManager,
-                     private val userLocationManager: UserLocationManager,
-                     private val userManager: UserManager,
                      private val createPlanterCheckInUseCase: CreatePlanterCheckInUseCase): CoroutineViewModel()  {
 
     private var email: String? = null
