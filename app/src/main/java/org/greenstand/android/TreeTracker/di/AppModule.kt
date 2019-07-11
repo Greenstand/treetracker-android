@@ -18,7 +18,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    viewModel { LoginViewModel(get(), get(), get()) }
+    viewModel { LoginViewModel(get(), get()) }
 
     viewModel { SignupViewModel() }
 
@@ -52,9 +52,9 @@ val appModule = module {
 
     factory { CreateTreeUseCase(get(), get(), get()) }
 
-    factory { UploadTreeUseCase(get(), get(), get(), get()) }
+    factory { UploadTreeUseCase(get(), get(), get()) }
 
     factory { SyncTreeUseCase(get(), get(), get()) }
 
-    factory { UploadPlanterDetailsUseCase(get(), get(), get()) }
+    factory { UploadPlanterUseCase(get(), get(), get()) }
 }

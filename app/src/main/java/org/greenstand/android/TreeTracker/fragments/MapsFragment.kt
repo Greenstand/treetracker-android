@@ -259,7 +259,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         userLocationManager.currentLocation ?: return true
 
         GlobalScope.launch {
-            val userId = -1
+            val planterCheckInId = -1
 
             for (i in 0..499) {
 
@@ -270,10 +270,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 fos.close()
 
                 val createTreeParams = CreateTreeParams(
-                    userId = userId.toLong(),
+                    planterCheckInId = planterCheckInId.toLong(),
                     photoPath = f.absolutePath,
-                    content = "My Note",
-                    planterIdentifierId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
+                    content = "My Note"
                 )
 
                 getKoin().get<CreateTreeUseCase>().execute(createTreeParams)

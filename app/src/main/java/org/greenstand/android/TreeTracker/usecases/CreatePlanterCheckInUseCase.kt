@@ -16,8 +16,7 @@ data class CreatePlanterCheckInParams(val localPhotoPath: String,
 class CreatePlanterCheckInUseCase(private val sharedPreferences: SharedPreferences,
                                   private val userLocationManager: UserLocationManager,
                                   private val doa: TreeTrackerDAO,
-                                  private val analytics: Analytics
-) : UseCase<CreatePlanterCheckInParams, Long>() {
+                                  private val analytics: Analytics) : UseCase<CreatePlanterCheckInParams, Long>() {
 
     override suspend fun execute(params: CreatePlanterCheckInParams): Long = withContext(Dispatchers.IO) {
 

@@ -39,10 +39,9 @@ class TreeHeightViewModel(private val treeManager: TreeManager,
                     withContext(Dispatchers.IO) {
 
                         val createTreeParams = CreateTreeParams(
-                            userId = tree.userId,
+                            planterCheckInId = tree.planterCheckInId,
                             photoPath = tree.photoPath,
-                            content = tree.content,
-                            planterIdentifierId = tree.planterIdentifierId
+                            content = tree.content
                         )
 
                         val treeId = createTreeUseCase.execute(createTreeParams)

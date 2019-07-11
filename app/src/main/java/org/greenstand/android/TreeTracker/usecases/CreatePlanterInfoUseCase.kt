@@ -10,17 +10,15 @@ import org.greenstand.android.TreeTracker.managers.UserLocationManager
 
 
 data class CreatePlanterInfoParams(val firstName: String,
-                                  val lastName: String,
-                                  val organization: String?,
-                                  val phone: String?,
-                                  val email: String?,
-                                  val identifier: String)
+                                   val lastName: String,
+                                   val organization: String?,
+                                   val phone: String?,
+                                   val email: String?,
+                                   val identifier: String)
 
-class CreatePlanterInfoUseCase(private val sharedPreferences: SharedPreferences,
-                               private val userLocationManager: UserLocationManager,
+class CreatePlanterInfoUseCase(private val userLocationManager: UserLocationManager,
                                private val doa: TreeTrackerDAO,
-                               private val analytics: Analytics
-) : UseCase<CreatePlanterInfoParams, Long>() {
+                               private val analytics: Analytics) : UseCase<CreatePlanterInfoParams, Long>() {
 
     override suspend fun execute(params: CreatePlanterInfoParams): Long = withContext(Dispatchers.IO) {
 
