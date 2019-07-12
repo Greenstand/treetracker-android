@@ -35,14 +35,14 @@ class CreatePlanterCheckInUseCase(private val sharedPreferences: SharedPreferenc
             photoUrl = null
         )
 
-        doa.insertPlanterCheckIn(entity).also {
+        doa.insertPlanterCheckIn(entity).also { planterCheckInId ->
 
             analytics.userCheckedIn()
 
             sharedPreferences.edit()
-                .putString(ValueHelper.PLANTER_IDENTIFIER, params.identifier)
-                .putLong(ValueHelper.PLANTER_IDENTIFIER_ID, planterInfoId)
-                .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, time / 1000)
+                .putLong(ValueHelper.PLANTER_CHECK_IN_ID, planterCheckInId)
+                .putLong(ValueHelper.PLANTER_INFO_ID, planterInfoId)
+                .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)
                 .putString(ValueHelper.PLANTER_PHOTO, params.localPhotoPath)
                 .apply()
         }

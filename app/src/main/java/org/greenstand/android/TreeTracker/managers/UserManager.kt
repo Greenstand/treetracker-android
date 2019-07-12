@@ -20,7 +20,7 @@ class UserManager(private val context: Context,
     var authToken: String? = null
 
     val isLoggedIn: Boolean
-        get() = sharedPreferences.getString(ValueHelper.PLANTER_IDENTIFIER, null) != null
+        get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1) != -1L
 
     val userId: Long
         get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)

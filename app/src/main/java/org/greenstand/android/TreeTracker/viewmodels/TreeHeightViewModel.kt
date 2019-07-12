@@ -9,12 +9,15 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.data.TreeColor
 import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.v2.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 
 class TreeHeightViewModel(private val treeManager: TreeManager,
-                          private val createTreeUseCase: CreateTreeUseCase) : CoroutineViewModel() {
+                          private val createTreeUseCase: CreateTreeUseCase,
+                          private val dao: TreeTrackerDAO) : CoroutineViewModel() {
 
     var newTree: NewTree? = null
     var treeColor: TreeColor? = null
@@ -46,7 +49,14 @@ class TreeHeightViewModel(private val treeManager: TreeManager,
 
                         val treeId = createTreeUseCase.execute(createTreeParams)
 
-                        fun addKeyValueAttribute(key: String, value: String) = treeManager.addTreeAttribute(treeId, key, value)
+                        fun addKeyValueAttribute(key: String, value: String) {
+                            val entity = TreeAttributeEntity(
+                                key = key,
+                                value = value,
+                                treeCaptureId = treeId
+                            )
+                            dao.insertTreeAttribute(entity)
+                        }
 
                         with(TreeHeightAttributes(treeId = treeId, heightColor = treeColor!!)) {
                             addKeyValueAttribute(TreeManager.TREE_COLOR_ATTR_KEY, heightColor.value)

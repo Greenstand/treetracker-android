@@ -17,6 +17,8 @@ class UploadPlanterUseCase(private val dao: TreeTrackerDAO,
 
         val planterInfoEntity = dao.getPlanterInfoById(params.planterInfoId)
 
+        planterInfoEntity ?: throw IllegalStateException("No PlanterInfo for id = ${params.planterInfoId}")
+
         val registration = RegistrationRequest(
             planterIdentifier = planterInfoEntity.identifier,
             firstName = planterInfoEntity.firstName,

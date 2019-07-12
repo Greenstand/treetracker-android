@@ -29,14 +29,12 @@ import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_map.view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.map.TreeMapAnnotation
@@ -45,6 +43,7 @@ import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.io.FileOutputStream
 
@@ -52,21 +51,22 @@ import java.io.FileOutputStream
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
 
-    private val userLocationManager: UserLocationManager = getKoin().get()
+    private val userLocationManager: UserLocationManager by inject()
 
     private var mSharedPreferences: SharedPreferences? = null
 
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
-    lateinit var database: AppDatabase
+    private val dao: TreeTrackerDAO by inject()
+
+    private val database: AppDatabase by inject()
 
     private lateinit var clusterManager : ClusterManager<TreeMapAnnotation>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = getKoin().get()
     }
 
     @SuppressLint("MissingPermission")
@@ -87,29 +87,24 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             //reset all sharedPreferences
             val editor = mSharedPreferences!!.edit()
             editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-            editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+            editor.putLong(ValueHelper.PLANTER_INFO_ID, -1)
             editor.putString(ValueHelper.PLANTER_PHOTO, null)
             editor.apply()
         } else {
-            val identifier = mSharedPreferences!!.getString(
-                ValueHelper.PLANTER_IDENTIFIER,
-                resources.getString(R.string.user_not_identified)
-            )
-            //
-            runBlocking {
-                val planterList = GlobalScope.async {
-                    database.planterDao().getPlantersByIdentifier(identifier)
-                }.await()
-                if (planterList.isEmpty()) {
+            val planterInfoId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_INFO_ID, -1)
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val planterInfo = withContext(Dispatchers.IO) { dao.getPlanterInfoById(planterInfoId) }
+                if (planterInfo == null) {
                     activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
                     // And time them out
                     val editor = mSharedPreferences!!.edit()
                     editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                    editor.putString(ValueHelper.PLANTER_IDENTIFIER, null)
+                    editor.putLong(ValueHelper.PLANTER_INFO_ID, -1)
                     editor.putString(ValueHelper.PLANTER_PHOTO, null)
                     editor.apply()
                 } else {
-                    val planter = planterList.first()
+                    val planter = planterInfo
                     val title = "${planter.firstName} ${planter.lastName}"
                     activity?.toolbarTitle?.text = title
 
@@ -120,7 +115,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                         if (rotatedBitmap != null) {
                             imageView.setImageBitmap(rotatedBitmap)
                             imageView.visibility = View.VISIBLE
-
                         }
                     } else {
                         imageView.visibility = View.GONE
