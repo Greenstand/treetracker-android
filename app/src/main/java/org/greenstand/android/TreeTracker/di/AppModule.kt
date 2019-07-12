@@ -24,7 +24,7 @@ val appModule = module {
 
     viewModel { TermsPolicyViewModel(get(), get()) }
 
-    viewModel { TreeHeightViewModel(get(), get()) }
+    viewModel { TreeHeightViewModel(get(), get(), get()) }
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
@@ -50,11 +50,15 @@ val appModule = module {
 
     factory { UploadImageUseCase(get()) }
 
-    factory { CreateTreeUseCase(get(), get(), get()) }
+    factory { UploadTreeUseCase(get(), get()) }
 
-    factory { UploadTreeUseCase(get(), get(), get()) }
+    factory { UploadPlanterUseCase(get(), get(), get()) }
 
     factory { SyncTreeUseCase(get(), get(), get()) }
 
-    factory { UploadPlanterUseCase(get(), get(), get()) }
+    factory { CreateTreeUseCase(get(), get(), get()) }
+
+    factory { CreatePlanterInfoUseCase(get(), get(), get()) }
+
+    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get()) }
 }

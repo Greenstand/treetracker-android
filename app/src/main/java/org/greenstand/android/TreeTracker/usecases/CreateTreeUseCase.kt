@@ -5,11 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -40,6 +38,7 @@ class CreateTreeUseCase(private val sharedPreferences: SharedPreferences,
             createAt = time
         )
 
+        Timber.d("PLANTER CHECK IN ID = ${params.planterCheckInId}")
         dao.insertTreeCapture(entity)
     }
 

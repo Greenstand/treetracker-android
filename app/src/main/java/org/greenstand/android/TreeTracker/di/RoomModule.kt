@@ -9,4 +9,6 @@ val roomModule = module {
     single { AppDatabase.getInstance(get()) }
 
     single { AppDatabaseV2.getInstance(get()) }
+
+    single { AppDatabaseV2.getInstance(get()).treeTrackerDao() }
 }

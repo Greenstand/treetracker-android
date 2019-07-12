@@ -30,6 +30,7 @@ import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.data.NewTree
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
@@ -38,12 +39,14 @@ import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.view.CustomToast
 import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
 
-    private val userLocationManager: UserLocationManager = getKoin().get()
+    private val userLocationManager: UserLocationManager by inject()
+    private val dao: TreeTrackerDAO by inject()
 
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
@@ -73,7 +76,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
             "org.greenstand.android", Context.MODE_PRIVATE
         )
 
-        planterCheckInId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
+        planterCheckInId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
 
         val saveBtn = v.fragmentNewTreeSave
 

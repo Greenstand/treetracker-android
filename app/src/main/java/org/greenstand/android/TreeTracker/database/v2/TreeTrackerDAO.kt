@@ -1,14 +1,10 @@
 package org.greenstand.android.TreeTracker.database.v2
 
 import androidx.room.*
-import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
-import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.database.v2.views.TreeUploadDbView
-import org.greenstand.android.TreeTracker.utilities.Utils
 
 
 @Dao
@@ -26,7 +22,7 @@ interface TreeTrackerDAO {
     fun getAllPlanterInfo(): List<PlanterInfoEntity>
 
     @Query("SELECT * FROM planter_info WHERE _id = :id")
-    fun getPlanterInfoById(id: Long): PlanterInfoEntity
+    fun getPlanterInfoById(id: Long): PlanterInfoEntity?
 
     @Update
     fun updatePlanterInfo(planterInfoEntity: PlanterInfoEntity)
@@ -78,9 +74,9 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM tree_capture WHERE _id = :id")
     fun getTreeCaptureById(id: Long): TreeCaptureEntity
 
-    @Transaction
-    @Query("SELECT * FROM tree_capture WHERE _id = :id")
-    fun getTreeUploadDataById(id: Long): TreeUploadDbView
+//    @Transaction
+//    @Query("SELECT * FROM tree_capture WHERE _id = :id")
+//    fun getTreeUploadDataById(id: Long): TreeUploadDbView
 
     @Update
     fun updateTreeCapture(treeCaptureEntity: TreeCaptureEntity)
