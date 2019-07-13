@@ -13,7 +13,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.OnClickListener
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -30,7 +29,6 @@ import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.data.NewTree
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
@@ -46,9 +44,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
 
 
     private val userLocationManager: UserLocationManager by inject()
-    private val dao: TreeTrackerDAO by inject()
-
-    private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private var planterCheckInId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
@@ -268,7 +263,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         val content = requireActivity().fragmentNewTreeNote.text.toString()
 
         // tree
-        val planterIdentifierId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
+        val planterInfoId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_INFO_ID, 0)
 
         return mCurrentPhotoPath?.let {
             NewTree(it,
@@ -276,7 +271,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
                     timeToNextUpdate,
                     content,
                     planterCheckInId,
-                    planterIdentifierId)
+                    planterInfoId)
         }
     }
 

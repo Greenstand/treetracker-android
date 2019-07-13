@@ -2,8 +2,6 @@ package org.greenstand.android.TreeTracker.managers
 
 import android.content.Context
 import android.location.Location
-import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.entity.PlanterDetailsEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterIdentificationsEntity
@@ -17,40 +15,6 @@ class PlanterManager(private val db: AppDatabase,
 
     private val sharedPrefs by lazy {
         context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE)
-    }
-
-    suspend fun addPlanterIdentification(identifier: String,
-                                         photoPath: String,
-                                         location: Location?): Long {
-
-        log.d("Adding Planter Identification: $identifier")
-
-        val planterDetailsId: Int? = getPlantersByIdentifier(identifier).firstOrNull()?.id
-
-        log.d("Found planter details ID = $planterDetailsId")
-
-        val entity = PlanterIdentificationsEntity(
-                planterDetailsId?.toLong(),
-                identifier,
-                photoPath,
-                null,
-                System.currentTimeMillis().toString(),
-                location = location?.let { "${it.latitude},${it.longitude}" }
-        )
-
-        log.d("Adding PlanterIdentification to DB:")
-        log.d(entity.toString())
-
-        val planterIndentifiedId = db.planterDao().insertPlanterIdentifications(entity)
-
-        sharedPrefs.edit()
-            .putString(ValueHelper.PLANTER_IDENTIFIER, identifier)
-            .putLong(ValueHelper.PLANTER_IDENTIFIER_ID, planterIndentifiedId)
-            .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)
-            .putString(ValueHelper.PLANTER_PHOTO, photoPath)
-            .apply()
-
-        return planterIndentifiedId
     }
 
     suspend fun addPlanterDetails(identification: String,
