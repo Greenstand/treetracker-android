@@ -48,7 +48,7 @@ class UserManager(private val context: Context,
 
     fun clearUser() {
         sharedPreferences.edit().apply {
-            putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+            putLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
             putString(ValueHelper.PLANTER_PHOTO, null)
             putString(ValueHelper.PLANTER_IDENTIFIER, null)
         }.apply()
