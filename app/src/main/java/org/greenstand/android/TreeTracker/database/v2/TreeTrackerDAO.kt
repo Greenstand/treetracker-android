@@ -5,6 +5,7 @@ import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntit
 import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.v2.views.TreeMapMarkerDbView
 
 
 @Dao
@@ -15,7 +16,7 @@ interface TreeTrackerDAO {
     fun getPlanterInfoToUpload(): List<PlanterInfoEntity>
 
     @Transaction
-    @Query("SELECT _id FROM planter_info WHERE identifier = :identifier")
+    @Query("SELECT _id FROM planter_info WHERE planterInfoId = :identifier")
     fun getPlanterInfoIdByIdentifier(identifier: String): Long
 
     @Query("SELECT * FROM planter_info")
@@ -55,7 +56,8 @@ interface TreeTrackerDAO {
     fun deletePlanterCheckIn(planterCheckInEntity: PlanterCheckInEntity)
 
 
-
+    @Query("SELECT latitude, longitude, _id as treeCaptureId FROM tree_capture")
+    fun getTreeDataForMap(): List<TreeMapMarkerDbView>
 
     @Transaction
     @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 1")

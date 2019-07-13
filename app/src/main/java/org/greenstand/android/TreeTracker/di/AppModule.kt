@@ -28,6 +28,8 @@ val appModule = module {
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
+    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
+
     single { FirebaseAnalytics.getInstance(get()) }
 
     single { TreeManager(get(), get()) }
@@ -60,5 +62,11 @@ val appModule = module {
 
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
-    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get()) }
+    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get(), get()) }
+
+    factory { ExpireCheckInStatusUseCase(get()) }
+
+    factory { ValidateCheckInStatusUseCase(get()) }
+
+    factory { PlanterCheckInUseCase(get(), get()) }
 }

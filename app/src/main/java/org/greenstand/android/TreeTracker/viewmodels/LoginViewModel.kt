@@ -5,14 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.managers.PlanterManager
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
-import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInParams
-import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
+import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
+import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 class LoginViewModel(private val planterManager: PlanterManager,
-                     private val createPlanterCheckInUseCase: CreatePlanterCheckInUseCase): CoroutineViewModel()  {
+                     private val planterCheckInUseCase: PlanterCheckInUseCase): CoroutineViewModel()  {
 
     private var email: String? = null
     private var phone: String? = null
@@ -72,8 +70,8 @@ class LoginViewModel(private val planterManager: PlanterManager,
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.Main) {
 
-            createPlanterCheckInUseCase.execute(CreatePlanterCheckInParams(localPhotoPath = photoPath!!,
-                                                                           identifier = userIdentification))
+            planterCheckInUseCase.execute(PlanterCheckInParams(localPhotoPath = photoPath!!,
+                                                               identifier = userIdentification))
 
             onConfirmationComplete()
         }
