@@ -5,13 +5,7 @@ object ValueHelper {
 
     const val NAME_SPACE = "org.greenstand.android"
 
-    const val MAP_FRAGMENT = "MAP_FRAGMENT"
     const val NEW_TREE_FRAGMENT = "NEW_TREE_FRAGMENT"
-    const val TREE_HEIGHT_FRAGMENT = "TREE_HEIGHT_FRAGMENT"
-    const val DATA_FRAGMENT = "DATA_FRAGMENT"
-    const val ABOUT_FRAGMENT = "ABOUT_FRAGMENT"
-    const val TREE_PREVIEW_FRAGMENT = "TREE_PREVIEW_FRAGMENT"
-    const val IDENTIFY_FRAGMENT = "IDENTIFY_FRAGMENT"
 
     private const val intentsOffset = 1000
     const val INTENT_CAMERA = intentsOffset + 1
@@ -26,12 +20,9 @@ object ValueHelper {
     const val TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT = "TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT"
     const val MIN_ACCURACY_GLOBAL_SETTING = "MIN_ACCURACY_GLOBAL_SETTING"
     const val MAIN_USER_ID = "MAIN_USER_ID"
-    const val TREE_ID = "TREE_ID"
     const val TREE_TRACKER_SETTINGS_USED = "TREE_TRACKER_SETTINGS_USED"
     const val FIRST_RUN = "FIRST_RUN"
     const val TAKEN_IMAGE_PATH = "TAKEN_IMAGE_PATH"
-    const val RUN_FROM_HOME_ON_LOGIN = "RUN_FROM_HOME_ON_LOGIN"
-    const val TREES_TO_BE_DOWNLOADED_FIRST = "TREES_TO_BE_DOWNLOADED_FIRST"
 
     const val TIME_TO_NEXT_UPDATE_DEFAULT_SETTING = 30
     const val MIN_ACCURACY_DEFAULT_SETTING = 10
