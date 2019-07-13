@@ -23,7 +23,7 @@ class UserManager(private val context: Context,
         get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1) != -1L
 
     val userId: Long
-        get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)
+        get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong("", -1)
 
     var firstName: String?
         get() = sharedPreferences.getString(FIRST_NAME_KEY, null)
@@ -58,9 +58,6 @@ class UserManager(private val context: Context,
                       photoPath: String,
                       location: Location?) {
 
-        planterManager.addPlanterIdentification(identifier,
-                                                photoPath,
-                                                location)
 
         userLoginChannel.send(Unit)
     }

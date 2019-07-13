@@ -62,10 +62,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     private val database: AppDatabase by inject()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     @SuppressLint("MissingPermission")
     override fun onPause() {
         super.onPause()
