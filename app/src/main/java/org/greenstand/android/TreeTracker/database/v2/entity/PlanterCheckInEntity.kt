@@ -21,8 +21,6 @@ inline class PlanterCheckInId(val value: Long)
 data class PlanterCheckInEntity(
     @ColumnInfo(name = PLANTER_INFO_ID, index = true)
     var planterInfoId: Long,
-    @ColumnInfo(name = IDENTIFIER)
-    var identifier: String,
     @ColumnInfo(name = LOCAL_PHOTO_PATH)
     var localPhotoPath: String,
     @ColumnInfo(name = PHOTO_URL)
@@ -44,7 +42,6 @@ data class PlanterCheckInEntity(
 
         const val ID = "_id"
         const val PLANTER_INFO_ID = "planter_info_id"
-        const val IDENTIFIER = "identifier"
         const val LOCAL_PHOTO_PATH = "local_photo_path"
         const val PHOTO_URL = "photo_url"
         const val LATITUDE = "latitude"

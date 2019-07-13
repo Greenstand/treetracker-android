@@ -26,15 +26,15 @@ class TermsPolicyViewModel(private val createPlanterCheckInUseCase: CreatePlante
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            createPlanterInfoUseCase.execute(CreatePlanterInfoParams(firstName = userInfo.firstName,
-                                                                     lastName = userInfo.lastName,
-                                                                     identifier = userInfo.identification,
-                                                                     organization = userInfo.organization,
-                                                                     phone = null,
-                                                                     email = null))
+            val planterInfoId = createPlanterInfoUseCase.execute(CreatePlanterInfoParams(firstName = userInfo.firstName,
+                                                                                         lastName = userInfo.lastName,
+                                                                                         identifier = userInfo.identification,
+                                                                                         organization = userInfo.organization,
+                                                                                         phone = null,
+                                                                                         email = null))
 
             createPlanterCheckInUseCase.execute(CreatePlanterCheckInParams(localPhotoPath = photoPath!!,
-                                                                           identifier = userInfo.identification))
+                                                                           planterInfoId = planterInfoId))
 
 
 

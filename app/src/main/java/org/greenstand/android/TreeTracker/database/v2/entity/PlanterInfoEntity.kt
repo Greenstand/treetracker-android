@@ -38,7 +38,7 @@ data class PlanterInfoEntity(
         const val TABLE = "planter_info"
 
         const val ID = "_id"
-        const val IDENTIFIER = "identifier"
+        const val IDENTIFIER = "planterInfoId"
         const val FIRST_NAME = "first_name"
         const val LAST_NAME = "last_name"
         const val ORGANIZATION = "organization"

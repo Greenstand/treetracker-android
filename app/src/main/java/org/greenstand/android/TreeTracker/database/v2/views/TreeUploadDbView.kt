@@ -11,7 +11,7 @@ package org.greenstand.android.TreeTracker.database.v2.views
 //        tree_capture.latitude,
 //        tree_capture.longitude,
 //        tree_capture.accuracy,
-//        planter_check_in.identifier as identifier,
+//        planter_check_in.planterInfoId as planterInfoId,
 //        planter_info._id as planterInfoId,
 //        planter_check_in.photo_url as "planterPhotoUrl"
 //        from tree_capture
@@ -20,8 +20,8 @@ package org.greenstand.android.TreeTracker.database.v2.views
 //data class TreeUploadDbView(
 //    @ColumnInfo(name = TreeCaptureEntity.UUID)
 //    var uuid: String,
-//    @ColumnInfo(name = "identifier")
-//    var identifier: String,
+//    @ColumnInfo(name = "planterInfoId")
+//    var planterInfoId: String,
 //    @ColumnInfo(name = "treePhotoUrl")
 //    var treePhotoUrl: String,
 //    @ColumnInfo(name = "planterInfoId") // TODO CHECK WHAT THIS VALUE SHOULD BE

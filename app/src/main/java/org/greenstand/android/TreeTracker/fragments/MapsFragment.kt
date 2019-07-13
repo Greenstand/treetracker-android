@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -33,6 +32,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.map.TreeMapAnnotation
@@ -52,8 +52,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     private val vm: MapViewModel by viewModel()
 
     private val userLocationManager: UserLocationManager by inject()
-
-    private var mSharedPreferences: SharedPreferences? = null
+    private val sharedPreferences: SharedPreferences by inject()
+    private val dao: TreeTrackerDAO by inject()
+    private val database: AppDatabase by inject()
 
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
@@ -68,16 +69,11 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         vm.checkInStatusLiveData.observe(this, Observer<Boolean> { planterIsCheckedIn ->
             if (planterIsCheckedIn) {
-                activity!!.toolbarTitle.text = "User Logged In"
-
                 GlobalScope.launch(Dispatchers.Main) {
-                    //                    val planterInfo = withContext(Dispatchers.IO) { dao.getPlanterInfoById(planterInfoId) }
-//
-//                    val planter = planterInfo
-//                    val title = "${planter.firstName} ${planter.lastName}"
-//                    activity?.toolbarTitle?.text = title
 
-                    val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
+                    requireActivity().toolbarTitle.text = vm.getPlanterName()
+
+                    val photoPath = sharedPreferences.getString(ValueHelper.PLANTER_PHOTO, null)
                     val profileImageView = mapUserImage
                     if (photoPath != null) {
                         val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
@@ -89,8 +85,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                         profileImageView.visibility = View.GONE
                     }
                 }
-
-
             } else {
                 activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
             }
@@ -125,10 +119,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             }
         }
 
-        mSharedPreferences = activity!!.getSharedPreferences(
-            "org.greenstand.android", Context.MODE_PRIVATE
-        )
-
         if (!(activity as AppCompatActivity).supportActionBar!!.isShowing) {
             Timber.d("toolbar hide")
             (activity as AppCompatActivity).supportActionBar!!.show()
@@ -146,7 +136,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         mapFragment!!.getMapAsync(this)
 
-        val minAccuracy = mSharedPreferences!!.getInt(
+        val minAccuracy = sharedPreferences.getInt(
             ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
             ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
         )
@@ -183,14 +173,14 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     }
                 }
             } else {
-                if (ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
                         activity!!,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION
+                        Manifest.permission.ACCESS_COARSE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestPermissions(
-                        arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                        arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
                         Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION
                     )
                 }
@@ -213,7 +203,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 if (MainActivity.allowNewTreeOrUpdate || !FeatureFlags.HIGH_GPS_ACCURACY) {
 
                     val currentTimestamp = System.currentTimeMillis() / 1000
-                    val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
+                    val lastTimeStamp = sharedPreferences.getLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
                     if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
                         findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
@@ -283,9 +273,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         clusterManager = this.clusterManager
 
         runBlocking {
-            val trees = GlobalScope.async {
-                return@async database.treeDao().getTreesToDisplay()
-            }.await()
+            val trees = withContext(Dispatchers.IO) { dao.getTreeDataForMap() }
 
             if (trees.isNotEmpty()) {
                 Timber.d("Adding markers")
@@ -297,13 +285,17 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     val treeMapAnnotation = TreeMapAnnotation(tree.latitude, tree.longitude)
                     clusterManager.addItem(treeMapAnnotation)
 
+                    val markerOptions = MarkerOptions()
+                        .title(tree.treeCaptureId.toString())// set Id instead of title
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
+                        .position(latLng)
+                    map.addMarker(markerOptions)
                 }
 
 
             }
             if (userLocationManager.currentLocation != null) {
-                val myLatLng =
-                        LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
+                val myLatLng = LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
             }
 

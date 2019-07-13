@@ -15,6 +15,7 @@ class UploadTreeUseCase(private val api: RetrofitApi,
 
         val treeCapture = dao.getTreeCaptureById(params.treeId)
         val planterCheckIn = dao.getPlanterCheckInById(treeCapture.planterCheckInId)
+        val planterInfo = dao.getPlanterInfoById(planterCheckIn.planterInfoId) ?: throw IllegalStateException("No Planter Info")
 
         val attributesList = dao.getTreeAttributeByTreeCaptureId(treeCapture.id)
         val attributesRequest =  mutableListOf<AttributeRequest>()
@@ -30,7 +31,7 @@ class UploadTreeUseCase(private val api: RetrofitApi,
             lat = treeCapture.latitude,
             lon = treeCapture.longitude,
             gpsAccuracy = treeCapture.accuracy.toInt(),
-            planterIdentifier = planterCheckIn.identifier,
+            planterIdentifier = planterInfo.identifier,
             planterPhotoUrl = planterCheckIn.photoUrl,
             timestamp = treeCapture.createAt,
             note = treeCapture.noteContent,
