@@ -16,8 +16,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.amazonaws.util.IOUtils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -29,27 +29,25 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
-import kotlinx.android.synthetic.main.fragment_map.view.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.AppDatabase
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
-import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
-import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.koin.android.ext.android.getKoin
+import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.io.FileOutputStream
 
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
+
+    private val vm: MapViewModel by viewModel()
 
     private val userLocationManager: UserLocationManager by inject()
 
@@ -58,9 +56,41 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
-    private val dao: TreeTrackerDAO by inject()
-
     private val database: AppDatabase by inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        vm.checkInStatusLiveData.observe(this, Observer<Boolean> { planterIsCheckedIn ->
+            if (planterIsCheckedIn) {
+                activity!!.toolbarTitle.text = "User Logged In"
+
+                GlobalScope.launch(Dispatchers.Main) {
+//                    val planterInfo = withContext(Dispatchers.IO) { dao.getPlanterInfoById(planterInfoId) }
+//
+//                    val planter = planterInfo
+//                    val title = "${planter.firstName} ${planter.lastName}"
+//                    activity?.toolbarTitle?.text = title
+
+                    val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
+                    val profileImageView = mapUserImage
+                    if (photoPath != null) {
+                        val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
+                        if (rotatedBitmap != null) {
+                            profileImageView.setImageBitmap(rotatedBitmap)
+                            profileImageView.visibility = View.VISIBLE
+                        }
+                    } else {
+                        profileImageView.visibility = View.GONE
+                    }
+                }
+
+
+            } else {
+                activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
+            }
+        })
+    }
 
     @SuppressLint("MissingPermission")
     override fun onPause() {
@@ -72,50 +102,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     override fun onResume() {
         super.onResume()
 
-        val currentTimestamp = System.currentTimeMillis() / 1000
-        val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-        if (FeatureFlags.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED
-            && currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
-            activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
-            //reset all sharedPreferences
-            val editor = mSharedPreferences!!.edit()
-            editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-            editor.putLong(ValueHelper.PLANTER_INFO_ID, -1)
-            editor.putString(ValueHelper.PLANTER_PHOTO, null)
-            editor.apply()
-        } else {
-            val planterInfoId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_INFO_ID, -1)
-
-            GlobalScope.launch(Dispatchers.Main) {
-                val planterInfo = withContext(Dispatchers.IO) { dao.getPlanterInfoById(planterInfoId) }
-                if (planterInfo == null) {
-                    activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
-                    // And time them out
-                    val editor = mSharedPreferences!!.edit()
-                    editor.putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                    editor.putLong(ValueHelper.PLANTER_INFO_ID, -1)
-                    editor.putString(ValueHelper.PLANTER_PHOTO, null)
-                    editor.apply()
-                } else {
-                    val planter = planterInfo
-                    val title = "${planter.firstName} ${planter.lastName}"
-                    activity?.toolbarTitle?.text = title
-
-                    val photoPath = mSharedPreferences!!.getString(ValueHelper.PLANTER_PHOTO, null)
-                    val imageView = view!!.mapUserImage
-                    if (photoPath != null) {
-                        val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
-                        if (rotatedBitmap != null) {
-                            imageView.setImageBitmap(rotatedBitmap)
-                            imageView.visibility = View.VISIBLE
-                        }
-                    } else {
-                        imageView.visibility = View.GONE
-                    }
-                }
-            }
+        GlobalScope.launch {
+            vm.checkForValidUser()
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -217,8 +206,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 if (MainActivity.allowNewTreeOrUpdate || !FeatureFlags.HIGH_GPS_ACCURACY) {
 
                     val currentTimestamp = System.currentTimeMillis() / 1000
-                    val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
-                    if (currentTimestamp - lastTimeStamp > ValueHelper.IDENTIFICATION_TIMEOUT) {
+                    val lastTimeStamp = mSharedPreferences!!.getLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
+                    if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
                         findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
                         findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
@@ -233,35 +222,16 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     // For debug analysis purposes only
     @SuppressLint("SimpleDateFormat")
     override fun onLongClick(view: View): Boolean {
-
-        Toast.makeText(activity, "Adding 500 trees", Toast.LENGTH_LONG).show()
-        // programmatically add 500 trees, for analysis only
-        // this is on the main thread for ease, in Kotlin just make a Coroutine
-
-        userLocationManager.currentLocation ?: return true
-
         GlobalScope.launch {
-            val planterCheckInId = -1
-
-            for (i in 0..499) {
-
-                val myInput = activity!!.assets.open("testtreeimage.jpg")
-                val f = ImageUtils.createImageFile(activity!!)
-                val fos = FileOutputStream(f)
-                fos.write(IOUtils.toByteArray(myInput))
-                fos.close()
-
-                val createTreeParams = CreateTreeParams(
-                    planterCheckInId = planterCheckInId.toLong(),
-                    photoPath = f.absolutePath,
-                    content = "My Note"
-                )
-
-                getKoin().get<CreateTreeUseCase>().execute(createTreeParams)
-
+            Toast.makeText(activity, "Adding 500 trees", Toast.LENGTH_LONG).show()
+            val didSuceed = vm.createFakeTrees()
+            if (didSuceed) {
+                Toast.makeText(activity, "500 trees added", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(activity, "Error adding test trees", Toast.LENGTH_LONG).show()
             }
         }
-        Toast.makeText(activity, "500 trees added", Toast.LENGTH_LONG).show()
+
         return true
     }
 
@@ -269,7 +239,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
         return true
     }
-
 
     override fun onMapReady(map: GoogleMap) {
 

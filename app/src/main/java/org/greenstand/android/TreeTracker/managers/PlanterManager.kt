@@ -59,7 +59,7 @@ class PlanterManager(private val db: AppDatabase,
         db.planterDao().updatePlanterIdentification(planterIdentification)
 
         sharedPrefs.edit()
-            .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)
+            .putLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, System.currentTimeMillis() / 1000)
             .apply()
     }
 }

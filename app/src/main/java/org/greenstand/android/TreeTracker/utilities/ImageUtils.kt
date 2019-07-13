@@ -2,21 +2,29 @@ package org.greenstand.android.TreeTracker.utilities
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.util.Log
-import android.widget.Toast
 import androidx.exifinterface.media.ExifInterface
+import com.amazonaws.util.IOUtils
 import timber.log.Timber
-
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 object ImageUtils {
+
+
+    fun createTestImageFile(context: Context, imageFileName: String = "testtreeimage.jpg"): File {
+        val myInput = context.assets.open(imageFileName)
+        val f = createImageFile(context)
+        val fos = FileOutputStream(f)
+        fos.write(IOUtils.toByteArray(myInput))
+        fos.close()
+        return f
+    }
 
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)

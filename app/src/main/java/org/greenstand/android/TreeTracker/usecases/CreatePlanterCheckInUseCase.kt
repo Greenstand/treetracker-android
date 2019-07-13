@@ -42,7 +42,7 @@ class CreatePlanterCheckInUseCase(private val sharedPreferences: SharedPreferenc
             sharedPreferences.edit()
                 .putLong(ValueHelper.PLANTER_CHECK_IN_ID, planterCheckInId)
                 .putLong(ValueHelper.PLANTER_INFO_ID, planterInfoId)
-                .putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, System.currentTimeMillis() / 1000)
+                .putLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, System.currentTimeMillis() / 1000)
                 .putString(ValueHelper.PLANTER_PHOTO, params.localPhotoPath)
                 .apply()
         }
