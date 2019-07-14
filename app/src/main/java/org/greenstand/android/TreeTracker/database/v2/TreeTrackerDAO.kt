@@ -12,10 +12,6 @@ import org.greenstand.android.TreeTracker.database.v2.views.TreeMapMarkerDbView
 interface TreeTrackerDAO {
 
     @Transaction
-    @Query("SELECT * FROM planter_info WHERE uploaded = 0")
-    fun getPlanterInfoToUpload(): List<PlanterInfoEntity>
-
-    @Transaction
     @Query("SELECT _id FROM planter_info WHERE planterInfoId = :identifier")
     fun getPlanterInfoIdByIdentifier(identifier: String): Long
 
@@ -37,7 +33,7 @@ interface TreeTrackerDAO {
 
 
     @Transaction
-    @Query("SELECT * FROM planter_check_in WHERE photo_url = null AND planter_info_id = :planterInfoId")
+    @Query("SELECT * FROM planter_check_in WHERE photo_url IS null AND planter_info_id = :planterInfoId")
     fun getPlanterCheckInsToUpload(planterInfoId: Long): List<PlanterCheckInEntity>
 
     @Query("SELECT * FROM planter_check_in")

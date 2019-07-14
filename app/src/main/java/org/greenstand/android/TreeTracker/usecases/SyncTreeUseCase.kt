@@ -2,7 +2,6 @@ package org.greenstand.android.TreeTracker.usecases
 
 import kotlinx.coroutines.coroutineScope
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.managers.TreeManager
 
 data class SyncTreeParams(val treeId: Long)
 
@@ -19,6 +18,10 @@ class SyncTreeUseCase(private val uploadImageUseCase: UploadImageUseCase,
             }
 
             val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath)) ?: throw IllegalStateException("No imageUrl")
+
+            tree.photoUrl = imageUrl
+
+            dao.updateTreeCapture(tree)
 
             uploadTreeUseCase.execute(UploadTreeParams(treeId = tree.id, treeImageUrl = imageUrl))
         }
