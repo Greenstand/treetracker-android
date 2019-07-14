@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.usecases
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 
 
@@ -10,11 +12,13 @@ class PlanterCheckInUseCase(private val createPlanterCheckInUseCase: CreatePlant
                             private val dao: TreeTrackerDAO) : UseCase<PlanterCheckInParams, Unit>() {
 
     override suspend fun execute(params: PlanterCheckInParams) {
+        withContext(Dispatchers.IO) {
+            val planterInfoId = dao.getPlanterInfoIdByIdentifier(params.identifier)
 
-        val planterInfoId = dao.getPlanterInfoIdByIdentifier(params.identifier)
+            planterInfoId ?: throw IllegalStateException("Planter ID should not be null")
 
-        createPlanterCheckInUseCase.execute(CreatePlanterCheckInParams(planterInfoId = planterInfoId,
-                                                                       localPhotoPath = params.localPhotoPath))
-
+            createPlanterCheckInUseCase.execute(CreatePlanterCheckInParams(planterInfoId = planterInfoId,
+                                                                           localPhotoPath = params.localPhotoPath))
+        }
     }
 }

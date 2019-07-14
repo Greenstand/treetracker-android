@@ -13,7 +13,7 @@ interface TreeTrackerDAO {
 
     @Transaction
     @Query("SELECT _id FROM planter_info WHERE planterInfoId = :identifier")
-    fun getPlanterInfoIdByIdentifier(identifier: String): Long
+    fun getPlanterInfoIdByIdentifier(identifier: String): Long?
 
     @Query("SELECT * FROM planter_info")
     fun getAllPlanterInfo(): List<PlanterInfoEntity>
