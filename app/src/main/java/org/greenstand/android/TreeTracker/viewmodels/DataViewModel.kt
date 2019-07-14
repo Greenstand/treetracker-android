@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.RetrofitApi
-import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.SyncTreeParams
 import org.greenstand.android.TreeTracker.usecases.SyncTreeUseCase
@@ -92,7 +91,10 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
 
     private suspend fun uploadPlanters() {
         // Upload all user registration data that hasn't been uploaded yet
-        val planterInfoToUploadList = dao.getPlanterInfoToUpload()
+        val planterInfoToUploadList = dao.getAllPlanterInfo()
+
+        Timber.tag("DataViewModel").d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
+
         planterInfoToUploadList.forEach {
             runCatching {
                 withContext(Dispatchers.IO) { uploadPlanterDetailsUseCase.execute(UploadPlanterParams(planterInfoId = it.id)) }
@@ -104,8 +106,7 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
 
         val treeList = dao.getAllTreeCapturesToUpload()
 
-        Timber.tag("DataFragment").d("treeCursor: $treeList")
-        Timber.tag("DataFragment").d("treeCursor: " + treeList.size)
+        Timber.tag("DataViewModel").d("Uploading ${treeList.size} trees")
 
         treeList.onEach {
 

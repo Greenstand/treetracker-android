@@ -32,7 +32,6 @@ import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -52,7 +51,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val dao: TreeTrackerDAO by inject()
-    private val database: AppDatabase by inject()
 
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null

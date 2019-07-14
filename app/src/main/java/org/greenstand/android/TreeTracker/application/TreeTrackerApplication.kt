@@ -19,7 +19,7 @@ class TreeTrackerApplication : Application() {
 
     override fun onCreate() {
         appContext = applicationContext
-        // The following line triggers the initialization of ACRA
+
         super.onCreate()
 
         startKoin {
