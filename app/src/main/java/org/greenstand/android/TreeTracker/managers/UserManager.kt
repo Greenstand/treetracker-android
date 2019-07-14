@@ -50,7 +50,8 @@ class UserManager(private val context: Context,
         sharedPreferences.edit().apply {
             putLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
             putString(ValueHelper.PLANTER_PHOTO, null)
-            putString(ValueHelper.PLANTER_IDENTIFIER, null)
+            putLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
+            putLong(ValueHelper.PLANTER_INFO_ID, -1)
         }.apply()
     }
 
