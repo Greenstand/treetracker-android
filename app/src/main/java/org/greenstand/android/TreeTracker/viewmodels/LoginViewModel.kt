@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.managers.PlanterManager
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
-class LoginViewModel(private val planterManager: PlanterManager,
+class LoginViewModel(private val dao: TreeTrackerDAO,
                      private val planterCheckInUseCase: PlanterCheckInUseCase): CoroutineViewModel()  {
 
     private var email: String? = null
@@ -64,7 +64,7 @@ class LoginViewModel(private val planterManager: PlanterManager,
     }
 
     fun isUserPresentOnDevice(): Boolean {
-        return planterManager.getPlanterByInputtedText(userIdentification) != null
+        return dao.getPlanterInfoIdByIdentifier(userIdentification) != null
     }
 
     private fun confirm(onConfirmationComplete: () -> Unit) {
