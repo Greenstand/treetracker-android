@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/fragment_tree_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -23,9 +23,10 @@
             android:fadingEdgeLength="@dimen/three_dp"
             android:requiresFadingEdge="vertical">
 
-        <RelativeLayout
+        <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
             <LinearLayout
                     android:id="@+id/fragment_tree_preview_distance_layout"
@@ -90,69 +91,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                    android:id="@+id/fragment_tree_preview_image_status_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/fragment_tree_preview_gps_accuracy_layout"
-                    android:orientation="horizontal"
-                    android:paddingLeft="@dimen/margin_twenty_four"
-                    android:paddingTop="@dimen/three_dp"
-                    android:paddingRight="@dimen/margin_twenty_four">
 
-                <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_twelve"
-                        android:layout_weight="1"
-                        android:text="@string/image_status_double_colon"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_seventeen"/>
-
-                <TextView
-                        android:id="@+id/fragmentTreePreviewImageStatus"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_twelve"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="@string/ok"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_seventeen"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:id="@+id/fragment_tree_preview_last_update_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/fragment_tree_preview_image_status_layout"
-                    android:orientation="horizontal"
-                    android:paddingLeft="@dimen/margin_twenty_four"
-                    android:paddingTop="@dimen/three_dp"
-                    android:paddingRight="@dimen/margin_twenty_four">
-
-                <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_twelve"
-                        android:layout_weight="1"
-                        android:text="@string/last_update_double_colon"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_seventeen"/>
-
-                <TextView
-                        android:id="@+id/fragmentTreePreviewLastUpdate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_twelve"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="@string/five_text_view"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_seventeen"/>
-
-            </LinearLayout>
 
             <LinearLayout
                     android:id="@+id/fragment_tree_preview_created_layout"
@@ -217,7 +156,7 @@
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 
@@ -232,5 +171,5 @@
             android:textSize="@dimen/text_size_seventeen"
             android:visibility="invisible"/>
 
-</RelativeLayout>
+</LinearLayout>
 
