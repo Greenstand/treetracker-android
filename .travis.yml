@@ -1,2 +1,11 @@
 language: android
 dist: trusty
+android:
+  components:
+    # from app/build.gradle:
+    # buildToolsVersion
+    - build-tools-28.0.3
+
+    # compileSdkVersion
+    - android-26
+    
