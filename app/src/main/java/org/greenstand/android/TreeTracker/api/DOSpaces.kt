@@ -45,7 +45,7 @@ class DOSpaces private constructor() {
     // Acceleration IS available in android SDK
     // https://github.com/aws-amplify/aws-sdk-android/blob/master/aws-android-sdk-s3/src/main/java/com/amazonaws/services/s3/S3ClientOptions.java#L114
     // https://github.com/aws-amplify/aws-sdk-android/issues/515
-    //private var transferUtility: TransferUtility
+    // private var transferUtility: TransferUtility
 
     init {
 
@@ -68,7 +68,9 @@ class DOSpaces private constructor() {
 */
                 s3Client = AmazonS3Client(credentialsProvider)
                 s3Client?.setRegion(Region.getRegion(Regions.fromName(clientRegion)))
-                s3Client?.setS3ClientOptions(S3ClientOptions.builder().setAccelerateModeEnabled(true).build());
+
+                // This line is no necessary
+                //s3Client?.setS3ClientOptions(S3ClientOptions.builder().setAccelerateModeEnabled(true).build());
 
                 // Enable Transfer Acceleration for the specified bucket.
                 /*
