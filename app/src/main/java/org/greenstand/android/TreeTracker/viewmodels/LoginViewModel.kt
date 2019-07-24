@@ -7,10 +7,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 class LoginViewModel(private val planterManager: PlanterManager,
-                     private val userLocationManager: UserLocationManager): CoroutineViewModel()  {
+                     private val userLocationManager: UserLocationManager,
+                     private val userManager: UserManager): CoroutineViewModel()  {
 
     private var email: String? = null
     private var phone: String? = null
@@ -70,9 +72,9 @@ class LoginViewModel(private val planterManager: PlanterManager,
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            planterManager.addPlanterIdentification(userIdentification,
-                                                    photoPath!!,
-                                                    userLocationManager.currentLocation)
+            userManager.login(userIdentification,
+                              photoPath!!,
+                              userLocationManager.currentLocation)
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }
