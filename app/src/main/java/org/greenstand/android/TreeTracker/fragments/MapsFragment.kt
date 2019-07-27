@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.amazonaws.util.IOUtils
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_map.view.*
@@ -44,6 +46,7 @@ import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreePhotoEntity
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.map.TreeMapAnnotation
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -67,6 +70,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     private var map: GoogleMap? = null
 
     lateinit var database: AppDatabase
+
+    private lateinit var clusterManager : ClusterManager<TreeMapAnnotation>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -161,6 +167,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         addTreeButton.setOnClickListener(this)
 
+        goToUploadsButton.setOnClickListener(this)
+
         if (FeatureFlags.DEBUG_ENABLED) {
             addTreeButton.setOnLongClickListener(this)
         }
@@ -244,6 +252,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
                 }
             }
+            R.id.goToUploadsButton -> {
+                findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
+            }
         }
     }
 
@@ -284,6 +295,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
+        if(marker.title == null){
+            return true;
+        }
         findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
         return true
     }
@@ -292,6 +306,11 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     override fun onMapReady(map: GoogleMap) {
 
         this.map = map
+
+        this.clusterManager = ClusterManager(this.context, this.map)
+        this.map!!.setOnCameraIdleListener(this.clusterManager)
+        this.map!!.setOnMarkerClickListener(this.clusterManager)
+
 
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -309,6 +328,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             return
         }
         map.isMyLocationEnabled = true
+        map.getUiSettings().setMyLocationButtonEnabled(false)
+
+        clusterManager = this.clusterManager
 
         runBlocking {
             val trees = GlobalScope.async {
@@ -321,28 +343,22 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                 var latLng: LatLng? = null
 
                 for (tree in trees) {
-                    latLng = LatLng(tree.latitude, tree.longitude)
 
-                    val markerOptions = MarkerOptions()
-                        .title(tree.tree_id.toString())// set Id instead of title
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
-                        .position(latLng)
-                    map.addMarker(markerOptions)
+                    val treeMapAnnotation = TreeMapAnnotation(tree.latitude, tree.longitude)
+                    clusterManager.addItem(treeMapAnnotation)
+
                 }
 
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
 
-            } else {
-                if (userLocationManager.currentLocation != null) {
-                    val myLatLng =
+            }
+            if (userLocationManager.currentLocation != null) {
+                val myLatLng =
                         LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
-                }
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
             }
 
         }
 
-        map.setOnMarkerClickListener(this@MapsFragment)
 
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
     }
