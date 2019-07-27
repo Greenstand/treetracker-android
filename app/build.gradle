@@ -50,8 +50,8 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 82
-        versionName "1.2.6"
+        versionCode 83
+        versionName "1.2.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
@@ -72,6 +72,12 @@ android {
     }
 
 
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
 
     buildTypes {
         release {
@@ -134,9 +140,9 @@ android {
             dimension "version"
         }
 
-        justdigit {
+        justdiggit {
             dimension "version"
-            applicationIdSuffix ".justdigit"
+            applicationIdSuffix ".justdiggit"
             buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
             buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
             buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "false"
@@ -146,6 +152,9 @@ android {
 
     useLibrary 'org.apache.http.legacy'
 }
+
+
+
 
 androidExtensions {
     experimental = true
