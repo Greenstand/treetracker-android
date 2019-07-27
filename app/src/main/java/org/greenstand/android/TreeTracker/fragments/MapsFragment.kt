@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.amazonaws.util.IOUtils
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -166,6 +167,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
         addTreeButton.setOnClickListener(this)
 
+        goToUploadsButton.setOnClickListener(this)
+
         if (FeatureFlags.DEBUG_ENABLED) {
             addTreeButton.setOnLongClickListener(this)
         }
@@ -249,6 +252,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
                 }
             }
+            R.id.goToUploadsButton -> {
+                findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
+            }
         }
     }
 
@@ -322,6 +328,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             return
         }
         map.isMyLocationEnabled = true
+        map.getUiSettings().setMyLocationButtonEnabled(false)
 
         clusterManager = this.clusterManager
 
