@@ -38,7 +38,12 @@
     <fragment
         android:id="@+id/dataFragment"
         android:name="org.greenstand.android.TreeTracker.fragments.DataFragment"
-        android:label="DataFragment"/>
+        android:label="DataFragment">
+        <argument
+            android:name="startSync"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+    </fragment>
     <fragment
         android:id="@+id/aboutFragment"
         android:name="org.greenstand.android.TreeTracker.fragments.AboutFragment"

@@ -52,13 +52,13 @@ platform :android do
 
 
   desc "Submit a new JustDigIt Beta Build to Crashlytics Beta"
-  lane :justdigit_beta do
+  lane :justdiggit_beta do
   
     versionReleased = bump_version_code()
 
     git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
-    gradle(task: "clean assembleJustdigitDebug")
+    gradle(task: "clean assembleJustdiggitDebug")
     crashlytics(groups: "all-testers")
 
     slack(message: "A new Justdiggit Beta Build has been released on Fabric",
