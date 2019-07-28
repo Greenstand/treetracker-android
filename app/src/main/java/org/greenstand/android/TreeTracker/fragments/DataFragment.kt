@@ -2,10 +2,7 @@ package org.greenstand.android.TreeTracker.fragments
 
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -59,8 +56,10 @@ class DataFragment : Fragment() {
 
         viewModel.isSyncing.observe(this, Observer { isSyncing ->
             val textId = if (isSyncing) {
+                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 R.string.stop
             } else {
+                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 R.string.sync
             }
             fragmentDataSyncButton.setText(textId)
