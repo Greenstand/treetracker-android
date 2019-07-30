@@ -3,51 +3,46 @@ package org.greenstand.android.TreeTracker.usecases
 import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
-import org.greenstand.android.TreeTracker.database.AppDatabase
-import org.greenstand.android.TreeTracker.managers.TreeManager
-import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.utilities.Utils
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 
 data class UploadTreeParams(val treeId: Long,
                             val treeImageUrl: String)
 
-class UploadTreeUseCase(private val treeManager: TreeManager,
-                        private val userManager: UserManager,
-                        private val api: RetrofitApi,
-                        private val db: AppDatabase) : UseCase<UploadTreeParams, Unit>() {
+class UploadTreeUseCase(private val api: RetrofitApi,
+                        private val dao: TreeTrackerDAO) : UseCase<UploadTreeParams, Unit>() {
 
     override suspend fun execute(params: UploadTreeParams) {
 
-        val tree = treeManager.getTree(params.treeId)
+        val treeCapture = dao.getTreeCaptureById(params.treeId)
+        val planterCheckIn = dao.getPlanterCheckInById(treeCapture.planterCheckInId)
+        val planterInfo = dao.getPlanterInfoById(planterCheckIn.planterInfoId) ?: throw IllegalStateException("No Planter Info")
 
-        val attributesList = treeManager.getTreeAttributes(tree.tree_id)
+        val attributesList = dao.getTreeAttributeByTreeCaptureId(treeCapture.id)
         val attributesRequest =  mutableListOf<AttributeRequest>()
         for (attribute in attributesList){
             attributesRequest.add(AttributeRequest(key=attribute.key, value=attribute.value))
         }
 
         val newTreeRequest = NewTreeRequest(
-            uuid = tree.uuid,
+            uuid = treeCapture.uuid,
             imageUrl = params.treeImageUrl,
-            userId = userManager.userId.toInt(),
-            sequenceId = tree.tree_id,
-            lat = tree.latitude,
-            lon = tree.longitude,
-            gpsAccuracy = tree.accuracy,
-            planterIdentifier = tree.planter_identifier,
-            planterPhotoUrl = tree.planter_photo_url,
-            timestamp = Utils.convertDateToTimestamp(tree.tree_time_created!!),
-            note = tree.note,
+            userId = planterCheckIn.id.toInt(),
+            sequenceId = treeCapture.id,
+            lat = treeCapture.latitude,
+            lon = treeCapture.longitude,
+            gpsAccuracy = treeCapture.accuracy.toInt(),
+            planterIdentifier = planterInfo.identifier,
+            planterPhotoUrl = planterCheckIn.photoUrl,
+            timestamp = treeCapture.createAt,
+            note = treeCapture.noteContent,
             attributes = attributesRequest
         )
 
-        val treeIdResponse: Int = api.createTree(newTreeRequest)
+        api.createTree(newTreeRequest)
 
         // Update tree db object with update status
-        val treeEntity = db.treeDao().getTreeByID(tree.tree_id)
-        treeEntity.isSynced = true
-        treeEntity.mainDbId = treeIdResponse
-        db.treeDao().updateTree(treeEntity)
+        treeCapture.uploaded = true
+        dao.updateTreeCapture(treeCapture)
 
     }
 }

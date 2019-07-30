@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -20,7 +19,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.utilities.*
+import org.greenstand.android.TreeTracker.utilities.CameraHelper
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.utilities.onTextChanged
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
