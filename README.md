@@ -1,4 +1,4 @@
-[![Build Status](https://app.bitrise.io/app/26ed633acc077bbe/status.svg?token=m-rsQnNZGxgqrDa2u78bpg&branch=master)](https://app.bitrise.io/app/26ed633acc077bbe)
+[![Build Status](https://travis-ci.com/Greenstand/treetracker-android.svg?branch=master)](https://travis-ci.com/Greenstand/treetracker-android)
 
 # Treetracker Android
 
