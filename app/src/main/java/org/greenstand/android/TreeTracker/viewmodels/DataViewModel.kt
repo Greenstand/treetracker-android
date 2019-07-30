@@ -36,6 +36,8 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
 
     fun sync() {
         launch {
+         if (currentJob == null) {
+
             val treesToSync = withContext(Dispatchers.IO) { dao.getNonUploadedTreeCaptureCount() }
             when (treesToSync) {
                 0 -> {
@@ -46,6 +48,11 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
                     toastLiveData.value = R.string.sync_started
                     startDataSynchronization()
                 }
+            } else {
+                currentJob?.cancel()
+                currentJob = null
+                isSyncingLiveData.value = false
+                toastLiveData.value = R.string.sync_stopped
             }
         }
     }
@@ -126,6 +133,8 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
 
     fun stopSyncing() {
         currentJob?.cancel()
+        currentJob = null
+        isSyncingLiveData.value = false
     }
 
 }

@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_data.*
 import org.greenstand.android.TreeTracker.R
@@ -18,8 +18,15 @@ class DataFragment : Fragment() {
 
     private val viewModel: DataViewModel by viewModel()
 
+    private val args: DataFragmentArgs by navArgs()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (args.startSync) {
+            viewModel.sync()
+        }
+
         setHasOptionsMenu(true)
     }
 
@@ -49,8 +56,10 @@ class DataFragment : Fragment() {
 
         viewModel.isSyncing.observe(this, Observer { isSyncing ->
             val textId = if (isSyncing) {
+                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 R.string.stop
             } else {
+                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 R.string.sync
             }
             fragmentDataSyncButton.setText(textId)

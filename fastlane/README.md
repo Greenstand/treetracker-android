@@ -30,7 +30,7 @@ Submit a new Greenstand Beta Build to Crashlytics Beta
 ```
 fastlane android justdiggit_beta
 ```
-Submit a new Justdiggit Beta Build to Crashlytics Beta
+Submit a new JustDigIt Beta Build to Crashlytics Beta
 ### android deploy
 ```
 fastlane android deploy
