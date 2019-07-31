@@ -7,6 +7,7 @@ import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.Utils
+import timber.log.Timber
 
 data class UploadTreeParams(val treeId: Long,
                             val treeImageUrl: String)
