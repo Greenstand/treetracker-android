@@ -26,9 +26,9 @@ Runs all the tests
 fastlane android beta
 ```
 Submit a new Greenstand Beta Build to Crashlytics Beta
-### android justdigit_beta
+### android justdiggit_beta
 ```
-fastlane android justdigit_beta
+fastlane android justdiggit_beta
 ```
 Submit a new JustDigIt Beta Build to Crashlytics Beta
 ### android deploy
