@@ -35,8 +35,6 @@ import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.map.TreeMapAnnotation
-import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
-import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
@@ -57,8 +55,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
-    private val database: AppDatabase by inject()
-
     private lateinit var clusterManager : ClusterManager<TreeMapAnnotation>
 
 
@@ -73,6 +69,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
                     val photoPath = sharedPreferences.getString(ValueHelper.PLANTER_PHOTO, null)
                     val profileImageView = mapUserImage
+
                     if (photoPath != null) {
                         val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
                         if (rotatedBitmap != null) {
@@ -241,14 +238,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         return true
     }
 
-    override fun onMapReady(map: GoogleMap) {
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
 
-        this.map = map
-
-        this.clusterManager = ClusterManager(this.context, this.map)
-        this.map!!.setOnCameraIdleListener(this.clusterManager)
-        this.map!!.setOnMarkerClickListener(this.clusterManager)
-
+        clusterManager = ClusterManager(context, map)
+        map!!.setOnCameraIdleListener(clusterManager)
+        map!!.setOnMarkerClickListener(clusterManager)
 
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -265,41 +260,27 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        map.isMyLocationEnabled = true
-        map.getUiSettings().setMyLocationButtonEnabled(false)
-
-        clusterManager = this.clusterManager
+        map!!.isMyLocationEnabled = true
+        map!!.uiSettings.isMyLocationButtonEnabled = false
 
         runBlocking {
             val trees = withContext(Dispatchers.IO) { dao.getTreeDataForMap() }
 
             if (trees.isNotEmpty()) {
                 Timber.d("Adding markers")
-
-                var latLng: LatLng? = null
-
                 for (tree in trees) {
-
                     val treeMapAnnotation = TreeMapAnnotation(tree.latitude, tree.longitude)
                     clusterManager.addItem(treeMapAnnotation)
-
-                    val markerOptions = MarkerOptions()
-                        .title(tree.treeCaptureId.toString())// set Id instead of title
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_pin))
-                        .position(latLng)
-                    map.addMarker(markerOptions)
                 }
-
-
             }
             if (userLocationManager.currentLocation != null) {
                 val myLatLng = LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
+                map!!.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
             }
 
         }
 
 
-        map.mapType = GoogleMap.MAP_TYPE_NORMAL
+        map!!.mapType = GoogleMap.MAP_TYPE_NORMAL
     }
 }
