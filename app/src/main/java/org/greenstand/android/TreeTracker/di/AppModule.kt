@@ -26,7 +26,7 @@ val appModule = module {
 
     viewModel { TreeHeightViewModel(get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get(), get()) }
+    viewModel { DataViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
 
@@ -69,4 +69,6 @@ val appModule = module {
     factory { ValidateCheckInStatusUseCase(get()) }
 
     factory { PlanterCheckInUseCase(get(), get()) }
+
+    factory { SyncDataUseCase(get(), get(), get(), get()) }
 }

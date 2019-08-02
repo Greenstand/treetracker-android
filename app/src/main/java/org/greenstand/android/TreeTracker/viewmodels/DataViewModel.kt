@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
@@ -8,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.RetrofitApi
+import org.greenstand.android.TreeTracker.background.SyncService
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.SyncTreeParams
 import org.greenstand.android.TreeTracker.usecases.SyncTreeUseCase
@@ -18,7 +20,8 @@ import timber.log.Timber
 class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
                     private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
                     private val api: RetrofitApi,
-                    private val dao: TreeTrackerDAO) : CoroutineViewModel() {
+                    private val dao: TreeTrackerDAO,
+                    private val context: Context) : CoroutineViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
     private val toastLiveData = MutableLiveData<Int>()
@@ -76,20 +79,22 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
         isSyncingLiveData.value = true
         currentJob = launch {
 
-            val isAuthenticated = withContext(Dispatchers.IO) { api.authenticateDevice() }
+            SyncService.enqueueWork(context)
 
-            if (!isAuthenticated) {
-                toastLiveData.value = R.string.sync_failed
-                isSyncingLiveData.value = false
-                return@launch
-            }
-
-            withContext(Dispatchers.IO) {
-
-                uploadPlanters()
-
-                uploadNewTrees()
-            }
+//            val isAuthenticated = withContext(Dispatchers.IO) { api.authenticateDevice() }
+//
+//            if (!isAuthenticated) {
+//                toastLiveData.value = R.string.sync_failed
+//                isSyncingLiveData.value = false
+//                return@launch
+//            }
+//
+//            withContext(Dispatchers.IO) {
+//
+//                uploadPlanters()
+//
+//                uploadNewTrees()
+//            }
 
             toastLiveData.value = R.string.sync_successful
             isSyncingLiveData.value = false
@@ -111,14 +116,14 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
 
     private suspend fun uploadNewTrees() {
 
-        val treeList = dao.getAllTreeCapturesToUpload()
+        val treeIdList = dao.getAllTreeCaptureIdsToUpload()
 
-        Timber.tag("DataViewModel").d("Uploading ${treeList.size} trees")
+        Timber.tag("DataViewModel").d("Uploading ${treeIdList.size} trees")
 
-        treeList.onEach {
+        treeIdList.onEach {
 
             try {
-                withContext(Dispatchers.IO) { syncTreeUseCase.execute(SyncTreeParams(treeId = it.id)) }
+                withContext(Dispatchers.IO) { syncTreeUseCase.execute(SyncTreeParams(treeId = it)) }
             } catch (e: Exception) {
                 Timber.e("NewTree upload failed")
             }
