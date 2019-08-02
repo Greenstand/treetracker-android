@@ -217,9 +217,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     // For debug analysis purposes only
     @SuppressLint("SimpleDateFormat")
     override fun onLongClick(view: View): Boolean {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.Main) {
             Toast.makeText(activity, "Adding 500 trees", Toast.LENGTH_LONG).show()
-            val didSuceed = vm.createFakeTrees()
+            val didSuceed = withContext(Dispatchers.IO) { vm.createFakeTrees() }
             if (didSuceed) {
                 Toast.makeText(activity, "500 trees added", Toast.LENGTH_LONG).show()
             } else {

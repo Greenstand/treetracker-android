@@ -1,14 +1,17 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
 import android.content.Context
+import android.content.IntentFilter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.RetrofitApi
+import org.greenstand.android.TreeTracker.background.SyncBroadcastReceiver
 import org.greenstand.android.TreeTracker.background.SyncService
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.SyncTreeParams
@@ -17,10 +20,13 @@ import org.greenstand.android.TreeTracker.usecases.UploadPlanterParams
 import org.greenstand.android.TreeTracker.usecases.UploadPlanterUseCase
 import timber.log.Timber
 
+
 class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
                     private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
                     private val api: RetrofitApi,
                     private val dao: TreeTrackerDAO,
+                    private val syncDataUseCase: SyncDataUseCase,
+                    private val localBroadcastManager: LocalBroadcastManager,
                     private val context: Context) : CoroutineViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
@@ -31,10 +37,19 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
     val toasts: LiveData<Int> = toastLiveData
     val isSyncing: LiveData<Boolean> = isSyncingLiveData
 
+    private val broadcastReceiver = SyncBroadcastReceiver()
+
     private var currentJob: Job? = null
 
     init {
         updateData()
+
+        broadcastReceiver.onDataReceived = {
+            updateData()
+        }
+
+        localBroadcastManager.registerReceiver(broadcastReceiver,
+                                               IntentFilter(SyncService.ACTION_ID))
     }
 
     fun sync() {
@@ -78,6 +93,8 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
     private fun startDataSynchronization() {
         isSyncingLiveData.value = true
         currentJob = launch {
+
+//            syncDataUseCase.execute(Unit)
 
             SyncService.enqueueWork(context)
 
@@ -134,6 +151,7 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
 
     override fun onCleared() {
         stopSyncing()
+        localBroadcastManager.unregisterReceiver(broadcastReceiver)
     }
 
     fun stopSyncing() {
