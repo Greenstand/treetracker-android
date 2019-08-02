@@ -37,6 +37,32 @@ For development, select the build variant _dev_. This build variant is configure
 &nbsp;
 &nbsp;
 
+## QC Deployment
+
+This repo has been configured to be easily deployed to QC through Travis. The process, however, is still a manual.
+
+In order to get a new build to QC, take the following steps:
+
+1. Go to the [Project page in Travis](https://travis-ci.com/Greenstand/treetracker-android)
+2. Select _More Options > Trigger build_
+3. On the dialog, select the appropriate branch, and use either of these configurations:
+    * For an Android Beta build:
+```
+script:
+  - "fastlane android beta"
+```
+    * For an Android JustDigIt build:
+```
+script:
+  - "fastlane android justdiggit_beta"
+```	
+4. Run the build and then wait for it to complete. _Voilá._
+
+Running without a `script` custom parameter will result in a standard build to be run without any artifacts deployed.
+
+&nbsp;
+&nbsp;
+
 ## Deployment
 
 There is one prerequisite to using the appropriate gradle tasks:
