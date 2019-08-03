@@ -1,32 +1,20 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
 import android.content.Context
-import android.content.IntentFilter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.Observer
+import androidx.work.*
+import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.api.RetrofitApi
-import org.greenstand.android.TreeTracker.background.SyncBroadcastReceiver
-import org.greenstand.android.TreeTracker.background.SyncService
+import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.usecases.SyncTreeParams
-import org.greenstand.android.TreeTracker.usecases.SyncTreeUseCase
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterParams
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterUseCase
-import timber.log.Timber
+import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
 
 
-class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
-                    private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
-                    private val api: RetrofitApi,
-                    private val dao: TreeTrackerDAO,
-                    private val syncDataUseCase: SyncDataUseCase,
-                    private val localBroadcastManager: LocalBroadcastManager,
+class DataViewModel(private val dao: TreeTrackerDAO,
+                    private val workManager: WorkManager,
                     private val context: Context) : CoroutineViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
@@ -37,40 +25,76 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
     val toasts: LiveData<Int> = toastLiveData
     val isSyncing: LiveData<Boolean> = isSyncingLiveData
 
-    private val broadcastReceiver = SyncBroadcastReceiver()
 
-    private var currentJob: Job? = null
+    var _isSyncing: Boolean? by Delegates.observable<Boolean?>(null) { _, _, startedSyncing ->
+
+        startedSyncing ?: return@observable
+
+        if (startedSyncing) {
+            updateTimerJob = launch {
+                while(true) {
+                    delay(1000)
+                    updateData()
+                }
+            }
+        }
+    }
+
+    private var updateTimerJob: Job? = null
+
+    private val syncObserver = Observer<List<WorkInfo>> { infoList ->
+        when(infoList.map { it.state }.elementAtOrNull(0)) {
+            WorkInfo.State.BLOCKED -> {
+                if (_isSyncing != null) {
+                    toastLiveData.value = R.string.sync_blocked
+                }
+
+                _isSyncing = false
+                isSyncingLiveData.value = false
+            }
+            WorkInfo.State.SUCCEEDED,
+            WorkInfo.State.CANCELLED,
+            WorkInfo.State.FAILED -> {
+                if (_isSyncing != null) {
+                    toastLiveData.value = R.string.sync_stopped
+                }
+
+                _isSyncing = false
+                isSyncingLiveData.value = false
+            }
+            WorkInfo.State.RUNNING -> {
+                if (_isSyncing != null) {
+                    toastLiveData.value = R.string.sync_started
+                }
+
+                _isSyncing = true
+                isSyncingLiveData.value = true
+            }
+            else -> { }
+        }
+    }
 
     init {
         updateData()
 
-        broadcastReceiver.onDataReceived = {
-            updateData()
-        }
+        workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
+            .observeForever(syncObserver)
 
-        localBroadcastManager.registerReceiver(broadcastReceiver,
-                                               IntentFilter(SyncService.ACTION_ID))
     }
 
     fun sync() {
         launch {
-            if (currentJob == null) {
+            if (_isSyncing == null || _isSyncing == false) {
                 val treesToSync =
                     withContext(Dispatchers.IO) { dao.getNonUploadedTreeCaptureCount() }
                 when (treesToSync) {
-                    0 -> {
-                        toastLiveData.value = R.string.nothing_to_sync
-                    }
-                    else -> {
-                        toastLiveData.value = R.string.sync_started
-                        startDataSynchronization()
-                    }
+                    0 -> toastLiveData.value = R.string.nothing_to_sync
+                    else -> startDataSynchronization()
                 }
             } else {
-                currentJob?.cancel()
-                currentJob = null
-                isSyncingLiveData.value = false
-                toastLiveData.value = R.string.sync_stopped
+                updateTimerJob?.cancel()
+                updateTimerJob = null
+                workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
             }
         }
     }
@@ -91,75 +115,16 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
     }
 
     private fun startDataSynchronization() {
-        isSyncingLiveData.value = true
-        currentJob = launch {
+        val request = OneTimeWorkRequestBuilder<TreeSyncWorker>()
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.SECONDS)
+            .build()
 
-//            syncDataUseCase.execute(Unit)
-
-            SyncService.enqueueWork(context)
-
-//            val isAuthenticated = withContext(Dispatchers.IO) { api.authenticateDevice() }
-//
-//            if (!isAuthenticated) {
-//                toastLiveData.value = R.string.sync_failed
-//                isSyncingLiveData.value = false
-//                return@launch
-//            }
-//
-//            withContext(Dispatchers.IO) {
-//
-//                uploadPlanters()
-//
-//                uploadNewTrees()
-//            }
-
-            toastLiveData.value = R.string.sync_successful
-            isSyncingLiveData.value = false
-        }
-    }
-
-    private suspend fun uploadPlanters() {
-        // Upload all user registration data that hasn't been uploaded yet
-        val planterInfoToUploadList = dao.getAllPlanterInfo()
-
-        Timber.tag("DataViewModel").d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
-
-        planterInfoToUploadList.forEach {
-            runCatching {
-                withContext(Dispatchers.IO) { uploadPlanterDetailsUseCase.execute(UploadPlanterParams(planterInfoId = it.id)) }
-            }
-        }
-    }
-
-    private suspend fun uploadNewTrees() {
-
-        val treeIdList = dao.getAllTreeCaptureIdsToUpload()
-
-        Timber.tag("DataViewModel").d("Uploading ${treeIdList.size} trees")
-
-        treeIdList.onEach {
-
-            try {
-                withContext(Dispatchers.IO) { syncTreeUseCase.execute(SyncTreeParams(treeId = it)) }
-            } catch (e: Exception) {
-                Timber.e("NewTree upload failed")
-            }
-
-            updateData()
-        }
+        workManager.enqueueUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID, ExistingWorkPolicy.KEEP, request)
     }
 
     override fun onCleared() {
-        stopSyncing()
-        localBroadcastManager.unregisterReceiver(broadcastReceiver)
+        workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID).removeObserver(syncObserver)
     }
-
-    fun stopSyncing() {
-        currentJob?.cancel()
-        currentJob = null
-        isSyncingLiveData.value = false
-    }
-
 }
 
 data class TreeData(val treesSynced: Int,

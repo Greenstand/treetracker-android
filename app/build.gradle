@@ -71,6 +71,9 @@ android {
         }
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 
     lintOptions {
         checkReleaseBuilds false
@@ -186,6 +189,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-runtime:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation "androidx.work:work-runtime-ktx:2.2.0-rc01"
 
     // Navigation
     implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0'

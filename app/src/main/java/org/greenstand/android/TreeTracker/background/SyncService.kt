@@ -20,9 +20,9 @@ class SyncService : JobIntentService() {
         sendBroadcastMessage("")
 
         jobScope.launch {
-            syncDataUseCase.execute {
-                sendBroadcastMessage("")
-            }
+//            syncDataUseCase.execute {
+//                sendBroadcastMessage("")
+//            }
         }
     }
 

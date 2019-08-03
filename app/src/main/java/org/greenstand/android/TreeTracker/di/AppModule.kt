@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.di
 import android.content.Context
 import android.location.LocationManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.DOSpaces
@@ -27,9 +28,11 @@ val appModule = module {
 
     viewModel { TreeHeightViewModel(get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { DataViewModel(get(), get(), get()) }
 
     viewModel { MapViewModel(get(), get(), get(), get()) }
+
+    single { WorkManager.getInstance(get()) }
 
     single { LocalBroadcastManager.getInstance(get()) }
 
@@ -62,6 +65,8 @@ val appModule = module {
     factory { SyncTreeUseCase(get(), get(), get()) }
 
     factory { CreateTreeUseCase(get(), get(), get()) }
+
+    factory { CreateFakeTreesUseCase(get(), get(), get(), get()) }
 
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 

@@ -1,29 +1,28 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.*
 import timber.log.Timber
+import kotlin.coroutines.coroutineContext
 
 class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
                       private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
                       private val api: RetrofitApi,
-                      private val dao: TreeTrackerDAO) : UseCase<() -> Unit, Unit>() {
+                      private val dao: TreeTrackerDAO) : UseCase<Unit, Boolean>() {
 
-    var callback: () -> Unit = { }
-
-    override suspend fun execute(params: () -> Unit) {
+    override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {
-
-            callback = params
 
             val isAuthenticated = api.authenticateDevice()
 
             if (!isAuthenticated) {
                 Timber.tag("SyncDataUseCase").w("Device Authentication failed")
-                return@withContext
+                return@withContext false
             }
 
             uploadPlanters()
@@ -31,10 +30,15 @@ class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
             var treeIdList = dao.getAllTreeCaptureIdsToUpload()
 
             while(treeIdList.isNotEmpty()) {
-                uploadTrees(treeIdList)
-                treeIdList = dao.getAllTreeCaptureIdsToUpload()
+                if (coroutineContext.isActive) {
+                    uploadTrees(treeIdList)
+                    treeIdList = dao.getAllTreeCaptureIdsToUpload()
+                } else {
+                    break
+                }
             }
         }
+        return true
     }
 
     private suspend fun uploadPlanters() {
@@ -44,9 +48,15 @@ class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
         Timber.tag("SyncDataUseCase").d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
 
         planterInfoToUploadList.forEach {
-            runCatching {
-                uploadPlanterDetailsUseCase.execute(UploadPlanterParams(planterInfoId = it.id))
+
+            if (coroutineContext.isActive) {
+                runCatching {
+                    uploadPlanterDetailsUseCase.execute(UploadPlanterParams(planterInfoId = it.id))
+                }
+            } else {
+                coroutineContext.cancel()
             }
+
         }
     }
 
@@ -56,8 +66,11 @@ class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
 
         treeIds.onEach {
             try {
-                syncTreeUseCase.execute(SyncTreeParams(treeId = it))
-                callback()
+                if (coroutineContext.isActive) {
+                    syncTreeUseCase.execute(SyncTreeParams(treeId = it))
+                } else {
+                    coroutineContext.cancel()
+                }
             } catch (e: Exception) {
                 Timber.e("NewTree upload failed")
             }
