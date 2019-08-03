@@ -38,6 +38,8 @@ class TreeSyncWorker(context: Context,
 
         syncDataUseCase.execute(Unit)
 
+        NotificationManagerCompat.from(applicationContext).cancel(NOTIFICATION_ID)
+
         return Result.success()
     }
 
