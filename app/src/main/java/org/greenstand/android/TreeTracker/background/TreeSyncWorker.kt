@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.utilities.TextUtils
 import org.greenstand.android.TreeTracker.viewmodels.SyncDataUseCase
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -25,12 +26,15 @@ class TreeSyncWorker(context: Context,
 
         createNotificationChannel()
 
-        var builder = NotificationCompat.Builder(applicationContext, "channel_id")
+        val stopText = TextUtils.createColorizedText("Stop", applicationContext, R.color.stop_red)
+
+        val builder = NotificationCompat.Builder(applicationContext, "channel_id")
             .setSmallIcon(R.drawable.logo)
             .setContentTitle("Syncing...")
             .setContentText("Uploading all trees")
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .addAction(R.drawable.save_icon, "Stop", createStopSyncPendingIntent())
+            .setColor(applicationContext.resources.getColor(R.color.colorPrimary))
+            .addAction(R.drawable.save_icon, stopText, createStopSyncPendingIntent())
 
         val notification = builder.build()
 
