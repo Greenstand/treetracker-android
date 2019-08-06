@@ -2,11 +2,13 @@ package org.greenstand.android.TreeTracker.di
 
 import android.content.Context
 import android.location.LocationManager
+import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.DOSpaces
+import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -48,6 +50,8 @@ val appModule = module {
 
     single { DeviceUtils }
 
+    single { SyncNotificationManager(get(), get()) }
+
     single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
 
     single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
@@ -55,6 +59,8 @@ val appModule = module {
     single { UserLocationManager(get(), get()) }
 
     single { DOSpaces.instance() }
+
+    single { NotificationManagerCompat.from(get()) }
 
     factory { UploadImageUseCase(get()) }
 

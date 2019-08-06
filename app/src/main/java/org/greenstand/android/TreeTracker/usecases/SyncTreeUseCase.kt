@@ -17,13 +17,17 @@ class SyncTreeUseCase(private val uploadImageUseCase: UploadImageUseCase,
                 throw IllegalStateException("No imagePath")
             }
 
-            val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath)) ?: throw IllegalStateException("No imageUrl")
+            // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
+            if (tree.photoUrl == null) {
+                val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath))
+                    ?: throw IllegalStateException("No imageUrl")
 
-            tree.photoUrl = imageUrl
+                tree.photoUrl = imageUrl
 
-            dao.updateTreeCapture(tree)
+                dao.updateTreeCapture(tree)
+            }
 
-            uploadTreeUseCase.execute(UploadTreeParams(treeId = tree.id, treeImageUrl = imageUrl))
+            uploadTreeUseCase.execute(UploadTreeParams(treeId = tree.id, treeImageUrl = tree.photoUrl!!))
         }
     }
 }

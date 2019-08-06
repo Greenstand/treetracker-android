@@ -1,12 +1,12 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.work.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import java.util.concurrent.TimeUnit
@@ -15,7 +15,7 @@ import kotlin.properties.Delegates
 
 class DataViewModel(private val dao: TreeTrackerDAO,
                     private val workManager: WorkManager,
-                    private val context: Context) : CoroutineViewModel() {
+                    private val syncNotification: SyncNotificationManager) : CoroutineViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
     private val toastLiveData = MutableLiveData<Int>()
@@ -95,6 +95,7 @@ class DataViewModel(private val dao: TreeTrackerDAO,
                 updateTimerJob?.cancel()
                 updateTimerJob = null
                 workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
+                syncNotification.removeNotification()
             }
         }
     }
