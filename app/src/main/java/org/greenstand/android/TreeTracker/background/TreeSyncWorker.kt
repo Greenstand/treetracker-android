@@ -3,7 +3,7 @@ package org.greenstand.android.TreeTracker.background
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import org.greenstand.android.TreeTracker.viewmodels.SyncDataUseCase
+import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 

@@ -1,8 +1,6 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.work.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
@@ -15,7 +13,7 @@ import kotlin.properties.Delegates
 
 class DataViewModel(private val dao: TreeTrackerDAO,
                     private val workManager: WorkManager,
-                    private val syncNotification: SyncNotificationManager) : CoroutineViewModel() {
+                    private val syncNotification: SyncNotificationManager) : ViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
     private val toastLiveData = MutableLiveData<Int>()
@@ -31,7 +29,7 @@ class DataViewModel(private val dao: TreeTrackerDAO,
         startedSyncing ?: return@observable
 
         if (startedSyncing) {
-            updateTimerJob = launch {
+            updateTimerJob = viewModelScope.launch {
                 while(true) {
                     delay(1000)
                     updateData()
@@ -83,7 +81,7 @@ class DataViewModel(private val dao: TreeTrackerDAO,
     }
 
     fun sync() {
-        launch {
+        viewModelScope.launch {
             if (_isSyncing == null || _isSyncing == false) {
                 val treesToSync =
                     withContext(Dispatchers.IO) { dao.getNonUploadedTreeCaptureCount() }
@@ -101,7 +99,7 @@ class DataViewModel(private val dao: TreeTrackerDAO,
     }
 
     private fun updateData() {
-        launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
 
             val syncedTreeCount = dao.getUploadedTreeCaptureCount()
             val notSyncedTreeCount = dao.getNonUploadedTreeCaptureCount()

@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.viewmodels
+package org.greenstand.android.TreeTracker.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -6,7 +6,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.usecases.*
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 

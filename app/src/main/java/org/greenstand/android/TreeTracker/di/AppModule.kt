@@ -28,7 +28,7 @@ val appModule = module {
 
     viewModel { TermsPolicyViewModel(get(), get()) }
 
-    viewModel { TreeHeightViewModel(get(), get(), get()) }
+    viewModel { TreeHeightViewModel(get(), get()) }
 
     viewModel { DataViewModel(get(), get(), get()) }
 
@@ -84,5 +84,12 @@ val appModule = module {
 
     factory { PlanterCheckInUseCase(get(), get()) }
 
-    factory { SyncDataUseCase(get(), get(), get(), get()) }
+    factory {
+        SyncDataUseCase(
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
 }

@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.*
-import org.greenstand.android.TreeTracker.viewmodels.SyncDataUseCase
+import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.android.ext.android.inject
 
 
