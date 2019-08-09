@@ -95,9 +95,10 @@ android {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
-            buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
-            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"ams3"'
-            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test"'
+            buildConfigField "String", "DOS_ACCESS_KEY", "\"${s3_access_key}\""
+            buildConfigField "String", "DOS_SECRET_KEY", "\"${s3_secret_key}\""
+            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker.test"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
@@ -122,7 +123,7 @@ android {
             buildConfigField "String", "DOS_ACCESS_KEY", "\"${s3_access_key}\""
             buildConfigField "String", "DOS_SECRET_KEY", "\"${s3_secret_key}\""
             buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"eu-central-1"'
-            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-test-bucket"'
+            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker.test"'
             buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"

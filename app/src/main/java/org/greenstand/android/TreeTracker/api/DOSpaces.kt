@@ -83,11 +83,12 @@ class DOSpaces private constructor() {
                 */
 
                 // Verify that transfer acceleration is enabled for the bucket.
-                val accelerateStatus = s3Client?.getBucketAccelerateConfiguration (
+                // You need the right permissions to get this
+                /*val accelerateStatus = s3Client?.getBucketAccelerateConfiguration (
                          GetBucketAccelerateConfigurationRequest (bucketName))
                     ?.status
                 Timber.tag("Acceleration").d("Bucket accelerate status: " + accelerateStatus)
-
+                */
             } catch (e : AmazonServiceException) {
                 // The call was transmitted successfully, but Amazon S3 couldn't process
                 // it, so it returned an error response.
