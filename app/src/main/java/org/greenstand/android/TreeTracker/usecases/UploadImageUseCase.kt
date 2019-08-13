@@ -10,7 +10,6 @@ data class UploadImageParams(val imagePath: String)
 
 class UploadImageUseCase(private val doSpaces: ObjectStorageClient) : UseCase<UploadImageParams, String?>() {
 
-
     override suspend fun execute(params: UploadImageParams): String? {
         return try {
             withContext(Dispatchers.IO) {

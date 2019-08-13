@@ -38,7 +38,6 @@ import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -184,10 +183,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     fragmentMapGpsAccuracyViewValue?.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
                         Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
-                    MainActivity.allowNewTreeOrUpdate = true
+                    allowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracyView.setTextColor(Color.RED)
-                    MainActivity.allowNewTreeOrUpdate = false
+                    allowNewTreeOrUpdate = false
 
                     if (currentLocation!!.hasAccuracy()) {
                         fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
@@ -209,14 +208,14 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 fragmentMapGpsAccuracyView.setTextColor(Color.RED)
                 fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
                 fragmentMapGpsAccuracyViewValue?.text = "N/A"
-                MainActivity.allowNewTreeOrUpdate = false
+                allowNewTreeOrUpdate = false
             }
 
 
             if (currentTreeLocation != null && userLocationManager.currentLocation != null) {
                 val results = floatArrayOf(0f, 0f, 0f)
                 Location.distanceBetween(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude,
-                                         MainActivity.currentTreeLocation!!.latitude, MainActivity.currentTreeLocation!!.longitude, results)
+                                         currentTreeLocation!!.latitude, currentTreeLocation!!.longitude, results)
 
                 if (fragmentNewTreeDistance != null) {
                     fragmentNewTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
@@ -226,8 +225,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     fragmentTreePreviewDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
                 }
             }
-        } else {
-            Timber.d("fragmentMapGpsAccuracy NULL" );
         }
     }
 

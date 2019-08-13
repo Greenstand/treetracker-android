@@ -7,15 +7,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.OnClickListener
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -40,16 +37,15 @@ import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.view.CustomToast
 import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
 
-    private val userLocationManager: UserLocationManager = getKoin().get()
-
-    private var mImageView: ImageView? = null
+    private val userLocationManager: UserLocationManager by inject()
     private var mCurrentPhotoPath: String? = null
-    private var userId: Long = 0
+    private var planterCheckInId: Long = 0
     private var mSharedPreferences: SharedPreferences? = null
     private var takePictureInvoked: Boolean = false
 
@@ -75,7 +71,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
             "org.greenstand.android", Context.MODE_PRIVATE
         )
 
-        userId = mSharedPreferences!!.getLong(ValueHelper.MAIN_USER_ID, -1)
+        planterCheckInId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
 
         val saveBtn = v.fragmentNewTreeSave
 
@@ -267,25 +263,24 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         val content = requireActivity().fragmentNewTreeNote.text.toString()
 
         // tree
-        val planterIdentifierId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_IDENTIFIER_ID, 0)
+        val planterInfoId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_INFO_ID, 0)
 
         return mCurrentPhotoPath?.let {
             NewTree(it,
                     minAccuracy,
                     timeToNextUpdate,
                     content,
-                    userId,
-                    planterIdentifierId)
+                    planterCheckInId,
+                    planterInfoId)
         }
     }
 
     private suspend fun saveToDb(newTree: NewTree): Long {
 
         val createTreeParams = CreateTreeParams(
-            userId = newTree.userId,
+            planterCheckInId = newTree.planterCheckInId,
             photoPath = newTree.photoPath,
-            content = newTree.content,
-            planterIdentifierId = newTree.planterIdentifierId
+            content = newTree.content
         )
 
         return getKoin().get<CreateTreeUseCase>().execute(createTreeParams)

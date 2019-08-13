@@ -18,24 +18,22 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
-import org.greenstand.android.TreeTracker.utilities.Utils
 import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.io.IOException
-import java.text.ParseException
 import java.util.*
 
 class TreePreviewFragment : Fragment() {
 
-    private val userLocationManager: UserLocationManager = getKoin().get()
-
+    private val userLocationManager: UserLocationManager by inject()
+    private val dao: TreeTrackerDAO by inject()
     private var mImageView: ImageView? = null
     private var mCurrentPhotoPath: String? = null
     private var treeIdStr: String = ""
@@ -69,19 +67,15 @@ class TreePreviewFragment : Fragment() {
 
         runBlocking {
 
-            val tree = GlobalScope.async {
-                appDatabase.treeDao().getTreeDtoByID(treeIdStr!!.toLong())
-            }.await()
+            val tree = withContext(Dispatchers.IO) { dao.getTreeCaptureById(treeIdStr.toLong()) }
 
             tree.let {
 
-                mCurrentPhotoPath = it.name
-
-                val isOutdated = it.isOutdated == true
+                mCurrentPhotoPath = it.localPhotoPath
 
                 val noImage = v.fragmentTreePreviewNoImage
 
-                if (mCurrentPhotoPath != null && !isOutdated) {
+                if (mCurrentPhotoPath != null) {
                     setPic()
 
                     noImage.visibility = View.INVISIBLE
@@ -101,8 +95,8 @@ class TreePreviewFragment : Fragment() {
                     Location.distanceBetween(
                         userLocationManager.currentLocation!!.latitude,
                         userLocationManager.currentLocation!!.longitude,
-                        MainActivity.currentTreeLocation!!.latitude,
-                        MainActivity.currentTreeLocation!!.longitude,
+                        tree.latitude,
+                        tree.longitude,
                         results
                     )
                 }
@@ -119,30 +113,7 @@ class TreePreviewFragment : Fragment() {
 
 
                 val createdTxt = v.fragmentTreePreviewCreated
-                createdTxt.text = it.tree_time_created!!.substring(
-                    0,
-                    it.tree_time_created!!.lastIndexOf(":")
-                )
-
-                val updatedTxt = v.fragmentTreePreviewLastUpdate
-                updatedTxt.text = it.tree_time_updated!!.substring(
-                    0,
-                    it.tree_time_updated!!.lastIndexOf(":")
-                )
-
-                val statusTxt = v.fragmentTreePreviewImageStatus
-
-                var dateForUpdate = Date()
-                try {
-                    dateForUpdate = Utils.dateFormat.parse(it.time_for_update)
-                } catch (e: ParseException) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace()
-                }
-
-                if (dateForUpdate.before(Date())) {
-                    statusTxt.setText(R.string.outdated)
-                }
+                createdTxt.text = Date(it.createAt).toLocaleString()
 
 
                 val notes = GlobalScope.async {

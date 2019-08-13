@@ -8,17 +8,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.api.RetrofitApi
-import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.SyncTreeParams
 import org.greenstand.android.TreeTracker.usecases.SyncTreeUseCase
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterDetailsParams
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterDetailsUseCase
+import org.greenstand.android.TreeTracker.usecases.UploadPlanterParams
+import org.greenstand.android.TreeTracker.usecases.UploadPlanterUseCase
 import timber.log.Timber
 
 class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
-                    private val uploadPlanterDetailsUseCase: UploadPlanterDetailsUseCase,
+                    private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
                     private val api: RetrofitApi,
-                    private val appDatabase: AppDatabase) : CoroutineViewModel() {
+                    private val dao: TreeTrackerDAO) : CoroutineViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
     private val toastLiveData = MutableLiveData<Int>()
@@ -37,9 +37,11 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
     fun sync() {
         launch {
             if (currentJob == null) {
-                val treesToSync = withContext(Dispatchers.IO) { appDatabase.treeDao().getToSyncTreeCount() }
+
+                val treesToSync = withContext(Dispatchers.IO) { dao.getNonUploadedTreeCaptureCount() }
                 when (treesToSync) {
                     0 -> {
+                        currentJob?.cancel()
                         toastLiveData.value = R.string.nothing_to_sync
                     }
                     else -> {
@@ -47,11 +49,6 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
                         startDataSynchronization()
                     }
                 }
-            } else {
-                currentJob?.cancel()
-                currentJob = null
-                isSyncingLiveData.value = false
-                toastLiveData.value = R.string.sync_stopped
             }
         }
     }
@@ -59,9 +56,9 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
     private fun updateData() {
         launch(Dispatchers.IO) {
 
-            val treeCount = appDatabase.treeDao().getTotalTreeCount()
-            val syncedTreeCount = appDatabase.treeDao().getSyncedTreeCount()
-            val notSyncedTreeCount = appDatabase.treeDao().getToSyncTreeCount()
+            val syncedTreeCount = dao.getUploadedTreeCaptureCount()
+            val notSyncedTreeCount = dao.getNonUploadedTreeCaptureCount()
+            val treeCount = syncedTreeCount + notSyncedTreeCount
 
             withContext(Dispatchers.Main) {
                 treeInfoLiveData.value = TreeData(totalTrees = treeCount,
@@ -85,7 +82,7 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
 
             withContext(Dispatchers.IO) {
 
-                uploadUserIdentifications()
+                uploadPlanters()
 
                 uploadNewTrees()
             }
@@ -95,26 +92,29 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
         }
     }
 
-    private suspend fun uploadUserIdentifications() {
+    private suspend fun uploadPlanters() {
         // Upload all user registration data that hasn't been uploaded yet
-        val registrations = appDatabase.planterDao().getPlanterRegistrationsToUpload()
-        registrations.forEach {
+        val planterInfoToUploadList = dao.getAllPlanterInfo()
+
+        Timber.tag("DataViewModel").d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
+
+        planterInfoToUploadList.forEach {
             runCatching {
-                withContext(Dispatchers.IO) { uploadPlanterDetailsUseCase.execute(UploadPlanterDetailsParams(planterDetailsId = it.id)) }
+                withContext(Dispatchers.IO) { uploadPlanterDetailsUseCase.execute(UploadPlanterParams(planterInfoId = it.id)) }
             }
         }
     }
 
     private suspend fun uploadNewTrees() {
-        val treeList = appDatabase.treeDao().getTreesToUpload()
 
-        Timber.tag("DataFragment").d("treeCursor: $treeList")
-        Timber.tag("DataFragment").d("treeCursor: " + treeList.size)
+        val treeList = dao.getAllTreeCapturesToUpload()
+
+        Timber.tag("DataViewModel").d("Uploading ${treeList.size} trees")
 
         treeList.onEach {
 
             try {
-                withContext(Dispatchers.IO) { syncTreeUseCase.execute(SyncTreeParams(treeId = it.tree_id)) }
+                withContext(Dispatchers.IO) { syncTreeUseCase.execute(SyncTreeParams(treeId = it.id)) }
             } catch (e: Exception) {
                 Timber.e(e)
                 Timber.e("NewTree upload failed")
