@@ -55,15 +55,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
-        buildConfigField "String", "DOS_ACCESS_KEY", "\"${dos_access_key}\""
-        buildConfigField "String", "DOS_SECRET_KEY", "\"${dos_secret_key}\""
+        buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${dos_access_key}\""
+        buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${dos_secret_key}\""
         buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
         buildConfigField 'Boolean', 'TREE_HEIGHT_FEATURE_ENABLED', "false"
         buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
-        buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "false"
+        buildConfigField 'Boolean', 'USE_AWS_S3', "false"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -86,8 +86,8 @@ android {
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
-            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
-            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"nyc3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET', '"treetracker-production"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -96,11 +96,11 @@ android {
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
-            buildConfigField "String", "DOS_ACCESS_KEY", "\"${s3_access_key}\""
-            buildConfigField "String", "DOS_SECRET_KEY", "\"${s3_secret_key}\""
-            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"eu-central-1"'
-            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker.test"'
-            buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "true"
+            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${s3_access_key}\""
+            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${s3_secret_key}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET', '"treetracker.test"'
+            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
@@ -110,8 +110,8 @@ android {
             resValue "string", "app_name", "Tree Tracker(dev)"
             buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
-            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
-            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-dev"'
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"nyc3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET', '"treetracker-dev"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
@@ -122,11 +122,11 @@ android {
             resValue "string", "app_name", "Tree Tracker(accel)"
             buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
-            buildConfigField "String", "DOS_ACCESS_KEY", "\"${s3_access_key}\""
-            buildConfigField "String", "DOS_SECRET_KEY", "\"${s3_secret_key}\""
-            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"eu-central-1"'
-            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker.test"'
-            buildConfigField 'Boolean', 'ENABLE_TRANSFER_ACCELERATION', "true"
+            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${s3_access_key}\""
+            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${s3_secret_key}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET', '"treetracker.test"'
+            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
@@ -137,8 +137,8 @@ android {
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
-            buildConfigField 'String', 'DO_SPACES_ENDPOINT', '"nyc3"'
-            buildConfigField 'String', 'DO_SPACES_BUCKET', '"treetracker-production"'
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"nyc3.digitaloceanspaces.com"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET', '"treetracker-production"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
         }
 

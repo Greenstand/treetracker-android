@@ -4,7 +4,7 @@ import android.content.Context
 import android.location.LocationManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.api.DOSpaces
+import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -46,7 +46,7 @@ val appModule = module {
 
     single { UserLocationManager(get(), get()) }
 
-    single { DOSpaces.instance() }
+    single { ObjectStorageClient.instance() }
 
     factory { UploadImageUseCase(get()) }
 
