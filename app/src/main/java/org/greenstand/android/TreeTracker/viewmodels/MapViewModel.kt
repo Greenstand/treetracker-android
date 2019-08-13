@@ -1,6 +1,8 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
@@ -9,6 +11,7 @@ import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.usecases.ExpireCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class MapViewModel constructor(private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
                                private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase,
@@ -35,7 +38,10 @@ class MapViewModel constructor(private val validateCheckInStatusUseCase: Validat
     suspend fun createFakeTrees(): Boolean {
         userLocationManager.currentLocation ?: return false
 
-        val planterCheckInId = -1
+        val mSharedPreferences: SharedPreferences =  context.getSharedPreferences(
+            "org.greenstand.android", Context.MODE_PRIVATE
+        )
+        val planterCheckInId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_CHECK_IN_ID, 1)
 
         for (i in 0..499) {
 
