@@ -4,7 +4,7 @@ import android.content.Context
 import android.location.LocationManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.api.DOSpaces
+import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -18,15 +18,17 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    viewModel { LoginViewModel(get(), get(), get()) }
+    viewModel { LoginViewModel(get(), get()) }
 
     viewModel { SignupViewModel() }
 
     viewModel { TermsPolicyViewModel(get(), get()) }
 
-    viewModel { TreeHeightViewModel(get(), get()) }
+    viewModel { TreeHeightViewModel(get(), get(), get()) }
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
+
+    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
 
     single { FirebaseAnalytics.getInstance(get()) }
 
@@ -46,15 +48,25 @@ val appModule = module {
 
     single { UserLocationManager(get(), get()) }
 
-    single { DOSpaces.instance() }
+    single { ObjectStorageClient.instance() }
 
     factory { UploadImageUseCase(get()) }
 
-    factory { CreateTreeUseCase(get(), get(), get()) }
+    factory { UploadTreeUseCase(get(), get()) }
 
-    factory { UploadTreeUseCase(get(), get(), get(), get()) }
+    factory { UploadPlanterUseCase(get(), get(), get()) }
 
     factory { SyncTreeUseCase(get(), get(), get()) }
 
-    factory { UploadPlanterDetailsUseCase(get(), get(), get()) }
+    factory { CreateTreeUseCase(get(), get(), get()) }
+
+    factory { CreatePlanterInfoUseCase(get(), get(), get()) }
+
+    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get(), get()) }
+
+    factory { ExpireCheckInStatusUseCase(get()) }
+
+    factory { ValidateCheckInStatusUseCase(get()) }
+
+    factory { PlanterCheckInUseCase(get(), get()) }
 }

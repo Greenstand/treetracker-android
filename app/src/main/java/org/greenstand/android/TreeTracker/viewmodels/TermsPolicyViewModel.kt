@@ -4,13 +4,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.data.UserInfo
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
-import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.utilities.Utils
-import java.util.*
+import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInParams
+import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
+import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoParams
+import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
 
-class TermsPolicyViewModel(private val userManager: UserManager,
-                           private val userLocationManager: UserLocationManager) : CoroutineViewModel() {
+class TermsPolicyViewModel(private val createPlanterCheckInUseCase: CreatePlanterCheckInUseCase,
+                           private val createPlanterInfoUseCase: CreatePlanterInfoUseCase) : CoroutineViewModel() {
 
     lateinit var userInfo: UserInfo
     var photoPath: String? = null
@@ -26,16 +26,17 @@ class TermsPolicyViewModel(private val userManager: UserManager,
     private fun confirm(onConfirmationComplete: () -> Unit) {
         launch(Dispatchers.IO) {
 
-            userManager.login(userInfo.identification,
-                              photoPath!!,
-                              userLocationManager.currentLocation)
+            val planterInfoId = createPlanterInfoUseCase.execute(CreatePlanterInfoParams(firstName = userInfo.firstName,
+                                                                                         lastName = userInfo.lastName,
+                                                                                         identifier = userInfo.identification,
+                                                                                         organization = userInfo.organization,
+                                                                                         phone = null,
+                                                                                         email = null))
 
-            userManager.addLoginDetails(userInfo.identification,
-                                        userInfo.firstName,
-                                        userInfo.lastName,
-                                        userInfo.organization,
-                                        Utils.dateFormat.format(Date()),
-                                        userLocationManager.currentLocation)
+            createPlanterCheckInUseCase.execute(CreatePlanterCheckInParams(localPhotoPath = photoPath!!,
+                                                                           planterInfoId = planterInfoId))
+
+
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }

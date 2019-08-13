@@ -20,10 +20,10 @@ class UserManager(private val context: Context,
     var authToken: String? = null
 
     val isLoggedIn: Boolean
-        get() = sharedPreferences.getString(ValueHelper.PLANTER_IDENTIFIER, null) != null
+        get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1) != -1L
 
     val userId: Long
-        get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong(ValueHelper.MAIN_USER_ID, -1)
+        get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong("", -1)
 
     var firstName: String?
         get() = sharedPreferences.getString(FIRST_NAME_KEY, null)
@@ -48,9 +48,10 @@ class UserManager(private val context: Context,
 
     fun clearUser() {
         sharedPreferences.edit().apply {
-            putLong(ValueHelper.TIME_OF_LAST_USER_IDENTIFICATION, 0)
+            putLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
             putString(ValueHelper.PLANTER_PHOTO, null)
-            putString(ValueHelper.PLANTER_IDENTIFIER, null)
+            putLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
+            putLong(ValueHelper.PLANTER_INFO_ID, -1)
         }.apply()
     }
 
@@ -58,9 +59,6 @@ class UserManager(private val context: Context,
                       photoPath: String,
                       location: Location?) {
 
-        planterManager.addPlanterIdentification(identifier,
-                                                photoPath,
-                                                location)
 
         userLoginChannel.send(Unit)
     }
