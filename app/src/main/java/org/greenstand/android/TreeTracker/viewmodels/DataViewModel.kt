@@ -116,6 +116,7 @@ class DataViewModel(private val syncTreeUseCase: SyncTreeUseCase,
             try {
                 withContext(Dispatchers.IO) { syncTreeUseCase.execute(SyncTreeParams(treeId = it.tree_id)) }
             } catch (e: Exception) {
+                Timber.e(e)
                 Timber.e("NewTree upload failed")
             }
 
