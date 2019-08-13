@@ -26,10 +26,6 @@ import com.amazonaws.services.s3.AmazonS3Client
 import timber.log.Timber
 
 
-/**
- * Created by lei on 12/11/17.
- */
-
 class ObjectStorageClient private constructor() {
 
     private var s3Client: AmazonS3? = null
