@@ -42,7 +42,7 @@ platform :android do
         default_payloads: ['git_branch'])
 
     slack(message: "A new Greenstand Beta Build has been released on Fabric",
-        slack_url: ENV["SLACK_URL_QC”],
+        slack_url: ENV["SLACK_URL_QC"],
         payload: {
                      "Build Number" => versionReleased,
                    },
@@ -65,7 +65,7 @@ platform :android do
         default_payloads: ['git_branch'])
 
     slack(message: "A new Justdiggit Beta Build has been released on Fabric",
-        slack_url: ENV["SLACK_URL_QC”],
+        slack_url: ENV["SLACK_URL_QC"],
         payload: {
                      "Build Number" => versionReleased,
                    },
