@@ -30,10 +30,7 @@ class ObjectStorageClient private constructor() {
 
     private var s3Client: AmazonS3? = null
 
-    // Acceleration IS available in android SDK
-    // https://github.com/aws-amplify/aws-sdk-android/blob/master/aws-android-sdk-s3/src/main/java/com/amazonaws/services/s3/S3ClientOptions.java#L114
-    // https://github.com/aws-amplify/aws-sdk-android/issues/515
-    // private var transferUtility: TransferUtility
+
 
     init {
 
@@ -41,6 +38,10 @@ class ObjectStorageClient private constructor() {
         val credentialsProvider = StaticCredentialsProvider(basicAWSCredentials)
 
         if(BuildConfig.USE_AWS_S3) {
+
+            // Acceleration IS available in android SDK
+            // https://github.com/aws-amplify/aws-sdk-android/blob/master/aws-android-sdk-s3/src/main/java/com/amazonaws/services/s3/S3ClientOptions.java#L114
+            // https://github.com/aws-amplify/aws-sdk-android/issues/515
 
             val clientRegion = BuildConfig.OBJECT_STORAGE_ENDPOINT
             try {
@@ -107,8 +108,22 @@ class ObjectStorageClient private constructor() {
         val poRequest = PutObjectRequest(BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES, dosKey, image)
         poRequest.withAccessControlList(acl)
         val poResult = s3Client?.putObject(poRequest)
-        return String.format("https://%s.%s/%s",  BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES,
-            BuildConfig.OBJECT_STORAGE_ENDPOINT, dosKey)
+
+        if(BuildConfig.USE_AWS_S3){
+            return String.format(
+                "https://%s.s3.%s.amazonaws.com/%s",
+                BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES,
+                BuildConfig.OBJECT_STORAGE_ENDPOINT,
+                dosKey
+            )
+        } else {
+            return String.format(
+                "https://%s.%s/%s",
+                BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES,
+                BuildConfig.OBJECT_STORAGE_ENDPOINT,
+                dosKey
+            )
+        }
     }
 
     companion object {
