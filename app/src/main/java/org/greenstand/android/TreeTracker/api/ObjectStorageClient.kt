@@ -1,29 +1,26 @@
 package org.greenstand.android.TreeTracker.api
 
+//import com.amazonaws.services.s3.AmazonS3ClientBuilder
+
 import android.annotation.SuppressLint
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.internal.StaticCredentialsProvider
-
+import com.amazonaws.regions.Region
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3
-//import com.amazonaws.services.s3.AmazonS3ClientBuilder
-
+import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.AccessControlList
 import com.amazonaws.services.s3.model.GroupGrantee
 import com.amazonaws.services.s3.model.Permission
 import com.amazonaws.services.s3.model.PutObjectRequest
-
 import org.greenstand.android.TreeTracker.BuildConfig
-
+import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.UUID
-import com.amazonaws.regions.Region
-import com.amazonaws.services.s3.AmazonS3Client
-import timber.log.Timber
+import java.util.*
 
 
 class ObjectStorageClient private constructor() {
@@ -48,7 +45,8 @@ class ObjectStorageClient private constructor() {
             try {
 
                 // Create an Amazon S3 client that is configured to use the accelerate endpoint.
-                val region = Region.getRegion(clientRegion);
+                val regions = Regions.fromName(clientRegion)
+                val region = Region.getRegion(Regions.fromName(clientRegion))
                 s3Client = AmazonS3Client(credentialsProvider, region, ClientConfiguration())
 
                 // Enable Transfer Acceleration for the specified bucket.

@@ -7,6 +7,7 @@ import org.greenstand.android.TreeTracker.api.models.requests.RegistrationReques
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import timber.log.Timber
 import java.io.IOException
 
 class RetrofitApi(private val api: ApiService,
@@ -35,6 +36,7 @@ class RetrofitApi(private val api: ApiService,
             authenticate(DeviceUtils.deviceId)
             updateDevice()
         } catch (e: IOException) {
+            Timber.tag("RetrofitApi").e(e)
             return false
         }
 

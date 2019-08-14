@@ -57,6 +57,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
     private lateinit var clusterManager : ClusterManager<TreeMapAnnotation>
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,6 +69,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
 
                     val photoPath = sharedPreferences.getString(ValueHelper.PLANTER_PHOTO, null)
                     val profileImageView = mapUserImage
+
                     if (photoPath != null) {
                         val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
                         if (rotatedBitmap != null) {
@@ -215,17 +217,13 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     // For debug analysis purposes only
     @SuppressLint("SimpleDateFormat")
     override fun onLongClick(view: View): Boolean {
-        Toast.makeText(activity, "Adding 500 trees", Toast.LENGTH_LONG).show()
-        GlobalScope.launch {
-            val didSucceed = vm.createFakeTrees()
-            if (didSucceed) {
-                GlobalScope.launch (Dispatchers.Main) {
-                    Toast.makeText(activity, "500 trees added", Toast.LENGTH_LONG).show()
-                }
+        GlobalScope.launch(Dispatchers.Main) {
+            Toast.makeText(activity, "Adding 500 trees", Toast.LENGTH_LONG).show()
+            val didSuceed = withContext(Dispatchers.IO) { vm.createFakeTrees() }
+            if (didSuceed) {
+                Toast.makeText(activity, "500 trees added", Toast.LENGTH_LONG).show()
             } else {
-                GlobalScope.launch (Dispatchers.Main) {
-                    Toast.makeText(activity, "Error adding test trees", Toast.LENGTH_LONG).show()
-                }
+                Toast.makeText(activity, "Error adding test trees", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -240,14 +238,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         return true
     }
 
-    override fun onMapReady(map: GoogleMap) {
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
 
-        this.map = map
-
-        this.clusterManager = ClusterManager(this.context, this.map)
-        this.map!!.setOnCameraIdleListener(this.clusterManager)
-        this.map!!.setOnMarkerClickListener(this.clusterManager)
-
+        clusterManager = ClusterManager(context, map)
+        map!!.setOnCameraIdleListener(clusterManager)
+        map!!.setOnMarkerClickListener(clusterManager)
 
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -264,36 +260,27 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        map.isMyLocationEnabled = true
-        map.getUiSettings().setMyLocationButtonEnabled(false)
-
-        clusterManager = this.clusterManager
+        map!!.isMyLocationEnabled = true
+        map!!.uiSettings.isMyLocationButtonEnabled = false
 
         runBlocking {
             val trees = withContext(Dispatchers.IO) { dao.getTreeDataForMap() }
 
             if (trees.isNotEmpty()) {
                 Timber.d("Adding markers")
-
-                var latLng: LatLng? = null
-
                 for (tree in trees) {
-
                     val treeMapAnnotation = TreeMapAnnotation(tree.latitude, tree.longitude)
                     clusterManager.addItem(treeMapAnnotation)
-
                 }
-
             }
             if (userLocationManager.currentLocation != null) {
-                val myLatLng =
-                        LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
+                val myLatLng = LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
+                map!!.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
             }
 
         }
 
 
-        map.mapType = GoogleMap.MAP_TYPE_NORMAL
+        map!!.mapType = GoogleMap.MAP_TYPE_NORMAL
     }
 }
