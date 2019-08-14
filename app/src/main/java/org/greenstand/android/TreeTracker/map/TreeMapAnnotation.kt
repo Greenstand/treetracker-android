@@ -4,30 +4,22 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
 
-class TreeMapAnnotation : ClusterItem {
-    private val mPosition: LatLng
-    private var mTitle: String = ""
-    private var mSnippet: String = ""
+class TreeMapAnnotation(lat: Double,
+                        lng: Double,
+                        private val _title: String = "",
+                        private val _snippet: String = "") : ClusterItem {
 
-    constructor(lat: Double, lng: Double) {
-        mPosition = LatLng(lat, lng)
-    }
-
-    constructor(lat: Double, lng: Double, title: String, snippet: String) {
-        mPosition = LatLng(lat, lng)
-        mTitle = title
-        mSnippet = snippet
-    }
+    private val _position: LatLng = LatLng(lat, lng)
 
     override fun getPosition(): LatLng {
-        return mPosition
+        return _position
     }
 
     override fun getTitle(): String {
-        return mTitle
+        return _title
     }
 
     override fun getSnippet(): String {
-        return mSnippet
+        return _snippet
     }
 }
