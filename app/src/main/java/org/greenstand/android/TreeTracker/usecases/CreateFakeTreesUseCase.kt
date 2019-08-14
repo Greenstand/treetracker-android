@@ -17,7 +17,7 @@ class CreateFakeTreesUseCase(private val userLocationManager: UserLocationManage
 
         for (i in 0..params.amount) {
 
-            val file = ImageUtils.createImageFile(context)
+            val file = ImageUtils.createTestImageFile(context)
 
             val createTreeParams = CreateTreeParams(
                 planterCheckInId = userManager.planterCheckinId!!,
