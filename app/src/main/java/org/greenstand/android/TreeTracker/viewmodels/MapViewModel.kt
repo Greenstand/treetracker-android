@@ -1,24 +1,17 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
-import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
+import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
+import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.ExpireCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
-import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class MapViewModel constructor(private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
                                private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase,
-                               private val createTreeUseCase: CreateTreeUseCase,
-                               private val userLocationManager: UserLocationManager,
-                               private val context: Context,
-                               private val userManager: UserManager) : CoroutineViewModel() {
+                               private val createFakeTreesUseCase: CreateFakeTreesUseCase,
+                               private val userManager: UserManager) : ViewModel() {
 
     val checkInStatusLiveData = MutableLiveData<Boolean>()
 
@@ -36,25 +29,7 @@ class MapViewModel constructor(private val validateCheckInStatusUseCase: Validat
     }
 
     suspend fun createFakeTrees(): Boolean {
-        userLocationManager.currentLocation ?: return false
-
-        val mSharedPreferences: SharedPreferences =  context.getSharedPreferences(
-            "org.greenstand.android", Context.MODE_PRIVATE
-        )
-        val planterCheckInId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_CHECK_IN_ID, 1)
-
-        for (i in 0..499) {
-
-            val file = ImageUtils.createImageFile(context)
-
-            val createTreeParams = CreateTreeParams(
-                planterCheckInId = planterCheckInId.toLong(),
-                photoPath = file.absolutePath,
-                content = "My Note"
-            )
-
-            createTreeUseCase.execute(createTreeParams)
-        }
+        createFakeTreesUseCase.execute(CreateFakeTreesParams(500))
         return true
     }
 

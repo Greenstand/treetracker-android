@@ -63,8 +63,8 @@ interface TreeTrackerDAO {
     @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 0")
     fun getNonUploadedTreeCaptureCount(): Int
 
-    @Query("SELECT * FROM tree_capture WHERE uploaded = 0")
-    fun getAllTreeCapturesToUpload(): List<TreeCaptureEntity>
+    @Query("SELECT _id FROM tree_capture WHERE uploaded = 0")
+    fun getAllTreeCaptureIdsToUpload(): List<Long>
 
     @Query("SELECT * FROM tree_capture")
     fun getAllTreeCaptures(): List<TreeCaptureEntity>

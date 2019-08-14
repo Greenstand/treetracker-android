@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
@@ -28,13 +29,15 @@ class SplashFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}, url: ${BuildConfig.BASE_URL}")
 
-        GlobalScope.launch(Dispatchers.Main) {
-            delay(ValueHelper.SPLASH_SCREEN_DURATION)
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            whenStarted {
+                delay(ValueHelper.SPLASH_SCREEN_DURATION)
 
-            if (userManager.isUserLoggedIn()) {
-                findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToMapsFragment())
-            } else {
-                findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
+                if (userManager.isUserLoggedIn()) {
+                    findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToMapsFragment())
+                } else {
+                    findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
+                }
             }
         }
     }
