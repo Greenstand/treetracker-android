@@ -2,8 +2,6 @@ package org.greenstand.android.TreeTracker.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,8 +15,9 @@ import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 
-class TreeHeightViewModel(private val createTreeUseCase: CreateTreeUseCase,
-                          private val dao: TreeTrackerDAO) : ViewModel() {
+class TreeHeightViewModel(private val treeManager: TreeManager,
+                          private val createTreeUseCase: CreateTreeUseCase,
+                          private val dao: TreeTrackerDAO) : CoroutineViewModel() {
 
     var newTree: NewTree? = null
     var treeColor: TreeColor? = null
@@ -32,7 +31,7 @@ class TreeHeightViewModel(private val createTreeUseCase: CreateTreeUseCase,
     private val onEnableButtonLiveData = MutableLiveData<Boolean>()
 
     fun saveNewTree() {
-        viewModelScope.launch {
+        launch {
             if (treeColor == null) {
                 toastMessageLiveData.postValue(R.string.tree_height_selection_error)
                 return@launch

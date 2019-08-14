@@ -1,7 +1,5 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -12,7 +10,7 @@ import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoParams
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
 
 class TermsPolicyViewModel(private val createPlanterCheckInUseCase: CreatePlanterCheckInUseCase,
-                           private val createPlanterInfoUseCase: CreatePlanterInfoUseCase) : ViewModel() {
+                           private val createPlanterInfoUseCase: CreatePlanterInfoUseCase) : CoroutineViewModel() {
 
     lateinit var userInfo: UserInfo
     var photoPath: String? = null
@@ -26,7 +24,7 @@ class TermsPolicyViewModel(private val createPlanterCheckInUseCase: CreatePlante
     var onNavigateToMap: () -> Unit = { }
 
     private fun confirm(onConfirmationComplete: () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
 
             val planterInfoId = createPlanterInfoUseCase.execute(CreatePlanterInfoParams(firstName = userInfo.firstName,
                                                                                          lastName = userInfo.lastName,

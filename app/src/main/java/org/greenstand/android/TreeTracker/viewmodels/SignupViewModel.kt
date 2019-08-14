@@ -2,10 +2,10 @@ package org.greenstand.android.TreeTracker.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.data.UserInfo
+import org.greenstand.android.TreeTracker.fragments.TermsPolicyFragment
 
-class SignupViewModel : ViewModel() {
+class SignupViewModel : CoroutineViewModel() {
 
     lateinit var userIdentification: String
 

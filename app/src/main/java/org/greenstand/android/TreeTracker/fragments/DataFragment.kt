@@ -69,4 +69,10 @@ class DataFragment : Fragment() {
             viewModel.sync()
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopSyncing()
+    }
+
 }

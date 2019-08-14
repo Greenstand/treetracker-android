@@ -2,13 +2,9 @@ package org.greenstand.android.TreeTracker.di
 
 import android.content.Context
 import android.location.LocationManager
-import androidx.core.app.NotificationManagerCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.managers.PlanterManager
 import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -28,15 +24,11 @@ val appModule = module {
 
     viewModel { TermsPolicyViewModel(get(), get()) }
 
-    viewModel { TreeHeightViewModel(get(), get()) }
+    viewModel { TreeHeightViewModel(get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get()) }
+    viewModel { DataViewModel(get(), get(), get(), get()) }
 
-    viewModel { MapViewModel(get(), get(), get(), get()) }
-
-    single { WorkManager.getInstance(get()) }
-
-    single { LocalBroadcastManager.getInstance(get()) }
+    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
 
     single { FirebaseAnalytics.getInstance(get()) }
 
@@ -50,8 +42,6 @@ val appModule = module {
 
     single { DeviceUtils }
 
-    single { SyncNotificationManager(get(), get()) }
-
     single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
 
     single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
@@ -59,8 +49,6 @@ val appModule = module {
     single { UserLocationManager(get(), get()) }
 
     single { ObjectStorageClient.instance() }
-
-    single { NotificationManagerCompat.from(get()) }
 
     factory { UploadImageUseCase(get()) }
 
@@ -72,8 +60,6 @@ val appModule = module {
 
     factory { CreateTreeUseCase(get(), get(), get()) }
 
-    factory { CreateFakeTreesUseCase(get(), get(), get(), get()) }
-
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
     factory { CreatePlanterCheckInUseCase(get(), get(), get(), get(), get()) }
@@ -83,13 +69,4 @@ val appModule = module {
     factory { ValidateCheckInStatusUseCase(get()) }
 
     factory { PlanterCheckInUseCase(get(), get()) }
-
-    factory {
-        SyncDataUseCase(
-            get(),
-            get(),
-            get(),
-            get()
-        )
-    }
 }

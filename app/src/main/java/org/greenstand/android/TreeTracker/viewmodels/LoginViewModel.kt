@@ -2,8 +2,6 @@ package org.greenstand.android.TreeTracker.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
@@ -12,7 +10,7 @@ import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 class LoginViewModel(private val dao: TreeTrackerDAO,
-                     private val planterCheckInUseCase: PlanterCheckInUseCase): ViewModel()  {
+                     private val planterCheckInUseCase: PlanterCheckInUseCase): CoroutineViewModel()  {
 
     private var email: String? = null
     private var phone: String? = null
@@ -70,7 +68,7 @@ class LoginViewModel(private val dao: TreeTrackerDAO,
     }
 
     private fun confirm(onConfirmationComplete: () -> Unit) {
-        viewModelScope.launch(Dispatchers.Main) {
+        launch(Dispatchers.Main) {
 
             planterCheckInUseCase.execute(PlanterCheckInParams(localPhotoPath = photoPath!!,
                                                                identifier = userIdentification))
