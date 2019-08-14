@@ -35,13 +35,11 @@ class ObjectStorageClient private constructor() {
     init {
 
         val basicAWSCredentials = BasicAWSCredentials(BuildConfig.OBJECT_STORAGE_ACCESS_KEY, BuildConfig.OBJECT_STORAGE_SECRET_KEY)
-        val bucketName = BuildConfig.OBJECT_STORAGE_BUCKET
         val credentialsProvider = StaticCredentialsProvider(basicAWSCredentials)
 
         if(BuildConfig.USE_AWS_S3) {
 
             val clientRegion = BuildConfig.OBJECT_STORAGE_ENDPOINT
-            Timber.tag("Acceleration").d(BuildConfig.OBJECT_STORAGE_ACCESS_KEY +':'+ BuildConfig.OBJECT_STORAGE_SECRET_KEY + ':' + BuildConfig.OBJECT_STORAGE_BUCKET + ':' + clientRegion)
             try {
 
                 // Create an Amazon S3 client that is configured to use the accelerate endpoint.
@@ -104,10 +102,10 @@ class ObjectStorageClient private constructor() {
         val timeStamp = SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Date())
 
         val dosKey = timeStamp + '_'.toString() + UUID.randomUUID() + '_'.toString() + image.name
-        val poRequest = PutObjectRequest(BuildConfig.OBJECT_STORAGE_BUCKET, dosKey, image)
+        val poRequest = PutObjectRequest(BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES, dosKey, image)
         poRequest.withAccessControlList(acl)
         val poResult = s3Client?.putObject(poRequest)
-        return String.format("https://%s.%s/%s",  BuildConfig.OBJECT_STORAGE_BUCKET,
+        return String.format("https://%s.%s/%s",  BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES,
             BuildConfig.OBJECT_STORAGE_ENDPOINT, dosKey)
     }
 
