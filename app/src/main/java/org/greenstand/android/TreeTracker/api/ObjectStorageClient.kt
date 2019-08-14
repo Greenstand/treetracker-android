@@ -9,6 +9,7 @@ import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.internal.StaticCredentialsProvider
 import com.amazonaws.regions.Region
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.AccessControlList
@@ -44,7 +45,8 @@ class ObjectStorageClient private constructor() {
             try {
 
                 // Create an Amazon S3 client that is configured to use the accelerate endpoint.
-                val region = Region.getRegion(clientRegion);
+                val regions = Regions.fromName(clientRegion)
+                val region = Region.getRegion(Regions.fromName(clientRegion))
                 s3Client = AmazonS3Client(credentialsProvider, region, ClientConfiguration())
 
                 // Enable Transfer Acceleration for the specified bucket.

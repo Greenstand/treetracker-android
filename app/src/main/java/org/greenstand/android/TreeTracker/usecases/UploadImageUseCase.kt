@@ -3,12 +3,12 @@ package org.greenstand.android.TreeTracker.usecases
 import com.amazonaws.AmazonClientException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.api.DOSpaces
+import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import timber.log.Timber
 
 data class UploadImageParams(val imagePath: String)
 
-class UploadImageUseCase(private val doSpaces: DOSpaces) : UseCase<UploadImageParams, String?>() {
+class UploadImageUseCase(private val doSpaces: ObjectStorageClient) : UseCase<UploadImageParams, String?>() {
 
     override suspend fun execute(params: UploadImageParams): String? {
         return try {
