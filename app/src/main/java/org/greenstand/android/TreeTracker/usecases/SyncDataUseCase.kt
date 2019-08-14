@@ -35,7 +35,9 @@ class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
                     if (!treeIdList.containsAll(remainingIds)) {
                         treeIdList = remainingIds
                     } else {
-                        Timber.tag("SyncDataUseCase").e("Remaining trees failed to upload, aborting...")
+                        if (remainingIds.isNotEmpty()) {
+                            Timber.tag("SyncDataUseCase").e("Remaining trees failed to upload, ending sync...")
+                        }
                         break
                     }
                 } else {
