@@ -31,7 +31,15 @@ class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
             while(treeIdList.isNotEmpty()) {
                 if (coroutineContext.isActive) {
                     uploadTrees(treeIdList)
-                    treeIdList = dao.getAllTreeCaptureIdsToUpload()
+                    val remainingIds = dao.getAllTreeCaptureIdsToUpload()
+                    if (!treeIdList.containsAll(remainingIds)) {
+                        treeIdList = remainingIds
+                    } else {
+                        if (remainingIds.isNotEmpty()) {
+                            Timber.tag("SyncDataUseCase").e("Remaining trees failed to upload, ending sync...")
+                        }
+                        break
+                    }
                 } else {
                     break
                 }

@@ -44,7 +44,6 @@ class ObjectStorageClient private constructor() {
             try {
 
                 // Create an Amazon S3 client that is configured to use the accelerate endpoint.
-                val regions = Regions.fromName(clientRegion)
                 val region = Region.getRegion(Regions.fromName(clientRegion))
                 s3Client = AmazonS3Client(credentialsProvider, region, ClientConfiguration())
 
