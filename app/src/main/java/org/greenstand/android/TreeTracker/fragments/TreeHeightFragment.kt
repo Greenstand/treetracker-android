@@ -26,7 +26,6 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class TreeHeightFragment : Fragment() {
-
     private val vm: TreeHeightViewModel by viewModel()
     private val args: TreeHeightFragmentArgs by navArgs()
     private var isInitialState = true
@@ -38,7 +37,7 @@ class TreeHeightFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        requireActivity().toolbarTitle?.setText(R.string.fifty)
+        requireActivity().toolbarTitle?.setText(R.string.tree_height_title)
 
         val parentView = view as ConstraintLayout
 

@@ -31,7 +31,7 @@ import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.map.TreeMapAnnotation

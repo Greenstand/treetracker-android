@@ -5,14 +5,15 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.RetrofitApi
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
 class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
                       private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
                       private val api: RetrofitApi,
-                      private val dao: TreeTrackerDAO) : UseCase<Unit, Boolean>() {
+                      private val dao: TreeTrackerDAO
+) : UseCase<Unit, Boolean>() {
 
     override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {

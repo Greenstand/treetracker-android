@@ -4,8 +4,8 @@ import android.content.SharedPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper

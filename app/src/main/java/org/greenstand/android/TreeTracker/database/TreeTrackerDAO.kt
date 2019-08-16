@@ -1,11 +1,11 @@
-package org.greenstand.android.TreeTracker.database.v2
+package org.greenstand.android.TreeTracker.database
 
 import androidx.room.*
-import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.v2.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.v2.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.database.v2.views.TreeMapMarkerDbView
+import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
 
 
 @Dao

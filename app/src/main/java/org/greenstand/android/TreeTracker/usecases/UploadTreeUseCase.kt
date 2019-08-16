@@ -3,13 +3,14 @@ package org.greenstand.android.TreeTracker.usecases
 import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 
 data class UploadTreeParams(val treeId: Long,
                             val treeImageUrl: String)
 
 class UploadTreeUseCase(private val api: RetrofitApi,
-                        private val dao: TreeTrackerDAO) : UseCase<UploadTreeParams, Unit>() {
+                        private val dao: TreeTrackerDAO
+) : UseCase<UploadTreeParams, Unit>() {
 
     override suspend fun execute(params: UploadTreeParams) {
 

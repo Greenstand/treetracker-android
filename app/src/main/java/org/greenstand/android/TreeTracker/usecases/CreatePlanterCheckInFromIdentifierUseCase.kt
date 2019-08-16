@@ -2,14 +2,15 @@ package org.greenstand.android.TreeTracker.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 
 
 data class PlanterCheckInParams(val identifier: String,
                                 val localPhotoPath: String)
 
 class PlanterCheckInUseCase(private val createPlanterCheckInUseCase: CreatePlanterCheckInUseCase,
-                            private val dao: TreeTrackerDAO) : UseCase<PlanterCheckInParams, Unit>() {
+                            private val dao: TreeTrackerDAO
+) : UseCase<PlanterCheckInParams, Unit>() {
 
     override suspend fun execute(params: PlanterCheckInParams) {
         withContext(Dispatchers.IO) {

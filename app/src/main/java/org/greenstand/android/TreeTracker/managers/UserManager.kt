@@ -8,8 +8,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class UserManager(private val context: Context,
-                  private val sharedPreferences: SharedPreferences,
-                  private val planterManager: PlanterManager) {
+                  private val sharedPreferences: SharedPreferences) {
 
     private val userLoginChannel = BroadcastChannel<Unit>(1)
     private val userDetailsChannel = BroadcastChannel<Unit>(1)
@@ -65,29 +64,6 @@ class UserManager(private val context: Context,
 
 
         userLoginChannel.send(Unit)
-    }
-
-    suspend fun addLoginDetails(identification: String,
-                                firstName: String,
-                                lastName: String,
-                                organization: String?,
-                                timeCreated: String,
-                                location: Location?) {
-
-        val planterDetailsId = planterManager.addPlanterDetails(identification,
-                                                                firstName,
-                                                                lastName,
-                                                                organization,
-                                                                timeCreated,
-                                                                location)
-
-        this.firstName = firstName
-        this.lastName = lastName
-        this.organization = organization
-
-        planterManager.updateIdentifierId(identification, planterDetailsId)
-
-        userDetailsChannel.send(Unit)
     }
 
     companion object {
