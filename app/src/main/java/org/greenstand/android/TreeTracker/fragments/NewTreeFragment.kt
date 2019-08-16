@@ -6,22 +6,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
-import android.view.View.OnClickListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
-import kotlinx.android.synthetic.main.fragment_new_tree.view.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
@@ -36,18 +31,17 @@ import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.view.CustomToast
-import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.getKoin
 import timber.log.Timber
+import kotlin.math.roundToInt
 
-class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
-
-
+class NewTreeFragment : androidx.fragment.app.Fragment(),
+    ActivityCompat.OnRequestPermissionsResultCallback {
     private val userLocationManager: UserLocationManager by inject()
-    private var mCurrentPhotoPath: String? = null
-    private var planterCheckInId: Long = 0
-    private var mSharedPreferences: SharedPreferences? = null
+    private lateinit var sharedPreferences: SharedPreferences
     private var takePictureInvoked: Boolean = false
+    private var currentPhotoPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,82 +53,75 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_new_tree, container, false)
 
-        val v = inflater.inflate(R.layout.fragment_new_tree, container, false)
+        val activity = activity as AppCompatActivity
+        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        activity.toolbarTitle.setText(R.string.new_tree)
+        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        activity!!.toolbarTitle.setText(R.string.new_tree)
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        mSharedPreferences = (activity as AppCompatActivity).getSharedPreferences(
+        sharedPreferences = activity.getSharedPreferences(
             "org.greenstand.android", Context.MODE_PRIVATE
         )
+        return view
+    }
 
-        planterCheckInId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fragmentNewTreeSave.text = getString(
+            if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
+                R.string.save
+            } else {
+                R.string.next
+            }
+        )
 
-        val saveBtn = v.fragmentNewTreeSave
-
-        saveBtn.text = if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
-            getString(R.string.save)
-        } else {
-            getString(R.string.next)
-        }
-
-        v.fragmentNewTreeNote.visibility = if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
+        fragmentNewTreeNote.visibility = if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
             View.VISIBLE
         } else {
             View.GONE
         }
+        val meterText = resources.getString(R.string.meters)
+        fragmentNewTreeDistance.text = "0 $meterText"
+        val newTreeGpsAccuracy = userLocationManager.currentLocation?.accuracy?.roundToInt() ?: 0
 
-        saveBtn.setOnClickListener(this@NewTreeFragment)
+        fragmentNewTreeGpsAccuracy.text = "$newTreeGpsAccuracy $meterText"
 
-        val newTreeDistance = v.fragmentNewTreeDistance
-        val newTreeDistanceString = Integer.toString(0) + " " + resources.getString(R.string.meters)
-        newTreeDistance.text = newTreeDistanceString
-
-        val newTreeGpsAccuracy = v.fragmentNewTreeGpsAccuracy
-        if (userLocationManager.currentLocation != null) {
-            val newTreeGpsAccuracyString1 = Integer.toString(Math.round(userLocationManager.currentLocation!!.accuracy)) +
-                    " " + resources.getString(R.string.meters)
-            newTreeGpsAccuracy.text = newTreeGpsAccuracyString1
-        } else {
-            val newTreeGpsAccuracyString2 = "0 " + resources.getString(R.string.meters)
-            newTreeGpsAccuracy.text = newTreeGpsAccuracyString2
-        }
-
-
-        val timeToNextUpdate = mSharedPreferences!!.getInt(
-            ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, mSharedPreferences!!.getInt(
+        val timeToNextUpdate = sharedPreferences.getInt(
+            ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, sharedPreferences.getInt(
                 ValueHelper.TIME_TO_NEXT_UPDATE_GLOBAL_SETTING,
                 ValueHelper.TIME_TO_NEXT_UPDATE_DEFAULT_SETTING
             )
         )
 
-        val newTreetimeToNextUpdate = v.fragmentNewTreeNextUpdate
-        val newTreeTimeToNextUpdateString = Integer.toString(timeToNextUpdate)
-        newTreetimeToNextUpdate.setText(newTreeTimeToNextUpdateString)
+        fragmentNewTreeNextUpdate.setText(timeToNextUpdate.toString())
 
-        if (mSharedPreferences!!.getBoolean(ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT, false)) {
-            newTreetimeToNextUpdate.isEnabled = false
+        if (sharedPreferences.getBoolean(ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT, false)) {
+            fragmentNewTreeNextUpdate.isEnabled = false
         }
 
-        newTreetimeToNextUpdate.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
-                Timber.d("days " + s.toString())
+        fragmentNewTreeSave.setOnClickListener {
+            it.performHapticFeedback(
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                generateNewTree(timeToNextUpdate)?.let { newTree ->
+                    if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+                        findNavController().navigate(
+                            NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(newTree)
+                        )
+                    } else {
+                        withContext(Dispatchers.IO) { saveToDb(newTree) }
+                        CustomToast.showToast("Tree saved")
+                        findNavController().popBackStack()
+                    }
+                } ?: run {
+                    CustomToast.showToast("Insufficient GPS accuracy")
+                    findNavController().popBackStack()
+                }
             }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-        })
-
-        return v
+        }
     }
 
     override fun onStart() {
@@ -145,37 +132,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
             findNavController().popBackStack()
         } else if (!takePictureInvoked) {
             takePicture()
-        }
-    }
-
-    override fun onClick(v: View) {
-
-        v.performHapticFeedback(
-            HapticFeedbackConstants.VIRTUAL_KEY,
-            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-        )
-
-        when (v.id) {
-
-            R.id.fragmentNewTreeSave -> {
-
-                GlobalScope.launch(Dispatchers.Main) {
-
-                    val newTree = createNewTreeData() ?: run {
-                        CustomToast.showToast("Insufficient GPS accuracy")
-                        findNavController().popBackStack()
-                        return@launch
-                    }
-
-                    if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
-                        findNavController().navigate(NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(newTree))
-                    } else {
-                        withContext(Dispatchers.IO) { saveToDb(newTree) }
-                        CustomToast.showToast("Tree saved")
-                        findNavController().popBackStack()
-                    }
-                }
-            }
         }
     }
 
@@ -197,47 +153,36 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty()) {
-            if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                takePicture()
-            }
+        if (grantResults.isNotEmpty() && requestCode == Permissions.MY_PERMISSION_CAMERA
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            takePicture()
         }
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         takePictureInvoked = true
 
-        if (data != null && resultCode != Activity.RESULT_CANCELED) {
-            if (resultCode == Activity.RESULT_OK) {
+        if (data != null && resultCode == Activity.RESULT_OK) {
+            currentPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
-                mCurrentPhotoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+            currentPhotoPath?.let {
 
-                if (mCurrentPhotoPath != null) {
-
-                    MainActivity.currentTreeLocation = Location("") // Just a blank location
-                    userLocationManager.currentLocation?.let { location ->
-                        MainActivity.currentTreeLocation!!.latitude = location.latitude
-                        MainActivity.currentTreeLocation!!.longitude = location.longitude
-                    }
-
-                    setPic()
-                    val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE,0.0);
-
-                    if (imageQuality < FOCUS_THRESHOLD) {
-                        fragment_new_tree_focus_warning_text?.visibility = View.VISIBLE
-                        fragment_new_tree_focus_warning_text?.setText(R.string.focus_warning)
-                    } else{
-                        fragment_new_tree_focus_warning_text?.visibility = View.GONE
-                        fragment_new_tree_focus_warning_text?.text = ""
-
-
-                    }
-
+                MainActivity.currentTreeLocation = Location("") // Just a blank location
+                userLocationManager.currentLocation?.let { location ->
+                    MainActivity.currentTreeLocation!!.latitude = location.latitude
+                    MainActivity.currentTreeLocation!!.longitude = location.longitude
                 }
 
+                setPic(it)
+                val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE, 0.0);
+
+                if (imageQuality < FOCUS_THRESHOLD) {
+                    fragment_new_tree_focus_warning_text.visibility = View.VISIBLE
+                    fragment_new_tree_focus_warning_text.setText(R.string.focus_warning)
+                } else {
+                    fragment_new_tree_focus_warning_text.visibility = View.GONE
+                    fragment_new_tree_focus_warning_text.text = ""
+                }
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
@@ -245,38 +190,32 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         }
     }
 
-    private fun createNewTreeData(): NewTree? {
-        val minAccuracy = mSharedPreferences!!.getInt(
+    private fun generateNewTree(timeToNextUpdate: Int): NewTree? {
+        val minAccuracy = sharedPreferences.getInt(
             ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
             ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
         )
 
-        val newTreetimeToNextUpdate = activity!!.fragmentNewTreeNextUpdate
-        val timeToNextUpdate = Integer.parseInt(
-            if (newTreetimeToNextUpdate.text.isEmpty())
-                "0"
-            else
-                newTreetimeToNextUpdate.text.toString()
-        )
-
         // note
-        val content = requireActivity().fragmentNewTreeNote.text.toString()
+        val content = fragmentNewTreeNote.text.toString()
 
         // tree
-        val planterInfoId = mSharedPreferences!!.getLong(ValueHelper.PLANTER_INFO_ID, 0)
+        val planterInfoId = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, 0)
+        val planterCheckinId = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
 
-        return mCurrentPhotoPath?.let {
-            NewTree(it,
-                    minAccuracy,
-                    timeToNextUpdate,
-                    content,
-                    planterCheckInId,
-                    planterInfoId)
+        return currentPhotoPath?.let {
+            NewTree(
+                it,
+                minAccuracy,
+                timeToNextUpdate,
+                content,
+                planterCheckinId,
+                planterInfoId
+            )
         }
     }
 
     private suspend fun saveToDb(newTree: NewTree): Long {
-
         val createTreeParams = CreateTreeParams(
             planterCheckInId = newTree.planterCheckInId,
             photoPath = newTree.photoPath,
@@ -286,51 +225,20 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), OnClickListener, Activ
         return getKoin().get<CreateTreeUseCase>().execute(createTreeParams)
     }
 
-    private fun setPic() {
-
+    private fun setPic(photoPath: String) {
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
-
-        val rotatedBitmap = ImageUtils.decodeBitmap(mCurrentPhotoPath, resources.displayMetrics.density)
+        val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
         if (rotatedBitmap == null) {
             Toast.makeText(activity, "Error setting image. Please try again.", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
         }
         /* Associate the Bitmap to the ImageView */
-        fragmentNewTreeImage!!.setImageBitmap(rotatedBitmap)
-        fragmentNewTreeImage!!.visibility = View.VISIBLE
+        fragmentNewTreeImage.setImageBitmap(rotatedBitmap)
+        fragmentNewTreeImage.visibility = View.VISIBLE
     }
 
     companion object {
         const val FOCUS_THRESHOLD = 700.0
-
-        private val TAG = "NewTreeFragment"
-
-        fun calculateInSampleSize(
-            options: BitmapFactory.Options,
-            reqWidth: Int, reqHeight: Int
-        ): Int {
-            // Raw height and width of image
-            val height = options.outHeight
-            val width = options.outWidth
-            var inSampleSize = 1
-
-            if (height > reqHeight || width > reqWidth) {
-
-                // Calculate ratios of height and width to requested height and
-                // width
-                val heightRatio = Math.round(height.toFloat() / reqHeight.toFloat())
-                val widthRatio = Math.round(width.toFloat() / reqWidth.toFloat())
-
-                // Choose the smallest ratio as inSampleSize value, this will
-                // guarantee
-                // a final image with both dimensions larger than or equal to the
-                // requested height and width.
-                inSampleSize = if (heightRatio < widthRatio) heightRatio else widthRatio
-            }
-
-            return inSampleSize
-        }
     }
-
 }
