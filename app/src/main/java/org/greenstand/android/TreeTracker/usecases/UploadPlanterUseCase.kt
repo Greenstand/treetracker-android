@@ -4,8 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.v2.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import timber.log.Timber
 
 data class UploadPlanterParams(val planterInfoId: Long)
