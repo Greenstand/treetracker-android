@@ -72,9 +72,15 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM tree_capture WHERE _id = :id")
     fun getTreeCaptureById(id: Long): TreeCaptureEntity
 
+    @Query("SELECT * FROM tree_capture WHERE _id IN (:ids)")
+    fun getTreeCapturesByIds(ids: List<Long>): List<TreeCaptureEntity>
+
 //    @Transaction
 //    @Query("SELECT * FROM tree_capture WHERE _id = :id")
 //    fun getTreeUploadDataById(id: Long): TreeUploadDbView
+
+    @Query("UPDATE tree_capture SET bundle_id = :bundleId WHERE _id IN (:ids)")
+    fun updateTreeCapturesBundleIds(ids: List<Long>, bundleId: String)
 
     @Update
     fun updateTreeCapture(treeCaptureEntity: TreeCaptureEntity)

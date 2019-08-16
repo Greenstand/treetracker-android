@@ -2,7 +2,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -39,7 +38,7 @@ import kotlin.math.roundToInt
 class NewTreeFragment : androidx.fragment.app.Fragment(),
     ActivityCompat.OnRequestPermissionsResultCallback {
     private val userLocationManager: UserLocationManager by inject()
-    private lateinit var sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences by inject()
     private var takePictureInvoked: Boolean = false
     private var currentPhotoPath: String? = null
 
@@ -61,9 +60,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
         activity.toolbarTitle.setText(R.string.new_tree)
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        sharedPreferences = activity.getSharedPreferences(
-            "org.greenstand.android", Context.MODE_PRIVATE
-        )
         return view
     }
 

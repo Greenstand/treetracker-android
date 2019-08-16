@@ -9,11 +9,10 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
-class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
-                      private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
-                      private val api: RetrofitApi,
-                      private val dao: TreeTrackerDAO
-) : UseCase<Unit, Boolean>() {
+class SyncDataBundleUseCase(private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
+                            private val uploadTreeBundleUseCase: UploadTreeBundleUseCase,
+                            private val api: RetrofitApi,
+                            private val dao: TreeTrackerDAO) : UseCase<Unit, Boolean>() {
 
     override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {
@@ -72,10 +71,10 @@ class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
 
         Timber.tag("SyncDataUseCase").d("Uploading ${treeIds.size} trees")
 
-        treeIds.onEach {
+        treeIds.windowed(size = 50, step = 50, partialWindows = true).onEach { treeIdBundle ->
             try {
                 if (coroutineContext.isActive) {
-                    syncTreeUseCase.execute(SyncTreeParams(treeId = it))
+                    uploadTreeBundleUseCase.execute(UploadTreeBundleParams(treeIds = treeIdBundle))
                 } else {
                     coroutineContext.cancel()
                 }
