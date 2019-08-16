@@ -20,7 +20,7 @@ class SyncDataBundleUseCase(private val uploadPlanterDetailsUseCase: UploadPlant
             val isAuthenticated = api.authenticateDevice()
 
             if (!isAuthenticated) {
-                Timber.tag("SyncDataUseCase").w("Device Authentication failed")
+                Timber.tag("SyncDataBundleUseCase").w("Device Authentication failed")
                 return@withContext false
             }
 
@@ -52,7 +52,7 @@ class SyncDataBundleUseCase(private val uploadPlanterDetailsUseCase: UploadPlant
         // Upload all user registration data that hasn't been uploaded yet
         val planterInfoToUploadList = dao.getAllPlanterInfo()
 
-        Timber.tag("SyncDataUseCase").d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
+        Timber.tag("SyncDataBundleUseCase").d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
 
         planterInfoToUploadList.forEach {
 
@@ -69,7 +69,7 @@ class SyncDataBundleUseCase(private val uploadPlanterDetailsUseCase: UploadPlant
 
     private suspend fun uploadTrees(treeIds: List<Long>) {
 
-        Timber.tag("SyncDataUseCase").d("Uploading ${treeIds.size} trees")
+        Timber.tag("SyncDataBundleUseCase").d("Uploading ${treeIds.size} trees")
 
         treeIds.windowed(size = 50, step = 50, partialWindows = true).onEach { treeIdBundle ->
             try {

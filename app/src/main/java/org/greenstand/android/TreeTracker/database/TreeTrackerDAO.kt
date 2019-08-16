@@ -82,6 +82,9 @@ interface TreeTrackerDAO {
     @Query("UPDATE tree_capture SET bundle_id = :bundleId WHERE _id IN (:ids)")
     fun updateTreeCapturesBundleIds(ids: List<Long>, bundleId: String)
 
+    @Query("UPDATE tree_capture SET uploaded = :isUploaded WHERE _id IN (:ids)")
+    fun updateTreeCapturesUploadStatus(ids: List<Long>, isUploaded: Boolean)
+
     @Update
     fun updateTreeCapture(treeCaptureEntity: TreeCaptureEntity)
 
