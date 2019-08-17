@@ -12,12 +12,9 @@ import com.amazonaws.regions.Region
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
-import com.amazonaws.services.s3.model.AccessControlList
-import com.amazonaws.services.s3.model.GroupGrantee
-import com.amazonaws.services.s3.model.Permission
-import com.amazonaws.services.s3.model.PutObjectRequest
+import com.amazonaws.services.s3.model.*
 import org.greenstand.android.TreeTracker.BuildConfig
-import timber.log.Timber
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,8 +23,6 @@ import java.util.*
 class ObjectStorageClient private constructor() {
 
     private var s3Client: AmazonS3? = null
-
-
 
     init {
 
@@ -123,16 +118,43 @@ class ObjectStorageClient private constructor() {
         }
     }
 
+    suspend fun uploadTreeJsonBundle(jsonBundle: String, bundleId: String) {
+        val byteArray = jsonBundle.toByteArray(Charsets.UTF_8)
+        val inputStream = ByteArrayInputStream(byteArray)
+
+        val acl = AccessControlList()
+        acl.grantPermission(GroupGrantee.AllUsers, Permission.Read)
+
+
+        val timeStamp = SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Date())
+
+        val dosKey = timeStamp + '_'.toString() + UUID.randomUUID() + '_'.toString() + bundleId
+
+        val objectMetadata = ObjectMetadata().apply {
+            contentLength = inputStream.available().toLong()
+        }
+
+        val putObjectRequest = PutObjectRequest(BuildConfig.OBJECT_STORAGE_BUCKET_BATCH_UPLOADS,
+                                                dosKey,
+                                                inputStream,
+                                                objectMetadata).apply {
+            withAccessControlList(acl)
+        }
+
+        s3Client?.putObject(putObjectRequest)
+
+    }
+
     companion object {
 
 
-        private var sInstance: ObjectStorageClient? = null
+        private var INSTANCE: ObjectStorageClient? = null
 
         fun instance(): ObjectStorageClient {
-            if (sInstance == null) {
-                sInstance = ObjectStorageClient()
+            if (INSTANCE == null) {
+                INSTANCE = ObjectStorageClient()
             }
-            return sInstance!!
+            return INSTANCE!!
         }
     }
 

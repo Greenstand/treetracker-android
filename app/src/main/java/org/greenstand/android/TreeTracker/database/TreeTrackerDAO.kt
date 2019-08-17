@@ -85,6 +85,9 @@ interface TreeTrackerDAO {
     @Query("UPDATE tree_capture SET uploaded = :isUploaded WHERE _id IN (:ids)")
     fun updateTreeCapturesUploadStatus(ids: List<Long>, isUploaded: Boolean)
 
+    @Query("UPDATE tree_capture SET local_photo_path = null WHERE _id IN (:ids)")
+    fun removeTreeCapturesLocalImagePaths(ids: List<Long>)
+
     @Update
     fun updateTreeCapture(treeCaptureEntity: TreeCaptureEntity)
 

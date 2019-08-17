@@ -2,18 +2,18 @@ package org.greenstand.android.TreeTracker.usecases
 
 import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
-import org.greenstand.android.TreeTracker.api.TreeBundleUploader
+import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
-import java.io.File
 
 data class UploadTreeBundleParams(val treeIds: List<Long>)
 
 class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase,
-                              private val treeBundleUploader: TreeBundleUploader,
+                              private val objectStorageClient: ObjectStorageClient,
                               private val createTreeRequestUseCase: CreateTreeRequestUseCase,
+                              private val removeLocalImagesWithIdsUseCase: RemoveLocalImagesWithIdsUseCase,
                               private val dao: TreeTrackerDAO) : UseCase<UploadTreeBundleParams, Unit>() {
 
     fun log(msg: String) = Timber.tag("UploadTreeBundleUseCase").d(msg)
@@ -55,11 +55,11 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
             dao.updateTreeCapturesBundleIds(trees.map { it.id }, bundleId)
 
             log("Uploading Bundle...")
-            treeBundleUploader.uploadTreeJsonBundle(jsonBundle, bundleId)
+            objectStorageClient.uploadTreeJsonBundle(jsonBundle, bundleId)
             log("Bundle Upload Completed")
 
             log("Deleting all local image files for uploaded trees...")
-            trees.forEach { File(it.localPhotoPath).delete() }
+            removeLocalImagesWithIdsUseCase.execute(RemoveLocalImagesWithIdsParams(trees.map { it.id }))
 
             log("Updating tree capture DB status to uploaded = true")
             dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)

@@ -8,7 +8,6 @@ import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.api.TreeBundleUploader
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
@@ -21,7 +20,6 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { TreeBundleUploader() }
 
     viewModel { LoginViewModel(get(), get()) }
 
@@ -65,7 +63,7 @@ val appModule = module {
 
     factory { UploadPlanterUseCase(get(), get(), get()) }
 
-    factory { SyncTreeUseCase(get(), get(), get()) }
+    factory { SyncTreeUseCase(get(), get(), get(), get()) }
 
     factory { CreateTreeUseCase(get(), get(), get()) }
 
@@ -85,7 +83,9 @@ val appModule = module {
 
     factory { SyncDataBundleUseCase(get(), get(), get(), get()) }
 
-    factory { UploadTreeBundleUseCase(get(), get(), get(), get()) }
+    factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get()) }
+
+    factory { RemoveLocalImagesWithIdsUseCase(get()) }
 
     factory { SyncDataUseCase(get(), get(), get(), get()) }
 }
