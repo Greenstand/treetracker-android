@@ -20,6 +20,5 @@ class UploadTreeUseCase(private val api: RetrofitApi,
         val treeCapture = dao.getTreeCaptureById(params.treeId)
         treeCapture.uploaded = true
         dao.updateTreeCapture(treeCapture)
-
     }
 }

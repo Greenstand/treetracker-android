@@ -22,7 +22,7 @@ data class TreeCaptureEntity(
     @ColumnInfo(name = PLANTER_CHECK_IN_ID, index = true)
     var planterCheckInId: Long,
     @ColumnInfo(name = LOCAL_PHOTO_PATH)
-    var localPhotoPath: String,
+    var localPhotoPath: String?,
     @ColumnInfo(name = PHOTO_URL)
     var photoUrl: String?,
     @ColumnInfo(name = NOTE_CONTENT)
