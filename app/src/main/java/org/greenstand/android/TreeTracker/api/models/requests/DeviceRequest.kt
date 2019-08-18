@@ -25,6 +25,5 @@ data class DeviceRequest(@SerializedName("app_version")
                          val androidRelease: String = Build.VERSION.RELEASE,
                          @SerializedName("androidSdkVersion")
                          val androidSdkVersion: Int = Build.VERSION.SDK_INT,
-                         @SerializedName("instance_id")
-                         val instance_id: String = FirebaseInstanceId.getInstance().id
-)
+                         @SerializedName("instanceId")
+                         val instanceId: String = FirebaseInstanceId.getInstance().id)
