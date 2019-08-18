@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import android.os.Build
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.annotations.SerializedName
 import org.greenstand.android.TreeTracker.BuildConfig
 
@@ -23,4 +24,7 @@ data class DeviceRequest(@SerializedName("app_version")
                          @SerializedName("androidRelease")
                          val androidRelease: String = Build.VERSION.RELEASE,
                          @SerializedName("androidSdkVersion")
-                         val androidSdkVersion: Int = Build.VERSION.SDK_INT)
+                         val androidSdkVersion: Int = Build.VERSION.SDK_INT,
+                         @SerializedName("instance_id")
+                         val instance_id: String = FirebaseInstanceId.getInstance().id
+)
