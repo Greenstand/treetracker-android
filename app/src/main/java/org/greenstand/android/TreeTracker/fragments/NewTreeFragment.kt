@@ -113,6 +113,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
                         if (newTree.content.isNotBlank()) {
                             analytics.treeNoteAdded(newTree.content.length)
                         }
+                        analytics.treePlanted()
                         withContext(Dispatchers.IO) { saveToDb(newTree) }
                         CustomToast.showToast("Tree saved")
                         findNavController().popBackStack()

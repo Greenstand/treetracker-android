@@ -10,6 +10,7 @@ import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.NOTE_ADDED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.STOP_BUTTON_CLICKED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.SYNC_BUTTON_CLICKED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.TREE_COLOR_ADDED
+import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.TREE_PLANTED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_CHECK_IN
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_DETAILS
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_EMAIL_PHONE
@@ -62,8 +63,8 @@ class Analytics(private val userManager: UserManager,
 
     }
 
-    fun treePlanted(treeInfo: String) {
-
+    fun treePlanted() {
+        firebaseAnalytics.logEvent(TREE_PLANTED, Bundle())
     }
 
     fun userCheckedIn() {
