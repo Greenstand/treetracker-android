@@ -4,6 +4,7 @@ import android.provider.Settings
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import java.util.*
 
+
 object DeviceUtils {
 
     val deviceId: String
@@ -12,4 +13,5 @@ object DeviceUtils {
 
     val language: String
         get() = Locale.getDefault().displayLanguage
+
 }

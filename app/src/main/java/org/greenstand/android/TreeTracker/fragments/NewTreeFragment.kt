@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
@@ -41,6 +42,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
     private val sharedPreferences: SharedPreferences by inject()
     private var takePictureInvoked: Boolean = false
     private var currentPhotoPath: String? = null
+    private val analytics: Analytics by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +110,9 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
                             NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(newTree)
                         )
                     } else {
+                        if (newTree.content.isNotBlank()) {
+                            analytics.treeNoteAdded(newTree.content.length)
+                        }
                         withContext(Dispatchers.IO) { saveToDb(newTree) }
                         CustomToast.showToast("Tree saved")
                         findNavController().popBackStack()

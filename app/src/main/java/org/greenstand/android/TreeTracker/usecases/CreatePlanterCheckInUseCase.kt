@@ -36,7 +36,6 @@ class CreatePlanterCheckInUseCase(private val sharedPreferences: SharedPreferenc
 
         val planterCheckInId = doa.insertPlanterCheckIn(entity)
 
-        analytics.userCheckedIn()
 
         sharedPreferences.edit()
             .putLong(ValueHelper.PLANTER_CHECK_IN_ID, planterCheckInId)
@@ -50,6 +49,8 @@ class CreatePlanterCheckInUseCase(private val sharedPreferences: SharedPreferenc
             userManager.lastName = it.lastName
             userManager.organization = it.organization
         }
+
+        analytics.userCheckedIn()
 
         planterCheckInId
     }
