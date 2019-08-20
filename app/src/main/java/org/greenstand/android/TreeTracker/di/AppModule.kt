@@ -27,9 +27,9 @@ val appModule = module {
 
     viewModel { TermsPolicyViewModel(get(), get()) }
 
-    viewModel { TreeHeightViewModel(get(), get()) }
+    viewModel { TreeHeightViewModel(get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get()) }
+    viewModel { DataViewModel(get(), get(), get(), get()) }
 
     viewModel { MapViewModel(get(), get(), get(), get()) }
 
