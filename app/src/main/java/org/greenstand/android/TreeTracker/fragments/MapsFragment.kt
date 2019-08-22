@@ -31,7 +31,7 @@ import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.map.TreeMapAnnotation
@@ -231,8 +231,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        if(marker.title == null){
-            return true;
+        if (marker.title == null){
+            return true
         }
         findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
         return true
@@ -269,7 +269,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             if (trees.isNotEmpty()) {
                 Timber.d("Adding markers")
                 for (tree in trees) {
-                    val treeMapAnnotation = TreeMapAnnotation(tree.latitude, tree.longitude)
+                    val treeMapAnnotation = TreeMapAnnotation(tree.latitude, tree.longitude, _title = tree.treeCaptureId.toString())
                     clusterManager.addItem(treeMapAnnotation)
                 }
             }

@@ -1,11 +1,10 @@
 package org.greenstand.android.TreeTracker.usecases
 
-import android.content.SharedPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.v2.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 
 

@@ -21,10 +21,8 @@ import kotlinx.android.synthetic.main.fragment_tree_preview.view.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.database.AppDatabase
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
-import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.io.IOException
@@ -40,13 +38,11 @@ class TreePreviewFragment : Fragment() {
 
     private val args: TreePreviewFragmentArgs by navArgs()
 
-    lateinit var appDatabase: AppDatabase
+     private val appDatabase: TreeTrackerDAO by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appDatabase = getKoin().get()
         setHasOptionsMenu(true)
-
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -116,23 +112,13 @@ class TreePreviewFragment : Fragment() {
                 createdTxt.text = Date(it.createAt).toLocaleString()
 
 
-                val notes = GlobalScope.async {
-                    return@async appDatabase.noteDao().getNotesByTreeID(treeIdStr!!)
+                val tree = GlobalScope.async {
+                    return@async appDatabase.getTreeCaptureById(treeIdStr.toLong())
                 }.await()
 
                 val notesTxt = v.fragmentTreePreviewNotes
 
-                notesTxt.text = " "
-
-                for (note in notes) {
-                    val currentText = notesTxt.text.toString()
-
-                    if (note.content?.isBlank() == true) {
-                        continue
-                    }
-
-                    notesTxt.text = "${note.content}\n\n$currentText"
-                }
+                notesTxt.text = tree.noteContent
             }
         }
 

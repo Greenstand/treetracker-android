@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation

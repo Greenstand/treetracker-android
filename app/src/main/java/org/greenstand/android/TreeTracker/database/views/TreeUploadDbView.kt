@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.v2.views
+package org.greenstand.android.TreeTracker.database.views
 
 //@DatabaseView("""
 //        SELECT

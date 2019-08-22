@@ -9,8 +9,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
-import org.greenstand.android.TreeTracker.managers.PlanterManager
-import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.*
@@ -40,11 +38,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { TreeManager(get(), get()) }
-
-    single { UserManager(get(), get(), get()) }
-
-    single { PlanterManager(get(), get()) }
+    single { UserManager(get(), get()) }
 
     single { Analytics(get(), get(), get()) }
 

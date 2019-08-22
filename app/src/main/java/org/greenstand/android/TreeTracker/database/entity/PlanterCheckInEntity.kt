@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.v2.entity
+package org.greenstand.android.TreeTracker.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -5,14 +5,15 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.RetrofitApi
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
 class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
                       private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
                       private val api: RetrofitApi,
-                      private val dao: TreeTrackerDAO) : UseCase<Unit, Boolean>() {
+                      private val dao: TreeTrackerDAO
+) : UseCase<Unit, Boolean>() {
 
     override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {
@@ -31,7 +32,15 @@ class SyncDataUseCase(private val syncTreeUseCase: SyncTreeUseCase,
             while(treeIdList.isNotEmpty()) {
                 if (coroutineContext.isActive) {
                     uploadTrees(treeIdList)
-                    treeIdList = dao.getAllTreeCaptureIdsToUpload()
+                    val remainingIds = dao.getAllTreeCaptureIdsToUpload()
+                    if (!treeIdList.containsAll(remainingIds)) {
+                        treeIdList = remainingIds
+                    } else {
+                        if (remainingIds.isNotEmpty()) {
+                            Timber.tag("SyncDataUseCase").e("Remaining trees failed to upload, ending sync...")
+                        }
+                        break
+                    }
                 } else {
                     break
                 }

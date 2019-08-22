@@ -1,13 +1,14 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import kotlinx.coroutines.coroutineScope
-import org.greenstand.android.TreeTracker.database.v2.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 
 data class SyncTreeParams(val treeId: Long)
 
 class SyncTreeUseCase(private val uploadImageUseCase: UploadImageUseCase,
                       private val uploadTreeUseCase: UploadTreeUseCase,
-                      private val dao: TreeTrackerDAO) : UseCase<SyncTreeParams, Unit>() {
+                      private val dao: TreeTrackerDAO
+) : UseCase<SyncTreeParams, Unit>() {
 
     override suspend fun execute(params: SyncTreeParams) {
         coroutineScope {
