@@ -17,7 +17,7 @@ class SyncTreeUseCase(private val uploadImageUseCase: UploadImageUseCase,
                 throw IllegalStateException("No imagePath")
             }
 
-            val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.name!!)) ?: throw IllegalStateException("No imageUrl")
+            val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.name!!)) ?: throw IllegalStateException("S3 upload failed")
 
             uploadTreeUseCase.execute(UploadTreeParams(treeId = tree.tree_id, treeImageUrl = imageUrl))
         }
