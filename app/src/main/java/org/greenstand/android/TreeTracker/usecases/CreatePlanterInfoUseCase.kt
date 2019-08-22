@@ -37,7 +37,8 @@ class CreatePlanterInfoUseCase(private val userLocationManager: UserLocationMana
         )
 
         doa.insertPlanterInfo(entity).also {
-            analytics.userInfoCreated()
+            analytics.userInfoCreated(phone = params.phone.orEmpty(),
+                                      email = params.email.orEmpty())
         }
     }
 

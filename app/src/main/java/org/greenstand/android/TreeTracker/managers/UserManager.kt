@@ -2,19 +2,10 @@ package org.greenstand.android.TreeTracker.managers
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.location.Location
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.ReceiveChannel
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class UserManager(private val context: Context,
                   private val sharedPreferences: SharedPreferences) {
-
-    private val userLoginChannel = BroadcastChannel<Unit>(1)
-    private val userDetailsChannel = BroadcastChannel<Unit>(1)
-
-    val userLoginReceiveChannel: ReceiveChannel<Unit> = userLoginChannel.openSubscription()
-    val userDetailsReceiveChannel: ReceiveChannel<Unit> = userDetailsChannel.openSubscription()
 
     var authToken: String? = null
 
@@ -56,14 +47,6 @@ class UserManager(private val context: Context,
             putLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
             putLong(ValueHelper.PLANTER_INFO_ID, -1)
         }.apply()
-    }
-
-    suspend fun login(identifier: String,
-                      photoPath: String,
-                      location: Location?) {
-
-
-        userLoginChannel.send(Unit)
     }
 
     companion object {

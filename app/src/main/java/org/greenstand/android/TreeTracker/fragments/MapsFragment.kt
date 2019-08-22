@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
@@ -46,6 +47,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
+    private val analytics: Analytics by inject()
 
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
@@ -226,6 +228,16 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             }
         }
 
+        return true
+    }
+
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        analytics.markerClicked(marker.position.latitude, marker.position.longitude)
+        if (marker.title == null){
+            return true
+        }
+        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
         return true
     }
 

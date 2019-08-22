@@ -18,17 +18,20 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.onTextChanged
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class LoginFragment : Fragment(){
 
     private val vm: LoginViewModel by viewModel()
+    private val analytics: Analytics by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -67,6 +70,7 @@ class LoginFragment : Fragment(){
                 } else {
                     // User has no info on device, go through the sign up process
                     Timber.d("User not on device, going to signup flow")
+                    analytics.userEnteredEmailPhone()
                     withContext(Dispatchers.Main) {
                         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment(vm.userIdentification))
                     }

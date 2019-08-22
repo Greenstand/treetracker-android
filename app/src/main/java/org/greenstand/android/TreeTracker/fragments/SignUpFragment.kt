@@ -10,13 +10,16 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.utilities.onTextChanged
 import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class SignUpFragment : Fragment() {
 
     private val vm: SignupViewModel by viewModel()
+    private val analytics: Analytics by inject()
 
     private val args by navArgs<SignUpFragmentArgs>()
 
@@ -45,6 +48,7 @@ class SignUpFragment : Fragment() {
         vm.organization = signupOrganizationEditText.text.toString()
 
         signUpFragmentButton.setOnClickListener {
+            analytics.userEnteredDetails()
             findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToTermsPolicyFragment(vm.userInfo))
         }
     }
