@@ -22,6 +22,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -228,16 +229,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             }
         }
 
-        return true
-    }
-
-
-    override fun onMarkerClick(marker: Marker): Boolean {
-        analytics.markerClicked(marker.position.latitude, marker.position.longitude)
-        if (marker.title == null){
-            return true
-        }
-        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
         return true
     }
 
