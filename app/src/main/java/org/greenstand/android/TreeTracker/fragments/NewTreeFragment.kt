@@ -2,7 +2,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -22,6 +21,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
@@ -39,9 +39,10 @@ import kotlin.math.roundToInt
 class NewTreeFragment : androidx.fragment.app.Fragment(),
     ActivityCompat.OnRequestPermissionsResultCallback {
     private val userLocationManager: UserLocationManager by inject()
-    private lateinit var sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences by inject()
     private var takePictureInvoked: Boolean = false
     private var currentPhotoPath: String? = null
+    private val analytics: Analytics by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +62,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
         activity.toolbarTitle.setText(R.string.new_tree)
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        sharedPreferences = activity.getSharedPreferences(
-            "org.greenstand.android", Context.MODE_PRIVATE
-        )
         return view
     }
 
@@ -112,6 +110,10 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
                             NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(newTree)
                         )
                     } else {
+                        if (newTree.content.isNotBlank()) {
+                            analytics.treeNoteAdded(newTree.content.length)
+                        }
+                        analytics.treePlanted()
                         withContext(Dispatchers.IO) { saveToDb(newTree) }
                         CustomToast.showToast("Tree saved")
                         findNavController().popBackStack()
