@@ -86,8 +86,12 @@ android {
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
-            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"nyc3.digitaloceanspaces.com"'
-            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production"'
+            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${s3_production_access_key}\""
+            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${s3_production_secret_key}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
+            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -120,14 +124,16 @@ android {
         prerelease {
             initWith(debug)
             applicationIdSuffix ".prerelease"
-            resValue "string", "app_name", "Tree Tracker"
-            buildConfigField "Boolean", "GPS_ACCURACY", "true"
+            buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
-            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${dos_access_key}\""
-            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${dos_secret_key}\""
-            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"nyc3.digitaloceanspaces.com"'
-            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production"'
+            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${s3_production_access_key}\""
+            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${s3_production_secret_key}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
+            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
+            resValue "string", "app_name", "Tree Tracker Prerelease"
         }
 
     }
