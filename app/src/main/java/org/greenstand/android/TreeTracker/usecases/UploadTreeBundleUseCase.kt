@@ -31,8 +31,12 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
                 .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
                 .forEach { tree ->
 
-                    val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath!!))
+                    val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath!!,
+                                                                                lat = tree.latitude,
+                                                                                long = tree.longitude))
                         ?: throw IllegalStateException("No imageUrl")
+
+                    Timber.d("IMAGE URL: $imageUrl")
 
                     // Update local tree data with image Url
                     tree.photoUrl = imageUrl

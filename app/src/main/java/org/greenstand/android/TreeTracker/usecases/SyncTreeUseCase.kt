@@ -20,7 +20,9 @@ class SyncTreeUseCase(private val uploadImageUseCase: UploadImageUseCase,
 
             // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
             if (tree.photoUrl == null) {
-                val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath!!))
+                val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath!!,
+                                                                            lat = tree.latitude,
+                                                                            long = tree.longitude))
                     ?: throw IllegalStateException("No imageUrl")
 
                 tree.photoUrl = imageUrl
