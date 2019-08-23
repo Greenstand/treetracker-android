@@ -20,15 +20,16 @@ import org.koin.dsl.module
 
 val appModule = module {
 
+
     viewModel { LoginViewModel(get(), get()) }
 
     viewModel { SignupViewModel() }
 
     viewModel { TermsPolicyViewModel(get(), get()) }
 
-    viewModel { TreeHeightViewModel(get(), get()) }
+    viewModel { TreeHeightViewModel(get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get()) }
+    viewModel { DataViewModel(get(), get(), get(), get()) }
 
     viewModel { MapViewModel(get(), get(), get(), get()) }
 
@@ -58,11 +59,11 @@ val appModule = module {
 
     factory { UploadImageUseCase(get()) }
 
-    factory { UploadTreeUseCase(get(), get()) }
+    factory { UploadTreeUseCase(get(), get(), get()) }
 
     factory { UploadPlanterUseCase(get(), get(), get()) }
 
-    factory { SyncTreeUseCase(get(), get(), get()) }
+    factory { SyncTreeUseCase(get(), get(), get(), get()) }
 
     factory { CreateTreeUseCase(get(), get(), get()) }
 
@@ -78,12 +79,13 @@ val appModule = module {
 
     factory { PlanterCheckInUseCase(get(), get()) }
 
-    factory {
-        SyncDataUseCase(
-            get(),
-            get(),
-            get(),
-            get()
-        )
-    }
+    factory { CreateTreeRequestUseCase(get()) }
+
+    factory { SyncDataBundleUseCase(get(), get(), get(), get()) }
+
+    factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get()) }
+
+    factory { RemoveLocalImagesWithIdsUseCase(get()) }
+
+    factory { SyncDataUseCase(get(), get(), get(), get()) }
 }

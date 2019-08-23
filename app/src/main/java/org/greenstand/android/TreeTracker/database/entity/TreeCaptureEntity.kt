@@ -5,8 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-inline class TreeCaptureId(val value: Long)
-
 @Entity(
     tableName = TreeCaptureEntity.TABLE,
     foreignKeys = [
@@ -24,7 +22,7 @@ data class TreeCaptureEntity(
     @ColumnInfo(name = PLANTER_CHECK_IN_ID, index = true)
     var planterCheckInId: Long,
     @ColumnInfo(name = LOCAL_PHOTO_PATH)
-    var localPhotoPath: String,
+    var localPhotoPath: String?,
     @ColumnInfo(name = PHOTO_URL)
     var photoUrl: String?,
     @ColumnInfo(name = NOTE_CONTENT)
@@ -38,7 +36,9 @@ data class TreeCaptureEntity(
     @ColumnInfo(name = UPLOADED)
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
-    var createAt: Long
+    var createAt: Long,
+    @ColumnInfo(name = BUNDLE_ID)
+    var bundleId: String? = null
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -59,5 +59,6 @@ data class TreeCaptureEntity(
         const val ACCURACY = "accuracy"
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"
+        const val BUNDLE_ID = "bundle_id"
     }
 }

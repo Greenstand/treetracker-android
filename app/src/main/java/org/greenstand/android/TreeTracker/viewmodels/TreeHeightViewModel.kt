@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.data.TreeColor
 import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
@@ -18,8 +19,8 @@ import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 
 class TreeHeightViewModel(private val createTreeUseCase: CreateTreeUseCase,
-                          private val dao: TreeTrackerDAO
-) : ViewModel() {
+                          private val dao: TreeTrackerDAO,
+                          private val analytics: Analytics) : ViewModel() {
 
     var newTree: NewTree? = null
     var treeColor: TreeColor? = null
@@ -71,6 +72,7 @@ class TreeHeightViewModel(private val createTreeUseCase: CreateTreeUseCase,
                 }
                 ?.also {
                     toastMessageLiveData.postValue(R.string.tree_saved)
+                    analytics.treeHeightMeasured(treeColor!!)
                     onFinishedLiveData.postValue(Unit)
                 }
                 ?: run { toastMessageLiveData.postValue(R.string.tree_height_save_error) }

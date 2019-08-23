@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import androidx.work.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -13,6 +14,7 @@ import kotlin.properties.Delegates
 
 class DataViewModel(private val dao: TreeTrackerDAO,
                     private val workManager: WorkManager,
+                    private val analytics: Analytics,
                     private val syncNotification: SyncNotificationManager) : ViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
@@ -89,26 +91,41 @@ class DataViewModel(private val dao: TreeTrackerDAO,
                     0 -> toastLiveData.value = R.string.nothing_to_sync
                     else -> startDataSynchronization()
                 }
+                val (total, synced, waiting) = loadTreeInfo()
+                analytics.syncButtonTapped(total, synced, waiting)
             } else {
                 updateTimerJob?.cancel()
                 updateTimerJob = null
                 workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
                 syncNotification.removeNotification()
+
+                val (total, synced, waiting) = loadTreeInfo()
+                analytics.stopButtonTapped(total, synced, waiting)
             }
+        }
+    }
+
+
+    private suspend fun loadTreeInfo(): TreeData {
+        return withContext(Dispatchers.IO) {
+
+            val syncedTreeCount = dao.getUploadedTreeCaptureCount()
+            val notSyncedTreeCount = dao.getNonUploadedTreeCaptureCount()
+            val treeCount = syncedTreeCount + notSyncedTreeCount
+
+            TreeData(totalTrees = treeCount,
+                     treesToSync = notSyncedTreeCount,
+                     treesSynced = syncedTreeCount)
         }
     }
 
     private fun updateData() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            val syncedTreeCount = dao.getUploadedTreeCaptureCount()
-            val notSyncedTreeCount = dao.getNonUploadedTreeCaptureCount()
-            val treeCount = syncedTreeCount + notSyncedTreeCount
+            val treeInfo = loadTreeInfo()
 
             withContext(Dispatchers.Main) {
-                treeInfoLiveData.value = TreeData(totalTrees = treeCount,
-                                                  treesToSync = notSyncedTreeCount,
-                                                  treesSynced = syncedTreeCount)
+                treeInfoLiveData.value = treeInfo
             }
         }
     }

@@ -19,7 +19,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -30,12 +29,14 @@ import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
-import org.greenstand.android.TreeTracker.map.TreeMapAnnotation
+import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
@@ -43,10 +44,11 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 
-class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarkerClickListener, OnMapReadyCallback,
+class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
+    private val analytics: Analytics by inject()
 
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
@@ -55,7 +57,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
-    private lateinit var clusterManager : ClusterManager<TreeMapAnnotation>
+    private lateinit var clusterManager : ClusterManager<TreeMapMarker>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -230,18 +232,15 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
         return true
     }
 
-    override fun onMarkerClick(marker: Marker): Boolean {
-        if (marker.title == null){
-            return true
-        }
-        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(marker.title))
-        return true
-    }
-
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
         clusterManager = ClusterManager(context, map)
+        clusterManager.renderer = TreeClusterRenderer(requireContext(), googleMap, clusterManager)
+        clusterManager.setOnClusterItemClickListener {
+            findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(it.title))
+            true
+        }
         map!!.setOnCameraIdleListener(clusterManager)
         map!!.setOnMarkerClickListener(clusterManager)
 
@@ -269,7 +268,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMarker
             if (trees.isNotEmpty()) {
                 Timber.d("Adding markers")
                 for (tree in trees) {
-                    val treeMapAnnotation = TreeMapAnnotation(tree.latitude, tree.longitude, _title = tree.treeCaptureId.toString())
+                    val treeMapAnnotation = TreeMapMarker(tree.latitude, tree.longitude, _title = tree.treeCaptureId.toString())
                     clusterManager.addItem(treeMapAnnotation)
                 }
             }
