@@ -34,6 +34,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
+import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -86,6 +87,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
             }
 
+            invalidateOptionsMenu()
+
             analytics.tagScreen(this, controller.currentDestination?.label.toString())
         }
 
@@ -105,8 +108,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        return if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.mapsFragment) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+            true
+        } else {
+            false
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -117,11 +124,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 bundle = intent.extras
                 fragment?.arguments = bundle
 
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_dataFragment)
+                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
                 return true
             }
             R.id.action_about -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_aboutFragment)
+                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToAboutFragment())
                 return true
             }
 
@@ -129,7 +136,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 userManager.clearUser()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
-
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_login_flow_graph)
             }
         }
@@ -232,7 +238,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (grantResults.size > 0) {
+        if (grantResults.isNotEmpty()) {
             if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates()
             }
