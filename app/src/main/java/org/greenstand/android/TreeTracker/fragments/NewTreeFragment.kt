@@ -11,6 +11,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,18 +32,21 @@ import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.view.CustomToast
+import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.getKoin
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import kotlin.math.roundToInt
 
-class NewTreeFragment : androidx.fragment.app.Fragment(),
-    ActivityCompat.OnRequestPermissionsResultCallback {
+class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
+
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private var takePictureInvoked: Boolean = false
     private var currentPhotoPath: String? = null
     private val analytics: Analytics by inject()
+
+    private val vm: NewTreeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,36 +58,30 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_new_tree, container, false)
+        return inflater.inflate(R.layout.fragment_new_tree, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val activity = activity as AppCompatActivity
         activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         activity.toolbarTitle.setText(R.string.new_tree)
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        fragmentNewTreeSave.text = getString(
-            if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
-                R.string.save
+        vm.noteEnabledLiveData.observe(this, Observer { isNoteEnabled ->
+            if (isNoteEnabled) {
+                fragmentNewTreeSave.text = getString(R.string.save)
+                fragmentNewTreeNote.visibility = View.VISIBLE
             } else {
-                R.string.next
+                fragmentNewTreeSave.text = getString(R.string.next)
+                fragmentNewTreeNote.visibility = View.GONE
             }
-        )
+        })
 
-        fragmentNewTreeNote.visibility = if (FeatureFlags.TREE_NOTE_FEATURE_ENABLED) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
-        val meterText = resources.getString(R.string.meters)
-        fragmentNewTreeDistance.text = "0 $meterText"
-        val newTreeGpsAccuracy = userLocationManager.currentLocation?.accuracy?.roundToInt() ?: 0
+        vm.accuracyLiveData.observe(this, Observer {
+            fragmentNewTreeGpsAccuracy.text = fragmentNewTreeGpsAccuracy.context.getString(R.string.gps_accuracy_double_colon, it)
+        })
 
-        fragmentNewTreeGpsAccuracy.text = "$newTreeGpsAccuracy $meterText"
 
         val timeToNextUpdate = sharedPreferences.getInt(
             ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING, sharedPreferences.getInt(
@@ -92,23 +90,16 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
             )
         )
 
-        fragmentNewTreeNextUpdate.setText(timeToNextUpdate.toString())
-
-        if (sharedPreferences.getBoolean(ValueHelper.TIME_TO_NEXT_UPDATE_ADMIN_DB_SETTING_PRESENT, false)) {
-            fragmentNewTreeNextUpdate.isEnabled = false
-        }
-
         fragmentNewTreeSave.setOnClickListener {
             it.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
                 HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                generateNewTree(timeToNextUpdate)?.let { newTree ->
+                vm.generateNewTree(timeToNextUpdate,
+                                   fragmentNewTreeNote.text.toString())?.let { newTree ->
                     if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
-                        findNavController().navigate(
-                            NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(newTree)
-                        )
+                        findNavController().navigate(NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(newTree))
                     } else {
                         if (newTree.content.isNotBlank()) {
                             analytics.treeNoteAdded(newTree.content.length)
@@ -141,12 +132,10 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
         if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(
-                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                Permissions.MY_PERMISSION_CAMERA
-            )
+            != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                               Permissions.MY_PERMISSION_CAMERA)
         } else {
             takePictureInvoked = true
             val takePictureIntent = Intent(activity, CameraActivity::class.java)
@@ -189,31 +178,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(),
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
             activity!!.supportFragmentManager.popBackStack()
-        }
-    }
-
-    private fun generateNewTree(timeToNextUpdate: Int): NewTree? {
-        val minAccuracy = sharedPreferences.getInt(
-            ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-            ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
-        )
-
-        // note
-        val content = fragmentNewTreeNote.text.toString()
-
-        // tree
-        val planterInfoId = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, 0)
-        val planterCheckinId = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
-
-        return currentPhotoPath?.let {
-            NewTree(
-                it,
-                minAccuracy,
-                timeToNextUpdate,
-                content,
-                planterCheckinId,
-                planterInfoId
-            )
         }
     }
 

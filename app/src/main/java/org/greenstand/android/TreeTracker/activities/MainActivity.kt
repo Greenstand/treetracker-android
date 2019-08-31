@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,7 @@ import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -175,26 +177,24 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         val minAccuracy = 10
 
         val fragmentMapGpsAccuracyView : TextView? = findViewById(R.id.fragmentMapGpsAccuracy)
-        val fragmentMapGpsAccuracyViewValue : TextView? = findViewById(R.id.fragmentMapGpsAccuracyValue)
+
         if (fragmentMapGpsAccuracyView != null) {
             if (currentLocation != null) {
                 if (currentLocation!!.hasAccuracy() && currentLocation!!.accuracy < minAccuracy) {
+
                     fragmentMapGpsAccuracyView.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyViewValue?.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                        Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    fragmentMapGpsAccuracy.text = getString(R.string.gps_accuracy_double_colon, currentLocation!!.accuracy.roundToInt())
                     allowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracyView.setTextColor(Color.RED)
                     allowNewTreeOrUpdate = false
 
                     if (currentLocation!!.hasAccuracy()) {
-                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                            Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        fragmentMapGpsAccuracy.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracy.text = getString(R.string.gps_accuracy_double_colon, currentLocation!!.accuracy.roundToInt())
                     } else {
-                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyViewValue?.text = "N/A"
+                        fragmentMapGpsAccuracy.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracy.text = getString(R.string.gps_accuracy) + " N/A"
                     }
                 }
 
@@ -206,8 +206,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 }
             } else {
                 fragmentMapGpsAccuracyView.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyViewValue?.text = "N/A"
+                fragmentMapGpsAccuracy.setTextColor(Color.RED)
+                fragmentMapGpsAccuracy.text = getString(R.string.gps_accuracy) + " N/A"
                 allowNewTreeOrUpdate = false
             }
 
@@ -217,9 +217,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Location.distanceBetween(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude,
                                          currentTreeLocation!!.latitude, currentTreeLocation!!.longitude, results)
 
-                if (fragmentNewTreeDistance != null) {
-                    fragmentNewTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
-                }
+//                if (fragmentNewTreeDistance != null) {
+//                    fragmentNewTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
+//                }
 
                 if (fragmentTreePreviewDistance != null) {
                     fragmentTreePreviewDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)

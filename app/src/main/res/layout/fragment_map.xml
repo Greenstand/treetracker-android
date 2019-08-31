@@ -40,36 +40,16 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <LinearLayout
-        android:id="@+id/fragment_map_gps_accuracy_layout"
+    <TextView
+        android:id="@+id/fragmentMapGpsAccuracy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_eight"
-        android:orientation="horizontal"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/fragmentMapGpsAccuracy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="@string/gps_accuracy_double_colon"
-            android:textColor="@color/red"
-            android:textSize="@dimen/text_size_twenty" />
-
-        <TextView
-            android:id="@+id/fragmentMapGpsAccuracyValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:textColor="@color/red"
-            android:textSize="@dimen/text_size_twenty"
-            tools:text="@string/gps_accuracy_length" />
-
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/gps_accuracy_double_colon"
+        android:textColor="@color/red"
+        android:textSize="@dimen/text_size_twenty" />
 
     <Button
         android:id="@+id/addTreeButton"
@@ -80,7 +60,7 @@
         android:padding="@dimen/padding_five"
         android:text="@string/add_tree"
         style="@style/NewButtonStyle"
-        app:layout_constraintBottom_toTopOf="@+id/fragment_map_gps_accuracy_layout"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentMapGpsAccuracy"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
