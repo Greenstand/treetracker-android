@@ -133,14 +133,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
         mapFragment!!.getMapAsync(this)
 
-        val minAccuracy = sharedPreferences.getInt(
-            ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-            ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
-        )
-
         if (fragmentMapGpsAccuracy != null) {
             if (userLocationManager.currentLocation != null) {
-                if (userLocationManager.currentLocation!!.hasAccuracy() && userLocationManager.currentLocation!!.accuracy < minAccuracy) {
+                if (userLocationManager.currentLocation!!.hasAccuracy() && userLocationManager.currentLocation!!.accuracy < ValueHelper.MIN_ACCURACY_DEFAULT_SETTING) {
                     fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
                     fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy_double_colon, MainActivity.currentLocation!!.accuracy.roundToInt())
                     MainActivity.allowNewTreeOrUpdate = true

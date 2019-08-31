@@ -217,10 +217,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Location.distanceBetween(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude,
                                          currentTreeLocation!!.latitude, currentTreeLocation!!.longitude, results)
 
-//                if (fragmentNewTreeDistance != null) {
-//                    fragmentNewTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
-//                }
-
                 if (fragmentTreePreviewDistance != null) {
                     fragmentTreePreviewDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
                 }
