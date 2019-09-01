@@ -142,7 +142,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
-            activity!!.supportFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
     }
 
