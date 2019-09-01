@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.data.NewTree
-import org.greenstand.android.TreeTracker.fragments.NewTreeFragment
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
@@ -46,9 +45,9 @@ class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
         }
     }
 
-    suspend fun createTree(note: String, photoPath: String) {
+    suspend fun createTree(note: String) {
 
-        val newTree = createNewTree(note, photoPath)
+        val newTree = createNewTree(note, photoPath!!)
 
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
@@ -75,7 +74,7 @@ class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
 
     fun isImageBlurry(data: Intent): Boolean {
         val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE, 0.0)
-        return imageQuality < NewTreeFragment.FOCUS_THRESHOLD
+        return imageQuality < FOCUS_THRESHOLD
     }
 
     private fun createNewTree(note: String, photoPath: String): NewTree {
@@ -88,6 +87,10 @@ class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
             note,
             planterCheckinId
         )
+    }
+
+    companion object {
+        const val FOCUS_THRESHOLD = 700.0
     }
 
 }

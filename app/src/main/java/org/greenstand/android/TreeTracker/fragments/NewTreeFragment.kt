@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.fragments
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -20,7 +19,6 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
 import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -35,11 +33,6 @@ import timber.log.Timber
 class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val userLocationManager: UserLocationManager by inject()
-    private val sharedPreferences: SharedPreferences by inject()
-    private var takePictureInvoked: Boolean = false
-    private var currentPhotoPath: String? = null
-    private val analytics: Analytics by inject()
-
     private val vm: NewTreeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +93,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
         fragmentNewTreeSave.setOnClickListener {
             it.vibrate()
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                vm.createTree(fragmentNewTreeNote.text.toString(), currentPhotoPath!!)
+                vm.createTree(fragmentNewTreeNote.text.toString())
             }
         }
     }
@@ -164,9 +157,5 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
         /* Associate the Bitmap to the ImageView */
         fragmentNewTreeImage.setImageBitmap(rotatedBitmap)
         fragmentNewTreeImage.visibility = View.VISIBLE
-    }
-
-    companion object {
-        const val FOCUS_THRESHOLD = 700.0
     }
 }

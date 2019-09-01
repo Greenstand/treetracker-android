@@ -33,7 +33,7 @@ val appModule = module {
 
     viewModel { MapViewModel(get(), get(), get(), get()) }
 
-    viewModel { NewTreeViewModel(get(), get()) }
+    viewModel { NewTreeViewModel(get(), get(), get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
