@@ -13,6 +13,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.ceil
 
 object ImageUtils {
 
@@ -51,7 +52,7 @@ object ImageUtils {
         // For e.g you want the width to stay consistent at 500dp
         val requiredWidth = (500 * density).toInt()
 
-        var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
+        var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
         Timber.d("sampleSize " + Integer.toString(sampleSize))
         // If the original image is smaller than required, don't sample
@@ -73,7 +74,6 @@ object ImageUtils {
         try {
             exif = ExifInterface(photoPath!!)
         } catch (e: IOException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
         }
 
@@ -90,7 +90,7 @@ object ImageUtils {
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
             rotationAngle = 270
 
-        Timber.d("rotationAngle " + Integer.toString(rotationAngle))
+        Timber.d("rotationAngle $rotationAngle")
 
         val matrix = Matrix()
         matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,

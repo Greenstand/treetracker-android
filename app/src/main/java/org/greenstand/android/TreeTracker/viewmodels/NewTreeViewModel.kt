@@ -78,8 +78,6 @@ class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
     }
 
     private fun createNewTree(note: String, photoPath: String): NewTree {
-
-        // tree
         val planterCheckinId = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
 
         return NewTree(
