@@ -56,7 +56,7 @@ class TreePreviewFragment : Fragment() {
                 fragmentTreePreviewNoImage.visibility = View.VISIBLE
             }
 
-            fragmentTreePreviewDistance.text = "${treeData.distance} ${resources.getString(R.string.meters)}"
+            fragmentTreePreviewDistance.text = "${treeData.distance.toInt()} ${resources.getString(R.string.meters)}"
             fragmentTreePreviewGpsAccuracy.text = "${treeData.accuracy} ${resources.getString(R.string.meters)}"
             fragmentTreePreviewCreated.text = Date(treeData.createdAt).toLocaleString()
             fragmentTreePreviewNotes.text = treeData.note

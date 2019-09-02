@@ -18,8 +18,8 @@ class TreePreviewViewModel(private val dao: TreeTrackerDAO,
 
         userLocationManager.currentLocation?.let {
             Location.distanceBetween(
-                userLocationManager.currentLocation!!.latitude,
-                userLocationManager.currentLocation!!.longitude,
+                it.latitude,
+                it.longitude,
                 tree.latitude,
                 tree.longitude,
                 results
