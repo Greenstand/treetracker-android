@@ -89,14 +89,14 @@ class ObjectStorageClient private constructor() {
 
     @SuppressLint("SimpleDateFormat")
     @Throws(AmazonClientException::class)
-    fun put(path: String): String {
+    fun put(path: String, lat: Double, long: Double): String {
         val acl = AccessControlList()
         acl.grantPermission(GroupGrantee.AllUsers, Permission.Read)
 
         val image = File(path)
         val timeStamp = SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Date())
 
-        val dosKey = timeStamp + '_'.toString() + UUID.randomUUID() + '_'.toString() + image.name
+        val dosKey = timeStamp + '_' + lat + '_' + long + '_' + UUID.randomUUID() + '_' + image.name
         val poRequest = PutObjectRequest(BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES, dosKey, image)
         poRequest.withAccessControlList(acl)
         val poResult = s3Client?.putObject(poRequest)
