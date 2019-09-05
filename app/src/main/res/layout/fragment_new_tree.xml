@@ -1,152 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/fragment_new_tree"
+<RelativeLayout android:id="@+id/fragment_new_tree"
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/background"
                 android:orientation="vertical">
-        <ImageView
-            android:id="@+id/fragmentNewTreeImage"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_new_tree_image"
-            android:contentDescription="@string/tree"
-            android:layout_gravity="center_vertical|center_horizontal"
-            />
+
+    <ImageView
+        android:id="@+id/fragmentNewTreeImage"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_new_tree_image"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_margin="24dp"
+        android:contentDescription="@string/tree"
+        />
 
     <LinearLayout
-            android:id="@+id/fragment_new_tree_focus_warning_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/fragmentNewTreeImage"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/margin_twenty_four"
-            android:paddingTop="@dimen/one_dp"
-            android:paddingRight="@dimen/margin_twenty_four">
-        <TextView
-                android:id="@+id/fragment_new_tree_focus_warning_text"
-                android:layout_width="@dimen/zero_dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:layout_weight="1"
-                android:layout_marginRight="8dp"
-                android:text=""
-                android:gravity="center"
-                android:textColor = "@color/cautionOrange"
-                android:textSize="@dimen/text_size_seventeen"
-                android:visibility="gone"
-                android:background="@drawable/caution_text_border"/>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/fragment_new_tree_distance_layout"
+        android:id="@+id/fragment_new_tree_focus_warning_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_new_tree_focus_warning_layout"
+        android:layout_below="@+id/fragmentNewTreeImage"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_twenty_four"
-        android:paddingTop="@dimen/one_dp"
-        android:paddingRight="@dimen/margin_twenty_four">
+        android:paddingRight="@dimen/margin_twenty_four"
+        android:paddingTop="@dimen/one_dp">
 
         <TextView
+            android:id="@+id/fragment_new_tree_focus_warning_text"
             android:layout_width="@dimen/zero_dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_eight"
-            android:layout_weight="2"
-            android:text="@string/distance_double_colon"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/fragmentNewTreeDistance"
-            android:layout_width="@dimen/zero_dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen"
-            android:visibility="invisible" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fragment_new_tree_gps_accuracy_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_new_tree_distance_layout"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/margin_twenty_four"
-        android:paddingTop="@dimen/one_dp"
-        android:paddingRight="@dimen/margin_twenty_four">
-
-        <TextView
-            android:layout_width="@dimen/zero_dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="1"
             android:layout_marginRight="8dp"
-            android:text="@string/gps_accuracy_double_colon"
-            android:gravity="end"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
-
-        <TextView
-            android:id="@+id/fragmentNewTreeGpsAccuracy"
-            android:layout_width="@dimen/zero_dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_twelve"
+            android:layout_marginTop="1dp"
             android:layout_weight="1"
-            android:gravity="start"
-            tools:text="5 meters"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
+            android:background="@drawable/caution_text_border"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/cautionOrange"
+            android:textSize="@dimen/text_size_seventeen"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/fragment_new_tree_next_update_layout"
+    <TextView
+        android:id="@+id/fragmentNewTreeGpsAccuracy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_new_tree_gps_accuracy_layout"
-        android:orientation="horizontal"
+        android:layout_below="@id/fragment_new_tree_focus_warning_layout"
         android:paddingLeft="@dimen/margin_twenty_four"
+        android:paddingRight="@dimen/margin_twenty_four"
         android:paddingTop="@dimen/one_dp"
-        android:paddingRight="@dimen/margin_twenty_four">
-
-        <TextView
-            android:layout_width="@dimen/zero_dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="2"
-            android:text="@string/time_to_next_update_double_colon"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen"
-            android:visibility="invisible" />
-
-        <EditText
-            android:id="@+id/fragmentNewTreeNextUpdate"
-            android:layout_width="@dimen/zero_dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:inputType="number"
-            android:maxLength="3"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen"
-            android:visibility="invisible" />
-
-    </LinearLayout>
+        android:gravity="center"
+        android:text="@string/gps_accuracy_double_colon"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_seventeen"/>
 
     <EditText
         android:id="@+id/fragmentNewTreeNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_new_tree_next_update_layout"
+        android:layout_below="@+id/fragmentNewTreeGpsAccuracy"
         android:layout_marginLeft="@dimen/margin_twenty_four"
-        android:layout_marginTop="@dimen/two_dp"
         android:layout_marginRight="@dimen/margin_twenty_four"
+        android:layout_marginTop="16dp"
         android:hint="@string/your_note"
         android:imeOptions="actionDone"
         android:inputType="text"
@@ -154,20 +69,7 @@
         android:maxLength="50"
         android:maxLines="2"
         android:minLines="2"
-        android:textSize="@dimen/text_size_sixty" />
-
-    <EditText
-        android:id="@+id/fragment_new_tree_three_digits"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fragmentNewTreeNote"
-        android:layout_marginLeft="@dimen/margin_twenty_four"
-        android:layout_marginRight="@dimen/margin_twenty_four"
-        android:hint="@string/three_digit_number"
-        android:inputType="number"
-        android:maxLength="3"
-        android:textSize="@dimen/text_size_sixty"
-        android:visibility="gone" />
+        android:textSize="@dimen/text_size_sixty"/>
 
     <LinearLayout
         android:id="@+id/fragment_new_tree_buttons"
@@ -179,13 +81,13 @@
 
         <Button
             android:id="@+id/fragmentNewTreeSave"
+            style="@style/NewButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="@dimen/margin_eight"
             android:paddingBottom="@dimen/margin_eight"
-            style="@style/NewButtonStyle"
-            android:text="@string/save" />
+            android:paddingTop="@dimen/margin_eight"
+            android:text="@string/save"/>
 
     </LinearLayout>
 
