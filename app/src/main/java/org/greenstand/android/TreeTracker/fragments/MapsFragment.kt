@@ -22,14 +22,12 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
@@ -42,13 +40,13 @@ import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import kotlin.math.roundToInt
 
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
-    private val analytics: Analytics by inject()
 
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
@@ -133,40 +131,23 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
         mapFragment!!.getMapAsync(this)
 
-        val minAccuracy = sharedPreferences.getInt(
-            ValueHelper.MIN_ACCURACY_GLOBAL_SETTING,
-            ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
-        )
-
         if (fragmentMapGpsAccuracy != null) {
             if (userLocationManager.currentLocation != null) {
-                if (userLocationManager.currentLocation!!.hasAccuracy() && userLocationManager.currentLocation!!.accuracy < minAccuracy) {
+                if (userLocationManager.currentLocation!!.hasAccuracy() && userLocationManager.currentLocation!!.accuracy < ValueHelper.MIN_ACCURACY_DEFAULT_SETTING) {
                     fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyValue.setTextColor(Color.GREEN)
-                    val fragmentMapGpsAccuracyValueString1 = Integer.toString(
-                        Math.round(
-                            MainActivity
-                                .currentLocation!!.accuracy
-                        )
-                    ) + " " + resources.getString(R.string.meters)
-                    fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString1
+                    fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy_double_colon, MainActivity.currentLocation!!.accuracy.roundToInt())
                     MainActivity.allowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracy.setTextColor(Color.RED)
                     MainActivity.allowNewTreeOrUpdate = false
 
                     if (userLocationManager.currentLocation!!.hasAccuracy()) {
-                        fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
-                        val fragmentMapGpsAccuracyValueString2 = Integer.toString(
-                            Math.round(
-                                MainActivity
-                                    .currentLocation!!.accuracy
-                            )
-                        ) + " " + resources.getString(R.string.meters)
-                        fragmentMapGpsAccuracyValue.text = fragmentMapGpsAccuracyValueString2
+                        fragmentMapGpsAccuracy.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy_double_colon,
+                                                                                 MainActivity.currentLocation!!.accuracy.roundToInt())
                     } else {
-                        fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyValue.text = "N/A"
+                        fragmentMapGpsAccuracy.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy) + " N/A"
                     }
                 }
             } else {
@@ -182,8 +163,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                     )
                 }
                 fragmentMapGpsAccuracy.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyValue.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyValue.text = "N/A"
+                fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy) + " N/A"
                 MainActivity.allowNewTreeOrUpdate = false
             }
 

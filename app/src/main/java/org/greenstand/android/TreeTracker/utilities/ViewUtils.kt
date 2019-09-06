@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
+import android.view.HapticFeedbackConstants
 import android.view.View
 import com.google.android.material.card.MaterialCardView
 
@@ -31,3 +32,11 @@ val MaterialCardView.cardColor: Int
     get() {
         return cardBackgroundColor.defaultColor
     }
+
+
+fun View.vibrate() {
+    performHapticFeedback(
+        HapticFeedbackConstants.VIRTUAL_KEY,
+        HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+    )
+}

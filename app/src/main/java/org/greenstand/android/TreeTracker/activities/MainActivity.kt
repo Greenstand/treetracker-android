@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
 import kotlinx.coroutines.Dispatchers
@@ -34,10 +35,14 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
+import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.getKoin
+import timber.log.Timber
+import kotlin.math.roundToInt
+import kotlin.math.sign
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -86,6 +91,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
             }
 
+            invalidateOptionsMenu()
+
             analytics.tagScreen(this, controller.currentDestination?.label.toString())
         }
 
@@ -105,8 +112,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        return if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.mapsFragment) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+            true
+        } else {
+            false
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -117,11 +128,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 bundle = intent.extras
                 fragment?.arguments = bundle
 
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_dataFragment)
+                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
                 return true
             }
             R.id.action_about -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_aboutFragment)
+                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToAboutFragment())
                 return true
             }
 
@@ -129,7 +140,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 userManager.clearUser()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
-
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_login_flow_graph)
             }
         }
@@ -175,26 +185,27 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         val minAccuracy = 10
 
         val fragmentMapGpsAccuracyView : TextView? = findViewById(R.id.fragmentMapGpsAccuracy)
-        val fragmentMapGpsAccuracyViewValue : TextView? = findViewById(R.id.fragmentMapGpsAccuracyValue)
+
         if (fragmentMapGpsAccuracyView != null) {
             if (currentLocation != null) {
+                Timber.d(currentLocation!!.accuracy.toString())
+                Timber.d(currentLocation!!.hasAccuracy().toString())
+
                 if (currentLocation!!.hasAccuracy() && currentLocation!!.accuracy < minAccuracy) {
+
                     fragmentMapGpsAccuracyView.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyViewValue?.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                        Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                    fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy_double_colon, currentLocation!!.accuracy.roundToInt())
                     allowNewTreeOrUpdate = true
                 } else {
                     fragmentMapGpsAccuracyView.setTextColor(Color.RED)
                     allowNewTreeOrUpdate = false
 
                     if (currentLocation!!.hasAccuracy()) {
-                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                            Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
+                        fragmentMapGpsAccuracyView.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy_double_colon, currentLocation!!.accuracy.roundToInt())
                     } else {
-                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyViewValue?.text = "N/A"
+                        fragmentMapGpsAccuracyView.setTextColor(Color.RED)
+                        fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy) + " N/A"
                     }
                 }
 
@@ -206,8 +217,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 }
             } else {
                 fragmentMapGpsAccuracyView.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyViewValue?.text = "N/A"
+                fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy) + " N/A"
                 allowNewTreeOrUpdate = false
             }
 
@@ -216,10 +226,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 val results = floatArrayOf(0f, 0f, 0f)
                 Location.distanceBetween(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude,
                                          currentTreeLocation!!.latitude, currentTreeLocation!!.longitude, results)
-
-                if (fragmentNewTreeDistance != null) {
-                    fragmentNewTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
-                }
 
                 if (fragmentTreePreviewDistance != null) {
                     fragmentTreePreviewDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
@@ -232,7 +238,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (grantResults.size > 0) {
+        if (grantResults.isNotEmpty()) {
             if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates()
             }
