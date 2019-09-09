@@ -16,6 +16,7 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
@@ -85,11 +86,21 @@ val appModule = module {
 
     factory { CreateTreeRequestUseCase(get()) }
 
-    factory { SyncDataBundleUseCase(get(), get(), get(), get()) }
-
     factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get()) }
 
     factory { RemoveLocalImagesWithIdsUseCase(get()) }
 
-    factory { SyncDataUseCase(get(), get(), get(), get()) }
+    factory(named(SyncDataUseCase.BUNDLE_UPLOAD)) { SyncDataUseCase(
+        treeLoadStrategy = BundleTreeUploadStrategy(uploadTreeBundleUseCase = get()),
+        uploadPlanterDetailsUseCase = get(),
+        api = get(),
+        dao = get()
+    ) }
+
+    factory(named(SyncDataUseCase.CONTINUOUS_UPLOAD)) { SyncDataUseCase(
+        treeLoadStrategy = ContinuousTreeUploadStrategy(syncTreeUseCase = get()),
+        uploadPlanterDetailsUseCase = get(),
+        api = get(),
+        dao = get()
+    ) }
 }
