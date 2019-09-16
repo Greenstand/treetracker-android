@@ -11,13 +11,11 @@ import org.koin.core.qualifier.named
 
 class TreeSyncWorker(context: Context,
                      workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters), KoinComponent {
+    private val syncDataUseCase: SyncDataUseCase by inject(named(SyncDataUseCase.CONTINUOUS_UPLOAD))
+    private val syncDataBundleUseCase: SyncDataUseCase by inject(named(SyncDataUseCase.BUNDLE_UPLOAD))
+    private val syncNotificationManager: SyncNotificationManager by inject()
 
     override suspend fun doWork(): Result {
-        //TODO: Would like to move those 2 injections to constructor, but I am not sure if it will still be lazy there.
-        val syncDataUseCase: SyncDataUseCase by inject(named(SyncDataUseCase.CONTINUOUS_UPLOAD))
-        val syncDataBundleUseCase: SyncDataUseCase by inject(named(SyncDataUseCase.BUNDLE_UPLOAD))
-        val syncNotificationManager: SyncNotificationManager by inject()
-
         syncNotificationManager.showNotification()
 
         if (FeatureFlags.BULK_UPLOAD_ENABLED) {
