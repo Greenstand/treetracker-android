@@ -9,10 +9,11 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
-class SyncDataUseCase(private val treeLoadStrategy: TreeUploadStrategy,
-                      private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
-                      private val api: RetrofitApi,
-                      private val dao: TreeTrackerDAO
+class SyncDataUseCase(
+    private val treeLoadStrategy: TreeUploadStrategy,
+    private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
+    private val api: RetrofitApi,
+    private val dao: TreeTrackerDAO
 ) : UseCase<Unit, Boolean>() {
 
     override suspend fun execute(params: Unit): Boolean {
@@ -27,16 +28,17 @@ class SyncDataUseCase(private val treeLoadStrategy: TreeUploadStrategy,
             var treeIdList = dao.getAllTreeCaptureIdsToUpload()
 
             while (treeIdList.isNotEmpty() && coroutineContext.isActive) {
-                    uploadTrees(treeIdList)
-                    val remainingIds = dao.getAllTreeCaptureIdsToUpload()
-                    if (!treeIdList.containsAll(remainingIds)) {
-                        treeIdList = remainingIds
-                    } else {
-                        if (remainingIds.isNotEmpty()) {
-                            Timber.tag("SyncDataUseCase").e("Remaining trees failed to upload, ending sync...")
-                        }
-                        break
+                uploadTrees(treeIdList)
+                val remainingIds = dao.getAllTreeCaptureIdsToUpload()
+                if (!treeIdList.containsAll(remainingIds)) {
+                    treeIdList = remainingIds
+                } else {
+                    if (remainingIds.isNotEmpty()) {
+                        Timber.tag("SyncDataUseCase")
+                            .e("Remaining trees failed to upload, ending sync...")
                     }
+                    break
+                }
             }
         }
         return true
@@ -46,7 +48,8 @@ class SyncDataUseCase(private val treeLoadStrategy: TreeUploadStrategy,
         // Upload all user registration data that hasn't been uploaded yet
         val planterInfoToUploadList = dao.getAllPlanterInfo()
 
-        Timber.tag("SyncDataUseCase").d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
+        Timber.tag("SyncDataUseCase")
+            .d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
 
         planterInfoToUploadList.forEach {
             if (coroutineContext.isActive) {
@@ -62,17 +65,14 @@ class SyncDataUseCase(private val treeLoadStrategy: TreeUploadStrategy,
 
     private suspend fun uploadTrees(treeIds: List<Long>) {
         Timber.tag("SyncDataUseCase").d("Uploading ${treeIds.size} trees")
-
-        treeIds.onEach {
-            try {
-                if (coroutineContext.isActive) {
-                    treeLoadStrategy.uploadTrees(treeIds)
-                } else {
-                    coroutineContext.cancel()
-                }
-            } catch (e: Exception) {
-                Timber.e("NewTree upload failed")
+        try {
+            if (coroutineContext.isActive) {
+                treeLoadStrategy.uploadTrees(treeIds)
+            } else {
+                coroutineContext.cancel()
             }
+        } catch (e: Exception) {
+            Timber.e("NewTree upload failed")
         }
     }
 
