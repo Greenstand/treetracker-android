@@ -11,7 +11,7 @@ interface TreeUploadStrategy {
 
 class BundleTreeUploadStrategy(private val uploadTreeBundleUseCase: UploadTreeBundleUseCase) : TreeUploadStrategy {
     override suspend fun uploadTrees(treeIds: List<Long>) {
-        Timber.tag("BundleTreeUpload").d("Uploading ${treeIds.size} trees")
+        Timber.tag(tag).d("Uploading ${treeIds.size} trees")
 
         treeIds.windowed(size = 50, step = 50, partialWindows = true).onEach { treeIdBundle ->
             try {
@@ -25,11 +25,14 @@ class BundleTreeUploadStrategy(private val uploadTreeBundleUseCase: UploadTreeBu
             }
         }    }
 
+    companion object {
+        val tag: String = BundleTreeUploadStrategy::class.java.simpleName
+    }
 }
 
 class ContinuousTreeUploadStrategy(private val syncTreeUseCase: SyncTreeUseCase) : TreeUploadStrategy {
     override suspend fun uploadTrees(treeIds: List<Long>) {
-        Timber.tag("ContinuousTreeUpload").d("Uploading ${treeIds.size} trees")
+        Timber.tag(tag).d("Uploading ${treeIds.size} trees")
 
         treeIds.onEach {
             try {
@@ -44,4 +47,7 @@ class ContinuousTreeUploadStrategy(private val syncTreeUseCase: SyncTreeUseCase)
         }
     }
 
+    companion object {
+        val tag: String = ContinuousTreeUploadStrategy::class.java.simpleName
+    }
 }

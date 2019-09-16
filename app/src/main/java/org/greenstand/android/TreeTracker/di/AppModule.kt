@@ -90,25 +90,34 @@ val appModule = module {
 
     factory { RemoveLocalImagesWithIdsUseCase(get()) }
 
-    factory<TreeUploadStrategy>(named(SyncDataUseCase.BUNDLE_UPLOAD)) { BundleTreeUploadStrategy(uploadTreeBundleUseCase = get())}
+    factory<TreeUploadStrategy>(named(BundleTreeUploadStrategy.tag)) {
+        BundleTreeUploadStrategy(
+            uploadTreeBundleUseCase = get()
+        )
+    }
 
-    factory<TreeUploadStrategy>(named(SyncDataUseCase.CONTINUOUS_UPLOAD)) { ContinuousTreeUploadStrategy(syncTreeUseCase = get()) }
+    factory<TreeUploadStrategy>(named(ContinuousTreeUploadStrategy.tag)) {
+        ContinuousTreeUploadStrategy(
+            syncTreeUseCase = get()
+        )
+    }
 
-    named(SyncDataUseCase.BUNDLE_UPLOAD).let { bundleUpload ->
-        factory(bundleUpload) { SyncDataUseCase(
-            treeLoadStrategy = get(bundleUpload),
+    factory(named(SyncDataUseCase.BUNDLE_UPLOAD)) {
+        SyncDataUseCase(
+            treeLoadStrategy = get(named(BundleTreeUploadStrategy.tag)),
             uploadPlanterDetailsUseCase = get(),
             api = get(),
             dao = get()
-        ) }
+        )
     }
 
-    named(SyncDataUseCase.CONTINUOUS_UPLOAD).let { continuousUpload ->
-        factory(continuousUpload) { SyncDataUseCase(
-            treeLoadStrategy = get(continuousUpload),
+    factory(named(SyncDataUseCase.CONTINUOUS_UPLOAD)) {
+        SyncDataUseCase(
+            treeLoadStrategy = get(named(ContinuousTreeUploadStrategy.tag)),
             uploadPlanterDetailsUseCase = get(),
             api = get(),
             dao = get()
-        ) }
+        )
     }
+
 }
