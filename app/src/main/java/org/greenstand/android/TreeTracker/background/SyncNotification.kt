@@ -27,8 +27,7 @@ class SyncNotificationManager(private val notificationManagerCompat: Notificatio
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setColor(context.resources.getColor(R.color.colorPrimary))
             .addAction(R.drawable.save_icon, stopText, createStopSyncPendingIntent())
-
-        builder.setProgress(0, 0, true)
+            .setProgress(0, 0, true)
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build())
     }
