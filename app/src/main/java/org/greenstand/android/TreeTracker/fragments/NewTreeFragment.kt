@@ -16,7 +16,8 @@ import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.activities.CameraActivity
+import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
+import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -105,7 +106,8 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                                Permissions.MY_PERMISSION_CAMERA)
         } else {
-            val takePictureIntent = Intent(activity, CameraActivity::class.java)
+//            findNavController().navigate(R.id.action_global_cameraFragment)
+            val takePictureIntent = Intent(activity, ImageCaptureActivity::class.java)
             startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
         }
     }
