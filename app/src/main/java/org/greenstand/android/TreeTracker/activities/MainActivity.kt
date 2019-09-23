@@ -21,6 +21,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
+
+import kotlinx.android.synthetic.main.fragment_new_tree.*
+import kotlinx.android.synthetic.main.fragment_tree_preview.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+
 import kotlinx.coroutines.Job
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -30,7 +36,12 @@ import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+
+import org.koin.android.ext.android.getKoin
+import timber.log.Timber
+import kotlin.math.roundToInt
 import org.koin.android.ext.android.inject
+
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -139,14 +150,14 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onResume() {
         super.onResume()
 
-        if(necessaryPermissionsGranted()) {
+        if(areNecessaryPermissionsNotGranted()) {
             requestNecessaryPermissions()
         } else {
             startPeriodicUpdates()
         }
     }
 
-    private fun necessaryPermissionsGranted() : Boolean {
+    private fun areNecessaryPermissionsNotGranted() : Boolean {
         return ContextCompat.checkSelfPermission(this,
             android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this,
@@ -176,7 +187,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     @SuppressLint("MissingPermission")
     private fun startPeriodicUpdates() {
-        if (necessaryPermissionsGranted()) {
+
+        if (areNecessaryPermissionsNotGranted()) {
             Toast.makeText(this, "GPS Permissions Not Enabled", Toast.LENGTH_LONG).show()
             requestNecessaryPermissions()
             return
