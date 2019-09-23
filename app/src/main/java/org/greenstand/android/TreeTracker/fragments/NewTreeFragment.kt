@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CameraActivity
-import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -123,12 +121,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
             vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
             vm.photoPath?.let {
-
-                MainActivity.currentTreeLocation = Location("") // Just a blank location
-                userLocationManager.currentLocation?.let { location ->
-                    MainActivity.currentTreeLocation!!.latitude = location.latitude
-                    MainActivity.currentTreeLocation!!.longitude = location.longitude
-                }
 
                 setPic(it)
 

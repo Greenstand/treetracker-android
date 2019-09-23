@@ -6,12 +6,13 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
-import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -27,15 +28,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.activities.MainActivity
-import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.managers.Accuracy
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -55,11 +57,15 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
+    private lateinit var fragmentMapGpsAccuracyView : TextView
     private lateinit var clusterManager : ClusterManager<TreeMapMarker>
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fragmentMapGpsAccuracyView = view.findViewById(R.id.fragmentMapGpsAccuracy)
 
         vm.checkInStatusLiveData.observe(this, Observer<Boolean> { planterIsCheckedIn ->
             if (planterIsCheckedIn) {
@@ -84,28 +90,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                 activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
             }
         })
-    }
 
-    @SuppressLint("MissingPermission")
-    override fun onPause() {
-        super.onPause()
-
-        map?.isMyLocationEnabled = false
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        GlobalScope.launch {
-            vm.checkForValidUser()
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (mapFragment == null) {
             mapFragment = SupportMapFragment()
             childFragmentManager.beginTransaction().apply {
@@ -113,6 +98,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                 commit()
             }
         }
+
+        vm.locationUpdates.observe(this, Observer {
+            updateLocationAccuracy(it)
+        })
 
         if (!(activity as AppCompatActivity).supportActionBar!!.isShowing) {
             Timber.d("toolbar hide")
@@ -130,54 +119,33 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
         }
 
         mapFragment!!.getMapAsync(this)
+    }
 
-        if (fragmentMapGpsAccuracy != null) {
-            if (userLocationManager.currentLocation != null) {
-                if (userLocationManager.currentLocation!!.hasAccuracy() && userLocationManager.currentLocation!!.accuracy < ValueHelper.MIN_ACCURACY_DEFAULT_SETTING) {
-                    fragmentMapGpsAccuracy.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy_double_colon, MainActivity.currentLocation!!.accuracy.roundToInt())
-                    MainActivity.allowNewTreeOrUpdate = true
-                } else {
-                    fragmentMapGpsAccuracy.setTextColor(Color.RED)
-                    MainActivity.allowNewTreeOrUpdate = false
-
-                    if (userLocationManager.currentLocation!!.hasAccuracy()) {
-                        fragmentMapGpsAccuracy.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy_double_colon,
-                                                                                 MainActivity.currentLocation!!.accuracy.roundToInt())
-                    } else {
-                        fragmentMapGpsAccuracy.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy) + " N/A"
-                    }
-                }
-            } else {
-                if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                        activity!!,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                        Permissions.MY_PERMISSION_ACCESS_COURSE_LOCATION
-                    )
-                }
-                fragmentMapGpsAccuracy.setTextColor(Color.RED)
-                fragmentMapGpsAccuracy.text = requireContext().getString(R.string.gps_accuracy) + " N/A"
-                MainActivity.allowNewTreeOrUpdate = false
+    private fun updateLocationAccuracy(location: Location?) {
+        when(location.accuracyStatus()) {
+            Accuracy.GOOD -> {
+                fragmentMapGpsAccuracyView.setTextColor(Color.GREEN)
+                fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy_double_colon, location!!.accuracy.roundToInt())
             }
-
+            Accuracy.BAD -> {
+                fragmentMapGpsAccuracyView.setTextColor(Color.RED)
+                fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy_double_colon, location!!.accuracy.roundToInt())
+            }
+            Accuracy.NONE -> {
+                fragmentMapGpsAccuracyView.setTextColor(Color.RED)
+                fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy) + " N/A"
+            }
         }
     }
 
     override fun onClick(v: View) {
-        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+        v.vibrate()
 
         when (v.id) {
             R.id.addTreeButton -> {
                 Timber.d("fab click")
 
-                if (MainActivity.allowNewTreeOrUpdate || !FeatureFlags.HIGH_GPS_ACCURACY) {
+                if (userLocationManager.hasSufficientAccuracy() || !FeatureFlags.HIGH_GPS_ACCURACY) {
 
                     val currentTimestamp = System.currentTimeMillis() / 1000
                     val lastTimeStamp = sharedPreferences.getLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
@@ -210,6 +178,21 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
         }
 
         return true
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onPause() {
+        super.onPause()
+
+        map?.isMyLocationEnabled = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        GlobalScope.launch {
+            vm.checkForValidUser()
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
