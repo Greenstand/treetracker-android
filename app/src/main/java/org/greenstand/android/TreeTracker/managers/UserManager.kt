@@ -12,9 +12,6 @@ class UserManager(private val context: Context,
     val isLoggedIn: Boolean
         get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1) != -1L
 
-    val userId: Long
-        get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong("", -1)
-
     var firstName: String?
         get() = sharedPreferences.getString(FIRST_NAME_KEY, null)
         set(value) = sharedPreferences.edit().putString(FIRST_NAME_KEY, value).apply()

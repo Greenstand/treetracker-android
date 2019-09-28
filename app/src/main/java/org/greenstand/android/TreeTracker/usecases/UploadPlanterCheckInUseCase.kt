@@ -21,7 +21,7 @@ class UploadPlanterCheckInUseCase(private val dao: TreeTrackerDAO,
 
             log("Uploading planter check in image: ${planterCheckIn.localPhotoPath}")
 
-            val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = planterCheckIn.localPhotoPath,
+            val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = planterCheckIn.localPhotoPath!!,
                                                                         lat = planterCheckIn.latitude,
                                                                         long = planterCheckIn.longitude))
             planterCheckIn.photoUrl = imageUrl

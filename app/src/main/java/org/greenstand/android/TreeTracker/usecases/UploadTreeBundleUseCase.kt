@@ -13,7 +13,7 @@ data class UploadTreeBundleParams(val treeIds: List<Long>)
 class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase,
                               private val objectStorageClient: ObjectStorageClient,
                               private val createTreeRequestUseCase: CreateTreeRequestUseCase,
-                              private val removeLocalImagesWithIdsUseCase: RemoveLocalImagesWithIdsUseCase,
+                              private val removeLocalImagesWithIdsUseCase: RemoveLocalTreeImagesWithIdsUseCase,
                               private val dao: TreeTrackerDAO) : UseCase<UploadTreeBundleParams, Unit>() {
 
     fun log(msg: String) = Timber.tag("UploadTreeBundleUseCase").d(msg)
@@ -63,15 +63,12 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
             log("Bundle Upload Completed")
 
             log("Deleting all local image files for uploaded trees...")
-            removeLocalImagesWithIdsUseCase.execute(RemoveLocalImagesWithIdsParams(trees.map { it.id }))
+            removeLocalImagesWithIdsUseCase.execute(RemoveLocalTreeImagesWithIdsParams(trees.map { it.id }))
 
             log("Updating tree capture DB status to uploaded = true")
             dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
 
         }
     }
-
-
-
 }
 

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c21f528b08ab94d7edf069f5f4769f3e",
+    "identityHash": "281e18b3c059307daf8fd2c573742020",
     "entities": [
       {
         "tableName": "planter_check_in",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planter_info_id` INTEGER NOT NULL, `local_photo_path` TEXT NOT NULL, `photo_url` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`planter_info_id`) REFERENCES `planter_info`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planter_info_id` INTEGER NOT NULL, `local_photo_path` TEXT, `photo_url` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`planter_info_id`) REFERENCES `planter_info`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -24,7 +24,7 @@
             "fieldPath": "localPhotoPath",
             "columnName": "local_photo_path",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "photoUrl",
@@ -336,7 +336,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c21f528b08ab94d7edf069f5f4769f3e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"281e18b3c059307daf8fd2c573742020\")"
     ]
   }
 }

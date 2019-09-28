@@ -66,7 +66,7 @@ val appModule = module {
 
     factory { UploadTreeUseCase(get(), get(), get()) }
 
-    factory { UploadPlanterUseCase(get(), get(), get(), get(), get()) }
+    factory { UploadPlanterUseCase(get(), get(), get(), get()) }
 
     factory { SyncTreeUseCase(get(), get(), get(), get()) }
 
@@ -92,7 +92,9 @@ val appModule = module {
 
     factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get()) }
 
-    factory { RemoveLocalImagesWithIdsUseCase(get()) }
+    factory { RemoveLocalTreeImagesWithIdsUseCase(get()) }
+
+    factory { DeleteOldPlanterImagesUseCase(get(), get()) }
 
     factory<TreeUploadStrategy>(named(BundleTreeUploadStrategy.tag)) {
         BundleTreeUploadStrategy(

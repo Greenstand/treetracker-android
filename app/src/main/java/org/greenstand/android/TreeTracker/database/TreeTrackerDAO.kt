@@ -60,6 +60,10 @@ interface TreeTrackerDAO {
     @Delete
     fun deletePlanterCheckIn(planterCheckInEntity: PlanterCheckInEntity)
 
+    @Query("UPDATE planter_check_in SET local_photo_path = null WHERE _id IN (:ids)")
+    fun removePlanterCheckInLocalImagePaths(ids: List<Long>)
+
+
 
     @Query("SELECT latitude, longitude, _id as treeCaptureId FROM tree_capture")
     fun getTreeDataForMap(): List<TreeMapMarkerDbView>

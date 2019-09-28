@@ -5,8 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-inline class PlanterCheckInId(val value: Long)
-
 @Entity(
     tableName = PlanterCheckInEntity.TABLE,
     foreignKeys = [
@@ -22,7 +20,7 @@ data class PlanterCheckInEntity(
     @ColumnInfo(name = PLANTER_INFO_ID, index = true)
     var planterInfoId: Long,
     @ColumnInfo(name = LOCAL_PHOTO_PATH)
-    var localPhotoPath: String,
+    var localPhotoPath: String?,
     @ColumnInfo(name = PHOTO_URL)
     var photoUrl: String?,
     @ColumnInfo(name = LATITUDE)

@@ -27,7 +27,8 @@ class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
                 firstName = it.firstName,
                 lastName = it.lastName,
                 organization = it.organization,
-                location = "${it.latitude},${it.longitude}"
+                lat = it.latitude,
+                long = it.longitude
             )
         }
 
