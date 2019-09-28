@@ -3,7 +3,7 @@ package org.greenstand.android.TreeTracker.usecases
 import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
+import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
@@ -48,7 +48,7 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
             // Create a request object for each tree
             val treeRequestList = trees.map { tree -> createTreeRequestUseCase.execute(CreateTreeRequestParams(tree.id, tree.photoUrl!!)) }
 
-            val jsonBundle = Gson().toJson(TreeBundle(treeRequestList))
+            val jsonBundle = Gson().toJson(UploadBundle(trees = treeRequestList))
 
             log("Creating MD5 hash")
             // Create a hash ID to reference this upload bundle later
@@ -59,7 +59,7 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
             dao.updateTreeCapturesBundleIds(trees.map { it.id }, bundleId)
 
             log("Uploading Bundle...")
-            objectStorageClient.uploadTreeJsonBundle(jsonBundle, bundleId)
+            objectStorageClient.uploadBundle(jsonBundle, bundleId)
             log("Bundle Upload Completed")
 
             log("Deleting all local image files for uploaded trees...")
@@ -75,4 +75,3 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
 
 }
 
-private data class TreeBundle(val trees: List<NewTreeRequest>)

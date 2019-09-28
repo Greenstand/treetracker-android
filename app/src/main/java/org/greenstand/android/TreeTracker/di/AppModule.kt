@@ -66,13 +66,15 @@ val appModule = module {
 
     factory { UploadTreeUseCase(get(), get(), get()) }
 
-    factory { UploadPlanterUseCase(get(), get(), get()) }
+    factory { UploadPlanterUseCase(get(), get(), get(), get(), get()) }
 
     factory { SyncTreeUseCase(get(), get(), get(), get()) }
 
     factory { CreateTreeUseCase(get(), get(), get()) }
 
     factory { CreateFakeTreesUseCase(get(), get(), get(), get()) }
+
+    factory { UploadPlanterCheckInUseCase(get(), get()) }
 
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
@@ -83,6 +85,8 @@ val appModule = module {
     factory { ValidateCheckInStatusUseCase(get()) }
 
     factory { PlanterCheckInUseCase(get(), get()) }
+
+    factory { UploadPlanterInfoUseCase(get(), get()) }
 
     factory { CreateTreeRequestUseCase(get()) }
 
