@@ -10,7 +10,7 @@ class UserManager(private val context: Context,
     var authToken: String? = null
 
     val isLoggedIn: Boolean
-        get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1) != -1L
+        get() = planterCheckinId != -1L
 
     val userId: Long
         get() = context.getSharedPreferences(ValueHelper.NAME_SPACE, Context.MODE_PRIVATE).getLong("", -1)
@@ -30,15 +30,6 @@ class UserManager(private val context: Context,
     var planterCheckinId: Long?
         get() = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
         set(value) = sharedPreferences.edit().putLong(ValueHelper.PLANTER_CHECK_IN_ID, value ?: -1).apply()
-
-    fun isUserLoggedIn(): Boolean {
-        return if (isLoggedIn) {
-            true
-        } else {
-            clearUser()
-            false
-        }
-    }
 
     fun clearUser() {
         sharedPreferences.edit().apply {

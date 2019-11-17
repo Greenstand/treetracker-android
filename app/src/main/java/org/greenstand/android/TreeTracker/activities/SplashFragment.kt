@@ -33,7 +33,7 @@ class SplashFragment : Fragment() {
             whenStarted {
                 delay(ValueHelper.SPLASH_SCREEN_DURATION)
 
-                if (userManager.isUserLoggedIn()) {
+                if (userManager.isLoggedIn) {
                     findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToMapsFragment())
                 } else {
                     findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
