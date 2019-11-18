@@ -1,12 +1,11 @@
 package org.greenstand.android.TreeTracker.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Rational
-import android.util.Size
 import android.view.Surface
 import android.view.TextureView
 import android.widget.ImageButton
@@ -25,6 +24,16 @@ class ImageCaptureActivity : AppCompatActivity() {
     private lateinit var viewFinder: TextureView
     private lateinit var imageCaptureButton: ImageButton
 
+    companion object {
+        private val SELFIE_MODE = "SELFIE_MODE"
+
+        fun createIntent(context: Context, selfieMode: Boolean = true): Intent {
+            return Intent(context, ImageCaptureActivity::class.java).apply {
+                putExtra(SELFIE_MODE, selfieMode)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,8 +42,9 @@ class ImageCaptureActivity : AppCompatActivity() {
         viewFinder = findViewById(R.id.view_finder)
         imageCaptureButton = findViewById(R.id.capture_button)
 
+        val bundle = intent.extras
 
-        val captureSelfie = intent.extras?.getBoolean(ValueHelper.TAKE_SELFIE_EXTRA, false) ?: false
+        val captureSelfie = bundle?.getBoolean(SELFIE_MODE, false) ?: false
 
         viewFinder.post { startCamera(captureSelfie) }
     }
@@ -42,10 +52,13 @@ class ImageCaptureActivity : AppCompatActivity() {
     private fun startCamera(captureSelfie: Boolean) {
         val preview = setupPreview(captureSelfie)
 
+        val lensFacing = if (captureSelfie) CameraX.LensFacing.FRONT else CameraX.LensFacing.BACK
+
         // Create configuration object for the image capture use case
         val imageCaptureConfig = ImageCaptureConfig.Builder()
-            .setTargetAspectRatio(Rational(1, 1))
-            .setTargetResolution(Size(800, 800))
+            //.setTargetAspectRatio(Rational(1, 1))
+            //.setTargetResolution(Size(800, 800))
+            .setLensFacing(lensFacing)
             .setCaptureMode(ImageCapture.CaptureMode.MAX_QUALITY)
             .build()
 
@@ -80,19 +93,19 @@ class ImageCaptureActivity : AppCompatActivity() {
                                      })
         }
 
-        val imageAnalysisConfig = ImageAnalysisConfig.Builder()
-            .setTargetResolution(Size(1280, 720))
-            .setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
-            .build()
-        val imageAnalysis = ImageAnalysis(imageAnalysisConfig)
+//        val imageAnalysisConfig = ImageAnalysisConfig.Builder()
+//            //.setTargetResolution(Size(1280, 720))
+//            .setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+//            .build()
+//        val imageAnalysis = ImageAnalysis(imageAnalysisConfig)
+//
+//        imageAnalysis.setAnalyzer({ image: ImageProxy, rotationDegrees: Int ->
+//                                      val buffer = image.planes[0].buffer
+//                                      val imageByteArray = buffer.toByteArray()
+//                                      val data = cropByteArray(imageByteArray, Rect(0, 0, 500, 500))
+//                                  })
 
-        imageAnalysis.setAnalyzer({ image: ImageProxy, rotationDegrees: Int ->
-                                      val buffer = image.planes[0].buffer
-                                      val imageByteArray = buffer.toByteArray()
-                                      val data = cropByteArray(imageByteArray, Rect(0, 0, 500, 500))
-                                  })
-
-        CameraX.bindToLifecycle(this, preview, imageCapture, imageAnalysis)
+        CameraX.bindToLifecycle(this, preview, imageCapture)
     }
 
     private fun setupPreview(captureSelfie: Boolean): Preview {
@@ -100,7 +113,7 @@ class ImageCaptureActivity : AppCompatActivity() {
         val lensFacing = if (captureSelfie) CameraX.LensFacing.FRONT else CameraX.LensFacing.BACK
 
         val previewConfig = PreviewConfig.Builder()
-            .setTargetAspectRatio(Rational(1, 1))
+            //.setTargetAspectRatio(Rational(1, 1))
             //.setTargetRotation(Surface.ROTATION_0)
             //.setTargetResolution(Size(800, 800))
             .setLensFacing(lensFacing)

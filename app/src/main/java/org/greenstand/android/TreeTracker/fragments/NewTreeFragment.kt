@@ -106,8 +106,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
             requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                                Permissions.MY_PERMISSION_CAMERA)
         } else {
-//            findNavController().navigate(R.id.action_global_cameraFragment)
-            val takePictureIntent = Intent(activity, ImageCaptureActivity::class.java)
+            val takePictureIntent = ImageCaptureActivity.createIntent(requireContext())
             startActivityForResult(takePictureIntent, ValueHelper.INTENT_CAMERA)
         }
     }
