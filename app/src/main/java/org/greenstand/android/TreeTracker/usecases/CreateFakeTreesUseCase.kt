@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import android.content.Context
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -13,7 +14,9 @@ class CreateFakeTreesUseCase(private val userLocationManager: UserLocationManage
                              private val createTreeUseCase: CreateTreeUseCase) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
-        userLocationManager.currentLocation ?: return
+        if (userLocationManager.currentLocation != null && FeatureFlags.HIGH_GPS_ACCURACY) {
+            return
+        }
 
         for (i in 0..params.amount) {
 
