@@ -21,11 +21,21 @@ or alternatively using `brew cask install fastlane`
 fastlane android test
 ```
 Runs all the tests
-### android beta
+### android beta_manual
 ```
-fastlane android beta
+fastlane android beta_manual
 ```
-Submit a new Greenstand Beta Build to Crashlytics Beta
+Manually Submit a new Greenstand Beta Build to Crashlytics Beta
+### android bump_version_code_and_push
+```
+fastlane android bump_version_code_and_push
+```
+Bump version code and push
+### android beta_release
+```
+fastlane android beta_release
+```
+Job for Travis to Submit a new Greenstand Beta Build to Crashlytics Beta
 ### android justdiggit_beta
 ```
 fastlane android justdiggit_beta
