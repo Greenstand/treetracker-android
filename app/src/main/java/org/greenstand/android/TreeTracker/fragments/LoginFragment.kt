@@ -63,7 +63,7 @@ class LoginFragment : Fragment(){
             GlobalScope.launch(Dispatchers.IO) {
                 if (vm.isUserPresentOnDevice()) {
                     withContext(Dispatchers.Main) {
-                        CameraHelper.takePictureForResult(this@LoginFragment)
+                        CameraHelper.takePictureForResult(this@LoginFragment, selfie = true)
                     }
                     // User already has their info on device, skip the sign up and just update photo
                     Timber.d("User already on device, going to map")
@@ -81,7 +81,7 @@ class LoginFragment : Fragment(){
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            CameraHelper.takePictureForResult(this)
+            CameraHelper.takePictureForResult(this, selfie = true)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

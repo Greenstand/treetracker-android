@@ -104,7 +104,7 @@ class TermsPolicyFragment: Fragment() {
         }
 
         accept_terms_button.setOnClickListener {
-            CameraHelper.takePictureForResult(this)
+            CameraHelper.takePictureForResult(this, selfie = true)
         }
     }
 
