@@ -196,7 +196,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
+        map = googleMap.apply {
+            uiSettings.isMyLocationButtonEnabled = false
+            uiSettings.isMapToolbarEnabled = false
+        }
 
         clusterManager = ClusterManager(context, map)
         clusterManager.renderer = TreeClusterRenderer(requireContext(), googleMap, clusterManager)
@@ -223,7 +226,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             return
         }
         map!!.isMyLocationEnabled = true
-        map!!.uiSettings.isMyLocationButtonEnabled = false
+
 
         runBlocking {
             val trees = withContext(Dispatchers.IO) { dao.getTreeDataForMap() }
