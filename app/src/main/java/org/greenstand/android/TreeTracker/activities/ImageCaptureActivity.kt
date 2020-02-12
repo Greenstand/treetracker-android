@@ -86,23 +86,20 @@ class ImageCaptureActivity : AppCompatActivity() {
                                              Timber.d("SUCCESS")
                                              val msg = "Photo capture succeeded: ${file.absolutePath}"
                                              Timber.d("CameraXApp", msg)
-                                             val imageQuality = testFocusQuality(file)
-                                             val focusMetricTrustable = imageQuality.first
-                                             val focusMetric = imageQuality.second
+                                             val focusMetric = testFocusQuality(file)
+
                                              val data = Intent().apply {
                                                 putExtra(ValueHelper.TAKEN_IMAGE_PATH, file.absolutePath)
-                                                 // if we can't trust the focus metric, because of problems
+                                                 // if we can't trust the focus metric (it will be null), because of problems
                                                  // generating the metric, we set the quality to "good" to
                                                  // avoid false positives. Ultimately, some research would be needed
                                                  // into determining the root cause of the false positives, but
                                                  // that will be a future effort.
-                                                 if (focusMetricTrustable)
-                                                 {
-                                                     putExtra(ValueHelper.FOCUS_METRIC_VALUE, focusMetric)
-                                                 }
-                                                 else
-                                                 {
+                                                 if (focusMetric == null) {
                                                      putExtra(ValueHelper.FOCUS_METRIC_VALUE, FOCUS_THRESHOLD)
+                                                 }
+                                                 else {
+                                                     putExtra(ValueHelper.FOCUS_METRIC_VALUE, focusMetric)
                                                  }
                                              }
 
@@ -126,26 +123,25 @@ class ImageCaptureActivity : AppCompatActivity() {
         return AutoFitPreviewBuilder.build(previewConfig, viewFinder)
     }
 
-    // Return a Pair where the first is a flag that indicates whether
-    // the value is to be trusted.
-    private fun testFocusQuality(imageFile: File): Pair<Boolean,Double> {
+    // Return either the focus metric, or, in the case of an
+    // exception return null.
+    private fun testFocusQuality(imageFile: File): Double? {
         try {
             // metric only cares about luminance.
             // for memory limitations, and performance and metric consistency,
             // the image is 200 pixels wide.
             val grayImage = ImageUtils.getGrayPixelFromBitmap(imageFile.absolutePath, 200)
-            if (grayImage.isNullOrEmpty())
-            {
+            if (grayImage.isNullOrEmpty()) {
                 Timber.d("Failed to create Grayscale Image.")
-                return Pair(false,0.0)
+                return null
             }
             val metric = ImageUtils.brennersFocusMetric(grayImage)
-            return Pair(true,metric)
+            return metric
         } catch (e: java.lang.Exception) {
             Timber.d("Unable to get focus metric.")
             Timber.d(e.message)
         }
-        // on an error, we return Pair of false (not valid) and the value.
-        return Pair(false,0.0)
+        // on an error, we return null.
+        return null
     }
 }

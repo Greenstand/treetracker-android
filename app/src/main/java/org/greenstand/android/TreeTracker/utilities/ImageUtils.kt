@@ -150,9 +150,6 @@ object ImageUtils {
         BitmapFactory.decodeFile(imagePath, bmOptions)
         val imageWidth = bmOptions.outWidth
 
-
-
-
         var sampleSize = Math.ceil((imageWidth.toFloat() / scaleToWidth.toFloat()).toDouble()).toInt()
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
