@@ -16,6 +16,7 @@ import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
 import timber.log.Timber
 import java.io.File
+import java.lang.Exception
 
 class ImageCaptureActivity : AppCompatActivity() {
 
@@ -86,9 +87,8 @@ class ImageCaptureActivity : AppCompatActivity() {
                                              val msg = "Photo capture succeeded: ${file.absolutePath}"
                                              Timber.d("CameraXApp", msg)
                                              val imageQuality = testFocusQuality(file)
-                                             val focusMetricTrustable = imageQuality.first;
-                                             val focusMetric = imageQuality.second;
-
+                                             val focusMetricTrustable = imageQuality.first
+                                             val focusMetric = imageQuality.second
                                              val data = Intent().apply {
                                                 putExtra(ValueHelper.TAKEN_IMAGE_PATH, file.absolutePath)
                                                  // if we can't trust the focus metric, because of problems
@@ -136,14 +136,16 @@ class ImageCaptureActivity : AppCompatActivity() {
             val grayImage = ImageUtils.getGrayPixelFromBitmap(imageFile.absolutePath, 200)
             if (grayImage.isNullOrEmpty())
             {
+                Timber.d("Failed to create Grayscale Image.")
                 return Pair(false,0.0)
             }
             val metric = ImageUtils.brennersFocusMetric(grayImage)
             return Pair(true,metric)
         } catch (e: java.lang.Exception) {
-            println(e)
+            Timber.d("Unable to get focus metric.")
+            Timber.d(e.message)
         }
-        // on an error, we return pair of false (not valid) and the value.
-        return Pair(false,0.0);
+        // on an error, we return Pair of false (not valid) and the value.
+        return Pair(false,0.0)
     }
 }
