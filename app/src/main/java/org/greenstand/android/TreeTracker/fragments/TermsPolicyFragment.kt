@@ -110,7 +110,7 @@ class TermsPolicyFragment: Fragment() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            CameraHelper.takePictureForResult(this)
+            CameraHelper.takePictureForResult(this, selfie = true)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

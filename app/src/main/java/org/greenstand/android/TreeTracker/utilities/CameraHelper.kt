@@ -9,7 +9,7 @@ import org.greenstand.android.TreeTracker.application.Permissions
 
 object CameraHelper {
 
-    fun takePictureForResult(fragment: Fragment, selfie: Boolean = false) {
+    fun takePictureForResult(fragment: Fragment, selfie: Boolean) {
         if (ActivityCompat.checkSelfPermission(fragment.requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
             ActivityCompat.checkSelfPermission(fragment.requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
