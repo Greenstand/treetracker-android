@@ -172,6 +172,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             val didSuceed = withContext(Dispatchers.IO) { vm.createFakeTrees() }
             if (didSuceed) {
                 Toast.makeText(activity, "500 trees added", Toast.LENGTH_LONG).show()
+                renderTrees()
             } else {
                 Toast.makeText(activity, "Error adding test trees", Toast.LENGTH_LONG).show()
             }
@@ -196,7 +197,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
+        map = googleMap.apply {
+            uiSettings.isMyLocationButtonEnabled = false
+            uiSettings.isMapToolbarEnabled = false
+        }
 
         clusterManager = ClusterManager(context, map)
         clusterManager.renderer = TreeClusterRenderer(requireContext(), googleMap, clusterManager)
@@ -223,10 +227,17 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             return
         }
         map!!.isMyLocationEnabled = true
-        map!!.uiSettings.isMyLocationButtonEnabled = false
 
+
+        map!!.mapType = GoogleMap.MAP_TYPE_NORMAL
+        renderTrees()
+    }
+
+    private fun renderTrees() {
         runBlocking {
             val trees = withContext(Dispatchers.IO) { dao.getTreeDataForMap() }
+
+            clusterManager.clearItems()
 
             if (trees.isNotEmpty()) {
                 Timber.d("Adding markers")
@@ -241,8 +252,5 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             }
 
         }
-
-
-        map!!.mapType = GoogleMap.MAP_TYPE_NORMAL
     }
 }

@@ -41,10 +41,7 @@ class ImageCaptureActivity : AppCompatActivity() {
         viewFinder = findViewById(R.id.view_finder)
         imageCaptureButton = findViewById(R.id.capture_button)
 
-        val bundle = intent.extras
-
-        val captureSelfie = bundle?.getBoolean(SELFIE_MODE, false) ?: false
-
+        val captureSelfie = intent.extras?.getBoolean(SELFIE_MODE, false) ?: false
 
         if (captureSelfie) {
             toolbarTitle.text= getString(R.string.take_a_selfie)
