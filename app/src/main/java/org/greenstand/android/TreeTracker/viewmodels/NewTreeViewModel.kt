@@ -57,8 +57,8 @@ class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
             navigateToTreeHeight.postValue(newTree)
         } else {
             saveTree(newTree)
+            onTreeSaved.postValue(Unit)
             navigateBack.postValue(Unit)
-            CustomToast.showToast("Tree saved")
         }
     }
 
