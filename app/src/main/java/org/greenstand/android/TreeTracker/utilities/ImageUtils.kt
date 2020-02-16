@@ -150,9 +150,6 @@ object ImageUtils {
         BitmapFactory.decodeFile(imagePath, bmOptions)
         val imageWidth = bmOptions.outWidth
 
-
-
-
         var sampleSize = Math.ceil((imageWidth.toFloat() / scaleToWidth.toFloat()).toDouble()).toInt()
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
@@ -165,7 +162,13 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
         bmOptions.inJustDecodeBounds = false
 
-        val bitmap = BitmapFactory.decodeFile(imagePath, bmOptions) ?: return null
+        val bitmap = BitmapFactory.decodeFile(imagePath, bmOptions)
+        if (bitmap == null)
+        {
+            Timber.d("Unable to decode bitmap 1")
+            return null
+        }
+
 
         val rows = bitmap.height
         val cols = bitmap.width
