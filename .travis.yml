@@ -8,6 +8,7 @@ android:
 before_install:
 - openssl aes-256-cbc -K $encrypted_0a37c10e9e19_key -iv $encrypted_0a37c10e9e19_iv
   -in secrets.tar.enc -out secrets.tar -d
+- tar xvf secrets.tar
 install:
 - bundle install
 script:
