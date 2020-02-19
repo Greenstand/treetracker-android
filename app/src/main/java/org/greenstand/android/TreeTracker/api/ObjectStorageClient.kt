@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.api
 
 import android.annotation.SuppressLint
+import android.content.Context
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.ClientConfiguration
@@ -24,9 +25,12 @@ import java.util.UUID
 import com.amazonaws.regions.Region
 import com.amazonaws.services.s3.AmazonS3Client
 import timber.log.Timber
+import com.amazonaws.auth.CognitoCachingCredentialsProvider
+import com.amazonaws.mobile.config.AWSConfiguration
+import com.amazonaws.regions.Regions
 
 
-class ObjectStorageClient private constructor() {
+class ObjectStorageClient private constructor(applicationContext: Context) {
 
     private var s3Client: AmazonS3? = null
 
@@ -34,8 +38,13 @@ class ObjectStorageClient private constructor() {
 
     init {
 
-        val basicAWSCredentials = BasicAWSCredentials(BuildConfig.OBJECT_STORAGE_ACCESS_KEY, BuildConfig.OBJECT_STORAGE_SECRET_KEY)
-        val credentialsProvider = StaticCredentialsProvider(basicAWSCredentials)
+
+        Timber.d("Production identity pool ID is hardcoded")
+        val credentialsProvider = CognitoCachingCredentialsProvider(
+            applicationContext,
+            BuildConfig.OBJECT_STORAGE_IDENTITY_POOL_ID,
+            Regions.US_EAST_2 // Region
+        )
 
         if(BuildConfig.USE_AWS_S3) {
 
@@ -131,10 +140,11 @@ class ObjectStorageClient private constructor() {
 
         private var sInstance: ObjectStorageClient? = null
 
+        fun init(context : Context) {
+            sInstance = ObjectStorageClient(context)
+        }
+
         fun instance(): ObjectStorageClient {
-            if (sInstance == null) {
-                sInstance = ObjectStorageClient()
-            }
             return sInstance!!
         }
     }
