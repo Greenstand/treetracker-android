@@ -81,7 +81,7 @@ platform :android do
 
     git_commit(path: "./app/build.gradle", message: "Release to Play Store: Version Bump to " + versionReleased.to_s)
 
-    add_git_tag()
+ #   add_git_tag()
 
     gradle(task: "clean assembleGreenstandRelease")
     upload_to_play_store
