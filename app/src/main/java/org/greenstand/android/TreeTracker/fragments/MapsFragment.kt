@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -140,13 +141,14 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
     override fun onClick(v: View) {
         v.vibrate()
-
         when (v.id) {
             R.id.addTreeButton -> {
                 Timber.d("fab click")
 
                 if (userLocationManager.hasSufficientAccuracy() || !FeatureFlags.HIGH_GPS_ACCURACY) {
-
+                    // Disable the addTreeButton below to avoid triggering the onClick listener
+                    // more than one once.
+                    addTreeButton.isEnabled = false
                     val currentTimestamp = System.currentTimeMillis() / 1000
                     val lastTimeStamp = sharedPreferences.getLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
                     if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
