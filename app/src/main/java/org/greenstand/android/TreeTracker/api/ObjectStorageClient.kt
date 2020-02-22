@@ -39,11 +39,13 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
     init {
 
 
+        val region = Regions.fromName(BuildConfig.OBJECT_STORAGE_IDENTITY_REGION)
+
         Timber.d("Production identity pool ID is hardcoded")
         val credentialsProvider = CognitoCachingCredentialsProvider(
             applicationContext,
             BuildConfig.OBJECT_STORAGE_IDENTITY_POOL_ID,
-            Regions.US_EAST_2 // Region
+            region
         )
 
         if(BuildConfig.USE_AWS_S3) {
