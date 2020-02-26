@@ -7,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.google.gms:google-services:4.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
@@ -30,12 +30,8 @@ allprojects {
     ext {
         androidSupportVersion = '1.0.0-beta01'
         retrofit2Version = '2.6.0'
-        dos_access_key = "configure in treetracker.keys.properties"
-        dos_secret_key = "configure in treetracker.keys.properties"
-        s3_access_key = "configure in treetracker.keys.properties"
-        s3_secret_key = "configure in treetracker.keys.properties"
-        s3_production_access_key = "configure in treetracker.keys.properties"
-        s3_production_secret_key = "configure in treetracker.keys.properties"
+        s3_production_identity_pool_id = "configure in treetracker.keys.properties"
+        s3_production_identity_region = "configure in treetracker.keys.properties"
         treetracker_client_id = "configure in treetracker.keys.properties"
         treetracker_client_secret = "configure in treetracker.keys.properties"
 

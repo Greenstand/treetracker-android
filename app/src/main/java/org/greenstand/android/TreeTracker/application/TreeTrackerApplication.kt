@@ -6,6 +6,7 @@ import androidx.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
 import org.greenstand.android.TreeTracker.di.networkModule
 import org.greenstand.android.TreeTracker.di.roomModule
@@ -21,6 +22,8 @@ class TreeTrackerApplication : Application() {
         appContext = applicationContext
 
         super.onCreate()
+
+        ObjectStorageClient.init(applicationContext)
 
         startKoin {
             androidLogger()
