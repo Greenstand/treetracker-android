@@ -9,6 +9,7 @@ buildscript {
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -50,7 +51,7 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 97
+        versionCode 99
         versionName "1.2.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -95,6 +96,7 @@ android {
 //            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -110,6 +112,7 @@ android {
 //            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
             resValue "string", "app_name", "Tree Tracker Prerelease"
         }
 
