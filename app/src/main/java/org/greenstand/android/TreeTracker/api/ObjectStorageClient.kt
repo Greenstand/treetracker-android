@@ -21,12 +21,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Date
 import java.util.UUID
-import com.amazonaws.regions.Region
-import com.amazonaws.services.s3.AmazonS3Client
 import timber.log.Timber
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobile.config.AWSConfiguration
-import com.amazonaws.regions.Regions
 
 
 class ObjectStorageClient private constructor(applicationContext: Context) {
@@ -35,10 +32,8 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
 
     init {
 
-
         val region = Regions.fromName(BuildConfig.OBJECT_STORAGE_IDENTITY_REGION)
 
-        Timber.d("Production identity pool ID is hardcoded")
         val credentialsProvider = CognitoCachingCredentialsProvider(
             applicationContext,
             BuildConfig.OBJECT_STORAGE_IDENTITY_POOL_ID,
@@ -167,11 +162,11 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
         private var INSTANCE: ObjectStorageClient? = null
 
         fun init(context : Context) {
-            sInstance = ObjectStorageClient(context)
+            INSTANCE = ObjectStorageClient(context)
         }
 
         fun instance(): ObjectStorageClient {
-            return sInstance!!
+            return INSTANCE!!
         }
     }
 

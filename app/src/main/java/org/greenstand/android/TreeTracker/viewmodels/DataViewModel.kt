@@ -33,7 +33,7 @@ class DataViewModel(private val dao: TreeTrackerDAO,
         if (startedSyncing) {
             updateTimerJob = viewModelScope.launch {
                 while(true) {
-                    delay(1000)
+                    delay(750)
                     updateData()
                 }
             }

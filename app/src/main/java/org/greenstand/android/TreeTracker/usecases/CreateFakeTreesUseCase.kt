@@ -14,7 +14,7 @@ class CreateFakeTreesUseCase(private val userLocationManager: UserLocationManage
                              private val createTreeUseCase: CreateTreeUseCase) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
-        if (userLocationManager.currentLocation != null && FeatureFlags.HIGH_GPS_ACCURACY) {
+        if (userLocationManager.currentLocation == null && FeatureFlags.HIGH_GPS_ACCURACY) {
             return
         }
 

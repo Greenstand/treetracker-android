@@ -57,7 +57,7 @@ android {
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
-        buildConfigField "String", "OBJECT_STORAGE_IDENTITY_REGION", "\"${s3_production_identity_region}\""
+        buildConfigField "String", "OBJECT_STORAGE_IDENTITY_REGION", '"eu-central-1"'
         buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
         buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
         buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
@@ -99,10 +99,10 @@ android {
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
-           // buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
-//            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
-//            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
-//            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
@@ -130,10 +130,9 @@ android {
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
-           // buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
-           // buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
-           // buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
-           // buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-test-batch-uploads"'
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-test-batch-uploads"'
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
