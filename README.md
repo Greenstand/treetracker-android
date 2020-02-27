@@ -65,8 +65,11 @@ Running without a `script` custom parameter will result in a standard build to b
 Fastlane must be installed using
 bundle install --path vendor/bundle
 fastlane install_plugins
+firebase login
 
 otherwise the firebase plugin will not work
+
+
 
 &nbsp;
 &nbsp;
