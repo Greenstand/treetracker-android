@@ -28,15 +28,6 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Manually Submit a new Greenstand Beta Build to Crashlytics Beta"
-  lane :beta_manual do
-  
-    bump_version_code_and_push()
-
-    beta_release()
-  
-  end
-
   desc "Bump version code and push"
   lane :bump_version_code_and_push do
 
@@ -45,6 +36,19 @@ platform :android do
     git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
     push_to_git_remote()
+
+  end
+
+  desc "Release a build on Firebase Beta"
+  lane :firebase_beta do
+    
+    gradle(task: "clean assembleGreenstandDebug")
+
+    firebase_app_distribution(
+        app: "1:422699885542:android:993c29134938ce4d",
+        testers: "zaven@greenstand.com, jay@greenstand.com",
+        release_notes: "A new release!"
+      )
 
   end
 

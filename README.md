@@ -60,6 +60,14 @@ script:
 
 Running without a `script` custom parameter will result in a standard build to be run without any artifacts deployed.
 
+### Fastlane
+
+Fastlane must be installed using
+bundle install --path vendor/bundle
+fastlane install_plugins
+
+otherwise the firebase plugin will not work
+
 &nbsp;
 &nbsp;
 
