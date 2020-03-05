@@ -96,7 +96,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            resValue "string", "app_name", "Tree Tracker"
+            resValue "string", "app_name", "Treetracker"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
@@ -127,7 +127,7 @@ android {
 
         debug {
             applicationIdSuffix ".debug"
-            resValue "string", "app_name", "Tree Tracker(debug)"
+            resValue "string", "app_name", "Treetracker(debug)"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
@@ -140,7 +140,7 @@ android {
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
-            resValue "string", "app_name", "Tree Tracker(dev)"
+            resValue "string", "app_name", "Treetracker(dev)"
             buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-dev-images"'
