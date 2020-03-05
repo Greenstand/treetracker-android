@@ -9,6 +9,7 @@ buildscript {
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -50,13 +51,16 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 97
-        versionName "1.2.7"
+        versionCode 101
+        versionName "1.2.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
-        buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${dos_access_key}\""
-        buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${dos_secret_key}\""
+        buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
+        buildConfigField "String", "OBJECT_STORAGE_IDENTITY_REGION", '"eu-central-1"'
+        buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+        buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
+        buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
         buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
         buildConfigField 'Boolean', 'TREE_HEIGHT_FEATURE_ENABLED', "false"
@@ -95,23 +99,38 @@ android {
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
-            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${s3_production_access_key}\""
-            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${s3_production_secret_key}\""
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+
+        prerelease {
+            initWith(debug)
+            applicationIdSuffix ".prerelease"
+            buildConfigField "Boolean", "GPS_ACCURACY", "false"
+            buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
+            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
+            resValue "string", "app_name", "Tree Tracker Prerelease"
+        }
+
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
-            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${s3_access_key}\""
-            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${s3_secret_key}\""
-            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-test-batch-uploads"'
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
@@ -130,20 +149,7 @@ android {
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
 
-        prerelease {
-            initWith(debug)
-            applicationIdSuffix ".prerelease"
-            buildConfigField "Boolean", "GPS_ACCURACY", "false"
-            buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
-            buildConfigField "String", "OBJECT_STORAGE_ACCESS_KEY", "\"${s3_production_access_key}\""
-            buildConfigField "String", "OBJECT_STORAGE_SECRET_KEY", "\"${s3_production_secret_key}\""
-            buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
-            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
-            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
-            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
-            buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
-            resValue "string", "app_name", "Tree Tracker Prerelease"
-        }
+
 
     }
 
@@ -202,8 +208,8 @@ dependencies {
     //implementation 'com.amazonaws:aws-java-sdk:1.11.584'
     // 2.0: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-project-gradle.html
     // android s3 sdk does not support transfer acceleration
-    implementation 'com.amazonaws:aws-android-sdk-core:2.13.6'
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.13.6'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.16.8'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.16.8'
 
     implementation 'org.koin:koin-android-viewmodel:2.0.0-GA'
 

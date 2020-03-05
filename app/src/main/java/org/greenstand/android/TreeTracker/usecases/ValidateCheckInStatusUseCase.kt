@@ -20,7 +20,7 @@ class ValidateCheckInStatusUseCase constructor(private val sharedPreferences: Sh
     }
 
     companion object {
-        private const val CHECK_IN_TIMEOUT = 60 * 60 * 2 // 2 hours
+        private const val CHECK_IN_TIMEOUT = 60 * 60 * 24 * 14 // 2 weeks
     }
 
 }

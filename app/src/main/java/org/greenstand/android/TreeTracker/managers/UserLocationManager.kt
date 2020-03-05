@@ -10,6 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ReceiveChannel
+import timber.log.Timber
 
 class UserLocationManager(private val locationManager: LocationManager,
                           private val context: Context) {
@@ -37,12 +40,16 @@ class UserLocationManager(private val locationManager: LocationManager,
         }
 
         override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+            Timber.d("Location status changed %s %d", p0, p1)
+
         }
 
         override fun onProviderEnabled(p0: String?) {
+            Timber.d("Provider enabled %s", p0)
         }
 
         override fun onProviderDisabled(p0: String?) {
+            Timber.d("Provider disabled %s", p0)
         }
     }
 

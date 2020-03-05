@@ -26,14 +26,14 @@ class DataViewModel(private val dao: TreeTrackerDAO,
     val isSyncing: LiveData<Boolean> = isSyncingLiveData
 
 
-    var _isSyncing: Boolean? by Delegates.observable<Boolean?>(null) { _, _, startedSyncing ->
+    private var _isSyncing: Boolean? by Delegates.observable<Boolean?>(null) { _, _, startedSyncing ->
 
         startedSyncing ?: return@observable
 
         if (startedSyncing) {
             updateTimerJob = viewModelScope.launch {
                 while(true) {
-                    delay(1000)
+                    delay(750)
                     updateData()
                 }
             }
@@ -109,8 +109,8 @@ class DataViewModel(private val dao: TreeTrackerDAO,
     private suspend fun loadTreeInfo(): TreeData {
         return withContext(Dispatchers.IO) {
 
-            val syncedTreeCount = dao.getUploadedTreeCaptureCount()
-            val notSyncedTreeCount = dao.getNonUploadedTreeCaptureCount()
+            val syncedTreeCount = dao.getUploadedTreeImageCount()
+            val notSyncedTreeCount = dao.getNonUploadedTreeImageCount()
             val treeCount = syncedTreeCount + notSyncedTreeCount
 
             TreeData(totalTrees = treeCount,
