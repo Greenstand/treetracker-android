@@ -94,6 +94,7 @@ android {
     }
 
     buildTypes {
+
         release {
             minifyEnabled true
             resValue "string", "app_name", "Treetracker"
@@ -109,10 +110,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
-
         prerelease {
             initWith(debug)
             applicationIdSuffix ".prerelease"
+            resValue "string", "app_name", "Treetracker Prerelease"
             buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
@@ -122,7 +123,6 @@ android {
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
-            resValue "string", "app_name", "Tree Tracker Prerelease"
         }
 
         debug {
@@ -137,6 +137,7 @@ android {
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
+
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
@@ -148,8 +149,6 @@ android {
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
-
-
 
     }
 
