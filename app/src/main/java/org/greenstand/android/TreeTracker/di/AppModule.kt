@@ -30,7 +30,7 @@ val appModule = module {
 
     viewModel { TreeHeightViewModel(get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get(), get()) }
+    viewModel { DataViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { MapViewModel(get(), get(), get(), get(), get()) }
 

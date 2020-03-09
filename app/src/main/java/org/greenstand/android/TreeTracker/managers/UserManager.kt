@@ -27,9 +27,12 @@ class UserManager(private val context: Context,
         get() = sharedPreferences.getString(ORG_NAME_KEY, null)
         set(value) = sharedPreferences.edit().putString(ORG_NAME_KEY, value).apply()
 
-    var planterCheckinId: Long?
+    var planterCheckinId: Long
         get() = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
         set(value) = sharedPreferences.edit().putLong(ValueHelper.PLANTER_CHECK_IN_ID, value ?: -1).apply()
+
+    val planterInfoId: Long
+        get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1)
 
     fun clearUser() {
         sharedPreferences.edit().apply {

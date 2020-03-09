@@ -1,132 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				xmlns:tools="http://schemas.android.com/tools"
-				android:id="@+id/fragment_data"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:background="@color/background"
-				android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_data"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightGrey"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/fragment_data_logo"
-		android:layout_width="@dimen/logo_width"
-		android:layout_height="157dp"
-		android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-		tools:src="@drawable/logo"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/logo"
-		android:layout_marginTop="@dimen/twenty_eight_dp"
-		/>
-
-    <LinearLayout
-        android:id="@+id/fragment_data_total_trees"
+    <TextView
+        android:id="@+id/fragment_data_title"
+        style="@style/TextTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_data_logo"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/padding_forty_eight"
-        android:paddingTop="@dimen/padding_five"
-        android:paddingRight="@dimen/padding_forty_eight"
-        android:paddingBottom="@dimen/padding_five">
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/tree_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/height_forty"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="3"
-            android:text="@string/total_trees"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
-
-        <TextView
-            android:id="@+id/fragmentDataTotalTreesValue"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/height_forty"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/fragment_data_located"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/tree_data_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_data_total_trees"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/padding_forty_eight"
-        android:paddingTop="@dimen/padding_five"
-        android:paddingRight="@dimen/padding_forty_eight"
-        android:paddingBottom="@dimen/padding_five">
+        android:layout_below="@+id/fragment_data_title"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_data_title">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/height_forty"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="3"
-            android:text="@string/uploaded"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tree_data_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/sixteen_dp"
+            android:paddingTop="@dimen/padding_five"
+            android:paddingRight="@dimen/sixteen_dp"
+            android:paddingBottom="@dimen/padding_five">
 
-        <TextView
-            android:id="@+id/fragmentDataLocatedValue"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/height_forty"
-            android:layout_marginTop="@dimen/margin_twelve"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_seventeen" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/tree_data_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="243dp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/fragmentDataUploadedLabel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:text="@string/uploaded"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/fragment_data_to_sync"
+            <TextView
+                android:id="@+id/fragmentDataUploaded"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:textColor="@color/black"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/tree_data_guideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/fragmentDataWaitingUploadLabel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:text="@string/fragment_data_waiting_to_upload_label"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/fragmentDataUploadedLabel"
+                app:layout_constraintTop_toBottomOf="@+id/fragmentDataUploadedLabel" />
+
+            <TextView
+                android:id="@+id/fragmentDataWaitingUpload"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:textColor="@color/black"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/fragmentDataUploaded"
+                app:layout_constraintTop_toBottomOf="@+id/fragmentDataUploaded" />
+
+            <TextView
+                android:id="@+id/fragmentDataValidatedTreesLabel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:text="@string/fragment_data_validated_label"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/fragmentDataWaitingUploadLabel"
+                app:layout_constraintTop_toBottomOf="@+id/fragmentDataWaitingUploadLabel" />
+
+            <TextView
+                android:id="@+id/fragmentDataValidatedTrees"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:textColor="@color/black"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/fragmentDataWaitingUpload"
+                app:layout_constraintTop_toBottomOf="@+id/fragmentDataWaitingUpload" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/fragment_data_payments_label"
+        style="@style/TextTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_data_located"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/padding_forty_eight"
-        android:paddingTop="@dimen/padding_five"
-        android:paddingRight="@dimen/padding_forty_eight"
-        android:paddingBottom="@dimen/padding_five">
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/payment_label"
+        app:layout_constraintEnd_toEndOf="@id/tree_data_card_view"
+        app:layout_constraintStart_toStartOf="@id/tree_data_card_view"
+        app:layout_constraintTop_toBottomOf="@+id/tree_data_card_view" />
 
-       	<TextView
-	    	android:layout_width="0dp"
-	        android:layout_height="@dimen/height_forty"
-	        android:textSize="@dimen/text_size_seventeen"
-	        android:layout_weight="3"
-	        android:textColor="@color/black"
-	        android:layout_marginTop="@dimen/margin_twenty"
-	        android:text="@string/to_sync"
-        />
-       	
-       	<TextView
-       	    android:id="@+id/fragmentDataToSyncValue"
-	    	android:layout_width="0dp"
-	        android:layout_height="@dimen/height_forty"
-	        android:textSize="@dimen/text_size_seventeen"
-	        android:layout_weight="1"
-	        android:gravity="right"
-	        android:textColor="@color/black"
-	        android:layout_marginTop="@dimen/margin_twenty"
-        />
-	    
-	</LinearLayout>	        
+    <androidx.cardview.widget.CardView
+        android:id="@+id/payment_data_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tree_data_card_view"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_data_payments_label">
 
-	    <Button
-	        android:id="@+id/fragmentDataSyncButton"
-	    	android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_margin="@dimen/activity_vertical_margin"
-	        android:text="@string/sync"
-			style="@style/NewButtonStyle"
-	        android:layout_alignParentBottom="true"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/payment_data_layout"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginStart="16dp"
+            android:paddingLeft="@dimen/sixteen_dp"
+            android:paddingTop="@dimen/padding_five"
+            android:paddingRight="@dimen/sixteen_dp"
+            android:paddingBottom="@dimen/padding_five">
 
-      
-</RelativeLayout>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/paymentDataGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="243dp" />
+
+            <TextView
+                android:id="@+id/paymentPendingLabel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:text="@string/pending_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/paymentPendingValue"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:textColor="@color/black"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/paymentDataGuideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/totalPaidLabel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:text="@string/total_paid_label"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/paymentPendingLabel"
+                app:layout_constraintTop_toBottomOf="@+id/paymentPendingLabel" />
+
+            <TextView
+                android:id="@+id/totalPaidValue"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_forty"
+                android:layout_marginTop="16dp"
+                android:layout_weight="3"
+                android:textColor="@color/black"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/text_size_seventeen"
+                app:layout_constraintStart_toStartOf="@+id/paymentDataGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/paymentPendingValue" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <ImageButton
+        android:id="@+id/fragmentDataSyncButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:layout_marginStart="307dp"
+        android:layout_marginEnd="307dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/circle_upload_button"
+        android:elevation="20dp"
+        android:foregroundGravity="center"
+        android:src="@drawable/cloud_backup_40"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 

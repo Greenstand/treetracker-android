@@ -2,7 +2,10 @@ package org.greenstand.android.TreeTracker.fragments
 
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -44,10 +47,13 @@ class DataFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.treeData.observe(this, Observer { treeData ->
-            fragmentDataTotalTreesValue.text = treeData.totalTrees.toString()
-            fragmentDataLocatedValue.text = treeData.treesSynced.toString()
-            fragmentDataToSyncValue.text = treeData.treesToSync.toString()
+        viewModel.planterAccountData.observe(this, Observer { planterAccountData ->
+            val treeData = planterAccountData.treeData
+            fragmentDataUploaded.text = treeData.uploadedCount.toString()
+            fragmentDataWaitingUpload.text = treeData.waitingToUploadCount.toString()
+            fragmentDataValidatedTrees.text = treeData.validatedCount.toString()
+            paymentPendingValue.text = planterAccountData.paymentAmountPending.toString()
+            totalPaidValue.text = planterAccountData.totalAmountPaid.toString()
         })
 
         viewModel.toasts.observe(this, Observer {
@@ -55,14 +61,11 @@ class DataFragment : Fragment() {
         })
 
         viewModel.isSyncing.observe(this, Observer { isSyncing ->
-            val textId = if (isSyncing) {
-                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                R.string.stop
+            if (isSyncing) {
+                fragmentDataSyncButton.setImageResource(R.drawable.stop_40dp)
             } else {
-                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                R.string.sync
+                fragmentDataSyncButton.setImageResource(R.drawable.cloud_backup_40)
             }
-            fragmentDataSyncButton.setText(textId)
         })
 
         fragmentDataSyncButton.setOnClickListener {
