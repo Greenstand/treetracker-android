@@ -29,11 +29,20 @@ interface TreeTrackerDAO {
     @Delete
     fun deletePlanterInfo(planterInfoEntity: PlanterInfoEntity)
 
+    @Query("UPDATE planter_info SET bundle_id = :bundleId WHERE _id IN (:ids)")
+    fun updatePlanterInfoBundleIds(ids: List<Long>, bundleId: String)
+
+    @Query("UPDATE planter_info SET uploaded = :isUploaded WHERE _id IN (:ids)")
+    fun updatePlanterInfoUploadStatus(ids: List<Long>, isUploaded: Boolean)
 
 
     @Transaction
     @Query("SELECT * FROM planter_check_in WHERE photo_url IS null AND planter_info_id = :planterInfoId")
     fun getPlanterCheckInsToUpload(planterInfoId: Long): List<PlanterCheckInEntity>
+
+    @Transaction
+    @Query("SELECT * FROM planter_check_in WHERE _id IN (:planterCheckInIds)")
+    fun getPlanterCheckInsById(planterCheckInIds: List<Long>): List<PlanterCheckInEntity>
 
     @Query("SELECT * FROM planter_check_in")
     fun getAllPlanterCheckIn(): List<PlanterCheckInEntity>
@@ -49,6 +58,10 @@ interface TreeTrackerDAO {
 
     @Delete
     fun deletePlanterCheckIn(planterCheckInEntity: PlanterCheckInEntity)
+
+    @Query("UPDATE planter_check_in SET local_photo_path = null WHERE _id IN (:ids)")
+    fun removePlanterCheckInLocalImagePaths(ids: List<Long>)
+
 
 
     @Query("SELECT latitude, longitude, _id as treeCaptureId FROM tree_capture")

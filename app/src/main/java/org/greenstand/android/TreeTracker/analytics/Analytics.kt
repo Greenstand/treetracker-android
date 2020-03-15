@@ -48,7 +48,7 @@ class Analytics(private val userManager: UserManager,
 
     fun updateUserData() {
         with(firebaseAnalytics) {
-            setUserId(userManager.userId.toString())
+            setUserId(userManager.planterCheckinId.toString())
             setUserProperty("first_name", userManager.firstName)
             setUserProperty("last_name", userManager.lastName)
             setUserProperty("organization", userManager.organization)

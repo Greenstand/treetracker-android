@@ -52,6 +52,8 @@ class CreatePlanterCheckInUseCase(private val sharedPreferences: SharedPreferenc
 
         analytics.userCheckedIn()
 
+        userManager.planterCheckinId = params.planterInfoId
+
         planterCheckInId
     }
 }
