@@ -13,7 +13,6 @@ import org.greenstand.android.TreeTracker.managers.UserManager
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
-
 class DataViewModel(private val userManager: UserManager,
                     private val dao: TreeTrackerDAO,
                     private val workManager: WorkManager,
@@ -86,8 +85,9 @@ class DataViewModel(private val userManager: UserManager,
 
     fun sync() {
         viewModelScope.launch {
-            val treeData = loadPlanterAccountData().treeData
-            val totalCount = treeData.uploadedCount + treeData.waitingToUploadCount
+            val uploadedCount = loadPlanterAccountData().uploadedCount
+            val waitingToUploadCount = loadPlanterAccountData().waitingToUploadCount
+            val totalCount = uploadedCount + waitingToUploadCount
             if (_isSyncing == null || _isSyncing == false) {
                 val treesToSync =
                     withContext(Dispatchers.IO) { dao.getNonUploadedTreeCaptureCount() }
@@ -98,14 +98,14 @@ class DataViewModel(private val userManager: UserManager,
                     isSyncingLiveData.value = true
                     startDataSynchronization()
                 }
-                analytics.syncButtonTapped(totalCount, treeData.uploadedCount, treeData.waitingToUploadCount)
+                analytics.syncButtonTapped(totalCount, uploadedCount, waitingToUploadCount)
             } else {
                 updateTimerJob?.cancel()
                 updateTimerJob = null
                 workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
                 syncNotification.removeNotification()
                 isSyncingLiveData.value = false
-                analytics.stopButtonTapped(totalCount, treeData.uploadedCount, treeData.waitingToUploadCount)
+                analytics.stopButtonTapped(totalCount, uploadedCount, waitingToUploadCount)
             }
         }
     }
@@ -118,11 +118,10 @@ class DataViewModel(private val userManager: UserManager,
             val totalAmountPaid = planterAccountEntity?.totalAmountPaid ?: 0.0
             val paymentAmountPending = planterAccountEntity?.paymentAmountPending ?: 0.0
             val waitingToUploadCount = dao.getNonUploadedTreeImageCount()
-            val treeData = TreeData(uploadedCount = uploadedTreeCount,
-                     waitingToUploadCount = waitingToUploadCount,
-                     validatedCount = validatedTreeCount)
             PlanterAccountData(
-                treeData = treeData,
+                uploadedCount = uploadedTreeCount,
+                waitingToUploadCount = waitingToUploadCount,
+                validatedCount = validatedTreeCount,
                 totalAmountPaid = totalAmountPaid,
                 paymentAmountPending = paymentAmountPending
             )
@@ -131,9 +130,7 @@ class DataViewModel(private val userManager: UserManager,
 
     private fun updateData() {
         viewModelScope.launch(Dispatchers.IO) {
-
             val treeInfo = loadPlanterAccountData()
-
             withContext(Dispatchers.Main) {
                 treeInfoLiveData.value = treeInfo
             }
@@ -153,14 +150,11 @@ class DataViewModel(private val userManager: UserManager,
     }
 }
 
-data class TreeData(
+data class PlanterAccountData(
     val uploadedCount: Int,
     val waitingToUploadCount: Int,
-    val validatedCount: Int
-)
-
-data class PlanterAccountData(
-    val treeData: TreeData,
+    val validatedCount: Int,
     val totalAmountPaid: Double,
-    val paymentAmountPending: Double
+    val paymentAmountPending: Double,
+    val paymentCurrencyCode: String = "USD"
 )

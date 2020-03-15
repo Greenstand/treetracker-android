@@ -5,7 +5,7 @@
     android:id="@+id/fragment_data"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGrey"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <TextView
@@ -13,25 +13,25 @@
         style="@style/TextTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/title_margin_start"
+        android:layout_marginTop="@dimen/title_margin_top"
+        android:layout_marginEnd="@dimen/title_margin_end"
         android:text="@string/tree_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/tree_data_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_data_title"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/card_view_margin_start"
+        android:layout_marginTop="@dimen/card_view_margin_top"
+        android:layout_marginEnd="@dimen/card_view_margin_end"
         app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="10dp"
+        app:cardCornerRadius="@dimen/card_view_corner_radius"
+        app:cardElevation="@dimen/card_view_elevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_data_title">
@@ -54,77 +54,71 @@
 
             <TextView
                 android:id="@+id/fragmentDataUploadedLabel"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginStart="@dimen/data_text_margin_start"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:text="@string/uploaded"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/fragmentDataUploaded"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:textColor="@color/black"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/tree_data_guideline"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="540891" />
 
             <TextView
                 android:id="@+id/fragmentDataWaitingUploadLabel"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:text="@string/fragment_data_waiting_to_upload_label"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/fragmentDataUploadedLabel"
                 app:layout_constraintTop_toBottomOf="@+id/fragmentDataUploadedLabel" />
 
             <TextView
                 android:id="@+id/fragmentDataWaitingUpload"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:textColor="@color/black"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/fragmentDataUploaded"
-                app:layout_constraintTop_toBottomOf="@+id/fragmentDataUploaded" />
+                app:layout_constraintTop_toBottomOf="@+id/fragmentDataUploaded"
+                tools:text="35" />
 
             <TextView
                 android:id="@+id/fragmentDataValidatedTreesLabel"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:text="@string/fragment_data_validated_label"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/fragmentDataWaitingUploadLabel"
                 app:layout_constraintTop_toBottomOf="@+id/fragmentDataWaitingUploadLabel" />
 
             <TextView
                 android:id="@+id/fragmentDataValidatedTrees"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:textColor="@color/black"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/fragmentDataWaitingUpload"
-                app:layout_constraintTop_toBottomOf="@+id/fragmentDataWaitingUpload" />
+                app:layout_constraintTop_toBottomOf="@+id/fragmentDataWaitingUpload"
+                tools:text="450" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -135,9 +129,9 @@
         style="@style/TextTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/title_margin_start"
+        android:layout_marginTop="@dimen/title_margin_top"
+        android:layout_marginEnd="@dimen/title_margin_end"
         android:text="@string/payment_label"
         app:layout_constraintEnd_toEndOf="@id/tree_data_card_view"
         app:layout_constraintStart_toStartOf="@id/tree_data_card_view"
@@ -148,12 +142,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tree_data_card_view"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/card_view_margin_start"
+        android:layout_marginTop="@dimen/card_view_margin_top"
+        android:layout_marginEnd="@dimen/card_view_margin_end"
         app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="10dp"
+        app:cardCornerRadius="@dimen/card_view_corner_radius"
+        app:cardElevation="@dimen/card_view_elevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_data_payments_label">
@@ -176,53 +170,49 @@
 
             <TextView
                 android:id="@+id/paymentPendingLabel"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginStart="@dimen/data_text_margin_start"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:text="@string/pending_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/paymentPendingValue"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:textColor="@color/black"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/paymentDataGuideline"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="$42.76"/>
 
             <TextView
                 android:id="@+id/totalPaidLabel"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:text="@string/total_paid_label"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/paymentPendingLabel"
                 app:layout_constraintTop_toBottomOf="@+id/paymentPendingLabel" />
 
             <TextView
                 android:id="@+id/totalPaidValue"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/height_forty"
-                android:layout_marginTop="16dp"
-                android:layout_weight="3"
+                android:layout_width="@dimen/data_text_layout_width"
+                android:layout_height="@dimen/data_text_layout_height"
+                android:layout_marginTop="@dimen/data_text_margin_top"
                 android:textColor="@color/black"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/text_size_seventeen"
+                android:textSize="@dimen/data_text_size"
                 app:layout_constraintStart_toStartOf="@+id/paymentDataGuideline"
-                app:layout_constraintTop_toBottomOf="@+id/paymentPendingValue" />
+                app:layout_constraintTop_toBottomOf="@+id/paymentPendingValue"
+                tools:text="$251.25"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -233,11 +223,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/activity_vertical_margin"
-        android:layout_marginStart="307dp"
-        android:layout_marginEnd="307dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="@dimen/button_margin"
+        android:layout_marginEnd="@dimen/button_margin"
+        android:layout_marginBottom="@dimen/button_margin_bottom"
         android:background="@drawable/circle_upload_button"
-        android:elevation="20dp"
+        android:elevation="@dimen/button_elevation"
         android:foregroundGravity="center"
         android:src="@drawable/cloud_backup_40"
         app:layout_constraintBottom_toBottomOf="parent"

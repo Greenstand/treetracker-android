@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_data.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
 
 class DataFragment : Fragment() {
 
@@ -48,12 +49,12 @@ class DataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.planterAccountData.observe(this, Observer { planterAccountData ->
-            val treeData = planterAccountData.treeData
-            fragmentDataUploaded.text = treeData.uploadedCount.toString()
-            fragmentDataWaitingUpload.text = treeData.waitingToUploadCount.toString()
-            fragmentDataValidatedTrees.text = treeData.validatedCount.toString()
-            paymentPendingValue.text = planterAccountData.paymentAmountPending.toString()
-            totalPaidValue.text = planterAccountData.totalAmountPaid.toString()
+            val currencySymbol = Currency.getInstance(planterAccountData.paymentCurrencyCode).symbol
+            fragmentDataUploaded.text = planterAccountData.uploadedCount.toString()
+            fragmentDataWaitingUpload.text = planterAccountData.waitingToUploadCount.toString()
+            fragmentDataValidatedTrees.text = planterAccountData.validatedCount.toString()
+            paymentPendingValue.text = "$currencySymbol${planterAccountData.paymentAmountPending.toString()}"
+            totalPaidValue.text = "$currencySymbol${planterAccountData.totalAmountPaid.toString()}"
         })
 
         viewModel.toasts.observe(this, Observer {
