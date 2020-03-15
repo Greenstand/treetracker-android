@@ -4,8 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-inline class PlanterInfoId(val value: Long)
-
 @Entity(tableName = PlanterInfoEntity.TABLE)
 data class PlanterInfoEntity(
     @ColumnInfo(name = IDENTIFIER)
@@ -27,7 +25,9 @@ data class PlanterInfoEntity(
     @ColumnInfo(name = UPLOADED)
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
-    var createdAt: Long
+    var createdAt: Long,
+    @ColumnInfo(name = BUNDLE_ID)
+    var bundleId: String? = null
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -48,5 +48,6 @@ data class PlanterInfoEntity(
         const val LONGITUDE = "longitude"
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"
+        const val BUNDLE_ID = "bundle_id"
     }
 }

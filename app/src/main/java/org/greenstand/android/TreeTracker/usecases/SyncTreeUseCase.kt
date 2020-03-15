@@ -7,7 +7,7 @@ data class SyncTreeParams(val treeId: Long)
 
 class SyncTreeUseCase(private val uploadImageUseCase: UploadImageUseCase,
                       private val uploadTreeUseCase: UploadTreeUseCase,
-                      private val removeLocalImagesWithIdsUseCase: RemoveLocalImagesWithIdsUseCase,
+                      private val removeLocalImagesWithIdsUseCase: RemoveLocalTreeImagesWithIdsUseCase,
                       private val dao: TreeTrackerDAO) : UseCase<SyncTreeParams, Unit>() {
 
     override suspend fun execute(params: SyncTreeParams) {
@@ -32,7 +32,7 @@ class SyncTreeUseCase(private val uploadImageUseCase: UploadImageUseCase,
 
             uploadTreeUseCase.execute(UploadTreeParams(treeId = tree.id, treeImageUrl = tree.photoUrl!!))
 
-            removeLocalImagesWithIdsUseCase.execute(RemoveLocalImagesWithIdsParams(listOf(tree.id)))
+            removeLocalImagesWithIdsUseCase.execute(RemoveLocalTreeImagesWithIdsParams(listOf(tree.id)))
         }
     }
 }

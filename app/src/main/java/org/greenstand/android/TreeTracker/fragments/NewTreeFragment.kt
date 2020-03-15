@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.Permissions
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -123,7 +124,7 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
 
                 setPic(it)
 
-                if (vm.isImageBlurry(data)) {
+                if (FeatureFlags.BLUR_DETECTION_ENABLED && vm.isImageBlurry(data)) {
                     fragment_new_tree_focus_warning_text.visibility = View.VISIBLE
                     fragment_new_tree_focus_warning_text.setText(R.string.focus_warning)
                 } else {

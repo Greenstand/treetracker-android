@@ -51,15 +51,14 @@ class SyncDataUseCase(
         Timber.tag("SyncDataUseCase")
             .d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
 
-        planterInfoToUploadList.forEach {
-            if (coroutineContext.isActive) {
-                runCatching {
-                    uploadPlanterDetailsUseCase.execute(UploadPlanterParams(planterInfoId = it.id))
-                }
-            } else {
-                coroutineContext.cancel()
-            }
+        val planterIdsToUpload = planterInfoToUploadList.map { it.id }
 
+        if (coroutineContext.isActive) {
+            runCatching {
+                uploadPlanterDetailsUseCase.execute(UploadPlanterParams(planterInfoIds = planterIdsToUpload))
+            }
+        } else {
+            coroutineContext.cancel()
         }
     }
 
