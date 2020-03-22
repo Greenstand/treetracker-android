@@ -16,7 +16,7 @@ import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
         TreeAttributeEntity::class,
         TreeCaptureEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -34,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
                                                     AppDatabase::class.java,
                                                     DB_NAME
                     )
+                        .addMigrations(MIGRATION_1_2)
                         .build()
                 }
             }
