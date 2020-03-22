@@ -129,7 +129,7 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
         }
     }
 
-    suspend fun uploadTreeJsonBundle(jsonBundle: String, bundleId: String) {
+    suspend fun uploadBundle(jsonBundle: String, bundleId: String) {
         val byteArray = jsonBundle.toByteArray(Charsets.UTF_8)
         val inputStream = ByteArrayInputStream(byteArray)
 

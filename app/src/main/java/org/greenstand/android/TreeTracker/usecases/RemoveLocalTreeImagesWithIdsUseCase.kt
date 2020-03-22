@@ -3,11 +3,11 @@ package org.greenstand.android.TreeTracker.usecases
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import java.io.File
 
-data class RemoveLocalImagesWithIdsParams(val treeCaptureIds: List<Long>)
+data class RemoveLocalTreeImagesWithIdsParams(val treeCaptureIds: List<Long>)
 
-class RemoveLocalImagesWithIdsUseCase(private val dao: TreeTrackerDAO) : UseCase<RemoveLocalImagesWithIdsParams, Unit>() {
+class RemoveLocalTreeImagesWithIdsUseCase(private val dao: TreeTrackerDAO) : UseCase<RemoveLocalTreeImagesWithIdsParams, Unit>() {
 
-    override suspend fun execute(params: RemoveLocalImagesWithIdsParams) {
+    override suspend fun execute(params: RemoveLocalTreeImagesWithIdsParams) {
 
         val trees = dao.getTreeCapturesByIds(params.treeCaptureIds)
 
