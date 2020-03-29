@@ -10,6 +10,7 @@ import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterAccountEntity
 import org.greenstand.android.TreeTracker.managers.UserManager
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -85,19 +86,13 @@ class DataViewModel(private val userManager: UserManager,
 
     fun sync() {
         viewModelScope.launch {
-            val uploadedCount = loadPlanterAccountData().uploadedCount
-            val waitingToUploadCount = loadPlanterAccountData().waitingToUploadCount
+            val planterAccountData = loadPlanterAccountData()
+            val uploadedCount = planterAccountData.uploadedCount
+            val waitingToUploadCount = planterAccountData.waitingToUploadCount
             val totalCount = uploadedCount + waitingToUploadCount
             if (_isSyncing == null || _isSyncing == false) {
-                val treesToSync =
-                    withContext(Dispatchers.IO) { dao.getNonUploadedTreeCaptureCount() }
-                if (treesToSync == 0) {
-                    toastLiveData.value = R.string.nothing_to_sync
-                    isSyncingLiveData.value = false
-                } else {
-                    isSyncingLiveData.value = true
-                    startDataSynchronization()
-                }
+                isSyncingLiveData.value = true
+                startDataSynchronization()
                 analytics.syncButtonTapped(totalCount, uploadedCount, waitingToUploadCount)
             } else {
                 updateTimerJob?.cancel()
@@ -112,7 +107,10 @@ class DataViewModel(private val userManager: UserManager,
 
     private suspend fun loadPlanterAccountData(): PlanterAccountData {
         return withContext(Dispatchers.IO) {
-            val planterAccountEntity: PlanterAccountEntity? = dao.getPlanterAccount(userManager.planterInfoId)
+            val planterInfoEntity = dao.getPlanterInfoById(userManager.planterInfoId)
+            val planterAccountEntity: PlanterAccountEntity? = planterInfoEntity?.let {
+                dao.getPlanterAccount(it.identifier)
+            }
             val uploadedTreeCount = planterAccountEntity?.uploadedTreeCount ?: 0
             val validatedTreeCount = planterAccountEntity?.validatedTreeCount ?: 0
             val totalAmountPaid = planterAccountEntity?.totalAmountPaid ?: 0.0

@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
 data class PlanterAccountEntity(
     @PrimaryKey
     @ColumnInfo(name= PLANTER_INFO_ID)
-    val planterInfoId: Int,
+    val planterInfoId: String,
     @ColumnInfo(name = UPLOADED_TREE_COUNT)
     val uploadedTreeCount: Int,
     @ColumnInfo(name = VALIDATED_TREE_COUNT)
@@ -24,7 +24,7 @@ data class PlanterAccountEntity(
 ) {
     companion object {
         const val TABLE = "planter_account"
-
+        // planter_info_id is the planter identifier (referencing email or phone number)
         const val PLANTER_INFO_ID = "planter_info_id"
         const val UPLOADED_TREE_COUNT = "uploaded_tree_count"
         const val VALIDATED_TREE_COUNT = "validated_tree_count"

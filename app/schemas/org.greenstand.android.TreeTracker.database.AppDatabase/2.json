@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "0c4272a56eff44297e73b2bedf9a118e",
+    "identityHash": "7e4d77416b642fdd74e51c469b4dd46a",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -169,12 +169,12 @@
       },
       {
         "tableName": "planter_account",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`planter_info_id` INTEGER NOT NULL, `uploaded_tree_count` INTEGER NOT NULL, `validated_tree_count` INTEGER NOT NULL, `total_amount_paid` REAL NOT NULL, `payment_amount_pending` REAL NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`planter_info_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`planter_info_id` TEXT NOT NULL, `uploaded_tree_count` INTEGER NOT NULL, `validated_tree_count` INTEGER NOT NULL, `total_amount_paid` REAL NOT NULL, `payment_amount_pending` REAL NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`planter_info_id`))",
         "fields": [
           {
             "fieldPath": "planterInfoId",
             "columnName": "planter_info_id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -387,7 +387,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0c4272a56eff44297e73b2bedf9a118e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e4d77416b642fdd74e51c469b4dd46a')"
     ]
   }
 }

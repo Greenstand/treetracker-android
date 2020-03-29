@@ -4,14 +4,13 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
+import org.greenstand.android.TreeTracker.api.models.requests.PlanterAccountRequest
+import org.greenstand.android.TreeTracker.api.models.responses.PlanterAccountData
 import org.greenstand.android.TreeTracker.api.models.responses.PostResult
 import org.greenstand.android.TreeTracker.api.models.responses.TokenResponse
 import org.greenstand.android.TreeTracker.api.models.responses.UserTree
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -27,9 +26,15 @@ interface ApiService {
     @PUT("devices/")
     suspend fun updateDevice(@Body deviceRequest: DeviceRequest): PostResult
 
+    @POST("planter_accounts")
+    suspend fun planterAccountData(
+        @Body planterAccountRequest: PlanterAccountRequest
+    ): Set<PlanterAccountData>
+
     companion object {
 
         const val ENDPOINT = BuildConfig.BASE_URL
+        const val PAYMENT_ENDPOINT = BuildConfig.PLANTER_ACCOUNT_URL
     }
 
 }

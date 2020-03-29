@@ -3,6 +3,8 @@ package org.greenstand.android.TreeTracker.api
 import org.greenstand.android.TreeTracker.api.models.requests.AuthenticationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.DeviceRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
+import org.greenstand.android.TreeTracker.api.models.requests.PlanterAccountRequest
+import org.greenstand.android.TreeTracker.api.models.responses.PlanterAccountData
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import timber.log.Timber
@@ -35,5 +37,9 @@ class RetrofitApi(private val api: ApiService,
         }
 
         return true
+    }
+
+    suspend fun getPlanterAccountInfo(planterIdentifiers: Set<String>): Set<PlanterAccountData>? {
+        return api.planterAccountData(PlanterAccountRequest(planterIdentifiers))
     }
 }

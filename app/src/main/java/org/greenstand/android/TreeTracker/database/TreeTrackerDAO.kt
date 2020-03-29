@@ -26,8 +26,11 @@ interface TreeTrackerDAO {
     @Delete
     fun deletePlanterInfo(planterInfoEntity: PlanterInfoEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPlanterAccount(planterAccountEntity: PlanterAccountEntity): Long
+
     @Query("SELECT * FROM planter_account WHERE planter_info_id = :planterInfoId")
-    fun getPlanterAccount(planterInfoId: Long): PlanterAccountEntity
+    fun getPlanterAccount(planterInfoId: String): PlanterAccountEntity
 
     @Query("UPDATE planter_info SET bundle_id = :bundleId WHERE _id IN (:ids)")
     fun updatePlanterInfoBundleIds(ids: List<Long>, bundleId: String)

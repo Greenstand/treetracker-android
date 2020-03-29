@@ -96,6 +96,8 @@ val appModule = module {
 
     factory { DeleteOldPlanterImagesUseCase(get(), get()) }
 
+    factory { GetPlanterAccountData(get(named("planterAccountApi")), get()) }
+
     factory<TreeUploadStrategy>(named(BundleTreeUploadStrategy.tag)) {
         BundleTreeUploadStrategy(
             uploadTreeBundleUseCase = get()

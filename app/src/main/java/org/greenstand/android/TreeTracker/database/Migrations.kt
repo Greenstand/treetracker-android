@@ -46,7 +46,7 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
             // Add a new column to `planter_info`
             database.execSQL("ALTER TABLE `planter_info` ADD COLUMN `bundle_id` TEXT")
 
-            val sql = """CREATE TABLE `planter_account` (`planter_info_id` INTEGER PRIMARY KEY NOT NULL,
+            val sql = """CREATE TABLE `planter_account` (`planter_info_id` text PRIMARY KEY NOT NULL,
                 |   `uploaded_tree_count` INTEGER NOT NULL, `validated_tree_count` INTEGER NOT NULL, 
                 |   `total_amount_paid` REAL NOT NULL, `payment_amount_pending` REAL NOT NULL,
                 |   `updated_at` INTEGER NOT NULL)
