@@ -143,6 +143,7 @@ android {
             resValue "string", "app_name", "Tree Tracker(dev)"
             buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
+            buildConfigField 'String', 'PLANTER_ACCOUNT_URL', '"http://192.168.2.128:3000/"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-dev-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-dev-batch-uploads"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
@@ -263,6 +264,7 @@ dependencies {
     api 'com.google.firebase:firebase-core:16.0.6'
 
     implementation "androidx.legacy:legacy-support-v4:${androidSupportVersion}"
+    implementation 'com.android.support:cardview-v7:28.0.0'
 }
 configurations.all {
     resolutionStrategy {

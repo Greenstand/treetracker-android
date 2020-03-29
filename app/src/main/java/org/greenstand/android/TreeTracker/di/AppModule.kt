@@ -30,7 +30,7 @@ val appModule = module {
 
     viewModel { TreeHeightViewModel(get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get(), get()) }
+    viewModel { DataViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { MapViewModel(get(), get(), get(), get(), get()) }
 
@@ -95,6 +95,8 @@ val appModule = module {
     factory { RemoveLocalTreeImagesWithIdsUseCase(get()) }
 
     factory { DeleteOldPlanterImagesUseCase(get(), get()) }
+
+    factory { GetPlanterAccountData(get(named("planterAccountApi")), get()) }
 
     factory<TreeUploadStrategy>(named(BundleTreeUploadStrategy.tag)) {
         BundleTreeUploadStrategy(

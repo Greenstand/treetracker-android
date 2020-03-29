@@ -5,6 +5,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.greenstand.android.TreeTracker.api.ApiService
 import org.greenstand.android.TreeTracker.api.AuthenticationInterceptor
 import org.greenstand.android.TreeTracker.api.RetrofitApi
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -39,6 +40,19 @@ val networkModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
+    }
+
+    single(named("paymentApi")) {
+        Retrofit.Builder()
+            .client(get())
+            .baseUrl(ApiService.PAYMENT_ENDPOINT)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+    }
+
+    single(named("planterAccountApi")) {
+        RetrofitApi(get(named("paymentApi")), get())
     }
 
 }

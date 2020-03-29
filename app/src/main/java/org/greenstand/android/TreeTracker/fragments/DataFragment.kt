@@ -2,7 +2,10 @@ package org.greenstand.android.TreeTracker.fragments
 
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -13,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_data.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
 
 class DataFragment : Fragment() {
 
@@ -44,10 +48,13 @@ class DataFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.treeData.observe(this, Observer { treeData ->
-            fragmentDataTotalTreesValue.text = treeData.totalTrees.toString()
-            fragmentDataLocatedValue.text = treeData.treesSynced.toString()
-            fragmentDataToSyncValue.text = treeData.treesToSync.toString()
+        viewModel.planterAccountData.observe(this, Observer { planterAccountData ->
+            val currencySymbol = Currency.getInstance(planterAccountData.paymentCurrencyCode).symbol
+            fragmentDataUploaded.text = planterAccountData.uploadedCount.toString()
+            fragmentDataWaitingUpload.text = planterAccountData.waitingToUploadCount.toString()
+            fragmentDataValidatedTrees.text = planterAccountData.validatedCount.toString()
+            paymentPendingValue.text = "$currencySymbol${planterAccountData.paymentAmountPending.toString()}"
+            totalPaidValue.text = "$currencySymbol${planterAccountData.totalAmountPaid.toString()}"
         })
 
         viewModel.toasts.observe(this, Observer {
@@ -55,14 +62,11 @@ class DataFragment : Fragment() {
         })
 
         viewModel.isSyncing.observe(this, Observer { isSyncing ->
-            val textId = if (isSyncing) {
-                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                R.string.stop
+            if (isSyncing) {
+                fragmentDataSyncButton.setImageResource(R.drawable.stop_40dp)
             } else {
-                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                R.string.sync
+                fragmentDataSyncButton.setImageResource(R.drawable.cloud_backup_40)
             }
-            fragmentDataSyncButton.setText(textId)
         })
 
         fragmentDataSyncButton.setOnClickListener {

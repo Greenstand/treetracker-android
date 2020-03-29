@@ -1,10 +1,7 @@
 package org.greenstand.android.TreeTracker.database
 
 import androidx.room.*
-import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
 
 
@@ -29,12 +26,17 @@ interface TreeTrackerDAO {
     @Delete
     fun deletePlanterInfo(planterInfoEntity: PlanterInfoEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPlanterAccount(planterAccountEntity: PlanterAccountEntity): Long
+
+    @Query("SELECT * FROM planter_account WHERE planter_info_id = :planterInfoId")
+    fun getPlanterAccount(planterInfoId: String): PlanterAccountEntity
+
     @Query("UPDATE planter_info SET bundle_id = :bundleId WHERE _id IN (:ids)")
     fun updatePlanterInfoBundleIds(ids: List<Long>, bundleId: String)
 
     @Query("UPDATE planter_info SET uploaded = :isUploaded WHERE _id IN (:ids)")
     fun updatePlanterInfoUploadStatus(ids: List<Long>, isUploaded: Boolean)
-
 
     @Transaction
     @Query("SELECT * FROM planter_check_in WHERE photo_url IS null AND planter_info_id = :planterInfoId")
