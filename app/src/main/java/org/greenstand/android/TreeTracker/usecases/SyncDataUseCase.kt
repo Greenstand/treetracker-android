@@ -68,9 +68,4 @@ class SyncDataUseCase(
             Timber.e("NewTree upload failed")
         }
     }
-
-    companion object {
-        const val CONTINUOUS_UPLOAD = "continuous_upload"
-        const val BUNDLE_UPLOAD = "bundle_upload"
-    }
 }

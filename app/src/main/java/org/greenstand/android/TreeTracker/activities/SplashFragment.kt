@@ -27,7 +27,7 @@ class SplashFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}, url: ${BuildConfig.BASE_URL}")
+        Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             whenStarted {
