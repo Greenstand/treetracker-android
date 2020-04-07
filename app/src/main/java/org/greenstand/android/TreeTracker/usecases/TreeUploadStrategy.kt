@@ -29,25 +29,3 @@ class BundleTreeUploadStrategy(private val uploadTreeBundleUseCase: UploadTreeBu
         val tag: String = BundleTreeUploadStrategy::class.java.simpleName
     }
 }
-
-class ContinuousTreeUploadStrategy(private val syncTreeUseCase: SyncTreeUseCase) : TreeUploadStrategy {
-    override suspend fun uploadTrees(treeIds: List<Long>) {
-        Timber.tag(tag).d("Uploading ${treeIds.size} trees")
-
-        treeIds.onEach {
-            try {
-                if (coroutineContext.isActive) {
-                    syncTreeUseCase.execute(SyncTreeParams(treeId = it))
-                } else {
-                    coroutineContext.cancel()
-                }
-            } catch (e: Exception) {
-                Timber.e("NewTree upload failed")
-            }
-        }
-    }
-
-    companion object {
-        val tag: String = ContinuousTreeUploadStrategy::class.java.simpleName
-    }
-}

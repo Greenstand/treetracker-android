@@ -4,26 +4,18 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import kotlinx.coroutines.*
-import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
-import org.koin.android.ext.android.inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 
 
 class SyncService : JobIntentService() {
 
     private val jobScope = CoroutineScope(Dispatchers.IO)
 
-    private val syncDataUseCase: SyncDataUseCase by inject()
-
     override fun onHandleWork(intent: Intent) {
-
         sendBroadcastMessage("")
-
-        jobScope.launch {
-//            syncDataUseCase.execute {
-//                sendBroadcastMessage("")
-//            }
-        }
     }
 
     @ExperimentalCoroutinesApi
