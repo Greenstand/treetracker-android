@@ -112,7 +112,6 @@ val appModule = module {
         SyncDataUseCase(
             treeLoadStrategy = get(named(BundleTreeUploadStrategy.tag)),
             uploadPlanterDetailsUseCase = get(),
-            api = get(),
             dao = get()
         )
     }
@@ -121,7 +120,6 @@ val appModule = module {
         SyncDataUseCase(
             treeLoadStrategy = get(named(ContinuousTreeUploadStrategy.tag)),
             uploadPlanterDetailsUseCase = get(),
-            api = get(),
             dao = get()
         )
     }

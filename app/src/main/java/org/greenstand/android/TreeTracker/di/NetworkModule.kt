@@ -13,7 +13,7 @@ import timber.log.Timber
 
 val networkModule = module {
 
-    single { RetrofitApi(get(), get()) }
+    single { RetrofitApi(get()  ) }
 
     // Create OkHttp instance
     single {

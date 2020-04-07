@@ -4,7 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.api.RetrofitApi
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
@@ -12,16 +11,11 @@ import kotlin.coroutines.coroutineContext
 class SyncDataUseCase(
     private val treeLoadStrategy: TreeUploadStrategy,
     private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
-    private val api: RetrofitApi,
     private val dao: TreeTrackerDAO
 ) : UseCase<Unit, Boolean>() {
 
     override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {
-            if (!api.authenticateDevice()) {
-                Timber.tag("SyncDataUseCase").w("Device Authentication failed")
-                return@withContext false
-            }
 
             uploadPlanters()
 
