@@ -16,7 +16,6 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
@@ -64,11 +63,7 @@ val appModule = module {
 
     factory { UploadImageUseCase(get()) }
 
-    factory { UploadTreeUseCase(get(), get(), get()) }
-
     factory { UploadPlanterUseCase(get(), get(), get(), get()) }
-
-    factory { SyncTreeUseCase(get(), get(), get(), get()) }
 
     factory { CreateTreeUseCase(get(), get(), get()) }
 
@@ -96,34 +91,8 @@ val appModule = module {
 
     factory { DeleteOldPlanterImagesUseCase(get(), get()) }
 
-    factory<TreeUploadStrategy>(named(BundleTreeUploadStrategy.tag)) {
-        BundleTreeUploadStrategy(
-            uploadTreeBundleUseCase = get()
-        )
-    }
+    factory<TreeUploadStrategy> { BundleTreeUploadStrategy(get()) }
 
-    factory<TreeUploadStrategy>(named(ContinuousTreeUploadStrategy.tag)) {
-        ContinuousTreeUploadStrategy(
-            syncTreeUseCase = get()
-        )
-    }
-
-    factory(named(SyncDataUseCase.BUNDLE_UPLOAD)) {
-        SyncDataUseCase(
-            treeLoadStrategy = get(named(BundleTreeUploadStrategy.tag)),
-            uploadPlanterDetailsUseCase = get(),
-            api = get(),
-            dao = get()
-        )
-    }
-
-    factory(named(SyncDataUseCase.CONTINUOUS_UPLOAD)) {
-        SyncDataUseCase(
-            treeLoadStrategy = get(named(ContinuousTreeUploadStrategy.tag)),
-            uploadPlanterDetailsUseCase = get(),
-            api = get(),
-            dao = get()
-        )
-    }
+    factory { SyncDataUseCase(get(), get(), get()) }
 
 }

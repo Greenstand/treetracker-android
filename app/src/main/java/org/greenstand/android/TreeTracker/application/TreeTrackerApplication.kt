@@ -8,7 +8,6 @@ import io.fabric.sdk.android.Fabric
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
-import org.greenstand.android.TreeTracker.di.networkModule
 import org.greenstand.android.TreeTracker.di.roomModule
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.koin.android.ext.koin.androidContext
@@ -30,7 +29,6 @@ class TreeTrackerApplication : Application() {
             androidContext(applicationContext)
             modules(
                 appModule,
-                networkModule,
                 roomModule
             )
         }
