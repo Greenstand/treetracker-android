@@ -68,7 +68,6 @@ android {
         buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
         buildConfigField 'Boolean', 'USE_AWS_S3', "false"
-        buildConfigField 'Boolean', 'BULK_UPLOAD', "true"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -98,7 +97,6 @@ android {
             minifyEnabled true
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
-            buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
@@ -114,7 +112,6 @@ android {
             initWith(debug)
             applicationIdSuffix ".prerelease"
             buildConfigField "Boolean", "GPS_ACCURACY", "false"
-            buildConfigField 'String', 'BASE_URL', '"https://treetracker.org/api/mobile/"'
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
@@ -129,7 +126,6 @@ android {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
             buildConfigField "Boolean", "GPS_ACCURACY", "true"
-            buildConfigField 'String', 'BASE_URL', '"http://test.treetracker.org/api/mobile/"'
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-test-batch-uploads"'
@@ -142,7 +138,6 @@ android {
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
             buildConfigField "Boolean", "GPS_ACCURACY", "false"
-            buildConfigField 'String', 'BASE_URL', '"http://dev.treetracker.org/api/mobile/"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-dev-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-dev-batch-uploads"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
@@ -238,8 +233,6 @@ dependencies {
     androidTestImplementation 'androidx.room:room-testing:2.2.2'
     devImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 
-    api 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-    api "com.squareup.retrofit2:retrofit:${retrofit2Version}"
     api "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
 
     // CameraX core library
