@@ -33,7 +33,8 @@ class CreatePlanterInfoUseCase(private val userLocationManager: UserLocationMana
             email = params.email,
             longitude = location?.longitude ?: 0.0,
             latitude = location?.latitude ?: 0.0,
-            createdAt = time
+            createdAt = time,
+            uploaded = false
         )
 
         doa.insertPlanterInfo(entity).also {

@@ -28,6 +28,8 @@ class TermsPolicyViewModel(private val createPlanterCheckInUseCase: CreatePlante
     private fun confirm(onConfirmationComplete: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
 
+
+
             val planterInfoId = createPlanterInfoUseCase.execute(CreatePlanterInfoParams(firstName = userInfo.firstName,
                                                                                          lastName = userInfo.lastName,
                                                                                          identifier = userInfo.identification,

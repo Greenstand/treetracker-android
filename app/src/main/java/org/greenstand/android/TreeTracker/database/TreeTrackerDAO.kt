@@ -17,6 +17,9 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM planter_info")
     fun getAllPlanterInfo(): List<PlanterInfoEntity>
 
+    @Query("SELECT * FROM planter_info where uploaded = 0")
+    fun getAllPlanterInfoToUpload(): List<PlanterInfoEntity>
+
     @Query("SELECT * FROM planter_info WHERE _id = :id")
     fun getPlanterInfoById(id: Long): PlanterInfoEntity?
 

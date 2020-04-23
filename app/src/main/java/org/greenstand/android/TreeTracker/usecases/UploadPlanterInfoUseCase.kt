@@ -28,8 +28,10 @@ class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
                 firstName = it.firstName,
                 lastName = it.lastName,
                 organization = it.organization,
+                phone = it.phone,
+                email = it.email,
                 lat = it.latitude,
-                long = it.longitude,
+                lon = it.longitude,
                 deviceIdentifier = DeviceUtils.deviceId
             )
         }

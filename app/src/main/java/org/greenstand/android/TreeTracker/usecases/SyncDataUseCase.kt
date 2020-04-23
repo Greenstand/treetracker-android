@@ -40,7 +40,7 @@ class SyncDataUseCase(
 
     private suspend fun uploadPlanters() {
         // Upload all user registration data that hasn't been uploaded yet
-        val planterInfoToUploadList = dao.getAllPlanterInfo()
+        val planterInfoToUploadList = dao.getAllPlanterInfoToUpload()
 
         Timber.tag("SyncDataUseCase")
             .d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
