@@ -51,6 +51,17 @@ platform :android do
         release_notes: "A new release!"
       )
 
+    slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        default_payloads: ['git_branch'])
+
+    slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        slack_url: ENV["SLACK_URL_QC"],
+        payload: {
+                     "Build Number" => versionReleased,
+                   },
+        default_payloads: ['git_branch'])
+
+
   end
 
 
