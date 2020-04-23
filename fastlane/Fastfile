@@ -42,6 +42,10 @@ platform :android do
   desc "Release a build on Firebase Beta"
   lane :firebase_beta do
     
+    versionReleased = bump_version_code()
+
+    git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
+
     gradle(task: "clean assembleGreenstandDebug")
 
     firebase_app_distribution(
