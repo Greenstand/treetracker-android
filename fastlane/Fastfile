@@ -42,6 +42,10 @@ platform :android do
   desc "Release a build on Firebase Beta"
   lane :firebase_beta do
     
+    versionReleased = bump_version_code()
+
+    git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
+
     gradle(task: "clean assembleGreenstandDebug")
 
     firebase_app_distribution(
@@ -50,6 +54,17 @@ platform :android do
         groups: "Greenstand",
         release_notes: "A new release!"
       )
+
+    slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        default_payloads: ['git_branch'])
+
+    slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        slack_url: ENV["SLACK_URL_QC"],
+        payload: {
+                     "Build Number" => versionReleased,
+                   },
+        default_payloads: ['git_branch'])
+
 
   end
 
