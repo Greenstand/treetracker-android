@@ -24,7 +24,8 @@ class CreateTreeUseCase(private val userLocationManager: UserLocationManager,
         val uuid = UUID.randomUUID()
 
         val location = userLocationManager.currentLocation
-        val time = location?.time ?: (System.currentTimeMillis() / 1000)
+        val time = location?.time ?: System.currentTimeMillis()
+        val timeInSeconds = time / 1000
 
         val entity = TreeCaptureEntity(
             uuid = uuid.toString(),
@@ -34,8 +35,8 @@ class CreateTreeUseCase(private val userLocationManager: UserLocationManager,
             noteContent = params.content,
             longitude = location?.longitude ?: 0.0,
             latitude = location?.latitude ?: 0.0,
-            accuracy = ValueHelper.MIN_ACCURACY_DEFAULT_SETTING.toDouble(),
-            createAt = time
+            accuracy = location?.accuracy?.toDouble() ?: 10000.0,
+            createAt = timeInSeconds
         )
 
         analytics.treePlanted()
