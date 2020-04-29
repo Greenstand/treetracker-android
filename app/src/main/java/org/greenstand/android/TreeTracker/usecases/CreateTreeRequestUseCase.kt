@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.usecases
 import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 data class CreateTreeRequestParams(val treeId: Long,
                                    val treeImageUrl: String)
@@ -26,6 +27,7 @@ class CreateTreeRequestUseCase(private val dao: TreeTrackerDAO) : UseCase<Create
             imageUrl = params.treeImageUrl,
             userId = planterCheckIn.id.toInt(),
             sequenceId = treeCapture.id,
+            deviceIdentifier = DeviceUtils.deviceId,
             lat = treeCapture.latitude,
             lon = treeCapture.longitude,
             gpsAccuracy = treeCapture.accuracy.toInt(),

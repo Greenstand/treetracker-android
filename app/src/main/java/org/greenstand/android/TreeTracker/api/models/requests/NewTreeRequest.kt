@@ -20,6 +20,8 @@ data class NewTreeRequest(@SerializedName("user_id")
                           val imageUrl: String? = null,
                           @SerializedName("sequence_id")
                           val sequenceId: Long = 0,
+                          @SerializedName("device_identifier")
+                          val deviceIdentifier: String? = null,
                           @SerializedName("planter_photo_url")
                           val planterPhotoUrl: String? = null,
                           @SerializedName("planter_identifier")

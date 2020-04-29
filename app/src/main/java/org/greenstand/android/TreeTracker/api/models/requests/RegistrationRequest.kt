@@ -10,7 +10,14 @@ data class RegistrationRequest(@SerializedName("planter_identifier")
                                val lastName: String?,
                                @SerializedName("organization")
                                val organization: String?,
+                               @SerializedName("phone")
+                               val phone: String?,
+                               @SerializedName("email")
+                               val email: String?,
                                @SerializedName("lat")
                                val lat: Double?,
-                               @SerializedName("long")
-                               val long: Double?)
+                               @SerializedName("lon")
+                               val lon: Double?,
+                               @SerializedName("device_identifier")
+                               val deviceIdentifier: String? = null
+)

@@ -13,7 +13,7 @@ data class UploadPlanterParams(val planterInfoIds: List<Long>)
  * as well as each of the planters check in photos
  */
 class UploadPlanterUseCase(private val dao: TreeTrackerDAO,
-                           private val uploadPlanterInfoUserCase: UploadPlanterInfoUseCase,
+                           private val uploadPlanterInfoUseCase: UploadPlanterInfoUseCase,
                            private val removeLocalImagesWithIdsUseCase: DeleteOldPlanterImagesUseCase,
                            private val uploadPlanterCheckInUseCase: UploadPlanterCheckInUseCase) : UseCase<UploadPlanterParams, Unit>() {
 
@@ -28,7 +28,7 @@ class UploadPlanterUseCase(private val dao: TreeTrackerDAO,
 
         // Upload the user data
         val planterInfoList = params.planterInfoIds.mapNotNull { dao.getPlanterInfoById(it) }
-        uploadPlanterInfoUserCase.execute(UploadPlanterInfoParams(planterInfoIds = planterInfoList.map { it.id }))
+        uploadPlanterInfoUseCase.execute(UploadPlanterInfoParams(planterInfoIds = planterInfoList.map { it.id }))
 
         // Delete local images
         removeLocalImagesWithIdsUseCase.execute(Unit)

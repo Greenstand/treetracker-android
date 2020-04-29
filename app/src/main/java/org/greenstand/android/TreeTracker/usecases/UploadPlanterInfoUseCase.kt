@@ -5,6 +5,7 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 
@@ -27,8 +28,11 @@ class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
                 firstName = it.firstName,
                 lastName = it.lastName,
                 organization = it.organization,
+                phone = it.phone,
+                email = it.email,
                 lat = it.latitude,
-                long = it.longitude
+                lon = it.longitude,
+                deviceIdentifier = DeviceUtils.deviceId
             )
         }
 
