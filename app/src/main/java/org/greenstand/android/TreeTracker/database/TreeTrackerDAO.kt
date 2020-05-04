@@ -1,10 +1,7 @@
 package org.greenstand.android.TreeTracker.database
 
 import androidx.room.*
-import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
 
 
@@ -116,8 +113,6 @@ interface TreeTrackerDAO {
     fun deleteTreeCapture(treeCaptureEntity: TreeCaptureEntity)
 
 
-
-
     @Query("SELECT * FROM tree_attribute")
     fun getAllTreeAttributes(): List<TreeAttributeEntity>
 
@@ -132,4 +127,10 @@ interface TreeTrackerDAO {
 
     @Delete
     fun deleteTreeAttribute(treeAttributeEntity: TreeAttributeEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertLocationData(locationCaptureEntity: LocationCaptureEntity): Long
+
+    @Query("DELETE FROM location_data WHERE uploaded = 1")
+    fun purgeUploadedLocations()
 }

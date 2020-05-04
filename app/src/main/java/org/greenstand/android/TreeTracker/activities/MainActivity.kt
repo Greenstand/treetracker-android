@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val userLocationManager: UserLocationManager by inject()
     private var sharedPreferences: SharedPreferences? = null
     private var fragment: Fragment? = null
-    private var locationUpdateJob: Job? = null
 
     /**
      * Called when the activity is first created.
@@ -142,9 +141,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     public override fun onPause() {
         super.onPause()
-
         userLocationManager.stopLocationUpdates()
-        locationUpdateJob?.cancel()
     }
 
     public override fun onResume() {

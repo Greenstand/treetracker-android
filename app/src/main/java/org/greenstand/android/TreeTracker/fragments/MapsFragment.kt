@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -39,8 +38,10 @@ import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
+import org.greenstand.android.TreeTracker.viewmodels.CaptureLocationViewModel
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import kotlin.math.roundToInt
@@ -50,6 +51,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
+    private val captureLocationViewModel by sharedViewModel<CaptureLocationViewModel>()
 
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
@@ -154,6 +156,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                     if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
                         findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
+                        // We want to capture location from the moment user navigates to camera
+                        // view to improve accuracy analysis of the tree data. The capture is to
+                        // stop the moment a picture is saved or 15 minutes is passed since the
+                        // location capture is triggered.
+                        captureLocationViewModel.startLocationCapture()
+                        Timber.i("Capture location for tree accuracy started")
                         findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                     }
                 } else {

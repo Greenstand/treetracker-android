@@ -54,5 +54,27 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
             database.endTransaction()
         }
     }
+}
 
+val MIGRATION_2_3 = object : Migration(2, 3) {
+
+    override fun migrate(database: SupportSQLiteDatabase) {
+        try {
+            database.beginTransaction()
+            val createLocationData = """
+                CREATE TABLE `location_data` (
+                    `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `base64_json` TEXT NOT NULL,
+                    `uploaded` INTEGER NOT NULL DEFAULT 0,
+                    `created_at` INTEGER
+                )
+            """.trimIndent()
+            database.execSQL(createLocationData)
+            val indexCreation = "CREATE INDEX `index_upload_id` ON `location_data` (`uploaded`)"
+            database.execSQL(indexCreation)
+            database.setTransactionSuccessful()
+        } finally {
+            database.endTransaction()
+        }
+    }
 }
