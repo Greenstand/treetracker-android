@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -50,7 +49,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
-
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val dao: TreeTrackerDAO by inject()
@@ -179,14 +177,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                 Toast.makeText(activity, "Error adding test trees", Toast.LENGTH_LONG).show()
             }
         }
-
         return true
     }
 
     @SuppressLint("MissingPermission")
     override fun onPause() {
         super.onPause()
-
         map?.isMyLocationEnabled = false
     }
 
