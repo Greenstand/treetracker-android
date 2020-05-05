@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Size
 import android.view.TextureView
 import android.widget.ImageButton
 import android.widget.TextView
@@ -16,7 +17,6 @@ import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
 import timber.log.Timber
 import java.io.File
-import java.lang.Exception
 
 class ImageCaptureActivity : AppCompatActivity() {
 
@@ -63,6 +63,7 @@ class ImageCaptureActivity : AppCompatActivity() {
         val imageCaptureConfig = ImageCaptureConfig.Builder()
             .setLensFacing(lensFacing)
             .setCaptureMode(ImageCapture.CaptureMode.MAX_QUALITY)
+            .setTargetResolution(Size(800, 800))
             .build()
 
         val file = ImageUtils.createImageFile(this)
@@ -73,16 +74,12 @@ class ImageCaptureActivity : AppCompatActivity() {
             imageCapture.takePicture(file,
                                      object : ImageCapture.OnImageSavedListener {
                                          override fun onError(imageCaptureError: ImageCapture.ImageCaptureError, message: String, cause: Throwable?) {
-                                             Timber.d("FAILURE")
-                                             val msg = "Photo capture failed: $message"
-                                             Timber.e("CameraXApp", msg)
+                                             Timber.tag("CameraXApp").e("Photo capture failed: $message")
                                              cause?.printStackTrace()
                                          }
 
                                          override fun onImageSaved(file: File) {
-                                             Timber.d("SUCCESS")
-                                             val msg = "Photo capture succeeded: ${file.absolutePath}"
-                                             Timber.d("CameraXApp", msg)
+                                             Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
                                              val focusMetric = testFocusQuality(file)
 
                                              val data = Intent().apply {
@@ -132,9 +129,8 @@ class ImageCaptureActivity : AppCompatActivity() {
                 Timber.d("Failed to create Grayscale Image.")
                 return null
             }
-            val metric = ImageUtils.brennersFocusMetric(grayImage)
-            return metric
-        } catch (e: java.lang.Exception) {
+            return ImageUtils.brennersFocusMetric(grayImage)
+        } catch (e: Exception) {
             Timber.d("Unable to get focus metric.")
             Timber.d(e.message)
         }
