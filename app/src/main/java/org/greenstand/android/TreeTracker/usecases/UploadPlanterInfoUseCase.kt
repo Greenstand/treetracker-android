@@ -20,7 +20,14 @@ class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
 
     override suspend fun execute(params: UploadPlanterInfoParams) {
 
-        val planterInfoList = params.planterInfoIds.mapNotNull { dao.getPlanterInfoById(it) }
+        val planterInfoList = params.planterInfoIds
+            .mapNotNull { dao.getPlanterInfoById(it) }
+            .filterNot { it.uploaded }
+
+        if (planterInfoList.isEmpty()) {
+            log("All PlanterInfo uploaded, skipping PlanterInfo upload.")
+            return
+        }
 
         val registrationRequests = planterInfoList.map {
             RegistrationRequest(
@@ -38,21 +45,18 @@ class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
 
         val jsonBundle = Gson().toJson(UploadBundle(registrations = registrationRequests))
 
-        log("Creating MD5 hash")
         // Create a hash ID to reference this upload bundle later
         val bundleId = jsonBundle.md5()
 
         val planterInfoIds = planterInfoList.map { it.id }
 
-        log("Updating UserInfo DB entries with MD5 hash")
         // Update the trees in DB with the bundleId
         dao.updatePlanterInfoBundleIds(planterInfoIds, bundleId)
 
-        log("Uploading Bundle...")
+        log("Uploading UserInfo Bundle...")
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        log("Bundle Upload Completed")
+        log("Bundle UserInfo Upload Completed")
 
-        log("Updating UserInfo DB status to uploaded = true")
         dao.updatePlanterInfoUploadStatus(planterInfoIds, true)
     }
 
