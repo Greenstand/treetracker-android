@@ -51,20 +51,12 @@ class CaptureLocationViewModel(
     }
 
     fun startLocationCapture() {
-        cancelLocationCaptureJob = viewModelScope.launch { scheduleCancelLocationCapture() }
         userLocationManager.locationUpdateLiveDate.observeForever(locationObserver)
     }
 
     fun stopLocationCapture() {
         cancelLocationCaptureJob?.cancel()
         userLocationManager.locationUpdateLiveDate.removeObserver(locationObserver)
-    }
-
-    private suspend fun scheduleCancelLocationCapture() {
-        viewModelScope.launch(Dispatchers.Main) {
-            delay(1000*60*15)
-            userLocationManager.locationUpdateLiveDate.removeObserver(locationObserver)
-        }
     }
 }
 

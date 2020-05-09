@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.database
 import androidx.room.*
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
+import org.greenstand.android.TreeTracker.viewmodels.LocationData
 
 
 @Dao
@@ -131,6 +132,9 @@ interface TreeTrackerDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertLocationData(locationCaptureEntity: LocationCaptureEntity): Long
 
+    @Query("SELECT * FROM location_data WHERE uploaded = 0")
+    fun getTreeLocationData(): List<LocationCaptureEntity>
+
     @Query("DELETE FROM location_data WHERE uploaded = 1")
-    fun purgeUploadedLocations()
+    fun purgeUploadedTreeLocations()
 }

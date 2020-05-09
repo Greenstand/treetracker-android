@@ -68,4 +68,8 @@ class SyncDataUseCase(
             Timber.e("NewTree upload failed")
         }
     }
+
+    private suspend fun uploadTreeLocationData() {
+        // Timber.tag("UploadTreeLocationData").d("Uploading ${}")
+    }
 }

@@ -112,7 +112,7 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
         poRequest.withAccessControlList(acl)
         val poResult = s3Client?.putObject(poRequest)
 
-        if(BuildConfig.USE_AWS_S3){
+        if (BuildConfig.USE_AWS_S3) {
             return String.format(
                 "https://%s.s3.%s.amazonaws.com/%s",
                 BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES,
