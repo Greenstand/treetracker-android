@@ -14,7 +14,7 @@ data class UploadPlanterParams(val planterInfoIds: List<Long>)
  */
 class UploadPlanterUseCase(private val dao: TreeTrackerDAO,
                            private val uploadPlanterInfoUseCase: UploadPlanterInfoUseCase,
-                           private val removeLocalImagesWithIdsUseCase: DeleteOldPlanterImagesUseCase,
+                           private val deleteOldPlanterImagesUseCase: DeleteOldPlanterImagesUseCase,
                            private val uploadPlanterCheckInUseCase: UploadPlanterCheckInUseCase) : UseCase<UploadPlanterParams, Unit>() {
 
     private fun log(msg: String) = Timber.tag("UploadPlanterUseCase").d(msg)
@@ -31,7 +31,7 @@ class UploadPlanterUseCase(private val dao: TreeTrackerDAO,
         uploadPlanterInfoUseCase.execute(UploadPlanterInfoParams(planterInfoIds = planterInfoList.map { it.id }))
 
         // Delete local images
-        removeLocalImagesWithIdsUseCase.execute(Unit)
+        deleteOldPlanterImagesUseCase.execute(Unit)
     }
 
 }
