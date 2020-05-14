@@ -66,6 +66,8 @@ val appModule = module {
 
     factory { UploadImageUseCase(get()) }
 
+    factory { UploadLocationDataUseCase(get()) }
+
     factory { UploadPlanterUseCase(get(), get(), get(), get()) }
 
     factory { CreateTreeUseCase(get(), get(), get()) }
@@ -96,6 +98,6 @@ val appModule = module {
 
     factory<TreeUploadStrategy> { BundleTreeUploadStrategy(get()) }
 
-    factory { SyncDataUseCase(get(), get(), get()) }
+    factory { SyncDataUseCase(get(), get(), get(), get()) }
 
 }

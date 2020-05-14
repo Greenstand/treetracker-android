@@ -14,7 +14,7 @@ data class LocationCaptureEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
     var id: Long = 0
-    @ColumnInfo(name = UPLOADED)
+    @ColumnInfo(name = UPLOADED, index = true)
     var uploaded: Boolean = false
     @ColumnInfo(name = CREATED_AT)
     var createdAt: Long = System.currentTimeMillis()

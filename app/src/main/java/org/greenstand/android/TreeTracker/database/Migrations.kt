@@ -65,8 +65,8 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
                 CREATE TABLE `location_data` (
                     `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                     `base64_json` TEXT NOT NULL,
-                    `uploaded` INTEGER NOT NULL DEFAULT 0,
-                    `created_at` INTEGER
+                    `uploaded` INTEGER NOT NULL,
+                    `created_at` INTEGER NOT NULL
                 )
             """.trimIndent()
             database.execSQL(createLocationData)

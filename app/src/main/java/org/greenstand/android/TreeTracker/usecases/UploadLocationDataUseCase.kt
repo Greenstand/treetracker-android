@@ -9,7 +9,7 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 
-class UploadLocationData(
+class UploadLocationDataUseCase(
     private val dao: TreeTrackerDAO
 ) : UseCase<Unit, Boolean>() {
 
@@ -18,14 +18,9 @@ class UploadLocationData(
     override suspend fun execute(params: Unit): Boolean {
         try {
             withContext(Dispatchers.IO) {
-                val locations = dao.getTreeLocationData()
-                val treeLocations = mutableListOf<String>()
                 val gson = Gson()
-                for (location in locations) {
-                    val locJson = gson.toJson(location)
-                    treeLocations.add(locJson)
-                }
-                val treeLocJsonArray = gson.toJson(treeLocations)
+                val locations = dao.getTreeLocationData().map { gson.toJson(it) }
+                val treeLocJsonArray = gson.toJson(locations)
                 storageClient.uploadBundle(treeLocJsonArray, treeLocJsonArray.md5())
             }
         } catch (ace: AmazonClientException) {

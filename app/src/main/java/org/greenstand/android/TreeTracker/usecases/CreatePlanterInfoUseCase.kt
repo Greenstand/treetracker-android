@@ -16,7 +16,7 @@ data class CreatePlanterInfoParams(val firstName: String,
                                    val identifier: String)
 
 class CreatePlanterInfoUseCase(private val userLocationManager: UserLocationManager,
-                               private val doa: TreeTrackerDAO,
+                               private val dao: TreeTrackerDAO,
                                private val analytics: Analytics) : UseCase<CreatePlanterInfoParams, Long>() {
 
     override suspend fun execute(params: CreatePlanterInfoParams): Long = withContext(Dispatchers.IO) {
@@ -36,7 +36,7 @@ class CreatePlanterInfoUseCase(private val userLocationManager: UserLocationMana
             createdAt = time
         )
 
-        doa.insertPlanterInfo(entity).also {
+        dao.insertPlanterInfo(entity).also {
             analytics.userInfoCreated(phone = params.phone.orEmpty(),
                                       email = params.email.orEmpty())
         }

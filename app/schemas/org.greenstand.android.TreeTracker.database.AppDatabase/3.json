@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "0132554903a3aa17054aaacce21bd9ef",
+    "identityHash": "09f0a8efd8671d48d4fcfa9cd5f1669f",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -368,14 +368,23 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_location_data_uploaded",
+            "unique": false,
+            "columnNames": [
+              "uploaded"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_location_data_uploaded` ON `${TABLE_NAME}` (`uploaded`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0132554903a3aa17054aaacce21bd9ef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '09f0a8efd8671d48d4fcfa9cd5f1669f')"
     ]
   }
 }
