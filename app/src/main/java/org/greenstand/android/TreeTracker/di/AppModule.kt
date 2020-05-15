@@ -9,18 +9,18 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
-import org.greenstand.android.TreeTracker.viewmodels.CaptureLocationViewModel
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.*
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
-
 
     viewModel { LoginViewModel(get(), get()) }
 
@@ -37,8 +37,6 @@ val appModule = module {
     viewModel { TreePreviewViewModel(get(), get()) }
 
     viewModel { NewTreeViewModel(get(), get(), get(), get()) }
-
-    viewModel { CaptureLocationViewModel(get(), get(), get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -63,6 +61,23 @@ val appModule = module {
     single { ObjectStorageClient.instance() }
 
     single { NotificationManagerCompat.from(get()) }
+
+    scope(named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE)) {
+        scoped {
+            CaptureTreeLocationUseCase(
+                get(),
+                get(),
+                get()
+            )
+        }
+    }
+
+    single {
+        getKoin().createScope(
+            ValueHelper.TREE_LOCATION_CAPTURE_SESSION,
+            named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE)
+        )
+    }
 
     factory { UploadImageUseCase(get()) }
 
@@ -99,5 +114,7 @@ val appModule = module {
     factory<TreeUploadStrategy> { BundleTreeUploadStrategy(get()) }
 
     factory { SyncDataUseCase(get(), get(), get(), get()) }
+
+
 
 }

@@ -32,4 +32,7 @@ object ValueHelper {
 
     const val TAKE_SELFIE_EXTRA = "TAKE_SELFIE_EXTRA"
     const val FOCUS_METRIC_VALUE = "FOCUS_METRIC_VALUE"
+
+    const val TREE_LOCATION_CAPTURE_SESSION = "treeLocationCaptureSession"
+    const val TREE_LOCATION_CAPTURE_SCOPE = "treeLocationCaptureScope"
 }

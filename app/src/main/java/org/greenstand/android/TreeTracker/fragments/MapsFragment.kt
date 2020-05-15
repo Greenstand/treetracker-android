@@ -34,15 +34,16 @@ import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
+import org.greenstand.android.TreeTracker.usecases.CaptureTreeLocationUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
-import org.greenstand.android.TreeTracker.viewmodels.CaptureLocationViewModel
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import timber.log.Timber
 import kotlin.math.roundToInt
 
@@ -51,8 +52,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
-    private val captureLocationViewModel by sharedViewModel<CaptureLocationViewModel>()
-
+    private val treeCaptureSession by inject<Scope>(named(ValueHelper.TREE_LOCATION_CAPTURE_SESSION))
+    private val locationCaptureScope: CaptureTreeLocationUseCase = treeCaptureSession.get(
+        named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE))
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val dao: TreeTrackerDAO by inject()
@@ -157,10 +159,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                         findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
                         // We want to capture location from the moment user navigates to camera
-                        // view to improve accuracy analysis of the tree data. The capture is to
-                        // stop the moment a picture is saved or 15 minutes is passed since the
-                        // location capture is triggered.
-                        captureLocationViewModel.startLocationCapture()
+                        // view to improve accuracy analysis of the tree data. The data capture will
+                        // the moment a picture is taken or when the user navigates away from the
+                        // camera view (see onPause() method in ImageCaptureActivity)
+                        locationCaptureScope.startLocationCapture()
                         Timber.i("Capture location for tree accuracy started")
                         findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                     }
@@ -187,14 +189,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                 Toast.makeText(activity, "Error adding test trees", Toast.LENGTH_LONG).show()
             }
         }
-
         return true
     }
 
     @SuppressLint("MissingPermission")
     override fun onPause() {
         super.onPause()
-
         map?.isMyLocationEnabled = false
     }
 

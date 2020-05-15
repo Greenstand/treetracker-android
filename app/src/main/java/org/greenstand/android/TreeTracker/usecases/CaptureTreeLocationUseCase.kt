@@ -1,16 +1,12 @@
-package org.greenstand.android.TreeTracker.viewmodels
+package org.greenstand.android.TreeTracker.usecases
 
 import android.location.Location
 import android.util.Base64
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationCaptureEntity
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -18,18 +14,16 @@ import org.greenstand.android.TreeTracker.managers.UserManager
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
-class CaptureLocationViewModel(
+class CaptureTreeLocationUseCase(
     private val userManager: UserManager,
     private val userLocationManager: UserLocationManager,
-    private val treeTrackerDAO: TreeTrackerDAO,
-    private val workManager: WorkManager
-):ViewModel() {
+    private val treeTrackerDAO: TreeTrackerDAO
+) {
 
     private val gson = Gson()
-    private var cancelLocationCaptureJob: CoroutineContext? = null
     private val locationObserver: Observer<Location?> = Observer {
         it?.apply {
-            viewModelScope.launch(Dispatchers.IO) {
+            MainScope().launch(Dispatchers.IO) {
                 userManager.planterCheckinId?.let{ planterCheckinId ->
                     val locationData =
                         LocationData(
@@ -43,7 +37,7 @@ class CaptureLocationViewModel(
                         gson.toJson(locationData).toByteArray(),
                         Base64.DEFAULT
                     )
-                    Timber.i("Inserting a new location data $base64String")
+                    Timber.d("Inserting a new location data $base64String")
                     treeTrackerDAO.insertLocationData(LocationCaptureEntity(base64String))
                 }
             }
@@ -55,7 +49,6 @@ class CaptureLocationViewModel(
     }
 
     fun stopLocationCapture() {
-        cancelLocationCaptureJob?.cancel()
         userLocationManager.locationUpdateLiveDate.removeObserver(locationObserver)
     }
 }

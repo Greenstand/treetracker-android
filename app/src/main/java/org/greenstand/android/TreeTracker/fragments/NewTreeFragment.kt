@@ -24,17 +24,16 @@ import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.view.CustomToast
-import org.greenstand.android.TreeTracker.viewmodels.CaptureLocationViewModel
+import org.greenstand.android.TreeTracker.usecases.CaptureTreeLocationUseCase
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import timber.log.Timber
 
 class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private val userLocationManager: UserLocationManager by inject()
-    private val captureLocationViewModel by sharedViewModel<CaptureLocationViewModel>()
     private val vm: NewTreeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,10 +119,6 @@ class NewTreeFragment : androidx.fragment.app.Fragment(), ActivityCompat.OnReque
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // Capture location for tree accuracy analysis should stop now since user has finished
-        // taking the tree picture or has cancelled it.
-        captureLocationViewModel.stopLocationCapture()
-        Timber.i("Capture location for tree accuracy stopped")
         if (data != null && resultCode == Activity.RESULT_OK) {
             vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 

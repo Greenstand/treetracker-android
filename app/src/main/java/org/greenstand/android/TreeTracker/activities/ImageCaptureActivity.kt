@@ -10,19 +10,26 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.usecases.CaptureTreeLocationUseCase
 import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
+import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import timber.log.Timber
 import java.io.File
-import java.lang.Exception
 
 class ImageCaptureActivity : AppCompatActivity() {
 
     private lateinit var viewFinder: TextureView
     private lateinit var imageCaptureButton: ImageButton
     private lateinit var toolbarTitle: TextView
+    private val treeCaptureSession by inject<Scope>(named(ValueHelper.TREE_LOCATION_CAPTURE_SESSION))
+    private val locationCaptureScope: CaptureTreeLocationUseCase = treeCaptureSession.get(
+        named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE)
+    )
 
     companion object {
         private const val SELFIE_MODE = "SELFIE_MODE"
@@ -52,6 +59,16 @@ class ImageCaptureActivity : AppCompatActivity() {
         }
 
         viewFinder.post { startCamera(captureSelfie) }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationCaptureScope.stopLocationCapture()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        locationCaptureScope.startLocationCapture()
     }
 
     private fun startCamera(captureSelfie: Boolean) {
