@@ -19,5 +19,7 @@ data class RegistrationRequest(@SerializedName("planter_identifier")
                                @SerializedName("lon")
                                val lon: Double?,
                                @SerializedName("device_identifier")
-                               val deviceIdentifier: String? = null
+                               val deviceIdentifier: String? = null,
+                               @SerializedName("record_uuid")
+                               val recordUuid: String? = null
 )

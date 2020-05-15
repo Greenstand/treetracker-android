@@ -27,7 +27,9 @@ data class PlanterInfoEntity(
     @ColumnInfo(name = CREATED_AT)
     var createdAt: Long,
     @ColumnInfo(name = BUNDLE_ID)
-    var bundleId: String? = null
+    var bundleId: String? = null,
+    @ColumnInfo(name = RECORD_UUID)
+    var recordUuid: String? = null
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -49,5 +51,6 @@ data class PlanterInfoEntity(
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"
         const val BUNDLE_ID = "bundle_id"
+        const val RECORD_UUID = "record_uuid"
     }
 }

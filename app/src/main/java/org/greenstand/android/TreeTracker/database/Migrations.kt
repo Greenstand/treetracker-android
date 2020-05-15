@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.database
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -55,4 +56,10 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         }
     }
 
+}
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE ${PlanterInfoEntity.TABLE} ADD COLUMN ${PlanterInfoEntity.RECORD_UUID} TEXT")
+    }
 }

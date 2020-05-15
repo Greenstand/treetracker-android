@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -236,6 +235,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     }
 
     private fun renderTrees() {
+
+        map ?: return
+
         runBlocking {
             val trees = withContext(Dispatchers.IO) { dao.getTreeDataForMap() }
 
