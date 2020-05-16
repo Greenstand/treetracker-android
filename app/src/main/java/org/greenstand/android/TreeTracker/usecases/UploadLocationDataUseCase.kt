@@ -22,6 +22,8 @@ class UploadLocationDataUseCase(
                 val locations = dao.getTreeLocationData().map { gson.toJson(it) }
                 val treeLocJsonArray = gson.toJson(locations)
                 storageClient.uploadBundle(treeLocJsonArray, treeLocJsonArray.md5())
+                dao.purgeUploadedTreeLocations()
+                Timber.d("Completed purging uploaded tree locations")
             }
         } catch (ace: AmazonClientException) {
             Timber.e(

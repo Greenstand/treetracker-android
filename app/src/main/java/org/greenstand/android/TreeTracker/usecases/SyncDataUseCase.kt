@@ -8,14 +8,14 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
-const val TAG = "SyncDataUseCase"
-
 class SyncDataUseCase(
     private val treeLoadStrategy: TreeUploadStrategy,
     private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
     private val uploadLocationDataUseCase: UploadLocationDataUseCase,
     private val dao: TreeTrackerDAO
 ) : UseCase<Unit, Boolean>() {
+
+    private val TAG = "SyncDataUseCase"
 
     override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {
@@ -78,8 +78,6 @@ class SyncDataUseCase(
         kotlin.runCatching {
             uploadLocationDataUseCase.execute(Unit)
             Timber.tag(TAG).d("Uploading tree location data complete")
-            dao.purgeUploadedTreeLocations()
-            Timber.tag(TAG).d("Completed purging uploaded tree locations")
         }
     }
 
