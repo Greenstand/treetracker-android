@@ -21,5 +21,5 @@ data class RegistrationRequest(@SerializedName("planter_identifier")
                                @SerializedName("device_identifier")
                                val deviceIdentifier: String? = null,
                                @SerializedName("record_uuid")
-                               val recordUuid: String? = null
+                               val recordUuid: String
 )

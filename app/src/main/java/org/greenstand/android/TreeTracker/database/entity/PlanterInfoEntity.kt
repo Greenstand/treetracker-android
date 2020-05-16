@@ -28,8 +28,8 @@ data class PlanterInfoEntity(
     var createdAt: Long,
     @ColumnInfo(name = BUNDLE_ID)
     var bundleId: String? = null,
-    @ColumnInfo(name = RECORD_UUID)
-    var recordUuid: String? = null
+    @ColumnInfo(name = RECORD_UUID, defaultValue = "")
+    var recordUuid: String
 ) {
 
     @PrimaryKey(autoGenerate = true)
