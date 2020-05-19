@@ -34,7 +34,6 @@ import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
-import org.greenstand.android.TreeTracker.usecases.CaptureTreeLocationUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -42,8 +41,6 @@ import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.qualifier.named
-import org.koin.core.scope.Scope
 import timber.log.Timber
 import kotlin.math.roundToInt
 
