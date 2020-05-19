@@ -26,10 +26,7 @@ class ImageCaptureActivity : AppCompatActivity() {
     private lateinit var viewFinder: TextureView
     private lateinit var imageCaptureButton: ImageButton
     private lateinit var toolbarTitle: TextView
-    private val treeCaptureSession by inject<Scope>(named(ValueHelper.TREE_LOCATION_CAPTURE_SESSION))
-    private val locationCaptureScope: CaptureTreeLocationUseCase = treeCaptureSession.get(
-        named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE)
-    )
+    private val captureTreeLocationUseCase: CaptureTreeLocationUseCase by inject()
 
     companion object {
         private const val SELFIE_MODE = "SELFIE_MODE"
@@ -61,14 +58,14 @@ class ImageCaptureActivity : AppCompatActivity() {
         viewFinder.post { startCamera(captureSelfie) }
     }
 
-    override fun onPause() {
-        super.onPause()
-        locationCaptureScope.stopLocationCapture()
+    override fun onStop() {
+        super.onStop()
+        captureTreeLocationUseCase.stopLocationCapture()
     }
 
-    override fun onResume() {
-        super.onResume()
-        locationCaptureScope.startLocationCapture()
+    override fun onStart() {
+        super.onStart()
+        captureTreeLocationUseCase.startLocationCapture()
     }
 
     private fun startCamera(captureSelfie: Boolean) {

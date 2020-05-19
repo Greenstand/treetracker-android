@@ -62,21 +62,12 @@ val appModule = module {
 
     single { NotificationManagerCompat.from(get()) }
 
-    scope(named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE)) {
-        scoped {
-            CaptureTreeLocationUseCase(
+    single {
+        CaptureTreeLocationUseCase(
                 get(),
                 get(),
                 get()
             )
-        }
-    }
-
-    single {
-        getKoin().createScope(
-            ValueHelper.TREE_LOCATION_CAPTURE_SESSION,
-            named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE)
-        )
     }
 
     factory { UploadImageUseCase(get()) }

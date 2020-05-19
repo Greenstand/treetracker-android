@@ -52,9 +52,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
-    private val treeCaptureSession by inject<Scope>(named(ValueHelper.TREE_LOCATION_CAPTURE_SESSION))
-    private val locationCaptureScope: CaptureTreeLocationUseCase = treeCaptureSession.get(
-        named(ValueHelper.TREE_LOCATION_CAPTURE_SCOPE))
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val dao: TreeTrackerDAO by inject()
@@ -158,12 +155,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                     if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
                         findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
-                        // We want to capture location from the moment user navigates to camera
-                        // view to improve accuracy analysis of the tree data. The data capture will
-                        // the moment a picture is taken or when the user navigates away from the
-                        // camera view (see onPause() method in ImageCaptureActivity)
-                        locationCaptureScope.startLocationCapture()
-                        Timber.i("Capture location for tree accuracy started")
                         findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                     }
                 } else {
