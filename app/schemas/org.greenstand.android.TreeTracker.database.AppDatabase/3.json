@@ -2,61 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "15348b337f92600443a71188434c46e7",
+    "identityHash": "e591e995eaf001cff23a8958f493fc72",
     "entities": [
       {
-        "tableName": "tree_attributes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `key` TEXT NOT NULL, `value` TEXT NOT NULL, `tree_id` INTEGER NOT NULL, FOREIGN KEY(`tree_id`) REFERENCES `tree`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "key",
-            "columnName": "key",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "value",
-            "columnName": "value",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "treeId",
-            "columnName": "tree_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "_id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "tree",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "tree_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          }
-        ]
-      },
-      {
-        "tableName": "tree",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` TEXT, `main_db_id` INTEGER NOT NULL, `time_created` TEXT NOT NULL, `time_updated` TEXT NOT NULL, `time_for_update` TEXT NOT NULL, `three_digit_number` INTEGER, `location_id` INTEGER, `is_missing` INTEGER NOT NULL, `is_synced` INTEGER NOT NULL, `is_priority` INTEGER NOT NULL, `cause_of_death_id` INTEGER, `settings_id` INTEGER, `settings_override_id` INTEGER, `user_id` INTEGER, `planter_identification_id` INTEGER, FOREIGN KEY(`settings_override_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`settings_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`cause_of_death_id`) REFERENCES `note`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`planter_identification_id`) REFERENCES `planter_identifications`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "tableName": "planter_check_in",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planter_info_id` INTEGER NOT NULL, `local_photo_path` TEXT, `photo_url` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`planter_info_id`) REFERENCES `planter_info`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -65,298 +15,38 @@
             "notNull": true
           },
           {
-            "fieldPath": "uuid",
-            "columnName": "uuid",
+            "fieldPath": "planterInfoId",
+            "columnName": "planter_info_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localPhotoPath",
+            "columnName": "local_photo_path",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "mainDbId",
-            "columnName": "main_db_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timeCreated",
-            "columnName": "time_created",
+            "fieldPath": "photoUrl",
+            "columnName": "photo_url",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timeUpdated",
-            "columnName": "time_updated",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timeForUpdate",
-            "columnName": "time_for_update",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "threeDigitNumber",
-            "columnName": "three_digit_number",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "locationId",
-            "columnName": "location_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "isMissing",
-            "columnName": "is_missing",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isSynced",
-            "columnName": "is_synced",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isPriority",
-            "columnName": "is_priority",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "causeOfDeath",
-            "columnName": "cause_of_death_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "settingId",
-            "columnName": "settings_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "settingsOverrideId",
-            "columnName": "settings_override_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "userId",
-            "columnName": "user_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "planterId",
-            "columnName": "planter_identification_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "_id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "settings",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "settings_override_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "settings",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "settings_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "location",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "location_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "note",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "cause_of_death_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "planter_identifications",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "planter_identification_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          }
-        ]
-      },
-      {
-        "tableName": "tree_note",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`note_id` INTEGER NOT NULL, `tree_id` INTEGER NOT NULL, PRIMARY KEY(`note_id`, `tree_id`), FOREIGN KEY(`note_id`) REFERENCES `note`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`tree_id`) REFERENCES `tree`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "noteId",
-            "columnName": "note_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "treeId",
-            "columnName": "tree_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "note_id",
-            "tree_id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "note",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "note_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "tree",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "tree_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          }
-        ]
-      },
-      {
-        "tableName": "tree_photo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tree_id` INTEGER NOT NULL, `photo_id` INTEGER NOT NULL, PRIMARY KEY(`tree_id`, `photo_id`), FOREIGN KEY(`photo_id`) REFERENCES `photo`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`tree_id`) REFERENCES `tree`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "treeId",
-            "columnName": "tree_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "photoId",
-            "columnName": "photo_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "tree_id",
-            "photo_id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "photo",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "photo_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "tree",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "tree_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          }
-        ]
-      },
-      {
-        "tableName": "location",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `accuracy` INTEGER, `lat` REAL, `long` REAL, `user_id` INTEGER, `main_db_id` INTEGER NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "accuracy",
-            "columnName": "accuracy",
-            "affinity": "INTEGER",
             "notNull": false
           },
           {
             "fieldPath": "latitude",
-            "columnName": "lat",
+            "columnName": "latitude",
             "affinity": "REAL",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "longitude",
-            "columnName": "long",
+            "columnName": "longitude",
             "affinity": "REAL",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "userId",
-            "columnName": "user_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "mainDbId",
-            "columnName": "main_db_id",
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -367,56 +57,33 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "note",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `main_db_id` INTEGER NOT NULL, `content` TEXT, `time_created` TEXT NOT NULL, `user_id` INTEGER)",
-        "fields": [
+        "indices": [
           {
-            "fieldPath": "id",
-            "columnName": "_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "mainDbId",
-            "columnName": "main_db_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "content",
-            "columnName": "content",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "timeCreated",
-            "columnName": "time_created",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "userId",
-            "columnName": "user_id",
-            "affinity": "INTEGER",
-            "notNull": false
+            "name": "index_planter_check_in_planter_info_id",
+            "unique": false,
+            "columnNames": [
+              "planter_info_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_planter_check_in_planter_info_id` ON `${TABLE_NAME}` (`planter_info_id`)"
           }
         ],
-        "primaryKey": {
-          "columnNames": [
-            "_id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "planter_info",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "planter_info_id"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          }
+        ]
       },
       {
-        "tableName": "planter_details",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identifier` TEXT, `first_name` TEXT, `last_name` TEXT, `organization` TEXT, `phone` TEXT, `email` TEXT, `uploaded` INTEGER NOT NULL, `time_created` TEXT NOT NULL, `location` TEXT)",
+        "tableName": "planter_info",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planterInfoId` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `organization` TEXT, `phone` TEXT, `email` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT, `record_uuid` TEXT NOT NULL DEFAULT '')",
         "fields": [
           {
             "fieldPath": "id",
@@ -426,21 +93,21 @@
           },
           {
             "fieldPath": "identifier",
-            "columnName": "identifier",
+            "columnName": "planterInfoId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "firstName",
             "columnName": "first_name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "lastName",
             "columnName": "last_name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "organization",
@@ -461,22 +128,41 @@
             "notNull": false
           },
           {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
             "fieldPath": "uploaded",
             "columnName": "uploaded",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "timeCreated",
-            "columnName": "time_created",
-            "affinity": "TEXT",
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "location",
-            "columnName": "location",
+            "fieldPath": "bundleId",
+            "columnName": "bundle_id",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "recordUuid",
+            "columnName": "record_uuid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -489,8 +175,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "planter_identifications",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planter_details_id` INTEGER, `identifier` TEXT, `photo_path` TEXT, `photo_url` TEXT, `time_created` TEXT NOT NULL, `location` TEXT, FOREIGN KEY(`planter_details_id`) REFERENCES `planter_details`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "tableName": "tree_attribute",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT NOT NULL, `value` TEXT NOT NULL, `tree_capture_id` INTEGER NOT NULL, FOREIGN KEY(`tree_capture_id`) REFERENCES `tree_capture`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -499,20 +185,79 @@
             "notNull": true
           },
           {
-            "fieldPath": "planterDetailsId",
-            "columnName": "planter_details_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "identifier",
-            "columnName": "identifier",
+            "fieldPath": "key",
+            "columnName": "key",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "photoPath",
-            "columnName": "photo_path",
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "treeCaptureId",
+            "columnName": "tree_capture_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_tree_attribute_tree_capture_id",
+            "unique": false,
+            "columnNames": [
+              "tree_capture_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tree_attribute_tree_capture_id` ON `${TABLE_NAME}` (`tree_capture_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "tree_capture",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "tree_capture_id"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "tree_capture",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` TEXT NOT NULL, `planter_checkin_id` INTEGER NOT NULL, `local_photo_path` TEXT, `photo_url` TEXT, `note_content` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `accuracy` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT, FOREIGN KEY(`planter_checkin_id`) REFERENCES `planter_check_in`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planterCheckInId",
+            "columnName": "planter_checkin_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localPhotoPath",
+            "columnName": "local_photo_path",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -523,14 +268,44 @@
             "notNull": false
           },
           {
-            "fieldPath": "timeCreated",
-            "columnName": "time_created",
+            "fieldPath": "noteContent",
+            "columnName": "note_content",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "location",
-            "columnName": "location",
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accuracy",
+            "columnName": "accuracy",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploaded",
+            "columnName": "uploaded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bundleId",
+            "columnName": "bundle_id",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -541,210 +316,23 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_tree_capture_planter_checkin_id",
+            "unique": false,
+            "columnNames": [
+              "planter_checkin_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tree_capture_planter_checkin_id` ON `${TABLE_NAME}` (`planter_checkin_id`)"
+          }
+        ],
         "foreignKeys": [
           {
-            "table": "planter_details",
+            "table": "planter_check_in",
             "onDelete": "NO ACTION",
             "onUpdate": "CASCADE",
             "columns": [
-              "planter_details_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          }
-        ]
-      },
-      {
-        "tableName": "settings",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `main_db_id` INTEGER NOT NULL, `time_to_next_update` INTEGER NOT NULL, `min_accuracy` INTEGER NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "mainDbId",
-            "columnName": "main_db_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timeToNextUpdate",
-            "columnName": "time_to_next_update",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "minAccuracy",
-            "columnName": "min_accuracy",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "_id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "pending_updates",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `main_db_id` INTEGER NOT NULL, `user_id` INTEGER, `settings_id` INTEGER, `tree_id` INTEGER, `location_id` INTEGER, `radius` INTEGER, FOREIGN KEY(`settings_id`) REFERENCES `settings`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`tree_id`) REFERENCES `tree`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "mainDbId",
-            "columnName": "main_db_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "userId",
-            "columnName": "user_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "settingsId",
-            "columnName": "settings_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "treeId",
-            "columnName": "tree_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "locationId",
-            "columnName": "location_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "radius",
-            "columnName": "radius",
-            "affinity": "INTEGER",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "_id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "settings",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "settings_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "tree",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "tree_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
-            "table": "location",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "location_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          }
-        ]
-      },
-      {
-        "tableName": "photo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `location_id` INTEGER, `main_db_id` INTEGER NOT NULL, `is_outdated` INTEGER NOT NULL, `time_taken` TEXT NOT NULL, `user_id` INTEGER, FOREIGN KEY(`location_id`) REFERENCES `location`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "locationId",
-            "columnName": "location_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "mainDbId",
-            "columnName": "main_db_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isOutdated",
-            "columnName": "is_outdated",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timeTaken",
-            "columnName": "time_taken",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "userId",
-            "columnName": "user_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "_id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "location",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "location_id"
+              "planter_checkin_id"
             ],
             "referencedColumns": [
               "_id"
@@ -753,9 +341,10 @@
         ]
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"15348b337f92600443a71188434c46e7\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e591e995eaf001cff23a8958f493fc72')"
     ]
   }
 }

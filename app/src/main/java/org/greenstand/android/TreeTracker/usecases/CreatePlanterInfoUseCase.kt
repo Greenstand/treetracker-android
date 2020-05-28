@@ -6,6 +6,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import java.util.*
 
 
 data class CreatePlanterInfoParams(val firstName: String,
@@ -34,7 +35,8 @@ class CreatePlanterInfoUseCase(private val userLocationManager: UserLocationMana
             longitude = location?.longitude ?: 0.0,
             latitude = location?.latitude ?: 0.0,
             createdAt = time,
-            uploaded = false
+            uploaded = false,
+            recordUuid = UUID.randomUUID().toString()
         )
 
         doa.insertPlanterInfo(entity).also {
