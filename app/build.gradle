@@ -17,7 +17,8 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.github.triplet.play'
 apply plugin: "androidx.navigation.safeargs.kotlin"
-
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
 
 def loadExtraProperties(String fileName) {
     def props = new Properties()
@@ -51,7 +52,7 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 101
+        versionCode 111
         versionName "1.2.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -198,7 +199,7 @@ repositories {
 dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
-    compile 'com.google.maps.android:android-maps-utils:0.5+'
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
     //implementation 'com.amazonaws:aws-java-sdk:1.11.584'
     // 2.0: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-project-gradle.html
@@ -270,3 +271,15 @@ play {
 
 apply plugin: 'com.google.gms.google-services'
 
+ktlint {
+    android.set(true)
+    outputColorName.set("RED")
+}
+
+afterEvaluate {
+    // ktlint git precommit hook is insalled to .git folder in project root when running app in
+    // Intellij by the developer or when triggering gradle build. This ensures ktlint format is
+    // executed before code is committed.
+    tasks["preBuild"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
+    tasks["clean"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
+}

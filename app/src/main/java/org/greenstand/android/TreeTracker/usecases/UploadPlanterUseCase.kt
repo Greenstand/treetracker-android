@@ -7,15 +7,16 @@ import timber.log.Timber
 
 data class UploadPlanterParams(val planterInfoIds: List<Long>)
 
-
 /**
  * Given a planter info ID this will upload the planters info
  * as well as each of the planters check in photos
  */
-class UploadPlanterUseCase(private val dao: TreeTrackerDAO,
-                           private val uploadPlanterInfoUserCase: UploadPlanterInfoUseCase,
-                           private val removeLocalImagesWithIdsUseCase: DeleteOldPlanterImagesUseCase,
-                           private val uploadPlanterCheckInUseCase: UploadPlanterCheckInUseCase) : UseCase<UploadPlanterParams, Unit>() {
+class UploadPlanterUseCase(
+    private val dao: TreeTrackerDAO,
+    private val uploadPlanterInfoUseCase: UploadPlanterInfoUseCase,
+    private val deleteOldPlanterImagesUseCase: DeleteOldPlanterImagesUseCase,
+    private val uploadPlanterCheckInUseCase: UploadPlanterCheckInUseCase
+) : UseCase<UploadPlanterParams, Unit>() {
 
     private fun log(msg: String) = Timber.tag("UploadPlanterUseCase").d(msg)
 
@@ -24,14 +25,15 @@ class UploadPlanterUseCase(private val dao: TreeTrackerDAO,
 
         // Upload all the images
         val planterCheckIns = dao.getPlanterCheckInsById(params.planterInfoIds)
-        uploadPlanterCheckInUseCase.execute(UploadPlanterCheckInParams(planterCheckIns.map { it.id }))
+        uploadPlanterCheckInUseCase.execute(
+            UploadPlanterCheckInParams(planterCheckIns.map { it.id }))
 
         // Upload the user data
         val planterInfoList = params.planterInfoIds.mapNotNull { dao.getPlanterInfoById(it) }
-        uploadPlanterInfoUserCase.execute(UploadPlanterInfoParams(planterInfoIds = planterInfoList.map { it.id }))
+        uploadPlanterInfoUseCase.execute(
+            UploadPlanterInfoParams(planterInfoIds = planterInfoList.map { it.id }))
 
         // Delete local images
-        removeLocalImagesWithIdsUseCase.execute(Unit)
+        deleteOldPlanterImagesUseCase.execute(Unit)
     }
-
 }

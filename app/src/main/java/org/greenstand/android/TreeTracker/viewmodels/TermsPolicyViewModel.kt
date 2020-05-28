@@ -11,8 +11,10 @@ import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoParams
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
 
-class TermsPolicyViewModel(private val createPlanterCheckInUseCase: CreatePlanterCheckInUseCase,
-                           private val createPlanterInfoUseCase: CreatePlanterInfoUseCase) : ViewModel() {
+class TermsPolicyViewModel(
+    private val createPlanterCheckInUseCase: CreatePlanterCheckInUseCase,
+    private val createPlanterInfoUseCase: CreatePlanterInfoUseCase
+) : ViewModel() {
 
     lateinit var userInfo: UserInfo
     var photoPath: String? = null
@@ -28,20 +30,25 @@ class TermsPolicyViewModel(private val createPlanterCheckInUseCase: CreatePlante
     private fun confirm(onConfirmationComplete: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            val planterInfoId = createPlanterInfoUseCase.execute(CreatePlanterInfoParams(firstName = userInfo.firstName,
-                                                                                         lastName = userInfo.lastName,
-                                                                                         identifier = userInfo.identification,
-                                                                                         organization = userInfo.organization,
-                                                                                         phone = null,
-                                                                                         email = null))
+            val planterInfoId = createPlanterInfoUseCase.execute(
+                CreatePlanterInfoParams(
+                    firstName = userInfo.firstName,
+                    lastName = userInfo.lastName,
+                    identifier = userInfo.identification,
+                    organization = userInfo.organization,
+                    phone = null,
+                    email = null
+                )
+            )
 
-            createPlanterCheckInUseCase.execute(CreatePlanterCheckInParams(localPhotoPath = photoPath!!,
-                                                                           planterInfoId = planterInfoId))
-
-
+            createPlanterCheckInUseCase.execute(
+                CreatePlanterCheckInParams(
+                    localPhotoPath = photoPath!!,
+                    planterInfoId = planterInfoId
+                )
+            )
 
             withContext(Dispatchers.Main) { onConfirmationComplete() }
         }
     }
-
 }
