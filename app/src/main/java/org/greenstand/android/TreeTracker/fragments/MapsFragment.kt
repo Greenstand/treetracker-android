@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.fragments
 
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
@@ -24,9 +23,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_map.*
-import kotlinx.coroutines.*
+import kotlin.math.roundToInt
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
+import kotlinx.android.synthetic.main.fragment_map.addTreeButton
+import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
+import kotlinx.android.synthetic.main.fragment_map.mapUserImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
@@ -42,14 +48,11 @@ import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import kotlin.math.roundToInt
-
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
-
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val dao: TreeTrackerDAO by inject()
@@ -57,10 +60,14 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
-    private lateinit var fragmentMapGpsAccuracyView : TextView
-    private lateinit var clusterManager : ClusterManager<TreeMapMarker>
+    private lateinit var fragmentMapGpsAccuracyView: TextView
+    private lateinit var clusterManager: ClusterManager<TreeMapMarker>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_map, container, false)
     }
 
@@ -77,7 +84,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                     val profileImageView = mapUserImage
 
                     if (photoPath != null) {
-                        val rotatedBitmap = ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
+                        val rotatedBitmap =
+                            ImageUtils.decodeBitmap(photoPath, resources.displayMetrics.density)
                         if (rotatedBitmap != null) {
                             profileImageView.setImageBitmap(rotatedBitmap)
                             profileImageView.visibility = View.VISIBLE
@@ -122,14 +130,16 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     }
 
     private fun updateLocationAccuracy(location: Location?) {
-        when(location.accuracyStatus()) {
+        when (location.accuracyStatus()) {
             Accuracy.GOOD -> {
                 fragmentMapGpsAccuracyView.setTextColor(Color.GREEN)
-                fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy_double_colon, location!!.accuracy.roundToInt())
+                fragmentMapGpsAccuracyView.text =
+                    getString(R.string.gps_accuracy_double_colon, location!!.accuracy.roundToInt())
             }
             Accuracy.BAD -> {
                 fragmentMapGpsAccuracyView.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyView.text = getString(R.string.gps_accuracy_double_colon, location!!.accuracy.roundToInt())
+                fragmentMapGpsAccuracyView.text =
+                    getString(R.string.gps_accuracy_double_colon, location!!.accuracy.roundToInt())
             }
             Accuracy.NONE -> {
                 fragmentMapGpsAccuracyView.setTextColor(Color.RED)
@@ -144,23 +154,34 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             R.id.addTreeButton -> {
                 Timber.d("fab click")
 
-                if (userLocationManager.hasSufficientAccuracy() || !FeatureFlags.HIGH_GPS_ACCURACY) {
+                if (userLocationManager.hasSufficientAccuracy() ||
+                    !FeatureFlags.HIGH_GPS_ACCURACY) {
                     // Disable the addTreeButton below to avoid triggering the onClick listener
                     // more than one once.
                     addTreeButton.isEnabled = false
                     val currentTimestamp = System.currentTimeMillis() / 1000
-                    val lastTimeStamp = sharedPreferences.getLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
+                    val lastTimeStamp = sharedPreferences.getLong(
+                        ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS,
+                        0
+                    )
                     if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
-                        findNavController().navigate(MapsFragmentDirections.actionGlobalLoginFlowGraph())
+                        findNavController().navigate(
+                            MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
-                        findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                        findNavController().navigate(
+                            MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                     }
                 } else {
-                    Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
             R.id.goToUploadsButton -> {
-                findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment(true))
+                findNavController().navigate(
+                    MapsFragmentDirections.actionMapsFragmentToDataFragment(
+                        true
+                    )
+                )
             }
         }
     }
@@ -178,14 +199,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                 Toast.makeText(activity, "Error adding test trees", Toast.LENGTH_LONG).show()
             }
         }
-
         return true
     }
 
     @SuppressLint("MissingPermission")
     override fun onPause() {
         super.onPause()
-
         map?.isMyLocationEnabled = false
     }
 
@@ -206,7 +225,11 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
         clusterManager = ClusterManager(context, map)
         clusterManager.renderer = TreeClusterRenderer(requireContext(), googleMap, clusterManager)
         clusterManager.setOnClusterItemClickListener {
-            findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(it.title))
+            findNavController().navigate(
+                MapsFragmentDirections.actionMapsFragmentToTreePreviewFragment(
+                    it.title
+                )
+            )
             true
         }
         map!!.setOnCameraIdleListener(clusterManager)
@@ -229,7 +252,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
         }
         map!!.isMyLocationEnabled = true
 
-
         map!!.mapType = GoogleMap.MAP_TYPE_NORMAL
         renderTrees()
     }
@@ -246,15 +268,21 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
             if (trees.isNotEmpty()) {
                 Timber.d("Adding markers")
                 for (tree in trees) {
-                    val treeMapAnnotation = TreeMapMarker(tree.latitude, tree.longitude, _title = tree.treeCaptureId.toString())
+                    val treeMapAnnotation = TreeMapMarker(
+                        tree.latitude,
+                        tree.longitude,
+                        _title = tree.treeCaptureId.toString()
+                    )
                     clusterManager.addItem(treeMapAnnotation)
                 }
             }
             if (userLocationManager.currentLocation != null) {
-                val myLatLng = LatLng(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude)
+                val myLatLng = LatLng(
+                    userLocationManager.currentLocation!!.latitude,
+                    userLocationManager.currentLocation!!.longitude
+                )
                 map!!.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
             }
-
         }
     }
 }

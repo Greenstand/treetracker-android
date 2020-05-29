@@ -10,11 +10,13 @@ import timber.log.Timber
 
 data class UploadTreeBundleParams(val treeIds: List<Long>)
 
-class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase,
-                              private val objectStorageClient: ObjectStorageClient,
-                              private val createTreeRequestUseCase: CreateTreeRequestUseCase,
-                              private val removeLocalImagesWithIdsUseCase: RemoveLocalTreeImagesWithIdsUseCase,
-                              private val dao: TreeTrackerDAO) : UseCase<UploadTreeBundleParams, Unit>() {
+class UploadTreeBundleUseCase(
+    private val uploadImageUseCase: UploadImageUseCase,
+    private val objectStorageClient: ObjectStorageClient,
+    private val createTreeRequestUseCase: CreateTreeRequestUseCase,
+    private val removeLocalImagesWithIdsUseCase: RemoveLocalTreeImagesWithIdsUseCase,
+    private val dao: TreeTrackerDAO
+) : UseCase<UploadTreeBundleParams, Unit>() {
 
     fun log(msg: String) = Timber.tag("UploadTreeBundleUseCase").d(msg)
 
@@ -31,9 +33,13 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
                 .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
                 .forEach { tree ->
 
-                    val imageUrl = uploadImageUseCase.execute(UploadImageParams(imagePath = tree.localPhotoPath!!,
-                                                                                lat = tree.latitude,
-                                                                                long = tree.longitude))
+                    val imageUrl = uploadImageUseCase.execute(
+                        UploadImageParams(
+                            imagePath = tree.localPhotoPath!!,
+                            lat = tree.latitude,
+                            long = tree.longitude
+                        )
+                    )
                         ?: throw IllegalStateException("No imageUrl")
 
                     // Update local tree data with image Url
@@ -43,7 +49,14 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
             log("Image uploads complete")
 
             // Create a request object for each tree
-            val treeRequestList = trees.map { tree -> createTreeRequestUseCase.execute(CreateTreeRequestParams(tree.id, tree.photoUrl!!)) }
+            val treeRequestList = trees.map { tree ->
+                createTreeRequestUseCase.execute(
+                    CreateTreeRequestParams(
+                        tree.id,
+                        tree.photoUrl!!
+                    )
+                )
+            }
 
             val jsonBundle = Gson().toJson(UploadBundle(trees = treeRequestList))
 
@@ -58,11 +71,10 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
             log("Bundle Tree Upload Completed")
 
             log("Deleting all local image files for uploaded trees...")
-            removeLocalImagesWithIdsUseCase.execute(RemoveLocalTreeImagesWithIdsParams(trees.map { it.id }))
+            removeLocalImagesWithIdsUseCase.execute(
+                RemoveLocalTreeImagesWithIdsParams(trees.map { it.id }))
 
             dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
-
         }
     }
 }
-

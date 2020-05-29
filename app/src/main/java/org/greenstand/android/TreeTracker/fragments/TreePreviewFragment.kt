@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.fragments
 
-
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater

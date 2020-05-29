@@ -23,7 +23,8 @@ class BundleTreeUploadStrategy(private val uploadTreeBundleUseCase: UploadTreeBu
             } catch (e: Exception) {
                 Timber.e("NewTree upload failed")
             }
-        }    }
+        }
+    }
 
     companion object {
         val tag: String = BundleTreeUploadStrategy::class.java.simpleName
