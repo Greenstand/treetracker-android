@@ -41,7 +41,6 @@ class UserLocationManager(private val locationManager: LocationManager,
 
         override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
             Timber.d("Location status changed %s %d", p0, p1)
-
         }
 
         override fun onProviderEnabled(p0: String?) {
@@ -88,6 +87,7 @@ class UserLocationManager(private val locationManager: LocationManager,
                 || ContextCompat.checkSelfPermission(context,
                                                      android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
+
 }
 
 enum class Accuracy {

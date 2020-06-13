@@ -13,13 +13,14 @@ import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.*
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
-
 
     viewModel { LoginViewModel(get(), get()) }
 
@@ -61,7 +62,17 @@ val appModule = module {
 
     single { NotificationManagerCompat.from(get()) }
 
+    single {
+        CaptureTreeLocationUseCase(
+                get(),
+                get(),
+                get()
+            )
+    }
+
     factory { UploadImageUseCase(get()) }
+
+    factory { UploadLocationDataUseCase(get()) }
 
     factory { UploadPlanterUseCase(get(), get(), get(), get()) }
 
@@ -93,6 +104,8 @@ val appModule = module {
 
     factory<TreeUploadStrategy> { BundleTreeUploadStrategy(get()) }
 
-    factory { SyncDataUseCase(get(), get(), get()) }
+    factory { SyncDataUseCase(get(), get(), get(), get()) }
+
+
 
 }
