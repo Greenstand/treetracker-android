@@ -1,5 +1,7 @@
 #!/bin/sh
+
 set -ex
+
 if [ '$TRAVIS_PULL_REQUEST' != "false"]; then
   echo "Generating dummy property file for the pull request build"
   touch treetracker.keys.properites
