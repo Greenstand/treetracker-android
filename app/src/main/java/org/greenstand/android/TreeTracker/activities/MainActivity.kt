@@ -7,15 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -24,35 +21,35 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
+
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.android.synthetic.main.fragment_tree_preview.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
+import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
+import kotlin.math.roundToInt
+import org.koin.android.ext.android.inject
+
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private val userManager: UserManager = getKoin().get()
-
-    private val analytics: Analytics = getKoin().get()
-
-    private val userLocationManager: UserLocationManager = getKoin().get()
-
+    private val userManager: UserManager by inject()
+    private val analytics: Analytics by inject()
+    private val userLocationManager: UserLocationManager by inject()
     private var sharedPreferences: SharedPreferences? = null
-
     private var fragment: Fragment? = null
-
-    private var locationUpdateJob: Job? = null
 
     /**
      * Called when the activity is first created.
@@ -87,6 +84,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
             }
 
+            invalidateOptionsMenu()
+
             analytics.tagScreen(this, controller.currentDestination?.label.toString())
         }
 
@@ -106,8 +105,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        return if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.mapsFragment) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+            true
+        } else {
+            false
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -118,11 +121,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 bundle = intent.extras
                 fragment?.arguments = bundle
 
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_dataFragment)
+                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
                 return true
             }
             R.id.action_about -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_mapsFragment_to_aboutFragment)
+                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToAboutFragment())
                 return true
             }
 
@@ -130,7 +133,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 userManager.clearUser()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
-
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_login_flow_graph)
             }
         }
@@ -139,22 +141,20 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     public override fun onPause() {
         super.onPause()
-
         userLocationManager.stopLocationUpdates()
-        locationUpdateJob?.cancel()
     }
 
     public override fun onResume() {
         super.onResume()
 
-        if(necessaryPermissionsGranted()) {
+        if(areNecessaryPermissionsNotGranted()) {
             requestNecessaryPermissions()
         } else {
             startPeriodicUpdates()
         }
     }
 
-    private fun necessaryPermissionsGranted() : Boolean {
+    private fun areNecessaryPermissionsNotGranted() : Boolean {
         return ContextCompat.checkSelfPermission(this,
             android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this,
@@ -168,74 +168,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 Permissions.NECESSARY_PERMISSIONS)
     }
 
-    @SuppressLint("SetTextI18n")
-    fun onLocationChanged(location: Location) {
-        // In the UI, set the latitude and longitude to the value received
-        currentLocation = location
-
-        val minAccuracy = 10
-
-        val fragmentMapGpsAccuracyView : TextView? = findViewById(R.id.fragmentMapGpsAccuracy)
-        val fragmentMapGpsAccuracyViewValue : TextView? = findViewById(R.id.fragmentMapGpsAccuracyValue)
-        if (fragmentMapGpsAccuracyView != null) {
-            if (currentLocation != null) {
-                if (currentLocation!!.hasAccuracy() && currentLocation!!.accuracy < minAccuracy) {
-                    fragmentMapGpsAccuracyView.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyViewValue?.setTextColor(Color.GREEN)
-                    fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                        Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
-                    MainActivity.allowNewTreeOrUpdate = true
-                } else {
-                    fragmentMapGpsAccuracyView.setTextColor(Color.RED)
-                    MainActivity.allowNewTreeOrUpdate = false
-
-                    if (currentLocation!!.hasAccuracy()) {
-                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyViewValue?.text = Integer.toString(
-                            Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
-                    } else {
-                        fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                        fragmentMapGpsAccuracyViewValue?.text = "N/A"
-                    }
-                }
-
-                if (currentLocation!!.hasAccuracy()) {
-                    if (fragmentNewTreeGpsAccuracy != null) {
-                        fragmentNewTreeGpsAccuracy?.text = Integer.toString(
-                            Math.round(currentLocation!!.accuracy)) + " " + resources.getString(R.string.meters)
-                    }
-                }
-            } else {
-                fragmentMapGpsAccuracyView.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyViewValue?.setTextColor(Color.RED)
-                fragmentMapGpsAccuracyViewValue?.text = "N/A"
-                MainActivity.allowNewTreeOrUpdate = false
-            }
-
-
-            if (currentTreeLocation != null && userLocationManager.currentLocation != null) {
-                val results = floatArrayOf(0f, 0f, 0f)
-                Location.distanceBetween(userLocationManager.currentLocation!!.latitude, userLocationManager.currentLocation!!.longitude,
-                                         MainActivity.currentTreeLocation!!.latitude, MainActivity.currentTreeLocation!!.longitude, results)
-
-                if (fragmentNewTreeDistance != null) {
-                    fragmentNewTreeDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
-                }
-
-                if (fragmentTreePreviewDistance != null) {
-                    fragmentTreePreviewDistance.text = Integer.toString(Math.round(results[0])) + " " + resources.getString(R.string.meters)
-                }
-            }
-        } else {
-            Timber.d("fragmentMapGpsAccuracy NULL" );
-        }
-    }
-
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (grantResults.size > 0) {
+        if (grantResults.isNotEmpty()) {
             if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates()
             }
@@ -249,13 +185,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     @SuppressLint("MissingPermission")
     private fun startPeriodicUpdates() {
 
-
-        if (necessaryPermissionsGranted()) {
+        if (areNecessaryPermissionsNotGranted()) {
             Toast.makeText(this, "GPS Permissions Not Enabled", Toast.LENGTH_LONG).show()
             requestNecessaryPermissions()
             return
         }
-
 
         // TODO this check may not longer be necessary
         if (!userLocationManager.isLocationEnabled()) {
@@ -279,17 +213,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     }
                 }
 
-
                 dialog.dismiss()
             }
-
 
             builder.setNegativeButton(R.string.cancel) { dialog, which ->
                 finish()
-
                 dialog.dismiss()
             }
-
 
             val alert = builder.create()
             alert.setCancelable(false)
@@ -299,21 +229,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             return
         }
 
-        // Register the listener with Location Manager's network provider
-        locationUpdateJob = GlobalScope.launch(Dispatchers.Main) {
-            for (location in userLocationManager.locationUpdatesChannel) {
-                onLocationChanged(location)
-            }
-        }
-
         userLocationManager.startLocationUpdates()
-    }
-
-    // TODO: implementing this as a static companion object is not necessarily a good design
-    companion object {
-        var currentLocation: Location? = null
-        var currentTreeLocation: Location? = null
-        var allowNewTreeOrUpdate = false
     }
 }
 

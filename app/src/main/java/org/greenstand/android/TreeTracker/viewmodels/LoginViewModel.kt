@@ -2,17 +2,17 @@ package org.greenstand.android.TreeTracker.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.managers.PlanterManager
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
+import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
-class LoginViewModel(private val planterManager: PlanterManager,
-                     private val userLocationManager: UserLocationManager,
-                     private val userManager: UserManager): CoroutineViewModel()  {
+class LoginViewModel(private val dao: TreeTrackerDAO,
+                     private val planterCheckInUseCase: PlanterCheckInUseCase): ViewModel()  {
 
     private var email: String? = null
     private var phone: String? = null
@@ -66,17 +66,16 @@ class LoginViewModel(private val planterManager: PlanterManager,
     }
 
     fun isUserPresentOnDevice(): Boolean {
-        return planterManager.getPlanterByInputtedText(userIdentification) != null
+        return dao.getPlanterInfoIdByIdentifier(userIdentification) != null
     }
 
     private fun confirm(onConfirmationComplete: () -> Unit) {
-        launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
 
-            userManager.login(userIdentification,
-                              photoPath!!,
-                              userLocationManager.currentLocation)
+            planterCheckInUseCase.execute(PlanterCheckInParams(localPhotoPath = photoPath!!,
+                                                               identifier = userIdentification))
 
-            withContext(Dispatchers.Main) { onConfirmationComplete() }
+            onConfirmationComplete()
         }
     }
 }

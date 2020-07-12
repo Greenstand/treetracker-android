@@ -2,21 +2,30 @@ package org.greenstand.android.TreeTracker.utilities
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.util.Log
-import android.widget.Toast
 import androidx.exifinterface.media.ExifInterface
+import com.amazonaws.util.IOUtils
 import timber.log.Timber
-
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import kotlin.math.ceil
 
 object ImageUtils {
+
+
+    fun createTestImageFile(context: Context, imageFileName: String = "testtreeimage.jpg"): File {
+        val myInput = context.assets.open(imageFileName)
+        val f = createImageFile(context)
+        val fos = FileOutputStream(f)
+        fos.write(IOUtils.toByteArray(myInput))
+        fos.close()
+        return f
+    }
 
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
@@ -43,7 +52,7 @@ object ImageUtils {
         // For e.g you want the width to stay consistent at 500dp
         val requiredWidth = (500 * density).toInt()
 
-        var sampleSize = Math.ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
+        var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
         Timber.d("sampleSize " + Integer.toString(sampleSize))
         // If the original image is smaller than required, don't sample
@@ -65,7 +74,6 @@ object ImageUtils {
         try {
             exif = ExifInterface(photoPath!!)
         } catch (e: IOException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
         }
 
@@ -82,7 +90,7 @@ object ImageUtils {
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
             rotationAngle = 270
 
-        Timber.d("rotationAngle " + Integer.toString(rotationAngle))
+        Timber.d("rotationAngle $rotationAngle")
 
         val matrix = Matrix()
         matrix.setRotate(rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
@@ -142,9 +150,6 @@ object ImageUtils {
         BitmapFactory.decodeFile(imagePath, bmOptions)
         val imageWidth = bmOptions.outWidth
 
-
-
-
         var sampleSize = Math.ceil((imageWidth.toFloat() / scaleToWidth.toFloat()).toDouble()).toInt()
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
@@ -157,7 +162,13 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
         bmOptions.inJustDecodeBounds = false
 
-        val bitmap = BitmapFactory.decodeFile(imagePath, bmOptions) ?: return null
+        val bitmap = BitmapFactory.decodeFile(imagePath, bmOptions)
+        if (bitmap == null)
+        {
+            Timber.d("Unable to decode bitmap 1")
+            return null
+        }
+
 
         val rows = bitmap.height
         val cols = bitmap.width

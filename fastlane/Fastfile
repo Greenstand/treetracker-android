@@ -28,12 +28,49 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Submit a new Greenstand Beta Build to Crashlytics Beta"
-  lane :beta do
-  
+  desc "Bump version code and push"
+  lane :bump_version_code_and_push do
+
     versionReleased = bump_version_code()
 
     git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
+
+    push_to_git_remote()
+
+  end
+
+  desc "Release a build on Firebase Beta"
+  lane :firebase_beta do
+    
+    versionReleased = bump_version_code()
+
+    git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
+
+    gradle(task: "clean assembleGreenstandDebug")
+
+    firebase_app_distribution(
+        app: "1:422699885542:android:993c29134938ce4d",
+        testers: "zaven@greenstand.com, jay@greenstand.com",
+        groups: "Greenstand",
+        release_notes: "A new release!"
+      )
+
+    slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        default_payloads: ['git_branch'])
+
+    slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        slack_url: ENV["SLACK_URL_QC"],
+        payload: {
+                     "Build Number" => versionReleased,
+                   },
+        default_payloads: ['git_branch'])
+
+
+  end
+
+
+  desc "Job for Travis to Submit a new Greenstand Beta Build to Crashlytics Beta"
+  lane :beta_release do
 
     gradle(task: "clean assembleGreenstandDebug")
     crashlytics(groups: "all-testers")
@@ -47,8 +84,9 @@ platform :android do
                      "Build Number" => versionReleased,
                    },
         default_payloads: ['git_branch'])
-  
+
   end
+
 
 
   desc "Submit a new JustDigIt Beta Build to Crashlytics Beta"

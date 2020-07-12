@@ -7,4 +7,5 @@ val roomModule = module {
 
     single { AppDatabase.getInstance(get()) }
 
+    single { AppDatabase.getInstance(get()).treeTrackerDao() }
 }

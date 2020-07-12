@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -19,15 +18,20 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.utilities.*
+import org.greenstand.android.TreeTracker.utilities.CameraHelper
+import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.utilities.onTextChanged
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class LoginFragment : Fragment(){
 
     private val vm: LoginViewModel by viewModel()
+    private val analytics: Analytics by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -59,13 +63,14 @@ class LoginFragment : Fragment(){
             GlobalScope.launch(Dispatchers.IO) {
                 if (vm.isUserPresentOnDevice()) {
                     withContext(Dispatchers.Main) {
-                        CameraHelper.takePictureForResult(this@LoginFragment)
+                        CameraHelper.takePictureForResult(this@LoginFragment, selfie = true)
                     }
                     // User already has their info on device, skip the sign up and just update photo
                     Timber.d("User already on device, going to map")
                 } else {
                     // User has no info on device, go through the sign up process
                     Timber.d("User not on device, going to signup flow")
+                    analytics.userEnteredEmailPhone()
                     withContext(Dispatchers.Main) {
                         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment(vm.userIdentification))
                     }
@@ -76,7 +81,7 @@ class LoginFragment : Fragment(){
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            CameraHelper.takePictureForResult(this)
+            CameraHelper.takePictureForResult(this, selfie = true)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

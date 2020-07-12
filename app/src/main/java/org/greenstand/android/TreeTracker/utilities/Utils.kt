@@ -5,43 +5,12 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.util.Base64
-import java.io.*
-import java.security.NoSuchAlgorithmException
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 class Utils {
 
     companion object {
-
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
-        fun computeMD5Hash(password: String): String {
-
-            try {
-                // Create MD5 Hash
-                val digest = java.security.MessageDigest.getInstance("MD5")
-                digest.update(password.toByteArray())
-                val messageDigest = digest.digest()
-
-                val MD5Hash = StringBuffer()
-                for (i in messageDigest.indices) {
-                    var h = Integer.toHexString(0xFF and messageDigest[i].toInt())
-                    while (h.length < 2)
-                        h = "0$h"
-                    MD5Hash.append(h)
-                }
-
-                return MD5Hash.toString()
-
-            } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
-            }
-
-            return ""
-
-        }
 
         fun resizedImage(path: String): Bitmap {
 
@@ -116,17 +85,6 @@ class Utils {
 
             return rotatedBitmap
 
-        }
-
-        fun convertDateToTimestamp(str: String): Long {
-            var date: Date? = null
-            try {
-                date = Utils.dateFormat.parse(str)
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-
-            return date!!.time / 1000
         }
 
         fun base64Image(path: String): String {

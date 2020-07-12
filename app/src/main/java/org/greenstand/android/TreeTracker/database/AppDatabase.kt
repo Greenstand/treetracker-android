@@ -4,39 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import org.greenstand.android.TreeTracker.database.dao.*
 import org.greenstand.android.TreeTracker.database.entity.*
-import org.greenstand.android.TreeTracker.database.migration.MigrationV1ToV2
-import org.greenstand.android.TreeTracker.database.migration.MigrationV2ToV3
-
 
 @Database(
     entities = [
-        TreeAttributesEntity::class,
-        TreeEntity::class,
-        TreeNoteEntity::class,
-        TreePhotoEntity::class,
-        LocationEntity::class,
-        NoteEntity::class,
-        PlanterDetailsEntity::class,
-        PlanterIdentificationsEntity::class,
-        SettingsEntity::class,
-        PendingUpdateEntity::class,
-        PhotoEntity::class
+        PlanterCheckInEntity::class,
+        PlanterInfoEntity::class,
+        TreeAttributeEntity::class,
+        TreeCaptureEntity::class,
+        LocationDataEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
-
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun treeDao(): TreeDao
-    abstract fun planterDao(): PlanterDao
-    abstract fun photoDao(): PhotoDao
-    abstract fun locationDao(): LocationDao
-    abstract fun noteDao(): NoteDao
-    abstract fun settingsDao(): SettingsDao
-    abstract fun treeAttributesDao(): TreeAttributesDao
+    abstract fun treeTrackerDao(): TreeTrackerDAO
 
     companion object {
 
@@ -47,16 +30,20 @@ abstract class AppDatabase : RoomDatabase() {
                 synchronized(AppDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
                                                     AppDatabase::class.java,
-                                                    DB_NAME_V2)
-                        .addMigrations(MigrationV1ToV2())
-                        .addMigrations(MigrationV2ToV3())
+                                                    DB_NAME
+                    )
+                        .addMigrations(
+                            MIGRATION_1_2,
+                            MIGRATION_2_3,
+                            MIGRATION_3_4
+                        )
                         .build()
                 }
             }
             return INSTANCE!!
         }
 
-        private const val DB_NAME_V2 = "treetracker.v2.db"
+        private const val DB_NAME = "treetracker.v1.db"
     }
 
 }

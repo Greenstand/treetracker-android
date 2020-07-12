@@ -4,22 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.text.*
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.*
-import kotlinx.android.synthetic.main.fragment_terms_policy.view.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.application.Permissions
-import org.greenstand.android.TreeTracker.data.UserInfo
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
@@ -110,13 +104,13 @@ class TermsPolicyFragment: Fragment() {
         }
 
         accept_terms_button.setOnClickListener {
-            CameraHelper.takePictureForResult(this)
+            CameraHelper.takePictureForResult(this, selfie = true)
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            CameraHelper.takePictureForResult(this)
+            CameraHelper.takePictureForResult(this, selfie = true)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

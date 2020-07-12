@@ -5,13 +5,16 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.google.gms:google-services:4.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0"
+        classpath 'org.jlleitschuh.gradle:ktlint-gradle:9.2.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -31,16 +34,16 @@ allprojects {
         androidSupportVersion = '1.0.0-beta01'
         retrofit2Version = '2.6.0'
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"
-        s3_production_identity_region = "configure in treetracker.keys.properties"
+        s3_test_identity_pool_id = "configure in treetracker.keys.properties"
+        s3_dev_identity_pool_id = "configure in treetracker.keys.properties"
         treetracker_client_id = "configure in treetracker.keys.properties"
         treetracker_client_secret = "configure in treetracker.keys.properties"
 
     }
-
 }
+
+apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-
