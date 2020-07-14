@@ -1,14 +1,18 @@
 language: android
 dist: trusty
+
 android:
   components:
   - tools
   - build-tools-28.0.3
   - android-28
+
 before_install:
-- openssl aes-256-cbc -K $encrypted_0a37c10e9e19_key -iv $encrypted_0a37c10e9e19_iv
-  -in secrets.tar.enc -out secrets.tar -d
+- 'if [ "$TRAVIS_SECURE_ENV_VARS" = "true" ]; then openssl aes-256-cbc -K $encrypted_0a37c10e9e19_key -iv $encrypted_0a37c10e9e19_iv -in secrets.tar.enc -out secrets.tar -d; fi'
+- tar xvf secrets.tar
+
 install:
 - bundle install
+
 script:
 - "./gradlew clean assembleGreenstandDebug"
