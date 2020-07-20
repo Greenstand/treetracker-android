@@ -164,7 +164,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                         ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS,
                         0
                     )
-                    if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
+                    if (FeatureFlags.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED &&
+                        currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
                         findNavController().navigate(
                             MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
