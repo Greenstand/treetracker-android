@@ -9,20 +9,27 @@ import android.view.TextureView
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraX
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureConfig
+import androidx.camera.core.Preview
+import androidx.camera.core.PreviewConfig
+import java.io.File
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.usecases.CaptureTreeLocationUseCase
 import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
+import org.koin.android.ext.android.inject
 import timber.log.Timber
-import java.io.File
 
 class ImageCaptureActivity : AppCompatActivity() {
 
     private lateinit var viewFinder: TextureView
     private lateinit var imageCaptureButton: ImageButton
     private lateinit var toolbarTitle: TextView
+    private val captureTreeLocationUseCase: CaptureTreeLocationUseCase by inject()
 
     companion object {
         private const val SELFIE_MODE = "SELFIE_MODE"
@@ -46,12 +53,22 @@ class ImageCaptureActivity : AppCompatActivity() {
         val captureSelfie = intent.extras?.getBoolean(SELFIE_MODE, false) ?: false
 
         if (captureSelfie) {
-            toolbarTitle.text= getString(R.string.take_a_selfie)
+            toolbarTitle.text = getString(R.string.take_a_selfie)
         } else {
             toolbarTitle.text = getString(R.string.add_a_tree)
         }
 
         viewFinder.post { startCamera(captureSelfie) }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        captureTreeLocationUseCase.stopLocationCapture()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        captureTreeLocationUseCase.startLocationCapture()
     }
 
     private fun startCamera(captureSelfie: Boolean) {
@@ -71,38 +88,41 @@ class ImageCaptureActivity : AppCompatActivity() {
         // Build the image capture use case and attach button click listener
         val imageCapture = ImageCapture(imageCaptureConfig)
         imageCaptureButton.setOnClickListener {
-            imageCapture.takePicture(file,
-                                     object : ImageCapture.OnImageSavedListener {
-                                         override fun onError(imageCaptureError: ImageCapture.ImageCaptureError, message: String, cause: Throwable?) {
-                                             Timber.tag("CameraXApp").e("Photo capture failed: $message")
-                                             cause?.printStackTrace()
-                                         }
+            imageCapture.takePicture(
+                file,
+                object : ImageCapture.OnImageSavedListener {
+                    override fun onError(
+                        imageCaptureError: ImageCapture.ImageCaptureError,
+                        message: String,
+                        cause: Throwable?
+                    ) {
+                        Timber.tag("CameraXApp").e("Photo capture failed: $message")
+                        cause?.printStackTrace()
+                    }
 
-                                         override fun onImageSaved(file: File) {
-                                             Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
-                                             val focusMetric = testFocusQuality(file)
+                    override fun onImageSaved(file: File) {
+                        Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
+                        val focusMetric = testFocusQuality(file)
 
-                                             val data = Intent().apply {
-                                                putExtra(ValueHelper.TAKEN_IMAGE_PATH, file.absolutePath)
-                                                 // if we can't trust the focus metric (it will be null), because of problems
-                                                 // generating the metric, we set the quality to "good" to
-                                                 // avoid false positives. Ultimately, some research would be needed
-                                                 // into determining the root cause of the false positives, but
-                                                 // that will be a future effort.
-                                                 if (focusMetric == null) {
-                                                     putExtra(ValueHelper.FOCUS_METRIC_VALUE, FOCUS_THRESHOLD)
-                                                 }
-                                                 else {
-                                                     putExtra(ValueHelper.FOCUS_METRIC_VALUE, focusMetric)
-                                                 }
-                                             }
+                        val data = Intent().apply {
+                            putExtra(ValueHelper.TAKEN_IMAGE_PATH, file.absolutePath)
+                            // if we can't trust the focus metric (it will be null), because of problems
+                            // generating the metric, we set the quality to "good" to
+                            // avoid false positives. Ultimately, some research would be needed
+                            // into determining the root cause of the false positives, but
+                            // that will be a future effort.
+                            if (focusMetric == null) {
+                                putExtra(ValueHelper.FOCUS_METRIC_VALUE, FOCUS_THRESHOLD)
+                            } else {
+                                putExtra(ValueHelper.FOCUS_METRIC_VALUE, focusMetric)
+                            }
+                        }
 
-                                             setResult(Activity.RESULT_OK, data)
-                                             finish()
-                                         }
-                                     })
+                        setResult(Activity.RESULT_OK, data)
+                        finish()
+                    }
+                })
         }
-
         CameraX.bindToLifecycle(this, preview, imageCapture)
     }
 

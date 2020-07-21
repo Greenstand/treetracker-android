@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.utilities
 
-
 object ValueHelper {
 
     const val NEW_TREE_FRAGMENT = "NEW_TREE_FRAGMENT"

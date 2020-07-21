@@ -9,12 +9,13 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 
-
 data class UploadPlanterInfoParams(val planterInfoIds: List<Long>)
 
-class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
-                               private val objectStorageClient: ObjectStorageClient)
-    : UseCase<UploadPlanterInfoParams, Unit>() {
+class UploadPlanterInfoUseCase(
+    private val dao: TreeTrackerDAO,
+    private val objectStorageClient: ObjectStorageClient
+) :
+    UseCase<UploadPlanterInfoParams, Unit>() {
 
     private fun log(msg: String) = Timber.tag("UploadPlanterInfoUseCase").d(msg)
 
@@ -39,7 +40,8 @@ class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
                 email = it.email,
                 lat = it.latitude,
                 lon = it.longitude,
-                deviceIdentifier = DeviceUtils.deviceId
+                deviceIdentifier = DeviceUtils.deviceId,
+                recordUuid = it.recordUuid
             )
         }
 
@@ -59,5 +61,4 @@ class UploadPlanterInfoUseCase(private val dao: TreeTrackerDAO,
 
         dao.updatePlanterInfoUploadStatus(planterInfoIds, true)
     }
-
 }

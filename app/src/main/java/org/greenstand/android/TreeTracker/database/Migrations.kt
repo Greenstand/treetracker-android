@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.database
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -54,5 +55,34 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
             database.endTransaction()
         }
     }
-
 }
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE ${PlanterInfoEntity.TABLE} ADD COLUMN ${PlanterInfoEntity.RECORD_UUID} TEXT NOT NULL DEFAULT ''")
+    }
+}
+
+val MIGRATION_3_4 = object : Migration(3, 4) {
+
+    override fun migrate(database: SupportSQLiteDatabase) {
+        try {
+            database.beginTransaction()
+            val createLocationData = """
+                CREATE TABLE `location_data` (
+                    `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `base64_json` TEXT NOT NULL,
+                    `uploaded` INTEGER NOT NULL,
+                    `created_at` INTEGER NOT NULL
+                )
+            """.trimIndent()
+            database.execSQL(createLocationData)
+            val indexCreation = "CREATE INDEX `index_upload_id` ON `location_data` (`uploaded`)"
+            database.execSQL(indexCreation)
+            database.setTransactionSuccessful()
+        } finally {
+            database.endTransaction()
+        }
+    }
+}
+

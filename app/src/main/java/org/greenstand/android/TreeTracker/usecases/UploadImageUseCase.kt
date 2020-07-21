@@ -29,5 +29,4 @@ class UploadImageUseCase(private val doSpaces: ObjectStorageClient) : UseCase<Up
             null
         }
     }
-
 }

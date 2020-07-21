@@ -1,11 +1,13 @@
 package org.greenstand.android.TreeTracker.usecases
 
+import java.io.File
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.UserManager
-import java.io.File
 
-class DeleteOldPlanterImagesUseCase(private val dao: TreeTrackerDAO,
-                                    private val userManager: UserManager) : UseCase<Unit, Unit>() {
+class DeleteOldPlanterImagesUseCase(
+    private val dao: TreeTrackerDAO,
+    private val userManager: UserManager
+) : UseCase<Unit, Unit>() {
 
     override suspend fun execute(params: Unit) {
 
@@ -24,6 +26,5 @@ class DeleteOldPlanterImagesUseCase(private val dao: TreeTrackerDAO,
         }
 
         dao.removePlanterCheckInLocalImagePaths(loggedOutPlanterCheckIns.map { it.id })
-
     }
 }
