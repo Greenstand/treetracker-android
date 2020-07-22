@@ -89,6 +89,16 @@ Once this is done, you can proceed by running one of the following tasks to run 
 &nbsp;
 &nbsp;
 
+## Manual Release
+
+1. Select Build->Generate Signed Bundle / APK
+2. Select APK ( This is what use currently, should be updated to use Bundle )
+3. Select the keystore to use from your hard drive
+4. Enter keystore password, alias, and key password
+5. Select the variant to build.  This is probably 'greenstandRelease' if you are deploying to the app store for the treetracker team
+6. Click 'finish' and APK will be generated
+7. This APK can be uploaded to google play, or sideloaded for testing
+
 ## Contributing
 
  See [Contributing in the Development-Overview README](https://github.com/Greenstand/Development-Overview/blob/master/README.md)
