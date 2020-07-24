@@ -78,6 +78,11 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
                 | """.trimMargin()
             database.execSQL(createPlanterCheckInIndex)
 
+            val createPlanterCheckInUploadIndex = """CREATE INDEX IF NOT EXISTS
+                | `index_tree_capture_uploaded` ON `tree_capture` (`uploaded`)
+                | """.trimMargin()
+            database.execSQL(createPlanterCheckInUploadIndex)
+
             val createTreeAttribute = """CREATE TABLE IF NOT EXISTS `tree_attribute` (
                 | `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 | `key` TEXT NOT NULL, `value` TEXT NOT NULL,
