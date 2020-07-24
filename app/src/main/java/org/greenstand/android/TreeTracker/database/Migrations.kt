@@ -24,7 +24,7 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
                 |  `uploaded` INTEGER NOT NULL,
                 |  `created_at` INTEGER NOT NULL,
                 |  `bundle_id` TEXT
-            )""".trimMargin()
+                |  )""".trimMargin()
             database.execSQL(createPlanterInfo)
             val createIndexPlanterIdentifier =  """
                 | CREATE INDEX IF NOT EXISTS 
@@ -116,7 +116,7 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
             | `photo_path`, `photo_url`, substr(`location`, 0, instr(`location`, ',')),
             | substr(`location`, instr(`location`, ',')+1), `time_created`
             | FROM `planter_identifications`
-        """.trimMargin()
+            | """.trimMargin()
             database.execSQL(populatePlanterCheckIns)
 
             // Populate tree captures
@@ -140,7 +140,7 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
             val populateTreeAttributes = """INSERT INTO `tree_attribute` (
             | `_id`, `key`, `value`, `tree_capture_id`) SELECT `_id`, `key`, `value`, `tree_id`
             | FROM `tree_attributes`
-        """.trimMargin()
+            | """.trimMargin()
             database.execSQL(populateTreeAttributes)
 
 
