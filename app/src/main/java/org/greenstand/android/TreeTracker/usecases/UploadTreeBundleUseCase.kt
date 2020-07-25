@@ -25,7 +25,7 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
 
             val trees = dao.getTreeCapturesByIds(params.treeIds)
 
-            log("Starting image uploads...")
+            log("Starting tree image uploads...")
             // Upload the images of each tree
             trees
                 .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
@@ -36,36 +36,30 @@ class UploadTreeBundleUseCase(private val uploadImageUseCase: UploadImageUseCase
                                                                                 long = tree.longitude))
                         ?: throw IllegalStateException("No imageUrl")
 
-                    Timber.d("IMAGE URL: $imageUrl")
-
                     // Update local tree data with image Url
                     tree.photoUrl = imageUrl
                     dao.updateTreeCapture(tree)
                 }
             log("Image uploads complete")
 
-            log("Creating tree requests")
             // Create a request object for each tree
             val treeRequestList = trees.map { tree -> createTreeRequestUseCase.execute(CreateTreeRequestParams(tree.id, tree.photoUrl!!)) }
 
             val jsonBundle = Gson().toJson(UploadBundle(trees = treeRequestList))
 
-            log("Creating MD5 hash")
             // Create a hash ID to reference this upload bundle later
             val bundleId = jsonBundle.md5()
 
-            log("Updating tree DB entries with MD5 hash")
             // Update the trees in DB with the bundleId
             dao.updateTreeCapturesBundleIds(trees.map { it.id }, bundleId)
 
-            log("Uploading Bundle...")
+            log("Uploading Tree Bundle...")
             objectStorageClient.uploadBundle(jsonBundle, bundleId)
-            log("Bundle Upload Completed")
+            log("Bundle Tree Upload Completed")
 
             log("Deleting all local image files for uploaded trees...")
             removeLocalImagesWithIdsUseCase.execute(RemoveLocalTreeImagesWithIdsParams(trees.map { it.id }))
 
-            log("Updating tree capture DB status to uploaded = true")
             dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
 
         }

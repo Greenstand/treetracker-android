@@ -11,11 +11,10 @@ class DeleteOldPlanterImagesUseCase(private val dao: TreeTrackerDAO,
 
         val planterCheckIns = dao.getAllPlanterCheckIn()
 
-        // Delete all local image files for registations except for the currently logged in users photo...
+        // Delete all local image files for registrations except for the currently logged in users photo...
         val loggedOutPlanterCheckIns = planterCheckIns
-            .filter { it.planterInfoId != userManager.planterCheckinId }
+            .filter { it.id != userManager.planterCheckinId }
             .sortedBy { it.createdAt }
-            .let { it.subList(0, it.size) }
 
         loggedOutPlanterCheckIns.forEach {
             val photoFile = File(it.localPhotoPath)
