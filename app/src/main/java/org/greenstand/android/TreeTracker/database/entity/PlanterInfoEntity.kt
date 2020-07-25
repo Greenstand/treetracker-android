@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = PlanterInfoEntity.TABLE)
 data class PlanterInfoEntity(
-    @ColumnInfo(name = IDENTIFIER)
+    @ColumnInfo(name = IDENTIFIER, index=true)
     var identifier: String,
     @ColumnInfo(name = FIRST_NAME)
     var firstName: String,
@@ -22,7 +22,7 @@ data class PlanterInfoEntity(
     var latitude: Double,
     @ColumnInfo(name = LONGITUDE)
     var longitude: Double,
-    @ColumnInfo(name = UPLOADED)
+    @ColumnInfo(name = UPLOADED, index = true)
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
     var createdAt: Long,
@@ -38,7 +38,7 @@ data class PlanterInfoEntity(
         const val TABLE = "planter_info"
 
         const val ID = "_id"
-        const val IDENTIFIER = "planterInfoId"
+        const val IDENTIFIER = "planter_identifier"
         const val FIRST_NAME = "first_name"
         const val LAST_NAME = "last_name"
         const val ORGANIZATION = "organization"
