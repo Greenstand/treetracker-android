@@ -11,7 +11,7 @@ import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
 @Dao
 interface TreeTrackerDAO {
 
-    @Query("SELECT _id FROM planter_info WHERE planterInfoId = :identifier")
+    @Query("SELECT _id FROM planter_info WHERE planter_identifier = :identifier")
     fun getPlanterInfoIdByIdentifier(identifier: String): Long?
 
     @Query("SELECT * FROM planter_info")
