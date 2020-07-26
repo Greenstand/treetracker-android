@@ -1,7 +1,6 @@
 package org.greenstand.android.TreeTracker.managers
 
 import android.content.SharedPreferences
-import timber.log.Timber
 
 object PrefKeys {
 
@@ -57,7 +56,7 @@ class Preferences(
             else -> {
                 prefKey.path
             }
-        }.also { Timber.d("JONATHAN $it") }
+        }
     }
 
     fun edit(): Editor {
