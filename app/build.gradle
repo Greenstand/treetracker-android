@@ -144,6 +144,8 @@ android {
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
+            signingConfig signingConfigs.debug
+            debuggable true
         }
 
         dev {
