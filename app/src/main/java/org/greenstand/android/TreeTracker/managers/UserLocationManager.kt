@@ -90,14 +90,17 @@ class UserLocationManager(
     }
 
     private fun hasLocationPermissions(): Boolean {
-        return ContextCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val coarseLocationPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        return (fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED)
     }
 }
 
