@@ -18,7 +18,7 @@ class UserLocationManager(
 ) {
 
     private val locationUpdates = MutableLiveData<Location?>()
-    val locationUpdateLiveDate: LiveData<Location?> = locationUpdates
+    val locationUpdateLiveData: LiveData<Location?> = locationUpdates
 
     var isUpdating: Boolean = false
         private set
@@ -71,7 +71,7 @@ class UserLocationManager(
 
     fun stopLocationUpdates() {
         Timber.d("Request to stop location updates submitted")
-        if (locationUpdateLiveDate.hasObservers())
+        if (locationUpdateLiveData.hasObservers())
             return
         Timber.d("Request to stop location update honored")
         locationManager.removeUpdates(locationUpdateListener)

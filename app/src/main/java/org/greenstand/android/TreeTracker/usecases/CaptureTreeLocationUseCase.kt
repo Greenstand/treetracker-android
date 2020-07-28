@@ -4,7 +4,9 @@ import android.location.Location
 import android.util.Base64
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
@@ -21,7 +23,7 @@ class CaptureTreeLocationUseCase(
     private val locationObserver: Observer<Location?> = Observer {
         it?.apply {
             MainScope().launch(Dispatchers.IO) {
-                userManager.planterCheckinId?.let{ planterCheckinId ->
+                userManager.planterCheckinId?.let { planterCheckinId ->
                     val locationData =
                         LocationData(
                             planterCheckinId,
@@ -42,11 +44,11 @@ class CaptureTreeLocationUseCase(
     }
 
     fun startLocationCapture() {
-        userLocationManager.locationUpdateLiveDate.observeForever(locationObserver)
+        userLocationManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 
     fun stopLocationCapture() {
-        userLocationManager.locationUpdateLiveDate.removeObserver(locationObserver)
+        userLocationManager.locationUpdateLiveData.removeObserver(locationObserver)
     }
 }
 
@@ -57,4 +59,3 @@ data class LocationData(
     val accuracy: Float,
     val capturedAt: Long
 )
-
