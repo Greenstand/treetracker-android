@@ -10,16 +10,25 @@ import org.greenstand.android.TreeTracker.application.Permissions
 object CameraHelper {
 
     fun takePictureForResult(fragment: Fragment, selfie: Boolean) {
-        if (ActivityCompat.checkSelfPermission(fragment.requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(fragment.requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                fragment.requireContext(),
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                fragment.requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-            fragment.requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                        Permissions.MY_PERMISSION_CAMERA)
-
+            fragment.requestPermissions(
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                Permissions.MY_PERMISSION_CAMERA)
         } else {
             val intent = ImageCaptureActivity.createIntent(fragment.requireContext(), selfie)
             fragment.startActivityForResult(intent, ValueHelper.INTENT_CAMERA)
         }
     }
 
+    fun wasCameraPermissionGranted(requestCode: Int, grantResults: IntArray): Boolean {
+        return grantResults.isNotEmpty() &&
+                requestCode == Permissions.MY_PERMISSION_CAMERA &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED
+    }
 }
