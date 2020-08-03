@@ -47,7 +47,6 @@ interface TreeTrackerDAO {
     @Transaction
     @Query("SELECT * FROM planter_check_in WHERE photo_url IS null AND planter_info_id = :planterInfoId") // kt-lint-disable max-line-length
     fun getPlanterCheckInsToUpload(planterInfoId: Long): List<PlanterCheckInEntity>
-    // kt-lint-enable max-line-length
 
     @Transaction
     @Query("SELECT * FROM planter_check_in WHERE _id IN (:planterCheckInIds)")
