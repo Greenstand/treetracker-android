@@ -33,7 +33,7 @@ data class TreeCaptureEntity(
     var longitude: Double,
     @ColumnInfo(name = ACCURACY)
     var accuracy: Double,
-    @ColumnInfo(name = UPLOADED)
+    @ColumnInfo(name = UPLOADED, index = true)
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
     var createAt: Long,

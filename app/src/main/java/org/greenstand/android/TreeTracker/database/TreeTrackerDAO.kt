@@ -1,13 +1,23 @@
 package org.greenstand.android.TreeTracker.database
 
-import androidx.room.*
-import org.greenstand.android.TreeTracker.database.entity.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
 
 @Dao
 interface TreeTrackerDAO {
 
-    @Query("SELECT _id FROM planter_info WHERE planterInfoId = :identifier")
+    @Query("SELECT _id FROM planter_info WHERE planter_identifier = :identifier")
     fun getPlanterInfoIdByIdentifier(identifier: String): Long?
 
     @Query("SELECT * FROM planter_info")
@@ -34,10 +44,10 @@ interface TreeTrackerDAO {
     @Query("UPDATE planter_info SET uploaded = :isUploaded WHERE _id IN (:ids)")
     fun updatePlanterInfoUploadStatus(ids: List<Long>, isUploaded: Boolean)
 
-
     @Transaction
-    @Query("SELECT * FROM planter_check_in WHERE photo_url IS null AND planter_info_id = :planterInfoId")
+    @Query("SELECT * FROM planter_check_in WHERE photo_url IS null AND planter_info_id = :planterInfoId") // kt-lint-disable max-line-length
     fun getPlanterCheckInsToUpload(planterInfoId: Long): List<PlanterCheckInEntity>
+    // kt-lint-enable max-line-length
 
     @Transaction
     @Query("SELECT * FROM planter_check_in WHERE _id IN (:planterCheckInIds)")
@@ -60,8 +70,6 @@ interface TreeTrackerDAO {
 
     @Query("UPDATE planter_check_in SET local_photo_path = null WHERE _id IN (:ids)")
     fun removePlanterCheckInLocalImagePaths(ids: List<Long>)
-
-
 
     @Query("SELECT latitude, longitude, _id as treeCaptureId FROM tree_capture")
     fun getTreeDataForMap(): List<TreeMapMarkerDbView>
@@ -113,7 +121,6 @@ interface TreeTrackerDAO {
 
     @Delete
     fun deleteTreeCapture(treeCaptureEntity: TreeCaptureEntity)
-
 
     @Query("SELECT * FROM tree_attribute")
     fun getAllTreeAttributes(): List<TreeAttributeEntity>
