@@ -23,9 +23,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_map.*
-import kotlinx.coroutines.*
+import kotlin.math.roundToInt
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
+import kotlinx.android.synthetic.main.fragment_map.addTreeButton
+import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
+import kotlinx.android.synthetic.main.fragment_map.mapUserImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
@@ -33,6 +40,7 @@ import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
+import org.greenstand.android.TreeTracker.usecases.ExpireCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -41,7 +49,6 @@ import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import kotlin.math.roundToInt
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
@@ -49,6 +56,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private val vm: MapViewModel by viewModel()
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
+    private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase by inject()
     private val dao: TreeTrackerDAO by inject()
 
     private var mapFragment: SupportMapFragment? = null
@@ -153,13 +161,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                     // Disable the addTreeButton below to avoid triggering the onClick listener
                     // more than one once.
                     addTreeButton.isEnabled = false
-                    val currentTimestamp = System.currentTimeMillis() / 1000
-                    val lastTimeStamp = sharedPreferences.getLong(
-                        ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS,
-                        0
-                    )
-                    if (FeatureFlags.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED &&
-                        currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
+                    if (expireCheckInStatusUseCase.readyForAutomaticSignout()) {
                         findNavController().navigate(
                             MapsFragmentDirections.actionGlobalLoginFlowGraph())
                     } else {
