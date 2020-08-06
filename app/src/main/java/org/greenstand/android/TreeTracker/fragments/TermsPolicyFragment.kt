@@ -2,7 +2,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,26 +12,27 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_terms_policy.*
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class TermsPolicyFragment: Fragment() {
+class TermsPolicyFragment : Fragment() {
 
     private val vm: TermsPolicyViewModel by viewModel()
 
     private val args: TermsPolicyFragmentArgs by navArgs()
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         vm.userInfo = args.userInfo
 
-        return inflater.inflate(R.layout.fragment_terms_policy, container,false)
+        return inflater.inflate(R.layout.fragment_terms_policy, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class TermsPolicyFragment: Fragment() {
             setTextColor(resources.getColor(R.color.black))
         }
 
-        //Make parts of the text_agreement to be clickable
+        // Make parts of the text_agreement to be clickable
 //        val spannableString = SpannableString(getString(R.string.agreement_text_test))
 //
 //        val clickableTermsCond = object : ClickableSpan(){
@@ -100,7 +100,8 @@ class TermsPolicyFragment: Fragment() {
 //        }
 
         vm.onNavigateToMap = {
-            findNavController().navigate(TermsPolicyFragmentDirections.actionTermsPolicyFragmentToMapsFragment())
+            findNavController()
+                .navigate(TermsPolicyFragmentDirections.actionTermsPolicyFragmentToMapsFragment())
         }
 
         accept_terms_button.setOnClickListener {
@@ -108,8 +109,12 @@ class TermsPolicyFragment: Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == Permissions.MY_PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (CameraHelper.wasCameraPermissionGranted(requestCode, grantResults)) {
             CameraHelper.takePictureForResult(this, selfie = true)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -124,5 +129,4 @@ class TermsPolicyFragment: Fragment() {
             Timber.d("Photo was cancelled")
         }
     }
-
 }

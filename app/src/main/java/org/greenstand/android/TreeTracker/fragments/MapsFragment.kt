@@ -23,16 +23,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
-import kotlin.math.roundToInt
-import kotlinx.android.synthetic.main.activity_main.toolbarTitle
-import kotlinx.android.synthetic.main.fragment_map.addTreeButton
-import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
-import kotlinx.android.synthetic.main.fragment_map.mapUserImage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
@@ -48,6 +41,7 @@ import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import kotlin.math.roundToInt
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapReadyCallback,
     View.OnLongClickListener {

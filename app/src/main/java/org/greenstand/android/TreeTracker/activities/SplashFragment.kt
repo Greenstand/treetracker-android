@@ -15,14 +15,18 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class SplashFragment : Fragment() {
 
-    private val userManager: UserManager = getKoin().get()
+    private val userManager: UserManager by inject()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.activity_splash, container, false)
     }
 
