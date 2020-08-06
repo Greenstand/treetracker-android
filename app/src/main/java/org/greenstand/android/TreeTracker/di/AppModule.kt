@@ -9,15 +9,15 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
+import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
+import org.greenstand.android.TreeTracker.managers.Preferences
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.*
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
@@ -44,7 +44,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { UserManager(get(), get()) }
+    single { UserManager(get()) }
 
     single { Analytics(get(), get(), get()) }
 
@@ -69,6 +69,10 @@ val appModule = module {
                 get()
             )
     }
+
+    single { Preferences(get(), get()) }
+
+    factory { LanguageSwitcher(get()) }
 
     factory { UploadImageUseCase(get()) }
 
@@ -105,7 +109,4 @@ val appModule = module {
     factory<TreeUploadStrategy> { BundleTreeUploadStrategy(get()) }
 
     factory { SyncDataUseCase(get(), get(), get(), get()) }
-
-
-
 }

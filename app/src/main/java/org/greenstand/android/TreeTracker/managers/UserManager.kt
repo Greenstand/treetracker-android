@@ -1,11 +1,9 @@
 package org.greenstand.android.TreeTracker.managers
 
-import android.content.Context
 import android.content.SharedPreferences
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
-class UserManager(private val context: Context,
-                  private val sharedPreferences: SharedPreferences) {
+class UserManager(private val sharedPreferences: SharedPreferences) {
 
     var authToken: String? = null
 
@@ -27,6 +25,10 @@ class UserManager(private val context: Context,
     var planterCheckinId: Long?
         get() = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
         set(value) = sharedPreferences.edit().putLong(ValueHelper.PLANTER_CHECK_IN_ID, value ?: -1).apply()
+
+    var planterInfoId: Long?
+        get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1)
+        set(value) = sharedPreferences.edit().putLong(ValueHelper.PLANTER_INFO_ID, value ?: -1).apply()
 
     fun clearUser() {
         sharedPreferences.edit().apply {
