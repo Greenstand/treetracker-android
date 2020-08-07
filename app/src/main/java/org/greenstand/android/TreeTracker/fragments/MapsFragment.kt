@@ -40,7 +40,6 @@ import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserLocationManager
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
-import org.greenstand.android.TreeTracker.usecases.ExpireCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -56,7 +55,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private val vm: MapViewModel by viewModel()
     private val userLocationManager: UserLocationManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
-    private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase by inject()
     private val dao: TreeTrackerDAO by inject()
 
     private var mapFragment: SupportMapFragment? = null
@@ -155,18 +153,19 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
         when (v.id) {
             R.id.addTreeButton -> {
                 Timber.d("fab click")
-
                 if (userLocationManager.hasSufficientAccuracy() ||
                     !FeatureFlags.HIGH_GPS_ACCURACY) {
                     // Disable the addTreeButton below to avoid triggering the onClick listener
                     // more than one once.
                     addTreeButton.isEnabled = false
-                    if (expireCheckInStatusUseCase.readyForAutomaticSignout()) {
-                        findNavController().navigate(
-                            MapsFragmentDirections.actionGlobalLoginFlowGraph())
-                    } else {
-                        findNavController().navigate(
-                            MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                    GlobalScope.launch(Dispatchers.Main) {
+                        if (vm.requiresLogin()) {
+                            findNavController().navigate(
+                                MapsFragmentDirections.actionGlobalLoginFlowGraph())
+                        } else {
+                            findNavController().navigate(
+                                MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                        }
                     }
                 } else {
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT)
