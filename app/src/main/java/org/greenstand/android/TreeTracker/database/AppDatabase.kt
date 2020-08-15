@@ -4,7 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import org.greenstand.android.TreeTracker.database.entity.*
+import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 
 @Database(
     entities = [
@@ -14,7 +18,7 @@ import org.greenstand.android.TreeTracker.database.entity.*
         TreeCaptureEntity::class,
         LocationDataEntity::class
     ],
-    version = 4,
+    version = 6,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,9 +37,9 @@ abstract class AppDatabase : RoomDatabase() {
                                                     DB_NAME
                     )
                         .addMigrations(
-                            MIGRATION_1_2,
-                            MIGRATION_2_3,
-                            MIGRATION_3_4
+                            MIGRATION_3_4,
+                            MIGRATION_4_5,
+                            MIGRATION_5_6
                         )
                         .build()
                 }
@@ -43,8 +47,6 @@ abstract class AppDatabase : RoomDatabase() {
             return INSTANCE!!
         }
 
-        private const val DB_NAME = "treetracker.v1.db"
+        private const val DB_NAME = "treetracker.v2.db"
     }
-
 }
-
