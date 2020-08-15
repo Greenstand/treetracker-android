@@ -23,9 +23,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_map.*
-import kotlinx.coroutines.*
+import kotlin.math.roundToInt
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
+import kotlinx.android.synthetic.main.fragment_map.addTreeButton
+import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
+import kotlinx.android.synthetic.main.fragment_map.mapUserImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
@@ -41,7 +48,6 @@ import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import kotlin.math.roundToInt
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
@@ -147,23 +153,19 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
         when (v.id) {
             R.id.addTreeButton -> {
                 Timber.d("fab click")
-
                 if (userLocationManager.hasSufficientAccuracy() ||
                     !FeatureFlags.HIGH_GPS_ACCURACY) {
                     // Disable the addTreeButton below to avoid triggering the onClick listener
                     // more than one once.
                     addTreeButton.isEnabled = false
-                    val currentTimestamp = System.currentTimeMillis() / 1000
-                    val lastTimeStamp = sharedPreferences.getLong(
-                        ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS,
-                        0
-                    )
-                    if (currentTimestamp - lastTimeStamp > ValueHelper.CHECK_IN_TIMEOUT) {
-                        findNavController().navigate(
-                            MapsFragmentDirections.actionGlobalLoginFlowGraph())
-                    } else {
-                        findNavController().navigate(
-                            MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                    GlobalScope.launch(Dispatchers.Main) {
+                        if (vm.requiresLogin()) {
+                            findNavController().navigate(
+                                MapsFragmentDirections.actionGlobalLoginFlowGraph())
+                        } else {
+                            findNavController().navigate(
+                                MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                        }
                     }
                 } else {
                     Toast.makeText(activity, "Insufficient GPS accuracy.", Toast.LENGTH_SHORT)
