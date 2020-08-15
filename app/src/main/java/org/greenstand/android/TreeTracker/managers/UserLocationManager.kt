@@ -10,16 +10,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.ReceiveChannel
 import timber.log.Timber
 
-class UserLocationManager(private val locationManager: LocationManager,
-                          private val context: Context) {
-
+class UserLocationManager(
+    private val locationManager: LocationManager,
+    private val context: Context
+) {
 
     private val locationUpdates = MutableLiveData<Location?>()
-    val locationUpdateLiveDate: LiveData<Location?> = locationUpdates
+    val locationUpdateLiveData: LiveData<Location?> = locationUpdates
 
     var isUpdating: Boolean = false
         private set
@@ -31,7 +30,7 @@ class UserLocationManager(private val locationManager: LocationManager,
         locationUpdates.postValue(null)
     }
 
-    private val locationUpdateListener = object : android.location.LocationListener  {
+    private val locationUpdateListener = object : android.location.LocationListener {
 
         @UseExperimental(ExperimentalCoroutinesApi::class)
         override fun onLocationChanged(location: Location) {
@@ -55,7 +54,12 @@ class UserLocationManager(private val locationManager: LocationManager,
     fun startLocationUpdates(): Boolean {
         return if (hasLocationPermissions()) {
             if (!isUpdating) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationUpdateListener)
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0f,
+                    locationUpdateListener
+                )
                 isUpdating = true
             }
             true
@@ -66,6 +70,10 @@ class UserLocationManager(private val locationManager: LocationManager,
     }
 
     fun stopLocationUpdates() {
+        Timber.d("Request to stop location updates submitted")
+        if (locationUpdateLiveData.hasObservers())
+            return
+        Timber.d("Request to stop location update honored")
         locationManager.removeUpdates(locationUpdateListener)
         locationUpdates.postValue(null)
         isUpdating = false
@@ -81,13 +89,19 @@ class UserLocationManager(private val locationManager: LocationManager,
         } ?: false
     }
 
-    private fun hasLocationPermissions() : Boolean {
-        return ContextCompat.checkSelfPermission(context,
-                                                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(context,
-                                                     android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
+    private fun hasLocationPermissions(): Boolean {
 
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val coarseLocationPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        return (fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED)
+    }
 }
 
 enum class Accuracy {
