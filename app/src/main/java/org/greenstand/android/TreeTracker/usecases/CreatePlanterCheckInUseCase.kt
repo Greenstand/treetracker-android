@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
@@ -17,7 +17,7 @@ data class CreatePlanterCheckInParams(
 
 class CreatePlanterCheckInUseCase(
     private val sharedPreferences: SharedPreferences,
-    private val userLocationManager: UserLocationManager,
+    private val locationUpdateManager: LocationUpdateManager,
     private val doa: TreeTrackerDAO,
     private val analytics: Analytics,
     private val userManager: UserManager
@@ -26,7 +26,7 @@ class CreatePlanterCheckInUseCase(
     override suspend fun execute(params: CreatePlanterCheckInParams): Long =
         withContext(Dispatchers.IO) {
 
-            val location = userLocationManager.currentLocation
+            val location = locationUpdateManager.currentLocation
             val time = location?.time ?: System.currentTimeMillis()
 
             val entity = PlanterCheckInEntity(

@@ -16,12 +16,10 @@ import androidx.camera.core.Preview
 import androidx.camera.core.PreviewConfig
 import java.io.File
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.usecases.CaptureTreeLocationUseCase
 import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
-import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class ImageCaptureActivity : AppCompatActivity() {
@@ -29,7 +27,6 @@ class ImageCaptureActivity : AppCompatActivity() {
     private lateinit var viewFinder: TextureView
     private lateinit var imageCaptureButton: ImageButton
     private lateinit var toolbarTitle: TextView
-    private val captureTreeLocationUseCase: CaptureTreeLocationUseCase by inject()
 
     companion object {
         private const val SELFIE_MODE = "SELFIE_MODE"
@@ -59,16 +56,6 @@ class ImageCaptureActivity : AppCompatActivity() {
         }
 
         viewFinder.post { startCamera(captureSelfie) }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        captureTreeLocationUseCase.stopLocationCapture()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        captureTreeLocationUseCase.startLocationCapture()
     }
 
     private fun startCamera(captureSelfie: Boolean) {

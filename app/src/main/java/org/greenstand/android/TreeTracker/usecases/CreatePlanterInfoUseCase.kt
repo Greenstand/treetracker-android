@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 
 data class CreatePlanterInfoParams(
     val firstName: String,
@@ -18,7 +18,7 @@ data class CreatePlanterInfoParams(
 )
 
 class CreatePlanterInfoUseCase(
-    private val userLocationManager: UserLocationManager,
+    private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics
 ) : UseCase<CreatePlanterInfoParams, Long>() {
@@ -26,7 +26,7 @@ class CreatePlanterInfoUseCase(
     override suspend fun execute(params: CreatePlanterInfoParams): Long =
         withContext(Dispatchers.IO) {
 
-            val location = userLocationManager.currentLocation
+            val location = locationUpdateManager.currentLocation
             val time = location?.time ?: System.currentTimeMillis()
 
             val entity = PlanterInfoEntity(

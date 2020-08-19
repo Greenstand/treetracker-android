@@ -18,17 +18,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.toolbar
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
+import org.greenstand.android.TreeTracker.managers.CaptureLocationData
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -36,7 +39,14 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val languageSwitcher: LanguageSwitcher by inject()
     private val userManager: UserManager by inject()
     private val analytics: Analytics by inject()
-    private val userLocationManager: UserLocationManager by inject()
+    private val locationUpdateManager: LocationUpdateManager by inject()
+
+    // An eager instance of CaptureLocationData assures the location data capture for the duration
+    // the Treetracker App is in the foreground as required for data analysis. Even if this instance
+    // is not used explicitly in this activity, this declaration is necessary to initiate the
+    // process.
+    private val captureLocationData: CaptureLocationData = get()
+
     private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null
 
@@ -53,8 +63,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         if (sharedPreferences.getBoolean(ValueHelper.FIRST_RUN, true)) {
 
-            if (sharedPreferences.getBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
-                sharedPreferences.edit()?.putBoolean(ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
+            if (sharedPreferences.getBoolean(
+                    ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
+                sharedPreferences.edit()?.putBoolean(
+                    ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
             }
 
             sharedPreferences.edit()?.putBoolean(ValueHelper.FIRST_RUN, false)?.apply()
@@ -67,10 +79,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         val navController = findNavController(R.id.nav_host_fragment)
 
-        val listener = NavController.OnDestinationChangedListener { controller, destination, arguments ->
-            if (destination.id != R.id.splashFragment2) {
-                findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
-            }
+        val listener = NavController
+            .OnDestinationChangedListener { controller, destination, arguments ->
+                if (destination.id != R.id.splashFragment2) {
+                    findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
+                }
 
             invalidateOptionsMenu()
 
@@ -93,7 +106,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.mapsFragment) {
+        return if (
+            findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.mapsFragment) {
             menuInflater.inflate(R.menu.menu_main, menu)
             menu.findItem(R.id.action_change_language).isVisible = FeatureFlags.DEBUG_ENABLED
             true
@@ -110,11 +124,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 bundle = intent.extras
                 fragment?.arguments = bundle
 
-                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
+                findNavController(R.id.nav_host_fragment)
+                    .navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
                 return true
             }
             R.id.action_about -> {
-                findNavController(R.id.nav_host_fragment).navigate(MapsFragmentDirections.actionMapsFragmentToAboutFragment())
+                findNavController(R.id.nav_host_fragment)
+                    .navigate(MapsFragmentDirections.actionMapsFragmentToAboutFragment())
                 return true
             }
 
@@ -122,7 +138,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 userManager.clearUser()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_login_flow_graph)
+                findNavController(R.id.nav_host_fragment)
+                    .navigate(R.id.action_global_login_flow_graph)
             }
             R.id.action_change_language -> {
                 languageSwitcher.switch(this)
@@ -133,7 +150,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     public override fun onPause() {
         super.onPause()
-        userLocationManager.stopLocationUpdates()
+        locationUpdateManager.stopLocationUpdates()
     }
 
     public override fun onResume() {
@@ -147,10 +164,15 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     private fun areNecessaryPermissionsNotGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        return (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED
+                ) ||
+                (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED)
     }
 
     private fun requestNecessaryPermissions() {
@@ -168,7 +190,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (grantResults.isNotEmpty()) {
-            if (requestCode == Permissions.NECESSARY_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == Permissions.NECESSARY_PERMISSIONS &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startPeriodicUpdates()
             }
         }
@@ -182,17 +205,22 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private fun startPeriodicUpdates() {
 
         if (areNecessaryPermissionsNotGranted()) {
-            Toast.makeText(this, "GPS Permissions Not Enabled", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "GPS Permissions Not Enabled",
+                Toast.LENGTH_LONG
+            ).show()
             requestNecessaryPermissions()
             return
         }
 
         // TODO this check may not longer be necessary
-        if (!userLocationManager.isLocationEnabled()) {
+        if (!locationUpdateManager.isLocationEnabled()) {
             val builder = AlertDialog.Builder(this@MainActivity)
 
             builder.setTitle(R.string.enable_location_access)
-            builder.setMessage(R.string.you_must_enable_location_access_in_your_settings_in_order_to_continue)
+            builder.setMessage(
+                R.string.you_must_enable_location_access_in_your_settings_in_order_to_continue)
 
             builder.setPositiveButton(R.string.ok) { dialog, which ->
                 if (Build.VERSION.SDK_INT >= 19) {
@@ -225,6 +253,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             return
         }
 
-        userLocationManager.startLocationUpdates()
+        locationUpdateManager.startLocationUpdates()
     }
 }
