@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.koin.core.KoinComponent
 import timber.log.Timber
 
 class LocationUpdateManager(
@@ -134,30 +133,31 @@ class LocationDataCapturer(
     private val userManager: UserManager,
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO
-) : KoinComponent {
+) {
 
-    init {
-        val gson = Gson()
-        val locationObserver: Observer<Location?> = Observer {
-            it?.apply {
-                MainScope().launch(Dispatchers.IO) {
-                    val locationData =
-                        LocationData(
-                            userManager.planterCheckinId,
-                            latitude,
-                            longitude,
-                            accuracy,
-                            System.currentTimeMillis()
-                        )
-                    val base64String = Base64.encodeToString(
-                        gson.toJson(locationData).toByteArray(),
-                        Base64.NO_WRAP
+    private val gson = Gson()
+    private val locationObserver: Observer<Location?> = Observer {
+        it?.apply {
+            MainScope().launch(Dispatchers.IO) {
+                val locationData =
+                    LocationData(
+                        userManager.planterCheckinId,
+                        latitude,
+                        longitude,
+                        accuracy,
+                        System.currentTimeMillis()
                     )
-                    Timber.d("Inserting a new location data $base64String")
-                    treeTrackerDAO.insertLocationData(LocationDataEntity(base64String))
-                }
+                val base64String = Base64.encodeToString(
+                    gson.toJson(locationData).toByteArray(),
+                    Base64.NO_WRAP
+                )
+                Timber.d("Inserting a new location data $base64String")
+                treeTrackerDAO.insertLocationData(LocationDataEntity(base64String))
             }
         }
+    }
+
+    fun start() {
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 

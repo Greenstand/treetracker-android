@@ -40,13 +40,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val userManager: UserManager by inject()
     private val analytics: Analytics by inject()
     private val locationUpdateManager: LocationUpdateManager by inject()
-
-    // An eager instance of LocationDataCapturer assures the location data capture for the duration
-    // the Treetracker App is in the foreground as required for data analysis. Even if this instance
-    // is not used explicitly in this activity, this declaration is necessary to initiate the
-    // process.
-    private val locationDataCapturer: LocationDataCapturer = get()
-
+    private val locationDataCapturer: LocationDataCapturer by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null
 
@@ -254,5 +248,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
 
         locationUpdateManager.startLocationUpdates()
+        locationDataCapturer.start()
     }
 }
