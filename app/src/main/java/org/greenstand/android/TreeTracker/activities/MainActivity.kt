@@ -25,9 +25,9 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
-import org.greenstand.android.TreeTracker.managers.CaptureLocationData
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
+import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -41,11 +41,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val analytics: Analytics by inject()
     private val locationUpdateManager: LocationUpdateManager by inject()
 
-    // An eager instance of CaptureLocationData assures the location data capture for the duration
+    // An eager instance of LocationDataCapturer assures the location data capture for the duration
     // the Treetracker App is in the foreground as required for data analysis. Even if this instance
     // is not used explicitly in this activity, this declaration is necessary to initiate the
     // process.
-    private val captureLocationData: CaptureLocationData = get()
+    private val locationDataCapturer: LocationDataCapturer = get()
 
     private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null

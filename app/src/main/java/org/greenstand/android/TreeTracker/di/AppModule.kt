@@ -9,8 +9,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
-import org.greenstand.android.TreeTracker.managers.CaptureLocationData
 import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
+import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.Preferences
 import org.greenstand.android.TreeTracker.managers.UserManager
@@ -89,7 +89,7 @@ val appModule = module {
     single { NotificationManagerCompat.from(get()) }
 
     single {
-        CaptureLocationData(
+        LocationDataCapturer(
             get(),
             get(),
             get()

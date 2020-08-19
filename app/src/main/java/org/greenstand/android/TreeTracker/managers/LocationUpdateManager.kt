@@ -76,7 +76,6 @@ class LocationUpdateManager(
             isUpdating = false
             false
         }
-
     }
 
     fun stopLocationUpdates() {
@@ -131,11 +130,11 @@ fun Location?.accuracyStatus(): Accuracy {
     }
 }
 
-class CaptureLocationData(
+class LocationDataCapturer(
     private val userManager: UserManager,
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO
-): KoinComponent {
+) : KoinComponent {
 
     init {
         val gson = Gson()
