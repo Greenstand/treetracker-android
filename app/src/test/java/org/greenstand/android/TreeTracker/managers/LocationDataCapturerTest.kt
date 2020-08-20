@@ -10,7 +10,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -54,7 +53,6 @@ class LocationDataCapturerTest {
 
     @Test
     fun turnOnTreeCaptureMode() {
-        val key = PrefKeys.SESSION + PrefKey(ValueHelper.CURRENT_TREE_ID)
 
         locationDataCapturer.turnOnTreeCaptureMode()
 
@@ -63,7 +61,6 @@ class LocationDataCapturerTest {
 
     @Test
     fun turnOffTreeCaptureMode() {
-        val key = PrefKeys.SESSION + PrefKey(ValueHelper.CURRENT_TREE_ID)
 
         locationDataCapturer.turnOffTreeCaptureMode()
 
