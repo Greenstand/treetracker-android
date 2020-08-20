@@ -21,7 +21,7 @@ object ValueHelper {
     const val PLANTER_PHOTO = "PLANTER_PHOTO"
     const val PLANTER_INFO_ID = "PLANTER_INFO_ID"
     const val PLANTER_CHECK_IN_ID = "PLANTER_CHECK_IN_ID"
-
+    const val CURRENT_TREE_ID = "CURRENT_TREE_UUID"
     const val CHECK_IN_TIMEOUT = 60 * 60 * 2
 
     const val FOCUS_METRIC_VALUE = "FOCUS_METRIC_VALUE"

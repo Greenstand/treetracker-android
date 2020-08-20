@@ -37,7 +37,9 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
+import org.greenstand.android.TreeTracker.managers.Preferences
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -53,8 +55,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     View.OnLongClickListener {
 
     private val vm: MapViewModel by viewModel()
-    private val userLocationManager: UserLocationManager by inject()
+    private val locationUpdateManager: LocationUpdateManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
+    private val preferences: Preferences by inject()
+    private val locationDataCapturer: LocationDataCapturer by inject()
     private val dao: TreeTrackerDAO by inject()
 
     private var mapFragment: SupportMapFragment? = null
@@ -153,7 +157,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
         when (v.id) {
             R.id.addTreeButton -> {
                 Timber.d("fab click")
-                if (userLocationManager.hasSufficientAccuracy() ||
+                if (locationUpdateManager.hasSufficientAccuracy() ||
                     !FeatureFlags.HIGH_GPS_ACCURACY) {
                     // Disable the addTreeButton below to avoid triggering the onClick listener
                     // more than one once.
@@ -165,6 +169,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                         } else {
                             findNavController().navigate(
                                 MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                            locationDataCapturer.turnOnTreeCaptureMode()
                         }
                     }
                 } else {
@@ -272,10 +277,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                     clusterManager.addItem(treeMapAnnotation)
                 }
             }
-            if (userLocationManager.currentLocation != null) {
+            if (locationUpdateManager.currentLocation != null) {
                 val myLatLng = LatLng(
-                    userLocationManager.currentLocation!!.latitude,
-                    userLocationManager.currentLocation!!.longitude
+                    locationUpdateManager.currentLocation!!.latitude,
+                    locationUpdateManager.currentLocation!!.longitude
                 )
                 map!!.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10f))
             }

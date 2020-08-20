@@ -23,7 +23,7 @@ data class LocationDataEntity(
         const val TABLE = "location_data"
 
         const val ID = "_id"
-        // base64 encoded json of LocationData defined in CaptureTreeLocationUseCase.kt
+        // base64 encoded json of LocationData defined in CaptureLocationData.kt
         const val BASE64_VALUE = "base64_json"
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"

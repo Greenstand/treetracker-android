@@ -13,18 +13,21 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.UUID
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
+import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.view.CustomToast
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -32,6 +35,8 @@ class NewTreeFragment :
     androidx.fragment.app.Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val vm: NewTreeViewModel by viewModel()
+    private val locationDataCapturer by inject<LocationDataCapturer>()
+    private var newTreeUuid: UUID? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +102,7 @@ class NewTreeFragment :
         fragmentNewTreeSave.setOnClickListener {
             it.vibrate()
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                vm.createTree(fragmentNewTreeNote.text.toString())
+                vm.createTree(fragmentNewTreeNote.text.toString(), newTreeUuid!!)
             }
         }
     }
@@ -111,10 +116,15 @@ class NewTreeFragment :
             CameraHelper.takePictureForResult(this, selfie = false)
         } else {
             findNavController().popBackStack()
+            locationDataCapturer.turnOffTreeCaptureMode()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        newTreeUuid = locationDataCapturer.generatedTreeUuid
+        locationDataCapturer.turnOffTreeCaptureMode()
+
         if (data != null && resultCode == Activity.RESULT_OK) {
             vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
