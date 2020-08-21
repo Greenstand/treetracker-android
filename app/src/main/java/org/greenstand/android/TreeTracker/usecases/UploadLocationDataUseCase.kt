@@ -27,8 +27,9 @@ class UploadLocationDataUseCase(
                     locationData.uploaded = true
                     dao.updateLocationData(locationData)
                 }
+                Timber.d("Completed uploading ${locations.size} GPS locations")
                 dao.purgeUploadedTreeLocations()
-                Timber.d("Completed purging uploaded tree locations")
+                Timber.d("Completed purging of uploaded GPS locations")
             }
         } catch (ace: AmazonClientException) {
             Timber.e(

@@ -4,7 +4,7 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -15,15 +15,15 @@ class MapViewModel constructor(
     private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
     private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
-    userLocationManager: UserLocationManager,
+    locationUpdateManager: LocationUpdateManager,
     private val userManager: UserManager
 ) : ViewModel() {
 
     val checkInStatusLiveData = MutableLiveData<Boolean>()
-    val locationUpdates: LiveData<Location?> = userLocationManager.locationUpdateLiveDate
+    val locationUpdates: LiveData<Location?> = locationUpdateManager.locationUpdateLiveData
 
     init {
-        userLocationManager.startLocationUpdates()
+        locationUpdateManager.startLocationUpdates()
     }
 
     suspend fun checkForValidUser() {
