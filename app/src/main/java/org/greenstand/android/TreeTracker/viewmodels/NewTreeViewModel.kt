@@ -5,20 +5,21 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.greenstand.android.TreeTracker.view.CustomToast
-import kotlin.math.roundToInt
 
-class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
-                       private val userLocationManager: UserLocationManager,
-                       private val createTreeUseCase: CreateTreeUseCase,
-                       private val analytics: Analytics) : ViewModel() {
+class NewTreeViewModel(
+    private val sharedPreferences: SharedPreferences,
+    private val locationUpdateManager: LocationUpdateManager,
+    private val createTreeUseCase: CreateTreeUseCase,
+    private val analytics: Analytics
+) : ViewModel() {
 
     val onTreeSaved: MutableLiveData<Unit> = MutableLiveData()
     val onInsufficientGps: MutableLiveData<Unit> = MutableLiveData()
@@ -31,13 +32,13 @@ class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
     }
 
     val accuracyLiveData: LiveData<Int> = MutableLiveData<Int>().apply {
-        postValue(userLocationManager.currentLocation?.accuracy?.roundToInt() ?: 0)
+        postValue(locationUpdateManager.currentLocation?.accuracy?.roundToInt() ?: 0)
     }
 
     var photoPath: String? = null
 
     init {
-        if (userLocationManager.currentLocation == null) {
+        if (locationUpdateManager.currentLocation == null) {
             onInsufficientGps.postValue(Unit)
             navigateBack.postValue(Unit)
         } else if (photoPath == null) {
@@ -90,5 +91,4 @@ class NewTreeViewModel(private val sharedPreferences: SharedPreferences,
     companion object {
         const val FOCUS_THRESHOLD = 700.0
     }
-
 }

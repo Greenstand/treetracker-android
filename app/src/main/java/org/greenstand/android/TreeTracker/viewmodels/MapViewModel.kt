@@ -4,24 +4,26 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.ExpireCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 
-class MapViewModel constructor(private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
-                               private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase,
-                               private val createFakeTreesUseCase: CreateFakeTreesUseCase,
-                               userLocationManager: UserLocationManager,
-                               private val userManager: UserManager) : ViewModel() {
+class MapViewModel constructor(
+    private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
+    private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase,
+    private val createFakeTreesUseCase: CreateFakeTreesUseCase,
+    locationUpdateManager: LocationUpdateManager,
+    private val userManager: UserManager
+) : ViewModel() {
 
     val checkInStatusLiveData = MutableLiveData<Boolean>()
-    val locationUpdates: LiveData<Location?> = userLocationManager.locationUpdateLiveDate
+    val locationUpdates: LiveData<Location?> = locationUpdateManager.locationUpdateLiveData
 
     init {
-        userLocationManager.startLocationUpdates()
+        locationUpdateManager.startLocationUpdates()
     }
 
     suspend fun checkForValidUser() {
@@ -33,6 +35,10 @@ class MapViewModel constructor(private val validateCheckInStatusUseCase: Validat
         }
     }
 
+    suspend fun requiresLogin(): Boolean {
+        return !validateCheckInStatusUseCase.execute(Unit)
+    }
+
     fun getPlanterName(): String {
         return userManager.firstName + " " + userManager.lastName
     }
@@ -41,5 +47,4 @@ class MapViewModel constructor(private val validateCheckInStatusUseCase: Validat
         createFakeTreesUseCase.execute(CreateFakeTreesParams(500))
         return true
     }
-
 }

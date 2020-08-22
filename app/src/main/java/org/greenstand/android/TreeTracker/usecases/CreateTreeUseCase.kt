@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import timber.log.Timber
 
 data class CreateTreeParams(
@@ -16,7 +16,7 @@ data class CreateTreeParams(
 )
 
 class CreateTreeUseCase(
-    private val userLocationManager: UserLocationManager,
+    private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics
 ) : UseCase<CreateTreeParams, Long>() {
@@ -24,7 +24,7 @@ class CreateTreeUseCase(
     override suspend fun execute(params: CreateTreeParams): Long = withContext(Dispatchers.IO) {
         val uuid = UUID.randomUUID()
 
-        val location = userLocationManager.currentLocation
+        val location = locationUpdateManager.currentLocation
         val time = location?.time ?: System.currentTimeMillis()
         val timeInSeconds = time / 1000
 

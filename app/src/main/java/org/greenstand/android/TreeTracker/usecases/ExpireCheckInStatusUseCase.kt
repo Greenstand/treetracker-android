@@ -3,7 +3,9 @@ package org.greenstand.android.TreeTracker.usecases
 import android.content.SharedPreferences
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
-class ExpireCheckInStatusUseCase constructor(private val sharedPreferences: SharedPreferences) : UseCase<Unit, Unit>() {
+class ExpireCheckInStatusUseCase constructor(
+    private val sharedPreferences: SharedPreferences
+) : UseCase<Unit, Unit>() {
 
     override suspend fun execute(params: Unit) {
         sharedPreferences.edit()
@@ -13,5 +15,4 @@ class ExpireCheckInStatusUseCase constructor(private val sharedPreferences: Shar
             .putString(ValueHelper.PLANTER_PHOTO, null)
             .apply()
     }
-
 }

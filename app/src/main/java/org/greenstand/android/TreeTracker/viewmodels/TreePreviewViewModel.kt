@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.managers.UserLocationManager
+import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 
-class TreePreviewViewModel(private val dao: TreeTrackerDAO,
-                           private val userLocationManager: UserLocationManager) : ViewModel() {
+class TreePreviewViewModel(
+    private val dao: TreeTrackerDAO,
+    private val locationUpdateManager: LocationUpdateManager
+) : ViewModel() {
 
     suspend fun loadTree(treeId: Long): TreePreviewData {
 
@@ -16,7 +18,7 @@ class TreePreviewViewModel(private val dao: TreeTrackerDAO,
 
         val results = floatArrayOf(0f, 0f, 0f)
 
-        userLocationManager.currentLocation?.let {
+        locationUpdateManager.currentLocation?.let {
             Location.distanceBetween(
                 it.latitude,
                 it.longitude,
@@ -35,12 +37,13 @@ class TreePreviewViewModel(private val dao: TreeTrackerDAO,
             note = tree.noteContent
         )
     }
-
 }
 
-data class TreePreviewData(val localPhotoPath: String?,
-                           val imageUrl: String?,
-                           val distance: Float,
-                           val accuracy: Float,
-                           val createdAt: Long,
-                           val note: String)
+data class TreePreviewData(
+    val localPhotoPath: String?,
+    val imageUrl: String?,
+    val distance: Float,
+    val accuracy: Float,
+    val createdAt: Long,
+    val note: String
+)
