@@ -10,7 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
@@ -19,8 +20,6 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
-import java.util.*
-
 
 class LocationUpdateManager(
     private val locationManager: LocationManager,
@@ -138,7 +137,7 @@ class LocationDataCapturer(
     private val treeTrackerDAO: TreeTrackerDAO
 ) {
 
-    private val gson = Gson()
+    private val gson = GsonBuilder().serializeNulls().create()
     var generatedTreeUuid: UUID? = null
         private set
 
@@ -155,7 +154,7 @@ class LocationDataCapturer(
                         generatedTreeUuid?.toString() ?: null,
                         System.currentTimeMillis()
                     )
-                Timber.d("Generated Location Data value ${locationData}")
+                Timber.d("Generated Location Data value $locationData")
                 val base64String = Base64.encodeToString(
                     gson.toJson(locationData).toByteArray(),
                     Base64.NO_WRAP

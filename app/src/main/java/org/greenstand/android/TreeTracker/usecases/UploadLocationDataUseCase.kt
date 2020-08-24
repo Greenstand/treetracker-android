@@ -22,7 +22,10 @@ class UploadLocationDataUseCase(
                 val locationEntities = dao.getTreeLocationData()
                 val locations = locationEntities.map { it.locationDataJson }
                 val treeLocJsonArray = gson.toJson(locations)
-                storageClient.uploadBundle(treeLocJsonArray, treeLocJsonArray.md5())
+                storageClient.uploadBundle(
+                    treeLocJsonArray,
+                    "loc_data_${treeLocJsonArray.md5()}"
+                )
                 for (locationData in locationEntities) {
                     locationData.uploaded = true
                     dao.updateLocationData(locationData)
