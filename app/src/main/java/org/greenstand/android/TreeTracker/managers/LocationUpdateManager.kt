@@ -133,7 +133,6 @@ fun Location?.accuracyStatus(): Accuracy {
 class LocationDataCapturer(
     private val userManager: UserManager,
     private val locationUpdateManager: LocationUpdateManager,
-    private val preferences: Preferences,
     private val treeTrackerDAO: TreeTrackerDAO
 ) {
 
@@ -144,7 +143,6 @@ class LocationDataCapturer(
     private val locationObserver: Observer<Location?> = Observer {
         it?.apply {
             MainScope().launch(Dispatchers.IO) {
-
                 val locationData =
                     LocationData(
                         userManager.planterCheckinId,
@@ -166,8 +164,7 @@ class LocationDataCapturer(
     }
 
     fun start() {
-        val livedata = locationUpdateManager.locationUpdateLiveData
-        livedata.observeForever(locationObserver)
+        locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 
     fun turnOnTreeCaptureMode() {

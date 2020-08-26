@@ -92,7 +92,6 @@ val appModule = module {
         LocationDataCapturer(
             get(),
             get(),
-            get(),
             get()
         )
     }
