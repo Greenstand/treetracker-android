@@ -156,12 +156,14 @@ class LocationDataCapturer(
                         System.currentTimeMillis()
                     )
                 Timber.d("Generated Location Data value ${locationData}")
-                val base64String = Base64.encodeToString(
-                    gson.toJson(locationData).toByteArray(),
-                    Base64.NO_WRAP
-                )
-                Timber.d("Inserting a new location data $base64String")
-                treeTrackerDAO.insertLocationData(LocationDataEntity(base64String))
+//                val base64String = Base64.encodeToString(
+//                    gson.toJson(locationData).toByteArray(),
+//                    Base64.NO_WRAP
+//                )
+//                Timber.d("Inserting a new location data $base64String")
+
+                val jsonString = Gson().toJson(locationData)
+                treeTrackerDAO.insertLocationData(LocationDataEntity(jsonString))
             }
         }
     }
