@@ -23,6 +23,7 @@ class MapViewModel constructor(
 
     val checkInStatusLiveData = MutableLiveData<Boolean>()
     val locationUpdates: LiveData<Location?> = locationUpdateManager.locationUpdateLiveData
+    val convergenceWithinRange: Boolean = locationDataCapturer.convergenceWithinRange
 
     init {
         locationUpdateManager.startLocationUpdates()
