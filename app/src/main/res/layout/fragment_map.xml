@@ -48,8 +48,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/gps_accuracy_double_colon"
-        android:textColor="@color/red"
+        android:textColor="@color/toolbar"
         android:textSize="@dimen/text_size_twenty" />
+
+    <ProgressBar
+        android:id="@+id/convergenceProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentMapGpsAccuracy"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/addTreeButton"

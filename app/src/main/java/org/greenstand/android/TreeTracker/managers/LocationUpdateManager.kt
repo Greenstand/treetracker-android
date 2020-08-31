@@ -5,13 +5,14 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Base64
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.gson.GsonBuilder
 import java.util.UUID
+import java.util.Deque
+import java.util.LinkedList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
@@ -135,13 +136,41 @@ class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO
 ) {
+    var convergenceWithinRange: Boolean = false
 
     private val gson = GsonBuilder().serializeNulls().create()
+    private var lastNLocations: Deque<Location> = LinkedList<Location>()
     var generatedTreeUuid: UUID? = null
+        private set
+    var longitudeMean: Double? = null
+        private set
+    var longitudeVariance: Double? = null
+        private set
+    var longitudeStdDev: Double? = null
         private set
 
     private val locationObserver: Observer<Location?> = Observer {
         it?.apply {
+
+            if (isInTreeCaptureMode() && !(convergenceWithinRange)) {
+                var replacedLocation: Location? = null
+                if (lastNLocations.size >= 5) {
+                    replacedLocation = lastNLocations.pollFirst()
+                    Timber.d("Convergence: polling the head from lastNLocations")
+                }
+                lastNLocations.add(it)
+                if (longitudeStdDev == null) {
+                    computeInitialConvergence(lastNLocations.toList())
+                } else {
+                    computeRunningConvergence(replacedLocation!!, it)
+                }
+                Timber.d("Convergence: Longitude Mean: [$longitudeMean]. \n" +
+                        "Longitude standard deviation value: [$longitudeStdDev]")
+                longitudeStdDev?.let {
+                    convergenceWithinRange = it < 0.00000021000001275237096
+                }
+            }
+
             MainScope().launch(Dispatchers.IO) {
                 val locationData =
                     LocationData(
@@ -152,13 +181,10 @@ class LocationDataCapturer(
                         generatedTreeUuid?.toString() ?: null,
                         System.currentTimeMillis()
                     )
-                Timber.d("Generated Location Data value $locationData")
-                val base64String = Base64.encodeToString(
-                    gson.toJson(locationData).toByteArray(),
-                    Base64.NO_WRAP
-                )
-                Timber.d("Inserting a new location data $base64String")
-                treeTrackerDAO.insertLocationData(LocationDataEntity(base64String))
+                Timber.d("Convergence: Generated Location Data value $locationData")
+                val jsonValue = gson.toJson(locationData)
+                Timber.d("Convergence: Inserting a new location data $jsonValue")
+                treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
             }
         }
     }
@@ -167,14 +193,65 @@ class LocationDataCapturer(
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 
+    fun isInTreeCaptureMode(): Boolean {
+        return generatedTreeUuid != null
+    }
+
     fun turnOnTreeCaptureMode() {
         generatedTreeUuid = UUID.randomUUID()
-        Timber.d("Tree capture mode turned on")
+        Timber.d("Convergence: Tree capture mode turned on")
     }
 
     fun turnOffTreeCaptureMode() {
         generatedTreeUuid = null
-        Timber.d("Tree capture turned off")
+        longitudeStdDev = null
+        lastNLocations.clear()
+        convergenceWithinRange = false
+        Timber.d("Convergence: Tree capture turned off")
+    }
+
+    private fun computeRunningConvergence(replaceLocation: Location, newLocation: Location) {
+        Timber.d("Convergence: Evaluating running convergence stats")
+        // Implementation based on the following answer found here since this seems to be a good
+        // approximation to the running window standard deviation calculation. Considered Welford's
+        // method of computing variance but it calculates running cumulative variance but we need
+        // sliding window computation here.
+        // https://math.stackexchange.com/questions/2815732/calculating-standard-deviation-of-a-moving-window
+        //
+        // Assuming you are using SD with Bessel's correction, call μn and SDn the mean and
+        // standard deviation from n to n+99. Then, calculate μ1 and SD1 afterwards, you can use the
+        // recursive relation
+        //  μn+1=μn−(1/99*X(n))+(1/99*X(n+100)) and
+        // variance(n+1)= variance(n) −1/99(Xn−μn)^2 + 1/99(X(n+100)−μ(n+1))^2
+        val priorLongitudeMean = longitudeMean
+        longitudeMean = priorLongitudeMean!!
+            .minus(replaceLocation.longitude / 5)
+            .plus(newLocation.longitude / 5)
+        longitudeVariance = longitudeVariance!!
+            .minus(Math.pow((replaceLocation.longitude - priorLongitudeMean!!), 2.0) / 5)
+            .plus(Math.pow((newLocation.longitude - longitudeMean!!), 2.0) / 5)
+        longitudeStdDev = Math.sqrt(longitudeVariance!!)
+    }
+
+    private fun computeInitialConvergence(locations: List<Location>) {
+        Timber.d("Convergence: Evaluating initial convergence stats")
+        if (locations.size < 5)
+            return
+
+        fun computeLongitudeStats() {
+            longitudeMean = locations
+                .map { it.longitude }
+                .sum()
+                .div(locations.size)
+            var variance = longitudeVariance ?: 0.0
+            for (x in locations) {
+                variance += Math.pow((x.longitude - longitudeMean!!), 2.0)
+            }
+            longitudeVariance = variance
+            longitudeStdDev = Math.sqrt(variance / locations.size)
+        }
+
+        computeLongitudeStats()
     }
 }
 

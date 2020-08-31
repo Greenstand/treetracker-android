@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -30,9 +31,12 @@ import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
 import kotlinx.android.synthetic.main.fragment_map.mapUserImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
@@ -165,9 +169,22 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())
                         } else {
+                            val progressBar = view!!.findViewById<ProgressBar>(
+                                R.id.convergenceProgressBar)
+                            progressBar.visibility = View.VISIBLE
                             vm.turnOnTreeCaptureMode()
-                            findNavController().navigate(
-                                MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                            try {
+                                withTimeout(60000) {
+                                    while (!vm.isConvergenceWithinRange()) {
+                                        delay(1000)
+                                    }
+                                }
+                            } catch (e: TimeoutCancellationException) {
+                                Timber.e("Convergence timedout..proceeding with capture")
+                            }
+                            progressBar.visibility = View.INVISIBLE
+                            findNavController()
+                                .navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                         }
                     }
                 } else {

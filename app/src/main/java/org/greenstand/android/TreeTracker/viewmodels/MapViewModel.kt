@@ -53,4 +53,6 @@ class MapViewModel constructor(
     suspend fun turnOnTreeCaptureMode() {
         locationDataCapturer.turnOnTreeCaptureMode()
     }
+
+    fun isConvergenceWithinRange() = locationDataCapturer.convergenceWithinRange
 }
