@@ -12,7 +12,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -20,7 +19,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
 
 class LocationDataCapturerTest {
 
@@ -36,7 +34,7 @@ class LocationDataCapturerTest {
     @MockK(relaxed = true)
     private lateinit var treeTrackerDAO: TreeTrackerDAO
     @get:Rule
-    var rule: TestRule = InstantTaskExecutorRule()
+    val instantExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setup() {
@@ -65,15 +63,15 @@ class LocationDataCapturerTest {
 
         locationDataCapturer.turnOnTreeCaptureMode()
 
-        assertNotNull(locationDataCapturer.generatedTreeUuid)
+        assertNotNull("Tree UUID is generated", locationDataCapturer.generatedTreeUuid)
     }
 
     @Test
     fun turnOffTreeCaptureMode() {
 
         locationDataCapturer.turnOffTreeCaptureMode()
-
-        assertNull(locationDataCapturer.generatedTreeUuid)
+        assertNull("Convergence is reset to null", locationDataCapturer.convergence)
+        assertNull("Tree UUID is reset to null", locationDataCapturer.generatedTreeUuid)
     }
 
     @Test
@@ -89,112 +87,58 @@ class LocationDataCapturerTest {
         // convergence
         for (i in 1..4) {
             val location = mockk<Location>(relaxed = true)
-            every { location.longitude } returns -122.08400000000002 + i / 100000000
             locationsLiveData.postValue(location)
         }
 
         assertFalse(locationDataCapturer.convergenceWithinRange)
     }
 
+    val locationValuesLowVariance = listOf(
+        Pair(-122.08400001, 37.42149486),
+        Pair(-122.08400111, 37.42149487),
+        Pair(-122.08400021519, 37.42149483),
+        Pair(-122.08400021999, 37.42149489),
+        Pair(-122.0840086753, 37.42149481)
+    )
     @Test
-    fun convergenceOnRequiredLocationSize() {
+    fun convergenceWithinRange() {
 
         val locationsLiveData = MutableLiveData<Location>()
         every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
 
         locationDataCapturer.start()
         locationDataCapturer.turnOnTreeCaptureMode()
-        for (i in 1..5) {
+        for (i in 0..4) {
             val location = mockk<Location>(relaxed = true)
-            every { location.longitude } returns -122.08400000000002 + i / 100000000
+            every { location.longitude } returns locationValuesLowVariance[i].first
+            every { location.latitude } returns locationValuesLowVariance[i].second
             locationsLiveData.postValue(location)
         }
         assertTrue(locationDataCapturer.convergenceWithinRange)
     }
 
-    // Hard coded values used for the following tests
-    val longitudeValues = listOf(
-        -122.08400001,
-        -122.08500111,
-        -122.093121519,
-        -122.0915121999,
-        -122.0773486753,
-        -121.0184743902
+    // Hard coded longitude and latitude pair values
+    val locationValuesHighVariance = listOf(
+        Pair(-122.08400001, 37.42149486),
+        Pair(-122.08500111, 37.42149487),
+        Pair(-122.093821519, 37.42149483),
+        Pair(-122.0913121999, 37.42149489),
+        Pair(-122.0773486753, 37.42149481)
     )
-
     @Test
-    fun verifyLongitudeMeanComputation() {
-
+    fun convergenceNotWithinRange() {
         val locationsLiveData = MutableLiveData<Location>()
         every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
 
         locationDataCapturer.start()
         locationDataCapturer.turnOnTreeCaptureMode()
-
         for (i in 0..4) {
             val location = mockk<Location>(relaxed = true)
-            every { location.longitude } returns longitudeValues[i]
+            every { location.longitude } returns locationValuesHighVariance[i].first
+            every { location.latitude } returns locationValuesHighVariance[i].second
             locationsLiveData.postValue(location)
         }
 
-        assertEquals(-122.08619670284, locationDataCapturer.longitudeMean)
-    }
-
-    @Test
-    fun verifyLongitudeVarianceComputation() {
-
-        val locationsLiveData = MutableLiveData<Location>()
-        every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
-
-        locationDataCapturer.start()
-        locationDataCapturer.turnOnTreeCaptureMode()
-
-        for (i in 0..4) {
-            val location = mockk<Location>(relaxed = true)
-            every { location.longitude } returns longitudeValues[i]
-            locationsLiveData.postValue(location)
-        }
-
-        assertEquals(0.00016075008086548827, locationDataCapturer.longitudeVariance)
-    }
-
-    @Test
-    fun verifyLongitudeStandardDeviationComputation() {
-
-        val locationsLiveData = MutableLiveData<Location>()
-        every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
-
-        locationDataCapturer.start()
-        locationDataCapturer.turnOnTreeCaptureMode()
-
-        for (i in 0..4) {
-            val location = mockk<Location>(relaxed = true)
-            every { location.longitude } returns longitudeValues[i]
-            locationsLiveData.postValue(location)
-        }
-
-        assertEquals(0.005670098427108444, locationDataCapturer.longitudeStdDev)
-    }
-
-    @Test
-    fun runningStatsAfterInitialConvergence() {
-        // When an initial computation for standard deviation is computed,
-        // newer location values triggers the use of running computation
-        val locationsLiveData = MutableLiveData<Location>()
-        every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
-
-        locationDataCapturer.start()
-        locationDataCapturer.turnOnTreeCaptureMode()
-
-        // The value of 5th will use the running computation instead of computing the
-        // stats using all values
-        for (i in 0..5) {
-            val location = mockk<Location>(relaxed = true)
-            every { location.longitude } returns longitudeValues[i]
-            locationsLiveData.postValue(location)
-        }
-        assertEquals(-121.87309157888, locationDataCapturer.longitudeMean)
-        assertEquals(0.14623389282643856, locationDataCapturer.longitudeVariance)
-        assertEquals(0.3824054037620789, locationDataCapturer.longitudeStdDev)
+        assertFalse(locationDataCapturer.convergenceWithinRange)
     }
 }

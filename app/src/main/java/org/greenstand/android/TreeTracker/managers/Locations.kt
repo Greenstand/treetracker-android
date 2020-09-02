@@ -45,6 +45,7 @@ class LocationUpdateManager(
         @UseExperimental(ExperimentalCoroutinesApi::class)
         override fun onLocationChanged(location: Location) {
             currentLocation = location
+            Timber.d("Posting location value $currentLocation")
             locationUpdates.postValue(location)
         }
 
@@ -157,7 +158,7 @@ class LocationDataCapturer(
                         convergence = Convergence(lastNLocations.toList())
                         convergence!!.computeConvergence()
                     } else {
-                        convergence!!.computeRunningConvergence(evictedLocation!!, it)
+                        convergence!!.computeSlidingWindowConvergence(evictedLocation!!, it)
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
@@ -234,8 +235,8 @@ class Convergence(val locations: List<Location>) {
         for (x in data) {
             variance += Math.pow((x - mean!!), 2.0)
         }
-        variance = variance
-        val stdDev = Math.sqrt(variance / data.size)
+        variance = variance / data.size
+        val stdDev = Math.sqrt(variance)
         return ConvergenceStats(mean, variance, stdDev)
     }
 
@@ -279,7 +280,7 @@ class Convergence(val locations: List<Location>) {
         latitudeConvergence = computeStats(latitudeData)
     }
 
-    fun computeRunningConvergence(replaceLocation: Location, newLocation: Location) {
+    fun computeSlidingWindowConvergence(replaceLocation: Location, newLocation: Location) {
         Timber.d("Convergence: Evaluating running convergence stats")
         longitudeConvergence = computeSlidingWindowStats(
             longitudeConvergence!!,
@@ -291,10 +292,6 @@ class Convergence(val locations: List<Location>) {
             replaceLocation.latitude,
             newLocation.latitude
         )
-    }
-
-    fun isComputed(): Boolean {
-        return longitudeConvergence != null && latitudeConvergence != null
     }
 
     fun longitudinalStandardDeviation(): Double? {
