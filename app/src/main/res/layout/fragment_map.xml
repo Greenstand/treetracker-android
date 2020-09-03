@@ -51,15 +51,29 @@
         android:textColor="@color/toolbar"
         android:textSize="@dimen/text_size_twenty" />
 
-    <ProgressBar
-        android:id="@+id/convergenceProgressBar"
+    <LinearLayout
+        android:id="@+id/fragmentMapsProgressBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:indeterminate="true"
+        android:orientation="vertical"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/fragmentMapGpsAccuracy"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+        <ProgressBar
+            android:id="@+id/convergenceProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:indeterminate="true"/>
+        <TextView
+            android:id="@+id/fragmentMapLocationProgressText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/gps_location_assessment"
+            android:textSize="@dimen/text_size_twenty" />
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/addTreeButton"

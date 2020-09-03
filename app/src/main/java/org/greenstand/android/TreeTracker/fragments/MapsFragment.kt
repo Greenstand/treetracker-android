@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.ProgressBar
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -169,16 +169,16 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())
                         } else {
-                            val progressBar = view!!.findViewById<ProgressBar>(
-                                R.id.convergenceProgressBar)
-                            progressBar.visibility = View.VISIBLE
+                            val progressBarLayout = view!!.findViewById<LinearLayout>(
+                                R.id.fragmentMapsProgressBarLayout)
+                            progressBarLayout.visibility = View.VISIBLE
                             vm.turnOnTreeCaptureMode()
                             withTimeoutOrNull(LocationDataConfig.CONVERGENCE_TIMEOUT) {
                                 while (!vm.isConvergenceWithinRange()) {
                                     delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
                                 }
                             }
-                            progressBar.visibility = View.INVISIBLE
+                            progressBarLayout.visibility = View.INVISIBLE
                             findNavController()
                                 .navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                         }
