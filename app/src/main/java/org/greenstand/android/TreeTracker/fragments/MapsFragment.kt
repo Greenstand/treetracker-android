@@ -32,7 +32,6 @@ import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
 import kotlinx.android.synthetic.main.fragment_map.mapUserImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

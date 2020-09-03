@@ -69,7 +69,7 @@ class LocationDataCapturerTest {
     fun turnOffTreeCaptureMode() {
 
         locationDataCapturer.turnOffTreeCaptureMode()
-        
+
         assertNull("Convergence is reset to null", locationDataCapturer.convergence)
         assertNull("Tree UUID is reset to null", locationDataCapturer.generatedTreeUuid)
     }
