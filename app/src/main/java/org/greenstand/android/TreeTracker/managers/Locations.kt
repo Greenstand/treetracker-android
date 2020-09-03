@@ -10,15 +10,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.gson.GsonBuilder
-import java.util.UUID
 import java.util.Deque
 import java.util.LinkedList
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
+import org.greenstand.android.TreeTracker.utilities.LocationDataConfig.CONVERGENCE_DATA_SIZE
+import org.greenstand.android.TreeTracker.utilities.LocationDataConfig.LAT_STD_DEV
+import org.greenstand.android.TreeTracker.utilities.LocationDataConfig.LONG_STD_DEV
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
@@ -67,8 +71,8 @@ class LocationUpdateManager(
             if (!isUpdating) {
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
-                    0,
-                    0f,
+                    LocationDataConfig.MIN_TIME_BTWN_UPDATES,
+                    LocationDataConfig.MIN_DISTANCE_BTW_UPDATES,
                     locationUpdateListener
                 )
                 isUpdating = true
@@ -147,13 +151,30 @@ class LocationDataCapturer(
 
     private val locationObserver: Observer<Location?> = Observer {
         it?.apply {
+
+            MainScope().launch(Dispatchers.IO) {
+                val locationData =
+                    LocationData(
+                        userManager.planterCheckinId,
+                        latitude,
+                        longitude,
+                        accuracy,
+                        generatedTreeUuid?.toString() ?: null,
+                        System.currentTimeMillis()
+                    )
+                Timber.d("Convergence: Generated Location Data value $locationData")
+                val jsonValue = gson.toJson(locationData)
+                Timber.d("Convergence: Inserting a new location data $jsonValue")
+                treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
+            }
+
             if (isInTreeCaptureMode() && !(convergenceWithinRange)) {
 
-                var evictedLocation: Location? = if (lastNLocations.size >= 5)
+                var evictedLocation: Location? = if (lastNLocations.size >= CONVERGENCE_DATA_SIZE)
                     lastNLocations.pollFirst() else null
                 lastNLocations.add(it)
 
-                if (lastNLocations.size >= 5) {
+                if (lastNLocations.size >= CONVERGENCE_DATA_SIZE) {
                     if (convergence == null) {
                         convergence = Convergence(lastNLocations.toList())
                         convergence!!.computeConvergence()
@@ -176,26 +197,10 @@ class LocationDataCapturer(
                         convergence!!.longitudinalStandardDeviation(),
                         convergence!!.latitudinalStandardDeviation()
                     ) { longStdDev, latStdDev ->
-                        convergenceWithinRange = longStdDev < 0.00001 &&
-                                latStdDev < 0.00001
+                        convergenceWithinRange = longStdDev < LONG_STD_DEV &&
+                                latStdDev < LAT_STD_DEV
                     }
                 }
-            }
-
-            MainScope().launch(Dispatchers.IO) {
-                val locationData =
-                    LocationData(
-                        userManager.planterCheckinId,
-                        latitude,
-                        longitude,
-                        accuracy,
-                        generatedTreeUuid?.toString() ?: null,
-                        System.currentTimeMillis()
-                    )
-                Timber.d("Convergence: Generated Location Data value $locationData")
-                val jsonValue = gson.toJson(locationData)
-                Timber.d("Convergence: Inserting a new location data $jsonValue")
-                treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
             }
         }
     }
@@ -260,18 +265,18 @@ class Convergence(val locations: List<Location>) {
         newValue: Double
     ): ConvergenceStats {
         val newMean = currentStats.mean
-            .minus(replacingValue / 5)
-            .plus(newValue / 5)
+            .minus(replacingValue / CONVERGENCE_DATA_SIZE)
+            .plus(newValue / CONVERGENCE_DATA_SIZE)
         val newVariance = currentStats.variance
-            .minus(Math.pow((replacingValue - currentStats.mean), 2.0) / 5)
-            .plus(Math.pow((newValue - newMean), 2.0) / 5)
+            .minus(Math.pow((replacingValue - currentStats.mean), 2.0) / CONVERGENCE_DATA_SIZE)
+            .plus(Math.pow((newValue - newMean), 2.0) / CONVERGENCE_DATA_SIZE)
         val newStdDev = Math.sqrt(newVariance)
         return ConvergenceStats(newMean, newVariance, newStdDev)
     }
 
     fun computeConvergence() {
         Timber.d("Convergence: Evaluating initial convergence stats")
-        if (locations.size < 5)
+        if (locations.size < CONVERGENCE_DATA_SIZE)
             return
         val longitudeData = locations.map { it.longitude }.toList()
         longitudeConvergence = computeStats(longitudeData)

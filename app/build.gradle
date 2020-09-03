@@ -144,9 +144,6 @@ android {
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
-
-
-
     }
 
     flavorDimensions "version"
@@ -216,6 +213,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc03'
     implementation "androidx.work:work-runtime-ktx:2.2.0"
+    implementation "com.google.maps.android:android-maps-utils:2.0.3"
 
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
