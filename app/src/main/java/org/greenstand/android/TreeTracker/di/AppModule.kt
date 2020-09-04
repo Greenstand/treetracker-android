@@ -11,6 +11,8 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.managers.*
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.managers.*
+import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.usecases.*
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.*
@@ -42,7 +44,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { User(get()) }
+    single { User() }
 
     single { Analytics(get(), get(), get()) }
 
@@ -69,6 +71,8 @@ val appModule = module {
     }
 
     single { Preferences(get(), get()) }
+
+    factory { PreferencesMigrator(get(), get()) }
 
     factory { LanguageSwitcher(get()) }
 

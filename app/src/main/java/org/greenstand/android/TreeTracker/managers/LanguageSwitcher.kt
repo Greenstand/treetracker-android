@@ -29,7 +29,7 @@ enum class Language(val locale: Locale) {
 class LanguageSwitcher(private val prefs: Preferences) {
 
     fun applyCurrentLanguage(activity: Activity) {
-        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en"))
+        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en") ?: "")
         setLanguage(language, activity.resources)
     }
 
@@ -60,7 +60,7 @@ class LanguageSwitcher(private val prefs: Preferences) {
     }
 
     private fun currentLanguage(): Language {
-        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en"))
+        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en") ?: "")
     }
 
     companion object {

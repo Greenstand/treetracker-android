@@ -3,8 +3,11 @@ package org.greenstand.android.TreeTracker.managers
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.koin.core.context.GlobalContext
 
-class UserManager(private val preferences: Preferences) {
+class UserManager {
+
+    private val preferences: Preferences by GlobalContext.get().koin.inject()
 
     val isLoggedIn: Boolean
         get() = planterCheckinId != -1L
