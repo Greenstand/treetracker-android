@@ -1,31 +1,7 @@
-package org.greenstand.android.TreeTracker.managers
+package org.greenstand.android.TreeTracker.preferences
 
 import android.content.SharedPreferences
-
-object PrefKeys {
-
-    val ROOT = PrefKey("greenstand")
-
-    val SESSION = PrefKey("session")
-
-    val USER_SETTINGS = ROOT + PrefKey("user-settings")
-}
-
-open class PrefKey(val path: String) {
-
-    operator fun plus(prefKey: PrefKey): PrefKey {
-        return when (prefKey) {
-            is UserPrefKey -> UserPrefKey("$path/${prefKey.path}")
-            else -> PrefKey("$path/${prefKey.path}")
-        }
-    }
-
-    fun asUserPref(): UserPrefKey {
-        return UserPrefKey(path)
-    }
-}
-
-class UserPrefKey(path: String) : PrefKey(path)
+import org.greenstand.android.TreeTracker.managers.UserManager
 
 class Preferences(
     private val prefs: SharedPreferences,

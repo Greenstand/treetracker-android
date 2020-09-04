@@ -5,6 +5,9 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.preferences.PrefKeys
+import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.preferences.UserPrefKey
 import java.util.*
 
 enum class Language(val locale: Locale) {
