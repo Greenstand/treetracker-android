@@ -4,7 +4,7 @@ object PrefKeys {
 
     private val ROOT = PrefKey("greenstand")
 
-    val SESSION = PrefKey("user-session")
+    val SESSION = ROOT + PrefKey("user-session")
 
     val USER_SETTINGS = ROOT + PrefKey("user-settings")
 
