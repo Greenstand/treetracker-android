@@ -47,12 +47,12 @@ import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import kotlin.math.roundToInt
 
 class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapReadyCallback,
     View.OnLongClickListener {
@@ -62,6 +62,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private val sharedPreferences: SharedPreferences by inject()
     private val preferences: Preferences by inject()
     private val dao: TreeTrackerDAO by inject()
+    private val userManager: UserManager by inject()
 
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
@@ -89,7 +90,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
                     requireActivity().toolbarTitle.text = vm.getPlanterName()
 
-                    val photoPath = sharedPreferences.getString(ValueHelper.PLANTER_PHOTO, null)
+                    val photoPath = userManager.profilePhotoPath
                     val profileImageView = mapUserImage
 
                     if (photoPath != null) {

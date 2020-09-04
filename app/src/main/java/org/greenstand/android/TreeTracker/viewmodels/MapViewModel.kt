@@ -9,12 +9,10 @@ import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
-import org.greenstand.android.TreeTracker.usecases.ExpireCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 
 class MapViewModel constructor(
     private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
-    private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val locationDataCapturer: LocationDataCapturer,
     locationUpdateManager: LocationUpdateManager,
@@ -32,7 +30,7 @@ class MapViewModel constructor(
         if (validateCheckInStatusUseCase.execute(Unit)) {
             checkInStatusLiveData.postValue(true)
         } else {
-            expireCheckInStatusUseCase.execute(Unit)
+            userManager.clearUser()
             checkInStatusLiveData.postValue(false)
         }
     }

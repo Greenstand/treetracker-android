@@ -9,10 +9,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
-import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.managers.*
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.usecases.*
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
@@ -33,7 +30,7 @@ val appModule = module {
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
-    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { MapViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { TreePreviewViewModel(get(), get()) }
 
@@ -45,7 +42,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { UserManager(get()) }
+    single { User(get()) }
 
     single { Analytics(get(), get(), get()) }
 
@@ -89,9 +86,7 @@ val appModule = module {
 
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
-    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get(), get()) }
-
-    factory { ExpireCheckInStatusUseCase(get()) }
+    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get()) }
 
     factory { ValidateCheckInStatusUseCase(get()) }
 

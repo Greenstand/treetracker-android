@@ -1,47 +1,52 @@
 package org.greenstand.android.TreeTracker.managers
 
-import android.content.SharedPreferences
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.preferences.PrefKey
+import org.greenstand.android.TreeTracker.preferences.PrefKeys
+import org.greenstand.android.TreeTracker.preferences.Preferences
 
-class UserManager(private val sharedPreferences: SharedPreferences) {
-
-    var authToken: String? = null
+class UserManager(private val preferences: Preferences) {
 
     val isLoggedIn: Boolean
         get() = planterCheckinId != -1L
 
     var firstName: String?
-        get() = sharedPreferences.getString(FIRST_NAME_KEY, null)
-        set(value) = sharedPreferences.edit().putString(FIRST_NAME_KEY, value).apply()
+        get() = preferences.getString(FIRST_NAME_KEY)
+        set(value) = preferences.edit().putString(FIRST_NAME_KEY, value).apply()
 
     var lastName: String?
-        get() = sharedPreferences.getString(LAST_NAME_KEY, null)
-        set(value) = sharedPreferences.edit().putString(LAST_NAME_KEY, value).apply()
+        get() = preferences.getString(LAST_NAME_KEY)
+        set(value) = preferences.edit().putString(LAST_NAME_KEY, value).apply()
+
+    var profilePhotoPath: String?
+        get() = preferences.getString(PROFILE_PHOTO_PATH_KEY)
+        set(value) = preferences.edit().putString(PROFILE_PHOTO_PATH_KEY, value).apply()
 
     var organization: String?
-        get() = sharedPreferences.getString(ORG_NAME_KEY, null)
-        set(value) = sharedPreferences.edit().putString(ORG_NAME_KEY, value).apply()
+        get() = preferences.getString(ORG_NAME_KEY)
+        set(value) = preferences.edit().putString(ORG_NAME_KEY, value).apply()
 
     var planterCheckinId: Long?
-        get() = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
-        set(value) = sharedPreferences.edit().putLong(ValueHelper.PLANTER_CHECK_IN_ID, value ?: -1).apply()
+        get() = preferences.getLong(PLANTER_CHECK_IN_ID_KEY)
+        set(value) = preferences.edit().putLong(PLANTER_CHECK_IN_ID_KEY, value ?: -1).apply()
 
     var planterInfoId: Long?
-        get() = sharedPreferences.getLong(ValueHelper.PLANTER_INFO_ID, -1)
-        set(value) = sharedPreferences.edit().putLong(ValueHelper.PLANTER_INFO_ID, value ?: -1).apply()
+        get() = preferences.getLong(PLANTER_INFO_ID_KEY)
+        set(value) = preferences.edit().putLong(PLANTER_INFO_ID_KEY, value ?: -1).apply()
 
-    fun clearUser() {
-        sharedPreferences.edit().apply {
-            putLong(ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS, 0)
-            putString(ValueHelper.PLANTER_PHOTO, null)
-            putLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
-            putLong(ValueHelper.PLANTER_INFO_ID, -1)
-        }.apply()
-    }
+    var lastCheckInTimeInSeconds: Long?
+        get() = preferences.getLong(LAST_CHECK_IN_TIME_IN_KEY)
+        set(value) = preferences.edit().putLong(LAST_CHECK_IN_TIME_IN_KEY, value ?: -1).apply()
+
+    fun clearUser() = preferences.clearPrefKeyUsage(BASE_KEY)
 
     companion object {
-        private const val FIRST_NAME_KEY = "FIRST_NAME_KEY"
-        private const val LAST_NAME_KEY = "LAST_NAME_KEY"
-        private const val ORG_NAME_KEY = "ORG_NAME_KEY"
+        private val BASE_KEY = PrefKeys.SESSION + PrefKey("user-info")
+        val PLANTER_CHECK_IN_ID_KEY = BASE_KEY + PrefKey("planter-check-in-id")
+        val PLANTER_INFO_ID_KEY = BASE_KEY + PrefKey("planter-info-id")
+        val ORG_NAME_KEY = BASE_KEY + PrefKey("organization")
+        val FIRST_NAME_KEY = BASE_KEY + PrefKey("first-name")
+        val LAST_NAME_KEY = BASE_KEY + PrefKey("last-name")
+        val PROFILE_PHOTO_PATH_KEY = BASE_KEY + PrefKey("profile-photo-path")
+        val LAST_CHECK_IN_TIME_IN_KEY = BASE_KEY + PrefKey("last-check-in-time-in-seconds")
     }
 }

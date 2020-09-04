@@ -2,9 +2,11 @@ package org.greenstand.android.TreeTracker.preferences
 
 object PrefKeys {
 
-    val ROOT = PrefKey("greenstand")
+    private val ROOT = PrefKey("greenstand")
 
-    val SESSION = PrefKey("session")
+    val SESSION = PrefKey("user-session")
 
     val USER_SETTINGS = ROOT + PrefKey("user-settings")
+
+    val SYSTEM_SETTINGS = ROOT + PrefKey("system-settings")
 }

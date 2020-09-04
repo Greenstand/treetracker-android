@@ -12,19 +12,23 @@ class Preferences(
         return prefs.getBoolean(computePath(prefKey), default)
     }
 
-    fun getString(prefKey: PrefKey, default: String): String {
+    fun getString(prefKey: PrefKey, default: String? = null): String? {
         return prefs.getString(computePath(prefKey), default)
     }
 
-    fun getFloat(prefKey: PrefKey, default: Float): Float {
+    fun getLong(prefKey: PrefKey, default: Long = -1): Long {
+        return prefs.getLong(computePath(prefKey), default)
+    }
+
+    fun getFloat(prefKey: PrefKey, default: Float = -1f): Float {
         return prefs.getFloat(computePath(prefKey), default)
     }
 
-    fun getInt(prefKey: PrefKey, default: Int): Int {
+    fun getInt(prefKey: PrefKey, default: Int = -1): Int {
         return prefs.getInt(computePath(prefKey), default)
     }
 
-    fun computePath(prefKey: PrefKey): String {
+    private fun computePath(prefKey: PrefKey): String {
         return when (prefKey) {
             is UserPrefKey -> {
                 prefKey.path + "/${userManager.planterInfoId}"
@@ -35,13 +39,22 @@ class Preferences(
         }
     }
 
+    fun clearPrefKeyUsage(prefKey: PrefKey) {
+        val editor = edit()
+        prefs.all
+            .keys
+            .filter { prefKey.path in it }
+            .forEach { editor.remove(PrefKey(it)) }
+        editor.apply()
+    }
+
     fun edit(): Editor {
         return Editor(prefs) {
             computePath(it)
         }
     }
 
-    inner class Editor(
+    class Editor(
         prefs: SharedPreferences,
         private val computePath: (PrefKey) -> String
     ) {
@@ -52,8 +65,12 @@ class Preferences(
             editor.putBoolean(computePath(prefKey), value)
         }
 
-        fun putString(prefKey: PrefKey, value: String) = apply {
+        fun putString(prefKey: PrefKey, value: String?) = apply {
             editor.putString(computePath(prefKey), value)
+        }
+
+        fun putLong(prefKey: PrefKey, value: Long) = apply {
+            editor.putLong(computePath(prefKey), value)
         }
 
         fun putFloat(prefKey: PrefKey, value: Float) = apply {
@@ -62,6 +79,10 @@ class Preferences(
 
         fun putInt(prefKey: PrefKey, value: Int) = apply {
             editor.putInt(computePath(prefKey), value)
+        }
+
+        fun remove(prefKey: PrefKey) = apply {
+            editor.remove(computePath(prefKey))
         }
 
         fun apply() {

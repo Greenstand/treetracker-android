@@ -18,20 +18,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.activity_main.toolbarTitle
+import kotlinx.android.synthetic.main.activity_main.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
-import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.koin.android.ext.android.get
+import org.greenstand.android.TreeTracker.managers.*
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -54,17 +47,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onCreate(savedInstanceState)
 
         languageSwitcher.applyCurrentLanguage(this)
-
-        if (sharedPreferences.getBoolean(ValueHelper.FIRST_RUN, true)) {
-
-            if (sharedPreferences.getBoolean(
-                    ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
-                sharedPreferences.edit()?.putBoolean(
-                    ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
-            }
-
-            sharedPreferences.edit()?.putBoolean(ValueHelper.FIRST_RUN, false)?.apply()
-        }
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
