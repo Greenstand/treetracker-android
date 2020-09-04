@@ -31,14 +31,16 @@ class PreferencesMigrator(
         // Delete old system values
         sharedPreferences
             .edit()
-            .putString("FIRST_NAME_KEY", null)
-            .putString("FIRST_NAME_KEY", null)
-            .putString("LAST_NAME_KEY", null)
-            .putString("ORG_NAME_KEY", null)
-            .putString("PLANTER_PHOTO", null)
-            .putLong("PLANTER_CHECK_IN_ID", -1)
-            .putLong("PLANTER_INFO_ID", -1)
-            .putLong("TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS", -1)
+            .remove("FIRST_NAME_KEY")
+            .remove("FIRST_NAME_KEY")
+            .remove("LAST_NAME_KEY")
+            .remove("ORG_NAME_KEY")
+            .remove("PLANTER_PHOTO")
+            .remove("PLANTER_CHECK_IN_ID")
+            .remove("PLANTER_INFO_ID")
+            .remove("FIRST_RUN")
+            .remove("TREE_TRACKER_SETTINGS_USED")
+            .remove("TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS")
             .apply()
     }
 
