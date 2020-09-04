@@ -15,7 +15,9 @@ class PreferencesMigrator(
     }
 
     private fun migrate() {
+        // Put old system values into new system
         preferences.edit()
+            .putString(UserManager.FIRST_NAME_KEY, sharedPreferences.getString("FIRST_NAME_KEY", "") ?: "")
             .putString(UserManager.FIRST_NAME_KEY, sharedPreferences.getString("FIRST_NAME_KEY", "") ?: "")
             .putString(UserManager.LAST_NAME_KEY, sharedPreferences.getString("LAST_NAME_KEY", "") ?: "")
             .putString(UserManager.ORG_NAME_KEY, sharedPreferences.getString("ORG_NAME_KEY", "") ?: "")
@@ -25,6 +27,19 @@ class PreferencesMigrator(
             .putLong(UserManager.LAST_CHECK_IN_TIME_IN_KEY, sharedPreferences.getLong("TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS", -1))
             .putBoolean(IS_MIGRATION_DONE_KEY, true)
             .commit()
+
+        // Delete old system values
+        sharedPreferences
+            .edit()
+            .putString("FIRST_NAME_KEY", null)
+            .putString("FIRST_NAME_KEY", null)
+            .putString("LAST_NAME_KEY", null)
+            .putString("ORG_NAME_KEY", null)
+            .putString("PLANTER_PHOTO", null)
+            .putLong("PLANTER_CHECK_IN_ID", -1)
+            .putLong("PLANTER_INFO_ID", -1)
+            .putLong("TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS", -1)
+            .apply()
     }
 
     companion object {
