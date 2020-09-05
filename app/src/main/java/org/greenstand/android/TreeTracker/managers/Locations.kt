@@ -163,9 +163,8 @@ class LocationDataCapturer(
                         generatedTreeUuid?.toString() ?: null,
                         System.currentTimeMillis()
                     )
-                Timber.d("Convergence: Generated Location Data value $locationData")
                 val jsonValue = gson.toJson(locationData)
-                Timber.d("Convergence: Inserting a new location data $jsonValue")
+                Timber.d("Inserting new location data $jsonValue")
                 treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
             }
 
