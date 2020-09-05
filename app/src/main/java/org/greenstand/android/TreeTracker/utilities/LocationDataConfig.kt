@@ -1,7 +1,8 @@
 package org.greenstand.android.TreeTracker.utilities
 
 /**
- *  app-wide constants and utilities
+ *  Contains configuration parameters for Location data capture
+ *  and location convergence parameter thresholds.
  */
 object LocationDataConfig {
 

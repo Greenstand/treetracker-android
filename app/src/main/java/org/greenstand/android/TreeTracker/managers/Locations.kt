@@ -84,14 +84,15 @@ class LocationUpdateManager(
         }
     }
 
-    fun stopLocationUpdates() {
+    fun stopLocationUpdates(): Boolean {
         Timber.d("Request to stop location updates submitted")
         if (locationUpdateLiveData.hasObservers())
-            return
+            return false
         Timber.d("Request to stop location update honored")
         locationManager.removeUpdates(locationUpdateListener)
         locationUpdates.postValue(null)
         isUpdating = false
+        return true
     }
 
     fun isLocationEnabled(): Boolean {
@@ -144,7 +145,7 @@ class LocationDataCapturer(
     var convergenceWithinRange: Boolean = false
 
     private val gson = GsonBuilder().serializeNulls().create()
-    private var lastNLocations: Deque<Location> = LinkedList<Location>()
+    private var locationsDeque: Deque<Location> = LinkedList<Location>()
     var generatedTreeUuid: UUID? = null
         private set
     var convergence: Convergence? = null
@@ -170,13 +171,13 @@ class LocationDataCapturer(
 
             if (isInTreeCaptureMode() && !(convergenceWithinRange)) {
 
-                var evictedLocation: Location? = if (lastNLocations.size >= CONVERGENCE_DATA_SIZE)
-                    lastNLocations.pollFirst() else null
-                lastNLocations.add(it)
+                var evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
+                    locationsDeque.pollFirst() else null
+                locationsDeque.add(it)
 
-                if (lastNLocations.size >= CONVERGENCE_DATA_SIZE) {
+                if (locationsDeque.size >= CONVERGENCE_DATA_SIZE) {
                     if (convergence == null) {
-                        convergence = Convergence(lastNLocations.toList())
+                        convergence = Convergence(locationsDeque.toList())
                         convergence!!.computeConvergence()
                     } else {
                         convergence!!.computeSlidingWindowConvergence(evictedLocation!!, it)
@@ -221,7 +222,7 @@ class LocationDataCapturer(
     fun turnOffTreeCaptureMode() {
         generatedTreeUuid = null
         convergence = null
-        lastNLocations.clear()
+        locationsDeque.clear()
         convergenceWithinRange = false
         Timber.d("Convergence: Tree capture turned off")
     }
