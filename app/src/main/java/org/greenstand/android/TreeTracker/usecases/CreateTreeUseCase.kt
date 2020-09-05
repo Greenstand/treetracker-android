@@ -12,7 +12,8 @@ import timber.log.Timber
 data class CreateTreeParams(
     val photoPath: String,
     val content: String,
-    val planterCheckInId: Long
+    val planterCheckInId: Long,
+    val treeUuid: UUID
 )
 
 class CreateTreeUseCase(
@@ -22,14 +23,12 @@ class CreateTreeUseCase(
 ) : UseCase<CreateTreeParams, Long>() {
 
     override suspend fun execute(params: CreateTreeParams): Long = withContext(Dispatchers.IO) {
-        val uuid = UUID.randomUUID()
-
         val location = locationUpdateManager.currentLocation
         val time = location?.time ?: System.currentTimeMillis()
         val timeInSeconds = time / 1000
 
         val entity = TreeCaptureEntity(
-            uuid = uuid.toString(),
+            uuid = params.treeUuid.toString(),
             planterCheckInId = params.planterCheckInId,
             localPhotoPath = params.photoPath,
             photoUrl = null,
@@ -41,7 +40,7 @@ class CreateTreeUseCase(
         )
 
         analytics.treePlanted()
-        Timber.d("PLANTER CHECK IN ID = ${params.planterCheckInId}")
+        Timber.d("Inserting TreeCapture entity $entity")
         dao.insertTreeCapture(entity)
     }
 }

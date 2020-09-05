@@ -5,10 +5,12 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.util.UUID
 import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
+import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
@@ -17,6 +19,7 @@ import org.greenstand.android.TreeTracker.utilities.ValueHelper
 class NewTreeViewModel(
     private val sharedPreferences: SharedPreferences,
     private val locationUpdateManager: LocationUpdateManager,
+    private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
     private val analytics: Analytics
 ) : ViewModel() {
@@ -26,6 +29,7 @@ class NewTreeViewModel(
     val navigateToTreeHeight: MutableLiveData<NewTree> = MutableLiveData()
     val navigateBack: MutableLiveData<Unit> = MutableLiveData()
     val onTakePicture: MutableLiveData<Unit> = MutableLiveData()
+    private var newTreeUuid: UUID? = null
 
     val noteEnabledLiveData: LiveData<Boolean> = MutableLiveData<Boolean>().apply {
         postValue(FeatureFlags.TREE_NOTE_FEATURE_ENABLED)
@@ -48,7 +52,7 @@ class NewTreeViewModel(
 
     suspend fun createTree(note: String) {
 
-        val newTree = createNewTree(note, photoPath!!)
+        val newTree = createNewTree(note, photoPath!!, newTreeUuid!!)
 
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
@@ -67,7 +71,8 @@ class NewTreeViewModel(
         val createTreeParams = CreateTreeParams(
             planterCheckInId = newTree.planterCheckInId,
             photoPath = newTree.photoPath,
-            content = newTree.content
+            content = newTree.content,
+            treeUuid = newTree.treeUuid
         )
 
         return createTreeUseCase.execute(createTreeParams)
@@ -78,13 +83,24 @@ class NewTreeViewModel(
         return imageQuality < FOCUS_THRESHOLD
     }
 
-    private fun createNewTree(note: String, photoPath: String): NewTree {
+    fun newTreePhotoCaptured() {
+        newTreeUuid = locationDataCapturer.generatedTreeUuid
+        locationDataCapturer.turnOffTreeCaptureMode()
+    }
+
+    fun newTreeCaptureCancelled() {
+        newTreeUuid = null
+        locationDataCapturer.turnOffTreeCaptureMode()
+    }
+
+    private fun createNewTree(note: String, photoPath: String, newTreeUuid: UUID): NewTree {
         val planterCheckinId = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
 
         return NewTree(
             photoPath,
             note,
-            planterCheckinId
+            planterCheckinId,
+            newTreeUuid
         )
     }
 

@@ -18,9 +18,11 @@ import org.greenstand.android.TreeTracker.managers.TreeManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 
-class TreeHeightViewModel(private val createTreeUseCase: CreateTreeUseCase,
-                          private val dao: TreeTrackerDAO,
-                          private val analytics: Analytics) : ViewModel() {
+class TreeHeightViewModel(
+    private val createTreeUseCase: CreateTreeUseCase,
+    private val dao: TreeTrackerDAO,
+    private val analytics: Analytics
+) : ViewModel() {
 
     var newTree: NewTree? = null
     var treeColor: TreeColor? = null
@@ -47,7 +49,8 @@ class TreeHeightViewModel(private val createTreeUseCase: CreateTreeUseCase,
                         val createTreeParams = CreateTreeParams(
                             planterCheckInId = tree.planterCheckInId,
                             photoPath = tree.photoPath,
-                            content = tree.content
+                            content = tree.content,
+                            treeUuid = tree.treeUuid
                         )
 
                         val treeId = createTreeUseCase.execute(createTreeParams)
@@ -76,7 +79,6 @@ class TreeHeightViewModel(private val createTreeUseCase: CreateTreeUseCase,
                     onFinishedLiveData.postValue(Unit)
                 }
                 ?: run { toastMessageLiveData.postValue(R.string.tree_height_save_error) }
-
         }
     }
 
