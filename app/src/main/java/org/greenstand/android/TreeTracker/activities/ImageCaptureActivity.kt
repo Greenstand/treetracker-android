@@ -9,18 +9,14 @@ import android.view.TextureView
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraX
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureConfig
-import androidx.camera.core.Preview
-import androidx.camera.core.PreviewConfig
-import java.io.File
+import androidx.camera.core.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
 import timber.log.Timber
+import java.io.File
 
 class ImageCaptureActivity : AppCompatActivity() {
 
@@ -88,6 +84,7 @@ class ImageCaptureActivity : AppCompatActivity() {
                     }
 
                     override fun onImageSaved(file: File) {
+                        ImageUtils.resizedImage(file.absolutePath)
                         Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
                         val focusMetric = testFocusQuality(file)
 
