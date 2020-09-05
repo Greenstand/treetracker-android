@@ -37,7 +37,6 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.Preferences
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
@@ -58,7 +57,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val preferences: Preferences by inject()
-    private val locationDataCapturer: LocationDataCapturer by inject()
     private val dao: TreeTrackerDAO by inject()
 
     private var mapFragment: SupportMapFragment? = null
@@ -167,9 +165,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())
                         } else {
+                            vm.turnOnTreeCaptureMode()
                             findNavController().navigate(
                                 MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
-                            locationDataCapturer.turnOnTreeCaptureMode()
                         }
                     }
                 } else {

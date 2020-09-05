@@ -10,6 +10,7 @@ import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
+import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
@@ -18,6 +19,7 @@ import org.greenstand.android.TreeTracker.utilities.ValueHelper
 class NewTreeViewModel(
     private val sharedPreferences: SharedPreferences,
     private val locationUpdateManager: LocationUpdateManager,
+    private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
     private val analytics: Analytics
 ) : ViewModel() {
@@ -27,6 +29,7 @@ class NewTreeViewModel(
     val navigateToTreeHeight: MutableLiveData<NewTree> = MutableLiveData()
     val navigateBack: MutableLiveData<Unit> = MutableLiveData()
     val onTakePicture: MutableLiveData<Unit> = MutableLiveData()
+    private var newTreeUuid: UUID? = null
 
     val noteEnabledLiveData: LiveData<Boolean> = MutableLiveData<Boolean>().apply {
         postValue(FeatureFlags.TREE_NOTE_FEATURE_ENABLED)
@@ -47,9 +50,9 @@ class NewTreeViewModel(
         }
     }
 
-    suspend fun createTree(note: String, newTreeUuid: UUID) {
+    suspend fun createTree(note: String) {
 
-        val newTree = createNewTree(note, photoPath!!, newTreeUuid)
+        val newTree = createNewTree(note, photoPath!!, newTreeUuid!!)
 
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
@@ -78,6 +81,16 @@ class NewTreeViewModel(
     fun isImageBlurry(data: Intent): Boolean {
         val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE, 0.0)
         return imageQuality < FOCUS_THRESHOLD
+    }
+
+    fun newTreePhotoCaptured() {
+        newTreeUuid = locationDataCapturer.generatedTreeUuid
+        locationDataCapturer.turnOffTreeCaptureMode()
+    }
+
+    fun newTreeCaptureCancelled() {
+        newTreeUuid = null
+        locationDataCapturer.turnOffTreeCaptureMode()
     }
 
     private fun createNewTree(note: String, photoPath: String, newTreeUuid: UUID): NewTree {

@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
@@ -15,6 +16,7 @@ class MapViewModel constructor(
     private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
     private val expireCheckInStatusUseCase: ExpireCheckInStatusUseCase,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
+    private val locationDataCapturer: LocationDataCapturer,
     locationUpdateManager: LocationUpdateManager,
     private val userManager: UserManager
 ) : ViewModel() {
@@ -46,5 +48,9 @@ class MapViewModel constructor(
     suspend fun createFakeTrees(): Boolean {
         createFakeTreesUseCase.execute(CreateFakeTreesParams(500))
         return true
+    }
+
+    suspend fun turnOnTreeCaptureMode() {
+        locationDataCapturer.turnOnTreeCaptureMode()
     }
 }
