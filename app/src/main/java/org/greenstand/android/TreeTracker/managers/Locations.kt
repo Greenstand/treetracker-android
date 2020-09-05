@@ -13,6 +13,8 @@ import com.google.gson.GsonBuilder
 import java.util.Deque
 import java.util.LinkedList
 import java.util.UUID
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
@@ -168,7 +170,7 @@ class LocationDataCapturer(
                 treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
             }
 
-            if (isInTreeCaptureMode() && !(convergenceWithinRange)) {
+            if (isInTreeCaptureMode() && !convergenceWithinRange) {
 
                 var evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
                     locationsDeque.pollFirst() else null
@@ -235,13 +237,13 @@ class Convergence(val locations: List<Location>) {
         private set
 
     fun computeStats(data: List<Double>): ConvergenceStats {
-        val mean = data.sum().div(data.size)
+        val mean = data.sum() / data.size
         var variance = 0.0
         for (x in data) {
-            variance += Math.pow((x - mean!!), 2.0)
+            variance += (x - mean!!).pow(2.0)
         }
-        variance = variance / data.size
-        val stdDev = Math.sqrt(variance)
+        variance /= data.size
+        val stdDev = sqrt(variance)
         return ConvergenceStats(mean, variance, stdDev)
     }
 
@@ -264,13 +266,15 @@ class Convergence(val locations: List<Location>) {
         replacingValue: Double,
         newValue: Double
     ): ConvergenceStats {
-        val newMean = currentStats.mean
-            .minus(replacingValue / CONVERGENCE_DATA_SIZE)
-            .plus(newValue / CONVERGENCE_DATA_SIZE)
-        val newVariance = currentStats.variance
-            .minus(Math.pow((replacingValue - currentStats.mean), 2.0) / CONVERGENCE_DATA_SIZE)
-            .plus(Math.pow((newValue - newMean), 2.0) / CONVERGENCE_DATA_SIZE)
-        val newStdDev = Math.sqrt(newVariance)
+        val newMean = (
+                currentStats.mean -
+                        (replacingValue / CONVERGENCE_DATA_SIZE) +
+                        (newValue / CONVERGENCE_DATA_SIZE))
+        val newVariance = (
+                currentStats.variance -
+                        ((replacingValue - currentStats.mean).pow(2.0) / CONVERGENCE_DATA_SIZE) +
+                        ((newValue - newMean).pow(2.0) / CONVERGENCE_DATA_SIZE))
+        val newStdDev = sqrt(newVariance)
         return ConvergenceStats(newMean, newVariance, newStdDev)
     }
 
