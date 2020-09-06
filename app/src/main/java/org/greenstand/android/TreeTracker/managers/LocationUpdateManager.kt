@@ -10,7 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
@@ -135,7 +136,10 @@ class LocationDataCapturer(
     private val treeTrackerDAO: TreeTrackerDAO
 ) {
 
-    private val gson = Gson()
+    private val gson = GsonBuilder().serializeNulls().create()
+    var generatedTreeUuid: UUID? = null
+        private set
+
     private val locationObserver: Observer<Location?> = Observer {
         it?.apply {
             MainScope().launch(Dispatchers.IO) {
@@ -145,8 +149,10 @@ class LocationDataCapturer(
                         latitude,
                         longitude,
                         accuracy,
+                        generatedTreeUuid?.toString() ?: null,
                         System.currentTimeMillis()
                     )
+                Timber.d("Generated Location Data value $locationData")
                 val base64String = Base64.encodeToString(
                     gson.toJson(locationData).toByteArray(),
                     Base64.NO_WRAP
@@ -162,11 +168,13 @@ class LocationDataCapturer(
     }
 
     fun turnOnTreeCaptureMode() {
-        // Implementation pending
+        generatedTreeUuid = UUID.randomUUID()
+        Timber.d("Tree capture mode turned on")
     }
 
     fun turnOffTreeCaptureMode() {
-        // Implementation pending
+        generatedTreeUuid = null
+        Timber.d("Tree capture turned off")
     }
 }
 
@@ -175,5 +183,6 @@ data class LocationData(
     val latitude: Double,
     val longitude: Double,
     val accuracy: Float,
+    val treeUuid: String?,
     val capturedAt: Long
 )

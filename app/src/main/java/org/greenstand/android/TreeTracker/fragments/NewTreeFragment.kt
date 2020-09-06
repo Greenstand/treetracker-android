@@ -13,7 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
 import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,6 +74,7 @@ class NewTreeFragment :
         })
 
         vm.navigateBack.observe(this, Observer {
+            vm.newTreeCaptureCancelled()
             findNavController().popBackStack()
         })
 
@@ -110,11 +111,14 @@ class NewTreeFragment :
         if (CameraHelper.wasCameraPermissionGranted(requestCode, grantResults)) {
             CameraHelper.takePictureForResult(this, selfie = false)
         } else {
+            vm.newTreeCaptureCancelled()
             findNavController().popBackStack()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        vm.newTreePhotoCaptured()
         if (data != null && resultCode == Activity.RESULT_OK) {
             vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 
