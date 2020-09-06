@@ -1,11 +1,11 @@
 package org.greenstand.android.TreeTracker.preferences
 
 import android.content.SharedPreferences
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.managers.User
 
 class Preferences(
     private val prefs: SharedPreferences,
-    private val userManager: UserManager
+    private val user: User
 ) {
 
     fun getBoolean(prefKey: PrefKey, default: Boolean): Boolean {
@@ -31,7 +31,7 @@ class Preferences(
     private fun computePath(prefKey: PrefKey): String {
         return when (prefKey) {
             is UserPrefKey -> {
-                prefKey.path + "/${userManager.planterInfoId}"
+                prefKey.path + "/${user.planterInfoId}"
             }
             else -> {
                 prefKey.path

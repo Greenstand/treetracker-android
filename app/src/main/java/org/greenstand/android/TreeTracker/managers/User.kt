@@ -5,7 +5,7 @@ import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.koin.core.context.GlobalContext
 
-class UserManager {
+class User {
 
     private val preferences: Preferences by GlobalContext.get().koin.inject()
 
@@ -40,7 +40,7 @@ class UserManager {
         get() = preferences.getLong(LAST_CHECK_IN_TIME_IN_KEY)
         set(value) = preferences.edit().putLong(LAST_CHECK_IN_TIME_IN_KEY, value ?: -1).apply()
 
-    fun clearUser() = preferences.clearPrefKeyUsage(BASE_KEY)
+    fun expireCheckInStatus() = preferences.clearPrefKeyUsage(BASE_KEY)
 
     companion object {
         private val BASE_KEY = PrefKeys.SESSION + PrefKey("info")

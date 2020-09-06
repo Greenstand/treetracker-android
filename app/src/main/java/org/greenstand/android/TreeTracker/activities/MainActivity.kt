@@ -30,7 +30,7 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val languageSwitcher: LanguageSwitcher by inject()
-    private val userManager: UserManager by inject()
+    private val user: User by inject()
     private val analytics: Analytics by inject()
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val locationDataCapturer: LocationDataCapturer by inject()
@@ -75,8 +75,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
-        if (!userManager.isLoggedIn) {
-            userManager.clearUser()
+        if (!user.isLoggedIn) {
+            user.expireCheckInStatus()
             toolbarTitle.text = resources.getString(R.string.user_not_identified)
         }
     }
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
 
             R.id.action_change_user -> {
-                userManager.clearUser()
+                user.expireCheckInStatus()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
                 findNavController(R.id.nav_host_fragment)

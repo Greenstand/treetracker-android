@@ -11,14 +11,13 @@ import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.managers.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import kotlin.math.roundToInt
 
 class NewTreeViewModel(
-    private val userManager: UserManager,
+    private val user: User,
     private val locationUpdateManager: LocationUpdateManager,
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
