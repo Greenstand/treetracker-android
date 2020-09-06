@@ -40,7 +40,7 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.Preferences
+import org.greenstand.android.TreeTracker.managers.User
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
@@ -57,8 +57,6 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
     private val vm: MapViewModel by viewModel()
     private val locationUpdateManager: LocationUpdateManager by inject()
-    private val sharedPreferences: SharedPreferences by inject()
-    private val preferences: Preferences by inject()
     private val dao: TreeTrackerDAO by inject()
     private val user: User by inject()
 

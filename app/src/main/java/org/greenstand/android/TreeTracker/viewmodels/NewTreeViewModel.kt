@@ -97,7 +97,7 @@ class NewTreeViewModel(
         return NewTree(
             photoPath,
             note,
-            user.planterCheckinId ?: -1
+            user.planterCheckinId ?: -1,
             newTreeUuid
         )
     }
