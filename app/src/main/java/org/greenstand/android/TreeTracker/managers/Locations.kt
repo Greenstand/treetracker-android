@@ -152,8 +152,8 @@ class LocationDataCapturer(
         private set
     var convergence: Convergence? = null
 
-    private val locationObserver: Observer<Location?> = Observer {
-        it?.apply {
+    private val locationObserver: Observer<Location?> = Observer { location ->
+        location?.apply {
 
             MainScope().launch(Dispatchers.IO) {
                 val locationData =
@@ -174,14 +174,14 @@ class LocationDataCapturer(
 
                 var evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
                     locationsDeque.pollFirst() else null
-                locationsDeque.add(it)
+                locationsDeque.add(location)
 
                 if (locationsDeque.size >= CONVERGENCE_DATA_SIZE) {
                     if (convergence == null) {
                         convergence = Convergence(locationsDeque.toList())
                         convergence!!.computeConvergence()
                     } else {
-                        convergence!!.computeSlidingWindowConvergence(evictedLocation!!, it)
+                        convergence!!.computeSlidingWindowConvergence(evictedLocation!!, location)
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
