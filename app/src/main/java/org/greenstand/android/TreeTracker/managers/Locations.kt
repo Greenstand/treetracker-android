@@ -179,26 +179,26 @@ class LocationDataCapturer(
                 if (locationsDeque.size >= CONVERGENCE_DATA_SIZE) {
                     if (convergence == null) {
                         convergence = Convergence(locationsDeque.toList())
-                        convergence!!.computeConvergence()
+                        convergence?.computeConvergence()
                     } else {
-                        convergence!!.computeSlidingWindowConvergence(evictedLocation!!, location)
+                        convergence?.computeSlidingWindowConvergence(evictedLocation!!, location)
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
-                                "[${convergence!!.longitudeConvergence?.mean}]. \n" +
+                                "[${convergence?.longitudeConvergence?.mean}]. \n" +
                                 "Longitude standard deviation value: " +
-                                "[${convergence!!.longitudeConvergence?.standardDeviation}]"
+                                "[${convergence?.longitudeConvergence?.standardDeviation}]"
                     )
                     Timber.d(
                         "Convergence: Latitude Mean: " +
-                                "[${convergence!!.latitudeConvergence?.mean}]. \n " +
+                                "[${convergence?.latitudeConvergence?.mean}]. \n " +
                                 "Latitude standard deviation value: " +
-                                "[${convergence!!.latitudeConvergence?.standardDeviation}]"
+                                "[${convergence?.latitudeConvergence?.standardDeviation}]"
                     )
-                    safeLet(
-                        convergence!!.longitudinalStandardDeviation(),
-                        convergence!!.latitudinalStandardDeviation()
-                    ) { longStdDev, latStdDev ->
+
+                    val longStdDev = convergence?.longitudinalStandardDeviation()
+                    val latStdDev = convergence?.latitudinalStandardDeviation()
+                    if (longStdDev != null && latStdDev != null) {
                         convergenceWithinRange = longStdDev < LONG_STD_DEV &&
                                 latStdDev < LAT_STD_DEV
                     }
@@ -236,11 +236,11 @@ class Convergence(val locations: List<Location>) {
     var latitudeConvergence: ConvergenceStats? = null
         private set
 
-    fun computeStats(data: List<Double>): ConvergenceStats {
+    private fun computeStats(data: List<Double>): ConvergenceStats {
         val mean = data.sum() / data.size
         var variance = 0.0
         for (x in data) {
-            variance += (x - mean!!).pow(2.0)
+            variance += (x - mean).pow(2.0)
         }
         variance /= data.size
         val stdDev = sqrt(variance)
@@ -324,7 +324,3 @@ data class LocationData(
     val treeUuid: String?,
     val capturedAt: Long
 )
-
-fun <T1 : Any, T2 : Any, R : Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2) -> R?): R? {
-    return if (p1 != null && p2 != null) block(p1, p2) else null
-}
