@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -30,9 +31,11 @@ import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
 import kotlinx.android.synthetic.main.fragment_map.mapUserImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
@@ -42,6 +45,7 @@ import org.greenstand.android.TreeTracker.managers.Preferences
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
@@ -63,6 +67,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private var map: GoogleMap? = null
 
     private lateinit var fragmentMapGpsAccuracyView: TextView
+    private lateinit var convergenceProgressView: Group
     private lateinit var clusterManager: ClusterManager<TreeMapMarker>
 
     override fun onCreateView(
@@ -75,6 +80,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fragmentMapGpsAccuracyView = view.findViewById(R.id.fragmentMapGpsAccuracy)
+        convergenceProgressView = view.findViewById<Group>(R.id.convergenceProgressGroup)
+        convergenceProgressView.visibility = View.GONE
 
         vm.checkInStatusLiveData.observe(this, Observer<Boolean> { planterIsCheckedIn ->
             if (planterIsCheckedIn) {
@@ -165,9 +172,16 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())
                         } else {
+                            convergenceProgressView.visibility = View.VISIBLE
                             vm.turnOnTreeCaptureMode()
-                            findNavController().navigate(
-                                MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
+                            withTimeoutOrNull(LocationDataConfig.CONVERGENCE_TIMEOUT) {
+                                while (!vm.isConvergenceWithinRange()) {
+                                    delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
+                                }
+                            }
+                            convergenceProgressView.visibility = View.GONE
+                            findNavController()
+                                .navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                         }
                     }
                 } else {

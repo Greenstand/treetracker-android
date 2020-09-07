@@ -12,7 +12,7 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
             val createLocationData = """
                 CREATE TABLE `location_data` (
                     `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                    `base64_json` TEXT NOT NULL,
+                    `json_value` TEXT NOT NULL,
                     `uploaded` INTEGER NOT NULL,
                     `created_at` INTEGER NOT NULL
                 )
