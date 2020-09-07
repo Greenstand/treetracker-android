@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         val listener = NavController
             .OnDestinationChangedListener { controller, destination, arguments ->
-                if (destination.id != R.id.splashFragment2) {
+                if (destination.id != R.id.splashFragment2 && destination.id != R.id.orgWallFragment) {
                     findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
                 }
 

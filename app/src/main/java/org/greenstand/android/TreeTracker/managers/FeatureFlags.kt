@@ -10,4 +10,5 @@ object FeatureFlags {
     val HIGH_GPS_ACCURACY: Boolean = BuildConfig.GPS_ACCURACY
     val AUTOMATIC_SIGN_OUT_FEATURE_ENABLED: Boolean = BuildConfig.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED
     val BLUR_DETECTION_ENABLED: Boolean = BuildConfig.BLUR_DETECTION_ENABLED
+    val ORG_LINK_ENABLED: Boolean = BuildConfig.ORG_LINK
 }

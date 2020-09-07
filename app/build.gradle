@@ -69,6 +69,7 @@ android {
         buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
         buildConfigField 'Boolean', 'USE_AWS_S3', "false"
+        buildConfigField 'Boolean', 'ORG_LINK', "false"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -153,6 +154,12 @@ android {
     productFlavors {
         greenstand {
             dimension "version"
+        }
+
+        organization {
+            dimension "version"
+            applicationIdSuffix ".organization"
+            buildConfigField 'Boolean', 'ORG_LINK', "true"
         }
 
         justdiggit {
