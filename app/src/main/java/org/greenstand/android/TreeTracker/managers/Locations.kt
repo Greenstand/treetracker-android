@@ -266,14 +266,12 @@ class Convergence(val locations: List<Location>) {
         replacingValue: Double,
         newValue: Double
     ): ConvergenceStats {
-        val newMean = (
-                currentStats.mean -
+        val newMean = currentStats.mean -
                         (replacingValue / CONVERGENCE_DATA_SIZE) +
-                        (newValue / CONVERGENCE_DATA_SIZE))
-        val newVariance = (
-                currentStats.variance -
+                        (newValue / CONVERGENCE_DATA_SIZE)
+        val newVariance = currentStats.variance -
                         ((replacingValue - currentStats.mean).pow(2.0) / CONVERGENCE_DATA_SIZE) +
-                        ((newValue - newMean).pow(2.0) / CONVERGENCE_DATA_SIZE))
+                        ((newValue - newMean).pow(2.0) / CONVERGENCE_DATA_SIZE)
         val newStdDev = sqrt(newVariance)
         return ConvergenceStats(newMean, newVariance, newStdDev)
     }

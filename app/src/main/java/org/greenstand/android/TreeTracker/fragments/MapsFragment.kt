@@ -11,10 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -67,6 +67,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
     private var map: GoogleMap? = null
 
     private lateinit var fragmentMapGpsAccuracyView: TextView
+    private lateinit var convergenceProgressView: Group
     private lateinit var clusterManager: ClusterManager<TreeMapMarker>
 
     override fun onCreateView(
@@ -79,6 +80,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fragmentMapGpsAccuracyView = view.findViewById(R.id.fragmentMapGpsAccuracy)
+        convergenceProgressView = view.findViewById<Group>(R.id.convergenceProgressGroup)
+        convergenceProgressView.visibility = View.GONE
 
         vm.checkInStatusLiveData.observe(this, Observer<Boolean> { planterIsCheckedIn ->
             if (planterIsCheckedIn) {
@@ -169,16 +172,14 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())
                         } else {
-                            val progressBarLayout = view!!.findViewById<LinearLayout>(
-                                R.id.fragmentMapsProgressBarLayout)
-                            progressBarLayout.visibility = View.VISIBLE
+                            convergenceProgressView.visibility = View.VISIBLE
                             vm.turnOnTreeCaptureMode()
                             withTimeoutOrNull(LocationDataConfig.CONVERGENCE_TIMEOUT) {
                                 while (!vm.isConvergenceWithinRange()) {
                                     delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
                                 }
                             }
-                            progressBarLayout.visibility = View.INVISIBLE
+                            convergenceProgressView.visibility = View.GONE
                             findNavController()
                                 .navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                         }
