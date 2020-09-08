@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "238caf84a0eb4bedccdeb189bf9f7a17",
+    "identityHash": "5eeb9e62dda7545a65ed9983150b4330",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -367,7 +367,7 @@
       },
       {
         "tableName": "location_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `base64_json` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `json_value` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -389,7 +389,7 @@
           },
           {
             "fieldPath": "locationDataJson",
-            "columnName": "base64_json",
+            "columnName": "json_value",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -416,7 +416,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '238caf84a0eb4bedccdeb189bf9f7a17')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5eeb9e62dda7545a65ed9983150b4330')"
     ]
   }
 }
