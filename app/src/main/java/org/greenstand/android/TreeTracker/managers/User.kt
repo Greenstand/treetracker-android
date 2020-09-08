@@ -5,9 +5,9 @@ import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.koin.core.context.GlobalContext
 
-class User {
-
-    private val preferences: Preferences by GlobalContext.get().koin.inject()
+class User(
+    private val preferences: Preferences
+) {
 
     val isLoggedIn: Boolean
         get() = planterCheckinId != -1L
@@ -35,6 +35,7 @@ class User {
     var planterInfoId: Long?
         get() = preferences.getLong(PLANTER_INFO_ID_KEY)
         set(value) = preferences.edit().putLong(PLANTER_INFO_ID_KEY, value ?: -1).apply()
+            .also { preferences.setPlanterInfoId(value) }
 
     var lastCheckInTimeInSeconds: Long?
         get() = preferences.getLong(LAST_CHECK_IN_TIME_IN_KEY)

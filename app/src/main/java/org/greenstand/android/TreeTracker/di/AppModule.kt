@@ -14,7 +14,6 @@ import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
 import org.greenstand.android.TreeTracker.managers.User
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import org.greenstand.android.TreeTracker.managers.*
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.usecases.BundleTreeUploadStrategy
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -71,7 +70,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { User() }
+    single { User(get()) }
 
     single { Analytics(get(), get(), get()) }
 
@@ -97,7 +96,7 @@ val appModule = module {
         )
     }
 
-    single { Preferences(get(), get()) }
+    single { Preferences(get()) }
 
     factory { PreferencesMigrator(get(), get()) }
 
