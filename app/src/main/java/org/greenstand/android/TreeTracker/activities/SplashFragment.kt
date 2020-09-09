@@ -13,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.UserManager
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.inject
@@ -37,10 +38,19 @@ class SplashFragment : Fragment() {
             whenStarted {
                 delay(ValueHelper.SPLASH_SCREEN_DURATION)
 
-                if (userManager.isLoggedIn) {
-                    findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToMapsFragment())
-                } else {
-                    findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
+                when {
+                    userManager.isLoggedIn ->
+                        findNavController()
+                            .navigate(SplashFragmentDirections
+                                .actionSplashFragment2ToMapsFragment())
+
+                    FeatureFlags.ORG_LINK_ENABLED ->
+                        findNavController()
+                            .navigate(SplashFragmentDirections
+                                .actionSplashFragment2ToOrgWallFragment())
+
+                    else -> findNavController()
+                        .navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
                 }
             }
         }
