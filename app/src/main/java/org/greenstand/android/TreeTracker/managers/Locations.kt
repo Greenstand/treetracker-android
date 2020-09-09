@@ -48,7 +48,6 @@ class LocationUpdateManager(
 
     private val locationUpdateListener = object : android.location.LocationListener {
 
-        @UseExperimental(ExperimentalCoroutinesApi::class)
         override fun onLocationChanged(location: Location) {
             currentLocation = location
             Timber.d("Posting location value $currentLocation")
@@ -140,7 +139,7 @@ fun Location?.accuracyStatus(): Accuracy {
 }
 
 class LocationDataCapturer(
-    private val userManager: UserManager,
+    private val userManager: User,
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO
 ) {
@@ -162,7 +161,7 @@ class LocationDataCapturer(
                         latitude,
                         longitude,
                         accuracy,
-                        generatedTreeUuid?.toString() ?: null,
+                        generatedTreeUuid?.toString(),
                         System.currentTimeMillis()
                     )
                 val jsonValue = gson.toJson(locationData)
@@ -172,7 +171,7 @@ class LocationDataCapturer(
 
             if (isInTreeCaptureMode() && !convergenceWithinRange) {
 
-                var evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
+                val evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
                     locationsDeque.pollFirst() else null
                 locationsDeque.add(location)
 

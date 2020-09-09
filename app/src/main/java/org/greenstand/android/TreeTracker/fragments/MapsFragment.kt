@@ -2,7 +2,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -41,13 +40,12 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.managers.Accuracy
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.Preferences
+import org.greenstand.android.TreeTracker.managers.User
 import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
@@ -59,9 +57,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
     private val vm: MapViewModel by viewModel()
     private val locationUpdateManager: LocationUpdateManager by inject()
-    private val sharedPreferences: SharedPreferences by inject()
-    private val preferences: Preferences by inject()
     private val dao: TreeTrackerDAO by inject()
+    private val user: User by inject()
 
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
@@ -89,7 +86,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
                     requireActivity().toolbarTitle.text = vm.getPlanterName()
 
-                    val photoPath = sharedPreferences.getString(ValueHelper.PLANTER_PHOTO, null)
+                    val photoPath = user.profilePhotoPath
                     val profileImageView = mapUserImage
 
                     if (photoPath != null) {
