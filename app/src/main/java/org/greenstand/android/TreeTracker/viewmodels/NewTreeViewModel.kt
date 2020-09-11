@@ -1,7 +1,6 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,12 +11,13 @@ import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.managers.FeatureFlags
 import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
+import org.greenstand.android.TreeTracker.managers.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class NewTreeViewModel(
-    private val sharedPreferences: SharedPreferences,
+    private val user: User,
     private val locationUpdateManager: LocationUpdateManager,
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
@@ -94,12 +94,10 @@ class NewTreeViewModel(
     }
 
     private fun createNewTree(note: String, photoPath: String, newTreeUuid: UUID): NewTree {
-        val planterCheckinId = sharedPreferences.getLong(ValueHelper.PLANTER_CHECK_IN_ID, -1)
-
         return NewTree(
             photoPath,
             note,
-            planterCheckinId,
+            user.planterCheckinId ?: -1,
             newTreeUuid
         )
     }

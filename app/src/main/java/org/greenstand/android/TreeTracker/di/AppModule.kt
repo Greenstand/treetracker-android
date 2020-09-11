@@ -12,8 +12,9 @@ import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
 import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
 import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.Preferences
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.usecases.BundleTreeUploadStrategy
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
@@ -21,7 +22,6 @@ import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.usecases.DeleteOldPlanterImagesUseCase
-import org.greenstand.android.TreeTracker.usecases.ExpireCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.usecases.RemoveLocalTreeImagesWithIdsUseCase
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
@@ -58,7 +58,7 @@ val appModule = module {
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
-    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { MapViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { TreePreviewViewModel(get(), get()) }
 
@@ -70,7 +70,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { UserManager(get()) }
+    single { User(get()) }
 
     single { Analytics(get(), get(), get()) }
 
@@ -96,7 +96,9 @@ val appModule = module {
         )
     }
 
-    single { Preferences(get(), get()) }
+    single { Preferences(get()) }
+
+    factory { PreferencesMigrator(get(), get()) }
 
     factory { LanguageSwitcher(get()) }
 
@@ -114,9 +116,7 @@ val appModule = module {
 
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
-    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get(), get()) }
-
-    factory { ExpireCheckInStatusUseCase(get()) }
+    factory { CreatePlanterCheckInUseCase(get(), get(), get(), get()) }
 
     factory { ValidateCheckInStatusUseCase(get()) }
 
