@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
@@ -252,11 +253,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        // Ignore
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let {
-            Timber.d("Step count so far ${it.values[0]}")
+            user.absoluteStepCount = it.values[0].toInt()
+            Timber.d("Step count so far ${it.values[0].toInt()}")
         }
     }
 }

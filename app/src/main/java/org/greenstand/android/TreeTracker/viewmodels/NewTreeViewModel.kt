@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import java.util.UUID
 import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
@@ -59,6 +58,15 @@ class NewTreeViewModel(
             photoPath = photoPath!!
         )
 
+        val absoluteStepCount = user.absoluteStepCount ?: 0
+        val lastStepCountWhenCreatingTree = user.absoluteStepCountOnTreeCapture ?: 0
+        // Delta step count is the difference between the absolute count at the time of capturing
+        // a tree minus the last absolute step count recorded when capturing a previous tree. This
+        // is the indicator for the number of steps taken between two trees.
+        val deltaSteps = absoluteStepCount - lastStepCountWhenCreatingTree
+        newTree.addTreeAttribute(Tree.ABS_STEP_COUNT_KEY, absoluteStepCount.toString())
+        newTree.addTreeAttribute(Tree.DELTA_STEP_COUNT_KEY, deltaSteps.toString())
+
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
         }
@@ -67,6 +75,7 @@ class NewTreeViewModel(
             navigateToTreeHeight.postValue(newTree)
         } else {
             createTreeUseCase.execute(newTree)
+            user.absoluteStepCountOnTreeCapture = absoluteStepCount
             onTreeSaved.postValue(Unit)
             navigateBack.postValue(Unit)
         }
@@ -85,16 +94,6 @@ class NewTreeViewModel(
     fun newTreeCaptureCancelled() {
         newTreeUuid = null
         locationDataCapturer.turnOffTreeCaptureMode()
-    }
-
-    private fun createNewTree(note: String, photoPath: String, newTreeUuid: UUID): NewTree {
-        return NewTree(
-            photoPath,
-            note,
-            user.planterCheckinId ?: -1,
-            newTreeUuid,
-            null
-        )
     }
 
     companion object {
