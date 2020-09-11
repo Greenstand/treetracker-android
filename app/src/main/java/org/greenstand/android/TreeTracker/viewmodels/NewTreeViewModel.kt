@@ -8,11 +8,11 @@ import java.util.UUID
 import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.data.NewTree
-import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.User
-import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.Tree
+import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
@@ -26,7 +26,7 @@ class NewTreeViewModel(
 
     val onTreeSaved: MutableLiveData<Unit> = MutableLiveData()
     val onInsufficientGps: MutableLiveData<Unit> = MutableLiveData()
-    val navigateToTreeHeight: MutableLiveData<NewTree> = MutableLiveData()
+    val navigateToTreeHeight: MutableLiveData<Tree> = MutableLiveData()
     val navigateBack: MutableLiveData<Unit> = MutableLiveData()
     val onTakePicture: MutableLiveData<Unit> = MutableLiveData()
     private var newTreeUuid: UUID? = null
@@ -52,7 +52,12 @@ class NewTreeViewModel(
 
     suspend fun createTree(note: String) {
 
-        val newTree = createNewTree(note, photoPath!!, newTreeUuid!!)
+        val newTree = Tree(
+            treeUuid = newTreeUuid!!,
+            planterCheckInId = user.planterCheckinId ?: -1,
+            content = note,
+            photoPath = photoPath!!
+        )
 
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
@@ -61,21 +66,10 @@ class NewTreeViewModel(
         if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
             navigateToTreeHeight.postValue(newTree)
         } else {
-            saveTree(newTree)
+            createTreeUseCase.execute(newTree)
             onTreeSaved.postValue(Unit)
             navigateBack.postValue(Unit)
         }
-    }
-
-    private suspend fun saveTree(newTree: NewTree): Long {
-        val createTreeParams = CreateTreeParams(
-            planterCheckInId = newTree.planterCheckInId,
-            photoPath = newTree.photoPath,
-            content = newTree.content,
-            treeUuid = newTree.treeUuid
-        )
-
-        return createTreeUseCase.execute(createTreeParams)
     }
 
     fun isImageBlurry(data: Intent): Boolean {
@@ -98,7 +92,8 @@ class NewTreeViewModel(
             photoPath,
             note,
             user.planterCheckinId ?: -1,
-            newTreeUuid
+            newTreeUuid,
+            null
         )
     }
 

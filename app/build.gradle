@@ -151,6 +151,7 @@ android {
     productFlavors {
         greenstand {
             dimension "version"
+            buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
         }
 
         organization {

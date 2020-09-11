@@ -1,9 +1,8 @@
-package org.greenstand.android.TreeTracker.managers
+package org.greenstand.android.TreeTracker.models
 
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import org.koin.core.context.GlobalContext
 
 class User(
     private val preferences: Preferences

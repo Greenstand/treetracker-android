@@ -9,13 +9,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.data.NewTree
 import org.greenstand.android.TreeTracker.data.TreeColor
 import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.managers.TreeManager
-import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
+import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 
 class TreeHeightViewModel(
@@ -24,7 +21,7 @@ class TreeHeightViewModel(
     private val analytics: Analytics
 ) : ViewModel() {
 
-    var newTree: NewTree? = null
+    var newTree: Tree? = null
     var treeColor: TreeColor? = null
         set(value) {
             field = value
@@ -45,32 +42,17 @@ class TreeHeightViewModel(
             newTree
                 ?.let { tree ->
                     withContext(Dispatchers.IO) {
-
-                        val createTreeParams = CreateTreeParams(
-                            planterCheckInId = tree.planterCheckInId,
-                            photoPath = tree.photoPath,
-                            content = tree.content,
-                            treeUuid = tree.treeUuid
-                        )
-
-                        val treeId = createTreeUseCase.execute(createTreeParams)
-
-                        fun addKeyValueAttribute(key: String, value: String) {
-                            val entity =
-                                TreeAttributeEntity(
-                                    key = key,
-                                    value = value,
-                                    treeCaptureId = treeId
-                                )
-                            dao.insertTreeAttribute(entity)
+                        with(TreeHeightAttributes(heightColor = treeColor!!)) {
+                            tree.addTreeAttribute(
+                                Tree.Attributes.TREE_COLOR_ATTR_KEY, heightColor.value)
+                            tree.addTreeAttribute(
+                                Tree.Attributes.APP_BUILD_ATTR_KEY, appBuild)
+                            tree.addTreeAttribute(
+                                Tree.Attributes.APP_FLAVOR_ATTR_KEY, appFlavor)
+                            tree.addTreeAttribute(
+                                Tree.Attributes.APP_VERSION_ATTR_KEY, appVersion)
                         }
-
-                        with(TreeHeightAttributes(treeId = treeId, heightColor = treeColor!!)) {
-                            addKeyValueAttribute(TreeManager.TREE_COLOR_ATTR_KEY, heightColor.value)
-                            addKeyValueAttribute(TreeManager.APP_BUILD_ATTR_KEY, appBuild)
-                            addKeyValueAttribute(TreeManager.APP_FLAVOR_ATTR_KEY, appFlavor)
-                            addKeyValueAttribute(TreeManager.APP_VERSION_ATTR_KEY, appVersion)
-                        }
+                        val treeId = createTreeUseCase.execute(tree)
                     }
                 }
                 ?.also {

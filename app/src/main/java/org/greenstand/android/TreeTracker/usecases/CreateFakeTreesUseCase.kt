@@ -2,9 +2,10 @@ package org.greenstand.android.TreeTracker.usecases
 
 import android.content.Context
 import java.util.UUID
-import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.Tree
+import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 
 data class CreateFakeTreesParams(val amount: Int)
@@ -25,14 +26,14 @@ class CreateFakeTreesUseCase(
 
             val file = ImageUtils.createTestImageFile(context)
 
-            val createTreeParams = CreateTreeParams(
+            val tree = Tree(
                 planterCheckInId = user.planterCheckinId!!,
                 photoPath = file.absolutePath,
                 content = "My Note",
                 treeUuid = UUID.randomUUID()
             )
 
-            createTreeUseCase.execute(createTreeParams)
+            createTreeUseCase.execute(tree)
         }
     }
 }

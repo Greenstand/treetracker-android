@@ -4,9 +4,9 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase

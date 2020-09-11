@@ -1,7 +1,7 @@
 package org.greenstand.android.TreeTracker.preferences
 
 import android.content.SharedPreferences
-import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.models.User
 
 class PreferencesMigrator(
     private val sharedPreferences: SharedPreferences,
