@@ -14,6 +14,7 @@ import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
@@ -60,11 +61,11 @@ val appModule = module {
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
-    viewModel { MapViewModel(get(), get(), get(), get(), get()) }
+    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { TreePreviewViewModel(get(), get()) }
 
-    viewModel { NewTreeViewModel(get(), get(), get(), get(), get()) }
+    viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -103,6 +104,8 @@ val appModule = module {
     single {
         ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
     }
+
+    single { StepCounter(get(), get()) }
 
     factory { PreferencesMigrator(get(), get()) }
 

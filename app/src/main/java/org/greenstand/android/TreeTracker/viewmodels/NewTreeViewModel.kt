@@ -10,6 +10,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
@@ -20,7 +21,8 @@ class NewTreeViewModel(
     private val locationUpdateManager: LocationUpdateManager,
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    private val stepCounter: StepCounter
 ) : ViewModel() {
 
     val onTreeSaved: MutableLiveData<Unit> = MutableLiveData()
@@ -58,8 +60,8 @@ class NewTreeViewModel(
             photoPath = photoPath!!
         )
 
-        val absoluteStepCount = user.absoluteStepCount ?: 0
-        val lastStepCountWhenCreatingTree = user.absoluteStepCountOnTreeCapture ?: 0
+        val absoluteStepCount = stepCounter.absoluteStepCount ?: 0
+        val lastStepCountWhenCreatingTree = stepCounter.absoluteStepCountOnTreeCapture ?: 0
         // Delta step count is the difference between the absolute count at the time of capturing
         // a tree minus the last absolute step count recorded when capturing a previous tree. This
         // is the indicator for the number of steps taken between two trees.
@@ -75,7 +77,10 @@ class NewTreeViewModel(
             navigateToTreeHeight.postValue(newTree)
         } else {
             createTreeUseCase.execute(newTree)
-            user.absoluteStepCountOnTreeCapture = absoluteStepCount
+            // Assign the current absolute step count to 'absoluteStepCountOnTreeCapture' to
+            // enable step count delta calculation for the next tree capture
+            stepCounter.absoluteStepCountOnTreeCapture = absoluteStepCount
+            stepCounter.disable()
             onTreeSaved.postValue(Unit)
             navigateBack.postValue(Unit)
         }

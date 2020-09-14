@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -16,7 +17,8 @@ class MapViewModel constructor(
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val locationDataCapturer: LocationDataCapturer,
     locationUpdateManager: LocationUpdateManager,
-    private val user: User
+    private val user: User,
+    private val stepCounter: StepCounter
 ) : ViewModel() {
 
     val checkInStatusLiveData = MutableLiveData<Boolean>()
@@ -50,6 +52,7 @@ class MapViewModel constructor(
 
     suspend fun turnOnTreeCaptureMode() {
         locationDataCapturer.turnOnTreeCaptureMode()
+        stepCounter.enable()
     }
 
     fun isConvergenceWithinRange() = locationDataCapturer.convergenceWithinRange

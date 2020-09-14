@@ -41,15 +41,6 @@ class User(
         set(value) = preferences
             .edit().putLong(LAST_CHECK_IN_TIME_IN_KEY, value ?: -1).apply()
 
-    var absoluteStepCount: Int?
-        get() = preferences.getInt(ABS_STEP_COUNT)
-        set(value) = preferences.edit().putInt(ABS_STEP_COUNT, value ?: -1).apply()
-
-    var absoluteStepCountOnTreeCapture: Int?
-        get() = preferences.getInt(ABS_STEP_COUNT_ON_TREE_CAPTURE)
-        set(value) = preferences
-            .edit().putInt(ABS_STEP_COUNT_ON_TREE_CAPTURE, value ?: -1).apply()
-
     fun expireCheckInStatus() = preferences.clearPrefKeyUsage(BASE_KEY)
 
     companion object {

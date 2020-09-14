@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.usecases
 
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -10,13 +9,6 @@ import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Tree
 import timber.log.Timber
-
-data class CreateTreeParams(
-    val photoPath: String,
-    val content: String,
-    val planterCheckInId: Long,
-    val treeUuid: UUID
-)
 
 class CreateTreeUseCase(
     private val locationUpdateManager: LocationUpdateManager,

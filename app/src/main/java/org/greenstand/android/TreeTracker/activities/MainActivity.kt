@@ -2,14 +2,9 @@ package org.greenstand.android.TreeTracker.activities
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -34,22 +29,20 @@ import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback,
-    SensorEventListener {
+class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val languageSwitcher: LanguageSwitcher by inject()
     private val user: User by inject()
     private val analytics: Analytics by inject()
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val locationDataCapturer: LocationDataCapturer by inject()
+    private val stepCounter: StepCounter by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null
-    private lateinit var sensorManager: SensorManager
-    private lateinit var stepCounter: Sensor
     /**
      * Called when the activity is first created.
      * @param savedInstanceState If the activity is being re-initialized after
@@ -58,10 +51,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-
+        lifecycle.addObserver(stepCounter.viewLifecycleObserver)
         languageSwitcher.applyCurrentLanguage(this)
 
         setContentView(R.layout.activity_main)
@@ -144,7 +134,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onPause() {
         super.onPause()
         locationUpdateManager.stopLocationUpdates()
-        sensorManager.unregisterListener(this)
     }
 
     public override fun onResume() {
@@ -155,7 +144,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         } else {
             startPeriodicUpdates()
         }
-        sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    public override fun onDestroy() {
+        super.onDestroy()
+        lifecycle.removeObserver(stepCounter.viewLifecycleObserver)
     }
 
     private fun areNecessaryPermissionsNotGranted(): Boolean {
@@ -250,16 +243,5 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         locationUpdateManager.startLocationUpdates()
         locationDataCapturer.start()
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Ignore
-    }
-
-    override fun onSensorChanged(event: SensorEvent?) {
-        event?.let {
-            user.absoluteStepCount = it.values[0].toInt()
-            Timber.d("Step count so far ${it.values[0].toInt()}")
-        }
     }
 }

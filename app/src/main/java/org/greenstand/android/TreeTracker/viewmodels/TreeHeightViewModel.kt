@@ -12,15 +12,15 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.data.TreeColor
 import org.greenstand.android.TreeTracker.data.TreeHeightAttributes
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
-import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 
 class TreeHeightViewModel(
-    private val user: User,
     private val createTreeUseCase: CreateTreeUseCase,
     private val dao: TreeTrackerDAO,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    private val stepCounter: StepCounter
 ) : ViewModel() {
 
     var newTree: Tree? = null
@@ -61,7 +61,10 @@ class TreeHeightViewModel(
                     toastMessageLiveData.postValue(R.string.tree_saved)
                     analytics.treeHeightMeasured(treeColor!!)
                     onFinishedLiveData.postValue(Unit)
-                    user.absoluteStepCountOnTreeCapture = user.absoluteStepCount
+                    // Assign the current absolute step count to 'absoluteStepCountOnTreeCapture'
+                    // variable to calculate future step count deltas
+                    stepCounter.absoluteStepCountOnTreeCapture = stepCounter.absoluteStepCount
+                    stepCounter.disable()
                 }
                 ?: run { toastMessageLiveData.postValue(R.string.tree_height_save_error) }
         }
