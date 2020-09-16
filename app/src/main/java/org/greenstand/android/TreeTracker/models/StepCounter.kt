@@ -7,42 +7,35 @@ import android.hardware.SensorManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import org.greenstand.android.TreeTracker.preferences.PrefKey
+import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import timber.log.Timber
 
 class StepCounter(
     private val sensorManager: SensorManager,
     private val preferences: Preferences
-) {
+) : LifecycleObserver {
 
     private val stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
     private val stepCountEventListener = StepCountEventListener()
-    private var enabled = false
 
     var absoluteStepCount: Int?
-        get() = preferences.getInt(User.ABS_STEP_COUNT)
-        private set(value) = preferences.edit().putInt(User.ABS_STEP_COUNT, value ?: 0).apply()
+        get() = preferences.getInt(ABS_STEP_COUNT)
+        private set(value) = preferences.edit().putInt(ABS_STEP_COUNT, value ?: 0).apply()
 
     var absoluteStepCountOnTreeCapture: Int?
-        get() = preferences.getInt(User.ABS_STEP_COUNT_ON_TREE_CAPTURE)
+        get() = preferences.getInt(ABS_STEP_COUNT_ON_TREE_CAPTURE)
         set(value) = preferences
-            .edit().putInt(User.ABS_STEP_COUNT_ON_TREE_CAPTURE, value ?: 0).apply()
-
-    val viewLifecycleObserver: LifecycleObserver = object : LifecycleObserver {
-
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        fun unregisterListener() {
-            Timber.d("StepCounter: unregister listener")
-            sensorManager.unregisterListener(stepCountEventListener)
-        }
-    }
+            .edit().putInt(ABS_STEP_COUNT_ON_TREE_CAPTURE, value ?: 0).apply()
 
     fun enable() {
         Timber.d("StepCounter: enable - register listener")
         sensorManager.registerListener(
-            stepCountEventListener, stepCounter, SensorManager.SENSOR_DELAY_NORMAL)
+            stepCountEventListener, stepCounter, SensorManager.SENSOR_DELAY_FASTEST)
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun disable() {
         Timber.d("StepCounter: disable - unregister listener")
         sensorManager.unregisterListener(stepCountEventListener)
@@ -59,5 +52,12 @@ class StepCounter(
                 Timber.d("StepCounter: Step count [${it.values[0].toInt()}]")
             }
         }
+    }
+
+    companion object {
+        private val BASE_KEY = PrefKeys.SESSION + PrefKey("info")
+        val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
+        val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
+                PrefKey("abs-step-count-on-tree-capture")
     }
 }

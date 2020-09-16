@@ -52,8 +52,5 @@ class User(
         val LAST_NAME_KEY = BASE_KEY + PrefKey("last-name")
         val PROFILE_PHOTO_PATH_KEY = BASE_KEY + PrefKey("profile-photo-path")
         val LAST_CHECK_IN_TIME_IN_KEY = BASE_KEY + PrefKey("last-check-in-time-in-seconds")
-        val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
-        val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
-                PrefKey("abs-step-count-on-tree-capture")
     }
 }

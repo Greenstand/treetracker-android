@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(stepCounter.viewLifecycleObserver)
+        lifecycle.addObserver(stepCounter)
         languageSwitcher.applyCurrentLanguage(this)
 
         setContentView(R.layout.activity_main)
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     public override fun onDestroy() {
         super.onDestroy()
-        lifecycle.removeObserver(stepCounter.viewLifecycleObserver)
+        lifecycle.removeObserver(stepCounter)
     }
 
     private fun areNecessaryPermissionsNotGranted(): Boolean {
