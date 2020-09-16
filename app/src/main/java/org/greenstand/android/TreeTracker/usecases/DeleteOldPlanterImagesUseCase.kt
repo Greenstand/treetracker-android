@@ -2,7 +2,7 @@ package org.greenstand.android.TreeTracker.usecases
 
 import java.io.File
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.models.User
 
 class DeleteOldPlanterImagesUseCase(
     private val dao: TreeTrackerDAO,

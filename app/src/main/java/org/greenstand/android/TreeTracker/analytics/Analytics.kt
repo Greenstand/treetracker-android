@@ -16,7 +16,7 @@ import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_EMAIL_PHONE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_INFO_CREATED
 import org.greenstand.android.TreeTracker.data.TreeColor
-import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class Analytics(

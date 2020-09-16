@@ -1,46 +1,42 @@
 package org.greenstand.android.TreeTracker.usecases
 
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.Tree
 import timber.log.Timber
-
-data class CreateTreeParams(
-    val photoPath: String,
-    val content: String,
-    val planterCheckInId: Long,
-    val treeUuid: UUID
-)
 
 class CreateTreeUseCase(
     private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics
-) : UseCase<CreateTreeParams, Long>() {
+) : UseCase<Tree, Long>() {
 
-    override suspend fun execute(params: CreateTreeParams): Long = withContext(Dispatchers.IO) {
+    override suspend fun execute(tree: Tree): Long = withContext(Dispatchers.IO) {
         val location = locationUpdateManager.currentLocation
         val time = location?.time ?: System.currentTimeMillis()
         val timeInSeconds = time / 1000
 
         val entity = TreeCaptureEntity(
-            uuid = params.treeUuid.toString(),
-            planterCheckInId = params.planterCheckInId,
-            localPhotoPath = params.photoPath,
+            uuid = tree.treeUuid.toString(),
+            planterCheckInId = tree.planterCheckInId,
+            localPhotoPath = tree.photoPath,
             photoUrl = null,
-            noteContent = params.content,
+            noteContent = tree.content,
             longitude = location?.longitude ?: 0.0,
             latitude = location?.latitude ?: 0.0,
             accuracy = location?.accuracy?.toDouble() ?: 10000.0,
             createAt = timeInSeconds
         )
-
         analytics.treePlanted()
+        val attributeEntitites = tree.treeCaptureAttributes().map {
+            TreeAttributeEntity(it.key, it.value, -1)
+        }.toList()
         Timber.d("Inserting TreeCapture entity $entity")
-        dao.insertTreeCapture(entity)
+        dao.insertTreeWithAttributes(entity, attributeEntitites)
     }
 }

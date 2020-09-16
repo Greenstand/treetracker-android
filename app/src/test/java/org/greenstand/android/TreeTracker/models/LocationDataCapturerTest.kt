@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.managers
+package org.greenstand.android.TreeTracker.models
 
 import android.content.SharedPreferences
 import android.location.Location

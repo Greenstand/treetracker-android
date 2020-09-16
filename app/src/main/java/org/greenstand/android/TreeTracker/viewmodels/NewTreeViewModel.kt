@@ -7,12 +7,12 @@ import androidx.lifecycle.ViewModel
 import java.util.UUID
 import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.data.NewTree
-import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.User
-import org.greenstand.android.TreeTracker.usecases.CreateTreeParams
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.Tree
+import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
@@ -21,12 +21,13 @@ class NewTreeViewModel(
     private val locationUpdateManager: LocationUpdateManager,
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    private val stepCounter: StepCounter
 ) : ViewModel() {
 
     val onTreeSaved: MutableLiveData<Unit> = MutableLiveData()
     val onInsufficientGps: MutableLiveData<Unit> = MutableLiveData()
-    val navigateToTreeHeight: MutableLiveData<NewTree> = MutableLiveData()
+    val navigateToTreeHeight: MutableLiveData<Tree> = MutableLiveData()
     val navigateBack: MutableLiveData<Unit> = MutableLiveData()
     val onTakePicture: MutableLiveData<Unit> = MutableLiveData()
     private var newTreeUuid: UUID? = null
@@ -52,7 +53,21 @@ class NewTreeViewModel(
 
     suspend fun createTree(note: String) {
 
-        val newTree = createNewTree(note, photoPath!!, newTreeUuid!!)
+        val newTree = Tree(
+            treeUuid = newTreeUuid!!,
+            planterCheckInId = user.planterCheckinId ?: -1,
+            content = note,
+            photoPath = photoPath!!
+        )
+
+        val absoluteStepCount = stepCounter.absoluteStepCount ?: 0
+        val lastStepCountWhenCreatingTree = stepCounter.absoluteStepCountOnTreeCapture ?: 0
+        // Delta step count is the difference between the absolute count at the time of capturing
+        // a tree minus the last absolute step count recorded when capturing a previous tree. This
+        // is the indicator for the number of steps taken between two trees.
+        val deltaSteps = absoluteStepCount - lastStepCountWhenCreatingTree
+        newTree.addTreeAttribute(Tree.ABS_STEP_COUNT_KEY, absoluteStepCount.toString())
+        newTree.addTreeAttribute(Tree.DELTA_STEP_COUNT_KEY, deltaSteps.toString())
 
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
@@ -61,21 +76,14 @@ class NewTreeViewModel(
         if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
             navigateToTreeHeight.postValue(newTree)
         } else {
-            saveTree(newTree)
+            createTreeUseCase.execute(newTree)
+            // Assign the current absolute step count to 'absoluteStepCountOnTreeCapture' to
+            // enable step count delta calculation for the next tree capture
+            stepCounter.absoluteStepCountOnTreeCapture = absoluteStepCount
+            stepCounter.disable()
             onTreeSaved.postValue(Unit)
             navigateBack.postValue(Unit)
         }
-    }
-
-    private suspend fun saveTree(newTree: NewTree): Long {
-        val createTreeParams = CreateTreeParams(
-            planterCheckInId = newTree.planterCheckInId,
-            photoPath = newTree.photoPath,
-            content = newTree.content,
-            treeUuid = newTree.treeUuid
-        )
-
-        return createTreeUseCase.execute(createTreeParams)
     }
 
     fun isImageBlurry(data: Intent): Boolean {
@@ -91,15 +99,6 @@ class NewTreeViewModel(
     fun newTreeCaptureCancelled() {
         newTreeUuid = null
         locationDataCapturer.turnOffTreeCaptureMode()
-    }
-
-    private fun createNewTree(note: String, photoPath: String, newTreeUuid: UUID): NewTree {
-        return NewTree(
-            photoPath,
-            note,
-            user.planterCheckinId ?: -1,
-            newTreeUuid
-        )
     }
 
     companion object {
