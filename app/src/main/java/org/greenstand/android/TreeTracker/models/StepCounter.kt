@@ -55,7 +55,7 @@ class StepCounter(
     }
 
     companion object {
-        private val BASE_KEY = PrefKeys.SESSION + PrefKey("info")
+        private val BASE_KEY = PrefKeys.SESSION + PrefKey("steps")
         val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
         val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
                 PrefKey("abs-step-count-on-tree-capture")
