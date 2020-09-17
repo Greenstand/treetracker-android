@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.managers
+package org.greenstand.android.TreeTracker.models
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -16,7 +16,6 @@ import java.util.UUID
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO

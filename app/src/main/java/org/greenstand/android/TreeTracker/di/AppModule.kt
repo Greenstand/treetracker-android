@@ -1,18 +1,21 @@
 package org.greenstand.android.TreeTracker.di
 
 import android.content.Context
+import android.hardware.SensorManager
 import android.location.LocationManager
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
-import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.usecases.BundleTreeUploadStrategy
@@ -54,15 +57,15 @@ val appModule = module {
 
     viewModel { TermsPolicyViewModel(get(), get()) }
 
-    viewModel { TreeHeightViewModel(get(), get(), get()) }
+    viewModel { TreeHeightViewModel(get(), get(), get(), get()) }
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
-    viewModel { MapViewModel(get(), get(), get(), get(), get()) }
+    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { TreePreviewViewModel(get(), get()) }
 
-    viewModel { NewTreeViewModel(get(), get(), get(), get(), get()) }
+    viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -97,6 +100,12 @@ val appModule = module {
     }
 
     single { Preferences(get()) }
+
+    single {
+        ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
+    }
+
+    single { StepCounter(get(), get()) }
 
     factory { PreferencesMigrator(get(), get()) }
 

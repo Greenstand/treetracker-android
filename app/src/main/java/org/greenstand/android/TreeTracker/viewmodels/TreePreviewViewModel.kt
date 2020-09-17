@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 
 class TreePreviewViewModel(
     private val dao: TreeTrackerDAO,

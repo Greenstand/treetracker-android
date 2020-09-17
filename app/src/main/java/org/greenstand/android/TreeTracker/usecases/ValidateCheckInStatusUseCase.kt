@@ -1,7 +1,7 @@
 package org.greenstand.android.TreeTracker.usecases
 
-import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.User
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.User
 
 class ValidateCheckInStatusUseCase constructor(private val user: User) : UseCase<Unit, Boolean>() {
 
@@ -12,7 +12,8 @@ class ValidateCheckInStatusUseCase constructor(private val user: User) : UseCase
 
         val timeSinceLastCheckIn = currentTimestampSeconds - lastTimeStamp
 
-        if (FeatureFlags.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED && timeSinceLastCheckIn > CHECK_IN_TIMEOUT) {
+        if (FeatureFlags.AUTOMATIC_SIGN_OUT_FEATURE_ENABLED &&
+            timeSinceLastCheckIn > CHECK_IN_TIMEOUT) {
             return false
         }
         return true

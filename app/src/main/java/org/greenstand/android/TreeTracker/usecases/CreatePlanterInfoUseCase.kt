@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 
 data class CreatePlanterInfoParams(
     val firstName: String,

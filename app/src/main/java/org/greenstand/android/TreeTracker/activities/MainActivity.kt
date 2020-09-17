@@ -18,13 +18,19 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.toolbar
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
-import org.greenstand.android.TreeTracker.managers.*
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.User
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -34,9 +40,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val analytics: Analytics by inject()
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val locationDataCapturer: LocationDataCapturer by inject()
+    private val stepCounter: StepCounter by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null
-
     /**
      * Called when the activity is first created.
      * @param savedInstanceState If the activity is being re-initialized after
@@ -45,7 +51,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        lifecycle.addObserver(stepCounter)
         languageSwitcher.applyCurrentLanguage(this)
 
         setContentView(R.layout.activity_main)
@@ -57,7 +63,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         val listener = NavController
             .OnDestinationChangedListener { controller, destination, arguments ->
-                if (destination.id != R.id.splashFragment2 && destination.id != R.id.orgWallFragment) {
+                if (destination.id != R.id.splashFragment2 &&
+                    destination.id != R.id.orgWallFragment) {
                     findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
                 }
 
@@ -137,6 +144,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         } else {
             startPeriodicUpdates()
         }
+    }
+
+    public override fun onDestroy() {
+        super.onDestroy()
+        lifecycle.removeObserver(stepCounter)
     }
 
     private fun areNecessaryPermissionsNotGranted(): Boolean {
