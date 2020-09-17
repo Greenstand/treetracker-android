@@ -30,11 +30,12 @@ import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
 import kotlinx.android.synthetic.main.fragment_map.mapUserImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
@@ -171,10 +172,15 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                         } else {
                             convergenceProgressView.visibility = View.VISIBLE
                             vm.turnOnTreeCaptureMode()
-                            withTimeoutOrNull(LocationDataConfig.CONVERGENCE_TIMEOUT) {
-                                while (!vm.isConvergenceWithinRange()) {
-                                    delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
+                            try {
+                                withTimeout(LocationDataConfig.CONVERGENCE_TIMEOUT) {
+                                    while (!vm.isConvergenceWithinRange()) {
+                                        delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
+                                    }
                                 }
+                            } catch (e: TimeoutCancellationException) {
+                                Timber.d("Convergence request timed out")
+                                vm.convergenceRequestTimedout()
                             }
                             convergenceProgressView.visibility = View.GONE
                             findNavController()

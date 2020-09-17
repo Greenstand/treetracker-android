@@ -55,5 +55,7 @@ class MapViewModel constructor(
         stepCounter.enable()
     }
 
-    fun isConvergenceWithinRange() = locationDataCapturer.convergenceWithinRange
+    fun isConvergenceWithinRange() = locationDataCapturer.isConvergenceWithinRange()
+
+    fun convergenceRequestTimedout() = locationDataCapturer.markConvergenceTimeout()
 }
