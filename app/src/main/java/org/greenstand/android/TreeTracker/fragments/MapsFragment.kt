@@ -30,12 +30,9 @@ import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
 import kotlinx.android.synthetic.main.fragment_map.mapUserImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
@@ -45,7 +42,6 @@ import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.models.accuracyStatus
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
@@ -170,18 +166,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())
                         } else {
-                            convergenceProgressView.visibility = View.VISIBLE
                             vm.turnOnTreeCaptureMode()
-                            try {
-                                withTimeout(LocationDataConfig.CONVERGENCE_TIMEOUT) {
-                                    while (!vm.isConvergenceWithinRange()) {
-                                        delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
-                                    }
-                                }
-                            } catch (e: TimeoutCancellationException) {
-                                Timber.d("Convergence request timed out")
-                                vm.convergenceRequestTimedout()
-                            }
+                            convergenceProgressView.visibility = View.VISIBLE
+                            vm.resolveLocationConvergence()
                             convergenceProgressView.visibility = View.GONE
                             findNavController()
                                 .navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
