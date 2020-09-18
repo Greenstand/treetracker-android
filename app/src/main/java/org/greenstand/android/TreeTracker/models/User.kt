@@ -41,10 +41,10 @@ class User(
         set(value) = preferences
             .edit().putLong(LAST_CHECK_IN_TIME_IN_KEY, value ?: -1).apply()
 
-    fun expireCheckInStatus() = preferences.clearPrefKeyUsage(BASE_KEY)
+    fun expireCheckInStatus() = preferences.clearSessionData()
 
     companion object {
-        private val BASE_KEY = PrefKeys.SESSION + PrefKey("info")
+        private val BASE_KEY = PrefKeys.SESSION + PrefKey("user")
         val PLANTER_CHECK_IN_ID_KEY = BASE_KEY + PrefKey("planter-check-in-id")
         val PLANTER_INFO_ID_KEY = BASE_KEY + PrefKey("planter-info-id")
         val ORG_NAME_KEY = BASE_KEY + PrefKey("organization")

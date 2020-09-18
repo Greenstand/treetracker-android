@@ -12,6 +12,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -25,7 +26,7 @@ class LocationDataCapturerTest {
     private lateinit var locationDataCapturer: LocationDataCapturer
 
     @MockK(relaxed = true)
-    private lateinit var userManager: UserManager
+    private lateinit var user: User
     @MockK(relaxed = true)
     private lateinit var locationUpdateManager: LocationUpdateManager
     @MockK(relaxed = true)
@@ -39,9 +40,9 @@ class LocationDataCapturerTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        preferences = Preferences(sharedPreferences, userManager)
+        preferences = Preferences(sharedPreferences)
         locationDataCapturer = LocationDataCapturer(
-            userManager,
+            user,
             locationUpdateManager,
             treeTrackerDAO
         )
@@ -90,7 +91,7 @@ class LocationDataCapturerTest {
             locationsLiveData.postValue(location)
         }
 
-        assertFalse(locationDataCapturer.convergenceWithinRange)
+        assertFalse(locationDataCapturer.isConvergenceWithinRange())
     }
 
     val locationValuesLowVariance = listOf(
@@ -114,7 +115,7 @@ class LocationDataCapturerTest {
             every { location.latitude } returns locationValuesLowVariance[i].second
             locationsLiveData.postValue(location)
         }
-        assertTrue(locationDataCapturer.convergenceWithinRange)
+        assertTrue(locationDataCapturer.isConvergenceWithinRange())
     }
 
     // Hard coded longitude and latitude pair values
@@ -139,6 +140,6 @@ class LocationDataCapturerTest {
             locationsLiveData.postValue(location)
         }
 
-        assertFalse(locationDataCapturer.convergenceWithinRange)
+        assertFalse(locationDataCapturer.isConvergenceWithinRange())
     }
 }

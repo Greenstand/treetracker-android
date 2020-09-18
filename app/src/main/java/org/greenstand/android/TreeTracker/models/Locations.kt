@@ -142,33 +142,18 @@ class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO
 ) {
-    var convergenceWithinRange: Boolean = false
-
     private val gson = GsonBuilder().serializeNulls().create()
     private var locationsDeque: Deque<Location> = LinkedList<Location>()
     var generatedTreeUuid: UUID? = null
         private set
     var convergence: Convergence? = null
+        private set
+    private var convergenceStatus: ConvergenceStatus? = null
 
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
 
-            MainScope().launch(Dispatchers.IO) {
-                val locationData =
-                    LocationData(
-                        userManager.planterCheckinId,
-                        latitude,
-                        longitude,
-                        accuracy,
-                        generatedTreeUuid?.toString(),
-                        System.currentTimeMillis()
-                    )
-                val jsonValue = gson.toJson(locationData)
-                Timber.d("Inserting new location data $jsonValue")
-                treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
-            }
-
-            if (isInTreeCaptureMode() && !convergenceWithinRange) {
+            if (isInTreeCaptureMode() && !isConvergenceWithinRange()) {
 
                 val evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
                     locationsDeque.pollFirst() else null
@@ -197,10 +182,27 @@ class LocationDataCapturer(
                     val longStdDev = convergence?.longitudinalStandardDeviation()
                     val latStdDev = convergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
-                        convergenceWithinRange = longStdDev < LONG_STD_DEV &&
-                                latStdDev < LAT_STD_DEV
+                        if (longStdDev < LONG_STD_DEV && latStdDev < LAT_STD_DEV) {
+                            convergenceStatus = ConvergenceStatus.CONVERGED
+                        }
                     }
                 }
+            }
+
+            MainScope().launch(Dispatchers.IO) {
+                val locationData =
+                    LocationData(
+                        userManager.planterCheckinId,
+                        latitude,
+                        longitude,
+                        accuracy,
+                        generatedTreeUuid?.toString(),
+                        convergenceStatus,
+                        System.currentTimeMillis()
+                    )
+                val jsonValue = gson.toJson(locationData)
+                Timber.d("Inserting new location data $jsonValue")
+                treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
             }
         }
     }
@@ -209,12 +211,24 @@ class LocationDataCapturer(
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 
+    fun isConvergenceWithinRange(): Boolean = ConvergenceStatus.CONVERGED == convergenceStatus
+
+    /*
+     * When the caller (MapFragment via a ViewModel) waits for location convergence to
+     * occur and the waiting period exceeds the threshold configured, this method is called
+     * to mark the convergence status as timed out for location data pipeline analysis.
+     */
+    fun markConvergenceTimeout() {
+        convergenceStatus = ConvergenceStatus.TIMED_OUT
+    }
+
     fun isInTreeCaptureMode(): Boolean {
         return generatedTreeUuid != null
     }
 
     fun turnOnTreeCaptureMode() {
         generatedTreeUuid = UUID.randomUUID()
+        convergenceStatus = ConvergenceStatus.NOT_CONVERGED
         Timber.d("Convergence: Tree capture mode turned on")
     }
 
@@ -222,7 +236,7 @@ class LocationDataCapturer(
         generatedTreeUuid = null
         convergence = null
         locationsDeque.clear()
-        convergenceWithinRange = false
+        convergenceStatus = null
         Timber.d("Convergence: Tree capture turned off")
     }
 }
@@ -314,11 +328,14 @@ data class ConvergenceStats(
     val standardDeviation: Double
 )
 
+enum class ConvergenceStatus { CONVERGED, NOT_CONVERGED, TIMED_OUT }
+
 data class LocationData(
     val planterCheckInId: Long?,
     val latitude: Double,
     val longitude: Double,
     val accuracy: Float,
     val treeUuid: String?,
+    val convergenceStatus: ConvergenceStatus?,
     val capturedAt: Long
 )

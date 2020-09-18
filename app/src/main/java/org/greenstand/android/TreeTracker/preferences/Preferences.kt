@@ -35,16 +35,16 @@ class Preferences(
 
     private fun computePath(prefKey: PrefKey): String {
         return when (prefKey) {
-            is UserPrefKey -> {
-                prefKey.path + "/${_planterInfoId}"
-            }
-            else -> {
-                prefKey.path
-            }
+            is UserPrefKey -> prefKey.path + "/${_planterInfoId}"
+            else -> prefKey.path
         }
     }
 
-    fun clearPrefKeyUsage(prefKey: PrefKey) {
+    fun clearSessionData() {
+        clearPrefKeyUsage(PrefKeys.SESSION)
+    }
+
+    private fun clearPrefKeyUsage(prefKey: PrefKey) {
         val editor = edit()
         prefs.all
             .keys
