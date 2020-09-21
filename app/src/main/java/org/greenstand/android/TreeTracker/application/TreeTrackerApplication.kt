@@ -3,13 +3,10 @@ package org.greenstand.android.TreeTracker.application
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
 import org.greenstand.android.TreeTracker.di.roomModule
-import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -31,10 +28,6 @@ class TreeTrackerApplication : Application() {
                 appModule,
                 roomModule
             )
-        }
-
-        if (FeatureFlags.FABRIC_ENABLED) {
-            Fabric.with(this, Crashlytics())
         }
 
         if (BuildConfig.DEBUG) {

@@ -14,11 +14,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
 apply plugin: 'com.github.triplet.play'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def loadExtraProperties(String fileName) {
     def props = new Properties()
@@ -255,12 +256,13 @@ dependencies {
     implementation "androidx.camera:camera-extensions:$camerax_ext_version"
 
     api 'com.jakewharton.timber:timber:4.7.1'
-    api('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
-        transitive = true
-    }
-    api 'com.google.firebase:firebase-core:16.0.6'
-
     implementation "androidx.legacy:legacy-support-v4:${androidSupportVersion}"
+
+    implementation platform('com.google.firebase:firebase-bom:25.10.0')
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.2.1'
+    implementation 'com.google.firebase:firebase-auth-ktx:19.4.0'
+    implementation 'com.google.firebase:firebase-iid:20.2.4'
 
     testImplementation "io.mockk:mockk:1.10.0"
     testImplementation "junit:junit:4.12"
