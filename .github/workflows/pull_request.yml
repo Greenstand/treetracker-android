@@ -17,14 +17,15 @@ jobs:
         with:
           java-version: 1.8
       - name: Generate dummy property file
-        run bash echo "#Treetracker API Keys
-        treetracker_client_id=dummy-id
-        treetracker_client_secret=dummy-secret
-        s3_dev_identity_pool_id=dummy-pool-id-dev
-        s3_test_identity_pool_id=dummy-pool-id-test" > treetracker.keys.properties
+        run: |
+          echo "#Treetracker API Keys
+          treetracker_client_id=dummy-id
+          treetracker_client_secret=dummy-secret
+          s3_dev_identity_pool_id=dummy-pool-id-dev
+          s3_test_identity_pool_id=dummy-pool-id-test" > treetracker.keys.properties
       - name: Unit tests
         run: bash ./gradlew test --stacktrace
       - name: Build Debug APK
         run: bash ./gradlew :app:assembleDebug
       - name: Delete dummy property file
-        run bash rm treetracker.keys.properties
+        run: rm treetracker.keys.properties
