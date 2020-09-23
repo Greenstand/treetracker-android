@@ -23,6 +23,7 @@ import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
+import org.greenstand.android.TreeTracker.utilities.visibleIf
 import org.greenstand.android.TreeTracker.view.CustomToast
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -58,15 +59,14 @@ class NewTreeFragment :
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
-        vm.noteEnabledLiveData.observe(this, Observer { isNoteEnabled ->
-            if (isNoteEnabled) {
-                fragmentNewTreeSave.text = getString(R.string.save)
-                fragmentNewTreeNote.visibility = View.VISIBLE
-            } else {
-                fragmentNewTreeSave.text = getString(R.string.next)
-                fragmentNewTreeNote.visibility = View.GONE
-            }
-        })
+        fragmentNewTreeNote.visibleIf(vm.isNoteEnabled)
+        fragmentNewTreeDBH.visibleIf(vm.isDbhEnabled)
+
+        if (vm.isTreeHeightEnabled) {
+            fragmentNewTreeSave.text = getString(R.string.next)
+        } else {
+            fragmentNewTreeSave.text = getString(R.string.save)
+        }
 
         vm.accuracyLiveData.observe(this, Observer {
             fragmentNewTreeGpsAccuracy.text =
@@ -98,7 +98,9 @@ class NewTreeFragment :
         fragmentNewTreeSave.setOnClickListener {
             it.vibrate()
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                vm.createTree(fragmentNewTreeNote.text.toString())
+                vm.createTree(
+                    fragmentNewTreeNote.text.toString(),
+                    fragmentNewTreeDBH.text.toString())
             }
         }
     }

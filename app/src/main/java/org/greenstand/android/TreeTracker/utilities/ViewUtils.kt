@@ -40,3 +40,11 @@ fun View.vibrate() {
         HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
     )
 }
+
+fun View.visibleIf(predicate: Boolean, default: Int = View.GONE) {
+    visibility = if (predicate) {
+        View.VISIBLE
+    } else {
+        default
+    }
+}

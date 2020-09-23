@@ -9,16 +9,15 @@ class Tree(
     val treeUuid: UUID,
     val planterCheckInId: Long,
     val content: String,
-    val photoPath: String
+    val photoPath: String,
+    private val treeAttributes: MutableMap<String, String> = mutableMapOf()
 ) : Parcelable {
 
-    private val treeCaptureAttributes = mutableMapOf<String, String>()
-
     fun addTreeAttribute(key: String, value: String) {
-        treeCaptureAttributes[key] = value
+        treeAttributes[key] = value
     }
 
-    fun treeCaptureAttributes(): Map<String, String> = treeCaptureAttributes
+    fun treeCaptureAttributes(): Map<String, String> = treeAttributes
 
     companion object Attributes {
         const val TREE_COLOR_ATTR_KEY = "height_color"
@@ -31,5 +30,7 @@ class Tree(
         // a tree minus the last absolute step count recorded when capturing a previous tree. This
         // is the indicator for the number of steps taken between two trees.
         const val DELTA_STEP_COUNT_KEY = "delta_step_count"
+        // DBH - Diameter at Breast Height (this is a standard method for measuring trees)
+        const val DBH_ATTR_KEY = "dbh"
     }
 }
