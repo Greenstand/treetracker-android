@@ -13,14 +13,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class SplashFragment : Fragment() {
 
-    private val userManager: UserManager by inject()
+    private val user: User by inject()
+    private val preferencesMigrator: PreferencesMigrator by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,12 +38,24 @@ class SplashFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             whenStarted {
+
+                preferencesMigrator.migrateIfNeeded()
+
                 delay(ValueHelper.SPLASH_SCREEN_DURATION)
 
-                if (userManager.isLoggedIn) {
-                    findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToMapsFragment())
-                } else {
-                    findNavController().navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
+                when {
+                    user.isLoggedIn ->
+                        findNavController()
+                            .navigate(SplashFragmentDirections
+                                .actionSplashFragment2ToMapsFragment())
+
+                    FeatureFlags.ORG_LINK_ENABLED ->
+                        findNavController()
+                            .navigate(SplashFragmentDirections
+                                .actionSplashFragment2ToOrgWallFragment())
+
+                    else -> findNavController()
+                        .navigate(SplashFragmentDirections.actionSplashFragment2ToLoginFlowGraph())
                 }
             }
         }

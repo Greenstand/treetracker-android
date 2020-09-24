@@ -13,7 +13,11 @@
     <FrameLayout
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.42"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/goToUploadsButton"
@@ -39,6 +43,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
+
+    <ProgressBar
+        android:id="@+id/convergenceProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentMapGpsAccuracy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/convergenceProgressText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/gps_location_assessment"
+        android:textSize="@dimen/text_size_twenty"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/convergenceProgressBar" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/convergenceProgressGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        app:constraint_referenced_ids="convergenceProgressBar, convergenceProgressText"/>
 
     <TextView
         android:id="@+id/fragmentMapGpsAccuracy"

@@ -2,7 +2,6 @@ package org.greenstand.android.TreeTracker.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -14,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -35,16 +35,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.managers.Accuracy
-import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.Preferences
-import org.greenstand.android.TreeTracker.managers.accuracyStatus
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
+import org.greenstand.android.TreeTracker.models.Accuracy
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.accuracyStatus
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
@@ -56,15 +54,14 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
     private val vm: MapViewModel by viewModel()
     private val locationUpdateManager: LocationUpdateManager by inject()
-    private val sharedPreferences: SharedPreferences by inject()
-    private val preferences: Preferences by inject()
-    private val locationDataCapturer: LocationDataCapturer by inject()
     private val dao: TreeTrackerDAO by inject()
+    private val user: User by inject()
 
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null
 
     private lateinit var fragmentMapGpsAccuracyView: TextView
+    private lateinit var convergenceProgressView: Group
     private lateinit var clusterManager: ClusterManager<TreeMapMarker>
 
     override fun onCreateView(
@@ -77,6 +74,8 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fragmentMapGpsAccuracyView = view.findViewById(R.id.fragmentMapGpsAccuracy)
+        convergenceProgressView = view.findViewById<Group>(R.id.convergenceProgressGroup)
+        convergenceProgressView.visibility = View.GONE
 
         vm.checkInStatusLiveData.observe(this, Observer<Boolean> { planterIsCheckedIn ->
             if (planterIsCheckedIn) {
@@ -84,7 +83,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
 
                     requireActivity().toolbarTitle.text = vm.getPlanterName()
 
-                    val photoPath = sharedPreferences.getString(ValueHelper.PLANTER_PHOTO, null)
+                    val photoPath = user.profilePhotoPath
                     val profileImageView = mapUserImage
 
                     if (photoPath != null) {
@@ -167,9 +166,12 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())
                         } else {
-                            findNavController().navigate(
-                                MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
-                            locationDataCapturer.turnOnTreeCaptureMode()
+                            vm.turnOnTreeCaptureMode()
+                            convergenceProgressView.visibility = View.VISIBLE
+                            vm.resolveLocationConvergence()
+                            convergenceProgressView.visibility = View.GONE
+                            findNavController()
+                                .navigate(MapsFragmentDirections.actionMapsFragmentToNewTreeGraph())
                         }
                     }
                 } else {

@@ -2,11 +2,11 @@ package org.greenstand.android.TreeTracker.usecases
 
 import java.io.File
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.models.User
 
 class DeleteOldPlanterImagesUseCase(
     private val dao: TreeTrackerDAO,
-    private val userManager: UserManager
+    private val user: User
 ) : UseCase<Unit, Unit>() {
 
     override suspend fun execute(params: Unit) {
@@ -15,7 +15,7 @@ class DeleteOldPlanterImagesUseCase(
 
         // Delete all local image files for registrations except for the currently logged in users photo...
         val loggedOutPlanterCheckIns = planterCheckIns
-            .filter { it.id != userManager.planterCheckinId }
+            .filter { it.id != user.planterCheckinId }
             .sortedBy { it.createdAt }
 
         loggedOutPlanterCheckIns.forEach {

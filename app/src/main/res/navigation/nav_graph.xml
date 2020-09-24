@@ -17,6 +17,9 @@
             app:destination="@id/login_flow_graph"
             app:popUpTo="@+id/splashFragment2"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_splashFragment2_to_orgWallFragment"
+            app:destination="@id/orgWallFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
@@ -107,7 +110,7 @@
             android:label="TreeHeightFragment">
             <argument
                 android:name="newTree"
-                app:argType="org.greenstand.android.TreeTracker.data.NewTree"/>
+                app:argType="org.greenstand.android.TreeTracker.models.Tree" />
         </fragment>
         <fragment
             android:id="@+id/newTreeFragment"
@@ -126,4 +129,8 @@
             android:name="treeId"
             app:argType="string"/>
     </fragment>
+    <fragment
+        android:id="@+id/orgWallFragment"
+        android:name="org.greenstand.android.TreeTracker.fragments.OrgWallFragment"
+        android:label="OrgWallFragment" />
 </navigation>

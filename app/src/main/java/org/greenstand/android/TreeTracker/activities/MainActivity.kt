@@ -25,25 +25,24 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
-import org.greenstand.android.TreeTracker.managers.FeatureFlags
-import org.greenstand.android.TreeTracker.managers.LanguageSwitcher
-import org.greenstand.android.TreeTracker.managers.LocationDataCapturer
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.koin.android.ext.android.get
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.User
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val languageSwitcher: LanguageSwitcher by inject()
-    private val userManager: UserManager by inject()
+    private val user: User by inject()
     private val analytics: Analytics by inject()
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val locationDataCapturer: LocationDataCapturer by inject()
+    private val stepCounter: StepCounter by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null
-
     /**
      * Called when the activity is first created.
      * @param savedInstanceState If the activity is being re-initialized after
@@ -52,19 +51,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        lifecycle.addObserver(stepCounter)
         languageSwitcher.applyCurrentLanguage(this)
-
-        if (sharedPreferences.getBoolean(ValueHelper.FIRST_RUN, true)) {
-
-            if (sharedPreferences.getBoolean(
-                    ValueHelper.TREE_TRACKER_SETTINGS_USED, true)) {
-                sharedPreferences.edit()?.putBoolean(
-                    ValueHelper.TREE_TRACKER_SETTINGS_USED, true)?.apply()
-            }
-
-            sharedPreferences.edit()?.putBoolean(ValueHelper.FIRST_RUN, false)?.apply()
-        }
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -75,7 +63,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         val listener = NavController
             .OnDestinationChangedListener { controller, destination, arguments ->
-                if (destination.id != R.id.splashFragment2) {
+                if (destination.id != R.id.splashFragment2 &&
+                    destination.id != R.id.orgWallFragment) {
                     findViewById<View>(R.id.appbar_layout).visibility = View.VISIBLE
                 }
 
@@ -93,8 +82,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
-        if (!userManager.isLoggedIn) {
-            userManager.clearUser()
+        if (!user.isLoggedIn) {
+            user.expireCheckInStatus()
             toolbarTitle.text = resources.getString(R.string.user_not_identified)
         }
     }
@@ -129,7 +118,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
 
             R.id.action_change_user -> {
-                userManager.clearUser()
+                user.expireCheckInStatus()
 
                 toolbarTitle.text = resources.getString(R.string.user_not_identified)
                 findNavController(R.id.nav_host_fragment)
@@ -155,6 +144,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         } else {
             startPeriodicUpdates()
         }
+    }
+
+    public override fun onDestroy() {
+        super.onDestroy()
+        lifecycle.removeObserver(stepCounter)
     }
 
     private fun areNecessaryPermissionsNotGranted(): Boolean {

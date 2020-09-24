@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
     tableName = LocationDataEntity.TABLE
 )
 data class LocationDataEntity(
-    @ColumnInfo(name = LocationDataEntity.BASE64_VALUE)
+    @ColumnInfo(name = LocationDataEntity.JSON_VALUE)
     var locationDataJson: String
 ) {
     @PrimaryKey(autoGenerate = true)
@@ -23,8 +23,8 @@ data class LocationDataEntity(
         const val TABLE = "location_data"
 
         const val ID = "_id"
-        // base64 encoded json of LocationData defined in LocationUpdateManager.kt
-        const val BASE64_VALUE = "base64_json"
+        // Json string of LocationData defined in LocationUpdateManager.kt
+        const val JSON_VALUE = "json_value"
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"
     }

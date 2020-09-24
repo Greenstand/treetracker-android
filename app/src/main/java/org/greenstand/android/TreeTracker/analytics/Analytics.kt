@@ -16,12 +16,14 @@ import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_EMAIL_PHONE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_INFO_CREATED
 import org.greenstand.android.TreeTracker.data.TreeColor
-import org.greenstand.android.TreeTracker.managers.UserManager
+import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
-class Analytics(private val userManager: UserManager,
-                private val firebaseAnalytics: FirebaseAnalytics,
-                private val deviceUtils: DeviceUtils) {
+class Analytics(
+    private val user: User,
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val deviceUtils: DeviceUtils
+) {
 
     init {
         setupStaticDeviceProperties()
@@ -48,10 +50,10 @@ class Analytics(private val userManager: UserManager,
 
     fun updateUserData() {
         with(firebaseAnalytics) {
-            setUserId(userManager.planterCheckinId.toString())
-            setUserProperty("first_name", userManager.firstName)
-            setUserProperty("last_name", userManager.lastName)
-            setUserProperty("organization", userManager.organization)
+            setUserId(user.planterCheckinId.toString())
+            setUserProperty("first_name", user.firstName)
+            setUserProperty("last_name", user.lastName)
+            setUserProperty("organization", user.organization)
         }
     }
 
@@ -60,7 +62,6 @@ class Analytics(private val userManager: UserManager,
     }
 
     fun uploadComplete(treesOnDevice: Int) {
-
     }
 
     fun treePlanted() {
@@ -73,9 +74,9 @@ class Analytics(private val userManager: UserManager,
 
     fun userInfoCreated(phone: String, email: String) {
         val bundle = Bundle().apply {
-            putString("first_name", userManager.firstName)
-            putString("last_name", userManager.lastName)
-            putString("organization", userManager.organization)
+            putString("first_name", user.firstName)
+            putString("last_name", user.lastName)
+            putString("organization", user.organization)
             putString("email", email)
             putString("phone", phone)
         }

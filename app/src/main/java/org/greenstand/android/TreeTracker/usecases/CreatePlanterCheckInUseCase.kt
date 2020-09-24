@@ -1,14 +1,12 @@
 package org.greenstand.android.TreeTracker.usecases
 
-import android.content.SharedPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.managers.LocationUpdateManager
-import org.greenstand.android.TreeTracker.managers.UserManager
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.User
 
 data class CreatePlanterCheckInParams(
     val localPhotoPath: String,
@@ -16,11 +14,10 @@ data class CreatePlanterCheckInParams(
 )
 
 class CreatePlanterCheckInUseCase(
-    private val sharedPreferences: SharedPreferences,
     private val locationUpdateManager: LocationUpdateManager,
     private val doa: TreeTrackerDAO,
     private val analytics: Analytics,
-    private val userManager: UserManager
+    private val user: User
 ) : UseCase<CreatePlanterCheckInParams, Long>() {
 
     override suspend fun execute(params: CreatePlanterCheckInParams): Long =
@@ -40,25 +37,19 @@ class CreatePlanterCheckInUseCase(
 
             val planterCheckInId = doa.insertPlanterCheckIn(entity)
 
-            sharedPreferences.edit()
-                .putLong(ValueHelper.PLANTER_CHECK_IN_ID, planterCheckInId)
-                .putLong(ValueHelper.PLANTER_INFO_ID, params.planterInfoId)
-                .putLong(
-                    ValueHelper.TIME_OF_LAST_PLANTER_CHECK_IN_SECONDS,
-                    System.currentTimeMillis() / 1000
-                )
-                .putString(ValueHelper.PLANTER_PHOTO, params.localPhotoPath)
-                .apply()
-
-            doa.getPlanterInfoById(params.planterInfoId)?.let {
-                userManager.firstName = it.firstName
-                userManager.lastName = it.lastName
-                userManager.organization = it.organization
+            doa.getPlanterInfoById(params.planterInfoId)?.let { planterInfo ->
+                with(user) {
+                    firstName = planterInfo.firstName
+                    lastName = planterInfo.lastName
+                    organization = planterInfo.organization
+                    planterCheckinId = planterCheckInId
+                    planterInfoId = params.planterInfoId
+                    lastCheckInTimeInSeconds = System.currentTimeMillis() / 1000
+                    profilePhotoPath = params.localPhotoPath
+                }
             }
 
             analytics.userCheckedIn()
-
-            userManager.planterCheckinId = planterCheckInId
 
             planterCheckInId
         }
