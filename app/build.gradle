@@ -67,6 +67,7 @@ android {
         buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
         buildConfigField 'Boolean', 'TREE_HEIGHT_FEATURE_ENABLED', "false"
         buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "true"
+        buildConfigField 'Boolean', 'TREE_DBH_FEATURE_ENABLED', "false"
         buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
         buildConfigField 'Boolean', 'USE_AWS_S3', "false"
@@ -165,6 +166,7 @@ android {
             applicationIdSuffix ".justdiggit"
             buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
             buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
+            buildConfigField 'Boolean', 'TREE_DBH_FEATURE_ENABLED', "true"
             buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "false"
         }
     }

@@ -34,9 +34,11 @@ class NewTreeViewModel(
     val onTakePicture: MutableLiveData<Unit> = MutableLiveData()
     private var newTreeUuid: UUID? = null
 
-    val noteEnabledLiveData: LiveData<Boolean> = MutableLiveData<Boolean>().apply {
-        postValue(FeatureFlags.TREE_NOTE_FEATURE_ENABLED)
-    }
+    val isNoteEnabled = FeatureFlags.TREE_NOTE_FEATURE_ENABLED
+
+    val isDbhEnabled = FeatureFlags.TREE_DBH_FEATURE_ENABLED
+
+    val isTreeHeightEnabled = FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED
 
     val accuracyLiveData: LiveData<Int> = MutableLiveData<Int>().apply {
         postValue(locationUpdateManager.currentLocation?.accuracy?.roundToInt() ?: 0)
@@ -53,7 +55,7 @@ class NewTreeViewModel(
         }
     }
 
-    suspend fun createTree(note: String) {
+    suspend fun createTree(note: String, dbh: String?) {
 
         val newTree = Tree(
             treeUuid = newTreeUuid!!,
@@ -61,6 +63,9 @@ class NewTreeViewModel(
             content = note,
             photoPath = photoPath!!
         )
+
+        dbh?.let { newTree.addTreeAttribute(Tree.DBH_ATTR_KEY, it) }
+
 
         val absoluteStepCount = stepCounter.absoluteStepCount ?: 0
         val lastStepCountWhenCreatingTree = stepCounter.absoluteStepCountOnTreeCapture ?: 0
