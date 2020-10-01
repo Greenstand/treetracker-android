@@ -57,6 +57,8 @@ class MapViewModel constructor(
     }
 
     fun turnOnTreeCaptureMode() {
+        if (FeatureFlags.TREE_DBH_FEATURE_ENABLED) return
+
         locationDataCapturer.turnOnTreeCaptureMode()
         stepCounter.enable()
         deviceOrientation.enable()

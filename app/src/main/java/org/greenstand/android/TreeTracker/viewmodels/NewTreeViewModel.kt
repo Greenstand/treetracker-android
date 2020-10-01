@@ -105,6 +105,8 @@ class NewTreeViewModel(
     }
 
     suspend fun waitForConvergence() {
+        stepCounter.enable()
+        locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
         newTreeUuid = locationDataCapturer.generatedTreeUuid
         locationDataCapturer.turnOffTreeCaptureMode()
@@ -123,8 +125,6 @@ class NewTreeViewModel(
         newTreeUuid = null
         locationDataCapturer.turnOffTreeCaptureMode()
     }
-
-    fun stopTreeCapture() = locationDataCapturer.turnOffTreeCaptureMode()
 
     companion object {
         const val FOCUS_THRESHOLD = 700.0
