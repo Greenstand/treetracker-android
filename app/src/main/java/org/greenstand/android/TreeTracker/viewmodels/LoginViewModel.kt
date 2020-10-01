@@ -42,8 +42,9 @@ class LoginViewModel(private val dao: TreeTrackerDAO,
         }
 
     fun updateEmail(email: String) {
-        if (Validation.isEmailValid(email)) {
-            this.email = email
+        val trimmedEmail = email.trim()
+        if (Validation.isEmailValid(trimmedEmail)) {
+            this.email = trimmedEmail
             loginButtonStateMutableLiveData.value = true
         } else {
             if (!Validation.isValidPhoneNumber(phone.orEmpty())) {
@@ -54,8 +55,9 @@ class LoginViewModel(private val dao: TreeTrackerDAO,
     }
 
     fun updatePhone(phone: String) {
-        if (Validation.isValidPhoneNumber(phone)) {
-            this.phone = phone
+        val trimmerPhone = phone.trim()
+        if (Validation.isValidPhoneNumber(trimmerPhone)) {
+            this.phone = trimmerPhone
             loginButtonStateMutableLiveData.value = true
         } else {
             if (!Validation.isEmailValid(email.orEmpty())) {
