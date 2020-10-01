@@ -25,6 +25,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val locationDataCapturer: LocationDataCapturer by inject()
     private val stepCounter: StepCounter by inject()
+    private val deviceOrientation: DeviceOrientation by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null
     /**
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(stepCounter)
+        lifecycle.addObserver(deviceOrientation)
         languageSwitcher.applyCurrentLanguage(this)
 
         setContentView(R.layout.activity_main)
@@ -149,6 +152,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     public override fun onDestroy() {
         super.onDestroy()
         lifecycle.removeObserver(stepCounter)
+        lifecycle.removeObserver(deviceOrientation)
     }
 
     private fun areNecessaryPermissionsNotGranted(): Boolean {

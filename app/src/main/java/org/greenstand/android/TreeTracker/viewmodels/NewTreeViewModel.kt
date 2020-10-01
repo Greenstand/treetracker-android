@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import java.util.UUID
 import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
@@ -22,7 +23,8 @@ class NewTreeViewModel(
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
     private val analytics: Analytics,
-    private val stepCounter: StepCounter
+    private val stepCounter: StepCounter,
+    private val deviceOrientation: DeviceOrientation
 ) : ViewModel() {
 
     val onTreeSaved: MutableLiveData<Unit> = MutableLiveData()
@@ -73,7 +75,10 @@ class NewTreeViewModel(
         val deltaSteps = absoluteStepCount - lastStepCountWhenCreatingTree
         newTree.addTreeAttribute(Tree.ABS_STEP_COUNT_KEY, absoluteStepCount.toString())
         newTree.addTreeAttribute(Tree.DELTA_STEP_COUNT_KEY, deltaSteps.toString())
-
+        deviceOrientation.rotationMatrixSnapshot?.let {
+            newTree.addTreeAttribute(
+                Tree.ROTATION_MATRIX_KEY, it.joinToString(","))
+        }
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
         }
@@ -84,7 +89,7 @@ class NewTreeViewModel(
             createTreeUseCase.execute(newTree)
             // Assign the current absolute step count to 'absoluteStepCountOnTreeCapture' to
             // enable step count delta calculation for the next tree capture
-            stepCounter.absoluteStepCountOnTreeCapture = absoluteStepCount
+            stepCounter.snapshotAbsoluteStepCountOnTreeCapture()
             stepCounter.disable()
             onTreeSaved.postValue(Unit)
             navigateBack.postValue(Unit)
