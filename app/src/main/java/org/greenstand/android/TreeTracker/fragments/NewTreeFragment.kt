@@ -61,6 +61,7 @@ class NewTreeFragment :
 
         fragmentNewTreeNote.visibleIf(vm.isNoteEnabled)
         fragmentNewTreeDBH.visibleIf(vm.isDbhEnabled)
+        fragmentNewTreeGPS.visibleIf(vm.isDbhEnabled)
 
         if (vm.isTreeHeightEnabled) {
             fragmentNewTreeSave.text = getString(R.string.next)
