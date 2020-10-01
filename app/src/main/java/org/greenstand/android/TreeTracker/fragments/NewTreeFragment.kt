@@ -122,6 +122,11 @@ class NewTreeFragment :
         }
     }
 
+    override fun onStop() {
+        vm.stopTreeCapture()
+        super.onStop()
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,

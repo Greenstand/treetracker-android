@@ -124,6 +124,8 @@ class NewTreeViewModel(
         locationDataCapturer.turnOffTreeCaptureMode()
     }
 
+    fun stopTreeCapture() = locationDataCapturer.turnOffTreeCaptureMode()
+
     companion object {
         const val FOCUS_THRESHOLD = 700.0
     }

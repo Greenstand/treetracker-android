@@ -105,13 +105,14 @@
         android:text="@string/mark_gps"/>
 
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:visibility="gone"
         tools:visibility="visible"
+        android:orientation="vertical"
         android:elevation="20dp">
 
         <ProgressBar
@@ -119,12 +120,20 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:layout_gravity="center"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="200dp"
             android:visibility="visible"
             android:elevation="20dp"
             android:indeterminate="true" />
 
-    </FrameLayout>
+        <TextView
+            android:id="@+id/convergenceProgressText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/gps_location_assessment"
+            android:textSize="@dimen/text_size_twenty" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fragment_new_tree_buttons"
