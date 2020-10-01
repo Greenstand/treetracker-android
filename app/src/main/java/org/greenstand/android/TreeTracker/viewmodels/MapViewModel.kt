@@ -63,16 +63,5 @@ class MapViewModel constructor(
         deviceOrientation.enable()
     }
 
-    suspend fun resolveLocationConvergence() {
-        try {
-            withTimeout(LocationDataConfig.CONVERGENCE_TIMEOUT) {
-                while (!locationDataCapturer.isConvergenceWithinRange()) {
-                    delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
-                }
-            }
-        } catch (e: TimeoutCancellationException) {
-            Timber.d("Convergence request timed out")
-            locationDataCapturer.markConvergenceTimeout()
-        }
-    }
+    suspend fun resolveLocationConvergence() = locationDataCapturer.converge()
 }
