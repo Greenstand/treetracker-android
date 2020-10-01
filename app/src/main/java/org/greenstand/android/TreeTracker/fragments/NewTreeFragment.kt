@@ -52,16 +52,19 @@ class NewTreeFragment :
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         with(activity as AppCompatActivity) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
             toolbarTitle.setText(R.string.new_tree)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
+        val progressBar = view.findViewById<View>(R.id.progressBar)
+
         fragmentNewTreeNote.visibleIf(vm.isNoteEnabled)
         fragmentNewTreeDBH.visibleIf(vm.isDbhEnabled)
         fragmentNewTreeGPS.visibleIf(vm.isDbhEnabled)
+
+        fragmentNewTreeSave.isEnabled = !vm.isDbhEnabled
 
         if (vm.isTreeHeightEnabled) {
             fragmentNewTreeSave.text = getString(R.string.next)
@@ -104,6 +107,19 @@ class NewTreeFragment :
                     fragmentNewTreeDBH.text.toString())
             }
         }
+
+        fragmentNewTreeGPS.setOnClickListener {
+            lifecycleScope.launch {
+                progressBar.visibility = View.VISIBLE
+                progressBar.setOnClickListener {
+                    // Do nothing. We want to intercept taps on screen while loading is shown
+                }
+                vm.waitForConvergence()
+                progressBar.visibility = View.GONE
+                fragmentNewTreeSave.isEnabled = true
+                progressBar.setOnClickListener(null)
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -120,7 +136,6 @@ class NewTreeFragment :
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         vm.newTreePhotoCaptured()
         if (data != null && resultCode == Activity.RESULT_OK) {
             vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)

@@ -12,11 +12,10 @@ import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
-import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
-import timber.log.Timber
 
 class MapViewModel constructor(
     private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
@@ -63,5 +62,10 @@ class MapViewModel constructor(
         deviceOrientation.enable()
     }
 
-    suspend fun resolveLocationConvergence() = locationDataCapturer.converge()
+    suspend fun resolveLocationConvergence() {
+        if (FeatureFlags.TREE_DBH_FEATURE_ENABLED) {
+            return
+        }
+        locationDataCapturer.converge()
+    }
 }
