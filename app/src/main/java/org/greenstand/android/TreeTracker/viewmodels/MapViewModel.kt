@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.StepCounter
@@ -23,7 +24,8 @@ class MapViewModel constructor(
     private val locationDataCapturer: LocationDataCapturer,
     locationUpdateManager: LocationUpdateManager,
     private val user: User,
-    private val stepCounter: StepCounter
+    private val stepCounter: StepCounter,
+    private val deviceOrientation: DeviceOrientation
 ) : ViewModel() {
 
     val checkInStatusLiveData = MutableLiveData<Boolean>()
@@ -58,6 +60,7 @@ class MapViewModel constructor(
     fun turnOnTreeCaptureMode() {
         locationDataCapturer.turnOnTreeCaptureMode()
         stepCounter.enable()
+        deviceOrientation.enable()
     }
 
     suspend fun resolveLocationConvergence() {
