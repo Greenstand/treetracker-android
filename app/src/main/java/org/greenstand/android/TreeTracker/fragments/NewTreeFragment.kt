@@ -109,21 +109,21 @@ class NewTreeFragment :
         }
 
         fragmentNewTreeGPS.setOnClickListener {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 progressBar.visibility = View.VISIBLE
                 progressBar.setOnClickListener {
                     // Do nothing. We want to intercept taps on screen while loading is shown
                 }
                 vm.waitForConvergence()
+                progressBar.setOnClickListener(null)
                 progressBar.visibility = View.GONE
                 fragmentNewTreeSave.isEnabled = true
-                progressBar.setOnClickListener(null)
             }
         }
     }
 
     override fun onStop() {
-        vm.stopTreeCapture()
+        vm.newTreeCaptureCancelled()
         super.onStop()
     }
 
