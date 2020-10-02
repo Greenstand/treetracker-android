@@ -105,6 +105,7 @@ class NewTreeViewModel(
     }
 
     suspend fun waitForConvergence() {
+        deviceOrientation.enable()
         stepCounter.enable()
         locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
