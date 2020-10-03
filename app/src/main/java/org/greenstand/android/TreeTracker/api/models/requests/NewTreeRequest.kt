@@ -4,23 +4,23 @@ import com.google.gson.annotations.SerializedName
 
 data class NewTreeRequest(
     @SerializedName("user_id")
-    val userId: Int = 0,
+    val userId: Int,
     @SerializedName("uuid")
     val uuid: String,
     @SerializedName("lat")
-    val lat: Double = 0.toDouble(),
+    val lat: Double,
     @SerializedName("lon")
-    val lon: Double = 0.toDouble(),
+    val lon: Double,
     @SerializedName("gps_accuracy")
-    val gpsAccuracy: Int = 0,
+    val gpsAccuracy: Int,
     @SerializedName("note")
     val note: String?,
     @SerializedName("timestamp")
-    val timestamp: Long = 0,
+    val timestamp: Long,
     @SerializedName("image_url")
     val imageUrl: String?,
     @SerializedName("sequence_id")
-    val sequenceId: Long = 0,
+    val sequenceId: Long,
     @SerializedName("device_identifier")
     val deviceIdentifier: String,
     @SerializedName("planter_photo_url")
