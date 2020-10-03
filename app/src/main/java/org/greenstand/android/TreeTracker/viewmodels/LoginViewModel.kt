@@ -55,9 +55,9 @@ class LoginViewModel(private val dao: TreeTrackerDAO,
     }
 
     fun updatePhone(phone: String) {
-        val trimmerPhone = phone.trim()
-        if (Validation.isValidPhoneNumber(trimmerPhone)) {
-            this.phone = trimmerPhone
+        val trimmedPhone = phone.trim()
+        if (Validation.isValidPhoneNumber(trimmedPhone)) {
+            this.phone = trimmedPhone
             loginButtonStateMutableLiveData.value = true
         } else {
             if (!Validation.isEmailValid(email.orEmpty())) {
