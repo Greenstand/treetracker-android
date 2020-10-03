@@ -40,6 +40,9 @@ class NewTreeViewModel(
 
     val isTreeHeightEnabled = FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED
 
+    var isNextButtonActive = !isDbhEnabled
+        private set
+
     val accuracyLiveData: LiveData<Int> = MutableLiveData<Int>().apply {
         postValue(locationUpdateManager.currentLocation?.accuracy?.roundToInt() ?: 0)
     }
@@ -101,7 +104,20 @@ class NewTreeViewModel(
         return imageQuality < FOCUS_THRESHOLD
     }
 
+    suspend fun waitForConvergence() {
+        deviceOrientation.enable()
+        stepCounter.enable()
+        locationDataCapturer.turnOnTreeCaptureMode()
+        locationDataCapturer.converge()
+        newTreeUuid = locationDataCapturer.generatedTreeUuid
+        locationDataCapturer.turnOffTreeCaptureMode()
+        isNextButtonActive = true
+    }
+
     fun newTreePhotoCaptured() {
+        if (FeatureFlags.TREE_DBH_FEATURE_ENABLED) {
+            return
+        }
         newTreeUuid = locationDataCapturer.generatedTreeUuid
         locationDataCapturer.turnOffTreeCaptureMode()
     }
