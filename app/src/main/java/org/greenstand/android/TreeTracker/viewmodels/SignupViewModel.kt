@@ -18,13 +18,13 @@ class SignupViewModel : ViewModel() {
     var firstName: String = ""
         set(value) {
             signupButtonStateMutableLiveData.value = firstName.isNotEmpty() && lastName.isNotEmpty()
-            field = value
+            field = value.trim()
         }
 
     var lastName: String = ""
         set(value) {
             signupButtonStateMutableLiveData.value = firstName.isNotBlank() && lastName.isNotEmpty()
-            field = value
+            field = value.trim()
         }
 
     var organization: String = ""

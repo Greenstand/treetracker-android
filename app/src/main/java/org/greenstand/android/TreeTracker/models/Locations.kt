@@ -16,6 +16,9 @@ import java.util.UUID
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -211,6 +214,19 @@ class LocationDataCapturer(
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 
+    suspend fun converge() {
+        try {
+            withTimeout(LocationDataConfig.CONVERGENCE_TIMEOUT) {
+                while (!isConvergenceWithinRange()) {
+                    delay(LocationDataConfig.MIN_TIME_BTWN_UPDATES)
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.d("Convergence request timed out")
+            markConvergenceTimeout()
+        }
+    }
+
     fun isConvergenceWithinRange(): Boolean = ConvergenceStatus.CONVERGED == convergenceStatus
 
     /*
@@ -218,11 +234,11 @@ class LocationDataCapturer(
      * occur and the waiting period exceeds the threshold configured, this method is called
      * to mark the convergence status as timed out for location data pipeline analysis.
      */
-    fun markConvergenceTimeout() {
+    private fun markConvergenceTimeout() {
         convergenceStatus = ConvergenceStatus.TIMED_OUT
     }
 
-    fun isInTreeCaptureMode(): Boolean {
+    private fun isInTreeCaptureMode(): Boolean {
         return generatedTreeUuid != null
     }
 
