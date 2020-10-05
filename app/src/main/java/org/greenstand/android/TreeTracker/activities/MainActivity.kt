@@ -151,8 +151,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     public override fun onDestroy() {
         super.onDestroy()
+        locationDataCapturer.turnOffTreeCaptureMode()
         lifecycle.removeObserver(stepCounter)
         lifecycle.removeObserver(deviceOrientation)
+        // This is address the use case when the app screen is exited when in
+        // in a tree capture mode
+        locationDataCapturer.turnOffTreeCaptureMode()
     }
 
     private fun areNecessaryPermissionsNotGranted(): Boolean {
