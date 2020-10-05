@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Greenstand/treetracker-android.svg?branch=master)](https://travis-ci.com/Greenstand/treetracker-android)
+![Build Status](https://github.com/Greenstand/treetracker-android/workflows/Treetracker%20Android%20App%20CI/badge.svg?branch=master)
 
 # Treetracker Android
 
