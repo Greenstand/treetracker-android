@@ -39,6 +39,9 @@ For development, select the build variant _dev_. This build variant is configure
 
 ## QC Deployment
 
+Note: QC deployment pipeline are about to be changed and moved to Github actions from Travis. The 
+following details will be updated once the change is made.
+
 This repo has been configured to be easily deployed to QC through Travis. The process, however, is still a manual.
 
 In order to get a new build to QC, take the following steps:
