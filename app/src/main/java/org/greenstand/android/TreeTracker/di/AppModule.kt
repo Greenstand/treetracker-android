@@ -11,6 +11,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
+import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
@@ -38,6 +39,7 @@ import org.greenstand.android.TreeTracker.usecases.UploadPlanterUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadTreeBundleUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
@@ -67,6 +69,8 @@ val appModule = module {
     viewModel { TreePreviewViewModel(get(), get()) }
 
     viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+
+    viewModel { ConfigViewModel(get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -109,6 +113,8 @@ val appModule = module {
     single { StepCounter(get(), get()) }
 
     single { DeviceOrientation(get()) }
+
+    single { Configuration(get()) }
 
     factory { PreferencesMigrator(get(), get()) }
 
