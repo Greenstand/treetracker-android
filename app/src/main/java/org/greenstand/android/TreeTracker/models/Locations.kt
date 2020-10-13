@@ -16,11 +16,11 @@ import java.util.UUID
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
@@ -156,7 +156,7 @@ class LocationDataCapturer(
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
 
-            if (isInTreeCaptureMode() && !isConvergenceWithinRange()) {
+            if (isInTreeCaptureMode()) {
 
                 val evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
                     locationsDeque.pollFirst() else null
@@ -187,6 +187,8 @@ class LocationDataCapturer(
                     if (longStdDev != null && latStdDev != null) {
                         if (longStdDev < LONG_STD_DEV && latStdDev < LAT_STD_DEV) {
                             convergenceStatus = ConvergenceStatus.CONVERGED
+                        } else {
+                            convergenceStatus = ConvergenceStatus.NOT_CONVERGED
                         }
                     }
                 }
@@ -276,7 +278,7 @@ class Convergence(val locations: List<Location>) {
     }
 
     /**
-     * Implementation based on the following answer found here since this seems to be a good
+     * Implementation based on the following answer found in stackexchange since it seems to be a good
      * approximation to the running window standard deviation calculation. Considered Welford's
      * method of computing variance but it calculates running cumulative variance but we need
      * sliding window computation here.
