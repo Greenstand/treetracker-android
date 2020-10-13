@@ -30,6 +30,8 @@ class LocationDataCapturerTest {
     @MockK(relaxed = true)
     private lateinit var locationUpdateManager: LocationUpdateManager
     @MockK(relaxed = true)
+    private lateinit var configuration: Configuration
+    @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var preferences: Preferences
     @MockK(relaxed = true)
@@ -41,10 +43,12 @@ class LocationDataCapturerTest {
     fun setup() {
         MockKAnnotations.init(this)
         preferences = Preferences(sharedPreferences)
+        every { configuration.locationDataConfig } returns LocationDataConfig()
         locationDataCapturer = LocationDataCapturer(
             user,
             locationUpdateManager,
-            treeTrackerDAO
+            treeTrackerDAO,
+            configuration
         )
     }
 

@@ -30,7 +30,7 @@ class Configuration(private val preferences: Preferences) {
 data class LocationDataConfig(
     val minTimeBetweenUpdates: Long = 1000L,
     val minDistanceBetweenUpdates: Float = 0F,
-    val configurationTimeout: Long = 60000L,
+    val convergenceTimeout: Long = 60000L,
     val convergenceDataSize: Int = 5,
     val lonStdDevThreshold: Float = 0.00001F,
     val latStdDevThreshold: Float = 0.00001F
@@ -45,7 +45,7 @@ class LeaveItHereForNow {
                 PrefKey("min-time-between-updates")
         val MIN_DISTANCE_BTWN_UPDATES = LOCATION_DATA_CONFIG_KEY +
                 PrefKey("min-distance-btwn-updates")
-        val CONFIGURATION_TIMEOUT = LOCATION_DATA_CONFIG_KEY +
+        val CONVERGENCE_TIMEOUT = LOCATION_DATA_CONFIG_KEY +
                 PrefKey("configuration-timeout")
         val CONVERGENCE_DATA_SIZE = LOCATION_DATA_CONFIG_KEY +
                 PrefKey("convergence-data-size")

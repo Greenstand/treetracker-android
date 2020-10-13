@@ -27,7 +27,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/locationDataConfigLabel"
@@ -44,30 +44,144 @@
                 android:id="@+id/minTimeBtwnUpdatesLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="4dp"
+                android:labelFor="@+id/minTimeBtwnUpdatesVal"
                 android:text="@string/min_time_btwn_updates"
                 android:textIsSelectable="true"
                 android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/minTimeBtwnUpdatesVal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/locationDataConfigLabel" />
+                app:layout_constraintTop_toTopOf="@+id/minTimeBtwnUpdatesVal" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="229dp" />
+                app:layout_constraintGuide_begin="258dp" />
 
             <EditText
                 android:id="@+id/minTimeBtwnUpdatesVal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:ems="6"
+                android:importantForAutofill="no"
                 android:inputType="number"
-                app:layout_constraintBottom_toBottomOf="@+id/minTimeBtwnUpdatesLabel"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toTopOf="@+id/minTimeBtwnUpdatesLabel" />
+                app:layout_constraintTop_toBottomOf="@+id/locationDataConfigLabel" />
+
+            <TextView
+                android:id="@+id/minDisBtwnUpdatesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:labelFor="@id/minDisBtwnUpdatesVal"
+                android:text="@string/min_distance_between_updates"
+                app:layout_constraintBottom_toBottomOf="@+id/minDisBtwnUpdatesVal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/minDisBtwnUpdatesVal" />
+
+            <EditText
+                android:id="@+id/minDisBtwnUpdatesVal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ems="6"
+                android:importantForAutofill="no"
+                android:inputType="number|numberDecimal"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/minTimeBtwnUpdatesVal" />
+
+            <TextView
+                android:id="@+id/convergenceTimeoutLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:hint="@string/convergence_timeout_hint"
+                android:labelFor="@+id/convergenceTimeoutVal"
+                android:text="@string/convergence_timeout"
+                app:layout_constraintBottom_toBottomOf="@+id/convergenceTimeoutVal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/convergenceTimeoutVal" />
+
+            <EditText
+                android:id="@+id/convergenceTimeoutVal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ems="6"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/minDisBtwnUpdatesVal" />
+
+            <TextView
+                android:id="@+id/convergenceDataSizeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:hint="@string/convergence_data_size_hint"
+                android:labelFor="@id/convergenceDataSizeVal"
+                android:text="@string/convergence_data_size"
+                app:layout_constraintBottom_toBottomOf="@+id/convergenceDataSizeVal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/convergenceDataSizeVal" />
+
+            <EditText
+                android:id="@+id/convergenceDataSizeVal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ems="6"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/convergenceTimeoutVal" />
+
+            <TextView
+                android:id="@+id/lonStdDevThresholdLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:labelFor="@id/lonStdDevThresholdVal"
+                android:text="@string/lon_std_dev_threshold"
+                app:layout_constraintBottom_toBottomOf="@+id/lonStdDevThresholdVal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/lonStdDevThresholdVal" />
+
+            <EditText
+                android:id="@+id/lonStdDevThresholdVal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:importantForAutofill="no"
+                android:inputType="number|numberDecimal"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/convergenceDataSizeVal" />
+
+            <TextView
+                android:id="@+id/latStdDevThresholdLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:labelFor="@id/latStdDevThresholdVal"
+                android:text="@string/lat_std_dev_threshold"
+                app:layout_constraintBottom_toBottomOf="@+id/latStdDevThresholdVal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/latStdDevThresholdVal" />
+
+            <EditText
+                android:id="@+id/latStdDevThresholdVal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:importantForAutofill="no"
+                android:inputType="number|numberDecimal"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/lonStdDevThresholdVal" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

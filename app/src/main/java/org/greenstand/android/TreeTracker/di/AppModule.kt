@@ -70,7 +70,7 @@ val appModule = module {
 
     viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
-    viewModel { ConfigViewModel(get()) }
+    viewModel { ConfigViewModel(get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -90,7 +90,7 @@ val appModule = module {
 
     single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
 
-    single { LocationUpdateManager(get(), get()) }
+    single { LocationUpdateManager(get(), get(), get()) }
 
     single { ObjectStorageClient.instance() }
 
@@ -98,6 +98,7 @@ val appModule = module {
 
     single {
         LocationDataCapturer(
+            get(),
             get(),
             get(),
             get()
