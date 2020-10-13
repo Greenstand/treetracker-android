@@ -174,8 +174,7 @@ class LocationDataCapturer(
 
             val locationDataConfig = configuration.locationDataConfig
             val convergenceDataSize = locationDataConfig.convergenceDataSize
-
-            if (isInTreeCaptureMode() && !isConvergenceWithinRange()) {
+            if (isInTreeCaptureMode()) {
                 val evictedLocation: Location? = if (locationsDeque.size >= convergenceDataSize)
                     locationsDeque.pollFirst() else null
                 locationsDeque.add(location)
@@ -207,6 +206,8 @@ class LocationDataCapturer(
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
                             latStdDev < locationDataConfig.latStdDevThreshold) {
                             convergenceStatus = ConvergenceStatus.CONVERGED
+                        } else {
+                            convergenceStatus = ConvergenceStatus.NOT_CONVERGED
                         }
                     }
                 }
@@ -297,7 +298,7 @@ class Convergence(val locations: List<Location>) {
     }
 
     /**
-     * Implementation based on the following answer found here since this seems to be a good
+     * Implementation based on the following answer found in stackexchange since it seems to be a good
      * approximation to the running window standard deviation calculation. Considered Welford's
      * method of computing variance but it calculates running cumulative variance but we need
      * sliding window computation here.

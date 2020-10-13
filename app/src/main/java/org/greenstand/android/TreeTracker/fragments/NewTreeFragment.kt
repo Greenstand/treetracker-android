@@ -101,6 +101,7 @@ class NewTreeFragment :
 
         fragmentNewTreeSave.setOnClickListener {
             it.vibrate()
+            vm.newTreePhotoCaptured()
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 vm.createTree(
                     fragmentNewTreeNote.text.toString(),
@@ -122,11 +123,6 @@ class NewTreeFragment :
         }
     }
 
-    override fun onStop() {
-        vm.newTreeCaptureCancelled()
-        super.onStop()
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -141,7 +137,6 @@ class NewTreeFragment :
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        vm.newTreePhotoCaptured()
         if (data != null && resultCode == Activity.RESULT_OK) {
             vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 

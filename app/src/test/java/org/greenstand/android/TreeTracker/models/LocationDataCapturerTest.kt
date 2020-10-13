@@ -27,15 +27,19 @@ class LocationDataCapturerTest {
 
     @MockK(relaxed = true)
     private lateinit var user: User
+
     @MockK(relaxed = true)
     private lateinit var locationUpdateManager: LocationUpdateManager
+
     @MockK(relaxed = true)
     private lateinit var configuration: Configuration
     @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var preferences: Preferences
+
     @MockK(relaxed = true)
     private lateinit var treeTrackerDAO: TreeTrackerDAO
+
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -105,6 +109,7 @@ class LocationDataCapturerTest {
         Pair(-122.08400021999, 37.42149489),
         Pair(-122.0840086753, 37.42149481)
     )
+
     @Test
     fun convergenceWithinRange() {
 
@@ -130,6 +135,7 @@ class LocationDataCapturerTest {
         Pair(-122.0913121999, 37.42149489),
         Pair(-122.0773486753, 37.42149481)
     )
+
     @Test
     fun convergenceNotWithinRange() {
         val locationsLiveData = MutableLiveData<Location>()
@@ -145,5 +151,45 @@ class LocationDataCapturerTest {
         }
 
         assertFalse(locationDataCapturer.isConvergenceWithinRange())
+    }
+
+    val locationsWithLowAndHighVariance = listOf(
+        Pair(-122.08400001, 37.42149486),
+        Pair(-122.08400111, 37.42149487),
+        Pair(-122.08400021519, 37.42149483),
+        Pair(-122.08400021999, 37.42149489),
+        Pair(-122.0840086753, 37.42149481),
+        Pair(-122.0913121999, 37.42149489),
+        Pair(-122.0773486753, 37.42149481)
+    )
+    @Test
+    fun unconvergeWhenGPSWanders() {
+        val locationsLiveData = MutableLiveData<Location>()
+        every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
+        locationDataCapturer.start()
+        locationDataCapturer.turnOnTreeCaptureMode()
+
+        for (i in 0..4) {
+            val location = mockk<Location>(relaxed = true)
+            every { location.longitude } returns locationValuesLowVariance[i].first
+            every { location.latitude } returns locationValuesLowVariance[i].second
+            locationsLiveData.postValue(location)
+        }
+
+        assertTrue(
+            "Converges with low variance location values",
+            locationDataCapturer.isConvergenceWithinRange()
+        )
+
+        for (i in 5..6) {
+            val location = mockk<Location>(relaxed = true)
+            every { location.longitude } returns locationsWithLowAndHighVariance[i].first
+            every { location.latitude } returns locationsWithLowAndHighVariance[i].second
+            locationsLiveData.postValue(location)
+        }
+        assertFalse(
+            "location unconverges when gps values wander",
+            locationDataCapturer.isConvergenceWithinRange()
+        )
     }
 }
