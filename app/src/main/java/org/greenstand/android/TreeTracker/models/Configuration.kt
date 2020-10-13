@@ -35,23 +35,3 @@ data class LocationDataConfig(
     val lonStdDevThreshold: Float = 0.00001F,
     val latStdDevThreshold: Float = 0.00001F
 )
-
-class LeaveItHereForNow {
-    companion object {
-
-        val LOCATION_DATA_CONFIG_KEY = PrefKeys.SYSTEM_SETTINGS +
-                PrefKey("location-data-config")
-        val MIN_TIME_BTWN_UPDATES = LOCATION_DATA_CONFIG_KEY +
-                PrefKey("min-time-between-updates")
-        val MIN_DISTANCE_BTWN_UPDATES = LOCATION_DATA_CONFIG_KEY +
-                PrefKey("min-distance-btwn-updates")
-        val CONVERGENCE_TIMEOUT = LOCATION_DATA_CONFIG_KEY +
-                PrefKey("configuration-timeout")
-        val CONVERGENCE_DATA_SIZE = LOCATION_DATA_CONFIG_KEY +
-                PrefKey("convergence-data-size")
-        val LON_STD_DEV_THRESHOLD = LOCATION_DATA_CONFIG_KEY +
-                PrefKey("lon-std-dev-threshold")
-        val LAT_STD_DEV_THRESHOLD = LOCATION_DATA_CONFIG_KEY +
-                PrefKey("lat-std-dev-threshold")
-    }
-}
