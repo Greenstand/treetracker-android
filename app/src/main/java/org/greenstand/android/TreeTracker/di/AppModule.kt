@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.GsonBuilder
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
@@ -101,6 +102,7 @@ val appModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -115,7 +117,9 @@ val appModule = module {
 
     single { DeviceOrientation(get()) }
 
-    single { Configuration(get()) }
+    single { Configuration(get(), get()) }
+
+    single { GsonBuilder().serializeNulls().create() }
 
     factory { PreferencesMigrator(get(), get()) }
 
@@ -123,7 +127,7 @@ val appModule = module {
 
     factory { UploadImageUseCase(get()) }
 
-    factory { UploadLocationDataUseCase(get()) }
+    factory { UploadLocationDataUseCase(get(), get()) }
 
     factory { UploadPlanterUseCase(get(), get(), get(), get()) }
 
@@ -141,11 +145,11 @@ val appModule = module {
 
     factory { PlanterCheckInUseCase(get(), get()) }
 
-    factory { UploadPlanterInfoUseCase(get(), get()) }
+    factory { UploadPlanterInfoUseCase(get(), get(), get()) }
 
     factory { CreateTreeRequestUseCase(get()) }
 
-    factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get()) }
+    factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get(), get()) }
 
     factory { RemoveLocalTreeImagesWithIdsUseCase(get()) }
 

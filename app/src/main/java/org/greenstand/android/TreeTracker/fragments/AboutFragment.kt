@@ -1,7 +1,6 @@
 package org.greenstand.android.TreeTracker.fragments
 
 import android.os.Bundle
-import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -15,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_about.fragmentAboutVersionCode
 import kotlinx.android.synthetic.main.fragment_about.fragmentAboutVersionName
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.utilities.vibrate
 
 class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
 
@@ -36,9 +36,9 @@ class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         fragmentAboutVersionCode.text = "${getString(R.string.build_version_title)}" +
-                " ${BuildConfig.VERSION_CODE}"
+            " ${BuildConfig.VERSION_CODE}"
         fragmentAboutVersionName.text = "${getString(R.string.tree_tracker_title)}" +
-                " ${BuildConfig.VERSION_NAME}"
+            " ${BuildConfig.VERSION_NAME}"
 
         fragmentAboutVersionCode.setOnTouchListener { v, event ->
             if (view.findNavController().currentDestination?.id == R.id.aboutFragment) {
@@ -50,10 +50,7 @@ class AboutFragment : androidx.fragment.app.Fragment(), OnClickListener {
     }
 
     override fun onClick(v: View) {
-        v.performHapticFeedback(
-            HapticFeedbackConstants.VIRTUAL_KEY,
-            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-        )
+        v.vibrate()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

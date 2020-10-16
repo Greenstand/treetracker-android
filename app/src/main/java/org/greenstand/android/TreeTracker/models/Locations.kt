@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import java.util.Deque
 import java.util.LinkedList
 import java.util.UUID
@@ -124,7 +124,6 @@ class LocationUpdateManager(
     }
 
     private fun hasLocationPermissions(): Boolean {
-
         val fineLocationPermission = ContextCompat.checkSelfPermission(
             context,
             android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -133,8 +132,10 @@ class LocationUpdateManager(
             context,
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         )
-        return (fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
-                coarseLocationPermission == PackageManager.PERMISSION_GRANTED)
+        return (
+            fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED
+            )
     }
 }
 
@@ -159,9 +160,9 @@ class LocationDataCapturer(
     private val userManager: User,
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO,
-    private val configuration: Configuration
+    private val configuration: Configuration,
+    private val gson: Gson
 ) {
-    private val gson = GsonBuilder().serializeNulls().create()
     private var locationsDeque: Deque<Location> = LinkedList<Location>()
     var generatedTreeUuid: UUID? = null
         private set
@@ -181,7 +182,8 @@ class LocationDataCapturer(
 
                 if (locationsDeque.size >= convergenceDataSize) {
                     if (convergence == null ||
-                        convergence?.locations!!.size < convergenceDataSize) {
+                        convergence?.locations!!.size < convergenceDataSize
+                    ) {
                         convergence = Convergence(locationsDeque.toList())
                         convergence?.computeConvergence()
                     } else {
@@ -189,22 +191,23 @@ class LocationDataCapturer(
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
-                                "[${convergence?.longitudeConvergence?.mean}]. \n" +
-                                "Longitude standard deviation value: " +
-                                "[${convergence?.longitudeConvergence?.standardDeviation}]"
+                            "[${convergence?.longitudeConvergence?.mean}]. \n" +
+                            "Longitude standard deviation value: " +
+                            "[${convergence?.longitudeConvergence?.standardDeviation}]"
                     )
                     Timber.d(
                         "Convergence: Latitude Mean: " +
-                                "[${convergence?.latitudeConvergence?.mean}]. \n " +
-                                "Latitude standard deviation value: " +
-                                "[${convergence?.latitudeConvergence?.standardDeviation}]"
+                            "[${convergence?.latitudeConvergence?.mean}]. \n " +
+                            "Latitude standard deviation value: " +
+                            "[${convergence?.latitudeConvergence?.standardDeviation}]"
                     )
 
                     val longStdDev = convergence?.longitudinalStandardDeviation()
                     val latStdDev = convergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
-                            latStdDev < locationDataConfig.latStdDevThreshold) {
+                            latStdDev < locationDataConfig.latStdDevThreshold
+                        ) {
                             convergenceStatus = ConvergenceStatus.CONVERGED
                         } else {
                             convergenceStatus = ConvergenceStatus.NOT_CONVERGED
@@ -317,11 +320,11 @@ class Convergence(val locations: List<Location>) {
         newValue: Double
     ): ConvergenceStats {
         val newMean = currentStats.mean -
-                        (replacingValue / locations.size) +
-                        (newValue / locations.size)
+            (replacingValue / locations.size) +
+            (newValue / locations.size)
         val newVariance = currentStats.variance -
-                        ((replacingValue - currentStats.mean).pow(2.0) / locations.size) +
-                        ((newValue - newMean).pow(2.0) / locations.size)
+            ((replacingValue - currentStats.mean).pow(2.0) / locations.size) +
+            ((newValue - newMean).pow(2.0) / locations.size)
         val newStdDev = sqrt(newVariance)
         return ConvergenceStats(newMean, newVariance, newStdDev)
     }

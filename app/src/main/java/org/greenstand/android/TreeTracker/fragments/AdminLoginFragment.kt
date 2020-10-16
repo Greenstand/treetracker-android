@@ -7,15 +7,12 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import java.security.MessageDigest
 import kotlinx.android.synthetic.main.fragment_admin_login.adminPassword
 import kotlinx.android.synthetic.main.fragment_admin_login.pwdError
 import kotlinx.android.synthetic.main.fragment_admin_login.view.btnNegative
 import kotlinx.android.synthetic.main.fragment_admin_login.view.btnPositive
 import org.greenstand.android.TreeTracker.R
-
-const val ADMIN_PWD_HASH = "B06B37124C9E46A33EAEFC4221878485CD637B3DF928A68F7E71DE7CE04A1F3C"
-const val HEX_CHARS = "0123456789ABCDEF"
+import org.greenstand.android.TreeTracker.utilities.hashString
 
 class AdminLoginFragment : DialogFragment() {
 
@@ -42,10 +39,11 @@ class AdminLoginFragment : DialogFragment() {
 
     private fun setupClickListeners(view: View) {
         view.btnPositive.setOnClickListener {
-            val pwdHash = hashString(adminPassword.text.toString())
+            val pwdHash = adminPassword.text.toString().hashString("sha-256")
             if (pwdHash == ADMIN_PWD_HASH) {
                 findNavController().navigate(
-                        AdminLoginFragmentDirections.actionAdminLoginFragmentToConfigFragment())
+                    AdminLoginFragmentDirections.actionAdminLoginFragmentToConfigFragment()
+                )
                 dismiss()
             } else {
                 pwdError.text = "Invalid password"
@@ -57,16 +55,7 @@ class AdminLoginFragment : DialogFragment() {
         }
     }
 
-    private fun hashString(input: String): String {
-        val bytes = MessageDigest
-            .getInstance("sha-256")
-            .digest(input.toByteArray())
-        val result = StringBuilder(bytes.size * 2)
-        bytes.forEach {
-            val i = it.toInt()
-            result.append(HEX_CHARS[(i shr 4) and 0x0f])
-            result.append(HEX_CHARS[i and 0x0f])
-        }
-        return result.toString()
+    companion object {
+        private val ADMIN_PWD_HASH = "B06B37124C9E46A33EAEFC4221878485CD637B3DF928A68F7E71DE7CE04A1F3C" // kt-lint-disable --verbose max-line-length
     }
 }

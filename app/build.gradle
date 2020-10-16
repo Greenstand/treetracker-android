@@ -289,7 +289,9 @@ play {
 apply plugin: 'com.google.gms.google-services'
 
 ktlint {
-    android.set(true)
+    android = true
+    verbose = true
+    enableExperimentalRules = true
     outputColorName.set("RED")
 }
 

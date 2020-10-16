@@ -13,14 +13,14 @@ data class UploadPlanterInfoParams(val planterInfoIds: List<Long>)
 
 class UploadPlanterInfoUseCase(
     private val dao: TreeTrackerDAO,
-    private val objectStorageClient: ObjectStorageClient
+    private val objectStorageClient: ObjectStorageClient,
+    private val gson: Gson
 ) :
     UseCase<UploadPlanterInfoParams, Unit>() {
 
     private fun log(msg: String) = Timber.tag("UploadPlanterInfoUseCase").d(msg)
 
     override suspend fun execute(params: UploadPlanterInfoParams) {
-
         val planterInfoList = params.planterInfoIds
             .mapNotNull { dao.getPlanterInfoById(it) }
             .filterNot { it.uploaded }
@@ -45,7 +45,7 @@ class UploadPlanterInfoUseCase(
             )
         }
 
-        val jsonBundle = Gson().toJson(UploadBundle(registrations = registrationRequests))
+        val jsonBundle = gson.toJson(UploadBundle(registrations = registrationRequests))
 
         // Create a hash ID to reference this upload bundle later
         val bundleId = jsonBundle.md5()

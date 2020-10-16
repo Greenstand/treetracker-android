@@ -28,7 +28,6 @@ class ConfigFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -36,9 +35,8 @@ class ConfigFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activity?.toolbarTitle?.setText(R.string.config_parameters)
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
+        requireActivity().toolbarTitle.setText(R.string.config_parameters)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         return inflater.inflate(R.layout.fragment_config, container, false)
     }
 
@@ -46,25 +44,35 @@ class ConfigFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         configViewModel
             .getLocationDataConfig()
-            .observe(viewLifecycleOwner, androidx.lifecycle.Observer { locationDataConfig ->
-                minTimeBtwnUpdatesVal.setText(locationDataConfig.minTimeBetweenUpdates.toString())
-                minDisBtwnUpdatesVal.setText(
-                    locationDataConfig.minDistanceBetweenUpdates.toString())
-                convergenceTimeoutVal.setText(locationDataConfig.convergenceTimeout.toString())
-                convergenceDataSizeVal.setText(locationDataConfig.convergenceDataSize.toString())
-                lonStdDevThresholdVal.setText(locationDataConfig.lonStdDevThreshold.toString())
-                latStdDevThresholdVal.setText(locationDataConfig.latStdDevThreshold.toString())
-            })
+            .observe(
+                viewLifecycleOwner,
+                androidx.lifecycle.Observer { locationDataConfig ->
+                    minTimeBtwnUpdatesVal.setText(
+                        locationDataConfig.minTimeBetweenUpdates.toString()
+                    )
+                    minDisBtwnUpdatesVal.setText(
+                        locationDataConfig.minDistanceBetweenUpdates.toString()
+                    )
+                    convergenceTimeoutVal.setText(locationDataConfig.convergenceTimeout.toString())
+                    convergenceDataSizeVal.setText(
+                        locationDataConfig.convergenceDataSize.toString()
+                    )
+                    lonStdDevThresholdVal.setText(locationDataConfig.lonStdDevThreshold.toString())
+                    latStdDevThresholdVal.setText(locationDataConfig.latStdDevThreshold.toString())
+                }
+            )
 
         saveConfigButton.setOnClickListener {
-            configViewModel.updateLocationDataConfig(LocationDataConfig(
-                minTimeBetweenUpdates = minTimeBtwnUpdatesVal.text.toString().toLong(),
-                minDistanceBetweenUpdates = minDisBtwnUpdatesVal.text.toString().toFloat(),
-                convergenceTimeout = convergenceTimeoutVal.text.toString().toLong(),
-                convergenceDataSize = convergenceDataSizeVal.text.toString().toInt(),
-                lonStdDevThreshold = lonStdDevThresholdVal.text.toString().toFloat(),
-                latStdDevThreshold = latStdDevThresholdVal.text.toString().toFloat()
-            ))
+            configViewModel.updateLocationDataConfig(
+                LocationDataConfig(
+                    minTimeBetweenUpdates = minTimeBtwnUpdatesVal.text.toString().toLong(),
+                    minDistanceBetweenUpdates = minDisBtwnUpdatesVal.text.toString().toFloat(),
+                    convergenceTimeout = convergenceTimeoutVal.text.toString().toLong(),
+                    convergenceDataSize = convergenceDataSizeVal.text.toString().toInt(),
+                    lonStdDevThreshold = lonStdDevThresholdVal.text.toString().toFloat(),
+                    latStdDevThreshold = latStdDevThresholdVal.text.toString().toFloat()
+                )
+            )
             val toast = Toast.makeText(activity, "Configuration Saved !!", Toast.LENGTH_SHORT)
             toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
             toast.show()

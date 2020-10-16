@@ -6,6 +6,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.gson.GsonBuilder
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -52,7 +53,8 @@ class LocationDataCapturerTest {
             user,
             locationUpdateManager,
             treeTrackerDAO,
-            configuration
+            configuration,
+            GsonBuilder().serializeNulls().create()
         )
     }
 

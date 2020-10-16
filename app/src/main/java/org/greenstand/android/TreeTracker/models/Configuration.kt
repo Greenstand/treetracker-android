@@ -1,16 +1,18 @@
 package org.greenstand.android.TreeTracker.models
 
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 
-class Configuration(private val preferences: Preferences) {
+class Configuration(
+    private val preferences: Preferences,
+    private val gson: Gson
+) {
 
     private val LOCATION_DATA_CONFIG_KEY: PrefKey = PrefKeys.SYSTEM_SETTINGS +
-            PrefKey("location-data-config")
-    private val gson = GsonBuilder().serializeNulls().create()
-    lateinit var locationDataConfig: LocationDataConfig
+        PrefKey("location-data-config")
+    var locationDataConfig: LocationDataConfig
         private set
 
     init {
