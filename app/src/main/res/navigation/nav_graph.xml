@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/nav_graph"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
             app:startDestination="@id/splashFragment2">
     <fragment
         android:id="@+id/splashFragment2"
@@ -50,7 +51,19 @@
     <fragment
         android:id="@+id/aboutFragment"
         android:name="org.greenstand.android.TreeTracker.fragments.AboutFragment"
-        android:label="AboutFragment"/>
+        android:label="AboutFragment">
+        <action
+            android:id="@+id/action_aboutFragment_to_adminLoginFragment"
+            app:destination="@+id/adminLoginFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/adminLoginFragment"
+        android:name="org.greenstand.android.TreeTracker.fragments.AdminLoginFragment">
+        <action
+            android:id="@+id/action_adminLoginFragment_to_configFragment"
+            app:destination="@id/configFragment" />
+    </dialog>
+
     <navigation android:id="@+id/login_flow_graph"
                 app:startDestination="@id/loginFragment">
         <fragment
@@ -133,4 +146,10 @@
         android:id="@+id/orgWallFragment"
         android:name="org.greenstand.android.TreeTracker.fragments.OrgWallFragment"
         android:label="OrgWallFragment" />
+    <fragment
+        android:id="@+id/configFragment"
+        android:name="org.greenstand.android.TreeTracker.fragments.ConfigFragment"
+        android:label="fragment_config"
+        tools:layout="@layout/fragment_config" />
+
 </navigation>
