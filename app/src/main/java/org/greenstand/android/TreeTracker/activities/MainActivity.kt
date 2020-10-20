@@ -27,6 +27,7 @@ import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
@@ -55,7 +56,14 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(stepCounter)
         lifecycle.addObserver(deviceOrientation)
-        languageSwitcher.applyCurrentLanguage(this)
+
+        // If justdiggit flavor, force swahili as language
+        if (FeatureFlags.TREE_HEIGHT_FEATURE_ENABLED) {
+            languageSwitcher.applyCurrentLanguage(this, Language.SWAHILI)
+        } else {
+            languageSwitcher.applyCurrentLanguage(this)
+        }
+
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)

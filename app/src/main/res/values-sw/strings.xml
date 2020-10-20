@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="organization_pre_fill" translatable="false">"LEAD Foundation"</string>
+
     <string name="hello">Hello TreeTracker!</string>
 
+    <!--Strings for the Login fragment-->
     <string name="greenstand_welcome_text" ><b>Karibu Tree Tracker</b></string>
     <string name="phone_text_hint" >Numba ya Simu</string>
     <string name="email_text_hint" >Barua Pepe (hiari)</string>
@@ -17,8 +21,8 @@
     <string name="policy_title_string" >II. Privacy Policy</string>
     <string name="cookies_title_string" >III. Cookies Use</string>
     <string name="show_details_string" >Show details</string>
-    <string name="accept_button_title" >ACCEPT</string>
-    <string name="sign_up_title" ><b>Sign Up</b></string>
+    <string name="accept_button_title" >kubali</string>
+    <string name="sign_up_title" ><b>kubali</b></string>
     <string name="terms_text" >Terms of Service text.....bla..bla</string>
     <string name="cookies_text" >Cookies goes here...bla...bla...</string>
     <string name="storagePermissQuestion" >Ruhusu<b> Tree Tracker</b> kufikia hifadhi yako?</string>
@@ -31,12 +35,13 @@
     <string name="two_of_three" >2 ya 3</string>
     <string name="three_of_three" >3 ya 3</string>
     <string name="invalid_identification" >Jaribu Tena. Waka numba ya simu yako au barua pepe</string>
+    <string name="take_a_selfie">picha yako</string>
     <string name="sync_started">Kutuma Kumeanza</string>
     <string name="sync_stopped">Kutuma kusimamishwa</string>
     <string name="nothing_to_sync">Hakuna miti ya kutuma</string>
     <string name="sync_successful">Imetumwa Imefanikiwa</string>
-    <string name="mark_gps">Weka Alama ya GPS</string>
-    <string name="gps_location_assessment">Tathmini Eneo</string>
+
+
     <string name="map">Ramani</string>
     <string name="uploaded">imepakiwa</string>
     <string name="action_settings">"Mipangilio "</string>
@@ -73,6 +78,8 @@
     <string name="cancel">Futa</string>
     <string name="reset_gps_location">Weka upya eneo la GPS</string>
     <string name="save">Hifadhi</string>
+    <string name="mark_gps">Weka Alama ya GPS</string>
+    <string name="gps_location_assessment">Tathmini Eneo</string>
     <string name="update">Sasisha</string>
     <string name="save_and_edit">Hifadhi na uhariri</string>
     <string name="do_you_want_to_sync_your_data_now">Unataka kusawazisha data yako sasa</string>
@@ -119,7 +126,7 @@
     <string name="resume">Rejea</string>
     <string name="latitude_longitude">Latitude Longitude</string>
     <string name="gps_accuracy">Usahihi wa GPS</string>
-    <string name="gps_accuracy_double_colon">Usahihi wa GPS: %d mita</string>
+    <string name="gps_accuracy_double_colon">Usahihi wa GPS</string>
     <string name="next_update_double_colon">Mwisho Mwisho:</string>
     <string name="days_to_next_update_double_colon">Siku hadi update ya pili:</string>
     <string name="enable_location_access">Wezesha upatikanaji wa eneo</string>
@@ -166,90 +173,99 @@
     <string name="user_with_that_email">Mtumiaji aliye na anwani hiyo ya barua pepe tayari yupo. \\n Safadhali chagua
         hatua chini au bonyeza nyuma ili kujaribu na anwani nyingine ya barua pepe.
     </string>
-    <string name="information_text">• Programu hii ya upandaji wa miti inafanywa kufuatilia miti iliyopandwa wakati wa
-        kusaidia watu na mashirika ambayo hupanda, kufuatilia na kulinda miti. • Chukua picha ya miti yako na kisha
-        usanike usawazishaji na data yako ya mti itapakiwa kwenye ramani kwenye www.treetracker.org. • Tembelea
-        www.GreenStand.org kwa maelezo zaidi kuhusu jinsi mfumo huu unavyofanya kazi. • Programu yako inahitaji mita 10
-        za usahihi kuchukua picha. • Barua pepe: info@greenstand.com kwa upatikanaji zaidi wa data yako, au kiungo cha
-        mtandao na miti yako maalum. • Programu hii iko chini ya maendeleo na Zaven Arra na timu yake ya kujitolea
-        katika GreenStand.org. • Waendelezaji wanaweza kupata msimbo wa mradi wa chanzo wazi kwenye
-        www.github.com/greenstand
-    </string>
+    <string name="information_text">
+            Programu hii ya Tracker ya Miti inafanywa kufuatilia eneo na ukuaji wa Miti Hai ya Kiisiki.
+\n\n
+Maelekezo:
+\n\n
+Baada ya kuingia, fanya picha ya mti wa Kisiki Hai na fimbo ya kupimia.
+\n\n
+Hakikisha fimbo kamili ya kupimwa inachukuliwa kwenye picha.
+\n\n
+Unaweza tu kuchukua picha ni usahihi GPS ni mita 10 au bora. Ikiwa sio kesi, tafadhali subiri muda mfupi au uende mahali ambapo unaweza kuona anga.
+\n\n
+Bonyeza darasa la urefu wa mti.
+\n\n
+Mara baada ya kukamilika na kuwa na huduma nzuri ya mtandao, hakikisha usawazisha data ili itapakiwe kwenye mtandao.
+\n\n
+Tembelea www.greenstand.org kwa maelezo zaidi juu ya programu.
+\n\n
+Wasiliana na Foundation Foundation, tembelea www.leadfoundation.org au www.justdiggit.org kwa maelezo zaidi juu ya programu ya Kisiki Hai.
+\n\n\n\n
+
+This Tree Tracker app is made to track the location and growth of Kisiki Hai Trees.
+\n\n
+
+Instructions:
+\n\n
+
+ After signing in, take a photo of the Kisiki Hai tree with the measuring stick.
+\n\n
+
+ Make sure the full measuring stick is captured in the photo.
+\n\n
+ You can only take a photo is the GPS accuracy is 10 meters or better. If this is not the case, please wait a short while or move to a spot where you can see the sky.
+\n\n
+
+Click the height class of the tree.
+\n\n
+
+Once you are done and have a good network reception, make sure you sync the data so it will be uploaded to the internet.
+\n\n
+
+Visit www.greenstand.org for more details on the app.
+\n\n
+
+Contact LEAD Foundation, visit www.leadfoundation.org or www.justdiggit.org for more info on the Kisiki Hai program.
+
+        </string>
 
     <string name="focus_warning">Tumegundua kwamba picha yako inaweza kuwa na rangi. Tafadhali kushinikiza kifungo nyuma na kurejesha picha, ikiwa ni lazima.</string>
-    <string name="take_a_selfie">picha yako</string>
-    <string name="tree_height_title">Chagua urefu wa mti</string>
 
+    <string name="tree_height_title">Chagua urefu wa mti</string>
     <string name="policy_text_blob">
-        Hapa GreenStand tunaheshimu usiri wako na tutafanya lolote kadri ya uwezo wetu kuendelea kulinda usiri huo.
-        Tutaweka wazi maelezo ya faragha ya GreenStand kutokana na mazoezi ya kusanya data.
-        \n\n
-        <b>Jinsi tunavyoshughulikia data:</b>
-        \n\n
-        Malengo yetu makuu ni kutumia data kwa kutengeneza mazingira bora na kupeana mibadala ya uokoaji uchumi katika
-        maeneo pweke. Tunaamini kuwa Sayansi na miradi yenye kutegemea data yenye tunasanya (yenye si ya kibinafsi)
-        yapaswa kupatikana bure kwa umma. Isipokuwa vinginevyo bila kupewa kibali hatutatoa habari nyeti kama habari
-        kukuhusu kama vile njia zako za mawasiliano. Ukusanyaji wa data yetu ya msingi unazingatia utafiti wa kisayansi
-        na kuunda mfumo wa uwazi kukusanya data kuhusiana na mchakato wa kuishi wa miti pamoja na taarifa yoyote
-        kuhusiana na mavuno ya utaratibu wa bidhaa zinazohusiana na miti. Maelezo haya ya mpandaji yanajumuisha picha
-        zenye maeneo halisi na ambazo zinazorekodi wakati na data nyingine ya mtumiaji.
-        \n\n
-        Kwa kutumia huduma zetu unakubali kutupa ruhusa kutumia data yako inayohusiana na mazingira na kuifanya
-        ipatikane kwa umma kupitia kwa tovuti yetu. Jina la mtumiaji la kwanza au jina la shirika linaweza onyeshwa
-        pamoja na data za mti unaolingana. Kwa idhini yako kwanza data zingine za mtumizi zinaweza wekwa wazi. Lakini
-        kwa ombi, data zote za mtumizi zinaweza fichwa zisionakane na umma. Nambari za simu \na barua pepe zinaweza
-        tumika na GreenStand kupigia wapanzi, lakini haziwezi pewa watu wengine bila ruhusa.
-        \n\n
-        <b>Miradi inayohusiana/ Data za Kisayansi:</b>
-        \n\n
-        GreenStand inadhibitisha data za wazi za kisayansi na sera na inakusudia kuzifanya data zozote za kisayansi
-        ambazo zinaweza kuwa na adhari chanya kwa mazingira na maisha ya ustawi wa jamii kupatikana kwa uwazi. Kwa
-        kutumia habari tunazozipata kupitia kwa simu za rununu, tovuti ama mfumo wetu wa data, tunakusudia kutambua
-        shida, suluhisho na mwenendo wa mazingira/afya ya kijamii. Kwa kutumia huduma zetu na software unakubali kutupa
-        ruhusa kuonyesha, kwa umma, miradi inayohusiana na habari za kisayansi. Ikiwa habari zilizokusanywa ni nyeti
-        unaweza wasiliana nasi kwa <a href="mailto:Info@greenstand.org">Info@greenstand.org</a> ilituweze kuchukua hatua zinazofaa.
-        \n\n
-        1. Jinsi tunavyo kusanya habari:
-        \n
-        Kwa kutumia simu ya rununu:
-        \n
-        Picha:zinarekodi wakati, zenye maeneo halisi
-        \n
-        Mtumizi hujaza habari yake: jina, barua pepe, jina la shirika, nambari ya simu, maelezo ya shamba
-        \n
-        Mpangilio wa Programu kwa watumiaji
-        \n
-        Kujua shida ya app: Jinsi ya simu, sababu ya goma
-        \n\n
-        2. Kwa kutumia tovuti
-        \n
-        Tunakusanya data ya mtumiaji:
-        \n
-        Hakuna ujumbe ama maelezo kuhusiana na mtuamiaji ama mashirika hayatapeanwa bila idhini yao. Tunatumia data zote
-        zinazohusiana na mtumiaji (jina kamili,namba za simu. barua pepe)salama kwa kutumia kielelezo cha kisasa
-        (cryptography). Majina ya wakulima wa miti na maelezo kuwahusu haitashirikwa kamwe bila idhini yao.
-        \n\n
-        Maelezo kukuhusu:Kwenye programu yetu ya tracker ya miti, tunahitaji jina,barua pepe na kwa hiari nambari ya
-        simu na jina ya shirika. Data yote ya kibinafsi imehifadhiwa kwenye database salama.
-        \n\n
-        Watumiaji wa Programu za simu za rununu: programu zetu za simu ya mikono hukusanya maelezo ya kibinafsi;habari
-        za mtumiaji;jina, anwani ya barua pepe,jina la shirika na nambari ya simu.
-        \n\n
-        <b>Picha za mtumiaji:</b>
-        \n\n
-        Programu ya GreenStand ya kufuatilia mti hutumika kwenye mkusanyiko wa picha zilizo rekodi wakati na maeneo
-        halisi. Habari hizi huhifadhiwa katika database salama ambazo huonyeshwa katika mfumo wa treemap. Pia hutumia
-        habari hizi kuzalisha takwimu zinazohusiana na upandaji wa miti. Tunavutiwa tu na picha zinazohusiana na
-        miti,tafadhali usitume picha za aina nyingine. Kwa utumiaji bora wa mfumo huu,picha zote zilizochukuliwa
-        zitahusiana na data za mazingira na GreenStand haizingatii na kutafsiri picha zinazowekwa kwenye mtandao
-        kama”maelezo ya mtumiaji”. Kwa kutumia programu yetu ya simu ya rununu unakubali kutupa ruhusa kutumia picha
-        zako.
-        \n\n
-        <b>Mabadiliko ya sera:</b>
-        \n\n
-        Ni nia yetu ya kushikilia kanuni za sera hii,lakini tunaelewa kunawezakana kuwa na haja ya kubadili mara kwa
-        mara. Mabadiliko yoyote yatachapishwa kwa tovuti yetu haraka iwezekanavyo.
-    </string>
+            Hapa Justdiggit tunaheshimu usiri wako na tutafanya lolote kadri ya uwezo wetu kuendelea kulinda usiri huo. Tutaweka wazi maelezo ya faragha ya GreenStand kutokana na mazoezi ya kusanya data.
+            \n\n
+            <b>Jinsi tunavyoshughulikia data:</b>
+            \n\n
+            Malengo yetu makuu ni kutumia data kwa kutengeneza mazingira bora na kupeana mibadala ya uokoaji uchumi katika maeneo pweke.Tunaamini kuwa Sayansi na miradi yenye kutegemea data yenye tunasanya (yenye si ya kibinafsi) yapaswa kupatikana bure kwa umma.Isipokuwa vinginevyo bila kupewa kibali hatutatoa habari nyeti kama habari kukuhusu kama vile njia zako za mawasiliano.Ukusanyaji wa data yetu ya msingi unazingatia utafiti wa kisayansi na kuunda mfumo wa uwazi kukusanya data kuhusiana na mchakato wa kuishi wa miti pamoja na taarifa yoyote kuhusiana na mavuno ya utaratibu wa bidhaa zinazohusiana na miti.Maelezo haya ya mpandaji yanajumuisha picha zenye maeneo halisi na ambazo zinazorekodi wakati na data nyingine ya mtumiaji.
+            \n\n
+            Kwa kutumia huduma zetu unakubali kutupa ruhusa kutumia data yako inayohusiana na mazingira na kuifanya ipatikane kwa umma kupitia kwa tovuti yetu. Jina la mtumiaji la kwanza au jina la shirika linaweza onyeshwa pamoja na data za mti unaolingana. Kwa idhini yako kwanza data zingine za mtumizi zinaweza wekwa wazi. Lakini kwa ombi, data zote za mtumizi zinaweza fichwa zisionakane na umma. Nambari za simu /na barua pepe zinaweza tumika na GreenStand kupigia wapanzi, lakini haziwezi pewa watu wengine bila ruhusa.
+            \n\n
+            Miradi inayohusiana/ Data za Kisayansi:
+            \n\n
+            Justdiggit na GreenStand inadhibitisha data za wazi za kisayansi na sera na inakusudia kuzifanya data zozote za kisayansi ambazo zinaweza kuwa na adhari chanya kwa mazingira na maisha ya ustawi wa jamii kupatikana kwa uwazi. Kwa kutumia habari tunazozipata kupitia kwa simu za rununu, tovuti ama mfumo wetu wa data, tunakusudia kutambua shida, suluhisho na mwenendo wa mazingira/afya ya kijamii.Kwa kutumia huduma zetu na software unakubali kutupa ruhusa kuonyesha, kwa umma, miradi inayohusiana na habari za kisayansi. Ikiwa habari zilizokusanywa ni nyeti unaweza wasiliana nasi kwa app@justdiggit.org ao Info@greenstand.org ilituweze kuchukua hatua zinazofaa.
+            \n\n
+            <b>Jinsi tunavyo kusanya habari:</b>
+            \n\n
+            Kwa kutumia simu ya rununu:
+            \n\n
+            <b>Picha:zinarekodi wakati, zenye maeneo halisi</b>
+            \n\n
+            Mtumizi hujaza habari yake: jina, barua pepe, jina la shirika, nambari ya simu, maelezo ya shamba
+            \n\n
+            Mpangilio wa Programu kwa watumiaji
+            \n\n
+            Application analytics: software crash reports, phone make and model.
+            \n\n
+            2.Kwa kutumia tovuti
+            \n\n
+            <b>Tunakusanya data ya mtumiaji:</b>
+            \n\n
+            Hakuna ujumbe ama maelezo kuhusiana na mtuamiaji ama mashirika hayatapeanwa bila idhini yao.Tunatumia data zote zinazohusiana na mtumiaji (jina kamili,namba za simu.barua pepe)salama kwa kutumia kielelezo cha kisasa (cryptography).Majina ya wakulima wa miti na maelezo kuwahusu haitashirikwa kamwe bila idhini yao.
+            \n\n
+            Maelezo kukuhusu:Kwenye programu yetu ya tracker ya miti, tunahitaji jina,barua pepe na kwa hiari nambari ya simu na jina ya shirika. Data yote ya kibinafsi imehifadhiwa kwenye database salama.
+            \n\n
+            Watumiaji wa Programu za simu za rununu: programu zetu za simu ya mikono hukusanya maelezo ya kibinafsi;habari za mtumiaji;jina, anwani ya barua pepe,jina la shirika na nambari ya simu.
+            \n\n
+            <b>Picha za mtumiaji :</b>
+            \n\n
+            Programu ya GreenStand ya kufuatilia mti hutumika kwenye mkusanyiko wa picha zilizo rekodi wakati na maeneo halisi.Habari hizi huhifadhiwa katika database salama ambazo huonyeshwa katika mfumo wa treemap. Pia hutumia habari hizi kuzalisha takwimu zinazohusiana na upandaji wa miti.Tunavutiwa tu na picha zinazohusiana na miti,tafadhali usitume picha za aina nyingine. Kwa utumiaji bora wa mfumo huu,picha zote zilizochukuliwa zitahusiana na data za mazingira na Justdiggit na GreenStand haizingatii na kutafsiri picha zinazowekwa kwenye mtandao kama”maelezo ya mtumiaji”.Kwa kutumia programu yetu ya simu ya rununu unakubali kutupa ruhusa kutumia picha zako.
+            \n\n
+            <b>Mabadiliko ya sera:</b>
+            \n\n
+            Ni nia yetu ya kushikilia kanuni za sera hii,lakini tunaelewa kunawezakana kuwa na haja ya kubadili mara kwa mara. Mabadiliko yoyote yatachapishwa kwa tovuti yetu haraka iwezekanavyo.
+        </string>
 
 </resources>
 
