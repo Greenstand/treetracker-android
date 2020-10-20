@@ -282,7 +282,10 @@ play {
 apply plugin: 'com.google.gms.google-services'
 
 ktlint {
+    version.set("0.22.0")
+    verbose.set(true)
     android.set(true)
+    outputToConsole.set(true)
     outputColorName.set("RED")
 }
 

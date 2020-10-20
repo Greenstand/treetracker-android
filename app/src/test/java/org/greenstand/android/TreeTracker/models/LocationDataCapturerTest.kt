@@ -6,6 +6,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.gson.GsonBuilder
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -32,6 +33,8 @@ class LocationDataCapturerTest {
     private lateinit var locationUpdateManager: LocationUpdateManager
 
     @MockK(relaxed = true)
+    private lateinit var configuration: Configuration
+    @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var preferences: Preferences
 
@@ -45,10 +48,13 @@ class LocationDataCapturerTest {
     fun setup() {
         MockKAnnotations.init(this)
         preferences = Preferences(sharedPreferences)
+        every { configuration.locationDataConfig } returns LocationDataConfig()
         locationDataCapturer = LocationDataCapturer(
             user,
             locationUpdateManager,
-            treeTrackerDAO
+            treeTrackerDAO,
+            configuration,
+            GsonBuilder().serializeNulls().create()
         )
     }
 

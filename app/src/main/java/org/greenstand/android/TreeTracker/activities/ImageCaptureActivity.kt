@@ -118,6 +118,11 @@ class ImageCaptureActivity : AppCompatActivity() {
         CameraX.bindToLifecycle(this, preview, imageCapture)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        deviceOrientation.disable()
+    }
+
     private fun setupPreview(captureSelfie: Boolean): Preview {
 
         val lensFacing = if (captureSelfie) CameraX.LensFacing.FRONT else CameraX.LensFacing.BACK
