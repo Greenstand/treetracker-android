@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -161,7 +162,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnClickListener, OnMapRea
                     // Disable the addTreeButton below to avoid triggering the onClick listener
                     // more than one once.
                     addTreeButton.isEnabled = false
-                    GlobalScope.launch(Dispatchers.Main) {
+                    lifecycleScope.launch {
                         if (vm.requiresLogin()) {
                             findNavController().navigate(
                                 MapsFragmentDirections.actionGlobalLoginFlowGraph())

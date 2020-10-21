@@ -26,7 +26,7 @@ class StepCounter(
 
     var absoluteStepCountOnTreeCapture: Int?
         get() = preferences.getInt(ABS_STEP_COUNT_ON_TREE_CAPTURE)
-        set(value) = preferences
+        private set(value) = preferences
             .edit().putInt(ABS_STEP_COUNT_ON_TREE_CAPTURE, value ?: 0).apply()
 
     fun enable() {
@@ -39,6 +39,10 @@ class StepCounter(
     fun disable() {
         Timber.d("StepCounter: disable - unregister listener")
         sensorManager.unregisterListener(stepCountEventListener)
+    }
+
+    fun snapshotAbsoluteStepCountOnTreeCapture() {
+        absoluteStepCountOnTreeCapture = absoluteStepCount
     }
 
     inner class StepCountEventListener : SensorEventListener {
@@ -56,8 +60,8 @@ class StepCounter(
 
     companion object {
         private val BASE_KEY = PrefKeys.SESSION + PrefKey("steps")
-        val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
-        val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
+        private val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
+        private val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
                 PrefKey("abs-step-count-on-tree-capture")
     }
 }

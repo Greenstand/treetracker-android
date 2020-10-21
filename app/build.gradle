@@ -23,20 +23,11 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 def loadExtraProperties(String fileName) {
     def props = new Properties()
-    if (System.getenv('CI_BITRISE') == "true") {
-        URL propFile = new URL(System.getenv("BITRISEIO_treetracker_URL"))
-        BufferedReader input = new BufferedReader(
-                new InputStreamReader(propFile.openStream()))
-        props.load(input)
-    } else {
-        props.load(new FileInputStream(fileName))
-    }
-
+    props.load(new FileInputStream(fileName))
     props.each { key, val ->
-        project.setProperty(key, val)
+       project.setProperty(key, val)
     }
 }
-
 
 loadExtraProperties("treetracker.keys.properties")
 
@@ -72,6 +63,8 @@ android {
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
         buildConfigField 'Boolean', 'USE_AWS_S3', "false"
         buildConfigField 'Boolean', 'ORG_LINK', "false"
+
+        resValue "string", "maps_api_key", "\"${maps_api_key}\""
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -289,7 +282,10 @@ play {
 apply plugin: 'com.google.gms.google-services'
 
 ktlint {
+    version.set("0.22.0")
+    verbose.set(true)
     android.set(true)
+    outputToConsole.set(true)
     outputColorName.set("RED")
 }
 

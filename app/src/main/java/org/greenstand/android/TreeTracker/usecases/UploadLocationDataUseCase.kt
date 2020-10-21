@@ -10,7 +10,8 @@ import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 
 class UploadLocationDataUseCase(
-    private val dao: TreeTrackerDAO
+    private val dao: TreeTrackerDAO,
+    private val gson: Gson
 ) : UseCase<Unit, Boolean>() {
 
     val storageClient = ObjectStorageClient.instance()
@@ -18,7 +19,6 @@ class UploadLocationDataUseCase(
     override suspend fun execute(params: Unit): Boolean {
         try {
             withContext(Dispatchers.IO) {
-                val gson = Gson()
                 val locationEntities = dao.getTreeLocationData()
                 val locations = locationEntities.map { it.locationDataJson }
                 val treeLocJsonArray = gson.toJson(locations)
@@ -37,10 +37,10 @@ class UploadLocationDataUseCase(
         } catch (ace: AmazonClientException) {
             Timber.e(
                 "Caught an AmazonClientException, which " +
-                        "means the client encountered " +
-                        "an internal error while trying to " +
-                        "communicate with S3, " +
-                        "such as not being able to access the network."
+                    "means the client encountered " +
+                    "an internal error while trying to " +
+                    "communicate with S3, " +
+                    "such as not being able to access the network."
             )
             Timber.e("Error Message: ${ace.message}")
             return false
