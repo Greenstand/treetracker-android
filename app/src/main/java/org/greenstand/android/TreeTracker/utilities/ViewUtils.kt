@@ -8,7 +8,6 @@ import android.view.HapticFeedbackConstants
 import android.view.View
 import com.google.android.material.card.MaterialCardView
 
-
 fun View.animateColor(toColor: Int, fromColor: Int = color, durationMsec: Long = 300) {
     ValueAnimator.ofObject(ArgbEvaluator(), fromColor, toColor).apply {
         duration = durationMsec
@@ -17,11 +16,10 @@ fun View.animateColor(toColor: Int, fromColor: Int = color, durationMsec: Long =
     }
 }
 
-
 val View.color: Int
     get() {
         val back = background
-        return when(back) {
+        return when (back) {
             is ColorDrawable -> back.color
             is ColorStateList -> (back.current as ColorDrawable).color
             else -> 0
@@ -32,7 +30,6 @@ val MaterialCardView.cardColor: Int
     get() {
         return cardBackgroundColor.defaultColor
     }
-
 
 fun View.vibrate() {
     performHapticFeedback(
