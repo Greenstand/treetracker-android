@@ -378,10 +378,11 @@ object ImageUtils {
 
         /* Decode the JPEG file into a Bitmap */
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
-
+        val matrix = Matrix()
+        matrix.setRotate(90f) // Offsets the -90 degree rotation on resize
         val rotatedBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
-            bmOptions.outWidth, bmOptions.outHeight, Matrix(), true
+            bmOptions.outWidth, bmOptions.outHeight, matrix, true
         )
 
         val compressionQuality = 100
@@ -434,7 +435,6 @@ object ImageUtils {
             bitmap, 0, 0,
             bmOptions.outWidth, bmOptions.outHeight, Matrix(), true
         )
-
         val compressionQuality = 80
         val encodedImage: String
         val byteArrayBitmapStream = ByteArrayOutputStream()
