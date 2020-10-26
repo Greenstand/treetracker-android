@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
@@ -50,17 +49,6 @@ class ConvergenceTest {
             locations.add(location)
         }
         convergence = Convergence(locations.subList(0, 5))
-    }
-
-    @Test
-    fun noConvergenceUntilThresholdDataSize() {
-        // instantiate with locations with size less than required for convergence computation
-        convergence = Convergence(locations.subList(0, 3))
-
-        convergence.computeConvergence()
-
-        assertNull(convergence.longitudeConvergence)
-        assertNull(convergence.latitudeConvergence)
     }
 
     @Test

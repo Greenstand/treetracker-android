@@ -61,9 +61,9 @@ class TreeHeightViewModel(
                     toastMessageLiveData.postValue(R.string.tree_saved)
                     analytics.treeHeightMeasured(treeColor!!)
                     onFinishedLiveData.postValue(Unit)
-                    // Assign the current absolute step count to 'absoluteStepCountOnTreeCapture'
+                    // Snapshot the current absolute step count to 'absoluteStepCountOnTreeCapture'
                     // variable to calculate future step count deltas
-                    stepCounter.absoluteStepCountOnTreeCapture = stepCounter.absoluteStepCount
+                    stepCounter.snapshotAbsoluteStepCountOnTreeCapture()
                     stepCounter.disable()
                 }
                 ?: run { toastMessageLiveData.postValue(R.string.tree_height_save_error) }

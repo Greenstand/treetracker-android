@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import java.util.Deque
 import java.util.LinkedList
 import java.util.UUID
@@ -17,19 +17,19 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
-import org.greenstand.android.TreeTracker.utilities.LocationDataConfig
-import org.greenstand.android.TreeTracker.utilities.LocationDataConfig.CONVERGENCE_DATA_SIZE
-import org.greenstand.android.TreeTracker.utilities.LocationDataConfig.LAT_STD_DEV
-import org.greenstand.android.TreeTracker.utilities.LocationDataConfig.LONG_STD_DEV
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
 class LocationUpdateManager(
     private val locationManager: LocationManager,
-    private val context: Context
+    private val context: Context,
+    private val configuration: Configuration
 ) {
 
     private val locationUpdates = MutableLiveData<Location?>()
@@ -69,10 +69,11 @@ class LocationUpdateManager(
     fun startLocationUpdates(): Boolean {
         return if (hasLocationPermissions()) {
             if (!isUpdating) {
+                val locationDataConfig = configuration.locationDataConfig
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
-                    LocationDataConfig.MIN_TIME_BTWN_UPDATES,
-                    LocationDataConfig.MIN_DISTANCE_BTW_UPDATES,
+                    locationDataConfig.minTimeBetweenUpdates,
+                    locationDataConfig.minDistanceBetweenUpdates,
                     locationUpdateListener
                 )
                 isUpdating = true
@@ -95,6 +96,23 @@ class LocationUpdateManager(
         return true
     }
 
+    /**
+     *  Meant to be used to dynamically update the location update request with
+     *  updated values for min time between updates and min distance between updates.
+     */
+    fun refreshLocationUpdateRequest() {
+        val locationDataConfig = configuration.locationDataConfig
+        locationManager.removeUpdates(locationUpdateListener)
+        if (hasLocationPermissions()) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                locationDataConfig.minTimeBetweenUpdates,
+                locationDataConfig.minDistanceBetweenUpdates,
+                locationUpdateListener
+            )
+        }
+    }
+
     fun isLocationEnabled(): Boolean {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
@@ -106,7 +124,6 @@ class LocationUpdateManager(
     }
 
     private fun hasLocationPermissions(): Boolean {
-
         val fineLocationPermission = ContextCompat.checkSelfPermission(
             context,
             android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -115,8 +132,10 @@ class LocationUpdateManager(
             context,
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         )
-        return (fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
-                coarseLocationPermission == PackageManager.PERMISSION_GRANTED)
+        return (
+            fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED
+            )
     }
 }
 
@@ -140,9 +159,10 @@ fun Location?.accuracyStatus(): Accuracy {
 class LocationDataCapturer(
     private val userManager: User,
     private val locationUpdateManager: LocationUpdateManager,
-    private val treeTrackerDAO: TreeTrackerDAO
+    private val treeTrackerDAO: TreeTrackerDAO,
+    private val configuration: Configuration,
+    private val gson: Gson
 ) {
-    private val gson = GsonBuilder().serializeNulls().create()
     private var locationsDeque: Deque<Location> = LinkedList<Location>()
     var generatedTreeUuid: UUID? = null
         private set
@@ -153,14 +173,17 @@ class LocationDataCapturer(
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
 
-            if (isInTreeCaptureMode() && !isConvergenceWithinRange()) {
-
-                val evictedLocation: Location? = if (locationsDeque.size >= CONVERGENCE_DATA_SIZE)
+            val locationDataConfig = configuration.locationDataConfig
+            val convergenceDataSize = locationDataConfig.convergenceDataSize
+            if (isInTreeCaptureMode()) {
+                val evictedLocation: Location? = if (locationsDeque.size >= convergenceDataSize)
                     locationsDeque.pollFirst() else null
                 locationsDeque.add(location)
 
-                if (locationsDeque.size >= CONVERGENCE_DATA_SIZE) {
-                    if (convergence == null) {
+                if (locationsDeque.size >= convergenceDataSize) {
+                    if (convergence == null ||
+                        convergence?.locations!!.size < convergenceDataSize
+                    ) {
                         convergence = Convergence(locationsDeque.toList())
                         convergence?.computeConvergence()
                     } else {
@@ -168,22 +191,26 @@ class LocationDataCapturer(
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
-                                "[${convergence?.longitudeConvergence?.mean}]. \n" +
-                                "Longitude standard deviation value: " +
-                                "[${convergence?.longitudeConvergence?.standardDeviation}]"
+                            "[${convergence?.longitudeConvergence?.mean}]. \n" +
+                            "Longitude standard deviation value: " +
+                            "[${convergence?.longitudeConvergence?.standardDeviation}]"
                     )
                     Timber.d(
                         "Convergence: Latitude Mean: " +
-                                "[${convergence?.latitudeConvergence?.mean}]. \n " +
-                                "Latitude standard deviation value: " +
-                                "[${convergence?.latitudeConvergence?.standardDeviation}]"
+                            "[${convergence?.latitudeConvergence?.mean}]. \n " +
+                            "Latitude standard deviation value: " +
+                            "[${convergence?.latitudeConvergence?.standardDeviation}]"
                     )
 
                     val longStdDev = convergence?.longitudinalStandardDeviation()
                     val latStdDev = convergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
-                        if (longStdDev < LONG_STD_DEV && latStdDev < LAT_STD_DEV) {
+                        if (longStdDev < locationDataConfig.lonStdDevThreshold &&
+                            latStdDev < locationDataConfig.latStdDevThreshold
+                        ) {
                             convergenceStatus = ConvergenceStatus.CONVERGED
+                        } else {
+                            convergenceStatus = ConvergenceStatus.NOT_CONVERGED
                         }
                     }
                 }
@@ -211,6 +238,20 @@ class LocationDataCapturer(
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 
+    suspend fun converge() {
+        try {
+            val locationDataConfig = configuration.locationDataConfig
+            withTimeout(locationDataConfig.convergenceTimeout) {
+                while (!isConvergenceWithinRange()) {
+                    delay(locationDataConfig.minTimeBetweenUpdates)
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.d("Convergence request timed out")
+            markConvergenceTimeout()
+        }
+    }
+
     fun isConvergenceWithinRange(): Boolean = ConvergenceStatus.CONVERGED == convergenceStatus
 
     /*
@@ -218,11 +259,11 @@ class LocationDataCapturer(
      * occur and the waiting period exceeds the threshold configured, this method is called
      * to mark the convergence status as timed out for location data pipeline analysis.
      */
-    fun markConvergenceTimeout() {
+    private fun markConvergenceTimeout() {
         convergenceStatus = ConvergenceStatus.TIMED_OUT
     }
 
-    fun isInTreeCaptureMode(): Boolean {
+    private fun isInTreeCaptureMode(): Boolean {
         return generatedTreeUuid != null
     }
 
@@ -260,7 +301,7 @@ class Convergence(val locations: List<Location>) {
     }
 
     /**
-     * Implementation based on the following answer found here since this seems to be a good
+     * Implementation based on the following answer found in stackexchange since it seems to be a good
      * approximation to the running window standard deviation calculation. Considered Welford's
      * method of computing variance but it calculates running cumulative variance but we need
      * sliding window computation here.
@@ -279,19 +320,17 @@ class Convergence(val locations: List<Location>) {
         newValue: Double
     ): ConvergenceStats {
         val newMean = currentStats.mean -
-                        (replacingValue / CONVERGENCE_DATA_SIZE) +
-                        (newValue / CONVERGENCE_DATA_SIZE)
+            (replacingValue / locations.size) +
+            (newValue / locations.size)
         val newVariance = currentStats.variance -
-                        ((replacingValue - currentStats.mean).pow(2.0) / CONVERGENCE_DATA_SIZE) +
-                        ((newValue - newMean).pow(2.0) / CONVERGENCE_DATA_SIZE)
+            ((replacingValue - currentStats.mean).pow(2.0) / locations.size) +
+            ((newValue - newMean).pow(2.0) / locations.size)
         val newStdDev = sqrt(newVariance)
         return ConvergenceStats(newMean, newVariance, newStdDev)
     }
 
     fun computeConvergence() {
         Timber.d("Convergence: Evaluating initial convergence stats")
-        if (locations.size < CONVERGENCE_DATA_SIZE)
-            return
         val longitudeData = locations.map { it.longitude }.toList()
         longitudeConvergence = computeStats(longitudeData)
 

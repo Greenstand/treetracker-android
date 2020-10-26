@@ -52,15 +52,19 @@ class NewTreeFragment :
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         with(activity as AppCompatActivity) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
             toolbarTitle.setText(R.string.new_tree)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
+        val progressBar = view.findViewById<View>(R.id.progressBar)
+
         fragmentNewTreeNote.visibleIf(vm.isNoteEnabled)
         fragmentNewTreeDBH.visibleIf(vm.isDbhEnabled)
+        fragmentNewTreeGPS.visibleIf(vm.isDbhEnabled)
+
+        fragmentNewTreeSave.isEnabled = !vm.isDbhEnabled
 
         if (vm.isTreeHeightEnabled) {
             fragmentNewTreeSave.text = getString(R.string.next)
@@ -97,10 +101,24 @@ class NewTreeFragment :
 
         fragmentNewTreeSave.setOnClickListener {
             it.vibrate()
+            vm.newTreePhotoCaptured()
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 vm.createTree(
                     fragmentNewTreeNote.text.toString(),
                     fragmentNewTreeDBH.text.toString())
+            }
+        }
+
+        fragmentNewTreeGPS.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                progressBar.visibility = View.VISIBLE
+                progressBar.setOnClickListener {
+                    // Do nothing. We want to intercept taps on screen while loading is shown
+                }
+                vm.waitForConvergence()
+                progressBar.setOnClickListener(null)
+                progressBar.visibility = View.GONE
+                fragmentNewTreeSave.isEnabled = true
             }
         }
     }
@@ -119,8 +137,6 @@ class NewTreeFragment :
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        vm.newTreePhotoCaptured()
         if (data != null && resultCode == Activity.RESULT_OK) {
             vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
 

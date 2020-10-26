@@ -8,9 +8,12 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.GsonBuilder
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
+import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
@@ -37,6 +40,7 @@ import org.greenstand.android.TreeTracker.usecases.UploadPlanterUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadTreeBundleUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
@@ -61,11 +65,13 @@ val appModule = module {
 
     viewModel { DataViewModel(get(), get(), get(), get()) }
 
-    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { MapViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { TreePreviewViewModel(get(), get()) }
 
-    viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+
+    viewModel { ConfigViewModel(get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -85,7 +91,7 @@ val appModule = module {
 
     single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
 
-    single { LocationUpdateManager(get(), get()) }
+    single { LocationUpdateManager(get(), get(), get()) }
 
     single { ObjectStorageClient.instance() }
 
@@ -93,6 +99,8 @@ val appModule = module {
 
     single {
         LocationDataCapturer(
+            get(),
+            get(),
             get(),
             get(),
             get()
@@ -107,13 +115,19 @@ val appModule = module {
 
     single { StepCounter(get(), get()) }
 
+    single { DeviceOrientation(get()) }
+
+    single { Configuration(get(), get()) }
+
+    single { GsonBuilder().serializeNulls().create() }
+
     factory { PreferencesMigrator(get(), get()) }
 
     factory { LanguageSwitcher(get()) }
 
     factory { UploadImageUseCase(get()) }
 
-    factory { UploadLocationDataUseCase(get()) }
+    factory { UploadLocationDataUseCase(get(), get()) }
 
     factory { UploadPlanterUseCase(get(), get(), get(), get()) }
 
@@ -131,11 +145,11 @@ val appModule = module {
 
     factory { PlanterCheckInUseCase(get(), get()) }
 
-    factory { UploadPlanterInfoUseCase(get(), get()) }
+    factory { UploadPlanterInfoUseCase(get(), get(), get()) }
 
     factory { CreateTreeRequestUseCase(get()) }
 
-    factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get()) }
+    factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get(), get()) }
 
     factory { RemoveLocalTreeImagesWithIdsUseCase(get()) }
 

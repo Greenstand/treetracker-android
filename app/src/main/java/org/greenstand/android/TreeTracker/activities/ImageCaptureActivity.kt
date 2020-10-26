@@ -9,13 +9,19 @@ import android.view.TextureView
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraX
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureConfig
+import androidx.camera.core.Preview
+import androidx.camera.core.PreviewConfig
 import java.io.File
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class ImageCaptureActivity : AppCompatActivity() {
@@ -23,6 +29,7 @@ class ImageCaptureActivity : AppCompatActivity() {
     private lateinit var viewFinder: TextureView
     private lateinit var imageCaptureButton: ImageButton
     private lateinit var toolbarTitle: TextView
+    private val deviceOrientation by inject<DeviceOrientation>()
 
     companion object {
         private const val SELFIE_MODE = "SELFIE_MODE"
@@ -71,6 +78,7 @@ class ImageCaptureActivity : AppCompatActivity() {
         // Build the image capture use case and attach button click listener
         val imageCapture = ImageCapture(imageCaptureConfig)
         imageCaptureButton.setOnClickListener {
+            deviceOrientation.takeSnapshotAndDisable()
             imageCapture.takePicture(
                 file,
                 object : ImageCapture.OnImageSavedListener {
@@ -84,7 +92,7 @@ class ImageCaptureActivity : AppCompatActivity() {
                     }
 
                     override fun onImageSaved(file: File) {
-                        ImageUtils.resizedImage(file.absolutePath)
+                        ImageUtils.resizeImage(file.absolutePath)
                         Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
                         val focusMetric = testFocusQuality(file)
 
@@ -105,9 +113,15 @@ class ImageCaptureActivity : AppCompatActivity() {
                         setResult(Activity.RESULT_OK, data)
                         finish()
                     }
-                })
+                }
+            )
         }
         CameraX.bindToLifecycle(this, preview, imageCapture)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        deviceOrientation.disable()
     }
 
     private fun setupPreview(captureSelfie: Boolean): Preview {

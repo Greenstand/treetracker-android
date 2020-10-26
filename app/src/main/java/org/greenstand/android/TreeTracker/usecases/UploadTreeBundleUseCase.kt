@@ -15,14 +15,14 @@ class UploadTreeBundleUseCase(
     private val objectStorageClient: ObjectStorageClient,
     private val createTreeRequestUseCase: CreateTreeRequestUseCase,
     private val removeLocalImagesWithIdsUseCase: RemoveLocalTreeImagesWithIdsUseCase,
-    private val dao: TreeTrackerDAO
+    private val dao: TreeTrackerDAO,
+    private val gson: Gson
 ) : UseCase<UploadTreeBundleParams, Unit>() {
 
     fun log(msg: String) = Timber.tag("UploadTreeBundleUseCase").d(msg)
 
     override suspend fun execute(params: UploadTreeBundleParams) {
         coroutineScope {
-
             log("Starting bulk upload for ${params.treeIds.size} trees")
 
             val trees = dao.getTreeCapturesByIds(params.treeIds)
@@ -58,7 +58,7 @@ class UploadTreeBundleUseCase(
                 )
             }
 
-            val jsonBundle = Gson().toJson(UploadBundle(trees = treeRequestList))
+            val jsonBundle = gson.toJson(UploadBundle(trees = treeRequestList))
 
             // Create a hash ID to reference this upload bundle later
             val bundleId = jsonBundle.md5()
@@ -72,7 +72,8 @@ class UploadTreeBundleUseCase(
 
             log("Deleting all local image files for uploaded trees...")
             removeLocalImagesWithIdsUseCase.execute(
-                RemoveLocalTreeImagesWithIdsParams(trees.map { it.id }))
+                RemoveLocalTreeImagesWithIdsParams(trees.map { it.id })
+            )
 
             dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
         }

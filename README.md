@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Greenstand/treetracker-android.svg?branch=master)](https://travis-ci.com/Greenstand/treetracker-android)
+![Build Status](https://github.com/Greenstand/treetracker-android/workflows/Treetracker%20Android%20App%20CI/badge.svg?branch=master)
 
 # Treetracker Android
 
@@ -38,6 +38,9 @@ For development, select the build variant _dev_. This build variant is configure
 &nbsp;
 
 ## QC Deployment
+
+Note: QC deployment pipeline are about to be changed and moved to Github actions from Travis. The 
+following details will be updated once the change is made.
 
 This repo has been configured to be easily deployed to QC through Travis. The process, however, is still a manual.
 

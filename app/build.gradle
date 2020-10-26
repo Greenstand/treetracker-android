@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.27.0'
+        classpath 'io.fabric.tools:gradle:1.28.0'
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
@@ -23,37 +23,29 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 def loadExtraProperties(String fileName) {
     def props = new Properties()
-    if (System.getenv('CI_BITRISE') == "true") {
-        URL propFile = new URL(System.getenv("BITRISEIO_treetracker_URL"))
-        BufferedReader input = new BufferedReader(
-                new InputStreamReader(propFile.openStream()))
-        props.load(input)
-    } else {
-        props.load(new FileInputStream(fileName))
-    }
-
+    props.load(new FileInputStream(fileName))
     props.each { key, val ->
-        project.setProperty(key, val)
+       project.setProperty(key, val)
     }
 }
-
 
 loadExtraProperties("treetracker.keys.properties")
 
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.0'
     playAccountConfigs {
         defaultAccountConfig {
             jsonFile = file('keys.json')
         }
     }
+
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 125
+        targetSdkVersion 29
+        versionCode 124
         versionName "1.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -72,6 +64,8 @@ android {
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
         buildConfigField 'Boolean', 'USE_AWS_S3', "false"
         buildConfigField 'Boolean', 'ORG_LINK', "false"
+
+        resValue "string", "maps_api_key", "\"${maps_api_key}\""
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -137,6 +131,21 @@ android {
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
+
+        beta {
+            applicationIdSuffix ".test"
+            resValue "string", "app_name", "Tree Tracker(test)"
+            buildConfigField "Boolean", "GPS_ACCURACY", "true"
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-test-batch-uploads"'
+            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
@@ -219,7 +228,7 @@ repositories {
 dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
-    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+    compile 'com.google.maps.android:android-maps-utils:0.5+'
 
     //implementation 'com.amazonaws:aws-java-sdk:1.11.584'
     // 2.0: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-project-gradle.html
@@ -302,7 +311,9 @@ play {
 apply plugin: 'com.google.gms.google-services'
 
 ktlint {
+    version.set("0.39.0")
     android.set(true)
+    outputToConsole.set(true)
     outputColorName.set("RED")
 }
 

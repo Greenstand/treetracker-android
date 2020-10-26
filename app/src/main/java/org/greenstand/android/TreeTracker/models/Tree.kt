@@ -30,6 +30,7 @@ class Tree(
         // a tree minus the last absolute step count recorded when capturing a previous tree. This
         // is the indicator for the number of steps taken between two trees.
         const val DELTA_STEP_COUNT_KEY = "delta_step_count"
+        const val ROTATION_MATRIX_KEY = "rotation_matrix"
         // DBH - Diameter at Breast Height (this is a standard method for measuring trees)
         const val DBH_ATTR_KEY = "dbh"
     }
