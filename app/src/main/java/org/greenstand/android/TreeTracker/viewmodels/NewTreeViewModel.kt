@@ -69,7 +69,6 @@ class NewTreeViewModel(
 
         dbh?.let { newTree.addTreeAttribute(Tree.DBH_ATTR_KEY, it) }
 
-
         val absoluteStepCount = stepCounter.absoluteStepCount ?: 0
         val lastStepCountWhenCreatingTree = stepCounter.absoluteStepCountOnTreeCapture ?: 0
         // Delta step count is the difference between the absolute count at the time of capturing
@@ -80,7 +79,8 @@ class NewTreeViewModel(
         newTree.addTreeAttribute(Tree.DELTA_STEP_COUNT_KEY, deltaSteps.toString())
         deviceOrientation.rotationMatrixSnapshot?.let {
             newTree.addTreeAttribute(
-                Tree.ROTATION_MATRIX_KEY, it.joinToString(","))
+                Tree.ROTATION_MATRIX_KEY, it.joinToString(",")
+            )
         }
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
