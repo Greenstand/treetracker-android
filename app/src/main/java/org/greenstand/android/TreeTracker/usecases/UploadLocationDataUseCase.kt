@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 
@@ -21,10 +20,8 @@ class UploadLocationDataUseCase(
         try {
             withContext(Dispatchers.IO) {
                 val locationEntities = dao.getTreeLocationData()
-                val locations = locationEntities.map {
-                    gson.fromJson(it.locationDataJson, LocationData::class.java)
-                }
-                val treeLocJsonArray = gson.toJson(locations)
+                val locations = locationEntities.map { it.locationDataJson }
+                val treeLocJsonArray = locations.toString()
                 storageClient.uploadBundle(
                     treeLocJsonArray,
                     "loc_data_${treeLocJsonArray.md5()}"
