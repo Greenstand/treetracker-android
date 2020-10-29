@@ -21,7 +21,7 @@ class UploadLocationDataUseCase(
             withContext(Dispatchers.IO) {
                 val locationEntities = dao.getTreeLocationData()
                 val locations = locationEntities.map { it.locationDataJson }
-                val treeLocJsonArray = gson.toJson(locations)
+                val treeLocJsonArray = locations.toString()
                 storageClient.uploadBundle(
                     treeLocJsonArray,
                     "loc_data_${treeLocJsonArray.md5()}"
