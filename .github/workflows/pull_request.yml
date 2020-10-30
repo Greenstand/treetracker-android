@@ -5,7 +5,7 @@ name: Treetracker Android App CI PR
 on:
   push:
   pull_request:
-    branches: [ master ]
+    branches: [ master, release* ]
 
 jobs:
   build:
