@@ -92,7 +92,7 @@ class ImageCaptureActivity : AppCompatActivity() {
                     }
 
                     override fun onImageSaved(file: File) {
-                        ImageUtils.resizeImage(file.absolutePath)
+                        ImageUtils.resizeImage(file.absolutePath, captureSelfie)
                         Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
                         val focusMetric = testFocusQuality(file)
 
