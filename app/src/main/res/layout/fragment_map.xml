@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:indeterminate="true"
-        app:layout_constraintBottom_toTopOf="@+id/fragmentMapGpsAccuracy"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -71,29 +71,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
-        app:constraint_referenced_ids="convergenceProgressBar, convergenceProgressText"/>
-
-    <TextView
-        android:id="@+id/fragmentMapGpsAccuracy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="@string/gps_accuracy_double_colon"
-        android:textColor="@color/red"
-        android:textSize="@dimen/text_size_twenty" />
+        app:constraint_referenced_ids="convergenceProgressBar, convergenceProgressText" />
 
     <Button
         android:id="@+id/addTreeButton"
+        style="@style/NewButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:padding="@dimen/padding_five"
         android:text="@string/add_tree"
-        style="@style/NewButtonStyle"
-        app:layout_constraintBottom_toTopOf="@+id/fragmentMapGpsAccuracy"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

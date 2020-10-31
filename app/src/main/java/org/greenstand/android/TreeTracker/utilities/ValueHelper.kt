@@ -13,7 +13,5 @@ object ValueHelper {
 
     const val TAKEN_IMAGE_PATH = "TAKEN_IMAGE_PATH"
 
-    const val MIN_ACCURACY_DEFAULT_SETTING = 10
-
     const val FOCUS_METRIC_VALUE = "FOCUS_METRIC_VALUE"
 }

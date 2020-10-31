@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
 class LocationUpdateManager(
@@ -117,12 +116,6 @@ class LocationUpdateManager(
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    fun hasSufficientAccuracy(): Boolean {
-        return currentLocation?.let {
-            it.hasAccuracy() && it.accuracy < ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
-        } ?: false
-    }
-
     private fun hasLocationPermissions(): Boolean {
         val fineLocationPermission = ContextCompat.checkSelfPermission(
             context,
@@ -143,17 +136,6 @@ enum class Accuracy {
     GOOD,
     BAD,
     NONE
-}
-
-fun Location?.accuracyStatus(): Accuracy {
-    if (this == null || !hasAccuracy()) {
-        return Accuracy.NONE
-    }
-    return if (accuracy < ValueHelper.MIN_ACCURACY_DEFAULT_SETTING) {
-        Accuracy.GOOD
-    } else {
-        Accuracy.BAD
-    }
 }
 
 class LocationDataCapturer(
