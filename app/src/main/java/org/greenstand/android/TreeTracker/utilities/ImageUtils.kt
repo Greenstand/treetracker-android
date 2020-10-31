@@ -343,7 +343,7 @@ object ImageUtils {
         return sum / (rows * cols).toDouble()
     }
 
-    fun resizeImage(path: String) {
+    fun resizeImage(path: String, captureSelfie: Boolean) {
 
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
@@ -379,7 +379,8 @@ object ImageUtils {
         /* Decode the JPEG file into a Bitmap */
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
         val matrix = Matrix()
-        matrix.setRotate(90f) // Offsets the -90 degree rotation on resize
+        val rotationOffset = if (captureSelfie) -90f else 90f
+        matrix.setRotate(rotationOffset) // Offsets the -90 degree rotation on resize
         val rotatedBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
             bmOptions.outWidth, bmOptions.outHeight, matrix, true
