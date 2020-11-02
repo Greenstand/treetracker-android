@@ -69,7 +69,7 @@ val appModule = module {
 
     viewModel { TreePreviewViewModel(get(), get()) }
 
-    viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { ConfigViewModel(get(), get()) }
 

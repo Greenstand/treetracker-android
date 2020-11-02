@@ -16,24 +16,24 @@ class CreateTreeUseCase(
     private val analytics: Analytics
 ) : UseCase<Tree, Long>() {
 
-    override suspend fun execute(tree: Tree): Long = withContext(Dispatchers.IO) {
+    override suspend fun execute(params: Tree): Long = withContext(Dispatchers.IO) {
         val location = locationUpdateManager.currentLocation
         val time = location?.time ?: System.currentTimeMillis()
         val timeInSeconds = time / 1000
 
         val entity = TreeCaptureEntity(
-            uuid = tree.treeUuid.toString(),
-            planterCheckInId = tree.planterCheckInId,
-            localPhotoPath = tree.photoPath,
+            uuid = params.treeUuid.toString(),
+            planterCheckInId = params.planterCheckInId,
+            localPhotoPath = params.photoPath,
             photoUrl = null,
-            noteContent = tree.content,
-            longitude = location?.longitude ?: 0.0,
-            latitude = location?.latitude ?: 0.0,
-            accuracy = location?.accuracy?.toDouble() ?: 10000.0,
+            noteContent = params.content,
+            longitude = params.meanLongitude,
+            latitude = params.meanLatitude,
+            accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
             createAt = timeInSeconds
         )
         analytics.treePlanted()
-        val attributeEntitites = tree.treeCaptureAttributes().map {
+        val attributeEntitites = params.treeCaptureAttributes().map {
             TreeAttributeEntity(it.key, it.value, -1)
         }.toList()
         Timber.d("Inserting TreeCapture entity $entity")

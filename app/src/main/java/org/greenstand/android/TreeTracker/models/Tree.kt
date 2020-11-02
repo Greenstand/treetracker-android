@@ -10,6 +10,8 @@ class Tree(
     val planterCheckInId: Long,
     val content: String,
     val photoPath: String,
+    val meanLongitude: Double,
+    val meanLatitude: Double,
     private val treeAttributes: MutableMap<String, String> = mutableMapOf()
 ) : Parcelable {
 

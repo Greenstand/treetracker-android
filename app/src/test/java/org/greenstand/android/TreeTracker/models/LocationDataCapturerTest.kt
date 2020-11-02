@@ -81,7 +81,7 @@ class LocationDataCapturerTest {
 
         locationDataCapturer.turnOffTreeCaptureMode()
 
-        assertNull("Convergence is reset to null", locationDataCapturer.convergence)
+        assertNull("Convergence is reset to null", locationDataCapturer.lastConvergenceWithinRange)
         assertNull("Tree UUID is reset to null", locationDataCapturer.generatedTreeUuid)
     }
 
@@ -127,6 +127,7 @@ class LocationDataCapturerTest {
             locationsLiveData.postValue(location)
         }
         assertTrue(locationDataCapturer.isConvergenceWithinRange())
+        assertNotNull(locationDataCapturer.lastConvergenceWithinRange)
     }
 
     // Hard coded longitude and latitude pair values
@@ -153,6 +154,7 @@ class LocationDataCapturerTest {
         }
 
         assertFalse(locationDataCapturer.isConvergenceWithinRange())
+        assertNull(locationDataCapturer.lastConvergenceWithinRange)
     }
 
     val locationsWithLowAndHighVariance = listOf(
