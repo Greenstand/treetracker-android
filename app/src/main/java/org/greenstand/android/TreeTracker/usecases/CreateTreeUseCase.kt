@@ -29,7 +29,7 @@ class CreateTreeUseCase(
             noteContent = params.content,
             longitude = params.meanLongitude,
             latitude = params.meanLatitude,
-            accuracy = location?.accuracy?.toDouble() ?: 10000.0,
+            accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
             createAt = timeInSeconds
         )
         analytics.treePlanted()

@@ -9,7 +9,6 @@ import org.greenstand.android.TreeTracker.models.Convergence
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.User
@@ -18,7 +17,6 @@ import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class NewTreeViewModel(
     private val user: User,
-    private val locationUpdateManager: LocationUpdateManager,
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
     private val analytics: Analytics,
