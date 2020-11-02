@@ -30,7 +30,9 @@ class CreateFakeTreesUseCase(
                 planterCheckInId = user.planterCheckinId!!,
                 photoPath = file.absolutePath,
                 content = "My Note",
-                treeUuid = UUID.randomUUID()
+                treeUuid = UUID.randomUUID(),
+                meanLongitude = 0.0,
+                meanLatitude = 0.0
             )
 
             createTreeUseCase.execute(tree)

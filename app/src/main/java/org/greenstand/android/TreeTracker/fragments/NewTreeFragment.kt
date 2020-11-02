@@ -73,14 +73,6 @@ class NewTreeFragment :
             fragmentNewTreeSave.text = getString(R.string.save)
         }
 
-        vm.accuracyLiveData.observe(
-            this,
-            Observer {
-                fragmentNewTreeGpsAccuracy.text = fragmentNewTreeGpsAccuracy
-                    .context.getString(R.string.gps_accuracy_double_colon, it)
-            }
-        )
-
         vm.navigateBack.observe(
             this,
             Observer {
@@ -95,13 +87,6 @@ class NewTreeFragment :
                 findNavController().navigate(
                     NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(it)
                 )
-            }
-        )
-
-        vm.onInsufficientGps.observe(
-            this,
-            Observer {
-                CustomToast.showToast("Insufficient GPS accuracy")
             }
         )
 

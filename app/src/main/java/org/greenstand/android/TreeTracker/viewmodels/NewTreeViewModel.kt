@@ -1,12 +1,11 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
 import android.content.Intent
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.util.UUID
-import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.models.Convergence
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
@@ -28,11 +27,11 @@ class NewTreeViewModel(
 ) : ViewModel() {
 
     val onTreeSaved: MutableLiveData<Unit> = MutableLiveData()
-    val onInsufficientGps: MutableLiveData<Unit> = MutableLiveData()
     val navigateToTreeHeight: MutableLiveData<Tree> = MutableLiveData()
     val navigateBack: MutableLiveData<Unit> = MutableLiveData()
     val onTakePicture: MutableLiveData<Unit> = MutableLiveData()
     private var newTreeUuid: UUID? = null
+    private var convergence: Convergence? = null
 
     val isNoteEnabled = FeatureFlags.TREE_NOTE_FEATURE_ENABLED
 
@@ -43,17 +42,10 @@ class NewTreeViewModel(
     var isNextButtonActive = !isDbhEnabled
         private set
 
-    val accuracyLiveData: LiveData<Int> = MutableLiveData<Int>().apply {
-        postValue(locationUpdateManager.currentLocation?.accuracy?.roundToInt() ?: 0)
-    }
-
     var photoPath: String? = null
 
     init {
-        if (locationUpdateManager.currentLocation == null) {
-            onInsufficientGps.postValue(Unit)
-            navigateBack.postValue(Unit)
-        } else if (photoPath == null) {
+        if (photoPath == null) {
             onTakePicture.postValue(Unit)
         }
     }
@@ -64,7 +56,9 @@ class NewTreeViewModel(
             treeUuid = newTreeUuid!!,
             planterCheckInId = user.planterCheckinId ?: -1,
             content = note,
-            photoPath = photoPath!!
+            photoPath = photoPath!!,
+            convergence?.longitudeConvergence?.mean ?: 0.0,
+            convergence?.latitudeConvergence?.mean ?: 0.0
         )
 
         dbh?.let { newTree.addTreeAttribute(Tree.DBH_ATTR_KEY, it) }
@@ -110,6 +104,7 @@ class NewTreeViewModel(
         locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
         newTreeUuid = locationDataCapturer.generatedTreeUuid
+        convergence = locationDataCapturer.lastConvergenceWithinRange
         locationDataCapturer.turnOffTreeCaptureMode()
         isNextButtonActive = true
     }
@@ -119,6 +114,7 @@ class NewTreeViewModel(
             return
         }
         newTreeUuid = locationDataCapturer.generatedTreeUuid
+        convergence = locationDataCapturer.lastConvergenceWithinRange
         locationDataCapturer.turnOffTreeCaptureMode()
     }
 
