@@ -5,11 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
-import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
@@ -54,11 +54,10 @@ class MapViewModel constructor(
     }
 
     fun turnOnTreeCaptureMode() {
+        deviceOrientation.enable()
         if (FeatureFlags.TREE_DBH_FEATURE_ENABLED) return
-
         locationDataCapturer.turnOnTreeCaptureMode()
         stepCounter.enable()
-        deviceOrientation.enable()
     }
 
     suspend fun resolveLocationConvergence() {

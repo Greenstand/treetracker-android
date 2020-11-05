@@ -46,13 +46,17 @@ class TreeHeightViewModel(
                     withContext(Dispatchers.IO) {
                         with(TreeHeightAttributes(heightColor = treeColor!!)) {
                             tree.addTreeAttribute(
-                                Tree.Attributes.TREE_COLOR_ATTR_KEY, heightColor.value)
+                                Tree.Attributes.TREE_COLOR_ATTR_KEY, heightColor.value
+                            )
                             tree.addTreeAttribute(
-                                Tree.Attributes.APP_BUILD_ATTR_KEY, appBuild)
+                                Tree.Attributes.APP_BUILD_ATTR_KEY, appBuild
+                            )
                             tree.addTreeAttribute(
-                                Tree.Attributes.APP_FLAVOR_ATTR_KEY, appFlavor)
+                                Tree.Attributes.APP_FLAVOR_ATTR_KEY, appFlavor
+                            )
                             tree.addTreeAttribute(
-                                Tree.Attributes.APP_VERSION_ATTR_KEY, appVersion)
+                                Tree.Attributes.APP_VERSION_ATTR_KEY, appVersion
+                            )
                         }
                         createTreeUseCase.execute(tree)
                     }
@@ -68,6 +72,10 @@ class TreeHeightViewModel(
                 }
                 ?: run { toastMessageLiveData.postValue(R.string.tree_height_save_error) }
         }
+    }
+
+    fun cancelTreeCapture() {
+        stepCounter.disable()
     }
 
     fun toastMessagesLiveData(): LiveData<Int> = toastMessageLiveData
