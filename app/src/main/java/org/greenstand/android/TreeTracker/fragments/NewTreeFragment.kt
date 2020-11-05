@@ -22,6 +22,7 @@ import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.utilities.dismissKeyboard
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.utilities.visibleIf
 import org.greenstand.android.TreeTracker.view.CustomToast
@@ -72,32 +73,36 @@ class NewTreeFragment :
             fragmentNewTreeSave.text = getString(R.string.save)
         }
 
-        vm.accuracyLiveData.observe(this, Observer {
-            fragmentNewTreeGpsAccuracy.text =
-                fragmentNewTreeGpsAccuracy.context.getString(R.string.gps_accuracy_double_colon, it)
-        })
+        vm.navigateBack.observe(
+            this,
+            Observer {
+                vm.newTreeCaptureCancelled()
+                findNavController().popBackStack()
+            }
+        )
 
-        vm.navigateBack.observe(this, Observer {
-            vm.newTreeCaptureCancelled()
-            findNavController().popBackStack()
-        })
+        vm.navigateToTreeHeight.observe(
+            this,
+            Observer {
+                findNavController().navigate(
+                    NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(it)
+                )
+            }
+        )
 
-        vm.navigateToTreeHeight.observe(this, Observer {
-            findNavController()
-                .navigate(NewTreeFragmentDirections.actionNewTreeFragmentToTreeHeightFragment(it))
-        })
+        vm.onTreeSaved.observe(
+            this,
+            Observer {
+                CustomToast.showToast("Tree saved")
+            }
+        )
 
-        vm.onInsufficientGps.observe(this, Observer {
-            CustomToast.showToast("Insufficient GPS accuracy")
-        })
-
-        vm.onTreeSaved.observe(this, Observer {
-            CustomToast.showToast("Tree saved")
-        })
-
-        vm.onTakePicture.observe(this, Observer {
-            CameraHelper.takePictureForResult(this, selfie = false)
-        })
+        vm.onTakePicture.observe(
+            this,
+            Observer {
+                CameraHelper.takePictureForResult(this, selfie = false)
+            }
+        )
 
         fragmentNewTreeSave.setOnClickListener {
             it.vibrate()
@@ -105,11 +110,13 @@ class NewTreeFragment :
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 vm.createTree(
                     fragmentNewTreeNote.text.toString(),
-                    fragmentNewTreeDBH.text.toString())
+                    fragmentNewTreeDBH.text.toString()
+                )
             }
         }
 
         fragmentNewTreeGPS.setOnClickListener {
+            requireActivity().dismissKeyboard()
             viewLifecycleOwner.lifecycleScope.launch {
                 progressBar.visibility = View.VISIBLE
                 progressBar.setOnClickListener {

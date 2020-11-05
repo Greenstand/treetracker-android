@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import timber.log.Timber
 
 class LocationUpdateManager(
@@ -117,12 +116,6 @@ class LocationUpdateManager(
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    fun hasSufficientAccuracy(): Boolean {
-        return currentLocation?.let {
-            it.hasAccuracy() && it.accuracy < ValueHelper.MIN_ACCURACY_DEFAULT_SETTING
-        } ?: false
-    }
-
     private fun hasLocationPermissions(): Boolean {
         val fineLocationPermission = ContextCompat.checkSelfPermission(
             context,
@@ -145,17 +138,6 @@ enum class Accuracy {
     NONE
 }
 
-fun Location?.accuracyStatus(): Accuracy {
-    if (this == null || !hasAccuracy()) {
-        return Accuracy.NONE
-    }
-    return if (accuracy < ValueHelper.MIN_ACCURACY_DEFAULT_SETTING) {
-        Accuracy.GOOD
-    } else {
-        Accuracy.BAD
-    }
-}
-
 class LocationDataCapturer(
     private val userManager: User,
     private val locationUpdateManager: LocationUpdateManager,
@@ -166,8 +148,9 @@ class LocationDataCapturer(
     private var locationsDeque: Deque<Location> = LinkedList<Location>()
     var generatedTreeUuid: UUID? = null
         private set
-    var convergence: Convergence? = null
+    var lastConvergenceWithinRange: Convergence? = null
         private set
+    private var currentConvergence: Convergence? = null
     private var convergenceStatus: ConvergenceStatus? = null
 
     private val locationObserver: Observer<Location?> = Observer { location ->
@@ -181,34 +164,37 @@ class LocationDataCapturer(
                 locationsDeque.add(location)
 
                 if (locationsDeque.size >= convergenceDataSize) {
-                    if (convergence == null ||
-                        convergence?.locations!!.size < convergenceDataSize
+                    if (currentConvergence == null ||
+                        currentConvergence?.locations!!.size < convergenceDataSize
                     ) {
-                        convergence = Convergence(locationsDeque.toList())
-                        convergence?.computeConvergence()
+                        currentConvergence = Convergence(locationsDeque.toList())
+                        currentConvergence?.computeConvergence()
                     } else {
-                        convergence?.computeSlidingWindowConvergence(evictedLocation!!, location)
+                        currentConvergence?.computeSlidingWindowConvergence(
+                            evictedLocation!!, location
+                        )
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
-                            "[${convergence?.longitudeConvergence?.mean}]. \n" +
+                            "[${currentConvergence?.longitudeConvergence?.mean}]. \n" +
                             "Longitude standard deviation value: " +
-                            "[${convergence?.longitudeConvergence?.standardDeviation}]"
+                            "[${currentConvergence?.longitudeConvergence?.standardDeviation}]"
                     )
                     Timber.d(
                         "Convergence: Latitude Mean: " +
-                            "[${convergence?.latitudeConvergence?.mean}]. \n " +
+                            "[${currentConvergence?.latitudeConvergence?.mean}]. \n " +
                             "Latitude standard deviation value: " +
-                            "[${convergence?.latitudeConvergence?.standardDeviation}]"
+                            "[${currentConvergence?.latitudeConvergence?.standardDeviation}]"
                     )
 
-                    val longStdDev = convergence?.longitudinalStandardDeviation()
-                    val latStdDev = convergence?.latitudinalStandardDeviation()
+                    val longStdDev = currentConvergence?.longitudinalStandardDeviation()
+                    val latStdDev = currentConvergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
                             latStdDev < locationDataConfig.latStdDevThreshold
                         ) {
                             convergenceStatus = ConvergenceStatus.CONVERGED
+                            lastConvergenceWithinRange = currentConvergence
                         } else {
                             convergenceStatus = ConvergenceStatus.NOT_CONVERGED
                         }
@@ -275,7 +261,8 @@ class LocationDataCapturer(
 
     fun turnOffTreeCaptureMode() {
         generatedTreeUuid = null
-        convergence = null
+        currentConvergence = null
+        lastConvergenceWithinRange = null
         locationsDeque.clear()
         convergenceStatus = null
         Timber.d("Convergence: Tree capture turned off")
@@ -288,17 +275,6 @@ class Convergence(val locations: List<Location>) {
         private set
     var latitudeConvergence: ConvergenceStats? = null
         private set
-
-    private fun computeStats(data: List<Double>): ConvergenceStats {
-        val mean = data.sum() / data.size
-        var variance = 0.0
-        for (x in data) {
-            variance += (x - mean).pow(2.0)
-        }
-        variance /= data.size
-        val stdDev = sqrt(variance)
-        return ConvergenceStats(mean, variance, stdDev)
-    }
 
     /**
      * Implementation based on the following answer found in stackexchange since it seems to be a good
@@ -358,6 +334,17 @@ class Convergence(val locations: List<Location>) {
 
     fun latitudinalStandardDeviation(): Double? {
         return latitudeConvergence?.standardDeviation
+    }
+
+    private fun computeStats(data: List<Double>): ConvergenceStats {
+        val mean = data.sum() / data.size
+        var variance = 0.0
+        for (x in data) {
+            variance += (x - mean).pow(2.0)
+        }
+        variance /= data.size
+        val stdDev = sqrt(variance)
+        return ConvergenceStats(mean, variance, stdDev)
     }
 }
 

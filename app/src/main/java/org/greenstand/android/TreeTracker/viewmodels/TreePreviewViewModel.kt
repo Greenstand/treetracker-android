@@ -32,7 +32,6 @@ class TreePreviewViewModel(
             localPhotoPath = tree.localPhotoPath,
             imageUrl = tree.photoUrl,
             distance = results.first(),
-            accuracy = tree.accuracy.toFloat(),
             createdAt = tree.createAt,
             note = tree.noteContent
         )
@@ -43,7 +42,6 @@ data class TreePreviewData(
     val localPhotoPath: String?,
     val imageUrl: String?,
     val distance: Float,
-    val accuracy: Float,
     val createdAt: Long,
     val note: String
 )

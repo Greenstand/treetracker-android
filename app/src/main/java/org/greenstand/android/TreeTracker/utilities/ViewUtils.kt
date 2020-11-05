@@ -2,10 +2,13 @@ package org.greenstand.android.TreeTracker.utilities
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.app.Activity
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.view.HapticFeedbackConstants
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import com.google.android.material.card.MaterialCardView
 
 fun View.animateColor(toColor: Int, fromColor: Int = color, durationMsec: Long = 300) {
@@ -43,5 +46,14 @@ fun View.visibleIf(predicate: Boolean, default: Int = View.GONE) {
         View.VISIBLE
     } else {
         default
+    }
+}
+
+fun Activity.dismissKeyboard() {
+    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    if (inputMethodManager.isActive) {
+        this.currentFocus?.let {
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 }
