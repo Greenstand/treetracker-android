@@ -2,8 +2,6 @@ package org.greenstand.android.TreeTracker.utilities
 
 object ValueHelper {
 
-    const val NEW_TREE_FRAGMENT = "NEW_TREE_FRAGMENT"
-
     const val INTENT_CAMERA = 1001
 
     const val JPEG_FILE_PREFIX = "IMG_"
