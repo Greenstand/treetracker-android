@@ -8,7 +8,6 @@ class Preferences(
 
     private var _planterInfoId: Long? = null
 
-
     fun setPlanterInfoId(planterInfoId: Long?) {
         _planterInfoId = planterInfoId
     }
@@ -35,7 +34,7 @@ class Preferences(
 
     private fun computePath(prefKey: PrefKey): String {
         return when (prefKey) {
-            is UserPrefKey -> prefKey.path + "/${_planterInfoId}"
+            is UserPrefKey -> prefKey.path + "/$_planterInfoId"
             else -> prefKey.path
         }
     }

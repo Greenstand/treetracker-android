@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.27.0'
+        classpath 'io.fabric.tools:gradle:1.28.0'
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
@@ -33,18 +33,19 @@ loadExtraProperties("treetracker.keys.properties")
 
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.0'
     playAccountConfigs {
         defaultAccountConfig {
             jsonFile = file('keys.json')
         }
     }
+
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 115
+        targetSdkVersion 29
+        versionCode 124
         versionName "1.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -93,7 +94,6 @@ android {
         release {
             minifyEnabled true
             resValue "string", "app_name", "Tree Tracker"
-            buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
@@ -108,7 +108,6 @@ android {
         prerelease {
             initWith(debug)
             applicationIdSuffix ".prerelease"
-            buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
@@ -122,7 +121,6 @@ android {
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "app_name", "Tree Tracker(debug)"
-            buildConfigField "Boolean", "GPS_ACCURACY", "true"
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-test-batch-uploads"'
@@ -130,11 +128,24 @@ android {
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
         }
+
+        beta {
+            applicationIdSuffix ".test"
+            resValue "string", "app_name", "Tree Tracker(test)"
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
+            buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-test-batch-uploads"'
+            buildConfigField 'Boolean', 'USE_AWS_S3', "true"
+            buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
+            buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+
         dev {
             initWith(debug)
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
-            buildConfigField "Boolean", "GPS_ACCURACY", "false"
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-dev-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-dev-batch-uploads"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
@@ -199,7 +210,7 @@ repositories {
 dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
-    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+    compile 'com.google.maps.android:android-maps-utils:0.5+'
 
     //implementation 'com.amazonaws:aws-java-sdk:1.11.584'
     // 2.0: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-project-gradle.html

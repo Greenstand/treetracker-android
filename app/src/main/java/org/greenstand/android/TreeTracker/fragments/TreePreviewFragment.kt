@@ -10,13 +10,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_tree_preview.*
+import java.util.Date
+import kotlinx.android.synthetic.main.activity_main.toolbarTitle
+import kotlinx.android.synthetic.main.fragment_tree_preview.fragmentTreePreviewCreated
+import kotlinx.android.synthetic.main.fragment_tree_preview.fragmentTreePreviewDistance
+import kotlinx.android.synthetic.main.fragment_tree_preview.fragmentTreePreviewImage
+import kotlinx.android.synthetic.main.fragment_tree_preview.fragmentTreePreviewNoImage
+import kotlinx.android.synthetic.main.fragment_tree_preview.fragmentTreePreviewNotes
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.viewmodels.TreePreviewViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
-import java.util.*
 
 class TreePreviewFragment : Fragment() {
 
@@ -33,7 +37,11 @@ class TreePreviewFragment : Fragment() {
     }
 
     @SuppressLint("SimpleDateFormat")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_tree_preview, container, false)
     }
 
@@ -47,7 +55,9 @@ class TreePreviewFragment : Fragment() {
             val treeData = vm.loadTree(args.treeId.toLong())
 
             if (treeData.localPhotoPath != null) {
-                val bitmap = ImageUtils.decodeBitmap(treeData.localPhotoPath, resources.displayMetrics.density)
+                val bitmap = ImageUtils.decodeBitmap(
+                    treeData.localPhotoPath, resources.displayMetrics.density
+                )
                 fragmentTreePreviewImage.setImageBitmap(bitmap)
                 fragmentTreePreviewImage.visibility = View.VISIBLE
                 fragmentTreePreviewNoImage.visibility = View.INVISIBLE
@@ -55,8 +65,8 @@ class TreePreviewFragment : Fragment() {
                 fragmentTreePreviewNoImage.visibility = View.VISIBLE
             }
 
-            fragmentTreePreviewDistance.text = "${treeData.distance.toInt()} ${resources.getString(R.string.meters)}"
-            fragmentTreePreviewGpsAccuracy.text = "${treeData.accuracy} ${resources.getString(R.string.meters)}"
+            fragmentTreePreviewDistance.text = "${treeData.distance.toInt()} " +
+                "${resources.getString(R.string.meters)}"
             fragmentTreePreviewCreated.text = Date(treeData.createdAt).toLocaleString()
             fragmentTreePreviewNotes.text = treeData.note
         }
