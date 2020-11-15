@@ -45,8 +45,8 @@ interface TreeTrackerDAO {
     fun updatePlanterInfoUploadStatus(ids: List<Long>, isUploaded: Boolean)
 
     @Transaction
-    @Query("SELECT * FROM planter_check_in WHERE photo_url IS null AND planter_info_id = :planterInfoId") // kt-lint-disable max-line-length
-    fun getPlanterCheckInsToUpload(planterInfoId: Long): List<PlanterCheckInEntity>
+    @Query("SELECT * FROM planter_check_in WHERE local_photo_path IS NOT NULL")
+    fun getPlanterCheckInsToUpload(): List<PlanterCheckInEntity>
 
     @Transaction
     @Query("SELECT * FROM planter_check_in WHERE _id IN (:planterCheckInIds)")

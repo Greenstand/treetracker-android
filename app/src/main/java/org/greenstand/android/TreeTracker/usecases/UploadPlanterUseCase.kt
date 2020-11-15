@@ -23,15 +23,17 @@ class UploadPlanterUseCase(
     override suspend fun execute(params: UploadPlanterParams) = withContext(Dispatchers.IO) {
         params.planterInfoIds
 
-        // Upload all the images
-        val planterCheckIns = dao.getPlanterCheckInsById(params.planterInfoIds)
-        uploadPlanterCheckInUseCase.execute(
-            UploadPlanterCheckInParams(planterCheckIns.map { it.id }))
-
         // Upload the user data
         val planterInfoList = params.planterInfoIds.mapNotNull { dao.getPlanterInfoById(it) }
         uploadPlanterInfoUseCase.execute(
-            UploadPlanterInfoParams(planterInfoIds = planterInfoList.map { it.id }))
+            UploadPlanterInfoParams(planterInfoIds = planterInfoList.map { it.id })
+        )
+
+        // Upload all the images
+        val planterCheckIns = dao.getPlanterCheckInsToUpload()
+        uploadPlanterCheckInUseCase.execute(
+            UploadPlanterCheckInParams(planterCheckIns.map { it.id })
+        )
 
         // Delete local images
         deleteOldPlanterImagesUseCase.execute(Unit)
