@@ -4,6 +4,16 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 
+val MIGRATION_6_7 = object : Migration(6, 7) {
+
+    override fun migrate(database: SupportSQLiteDatabase) {
+        val sql = """CREATE INDEX `index_planter_check_in_local_photo_path`
+                    | ON `planter_check_in` (`local_photo_path`)
+                    | """.trimMargin()
+        database.execSQL(sql)
+    }
+}
+
 val MIGRATION_5_6 = object : Migration(5, 6) {
 
     override fun migrate(database: SupportSQLiteDatabase) {

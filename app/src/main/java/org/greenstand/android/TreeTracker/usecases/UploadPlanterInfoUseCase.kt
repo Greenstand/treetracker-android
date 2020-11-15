@@ -48,7 +48,7 @@ class UploadPlanterInfoUseCase(
         val jsonBundle = gson.toJson(UploadBundle(registrations = registrationRequests))
 
         // Create a hash ID to reference this upload bundle later
-        val bundleId = jsonBundle.md5()
+        val bundleId = jsonBundle.md5() + "_registrations"
 
         val planterInfoIds = planterInfoList.map { it.id }
 

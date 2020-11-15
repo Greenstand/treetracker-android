@@ -11,11 +11,14 @@ class DeleteOldPlanterImagesUseCase(
 
     override suspend fun execute(params: Unit) {
 
-        val planterCheckIns = dao.getAllPlanterCheckIn()
+        val planterCheckIns = dao.getPlanterCheckInsToUpload()
 
         // Delete all local image files for registrations except for the currently logged in users photo...
         val loggedOutPlanterCheckIns = planterCheckIns
-            .filter { it.id != user.planterCheckinId }
+            .filter {
+                it.id != user.planterCheckinId &&
+                    it.localPhotoPath != null && it.photoUrl != null
+            }
             .sortedBy { it.createdAt }
 
         loggedOutPlanterCheckIns.forEach {
