@@ -37,7 +37,6 @@ class PlanterUploader(
         dao.getPlanterCheckInsToUpload()
             .filter { it.photoUrl == null && it.localPhotoPath != null }
             .forEach { planterCheckIn ->
-
                 val imageUrl = uploadImageUseCase.execute(
                     UploadImageParams(
                         imagePath = planterCheckIn.localPhotoPath!!,
@@ -60,7 +59,6 @@ class PlanterUploader(
 
         val registrationRequests = planterInfoToUpload
             .map { planterInfo ->
-
                 // Find the image this user first took during registration
                 // This image is the oldest image for PlanterCheckIn
                 val registrationPhotoUrl = dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
@@ -83,9 +81,7 @@ class PlanterUploader(
             }
 
         val jsonBundle = gson.toJson(UploadBundle(registrations = registrationRequests))
-
         val bundleId = jsonBundle.md5() + "_registrations"
-
         val planterInfoIds = planterInfoToUpload.map { it.id }
 
         // Update the trees in DB with the bundleId
