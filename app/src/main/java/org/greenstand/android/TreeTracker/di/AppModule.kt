@@ -12,13 +12,7 @@ import com.google.gson.GsonBuilder
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
-import org.greenstand.android.TreeTracker.models.Configuration
-import org.greenstand.android.TreeTracker.models.DeviceOrientation
-import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
-import org.greenstand.android.TreeTracker.models.StepCounter
-import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.*
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.usecases.BundleTreeUploadStrategy
@@ -116,6 +110,8 @@ val appModule = module {
     single { Configuration(get(), get()) }
 
     single { GsonBuilder().serializeNulls().create() }
+
+    factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
     factory { PreferencesMigrator(get(), get()) }
 
