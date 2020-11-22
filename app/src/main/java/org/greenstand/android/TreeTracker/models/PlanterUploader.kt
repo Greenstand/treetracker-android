@@ -2,8 +2,6 @@ package org.greenstand.android.TreeTracker.models
 
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
@@ -11,12 +9,9 @@ import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.UploadImageParams
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterParams
-import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.md5
+import timber.log.Timber
 import java.io.File
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 
 class PlanterUploader(
     private val dao: TreeTrackerDAO,
@@ -27,16 +22,10 @@ class PlanterUploader(
 ) {
 
     suspend fun uploadPlanters() {
-        if (coroutineContext.isActive) {
-            runCatching {
-                withContext(Dispatchers.Default) {
-                    uploadPlanterImages()
-                    uploadPlanterInfo()
-                    deleteLocalImagesThatWereUploaded()
-                }
-            }
-        } else {
-            coroutineContext.cancel()
+        withContext(Dispatchers.Default) {
+            uploadPlanterImages()
+            uploadPlanterInfo()
+            deleteLocalImagesThatWereUploaded()
         }
     }
 
@@ -61,6 +50,9 @@ class PlanterUploader(
 
     private suspend fun uploadPlanterInfo() {
         val planterInfoToUpload = dao.getAllPlanterInfoToUpload()
+
+        Timber.tag(TAG)
+            .d("Uploading Planter Info for ${planterInfoToUpload.size} planters")
 
         val registrationRequests = planterInfoToUpload
             .map { planterInfo ->
@@ -117,5 +109,9 @@ class PlanterUploader(
         }
 
         dao.removePlanterCheckInLocalImagePaths(loggedOutPlanterCheckIns.map { it.id })
+    }
+
+    companion object {
+        private const val TAG = "PlanterUploader"
     }
 }
