@@ -13,6 +13,10 @@ import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 import java.io.File
 
+/**
+ * Uploads all user data including the users photos
+ * Deletes local photos once they are uploaded
+ */
 class PlanterUploader(
     private val dao: TreeTrackerDAO,
     private val uploadImageUseCase: UploadImageUseCase,
@@ -48,7 +52,7 @@ class PlanterUploader(
             }
     }
 
-    private suspend fun uploadPlanterInfo() {
+    private fun uploadPlanterInfo() {
         val planterInfoToUpload = dao.getAllPlanterInfoToUpload()
 
         Timber.tag(TAG)
@@ -92,7 +96,7 @@ class PlanterUploader(
         dao.updatePlanterInfoUploadStatus(planterInfoIds, true)
     }
 
-    private suspend fun deleteLocalImagesThatWereUploaded() {
+    private fun deleteLocalImagesThatWereUploaded() {
         // Delete all local image files for registrations except for the currently logged in users photo...
         val loggedOutPlanterCheckIns = dao.getPlanterCheckInsToUpload()
             .filter {
