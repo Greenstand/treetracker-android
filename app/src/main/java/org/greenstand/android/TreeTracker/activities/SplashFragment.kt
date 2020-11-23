@@ -44,11 +44,6 @@ class SplashFragment : Fragment() {
 
                 preferencesMigrator.migrateIfNeeded()
 
-                if (FeatureFlags.USE_SWAHILI) {
-                    languageSwitcher.setLanguage(Language.SWAHILI, resources)
-                    languageSwitcher.applyCurrentLanguage(requireActivity())
-                }
-
                 delay(ValueHelper.SPLASH_SCREEN_DURATION)
 
                 when {

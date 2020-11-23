@@ -25,13 +25,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
-import org.greenstand.android.TreeTracker.models.DeviceOrientation
-import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
-import org.greenstand.android.TreeTracker.models.StepCounter
-import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.*
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -55,7 +49,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(stepCounter)
         lifecycle.addObserver(deviceOrientation)
-        languageSwitcher.applyCurrentLanguage(this)
+
+        if (FeatureFlags.USE_SWAHILI) {
+            languageSwitcher.setLanguage(Language.SWAHILI, resources)
+        } else {
+            languageSwitcher.applyCurrentLanguage(this)
+        }
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
