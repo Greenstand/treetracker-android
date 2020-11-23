@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.Language
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
@@ -24,6 +26,7 @@ class SplashFragment : Fragment() {
 
     private val user: User by inject()
     private val preferencesMigrator: PreferencesMigrator by inject()
+    private val languageSwitcher: LanguageSwitcher by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +43,11 @@ class SplashFragment : Fragment() {
             whenStarted {
 
                 preferencesMigrator.migrateIfNeeded()
+
+                if (FeatureFlags.USE_SWAHILI) {
+                    languageSwitcher.setLanguage(Language.SWAHILI, resources)
+                    languageSwitcher.applyCurrentLanguage(requireActivity())
+                }
 
                 delay(ValueHelper.SPLASH_SCREEN_DURATION)
 
