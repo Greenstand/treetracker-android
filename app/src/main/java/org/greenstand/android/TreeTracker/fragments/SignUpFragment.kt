@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -45,6 +47,14 @@ class SignUpFragment : Fragment() {
         signupFirstNameEditText.onTextChanged { vm.firstName = it }
         signupLastNameEditText.onTextChanged { vm.lastName = it }
         signupOrganizationEditText.onTextChanged { vm.organization = it }
+        signupOrganizationEditText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_GO && signUpFragmentButton.isEnabled) {
+                    signUpFragmentButton.performClick()
+                    true
+                }
+                false
+            }
+
         vm.organization = signupOrganizationEditText.text.toString()
 
         signUpFragmentButton.setOnClickListener {
