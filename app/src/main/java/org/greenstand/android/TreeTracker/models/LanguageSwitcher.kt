@@ -47,7 +47,7 @@ class LanguageSwitcher(private val prefs: Preferences) {
         activity.startActivity(Intent(activity, MainActivity::class.java))
     }
 
-    private fun setLanguage(language: Language, res: Resources) {
+    fun setLanguage(language: Language, res: Resources) {
         val config = Configuration(res.configuration).apply {
             Locale.setDefault(language.locale)
             setLocale(language.locale)
