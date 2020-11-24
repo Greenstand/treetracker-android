@@ -26,7 +26,7 @@ class PlanterUploader(
 ) {
 
     suspend fun uploadPlanters() {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             uploadPlanterImages()
             uploadPlanterInfo()
             deleteLocalImagesThatWereUploaded()
