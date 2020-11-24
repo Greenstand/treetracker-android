@@ -17,6 +17,7 @@ import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -27,16 +28,12 @@ import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
-import org.greenstand.android.TreeTracker.usecases.DeleteOldPlanterImagesUseCase
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.usecases.RemoveLocalTreeImagesWithIdsUseCase
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.greenstand.android.TreeTracker.usecases.TreeUploadStrategy
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterCheckInUseCase
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterInfoUseCase
-import org.greenstand.android.TreeTracker.usecases.UploadPlanterUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadTreeBundleUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
@@ -121,6 +118,8 @@ val appModule = module {
 
     single { GsonBuilder().serializeNulls().create() }
 
+    factory { PlanterUploader(get(), get(), get(), get(), get()) }
+
     factory { PreferencesMigrator(get(), get()) }
 
     factory { LanguageSwitcher(get()) }
@@ -129,13 +128,9 @@ val appModule = module {
 
     factory { UploadLocationDataUseCase(get(), get()) }
 
-    factory { UploadPlanterUseCase(get(), get(), get(), get()) }
-
     factory { CreateTreeUseCase(get(), get(), get()) }
 
     factory { CreateFakeTreesUseCase(get(), get(), get(), get()) }
-
-    factory { UploadPlanterCheckInUseCase(get(), get()) }
 
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
@@ -145,15 +140,11 @@ val appModule = module {
 
     factory { PlanterCheckInUseCase(get(), get()) }
 
-    factory { UploadPlanterInfoUseCase(get(), get(), get()) }
-
     factory { CreateTreeRequestUseCase(get()) }
 
     factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get(), get()) }
 
     factory { RemoveLocalTreeImagesWithIdsUseCase(get()) }
-
-    factory { DeleteOldPlanterImagesUseCase(get(), get()) }
 
     factory<TreeUploadStrategy> { BundleTreeUploadStrategy(get()) }
 
