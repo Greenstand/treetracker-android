@@ -67,7 +67,7 @@ class LoginViewModel(private val dao: TreeTrackerDAO,
         }
     }
 
-    fun isUserPresentOnDevice(): Boolean {
+    suspend fun isUserPresentOnDevice(): Boolean {
         return dao.getPlanterInfoIdByIdentifier(userIdentification) != null
     }
 
