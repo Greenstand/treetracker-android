@@ -51,7 +51,7 @@ class PlanterUploader(
             }
     }
 
-    private fun uploadPlanterInfo() {
+    private suspend fun uploadPlanterInfo() {
         val planterInfoToUpload = dao.getAllPlanterInfoToUpload()
 
         Timber.tag(TAG)
@@ -92,7 +92,7 @@ class PlanterUploader(
         dao.updatePlanterInfoUploadStatus(planterInfoIds, true)
     }
 
-    private fun deleteLocalImagesThatWereUploaded() {
+    private suspend fun deleteLocalImagesThatWereUploaded() {
         // Delete all local image files for registrations except for the currently logged in users photo...
         val loggedOutPlanterCheckIns = dao.getPlanterCheckInsToUpload()
             .filter {

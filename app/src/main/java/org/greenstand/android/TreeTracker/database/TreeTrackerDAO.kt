@@ -53,7 +53,7 @@ interface TreeTrackerDAO {
     suspend fun getPlanterCheckInsById(planterCheckInIds: List<Long>): List<PlanterCheckInEntity>
 
     @Query("SELECT * FROM planter_check_in WHERE planter_info_id = (:planterInfoId)")
-    fun getAllPlanterCheckInsForPlanterInfoId(planterInfoId: Long): List<PlanterCheckInEntity>
+    suspend fun getAllPlanterCheckInsForPlanterInfoId(planterInfoId: Long): List<PlanterCheckInEntity>
 
     @Query("SELECT * FROM planter_check_in WHERE _id = :id")
     suspend fun getPlanterCheckInById(id: Long): PlanterCheckInEntity
