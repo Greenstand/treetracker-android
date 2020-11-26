@@ -33,6 +33,7 @@
             android:drawableStart="@drawable/phone"
             android:inputType="phone"
             android:imeOptions="actionDone"
+            android:autofillHints="phone"
             android:drawablePadding="16dp"
             />
 
@@ -51,7 +52,8 @@
             android:drawableLeft="@drawable/email"
             android:drawableStart="@drawable/email"
             android:inputType="textEmailAddress"
-            android:imeOptions="actionDone"
+            android:autofillHints="emailAddress"
+            android:imeOptions="actionGo"
             android:drawablePadding="16dp"
             />
 
