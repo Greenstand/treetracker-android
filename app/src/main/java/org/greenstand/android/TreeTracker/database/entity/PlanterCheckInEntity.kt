@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
 data class PlanterCheckInEntity(
     @ColumnInfo(name = PLANTER_INFO_ID, index = true)
     var planterInfoId: Long,
-    @ColumnInfo(name = LOCAL_PHOTO_PATH)
+    @ColumnInfo(name = LOCAL_PHOTO_PATH, index = true)
     var localPhotoPath: String?,
     @ColumnInfo(name = PHOTO_URL)
     var photoUrl: String?,

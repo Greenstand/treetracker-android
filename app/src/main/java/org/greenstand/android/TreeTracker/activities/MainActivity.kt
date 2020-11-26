@@ -27,6 +27,7 @@ import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
@@ -43,7 +44,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val locationDataCapturer: LocationDataCapturer by inject()
     private val stepCounter: StepCounter by inject()
     private val deviceOrientation: DeviceOrientation by inject()
-    private val sharedPreferences: SharedPreferences by inject()
     private var fragment: Fragment? = null
     /**
      * Called when the activity is first created.
@@ -55,7 +55,12 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(stepCounter)
         lifecycle.addObserver(deviceOrientation)
-        languageSwitcher.applyCurrentLanguage(this)
+
+        if (FeatureFlags.USE_SWAHILI) {
+            languageSwitcher.setLanguage(Language.SWAHILI, resources)
+        } else {
+            languageSwitcher.applyCurrentLanguage(this)
+        }
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)

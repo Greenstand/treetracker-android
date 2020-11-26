@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import com.google.gson.annotations.SerializedName
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 data class RegistrationRequest(
     @SerializedName("planter_identifier")
@@ -20,7 +21,9 @@ data class RegistrationRequest(
     @SerializedName("lon")
     val lon: Double?,
     @SerializedName("device_identifier")
-    val deviceIdentifier: String? = null,
+    val deviceIdentifier: String = DeviceUtils.deviceId,
     @SerializedName("record_uuid")
-    val recordUuid: String
+    val recordUuid: String,
+    @SerializedName("image_url")
+    val imageUrl: String,
 )
