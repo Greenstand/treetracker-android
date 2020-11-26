@@ -101,7 +101,7 @@ class NewTreeViewModel(
         locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
         newTreeUuid = locationDataCapturer.generatedTreeUuid
-        convergence = locationDataCapturer.lastConvergenceWithinRange
+        convergence = locationDataCapturer.convergence()
         locationDataCapturer.turnOffTreeCaptureMode()
         isNextButtonActive = true
     }
@@ -111,7 +111,7 @@ class NewTreeViewModel(
             return
         }
         newTreeUuid = locationDataCapturer.generatedTreeUuid
-        convergence = locationDataCapturer.lastConvergenceWithinRange
+        convergence = locationDataCapturer.convergence()
         locationDataCapturer.turnOffTreeCaptureMode()
     }
 

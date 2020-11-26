@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
+import java.lang.IllegalStateException
 import java.util.Deque
 import java.util.LinkedList
 import java.util.UUID
@@ -148,8 +149,7 @@ class LocationDataCapturer(
     private var locationsDeque: Deque<Location> = LinkedList<Location>()
     var generatedTreeUuid: UUID? = null
         private set
-    var lastConvergenceWithinRange: Convergence? = null
-        private set
+    private var lastConvergenceWithinRange: Convergence? = null
     private var currentConvergence: Convergence? = null
     private var convergenceStatus: ConvergenceStatus? = null
 
@@ -224,6 +224,18 @@ class LocationDataCapturer(
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 
+    /**
+     *  Guarantees a Convergence instance that is within the variance threshold or the current
+     *  running instance (Not converged) as long as this method is invoked during a tree capture.
+     *
+     *  @throws IllegalStateException - If invoked outside the scope of tree capture
+     */
+    fun convergence(): Convergence {
+        if (!isInTreeCaptureMode())
+            throw IllegalStateException()
+        return lastConvergenceWithinRange ?: currentConvergence!!
+    }
+
     suspend fun converge() {
         try {
             val locationDataConfig = configuration.locationDataConfig
@@ -234,20 +246,11 @@ class LocationDataCapturer(
             }
         } catch (e: TimeoutCancellationException) {
             Timber.d("Convergence request timed out")
-            markConvergenceTimeout()
+            convergenceStatus = ConvergenceStatus.TIMED_OUT
         }
     }
 
     fun isConvergenceWithinRange(): Boolean = ConvergenceStatus.CONVERGED == convergenceStatus
-
-    /*
-     * When the caller (MapFragment via a ViewModel) waits for location convergence to
-     * occur and the waiting period exceeds the threshold configured, this method is called
-     * to mark the convergence status as timed out for location data pipeline analysis.
-     */
-    private fun markConvergenceTimeout() {
-        convergenceStatus = ConvergenceStatus.TIMED_OUT
-    }
 
     private fun isInTreeCaptureMode(): Boolean {
         return generatedTreeUuid != null
