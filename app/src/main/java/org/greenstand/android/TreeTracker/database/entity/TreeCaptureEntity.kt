@@ -38,7 +38,9 @@ data class TreeCaptureEntity(
     @ColumnInfo(name = CREATED_AT)
     var createAt: Long,
     @ColumnInfo(name = BUNDLE_ID)
-    var bundleId: String? = null
+    var bundleId: String? = null,
+    @ColumnInfo(name = WALLET)
+    var wallet: String,
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -60,5 +62,6 @@ data class TreeCaptureEntity(
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"
         const val BUNDLE_ID = "bundle_id"
+        const val WALLET = "wallet"
     }
 }

@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.usecases
 import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
+import org.greenstand.android.TreeTracker.api.models.requests.TransferRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utilities.md5
@@ -58,7 +59,18 @@ class UploadTreeBundleUseCase(
                 )
             }
 
-            val jsonBundle = gson.toJson(UploadBundle(trees = treeRequestList))
+            // Create requests to tie trees to wallets
+            val transferRequests = trees.map { tree ->
+                TransferRequest(
+                    treeUUid = tree.uuid,
+                    wallet = tree.wallet
+                )
+            }
+
+            val jsonBundle = Gson().toJson(UploadBundle(
+                trees = treeRequestList,
+                transfers = transferRequests
+            ))
 
             // Create a hash ID to reference this upload bundle later
             val bundleId = jsonBundle.md5()

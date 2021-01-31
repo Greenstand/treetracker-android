@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "e3f96404ac712f0618eaf04e8251407d",
+    "identityHash": "1a89cf8d90f0f1d0dedc2bec538088ee",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -260,7 +260,7 @@
       },
       {
         "tableName": "tree_capture",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` TEXT NOT NULL, `planter_checkin_id` INTEGER NOT NULL, `local_photo_path` TEXT, `photo_url` TEXT, `note_content` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `accuracy` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT, FOREIGN KEY(`planter_checkin_id`) REFERENCES `planter_check_in`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` TEXT NOT NULL, `planter_checkin_id` INTEGER NOT NULL, `local_photo_path` TEXT, `photo_url` TEXT, `note_content` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `accuracy` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT, `wallet` TEXT NOT NULL, FOREIGN KEY(`planter_checkin_id`) REFERENCES `planter_check_in`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -333,6 +333,12 @@
             "columnName": "bundle_id",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "wallet",
+            "columnName": "wallet",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -424,7 +430,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e3f96404ac712f0618eaf04e8251407d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a89cf8d90f0f1d0dedc2bec538088ee')"
     ]
   }
 }

@@ -41,6 +41,10 @@ class User(
         set(value) = preferences
             .edit().putLong(LAST_CHECK_IN_TIME_IN_KEY, value ?: -1).apply()
 
+    var wallet: String?
+        get() = preferences.getString(WALLET_KEY)
+        set(value) = preferences.edit().putString(WALLET_KEY, value).apply()
+
     fun expireCheckInStatus() = preferences.clearSessionData()
 
     companion object {
@@ -52,5 +56,6 @@ class User(
         val LAST_NAME_KEY = BASE_KEY + PrefKey("last-name")
         val PROFILE_PHOTO_PATH_KEY = BASE_KEY + PrefKey("profile-photo-path")
         val LAST_CHECK_IN_TIME_IN_KEY = BASE_KEY + PrefKey("last-check-in-time-in-seconds")
+        val WALLET_KEY = BASE_KEY + PrefKey("wallet-name")
     }
 }

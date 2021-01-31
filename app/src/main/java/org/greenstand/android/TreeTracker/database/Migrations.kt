@@ -3,6 +3,16 @@ package org.greenstand.android.TreeTracker.database
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
+
+val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        val sql = """ALTER TABLE ${TreeCaptureEntity.TABLE}
+            | ADD COLUMN ${TreeCaptureEntity.WALLET} TEXT NOT NULL DEFAULT ''
+            | """.trimMargin()
+        database.execSQL(sql)
+    }
+}
 
 val MIGRATION_6_7 = object : Migration(6, 7) {
 

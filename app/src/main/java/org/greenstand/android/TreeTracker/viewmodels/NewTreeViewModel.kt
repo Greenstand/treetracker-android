@@ -31,6 +31,8 @@ class NewTreeViewModel(
     private var newTreeUuid: UUID? = null
     private var convergence: Convergence? = null
 
+    val defaultWallet = user.wallet
+
     val isNoteEnabled = FeatureFlags.TREE_NOTE_FEATURE_ENABLED
 
     val isDbhEnabled = FeatureFlags.TREE_DBH_FEATURE_ENABLED
@@ -48,7 +50,9 @@ class NewTreeViewModel(
         }
     }
 
-    suspend fun createTree(note: String, dbh: String?) {
+    suspend fun createTree(note: String, dbh: String?, wallet: String) {
+
+        user.wallet = wallet
 
         val newTree = Tree(
             treeUuid = newTreeUuid!!,
