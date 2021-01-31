@@ -6,7 +6,6 @@ buildscript {
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.28.0'
-        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
 
@@ -14,7 +13,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.github.triplet.play'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
@@ -35,11 +33,7 @@ loadExtraProperties("treetracker.keys.properties")
 android {
     compileSdkVersion 29
     buildToolsVersion '29.0.0'
-    playAccountConfigs {
-        defaultAccountConfig {
-            jsonFile = file('keys.json')
-        }
-    }
+
 
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
@@ -49,7 +43,6 @@ android {
         versionName "1.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        playAccountConfig = playAccountConfigs.defaultAccountConfig
         buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
         buildConfigField "String", "OBJECT_STORAGE_IDENTITY_REGION", '"eu-central-1"'
         buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
@@ -286,9 +279,6 @@ configurations.all {
     }
 }
 
-play {
-    track = 'beta' // or 'rollout' or 'production' or 'alpha'
-}
 
 apply plugin: 'com.google.gms.google-services'
 
