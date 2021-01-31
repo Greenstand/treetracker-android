@@ -1,14 +1,3 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.28.0'
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -28,7 +17,6 @@ def loadExtraProperties(String fileName) {
 }
 
 loadExtraProperties("treetracker.keys.properties")
-
 
 android {
     compileSdkVersion 29
@@ -279,7 +267,6 @@ configurations.all {
         force 'com.google.code.gson:gson:2.8.5'
     }
 }
-
 
 apply plugin: 'com.google.gms.google-services'
 
