@@ -9,7 +9,14 @@ import android.graphics.drawable.ColorDrawable
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.card.MaterialCardView
+import org.greenstand.android.TreeTracker.activities.MainActivity
+
+fun Fragment.mainActivity(): MainActivity {
+    return requireActivity() as MainActivity
+}
 
 fun View.animateColor(toColor: Int, fromColor: Int = color, durationMsec: Long = 300) {
     ValueAnimator.ofObject(ArgbEvaluator(), fromColor, toColor).apply {

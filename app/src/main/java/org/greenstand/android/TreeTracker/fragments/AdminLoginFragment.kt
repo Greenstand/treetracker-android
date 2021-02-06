@@ -7,26 +7,26 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_admin_login.adminPassword
-import kotlinx.android.synthetic.main.fragment_admin_login.pwdError
-import kotlinx.android.synthetic.main.fragment_admin_login.view.btnNegative
-import kotlinx.android.synthetic.main.fragment_admin_login.view.btnPositive
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.databinding.FragmentAdminLoginBinding
 import org.greenstand.android.TreeTracker.utilities.hashString
 
 class AdminLoginFragment : DialogFragment() {
+
+    private lateinit var bindings: FragmentAdminLoginBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_admin_login, container, false)
+    ): View {
+        bindings = FragmentAdminLoginBinding.inflate(inflater)
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupClickListeners(view)
+        setupClickListeners()
     }
 
     override fun onStart() {
@@ -37,25 +37,25 @@ class AdminLoginFragment : DialogFragment() {
         )
     }
 
-    private fun setupClickListeners(view: View) {
-        view.btnPositive.setOnClickListener {
-            val pwdHash = adminPassword.text.toString().hashString("sha-256")
+    private fun setupClickListeners() {
+        bindings.btnPositive.setOnClickListener {
+            val pwdHash = bindings.adminPassword.text.toString().hashString("sha-256")
             if (pwdHash == ADMIN_PWD_HASH) {
                 findNavController().navigate(
                     AdminLoginFragmentDirections.actionAdminLoginFragmentToConfigFragment()
                 )
                 dismiss()
             } else {
-                pwdError.text = "Invalid password"
-                pwdError.visibility = View.VISIBLE
+                bindings.pwdError.text = "Invalid password"
+                bindings.pwdError.visibility = View.VISIBLE
             }
         }
-        view.btnNegative.setOnClickListener {
+        bindings.btnNegative.setOnClickListener {
             dismiss()
         }
     }
 
     companion object {
-        private val ADMIN_PWD_HASH = "B06B37124C9E46A33EAEFC4221878485CD637B3DF928A68F7E71DE7CE04A1F3C" // kt-lint-disable --verbose max-line-length
+        private const val ADMIN_PWD_HASH = "B06B37124C9E46A33EAEFC4221878485CD637B3DF928A68F7E71DE7CE04A1F3C" // kt-lint-disable --verbose max-line-length
     }
 }

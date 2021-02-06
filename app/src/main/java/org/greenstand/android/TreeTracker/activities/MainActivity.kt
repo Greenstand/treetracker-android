@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_main.toolbarTitle
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
+import org.greenstand.android.TreeTracker.databinding.ActivityMainBinding
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val stepCounter: StepCounter by inject()
     private val deviceOrientation: DeviceOrientation by inject()
     private var fragment: Fragment? = null
+
+    lateinit var bindings: ActivityMainBinding
     /**
      * Called when the activity is first created.
      * @param savedInstanceState If the activity is being re-initialized after
@@ -62,7 +65,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             languageSwitcher.applyCurrentLanguage(this)
         }
 
-        setContentView(R.layout.activity_main)
+        bindings = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(bindings.root)
         setSupportActionBar(toolbar)
 
         findViewById<View>(R.id.appbar_layout).visibility = View.GONE

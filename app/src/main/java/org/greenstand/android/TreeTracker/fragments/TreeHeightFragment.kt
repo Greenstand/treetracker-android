@@ -13,17 +13,19 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_tree_height.*
-import kotlinx.android.synthetic.main.fragment_tree_height.view.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.data.TreeColor
+import org.greenstand.android.TreeTracker.databinding.FragmentTreeHeightBinding
 import org.greenstand.android.TreeTracker.utilities.animateColor
 import org.greenstand.android.TreeTracker.utilities.color
+import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.viewmodels.TreeHeightViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class TreeHeightFragment : Fragment() {
+
+    private lateinit var bindings: FragmentTreeHeightBinding
+
     private val vm: TreeHeightViewModel by viewModel()
     private val args: TreeHeightFragmentArgs by navArgs()
     private var isInitialState = true
@@ -32,33 +34,33 @@ class TreeHeightFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_tree_height, container, false)
+    ): View {
+        bindings = FragmentTreeHeightBinding.inflate(inflater)
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        requireActivity().toolbarTitle?.setText(R.string.tree_height_title)
+        mainActivity().bindings.toolbarTitle.setText(R.string.tree_height_title)
 
         val parentView = view as ConstraintLayout
 
         vm.newTree = args.newTree
 
         listOf(
-            height_button_five,
-            height_button_four,
-            height_button_three,
-            height_button_two,
-            height_button_one
-        )
-            .forEachIndexed { index, colorView ->
+            bindings.heightButtonFive,
+            bindings.heightButtonFour,
+            bindings.heightButtonThree,
+            bindings.heightButtonTwo,
+            bindings.heightButtonOne
+        ).forEachIndexed { index, colorView ->
                 colorView.setOnClickListener {
                     moveSelection(parentView, colorView, index)
                     vm.treeColor = indexToTreeColor(index)
                 }
             }
 
-        save_tree_height.setOnClickListener {
+        bindings.saveTreeHeight.setOnClickListener {
             vm.saveNewTree()
         }
 
@@ -79,7 +81,7 @@ class TreeHeightFragment : Fragment() {
         vm.onEnableButtonLiveData().observe(
             this,
             Observer {
-                save_tree_height.isEnabled = it
+                bindings.saveTreeHeight.isEnabled = it
             }
         )
 
@@ -118,8 +120,8 @@ class TreeHeightFragment : Fragment() {
 
                 val bias = indexToBias(index)
 
-                val height = view.stick_container.height / 5
-                val width = view.stick_container.width
+                val height = bindings.stickContainer.height / 5
+                val width = bindings.stickContainer.width
 
                 val selectedHeight = (height * 1.1).toInt()
                 val selectedWidth = (width * 2)
@@ -131,7 +133,7 @@ class TreeHeightFragment : Fragment() {
                     setVerticalBias(R.id.floating_button, bias)
                     constrainHeight(R.id.floating_button, selectedHeight)
                     constrainWidth(R.id.floating_button, selectedWidth)
-                    floating_button_inner.animateColor(toColor = colorView.color)
+                    bindings.floatingButtonInner.animateColor(toColor = colorView.color)
                     applyTo(view)
                 }
             }
@@ -144,8 +146,8 @@ class TreeHeightFragment : Fragment() {
 
                 val bias = indexToBias(index)
 
-                val height = view.stick_container.height / 5
-                val width = view.stick_container.width
+                val height = bindings.stickContainer.height / 5
+                val width = bindings.stickContainer.width
 
                 ConstraintSet().apply {
                     clone(view)
@@ -162,7 +164,7 @@ class TreeHeightFragment : Fragment() {
                     constrainHeight(R.id.floating_button, height)
                     constrainWidth(R.id.floating_button, width)
                     setVisibility(R.id.floating_button, ConstraintSet.VISIBLE)
-                    floating_button_inner.setBackgroundColor(colorView.color)
+                    bindings.floatingButtonInner.setBackgroundColor(colorView.color)
                     applyTo(view)
                 }
                 isInitialState = false

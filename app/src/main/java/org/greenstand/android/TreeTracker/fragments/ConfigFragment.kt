@@ -18,26 +18,29 @@ import kotlinx.android.synthetic.main.fragment_config.minDisBtwnUpdatesVal
 import kotlinx.android.synthetic.main.fragment_config.minTimeBtwnUpdatesVal
 import kotlinx.android.synthetic.main.fragment_config.saveConfigButton
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.databinding.FragmentAdminLoginBinding
+import org.greenstand.android.TreeTracker.databinding.FragmentConfigBinding
 import org.greenstand.android.TreeTracker.models.LocationDataConfig
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.koin.android.ext.android.inject
 
 class ConfigFragment : Fragment() {
 
+    private lateinit var bindings: FragmentConfigBinding
     private val configViewModel by inject<ConfigViewModel>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        requireActivity().toolbarTitle.setText(R.string.config_parameters)
-        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        return inflater.inflate(R.layout.fragment_config, container, false)
+    ): View {
+        bindings = FragmentConfigBinding.inflate(inflater)
+        (requireActivity() as MainActivity).apply {
+            bindings.toolbarTitle.setText(R.string.config_parameters)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,7 +49,7 @@ class ConfigFragment : Fragment() {
             .getLocationDataConfig()
             .observe(
                 viewLifecycleOwner,
-                androidx.lifecycle.Observer { locationDataConfig ->
+                { locationDataConfig ->
                     minTimeBtwnUpdatesVal.setText(
                         locationDataConfig.minTimeBetweenUpdates.toString()
                     )
