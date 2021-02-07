@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import org.greenstand.android.TreeTracker.databinding.FragmentNewTreeBinding
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.utilities.*
@@ -141,7 +142,7 @@ class NewTreeFragment :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && resultCode == Activity.RESULT_OK) {
-            vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+            vm.photoPath = data.getStringExtra(ImageCaptureActivity.TAKEN_IMAGE_PATH)
 
             vm.photoPath?.let {
 

@@ -20,6 +20,9 @@ import timber.log.Timber
 
 object ImageUtils {
 
+    private const val JPEG_FILE_PREFIX = "IMG_"
+    private const val JPEG_FILE_SUFFIX = ".jpg"
+
     fun createTestImageFile(context: Context, imageFileName: String = "testtreeimage.jpg"): File {
         val myInput = context.assets.open(imageFileName)
         val f = createImageFile(context)
@@ -34,10 +37,10 @@ object ImageUtils {
     fun createImageFile(context: Context): File {
         // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = ValueHelper.JPEG_FILE_PREFIX + timeStamp + "_"
+        val imageFileName = JPEG_FILE_PREFIX + timeStamp + "_"
         val directory = context.getDir("treeImages", Context.MODE_PRIVATE)
 
-        return File.createTempFile(imageFileName, ValueHelper.JPEG_FILE_SUFFIX, directory)
+        return File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, directory)
     }
 
     fun decodeBitmap(photoPath: String?, density: Float): Bitmap? {

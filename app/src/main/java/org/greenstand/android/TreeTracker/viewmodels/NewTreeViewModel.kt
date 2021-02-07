@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.viewmodels
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import java.util.UUID
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.models.Convergence
@@ -13,7 +14,6 @@ import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class NewTreeViewModel(
     private val user: User,
@@ -92,7 +92,7 @@ class NewTreeViewModel(
     }
 
     fun isImageBlurry(data: Intent): Boolean {
-        val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE, 0.0)
+        val imageQuality = data.getDoubleExtra(ImageCaptureActivity.FOCUS_METRIC_VALUE, 0.0)
         return imageQuality < FOCUS_THRESHOLD
     }
 

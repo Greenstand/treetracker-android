@@ -28,17 +28,11 @@ fun View.animateColor(toColor: Int, fromColor: Int = color, durationMsec: Long =
 
 val View.color: Int
     get() {
-        val back = background
-        return when (back) {
+        return when (val back = background) {
             is ColorDrawable -> back.color
             is ColorStateList -> (back.current as ColorDrawable).color
             else -> 0
         }
-    }
-
-val MaterialCardView.cardColor: Int
-    get() {
-        return cardBackgroundColor.defaultColor
     }
 
 fun View.vibrate() {

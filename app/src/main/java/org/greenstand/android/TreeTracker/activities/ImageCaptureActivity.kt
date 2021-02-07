@@ -19,7 +19,6 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -33,6 +32,9 @@ class ImageCaptureActivity : AppCompatActivity() {
 
     companion object {
         private const val SELFIE_MODE = "SELFIE_MODE"
+
+        const val FOCUS_METRIC_VALUE = "FOCUS_METRIC_VALUE"
+        const val TAKEN_IMAGE_PATH = "TAKEN_IMAGE_PATH"
 
         fun createIntent(context: Context, selfieMode: Boolean = false): Intent {
             return Intent(context, ImageCaptureActivity::class.java).apply {
@@ -97,16 +99,16 @@ class ImageCaptureActivity : AppCompatActivity() {
                         val focusMetric = testFocusQuality(file)
 
                         val data = Intent().apply {
-                            putExtra(ValueHelper.TAKEN_IMAGE_PATH, file.absolutePath)
+                            putExtra(TAKEN_IMAGE_PATH, file.absolutePath)
                             // if we can't trust the focus metric (it will be null), because of problems
                             // generating the metric, we set the quality to "good" to
                             // avoid false positives. Ultimately, some research would be needed
                             // into determining the root cause of the false positives, but
                             // that will be a future effort.
                             if (focusMetric == null) {
-                                putExtra(ValueHelper.FOCUS_METRIC_VALUE, FOCUS_THRESHOLD)
+                                putExtra(FOCUS_METRIC_VALUE, FOCUS_THRESHOLD)
                             } else {
-                                putExtra(ValueHelper.FOCUS_METRIC_VALUE, focusMetric)
+                                putExtra(FOCUS_METRIC_VALUE, focusMetric)
                             }
                         }
 
