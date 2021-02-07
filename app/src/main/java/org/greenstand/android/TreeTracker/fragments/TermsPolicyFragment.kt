@@ -9,35 +9,35 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_terms_policy.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.databinding.FragmentTermsPolicyBinding
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class TermsPolicyFragment : Fragment() {
 
-    private val vm: TermsPolicyViewModel by viewModel()
+    private lateinit var bindings: FragmentTermsPolicyBinding
 
+    private val vm: TermsPolicyViewModel by viewModel()
     private val args: TermsPolicyFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
+    ): View {
+        bindings = FragmentTermsPolicyBinding.inflate(inflater)
         vm.userInfo = args.userInfo
-
-        return inflater.inflate(R.layout.fragment_terms_policy, container, false)
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        requireActivity().toolbarTitle?.apply {
+        mainActivity().bindings.toolbarTitle.apply {
             setText(R.string.sign_up_title)
             setTextColor(resources.getColor(R.color.black))
         }
@@ -104,7 +104,7 @@ class TermsPolicyFragment : Fragment() {
                 .navigate(TermsPolicyFragmentDirections.actionTermsPolicyFragmentToMapsFragment())
         }
 
-        accept_terms_button.setOnClickListener {
+        bindings.acceptTermsButton.setOnClickListener {
             CameraHelper.takePictureForResult(this, selfie = true)
         }
     }

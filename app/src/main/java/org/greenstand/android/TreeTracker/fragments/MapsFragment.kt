@@ -21,10 +21,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
-import kotlinx.android.synthetic.main.activity_main.toolbarTitle
-import kotlinx.android.synthetic.main.fragment_map.addTreeButton
-import kotlinx.android.synthetic.main.fragment_map.goToUploadsButton
-import kotlinx.android.synthetic.main.fragment_map.mapUserImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,12 +28,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.databinding.FragmentMapBinding
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
+import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
@@ -49,6 +47,8 @@ class MapsFragment :
     OnClickListener,
     OnMapReadyCallback,
     View.OnLongClickListener {
+
+    private lateinit var bindings: FragmentMapBinding
 
     private val vm: MapViewModel by viewModel()
     private val locationUpdateManager: LocationUpdateManager by inject()
@@ -65,8 +65,9 @@ class MapsFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
+    ): View {
+        bindings = FragmentMapBinding.inflate(inflater)
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,10 +80,10 @@ class MapsFragment :
                 if (planterIsCheckedIn) {
                     GlobalScope.launch(Dispatchers.Main) {
 
-                        requireActivity().toolbarTitle.text = vm.getPlanterName()
+                       mainActivity().bindings.toolbarTitle.text = vm.getPlanterName()
 
                         val photoPath = user.profilePhotoPath
-                        val profileImageView = mapUserImage
+                        val profileImageView = bindings.mapUserImage
 
                         if (photoPath != null) {
                             val rotatedBitmap =
@@ -96,7 +97,7 @@ class MapsFragment :
                         }
                     }
                 } else {
-                    activity!!.toolbarTitle.text = resources.getString(R.string.user_not_identified)
+                    mainActivity().bindings.toolbarTitle.text = resources.getString(R.string.user_not_identified)
                 }
             }
         )
@@ -116,12 +117,12 @@ class MapsFragment :
 
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
 
-        addTreeButton.setOnClickListener(this)
+        bindings.addTreeButton.setOnClickListener(this)
 
-        goToUploadsButton.setOnClickListener(this)
+        bindings.goToUploadsButton.setOnClickListener(this)
 
         if (FeatureFlags.DEBUG_ENABLED) {
-            addTreeButton.setOnLongClickListener(this)
+            bindings.addTreeButton.setOnLongClickListener(this)
         }
 
         mapFragment!!.getMapAsync(this)
@@ -134,7 +135,7 @@ class MapsFragment :
                 Timber.d("fab click")
                 // Disable the addTreeButton below to avoid triggering the onClick listener
                 // more than one once.
-                addTreeButton.isEnabled = false
+                bindings.addTreeButton.isEnabled = false
                 lifecycleScope.launch {
                     if (vm.requiresLogin()) {
                         findNavController().navigate(

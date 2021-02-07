@@ -18,11 +18,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.activity_main.toolbarTitle
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
+import org.greenstand.android.TreeTracker.databinding.ActivityMainBinding
 import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
@@ -45,6 +44,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val stepCounter: StepCounter by inject()
     private val deviceOrientation: DeviceOrientation by inject()
     private var fragment: Fragment? = null
+
+    lateinit var bindings: ActivityMainBinding
     /**
      * Called when the activity is first created.
      * @param savedInstanceState If the activity is being re-initialized after
@@ -62,8 +63,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             languageSwitcher.applyCurrentLanguage(this)
         }
 
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        bindings = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(bindings.root)
+        setSupportActionBar(bindings.toolbar)
 
         findViewById<View>(R.id.appbar_layout).visibility = View.GONE
 
@@ -83,7 +85,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         navController.addOnDestinationChangedListener(listener)
 
-        toolbar.setNavigationOnClickListener {
+        bindings.toolbar.setNavigationOnClickListener {
             navController.popBackStack()
         }
 
@@ -92,7 +94,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         if (!user.isLoggedIn) {
             user.expireCheckInStatus()
-            toolbarTitle.text = resources.getString(R.string.user_not_identified)
+            bindings.toolbarTitle.text = resources.getString(R.string.user_not_identified)
         }
     }
 
@@ -128,7 +130,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             R.id.action_change_user -> {
                 user.expireCheckInStatus()
 
-                toolbarTitle.text = resources.getString(R.string.user_not_identified)
+                bindings.toolbarTitle.text = resources.getString(R.string.user_not_identified)
                 findNavController(R.id.nav_host_fragment)
                     .navigate(R.id.action_global_login_flow_graph)
             }

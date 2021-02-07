@@ -11,16 +11,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.databinding.FragmentLoginBinding
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.ValueHelper
+import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.utilities.onTextChanged
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.koin.android.ext.android.inject
@@ -29,6 +29,8 @@ import timber.log.Timber
 
 class LoginFragment : Fragment() {
 
+    private lateinit var bindings: FragmentLoginBinding
+
     private val vm: LoginViewModel by viewModel()
     private val analytics: Analytics by inject()
 
@@ -36,13 +38,14 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_login, container, false)
+    ): View {
+        bindings = FragmentLoginBinding.inflate(layoutInflater)
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        requireActivity().toolbarTitle?.apply {
+        mainActivity().bindings.toolbarTitle.apply {
             setText(R.string.greenstand_welcome_text)
             setTextColor(resources.getColor(R.color.black))
         }
@@ -52,7 +55,7 @@ class LoginFragment : Fragment() {
         })
 
         vm.loginButtonStateLiveDate.observe(this, Observer {
-            login_button.isEnabled = it
+            bindings.loginButton.isEnabled = it
         })
 
         vm.onNavigateToMap = {
@@ -60,17 +63,17 @@ class LoginFragment : Fragment() {
                 .navigate(LoginFragmentDirections.actionLoginFragmentToMapsFragment())
         }
 
-        loginPhoneEditText.onTextChanged { vm.updatePhone(it) }
-        loginEmailEditText.onTextChanged { vm.updateEmail(it) }
-        loginEmailEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_GO && login_button.isEnabled) {
-                login_button.performClick()
+        bindings.loginPhoneEditText.onTextChanged { vm.updatePhone(it) }
+        bindings.loginEmailEditText.onTextChanged { vm.updateEmail(it) }
+        bindings.loginEmailEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO && bindings.loginButton.isEnabled) {
+                bindings.loginButton.performClick()
                 true
             }
             false
         }
 
-        login_button.setOnClickListener {
+        bindings.loginButton.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 if (vm.isUserPresentOnDevice()) {
                     withContext(Dispatchers.Main) {

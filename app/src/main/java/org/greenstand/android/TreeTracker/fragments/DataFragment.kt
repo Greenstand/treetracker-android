@@ -4,17 +4,18 @@ package org.greenstand.android.TreeTracker.fragments
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_data.*
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.databinding.FragmentDataBinding
+import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class DataFragment : Fragment() {
+
+    private lateinit var bindings: FragmentDataBinding
 
     private val viewModel: DataViewModel by viewModel()
 
@@ -35,19 +36,19 @@ class DataFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_data, container, false)
+        bindings = FragmentDataBinding.inflate(inflater)
 
-        requireActivity().toolbarTitle?.setText(R.string.data)
-        (requireActivity() as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        mainActivity().bindings.toolbarTitle.setText(R.string.data)
+        mainActivity().supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        return v
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.treeData.observe(this, Observer { treeData ->
-            fragmentDataTotalTreesValue.text = treeData.totalTrees.toString()
-            fragmentDataLocatedValue.text = treeData.treesSynced.toString()
-            fragmentDataToSyncValue.text = treeData.treesToSync.toString()
+            bindings.fragmentDataTotalTreesValue.text = treeData.totalTrees.toString()
+            bindings.fragmentDataLocatedValue.text = treeData.treesSynced.toString()
+            bindings.fragmentDataToSyncValue.text = treeData.treesToSync.toString()
         })
 
         viewModel.toasts.observe(this, Observer {
@@ -62,10 +63,10 @@ class DataFragment : Fragment() {
                 requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 R.string.sync
             }
-            fragmentDataSyncButton.setText(textId)
+            bindings.fragmentDataSyncButton.setText(textId)
         })
 
-        fragmentDataSyncButton.setOnClickListener {
+        bindings.fragmentDataSyncButton.setOnClickListener {
             viewModel.sync()
         }
     }

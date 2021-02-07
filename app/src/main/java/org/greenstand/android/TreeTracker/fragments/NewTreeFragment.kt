@@ -13,18 +13,12 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.activity_main.toolbarTitle
-import kotlinx.android.synthetic.main.fragment_new_tree.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.databinding.FragmentNewTreeBinding
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.utilities.CameraHelper
-import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
-import org.greenstand.android.TreeTracker.utilities.dismissKeyboard
-import org.greenstand.android.TreeTracker.utilities.vibrate
-import org.greenstand.android.TreeTracker.utilities.visibleIf
+import org.greenstand.android.TreeTracker.utilities.*
 import org.greenstand.android.TreeTracker.view.CustomToast
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -33,6 +27,7 @@ import timber.log.Timber
 class NewTreeFragment :
     androidx.fragment.app.Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private lateinit var bindings: FragmentNewTreeBinding
     private val vm: NewTreeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,29 +43,30 @@ class NewTreeFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_new_tree, container, false)
+    ): View {
+        bindings = FragmentNewTreeBinding.inflate(inflater)
+        return bindings.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        with(activity as AppCompatActivity) {
+        with(mainActivity()) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-            toolbarTitle.setText(R.string.new_tree)
+            bindings.toolbarTitle.setText(R.string.new_tree)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
         val progressBar = view.findViewById<View>(R.id.progressBar)
 
-        fragmentNewTreeNote.visibleIf(vm.isNoteEnabled)
-        fragmentNewTreeDBH.visibleIf(vm.isDbhEnabled)
-        fragmentNewTreeGPS.visibleIf(vm.isDbhEnabled)
+        bindings.fragmentNewTreeNote.visibleIf(vm.isNoteEnabled)
+        bindings.fragmentNewTreeDBH.visibleIf(vm.isDbhEnabled)
+        bindings.fragmentNewTreeGPS.visibleIf(vm.isDbhEnabled)
 
-        fragmentNewTreeSave.isEnabled = !vm.isDbhEnabled
+        bindings.fragmentNewTreeSave.isEnabled = !vm.isDbhEnabled
 
         if (vm.isTreeHeightEnabled) {
-            fragmentNewTreeSave.text = getString(R.string.next)
+            bindings.fragmentNewTreeSave.text = getString(R.string.next)
         } else {
-            fragmentNewTreeSave.text = getString(R.string.save)
+            bindings.fragmentNewTreeSave.text = getString(R.string.save)
         }
 
         vm.navigateBack.observe(
@@ -104,18 +100,18 @@ class NewTreeFragment :
             }
         )
 
-        fragmentNewTreeSave.setOnClickListener {
+        bindings.fragmentNewTreeSave.setOnClickListener {
             it.vibrate()
             vm.newTreePhotoCaptured()
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 vm.createTree(
-                    fragmentNewTreeNote.text.toString(),
-                    fragmentNewTreeDBH.text.toString()
+                    bindings.fragmentNewTreeNote.text.toString(),
+                    bindings.fragmentNewTreeDBH.text.toString()
                 )
             }
         }
 
-        fragmentNewTreeGPS.setOnClickListener {
+        bindings.fragmentNewTreeGPS.setOnClickListener {
             requireActivity().dismissKeyboard()
             viewLifecycleOwner.lifecycleScope.launch {
                 progressBar.visibility = View.VISIBLE
@@ -125,7 +121,7 @@ class NewTreeFragment :
                 vm.waitForConvergence()
                 progressBar.setOnClickListener(null)
                 progressBar.visibility = View.GONE
-                fragmentNewTreeSave.isEnabled = true
+                bindings.fragmentNewTreeSave.isEnabled = true
             }
         }
     }
@@ -152,11 +148,11 @@ class NewTreeFragment :
                 setPic(it)
 
                 if (FeatureFlags.BLUR_DETECTION_ENABLED && vm.isImageBlurry(data)) {
-                    fragment_new_tree_focus_warning_text.visibility = View.VISIBLE
-                    fragment_new_tree_focus_warning_text.setText(R.string.focus_warning)
+                    bindings.fragmentNewTreeFocusWarningText.visibility = View.VISIBLE
+                    bindings.fragmentNewTreeFocusWarningText.setText(R.string.focus_warning)
                 } else {
-                    fragment_new_tree_focus_warning_text.visibility = View.GONE
-                    fragment_new_tree_focus_warning_text.text = ""
+                    bindings.fragmentNewTreeFocusWarningText.visibility = View.GONE
+                    bindings.fragmentNewTreeFocusWarningText.text = ""
                 }
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -174,7 +170,7 @@ class NewTreeFragment :
             findNavController().popBackStack()
         }
         /* Associate the Bitmap to the ImageView */
-        fragmentNewTreeImage.setImageBitmap(rotatedBitmap)
-        fragmentNewTreeImage.visibility = View.VISIBLE
+        bindings.fragmentNewTreeImage.setImageBitmap(rotatedBitmap)
+        bindings.fragmentNewTreeImage.visibility = View.VISIBLE
     }
 }
