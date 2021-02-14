@@ -9,6 +9,8 @@ import org.greenstand.android.TreeTracker.application.Permissions
 
 object CameraHelper {
 
+    private const val CAMERA_INTENT = 1001
+
     fun takePictureForResult(fragment: Fragment, selfie: Boolean) {
         if (ActivityCompat.checkSelfPermission(
                 fragment.requireContext(),
@@ -22,7 +24,7 @@ object CameraHelper {
                 Permissions.MY_PERMISSION_CAMERA)
         } else {
             val intent = ImageCaptureActivity.createIntent(fragment.requireContext(), selfie)
-            fragment.startActivityForResult(intent, ValueHelper.INTENT_CAMERA)
+            fragment.startActivityForResult(intent, CAMERA_INTENT)
         }
     }
 

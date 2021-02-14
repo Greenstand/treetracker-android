@@ -16,7 +16,6 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -41,7 +40,7 @@ class SplashFragment : Fragment() {
 
                 preferencesMigrator.migrateIfNeeded()
 
-                delay(ValueHelper.SPLASH_SCREEN_DURATION)
+                delay(1000)
 
                 when {
                     user.isLoggedIn ->

@@ -10,9 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import org.greenstand.android.TreeTracker.databinding.FragmentTermsPolicyBinding
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -123,7 +123,7 @@ class TermsPolicyFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && resultCode != Activity.RESULT_CANCELED) {
             if (resultCode == Activity.RESULT_OK) {
-                vm.photoPath = data.getStringExtra(ValueHelper.TAKEN_IMAGE_PATH)
+                vm.photoPath = data.getStringExtra(ImageCaptureActivity.TAKEN_IMAGE_PATH)
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Timber.d("Photo was cancelled")
