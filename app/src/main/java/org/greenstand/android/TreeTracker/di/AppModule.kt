@@ -20,21 +20,18 @@ import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
-import org.greenstand.android.TreeTracker.usecases.BundleTreeUploadStrategy
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
-import org.greenstand.android.TreeTracker.usecases.RemoveLocalTreeImagesWithIdsUseCase
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
-import org.greenstand.android.TreeTracker.usecases.TreeUploadStrategy
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
-import org.greenstand.android.TreeTracker.usecases.UploadTreeBundleUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
@@ -142,11 +139,7 @@ val appModule = module {
 
     factory { CreateTreeRequestUseCase(get()) }
 
-    factory { UploadTreeBundleUseCase(get(), get(), get(), get(), get(), get()) }
-
-    factory { RemoveLocalTreeImagesWithIdsUseCase(get()) }
-
-    factory<TreeUploadStrategy> { BundleTreeUploadStrategy(get()) }
+    factory { TreeUploader(get(), get(), get(), get(), get()) }
 
     factory { SyncDataUseCase(get(), get(), get(), get()) }
 }

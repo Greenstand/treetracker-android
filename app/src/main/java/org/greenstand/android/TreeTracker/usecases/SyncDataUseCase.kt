@@ -7,10 +7,11 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.TreeUploader
 import timber.log.Timber
 
 class SyncDataUseCase(
-    private val treeLoadStrategy: TreeUploadStrategy,
+    private val treeUploader: TreeUploader,
     private val uploadLocationDataUseCase: UploadLocationDataUseCase,
     private val dao: TreeTrackerDAO,
     private val planterUploader: PlanterUploader
@@ -57,7 +58,7 @@ class SyncDataUseCase(
         Timber.tag(TAG).d("Uploading ${treeIds.size} trees")
         try {
             if (coroutineContext.isActive) {
-                treeLoadStrategy.uploadTrees(treeIds)
+                treeUploader.uploadTrees(treeIds)
             } else {
                 coroutineContext.cancel()
             }

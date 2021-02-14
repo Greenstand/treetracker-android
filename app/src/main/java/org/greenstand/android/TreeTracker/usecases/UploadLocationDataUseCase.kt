@@ -15,7 +15,7 @@ class UploadLocationDataUseCase(
     private val gson: Gson
 ) : UseCase<Unit, Boolean>() {
 
-    val storageClient = ObjectStorageClient.instance()
+    private val storageClient = ObjectStorageClient.instance()
 
     override suspend fun execute(params: Unit): Boolean {
         try {
