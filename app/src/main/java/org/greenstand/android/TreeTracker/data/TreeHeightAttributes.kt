@@ -1,7 +1,7 @@
 package org.greenstand.android.TreeTracker.data
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import org.greenstand.android.TreeTracker.BuildConfig
 
 @Parcelize
