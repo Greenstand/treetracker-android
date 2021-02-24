@@ -101,8 +101,9 @@ class PlanterUploader(
             }
             .sortedBy { it.createdAt }
 
-        loggedOutPlanterCheckIns.forEach {
-            val photoFile = File(it.localPhotoPath)
+        loggedOutPlanterCheckIns.mapNotNull { it.localPhotoPath }
+            .forEach { localPhotoPath ->
+            val photoFile = File(localPhotoPath)
             if (photoFile.exists()) {
                 photoFile.delete()
             }

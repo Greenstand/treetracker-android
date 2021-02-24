@@ -25,7 +25,6 @@ class MapViewModel constructor(
 ) : ViewModel() {
 
     val checkInStatusLiveData = MutableLiveData<Boolean>()
-    val locationUpdates: LiveData<Location?> = locationUpdateManager.locationUpdateLiveData
 
     init {
         locationUpdateManager.startLocationUpdates()
