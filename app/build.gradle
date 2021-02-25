@@ -20,7 +20,7 @@ loadExtraProperties("treetracker.keys.properties")
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.0'
+    buildToolsVersion '30.0.3'
 
 
     defaultConfig {
@@ -56,11 +56,17 @@ android {
     }
 
     buildFeatures {
+        compose true
         viewBinding true
     }
 
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerVersion kotlin_version
     }
 
     compileOptions {
@@ -177,6 +183,12 @@ android {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 repositories {
     maven {
         url "https://maven.google.com"
@@ -188,7 +200,7 @@ repositories {
 dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
-    compile 'com.google.maps.android:android-maps-utils:0.5+'
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
     //implementation 'com.amazonaws:aws-java-sdk:1.11.584'
     // 2.0: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-project-gradle.html
@@ -202,9 +214,26 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.exifinterface:exifinterface:1.3.2'
+    implementation 'androidx.exifinterface:exifinterface:1.3.2'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
     implementation "androidx.work:work-runtime-ktx:2.5.0"
+
+    // Compose
+//    implementation "androidx.compose.ui:ui:$compose_version"
+//    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+//    implementation "androidx.compose.foundation:foundation:$compose_version"
+//    implementation "androidx.compose.material:material:$compose_version"
+//    implementation "androidx.compose.material:material-icons-core:$compose_version"
+//    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+//    implementation "androidx.navigation:navigation-compose:1.0.0-alpha04"
+    implementation "androidx.compose.runtime:runtime:$compose_version"
+    implementation "androidx.compose.foundation:foundation:$compose_version"
+    implementation "androidx.compose.foundation:foundation-layout:$compose_version"
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.animation:animation:$compose_version"
 
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.3'

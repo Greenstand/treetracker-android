@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.4.20'
+    ext.kotlin_version = '1.4.30'
     repositories {
         google()
         jcenter()
@@ -9,11 +9,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:7.0.0-alpha08'
         classpath 'com.google.gms:google-services:4.3.3'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0"
         classpath 'org.jlleitschuh.gradle:ktlint-gradle:9.2.1'
 
@@ -23,6 +22,7 @@ buildscript {
 }
 
 allprojects {
+
     repositories {
         google()
         jcenter()
@@ -31,7 +31,9 @@ allprojects {
         }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
+
     ext {
+        compose_version = "1.0.0-beta01"
         androidSupportVersion = '1.0.0'
         retrofit2Version = '2.6.0'
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"
