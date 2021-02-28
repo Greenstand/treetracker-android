@@ -31,5 +31,21 @@
     <action
         android:id="@+id/action_global_languagePickerFragment"
         app:destination="@id/languagePickerFragment" />
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="org.greenstand.android.TreeTracker.dashboard.DashboardFragment"
+        android:label="DashboardFragment" />
+    <action
+        android:id="@+id/action_global_dashboardFragment"
+        app:destination="@id/dashboardFragment"
+        app:popUpTo="@id/tree_tracker_graph"
+        app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/orgPickerFragment"
+        android:name="org.greenstand.android.TreeTracker.orgpicker.OrgPickerFragment"
+        android:label="OrgPickerFragment" />
+    <action
+        android:id="@+id/action_global_orgPickerFragment"
+        app:destination="@id/orgPickerFragment" />
 
 </navigation>

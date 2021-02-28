@@ -2,6 +2,8 @@ package org.greenstand.android.TreeTracker.languagepicker
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,17 +28,23 @@ fun LanguageSelectScreen(onNavNext: () -> Unit, viewModel: LanguagePickerViewMod
     val currentLanguage by viewModel.currentLanguage.observeAsState()
 
     Scaffold(
-        topBar = { Text(stringResource(id = R.string.sync)) },
         bottomBar = {
-            Button(onClick = onNavNext) {
+            Button(
+                onClick = onNavNext,
+                modifier = Modifier.padding(10.dp)
+            ) {
                 Text("Next")
             }
         },
     ) {
-        Text(currentLanguage.toString())
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
         ) {
+            item {
+                Text("Current Language: $currentLanguage")
+            }
             items(Language.values()) { language ->
                 Text(
                     text = language.toString(),

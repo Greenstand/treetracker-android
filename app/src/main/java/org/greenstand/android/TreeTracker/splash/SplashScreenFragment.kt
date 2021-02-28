@@ -47,36 +47,3 @@ class SplashScreenFragment : Fragment() {
         }
     }
 }
-
-@Composable
-fun SplashScreen(preferencesMigrator: PreferencesMigrator, navController: NavController?) {
-    val context = LocalContext.current
-    LaunchedEffect(true) {
-        Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
-        preferencesMigrator.migrateIfNeeded()
-        delay(100)
-
-        val hasUserSetup = false
-
-        if (!hasUserSetup) {
-            navController?.navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToLanguagePickerFragment(isFromTopBar = false))
-        } else {
-            Toast.makeText(context, "Navigating to Dashboard is under construction", Toast.LENGTH_LONG)
-                .show()
-        }
-    }
-
-    Image(
-        painter = painterResource(id = R.drawable.splash),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
-}
-
-@Preview
-@Composable
-fun SplashScreenPreview() {
-    TreeTrackerTheme {
-        SplashScreen(GlobalContext.get().koin.get(), null)
-    }
-}
