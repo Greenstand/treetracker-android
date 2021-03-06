@@ -12,6 +12,8 @@ import com.google.gson.GsonBuilder
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
+import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
+import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
@@ -21,6 +23,7 @@ import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.models.TreeUploader
+import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -67,6 +70,14 @@ val appModule = module {
 
     viewModel { ConfigViewModel(get(), get()) }
 
+    viewModel { LanguagePickerViewModel(get(), get()) }
+
+    viewModel { DashboardViewModel() }
+
+    viewModel { OrgPickerViewModel() }
+
+    viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel() }
+
     single { WorkManager.getInstance(get()) }
 
     single { LocalBroadcastManager.getInstance(get()) }
@@ -84,6 +95,8 @@ val appModule = module {
     single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
 
     single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
+
+    single { androidContext().resources }
 
     single { LocationUpdateManager(get(), get(), get()) }
 

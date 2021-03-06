@@ -8,10 +8,14 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.view.HapticFeedbackConstants
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.card.MaterialCardView
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 
 fun Fragment.mainActivity(): MainActivity {
@@ -56,5 +60,16 @@ fun Activity.dismissKeyboard() {
         this.currentFocus?.let {
             inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
         }
+    }
+}
+
+fun Fragment.createCompose(resId: Int, content: @Composable () -> Unit): View {
+    return ComposeView(requireContext()).apply {
+        id = resId
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        setContent(content)
     }
 }

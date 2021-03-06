@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.UserPrefKey
@@ -41,13 +42,13 @@ class LanguageSwitcher(private val prefs: Preferences) {
         }
         setLanguage(newLanguage, res)
 
-        prefs.edit().putString(LANGUAGE_PREF_KEY, newLanguage.locale.toLanguageTag()).commit()
-
         activity.finish()
         activity.startActivity(Intent(activity, MainActivity::class.java))
     }
 
     fun setLanguage(language: Language, res: Resources) {
+        prefs.edit().putString(LANGUAGE_PREF_KEY, language.locale.toLanguageTag()).commit()
+
         val config = Configuration(res.configuration).apply {
             Locale.setDefault(language.locale)
             setLocale(language.locale)
@@ -59,7 +60,7 @@ class LanguageSwitcher(private val prefs: Preferences) {
         )
     }
 
-    private fun currentLanguage(): Language {
+    fun currentLanguage(): Language {
         return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en") ?: "")
     }
 
