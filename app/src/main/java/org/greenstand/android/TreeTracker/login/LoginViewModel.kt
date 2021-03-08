@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.viewmodels
+package org.greenstand.android.TreeTracker.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

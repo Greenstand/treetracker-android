@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.fragments
+package org.greenstand.android.TreeTracker.login
 
 import android.app.Activity
 import android.content.Intent
@@ -19,7 +19,6 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.databinding.FragmentLoginBinding
-import org.greenstand.android.TreeTracker.login.LoginViewModel
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.utilities.onTextChanged
