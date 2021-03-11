@@ -1,83 +1,117 @@
 package org.greenstand.android.TreeTracker.login
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavDirections
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
-import org.greenstand.android.TreeTracker.utilities.Validation
+import timber.log.Timber
 
-class LoginViewModel(private val dao: TreeTrackerDAO,
-                     private val planterCheckInUseCase: PlanterCheckInUseCase): ViewModel()  {
+class LoginViewModel(
+    private val dao: TreeTrackerDAO,
+    private val planterCheckInUseCase: PlanterCheckInUseCase,
+    private val analytics: Analytics
+) : ViewModel() {
 
-    private var email: String? = null
-    private var phone: String? = null
+//    private var email: String? = null
+//    private var phone: String? = null
+
+    private lateinit var userCredentials: String
 
     var photoPath: String? = null
         set(value) {
             field = value
-            if (!field.isNullOrEmpty()) {
-                confirm(onNavigateToMap)
+
+            field?.let { path ->
+                if (path.isNotEmpty()) {
+                    viewModelScope.launch(Dispatchers.Main) {
+                        planterCheckInUseCase.execute(
+                            PlanterCheckInParams(localPhotoPath = path, identifier = userCredentials)
+                        )
+                    }
+                }
             }
         }
 
-    var onNavigateToMap: () -> Unit = { }
+    private val _uiEvents = MutableLiveData<UIEvent>()
+    val uiEvents: LiveData<UIEvent> = _uiEvents
 
-    private val errorMessageMutableLiveData = MutableLiveData<Int>()
-    private val loginButtonStateMutableLiveData = MutableLiveData<Boolean>().apply {
-        value = false
-    }
+    /**
+     * User's information. Email will always be used over phone when possible.
+     */
+//    val userIdentification: String
+//        get() = email ?: phone!!
 
-    val errorMessageLiveDate: LiveData<Int> = errorMessageMutableLiveData
-    val loginButtonStateLiveDate: LiveData<Boolean> = loginButtonStateMutableLiveData
+//    fun updateEmail(email: String) {
+//        val trimmedEmail = email.trim()
+//        if (Validation.isEmailValid(trimmedEmail)) {
+//            this.email = trimmedEmail
+//        } else {
+//            if (!Validation.isValidPhoneNumber(phone.orEmpty())) {
+//            }
+//            //errorMessageMutableLiveData.value = R.string.invalid_identification
+//        }
+//    }
 
-    val userIdentification: String
-        get() {
-            // We always use email over phone if possible
-            return email ?: phone!!
-        }
+//    fun updatePhone(phone: String) {
+//        val trimmedPhone = phone.trim()
+//        if (Validation.isValidPhoneNumber(trimmedPhone)) {
+//            this.phone = trimmedPhone
+//        } else {
+//            if (!Validation.isEmailValid(email.orEmpty())) {
+//            }
+//            //errorMessageMutableLiveData.value = R.string.invalid_identification
+//        }
+//    }
 
-    fun updateEmail(email: String) {
-        val trimmedEmail = email.trim()
-        if (Validation.isEmailValid(trimmedEmail)) {
-            this.email = trimmedEmail
-            loginButtonStateMutableLiveData.value = true
-        } else {
-            if (!Validation.isValidPhoneNumber(phone.orEmpty())) {
-                loginButtonStateMutableLiveData.value = false
+//    private suspend fun isUserPresentOnDevice(credentials: String): Boolean {
+//        return dao.getPlanterInfoIdByIdentifier(credentials) != null
+//    }
+
+//    private fun confirm(onConfirmationComplete: () -> Unit) {
+//        viewModelScope.launch(Dispatchers.Main) {
+//
+//            planterCheckInUseCase.execute(PlanterCheckInParams(localPhotoPath = photoPath!!,
+//                                                               identifier = userIdentification))
+//
+//            onConfirmationComplete()
+//        }
+//    }
+
+    /**
+     * @param credentials - The user provided email or phone.
+     */
+    fun loginButtonClicked(credentials: String) {
+
+        this.userCredentials = credentials
+
+        this.viewModelScope.launch {
+
+            if (dao.getPlanterInfoIdByIdentifier(credentials) != null) {
+                _uiEvents.postValue(UIEvent.TakePhotoEvent)
+                Timber.d("User already on device, going to map")
+            } else {
+                Timber.d("User not on device, going to signup flow")
+                analytics.userEnteredEmailPhone()
+                _uiEvents.postValue(
+                    UIEvent.NavigationRequestEvent(
+                        LoginFragmentDirections.actionLoginFragmentToSignUpFragment(credentials)
+                    )
+                )
             }
-            //errorMessageMutableLiveData.value = R.string.invalid_identification
         }
     }
 
-    fun updatePhone(phone: String) {
-        val trimmedPhone = phone.trim()
-        if (Validation.isValidPhoneNumber(trimmedPhone)) {
-            this.phone = trimmedPhone
-            loginButtonStateMutableLiveData.value = true
-        } else {
-            if (!Validation.isEmailValid(email.orEmpty())) {
-                loginButtonStateMutableLiveData.value = false
-            }
-            //errorMessageMutableLiveData.value = R.string.invalid_identification
-        }
-    }
-
-    suspend fun isUserPresentOnDevice(): Boolean {
-        return dao.getPlanterInfoIdByIdentifier(userIdentification) != null
-    }
-
-    private fun confirm(onConfirmationComplete: () -> Unit) {
-        viewModelScope.launch(Dispatchers.Main) {
-
-            planterCheckInUseCase.execute(PlanterCheckInParams(localPhotoPath = photoPath!!,
-                                                               identifier = userIdentification))
-
-            onConfirmationComplete()
-        }
+    sealed class UIEvent {
+        data class NavigationRequestEvent(val newNavDirection: NavDirections) : UIEvent()
+        data class ErrorEvent(@StringRes val errorMessage: Int) : UIEvent()
+        object TakePhotoEvent : UIEvent()
     }
 }

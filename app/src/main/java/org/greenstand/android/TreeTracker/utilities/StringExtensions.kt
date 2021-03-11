@@ -40,3 +40,17 @@ fun String.hashString(algorithmName: String): String {
     }
     return result.toString()
 }
+
+/**
+ * @return true if this string is a valid phone number, false if not.
+ */
+fun String.isValidPhoneNumber(): Boolean {
+    return Validation.isValidPhoneNumber(this)
+}
+
+/**
+ * @return true if this string is a valid email, false if not.
+ */
+fun String.isValidEmail(): Boolean {
+    return Validation.isEmailValid(this)
+}

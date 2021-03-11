@@ -21,6 +21,7 @@ fun TreeTrackerButton(
     onClick: () -> Unit,
     padding: Padding = Padding(),
     @StringRes textRes: Int,
+    isEnabled: Boolean = true
 ) {
 
     Button(
@@ -37,7 +38,8 @@ fun TreeTrackerButton(
         colors = ButtonDefaults.buttonColors(
             backgroundColor = treeTrackerGreen
         ),
-        shape = RoundedCornerShape(5.dp)
+        shape = RoundedCornerShape(5.dp),
+        enabled = isEnabled
 
     ) {
         Text(text = stringResource(id = textRes))

@@ -6,100 +6,100 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.Toast
+import androidx.compose.ui.platform.ComposeView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
-import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.databinding.FragmentLoginBinding
 import org.greenstand.android.TreeTracker.utilities.CameraHelper
 import org.greenstand.android.TreeTracker.utilities.mainActivity
-import org.greenstand.android.TreeTracker.utilities.onTextChanged
-import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class LoginFragment : Fragment() {
 
-    private lateinit var bindings: FragmentLoginBinding
+//    private lateinit var bindings: FragmentLoginBinding
 
     private val vm: LoginViewModel by viewModel()
-    private val analytics: Analytics by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        bindings = FragmentLoginBinding.inflate(layoutInflater)
-        return bindings.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                LoginView(viewModel = vm, navController = findNavController())
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         mainActivity().bindings.toolbarTitle.apply {
             setText(R.string.greenstand_welcome_text)
-            setTextColor(resources.getColor(R.color.black))
+            setTextColor(ContextCompat.getColor(context, R.color.black))
         }
 
-        vm.errorMessageLiveDate.observe(
-            this,
-            Observer {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }
-        )
-
-        vm.loginButtonStateLiveDate.observe(
-            this,
-            Observer {
-                bindings.loginButton.isEnabled = it
-            }
-        )
-
-        vm.onNavigateToMap = {
-            findNavController()
-                .navigate(LoginFragmentDirections.actionLoginFragmentToMapsFragment())
-        }
-
-        bindings.loginPhoneEditText.onTextChanged { vm.updatePhone(it) }
-        bindings.loginEmailEditText.onTextChanged { vm.updateEmail(it) }
-        bindings.loginEmailEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_GO && bindings.loginButton.isEnabled) {
-                bindings.loginButton.performClick()
-                true
-            }
-            false
-        }
-
-        bindings.loginButton.setOnClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
-                if (vm.isUserPresentOnDevice()) {
-                    withContext(Dispatchers.Main) {
-                        CameraHelper.takePictureForResult(this@LoginFragment, selfie = true)
-                    }
-                    // User already has their info on device, skip the sign up and just update photo
-                    Timber.d("User already on device, going to map")
-                } else {
-                    // User has no info on device, go through the sign up process
-                    Timber.d("User not on device, going to signup flow")
-                    analytics.userEnteredEmailPhone()
-                    withContext(Dispatchers.Main) {
-                        findNavController()
-                            .navigate(
-                                LoginFragmentDirections
-                                    .actionLoginFragmentToSignUpFragment(vm.userIdentification)
-                            )
-                    }
-                }
+        vm.uiEvents.observe(viewLifecycleOwner) { uiEvent ->
+            when (uiEvent) {
+                is LoginViewModel.UIEvent.TakePhotoEvent -> CameraHelper.takePictureForResult(this, true)
+                else -> Unit // **Note: Some UIEvents are consumed in the composable LoginView and are ignored here.
             }
         }
+
+//        vm.errorMessageLiveDate.observe(
+//            viewLifecycleOwner,
+//            Observer {
+//                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+//            }
+//        )
+//
+//        vm.loginButtonStateLiveDate.observe(
+//            viewLifecycleOwner,
+//            Observer {
+//                bindings.loginButton.isEnabled = it
+//            }
+//        )
+
+//        vm.onNavigateToMap = {
+//            findNavController()
+//                .navigate(LoginFragmentDirections.actionLoginFragmentToMapsFragment())
+//        }
+
+//        bindings.loginPhoneEditText.onTextChanged { vm.updatePhone(it) }
+//        bindings.loginEmailEditText.onTextChanged { vm.updateEmail(it) }
+//        bindings.loginEmailEditText.setOnEditorActionListener { _, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_GO && bindings.loginButton.isEnabled) {
+//                bindings.loginButton.performClick()
+//                true
+//            }
+//            false
+//        }
+
+//        bindings.loginButton.setOnClickListener {
+//            GlobalScope.launch(Dispatchers.IO) {
+//                if (vm.isUserPresentOnDevice()) {
+//                    withContext(Dispatchers.Main) {
+//                        CameraHelper.takePictureForResult(this@LoginFragment, selfie = true)
+//                    }
+//                    // User already has their info on device, skip the sign up and just update photo
+//                    Timber.d("User already on device, going to map")
+//                } else {
+//                    // User has no info on device, go through the sign up process
+//                    Timber.d("User not on device, going to signup flow")
+//                    analytics.userEnteredEmailPhone()
+//                    withContext(Dispatchers.Main) {
+//                        findNavController()
+//                            .navigate(
+//                                LoginFragmentDirections
+//                                    .actionLoginFragmentToSignUpFragment(vm.userIdentification)
+//                            )
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun onRequestPermissionsResult(
