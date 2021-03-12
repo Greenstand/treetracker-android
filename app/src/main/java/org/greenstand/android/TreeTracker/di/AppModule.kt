@@ -14,7 +14,6 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
-import org.greenstand.android.TreeTracker.login.LoginViewModel
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
@@ -40,6 +39,7 @@ import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
+import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel

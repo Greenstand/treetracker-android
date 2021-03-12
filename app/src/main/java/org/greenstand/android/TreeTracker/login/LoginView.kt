@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.utilities.isValidEmail
 import org.greenstand.android.TreeTracker.utilities.isValidPhoneNumber
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 
 @Composable
 fun LoginView(
