@@ -28,6 +28,7 @@ import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
+import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
@@ -67,6 +68,8 @@ val appModule = module {
     viewModel { DashboardViewModel() }
 
     viewModel { OrgPickerViewModel(get()) }
+
+    viewModel { UserSelectViewModel(get()) }
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel() }
 
