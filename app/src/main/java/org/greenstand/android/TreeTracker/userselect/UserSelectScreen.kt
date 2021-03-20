@@ -16,22 +16,20 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 @Composable
 fun UserSelectScreen(viewModel: UserSelectViewModel, navController: NavController) {
-    TreeTrackerTheme {
-        Scaffold {
+    Scaffold {
 
-            val users by viewModel.planterInfoList.observeAsState(emptyList())
+        val users by viewModel.planterInfoList.observeAsState(emptyList())
 
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("User Select")
-                users.forEach { user ->
-                    Text(
-                        text = "${user.firstName} ${user.lastName}",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("User Select")
+            users.forEach { user ->
+                Text(
+                    text = "${user.firstName} ${user.lastName}",
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
     }
