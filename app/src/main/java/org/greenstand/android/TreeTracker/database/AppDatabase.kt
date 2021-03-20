@@ -18,7 +18,7 @@ import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
         TreeCaptureEntity::class,
         LocationDataEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -32,14 +32,16 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(context.applicationContext,
-                                                    AppDatabase::class.java,
-                                                    DB_NAME
+                    INSTANCE = Room.databaseBuilder(
+                        context.applicationContext,
+                        AppDatabase::class.java,
+                        DB_NAME
                     )
                         .addMigrations(
                             MIGRATION_3_4,
                             MIGRATION_4_5,
-                            MIGRATION_5_6
+                            MIGRATION_5_6,
+                            MIGRATION_6_7
                         )
                         .build()
                 }

@@ -42,24 +42,11 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/fragmentNewTreeGpsAccuracy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/fragment_new_tree_focus_warning_layout"
-        android:paddingLeft="@dimen/margin_twenty_four"
-        android:paddingRight="@dimen/margin_twenty_four"
-        android:paddingTop="@dimen/one_dp"
-        android:gravity="center"
-        android:text="@string/gps_accuracy_double_colon"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_seventeen"/>
-
     <EditText
         android:id="@+id/fragmentNewTreeNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fragmentNewTreeGpsAccuracy"
+        android:layout_below="@+id/fragment_new_tree_focus_warning_layout"
         android:layout_marginLeft="@dimen/margin_twenty_four"
         android:layout_marginRight="@dimen/margin_twenty_four"
         android:layout_marginTop="16dp"

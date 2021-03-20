@@ -1,25 +1,22 @@
 package org.greenstand.android.TreeTracker.viewmodels
 
 import android.content.Intent
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import java.util.UUID
-import kotlin.math.roundToInt
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.models.Convergence
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
-import org.greenstand.android.TreeTracker.utilities.ValueHelper
 
 class NewTreeViewModel(
     private val user: User,
-    private val locationUpdateManager: LocationUpdateManager,
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
     private val analytics: Analytics,
@@ -28,11 +25,11 @@ class NewTreeViewModel(
 ) : ViewModel() {
 
     val onTreeSaved: MutableLiveData<Unit> = MutableLiveData()
-    val onInsufficientGps: MutableLiveData<Unit> = MutableLiveData()
     val navigateToTreeHeight: MutableLiveData<Tree> = MutableLiveData()
     val navigateBack: MutableLiveData<Unit> = MutableLiveData()
     val onTakePicture: MutableLiveData<Unit> = MutableLiveData()
     private var newTreeUuid: UUID? = null
+    private var convergence: Convergence? = null
 
     val isNoteEnabled = FeatureFlags.TREE_NOTE_FEATURE_ENABLED
 
@@ -43,17 +40,10 @@ class NewTreeViewModel(
     var isNextButtonActive = !isDbhEnabled
         private set
 
-    val accuracyLiveData: LiveData<Int> = MutableLiveData<Int>().apply {
-        postValue(locationUpdateManager.currentLocation?.accuracy?.roundToInt() ?: 0)
-    }
-
     var photoPath: String? = null
 
     init {
-        if (locationUpdateManager.currentLocation == null) {
-            onInsufficientGps.postValue(Unit)
-            navigateBack.postValue(Unit)
-        } else if (photoPath == null) {
+        if (photoPath == null) {
             onTakePicture.postValue(Unit)
         }
     }
@@ -64,11 +54,12 @@ class NewTreeViewModel(
             treeUuid = newTreeUuid!!,
             planterCheckInId = user.planterCheckinId ?: -1,
             content = note,
-            photoPath = photoPath!!
+            photoPath = photoPath!!,
+            convergence?.longitudeConvergence?.mean ?: 0.0,
+            convergence?.latitudeConvergence?.mean ?: 0.0
         )
 
         dbh?.let { newTree.addTreeAttribute(Tree.DBH_ATTR_KEY, it) }
-
 
         val absoluteStepCount = stepCounter.absoluteStepCount ?: 0
         val lastStepCountWhenCreatingTree = stepCounter.absoluteStepCountOnTreeCapture ?: 0
@@ -80,7 +71,8 @@ class NewTreeViewModel(
         newTree.addTreeAttribute(Tree.DELTA_STEP_COUNT_KEY, deltaSteps.toString())
         deviceOrientation.rotationMatrixSnapshot?.let {
             newTree.addTreeAttribute(
-                Tree.ROTATION_MATRIX_KEY, it.joinToString(","))
+                Tree.ROTATION_MATRIX_KEY, it.joinToString(",")
+            )
         }
         if (newTree.content.isNotBlank()) {
             analytics.treeNoteAdded(newTree.content.length)
@@ -100,16 +92,16 @@ class NewTreeViewModel(
     }
 
     fun isImageBlurry(data: Intent): Boolean {
-        val imageQuality = data.getDoubleExtra(ValueHelper.FOCUS_METRIC_VALUE, 0.0)
+        val imageQuality = data.getDoubleExtra(ImageCaptureActivity.FOCUS_METRIC_VALUE, 0.0)
         return imageQuality < FOCUS_THRESHOLD
     }
 
     suspend fun waitForConvergence() {
-        deviceOrientation.enable()
         stepCounter.enable()
         locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
         newTreeUuid = locationDataCapturer.generatedTreeUuid
+        convergence = locationDataCapturer.convergence()
         locationDataCapturer.turnOffTreeCaptureMode()
         isNextButtonActive = true
     }
@@ -119,6 +111,7 @@ class NewTreeViewModel(
             return
         }
         newTreeUuid = locationDataCapturer.generatedTreeUuid
+        convergence = locationDataCapturer.convergence()
         locationDataCapturer.turnOffTreeCaptureMode()
     }
 

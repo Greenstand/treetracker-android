@@ -1,8 +1,8 @@
 package org.greenstand.android.TreeTracker.models
 
 import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.UUID
-import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class Tree(
@@ -10,6 +10,8 @@ class Tree(
     val planterCheckInId: Long,
     val content: String,
     val photoPath: String,
+    val meanLongitude: Double,
+    val meanLatitude: Double,
     private val treeAttributes: MutableMap<String, String> = mutableMapOf()
 ) : Parcelable {
 

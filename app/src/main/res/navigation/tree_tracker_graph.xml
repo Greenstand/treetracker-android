@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tree_tracker_graph"
+    app:startDestination="@id/splashScreenFragment">
+
+    <fragment
+        android:id="@+id/splashScreenFragment"
+        android:name="org.greenstand.android.TreeTracker.splash.SplashScreenFragment"
+        android:label="SplashScreenFragment" >
+        <action
+            android:id="@+id/action_splashScreenFragment_to_languagePickerFragment"
+            app:destination="@id/languagePickerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/languagePickerFragment"
+        android:name="org.greenstand.android.TreeTracker.languagepicker.LanguagePickerFragment"
+        android:label="LanguagePickerFragment" >
+        <action
+            android:id="@+id/action_languagePickerFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+        <argument
+            android:name="isFromTopBar"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="org.greenstand.android.TreeTracker.signup.SignupFragment"
+        android:label="SignupFragment" />
+    <action
+        android:id="@+id/action_global_languagePickerFragment"
+        app:destination="@id/languagePickerFragment" />
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="org.greenstand.android.TreeTracker.dashboard.DashboardFragment"
+        android:label="DashboardFragment" />
+    <action
+        android:id="@+id/action_global_dashboardFragment"
+        app:destination="@id/dashboardFragment"
+        app:popUpTo="@id/tree_tracker_graph"
+        app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/orgPickerFragment"
+        android:name="org.greenstand.android.TreeTracker.orgpicker.OrgPickerFragment"
+        android:label="OrgPickerFragment" />
+    <action
+        android:id="@+id/action_global_orgPickerFragment"
+        app:destination="@id/orgPickerFragment" />
+
+</navigation>

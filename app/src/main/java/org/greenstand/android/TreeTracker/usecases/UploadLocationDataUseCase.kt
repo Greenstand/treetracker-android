@@ -6,22 +6,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 
 class UploadLocationDataUseCase(
-    private val dao: TreeTrackerDAO
+    private val dao: TreeTrackerDAO,
+    private val gson: Gson
 ) : UseCase<Unit, Boolean>() {
 
-    val storageClient = ObjectStorageClient.instance()
+    private val storageClient = ObjectStorageClient.instance()
 
     override suspend fun execute(params: Unit): Boolean {
         try {
             withContext(Dispatchers.IO) {
-                val gson = Gson()
                 val locationEntities = dao.getTreeLocationData()
-                val locations = locationEntities.map { it.locationDataJson }
-                val treeLocJsonArray = gson.toJson(locations)
+                val locations = locationEntities.map {
+                    gson.fromJson(it.locationDataJson, LocationData::class.java)
+                }
+                val treeLocJsonArray = gson.toJson(mapOf("locations" to locations))
                 storageClient.uploadBundle(
                     treeLocJsonArray,
                     "loc_data_${treeLocJsonArray.md5()}"
@@ -37,10 +40,10 @@ class UploadLocationDataUseCase(
         } catch (ace: AmazonClientException) {
             Timber.e(
                 "Caught an AmazonClientException, which " +
-                        "means the client encountered " +
-                        "an internal error while trying to " +
-                        "communicate with S3, " +
-                        "such as not being able to access the network."
+                    "means the client encountered " +
+                    "an internal error while trying to " +
+                    "communicate with S3, " +
+                    "such as not being able to access the network."
             )
             Timber.e("Error Message: ${ace.message}")
             return false

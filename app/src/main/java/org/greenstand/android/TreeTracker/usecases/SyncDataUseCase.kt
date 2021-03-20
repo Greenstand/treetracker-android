@@ -6,13 +6,15 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.TreeUploader
 import timber.log.Timber
 
 class SyncDataUseCase(
-    private val treeLoadStrategy: TreeUploadStrategy,
-    private val uploadPlanterDetailsUseCase: UploadPlanterUseCase,
+    private val treeUploader: TreeUploader,
     private val uploadLocationDataUseCase: UploadLocationDataUseCase,
-    private val dao: TreeTrackerDAO
+    private val dao: TreeTrackerDAO,
+    private val planterUploader: PlanterUploader
 ) : UseCase<Unit, Boolean>() {
 
     private val TAG = "SyncDataUseCase"
@@ -43,18 +45,9 @@ class SyncDataUseCase(
     }
 
     private suspend fun uploadPlanters() {
-        // Upload all user registration data that hasn't been uploaded yet
-        val planterInfoToUploadList = dao.getAllPlanterInfoToUpload()
-
-        Timber.tag(TAG)
-            .d("Uploading Planter Info for ${planterInfoToUploadList.size} planters")
-
-        val planterIdsToUpload = planterInfoToUploadList.map { it.id }
-
         if (coroutineContext.isActive) {
             runCatching {
-                uploadPlanterDetailsUseCase.execute(
-                    UploadPlanterParams(planterInfoIds = planterIdsToUpload))
+                planterUploader.uploadPlanters()
             }
         } else {
             coroutineContext.cancel()
@@ -65,7 +58,7 @@ class SyncDataUseCase(
         Timber.tag(TAG).d("Uploading ${treeIds.size} trees")
         try {
             if (coroutineContext.isActive) {
-                treeLoadStrategy.uploadTrees(treeIds)
+                treeUploader.uploadTrees(treeIds)
             } else {
                 coroutineContext.cancel()
             }

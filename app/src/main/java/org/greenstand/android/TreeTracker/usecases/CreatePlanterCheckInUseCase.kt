@@ -13,6 +13,7 @@ data class CreatePlanterCheckInParams(
     val planterInfoId: Long
 )
 
+@Deprecated("Use Users class instead to start a session, which replaces check ins")
 class CreatePlanterCheckInUseCase(
     private val locationUpdateManager: LocationUpdateManager,
     private val doa: TreeTrackerDAO,

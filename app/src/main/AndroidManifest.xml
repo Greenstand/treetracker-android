@@ -47,7 +47,7 @@
 
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.TreeTrackerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
             android:configChanges="locale"
@@ -63,13 +63,21 @@
 
         </activity>
 
+        <activity
+            android:name=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="locale"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <meta-data
            android:name="com.google.android.maps.v2.API_KEY"
-           android:value="AIzaSyCw3J04DQgxglY8D5OwRgqVR_IVDOhI7yc"/>
+           android:value="@string/maps_api_key"/>
 
         <!--
         <meta-data
