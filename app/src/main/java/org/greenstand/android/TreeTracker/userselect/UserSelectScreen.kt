@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 @Composable
 fun UserSelectScreen(viewModel: UserSelectViewModel, navController: NavController) {
