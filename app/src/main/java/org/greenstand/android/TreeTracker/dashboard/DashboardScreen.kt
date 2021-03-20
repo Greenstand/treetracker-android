@@ -13,12 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
-    onNavLanguage: () -> Unit,
-    onNavOrg: () -> Unit
+    navController: NavController
 ) {
     Scaffold(
         topBar = {
@@ -27,13 +27,17 @@ fun DashboardScreen(
                 navigationIcon = {
                     Text(
                         text = "Org",
-                        modifier = Modifier.clickable(onClick = onNavOrg)
+                        modifier = Modifier.clickable {
+                            navController.navigate(DashboardFragmentDirections.actionGlobalOrgPickerFragment())
+                        }
                     )
                 },
                 actions = {
                     Text(
                         text = "Language",
-                        modifier = Modifier.clickable(onClick = onNavLanguage)
+                        modifier = Modifier.clickable {
+                            navController.navigate(DashboardFragmentDirections.actionGlobalLanguagePickerFragment())
+                        }
                     )
                 }
             )
@@ -52,7 +56,9 @@ fun DashboardScreen(
             }
             Button(
                 modifier = Modifier.padding(16.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = {
+                    navController.navigate(DashboardFragmentDirections.actionDashboardFragmentToUserSelectFragment())
+                }) {
                 Text(
                     text = "Track",
                 )

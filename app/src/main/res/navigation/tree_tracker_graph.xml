@@ -34,7 +34,11 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="org.greenstand.android.TreeTracker.dashboard.DashboardFragment"
-        android:label="DashboardFragment" />
+        android:label="DashboardFragment" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_userSelectFragment"
+            app:destination="@id/userSelectFragment" />
+    </fragment>
     <action
         android:id="@+id/action_global_dashboardFragment"
         app:destination="@id/dashboardFragment"
@@ -47,5 +51,9 @@
     <action
         android:id="@+id/action_global_orgPickerFragment"
         app:destination="@id/orgPickerFragment" />
+    <fragment
+        android:id="@+id/userSelectFragment"
+        android:name="org.greenstand.android.TreeTracker.userselect.UserSelectFragment"
+        android:label="UserSelectFragment" />
 
 </navigation>
