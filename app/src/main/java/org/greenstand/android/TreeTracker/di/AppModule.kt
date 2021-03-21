@@ -14,15 +14,7 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
-import org.greenstand.android.TreeTracker.models.Configuration
-import org.greenstand.android.TreeTracker.models.DeviceOrientation
-import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
-import org.greenstand.android.TreeTracker.models.PlanterUploader
-import org.greenstand.android.TreeTracker.models.StepCounter
-import org.greenstand.android.TreeTracker.models.User
-import org.greenstand.android.TreeTracker.models.TreeUploader
+import org.greenstand.android.TreeTracker.models.*
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
@@ -127,6 +119,8 @@ val appModule = module {
     single { Configuration(get(), get()) }
 
     single { GsonBuilder().serializeNulls().create() }
+
+    single { TreeTrackerViewModelFactory(get(), get(), get()) }
 
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
