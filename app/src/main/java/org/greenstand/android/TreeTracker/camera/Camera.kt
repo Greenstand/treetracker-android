@@ -1,0 +1,92 @@
+package org.greenstand.android.TreeTracker.camera
+
+import android.util.Size
+import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
+import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import timber.log.Timber
+
+@Composable
+fun Camera(
+    isSelfieMode: Boolean = false,
+    cameraControl: CameraControl,
+    onImageCaptured: (String) -> Unit
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { context ->
+            PreviewView(context).also { previewView ->
+                previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                val cameraProviderFuture = ProcessCameraProvider.getInstance(previewView.context)
+
+                cameraProviderFuture.addListener({
+                    val cameraProvider = cameraProviderFuture.get()
+
+                    val preview = Preview.Builder().build()
+
+                    val imageCapture = ImageCapture.Builder()
+                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                        .setTargetResolution(Size(800, 800))
+                        .build()
+
+                    cameraControl.captureListener = {
+
+                        val file = ImageUtils.createImageFile(context)
+
+                        val metadata = ImageCapture.Metadata().apply {
+                            // Mirror image when using the front camera
+                            isReversedHorizontal = isSelfieMode
+                        }
+
+                        val outputOptions = ImageCapture.OutputFileOptions.Builder(file)
+                            .setMetadata(metadata)
+                            .build()
+
+                        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(previewView.context), object : ImageCapture.OnImageSavedCallback {
+                            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                                ImageUtils.resizeImage(file.absolutePath, isSelfieMode)
+                                Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
+                                onImageCaptured(file.absolutePath)
+                            }
+
+                            override fun onError(exception: ImageCaptureException) {
+                                Timber.tag("CameraXApp").e("Photo capture failed: ${exception.localizedMessage}")
+                                exception.printStackTrace()
+                            }
+                        })
+                    }
+
+                    val cameraSelector = CameraSelector.Builder()
+                        .requireLensFacing(
+                            if (isSelfieMode) CameraSelector.LENS_FACING_FRONT
+                            else CameraSelector.LENS_FACING_FRONT
+                        )
+                        .build()
+
+                    val camera = cameraProvider.bindToLifecycle(
+                        lifecycleOwner, cameraSelector, preview, imageCapture)
+
+                    preview.setSurfaceProvider(previewView.surfaceProvider)
+                }, ContextCompat.getMainExecutor(previewView.context))
+            }
+        },
+    )
+}
+
+class CameraControl {
+
+    var captureListener: (() -> Unit)? = null
+
+    fun captureImage() {
+        captureListener?.invoke()
+    }
+}
