@@ -72,7 +72,7 @@ fun Camera(
                         )
                         .build()
 
-                    val camera = cameraProvider.bindToLifecycle(
+                    cameraProvider.bindToLifecycle(
                         lifecycleOwner, cameraSelector, preview, imageCapture)
 
                     preview.setSurfaceProvider(previewView.surfaceProvider)
