@@ -8,12 +8,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.databinding.TreeTrackerActivityBinding
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.models.*
-import org.greenstand.android.TreeTracker.signup.SignupScreen
+import org.greenstand.android.TreeTracker.signup.SignupFlow
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.koin.android.ext.android.inject
@@ -64,11 +65,12 @@ private fun Host() {
                 SplashScreen()
             }
 
-            composable(NavRoute.LanguagePickerView.route) {
+            composable(
+                route = NavRoute.LanguagePickerView.route,
+                arguments = listOf(navArgument("isFromTopBar") { type = NavType.BoolType })
+            ) { backStackEntry ->
                 LanguageSelectScreen(
-                    onNavNext = {
-                        // todo: Figure out what should be done here
-                    }
+                    isFromTopBar = backStackEntry.arguments?.getBoolean("isFromTopBar") ?: false
                 )
             }
 
@@ -77,7 +79,7 @@ private fun Host() {
             }
 
             composable(NavRoute.SignupView.route) {
-                SignupScreen(onNavBackward = { /*TODO*/ }, onNavForward = { /*TODO*/ }, onNavLanguage = { /*TODO*/ })
+                SignupFlow()
             }
         }
     }

@@ -27,15 +27,7 @@ class LanguagePickerFragment : Fragment() {
         return createCompose(2) {
             TreeTrackerTheme {
                 LanguageSelectScreen(
-                    onNavNext = {
-                        if (args.isFromTopBar) {
-                            findNavController().popBackStack()
-                        } else {
-                            findNavController()
-                                .navigate(LanguagePickerFragmentDirections.actionLanguagePickerFragmentToSignupFragment())
-                        }
-                        languageSwitcher.applyCurrentLanguage(requireActivity())
-                                },
+                    false,
                     viewModel = viewModel
                 )
             }

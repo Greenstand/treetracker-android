@@ -1,8 +1,10 @@
 package org.greenstand.android.TreeTracker.splash
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,12 +30,12 @@ fun SplashScreen(
     LaunchedEffect(true) {
         Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
         viewModel.migratePreferences()
-        delay(100)
+        delay(1000)
 
         val hasUserSetup = false // fixme: Change this back to true when we want to go to the DashBoard
 
         if (!hasUserSetup) {
-            navController.navigate(NavRoute.LanguagePickerView.route)
+            navController.navigate("language/false")
         } else {
             navController.navigate(NavRoute.DashboardView.route)
         }
@@ -42,7 +44,8 @@ fun SplashScreen(
     Image(
         painter = painterResource(id = R.drawable.splash),
         contentDescription = null,
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize()
     )
 }
 

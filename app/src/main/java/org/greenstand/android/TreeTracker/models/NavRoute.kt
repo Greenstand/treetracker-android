@@ -2,8 +2,8 @@ package org.greenstand.android.TreeTracker.models
 
 enum class NavRoute(val route: String) {
 
-    SplashScreen("splashScreen"),
-    LanguagePickerView("languagePickerView"),
-    DashboardView("dashboardView"),
-    SignupView("SignupView")
+    SplashScreen("splash"),
+    LanguagePickerView("language/{isFromTopBar}"),
+    DashboardView("dashboard"),
+    SignupView("signup")
 }

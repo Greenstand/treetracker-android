@@ -20,11 +20,8 @@ class SignupFragment : Fragment() {
     ): View {
 
         return createCompose(2) {
-            SignupScreen(
+            SignupFlow(
                 viewModel = viewModel,
-                onNavBackward = { findNavController().popBackStack() },
-                onNavForward = { /* Go to image capture */ },
-                onNavLanguage = { findNavController().navigate(SignupFragmentDirections.actionGlobalLanguagePickerFragment()) }
             )
         }
     }

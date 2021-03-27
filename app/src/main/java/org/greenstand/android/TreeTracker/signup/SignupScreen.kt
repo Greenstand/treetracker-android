@@ -17,48 +17,55 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
+import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
+import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
+import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 @Composable
-fun SignupScreen(
+fun SignupFlow(
     viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current),
-    onNavBackward: () -> Unit,
-    onNavForward: () -> Unit,
-    onNavLanguage: () -> Unit
 ) {
     val state by viewModel.state.observeAsState(SignUpState())
 
-    val onBackPressedCallback: OnBackPressedCallback = remember {
-        object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                // viewModel.popScreen()
-            }
-        }
-    }
-    val dispatchOwner = LocalOnBackPressedDispatcherOwner.current
-    DisposableEffect(key1 = true) {
-        // dispatchOwner.onBackPressedDispatcher.addCallback(onBackPressedCallback)
-        onDispose {
-            // dispatchOwner.onBackPressedDispatcher
-        }
-    }
+    val parentNavController = LocalNavHostController.current
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    Crossfade(targetState = state.screen) { screen ->
-        when (screen) {
-            SignupFlowScreen.EMAIL_PHONE -> EnterPhoneEmail(
+    NavHost(navController, startDestination = "phoneEmail") {
+
+        composable("phoneEmail") {
+            EnterPhoneEmail(
                 emailPhone = state.emailPhone ?: "",
-                onNavForward = { viewModel.setScreen(SignupFlowScreen.NAME) },
-                onNavBackward = onNavBackward,
-                onNavLanguage = onNavLanguage,
+                onNavForward = { navController.navigate("name") },
+                onNavBackward = { navController.popBackStack() },
+                onNavLanguage = { parentNavController.navigate("language/true") },
                 onEmailPhoneChanged = { viewModel.setEmailPhone(it) }
             )
-            SignupFlowScreen.NAME -> EnterName(
+        }
+
+        composable("name") {
+            EnterName(
                 name = state.name ?: "",
                 onNameChanged = { viewModel.setName(it) },
-                onNavLanguage = onNavLanguage,
-                onNavForward = onNavForward,
-                onNavBackward = { viewModel.setScreen(SignupFlowScreen.EMAIL_PHONE) }
+                onNavForward = {
+                    parentNavController.navigate(NavRoute.DashboardView.route) {
+                        launchSingleTop = true
+                        popUpTo(NavRoute.SplashScreen.route) { inclusive = true }
+                    }
+                               },
+                onNavBackward = { navController.popBackStack() },
+                onNavLanguage = { parentNavController.navigate("language/true") },
             )
+        }
+
+        composable("camera") {
+
         }
     }
 }
@@ -164,5 +171,5 @@ fun EnterName(
 @Preview
 @Composable
 fun SignupScreen_Preview(@PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel) {
-    SignupScreen(viewModel = viewModel, onNavBackward = { /*TODO*/ }, onNavForward = { /*TODO*/ }, onNavLanguage = { /*TODO*/ })
+    SignupFlow(viewModel = viewModel)
 }

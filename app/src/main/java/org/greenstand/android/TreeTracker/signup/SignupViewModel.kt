@@ -14,7 +14,6 @@ data class SignUpState(
     val emailPhone: String? = null,
     val name: String? = null,
     val photoPath: String? = null,
-    val screen: SignupFlowScreen = SignupFlowScreen.EMAIL_PHONE
 )
 
 class SignupViewModel : ViewModel() {
@@ -36,7 +35,4 @@ class SignupViewModel : ViewModel() {
         _state.value = _state.value?.copy(photoPath = photoPath)
     }
 
-    fun setScreen(screen: SignupFlowScreen) {
-        _state.value = _state.value?.copy(screen = screen)
-    }
 }

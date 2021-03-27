@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.languagepicker
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
@@ -21,5 +22,9 @@ class LanguagePickerViewModel(
     fun setLanguage(language: Language) {
         languageSwitcher.setLanguage(language, resource)
         _currentLanguage.value = language
+    }
+
+    fun refreshAppLanguage(activity: Activity) {
+        languageSwitcher.applyCurrentLanguage(activity)
     }
 }

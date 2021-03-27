@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.languagepicker
 
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,25 +15,37 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.navigate
+import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.Language
+import org.greenstand.android.TreeTracker.models.NavRoute
 
 @Composable
 fun LanguageSelectScreen(
-    onNavNext: () -> Unit,
+    isFromTopBar: Boolean,
     viewModel: LanguagePickerViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
-
     val currentLanguage by viewModel.currentLanguage.observeAsState()
+    val navController = LocalNavHostController.current
+    val activity = LocalContext.current as Activity
 
     Scaffold(
         bottomBar = {
             Button(
-                onClick = onNavNext,
+                onClick = {
+                    if (isFromTopBar) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(NavRoute.SignupView.route)
+                    }
+                    viewModel.refreshAppLanguage(activity)
+                          },
                 modifier = Modifier.padding(10.dp)
             ) {
                 Text("Next")
@@ -67,7 +80,7 @@ fun LanguageSelectScreen_Preview(
     @PreviewParameter(LanguagePickerPreviewProvider::class) viewModel: LanguagePickerViewModel
 ) {
     LanguageSelectScreen(
-        onNavNext = { },
+        true,
         viewModel
     )
 }
