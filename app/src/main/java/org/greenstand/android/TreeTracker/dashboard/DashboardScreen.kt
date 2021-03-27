@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.view.Bar
 
 @Composable
 fun DashboardScreen(
@@ -49,6 +50,9 @@ fun DashboardScreen(
                     )
                 }
             )
+        },
+        bottomBar = {
+            Bar()
         }
     ) {
         Column(
