@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import org.greenstand.android.TreeTracker.utilities.createCompose
 import org.koin.android.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class SignupFragment : Fragment() {
 
@@ -19,10 +18,8 @@ class SignupFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Timber.i("Creating view for SignupFragment!")
 
         return createCompose(2) {
-            // TreeTrackerTheme {
             SignupScreen(
                 viewModel = viewModel,
                 onNavBackward = { findNavController().popBackStack() },
@@ -30,6 +27,5 @@ class SignupFragment : Fragment() {
                 onNavLanguage = { findNavController().navigate(SignupFragmentDirections.actionGlobalLanguagePickerFragment()) }
             )
         }
-        // }
     }
 }
