@@ -1,36 +1,41 @@
 package org.greenstand.android.TreeTracker.splash
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
-import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
-import org.koin.core.context.GlobalContext
+import org.greenstand.android.TreeTracker.activities.LocalNavHostController
+import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.models.NavRoute
 import timber.log.Timber
 
-
 @Composable
-fun SplashScreen(preferencesMigrator: PreferencesMigrator, navController: NavController?) {
+fun SplashScreen(
+    viewModel: SplashScreenViewModel = viewModel(factory = LocalViewModelFactory.current),
+    navController: NavHostController = LocalNavHostController.current
+) {
+
     LaunchedEffect(true) {
         Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
-        preferencesMigrator.migrateIfNeeded()
+        viewModel.migratePreferences()
         delay(100)
 
-        val hasUserSetup = true
+        val hasUserSetup = false // fixme: Change this back to true when we want to go to the DashBoard
 
         if (!hasUserSetup) {
-            navController?.navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToLanguagePickerFragment(isFromTopBar = false))
+            navController.navigate(NavRoute.LanguagePickerView.route)
         } else {
-            navController?.navigate(SplashScreenFragmentDirections.actionGlobalDashboardFragment())
+            navController.navigate(NavRoute.DashboardView.route)
         }
     }
 
@@ -43,8 +48,9 @@ fun SplashScreen(preferencesMigrator: PreferencesMigrator, navController: NavCon
 
 @Preview
 @Composable
-fun SplashScreenPreview() {
-    TreeTrackerTheme {
-        SplashScreen(GlobalContext.get().koin.get(), null)
-    }
+fun SplashScreenPreview(@PreviewParameter(SplashScreenPreviewProvider::class) viewModel: SplashScreenViewModel) {
+    SplashScreen(
+        viewModel = viewModel,
+        navController = rememberNavController()
+    )
 }

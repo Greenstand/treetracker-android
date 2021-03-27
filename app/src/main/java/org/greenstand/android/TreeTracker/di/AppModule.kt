@@ -18,6 +18,7 @@ import org.greenstand.android.TreeTracker.models.*
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
+import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
@@ -64,6 +65,8 @@ val appModule = module {
     viewModel { UserSelectViewModel(get()) }
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel() }
+
+    viewModel { SplashScreenViewModel(get()) }
 
     single { Users(get(), get(), get()) }
 
@@ -118,6 +121,8 @@ val appModule = module {
     single { Configuration(get(), get()) }
 
     single { GsonBuilder().serializeNulls().create() }
+
+    single { TreeTrackerViewModelFactory(get(), get(), get(), get()) }
 
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
