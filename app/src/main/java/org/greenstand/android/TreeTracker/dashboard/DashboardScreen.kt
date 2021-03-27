@@ -12,13 +12,19 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import org.greenstand.android.TreeTracker.activities.LocalNavHostController
+import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 
 @Composable
 fun DashboardScreen(
-    viewModel: DashboardViewModel,
-    navController: NavController
+    viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
+    navController: NavController = LocalNavHostController.current
 ) {
     Scaffold(
         topBar = {
@@ -46,10 +52,12 @@ fun DashboardScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Center
+        ) {
             Button(
                 modifier = Modifier.padding(16.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = { /*TODO*/ }
+            ) {
                 Text(
                     text = "Upload",
                 )
@@ -58,18 +66,26 @@ fun DashboardScreen(
                 modifier = Modifier.padding(16.dp),
                 onClick = {
                     navController.navigate(DashboardFragmentDirections.actionDashboardFragmentToUserSelectFragment())
-                }) {
+                }
+            ) {
                 Text(
                     text = "Track",
                 )
             }
             Button(
                 modifier = Modifier.padding(16.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = { /*TODO*/ }
+            ) {
                 Text(
                     text = "Messages",
                 )
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun DashboardScreen_Preview(@PreviewParameter(DashboardPreviewParameter::class) viewModel: DashboardViewModel) {
+    DashboardScreen(viewModel = viewModel, rememberNavController())
 }
