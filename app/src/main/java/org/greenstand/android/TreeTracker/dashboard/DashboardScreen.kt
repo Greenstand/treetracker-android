@@ -15,15 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import org.greenstand.android.TreeTracker.activities.LocalNavHostController
+import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
-    navController: NavController
+    navController: NavController = LocalNavHostController.current
 ) {
     Scaffold(
         topBar = {
@@ -65,7 +66,8 @@ fun DashboardScreen(
                 modifier = Modifier.padding(16.dp),
                 onClick = {
                     navController.navigate(DashboardFragmentDirections.actionDashboardFragmentToUserSelectFragment())
-                }) {
+                }
+            ) {
                 Text(
                     text = "Track",
                 )

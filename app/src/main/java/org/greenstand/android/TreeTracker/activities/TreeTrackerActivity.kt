@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.databinding.TreeTrackerActivityBinding
@@ -17,7 +18,8 @@ import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.koin.android.ext.android.inject
 
-val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error("No active ViewModel factory found!") }
+val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error { "No active ViewModel factory found!" } }
+val LocalNavHostController = compositionLocalOf<NavHostController> { error { "No NavHostController found!" } }
 
 class TreeTrackerActivity : ComponentActivity() {
 
@@ -36,7 +38,12 @@ class TreeTrackerActivity : ComponentActivity() {
         }
 
         setContent {
-            CompositionLocalProvider(LocalViewModelFactory provides viewModelFactory) {
+            val navController = rememberNavController()
+
+            CompositionLocalProvider(
+                LocalViewModelFactory provides viewModelFactory,
+                LocalNavHostController provides navController
+            ) {
                 Host()
             }
         }
@@ -46,7 +53,7 @@ class TreeTrackerActivity : ComponentActivity() {
 @Composable
 private fun Host() {
 
-    val navController = rememberNavController()
+    val navController = LocalNavHostController.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
@@ -54,7 +61,7 @@ private fun Host() {
     TreeTrackerTheme {
         NavHost(navController, startDestination = NavRoute.SplashScreen.route) {
             composable(NavRoute.SplashScreen.route) {
-                SplashScreen(navController = navController)
+                SplashScreen()
             }
 
             composable(NavRoute.LanguagePickerView.route) {
@@ -66,7 +73,7 @@ private fun Host() {
             }
 
             composable(NavRoute.DashboardView.route) {
-                DashboardScreen(onNavLanguage = { /*TODO*/ }, onNavOrg = { /*TODO*/ })
+                DashboardScreen()
             }
 
             composable(NavRoute.SignupView.route) {

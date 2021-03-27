@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
 import timber.log.Timber
@@ -21,7 +22,7 @@ import timber.log.Timber
 @Composable
 fun SplashScreen(
     viewModel: SplashScreenViewModel = viewModel(factory = LocalViewModelFactory.current),
-    navController: NavHostController
+    navController: NavHostController = LocalNavHostController.current
 ) {
 
     LaunchedEffect(true) {
