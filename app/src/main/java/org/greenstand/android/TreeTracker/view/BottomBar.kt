@@ -18,33 +18,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
 
-@Composable
-fun Bar() {
-    ActionBar(
-        leftAction = {
-            TextButton(
-                modifier = Modifier.align(Alignment.Center),
-                stringRes = R.string.language,
-                onClick = {  }
-            )
-                     },
-        centerAction = {
-            Text("HELLO!", modifier = Modifier.align(Alignment.Center),)
-                       },
-        rightAction = {
-            TextButton(
-                modifier = Modifier.align(Alignment.Center),
-                stringRes = R.string.language,
-                onClick = {  }
-            )
-        })
-}
+
 
 @Composable
 fun ActionBar(
-    leftAction: @Composable (BoxScope.() -> Unit),
-    centerAction: @Composable (BoxScope.() -> Unit),
-    rightAction: @Composable (BoxScope.() -> Unit),
+    leftAction: @Composable (BoxScope.() -> Unit) = { },
+    centerAction: @Composable (BoxScope.() -> Unit) = { },
+    rightAction: @Composable (BoxScope.() -> Unit) = { },
 ) {
     BottomAppBar(
         elevation = 16.dp,
@@ -62,19 +42,3 @@ fun ActionBar(
 }
 
 
-@Composable
-fun TextButton(
-    modifier: Modifier = Modifier,
-    stringRes: Int,
-    onClick: () -> Unit,
-) {
-    // TODO customize button visuals
-    Button(
-        onClick = onClick,
-        modifier = modifier.size(height = 46.dp, width = 110.dp)
-    ) {
-        Text(
-            text = stringResource(id = stringRes)
-        )
-    }
-}
