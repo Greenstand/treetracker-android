@@ -1,11 +1,11 @@
 package org.greenstand.android.TreeTracker.splash
 
-import org.greenstand.android.TreeTracker.BaseViewModel
+import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 
 class SplashScreenViewModel(
     private val preferencesMigrator: PreferencesMigrator
-) : BaseViewModel() {
+) : ViewModel() {
 
     fun migratePreferences() {
         preferencesMigrator.migrateIfNeeded()

@@ -2,7 +2,7 @@ package org.greenstand.android.TreeTracker.signup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.greenstand.android.TreeTracker.BaseViewModel
+import androidx.lifecycle.ViewModel
 
 enum class SignupFlowScreen {
     EMAIL_PHONE,
@@ -17,7 +17,7 @@ data class SignUpState(
     val screen: SignupFlowScreen = SignupFlowScreen.EMAIL_PHONE
 )
 
-class SignupViewModel : BaseViewModel() {
+class SignupViewModel : ViewModel() {
 
     private val _state = MutableLiveData(SignUpState())
     val state: LiveData<SignUpState> = _state

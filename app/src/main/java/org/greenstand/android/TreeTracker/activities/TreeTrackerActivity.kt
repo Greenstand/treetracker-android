@@ -16,7 +16,6 @@ import org.greenstand.android.TreeTracker.signup.SignupScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error("No active ViewModel factory found!") }
 
@@ -30,17 +29,11 @@ class TreeTrackerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Timber.i("Inside TreeTrackerActivity creating view now!")
-
         if (FeatureFlags.USE_SWAHILI) {
             languageSwitcher.setLanguage(Language.SWAHILI, resources)
         } else {
             languageSwitcher.applyCurrentLanguage(this)
         }
-
-        // TODO: Remember to undo these so that the NavigationGraph can still do it's thing
-//        bindings = TreeTrackerActivityBinding.inflate(layoutInflater)
-//        setContentView(bindings.root)
 
         setContent {
             CompositionLocalProvider(LocalViewModelFactory provides viewModelFactory) {
