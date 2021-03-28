@@ -5,11 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.Users
 
-enum class SignupFlowScreen {
-    EMAIL_PHONE,
-    NAME
-}
-
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
     val emailPhone: String? = null,

@@ -16,11 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.Bar
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.TextButton
@@ -77,7 +75,7 @@ fun DashboardTopBar(navController: NavController) {
             TextButton(
                 modifier = Modifier.align(Alignment.Center),
                 stringRes = R.string.organization,
-                onClick = { navController.navigate(DashboardFragmentDirections.actionGlobalOrgPickerFragment())  }
+                onClick = { navController.navigate(NavRoute.Org.route)  }
             )
         },
         centerAction = {
@@ -87,7 +85,7 @@ fun DashboardTopBar(navController: NavController) {
             TextButton(
                 modifier = Modifier.align(Alignment.Center),
                 stringRes = R.string.language,
-                onClick = { navController.navigate(DashboardFragmentDirections.actionGlobalLanguagePickerFragment()) }
+                onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
             )
         })
 }
