@@ -37,6 +37,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
             val state: SignUpState = _state.value ?: return false
             with(state) {
                 users.createUser(
+                    // TODO fix user data usage
                     firstName = name?.split(" ")?.get(0) ?: "",
                     lastName = name?.split(" ")?.get(0) ?: "",
                     phone = emailPhone,

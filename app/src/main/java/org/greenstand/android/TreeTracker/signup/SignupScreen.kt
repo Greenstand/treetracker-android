@@ -44,7 +44,11 @@ fun SignupFlow(
         onResult = {
             scope.launch {
                 if (viewModel.setPhotoPath(it)) {
-                    navController.navigate(NavRoute.Dashboard.route)
+                    navController.navigate(NavRoute.Dashboard.route) {
+                        // TODO fix popup behavior to match app flow
+                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
         }
@@ -73,9 +77,9 @@ fun SignupFlow(
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
+                // TODO disable button until input fields are valid
                 Button(onClick = {
                     cameraLauncher.launch(true)
-//                    navController.navigate(NavRoute.Camera.create(isSelfieMode = true))
                 }) {
                     Text("Next")
                 }

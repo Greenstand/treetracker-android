@@ -26,8 +26,8 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
-    navController: NavController = LocalNavHostController.current
 ) {
+    val navController = LocalNavHostController.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -89,5 +89,5 @@ fun DashboardScreen(
 @Preview
 @Composable
 fun DashboardScreen_Preview(@PreviewParameter(DashboardPreviewParameter::class) viewModel: DashboardViewModel) {
-    DashboardScreen(viewModel = viewModel, rememberNavController())
+    DashboardScreen(viewModel = viewModel)
 }

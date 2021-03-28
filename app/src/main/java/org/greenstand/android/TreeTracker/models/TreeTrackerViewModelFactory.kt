@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import java.lang.RuntimeException
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
+import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
@@ -17,6 +18,7 @@ class TreeTrackerViewModelFactory(
     private val dashboardViewModel: DashboardViewModel,
     private val signupViewModel: SignupViewModel,
     private val userSelectViewModel: UserSelectViewModel,
+    private val orgPickerViewModel: OrgPickerViewModel,
 ) : ViewModelProvider.NewInstanceFactory(), KoinComponent {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -25,6 +27,7 @@ class TreeTrackerViewModelFactory(
             modelClass.isAssignableFrom(DashboardViewModel::class.java) -> dashboardViewModel as T
             modelClass.isAssignableFrom(SignupViewModel::class.java) -> signupViewModel as T
             modelClass.isAssignableFrom(LanguagePickerViewModel::class.java) -> languagePickerViewModel as T
+            modelClass.isAssignableFrom(OrgPickerViewModel::class.java) -> orgPickerViewModel as T
             modelClass.isAssignableFrom(SplashScreenViewModel::class.java) -> splashScreenViewModel as T
             else -> throw RuntimeException("Unable to create instance of ${modelClass.simpleName}. Did you forget to update the TreeTrackerViewModelFactory?")
         }

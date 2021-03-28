@@ -16,18 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import org.greenstand.android.TreeTracker.activities.LocalNavHostController
+import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.Org
 
 @Composable
-fun OrgPickerScreen(viewModel: OrgPickerViewModel, navController: NavController) {
+fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
 
+    val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(OrgPickerState())
 
     val lifecycle = LocalLifecycleOwner.current
     LaunchedEffect(lifecycle) {
         viewModel.uiEvents.observe(lifecycle) {
-            when(it) {
+            when (it) {
                 OrgPickerUIEvents.Exit -> navController.popBackStack()
             }
         }

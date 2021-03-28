@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import org.greenstand.android.TreeTracker.BuildConfig
@@ -35,9 +36,15 @@ fun SplashScreen(
         val hasUserSetup = false // fixme: Change this back to true when we want to go to the DashBoard
 
         if (!hasUserSetup) {
-            navController.navigate(NavRoute.Language.create(isFromTopBar = false))
+            navController.navigate(NavRoute.Language.create(isFromTopBar = false)) {
+                popUpTo(NavRoute.Splash.route) { inclusive = true }
+                launchSingleTop = true
+            }
         } else {
-            navController.navigate(NavRoute.Dashboard.route)
+            navController.navigate(NavRoute.Dashboard.route) {
+                popUpTo(NavRoute.Splash.route) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 

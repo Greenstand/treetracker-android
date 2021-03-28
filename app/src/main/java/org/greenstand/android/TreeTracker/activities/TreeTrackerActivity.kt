@@ -14,9 +14,9 @@ import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraControl
 import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
-import org.greenstand.android.TreeTracker.databinding.TreeTrackerActivityBinding
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.models.*
+import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.SignupFlow
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
@@ -27,8 +27,6 @@ val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { er
 val LocalNavHostController = compositionLocalOf<NavHostController> { error { "No NavHostController found!" } }
 
 class TreeTrackerActivity : ComponentActivity() {
-
-    lateinit var bindings: TreeTrackerActivityBinding
 
     private val languageSwitcher: LanguageSwitcher by inject()
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
@@ -86,8 +84,8 @@ private fun Host() {
                 DashboardScreen()
             }
 
-            composable(NavRoute.Dashboard.route) {
-                DashboardScreen()
+            composable(NavRoute.Org.route) {
+                OrgPickerScreen()
             }
 
             composable(NavRoute.UserSelect.route) {
