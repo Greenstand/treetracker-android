@@ -64,7 +64,7 @@ val appModule = module {
 
     viewModel { UserSelectViewModel(get()) }
 
-    viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel() }
+    viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get()) }
 
     viewModel { SplashScreenViewModel(get()) }
 
@@ -122,7 +122,7 @@ val appModule = module {
 
     single { GsonBuilder().serializeNulls().create() }
 
-    single { TreeTrackerViewModelFactory(get(), get(), get(), get()) }
+    single { TreeTrackerViewModelFactory(get(), get(), get(), get(), get(), get()) }
 
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
 

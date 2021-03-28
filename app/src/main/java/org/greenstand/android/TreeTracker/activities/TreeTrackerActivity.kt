@@ -8,13 +8,18 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import org.greenstand.android.TreeTracker.camera.Camera
+import org.greenstand.android.TreeTracker.camera.CameraControl
+import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
-import org.greenstand.android.TreeTracker.databinding.TreeTrackerActivityBinding
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.models.*
-import org.greenstand.android.TreeTracker.signup.SignupScreen
+import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
+import org.greenstand.android.TreeTracker.signup.SignupFlow
 import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.koin.android.ext.android.inject
 
@@ -22,8 +27,6 @@ val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { er
 val LocalNavHostController = compositionLocalOf<NavHostController> { error { "No NavHostController found!" } }
 
 class TreeTrackerActivity : ComponentActivity() {
-
-    lateinit var bindings: TreeTrackerActivityBinding
 
     private val languageSwitcher: LanguageSwitcher by inject()
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
@@ -59,25 +62,43 @@ private fun Host() {
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
     TreeTrackerTheme {
-        NavHost(navController, startDestination = NavRoute.SplashScreen.route) {
-            composable(NavRoute.SplashScreen.route) {
+        NavHost(navController, startDestination = NavRoute.Splash.route) {
+            composable(NavRoute.Splash.route) {
                 SplashScreen()
             }
 
-            composable(NavRoute.LanguagePickerView.route) {
+            composable(
+                route = NavRoute.Language.route,
+                arguments = NavRoute.Language.arguments
+            ) { backStackEntry ->
                 LanguageSelectScreen(
-                    onNavNext = {
-                        // todo: Figure out what should be done here
-                    }
+                    isFromTopBar = NavRoute.Language.isFromTopBar(backStackEntry)
                 )
             }
 
-            composable(NavRoute.DashboardView.route) {
+            composable(NavRoute.SignupFlow.route) {
+                SignupFlow()
+            }
+
+            composable(NavRoute.Dashboard.route) {
                 DashboardScreen()
             }
 
-            composable(NavRoute.SignupView.route) {
-                SignupScreen(onNavBackward = { /*TODO*/ }, onNavForward = { /*TODO*/ }, onNavLanguage = { /*TODO*/ })
+            composable(NavRoute.Org.route) {
+                OrgPickerScreen()
+            }
+
+            composable(NavRoute.UserSelect.route) {
+                UserSelectScreen()
+            }
+
+            composable(
+                route = NavRoute.Camera.route,
+                arguments = NavRoute.Camera.arguments
+            ) {
+                CameraScreen(
+                    isSelfieMode = NavRoute.Camera.isSelfieMode(it)
+                )
             }
         }
     }

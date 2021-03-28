@@ -4,24 +4,66 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Size
-import android.view.TextureView
-import android.widget.ImageButton
-import android.widget.TextView
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraX
-import androidx.camera.core.ImageCapture
-//import androidx.camera.core.ImageCaptureConfig
-//import androidx.camera.core.Preview
-//import androidx.camera.core.PreviewConfig
-import java.io.File
-import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.DeviceOrientation
-//import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
-import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
-import org.koin.android.ext.android.inject
-import timber.log.Timber
+import androidx.compose.foundation.Image
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.ImageBitmap
+import org.greenstand.android.TreeTracker.camera.CameraScreen
+import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import android.graphics.BitmapFactory
+
+import android.graphics.Bitmap
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.navigation.compose.*
+import java.lang.Exception
+
+
+@Composable
+fun loadLocalImage(
+    imagePath: String,
+): State<ImageBitmap?> {
+    return produceState(initialValue = null, imagePath) {
+        try {
+            value = BitmapFactory.decodeFile(imagePath).asImageBitmap()
+        } catch (e: Exception) { }
+    }
+}
+
+class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
+
+    companion object {
+        const val SELFIE_MODE = "SELFIE_MODE"
+        const val FOCUS_METRIC_VALUE = "FOCUS_METRIC_VALUE"
+        const val TAKEN_IMAGE_PATH = "TAKEN_IMAGE_PATH"
+    }
+
+    override fun createIntent(context: Context, selfieMode: Boolean): Intent {
+        return Intent(context, ImageCaptureActivity::class.java).apply {
+            putExtra(SELFIE_MODE, selfieMode)
+        }
+    }
+
+    override fun parseResult(resultCode: Int, intent: Intent?): String? {
+        if (resultCode == Activity.RESULT_OK) {
+            return intent?.getStringExtra(TAKEN_IMAGE_PATH)
+        }
+        return null
+    }
+
+}
 
 class ImageCaptureActivity : AppCompatActivity() {
 
@@ -39,6 +81,70 @@ class ImageCaptureActivity : AppCompatActivity() {
         fun createIntent(context: Context, selfieMode: Boolean = false): Intent {
             return Intent(context, ImageCaptureActivity::class.java).apply {
                 putExtra(SELFIE_MODE, selfieMode)
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val captureSelfie = intent.extras?.getBoolean(SELFIE_MODE, false) ?: false
+
+        setContent {
+
+            val navController = rememberNavController()
+
+            TreeTrackerTheme {
+                NavHost(navController, startDestination = NavRoute.Camera.route) {
+
+                    composable(
+                        route = NavRoute.Camera.route,
+                    ) {
+                        CameraScreen(isSelfieMode = captureSelfie) {
+                            navController.navigate(NavRoute.ImageReview.create(it))
+                        }
+                    }
+
+                    composable(
+                        route = NavRoute.ImageReview.route,
+                        arguments = NavRoute.ImageReview.arguments,
+                    ) { backStackEntry ->
+                        Scaffold(
+                            bottomBar = {
+                                Row(
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Button(onClick = {
+                                        navController.navigate(NavRoute.Camera.create(isSelfieMode = true)) {
+                                            launchSingleTop = true
+                                            popUpTo(NavRoute.Camera.route) { inclusive = true }
+                                        }
+                                    }) {
+                                        Text("Retake")
+                                    }
+                                    Button(onClick = {
+                                        val data = Intent().apply {
+                                            putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, NavRoute.ImageReview.photoPath(backStackEntry))
+                                        }
+                                        setResult(RESULT_OK, data)
+                                        finish()
+                                    }) {
+                                        Text("Accept")
+                                    }
+                                }
+                            }
+                        ) {
+                            val bitmap by loadLocalImage(imagePath = NavRoute.ImageReview.photoPath(backStackEntry))
+                            bitmap?.let {
+                                Image(
+                                    bitmap = it,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }

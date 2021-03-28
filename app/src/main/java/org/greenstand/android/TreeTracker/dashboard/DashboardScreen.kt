@@ -17,15 +17,17 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.models.NavRoute
 
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
-    navController: NavController = LocalNavHostController.current
 ) {
+    val navController = LocalNavHostController.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -34,7 +36,7 @@ fun DashboardScreen(
                     Text(
                         text = "Org",
                         modifier = Modifier.clickable {
-                            navController.navigate(DashboardFragmentDirections.actionGlobalOrgPickerFragment())
+                            navController.navigate(NavRoute.Org.route)
                         }
                     )
                 },
@@ -42,7 +44,7 @@ fun DashboardScreen(
                     Text(
                         text = "Language",
                         modifier = Modifier.clickable {
-                            navController.navigate(DashboardFragmentDirections.actionGlobalLanguagePickerFragment())
+                            navController.navigate(NavRoute.Language.create(isFromTopBar = true))
                         }
                     )
                 }
@@ -65,7 +67,7 @@ fun DashboardScreen(
             Button(
                 modifier = Modifier.padding(16.dp),
                 onClick = {
-                    navController.navigate(DashboardFragmentDirections.actionDashboardFragmentToUserSelectFragment())
+                    navController.navigate(NavRoute.UserSelect.route)
                 }
             ) {
                 Text(
@@ -87,5 +89,5 @@ fun DashboardScreen(
 @Preview
 @Composable
 fun DashboardScreen_Preview(@PreviewParameter(DashboardPreviewParameter::class) viewModel: DashboardViewModel) {
-    DashboardScreen(viewModel = viewModel, rememberNavController())
+    DashboardScreen(viewModel = viewModel)
 }

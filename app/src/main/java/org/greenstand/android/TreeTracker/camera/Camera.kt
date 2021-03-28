@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.camera
 
+import android.util.Log
 import android.util.Size
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -31,11 +32,14 @@ fun Camera(
                 cameraProviderFuture.addListener({
                     val cameraProvider = cameraProviderFuture.get()
 
-                    val preview = Preview.Builder().build()
+                    val preview = Preview.Builder()
+                        .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                        .build()
 
                     val imageCapture = ImageCapture.Builder()
                         .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                        .setTargetResolution(Size(800, 800))
+                        //.setTargetResolution(Size(800, 800))
+                        .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                         .build()
 
                     cameraControl.captureListener = {
@@ -68,7 +72,7 @@ fun Camera(
                     val cameraSelector = CameraSelector.Builder()
                         .requireLensFacing(
                             if (isSelfieMode) CameraSelector.LENS_FACING_FRONT
-                            else CameraSelector.LENS_FACING_FRONT
+                            else CameraSelector.LENS_FACING_BACK
                         )
                         .build()
 
