@@ -31,7 +31,8 @@ class Users(
         organization: String?,
         phone: String?,
         email: String?,
-        identifier: String
+        identifier: String,
+        photoPath: String,
     ) {
         withContext(Dispatchers.IO) {
 
@@ -52,12 +53,17 @@ class Users(
                 recordUuid = UUID.randomUUID().toString()
             )
 
-            dao.insertPlanterInfo(entity).also {
+            val userId = dao.insertPlanterInfo(entity).also {
                 analytics.userInfoCreated(
                     phone = phone.orEmpty(),
                     email = email.orEmpty()
                 )
             }
+
+            startUserSession(
+                localPhotoPath = photoPath,
+                planterInfoId = userId,
+            )
         }
 
     }
@@ -79,6 +85,8 @@ class Users(
                 createdAt = time,
                 photoUrl = null
             )
+
+            val planterCheckInId = dao.insertPlanterCheckIn(planterCheckInEntity)
 
             dao.getPlanterInfoById(planterInfoId)?.let { planterInfo ->
                 currentSessionUser = SessionUser(

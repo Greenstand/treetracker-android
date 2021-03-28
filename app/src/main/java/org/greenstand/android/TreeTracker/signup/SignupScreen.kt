@@ -1,26 +1,30 @@
 package org.greenstand.android.TreeTracker.signup
 
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.registerForActivityResult
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.camera.Camera
+import org.greenstand.android.TreeTracker.camera.CameraControl
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.models.NavRoute
@@ -32,40 +36,67 @@ fun SignupFlow(
     viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.observeAsState(SignUpState())
+    val navController = LocalNavHostController.current
+    val scope = rememberCoroutineScope()
 
-    val parentNavController = LocalNavHostController.current
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-    NavHost(navController, startDestination = "phoneEmail") {
-
-        composable("phoneEmail") {
-            EnterPhoneEmail(
-                emailPhone = state.emailPhone ?: "",
-                onNavForward = { navController.navigate("name") },
-                onNavBackward = { navController.popBackStack() },
-                onNavLanguage = { parentNavController.navigate("language/true") },
-                onEmailPhoneChanged = { viewModel.setEmailPhone(it) }
-            )
+    val cameraLauncher = registerForActivityResult(
+        contract = CaptureImageContract(),
+        onResult = {
+            scope.launch {
+                if (viewModel.setPhotoPath(it)) {
+                    navController.navigate(NavRoute.Dashboard.route)
+                }
+            }
         }
+    )
 
-        composable("name") {
-            EnterName(
-                name = state.name ?: "",
-                onNameChanged = { viewModel.setName(it) },
-                onNavForward = {
-                    parentNavController.navigate(NavRoute.DashboardView.route) {
-                        launchSingleTop = true
-                        popUpTo(NavRoute.SplashScreen.route) { inclusive = true }
-                    }
-                               },
-                onNavBackward = { navController.popBackStack() },
-                onNavLanguage = { parentNavController.navigate("language/true") },
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("TreeTracker") },
+                actions = {
+                    Text(
+                        text = "Language",
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                navController.navigate(NavRoute.Language.create(isFromTopBar = true))
+                            })
+                            .padding(8.dp)
+                    )
+                }
             )
+        },
+        bottomBar = {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Button(onClick = {
+                    cameraLauncher.launch(true)
+//                    navController.navigate(NavRoute.Camera.create(isSelfieMode = true))
+                }) {
+                    Text("Next")
+                }
+            }
         }
-
-        composable("camera") {
-
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            TextField(
+                value = state.emailPhone ?: "",
+                onValueChange = { viewModel.setEmailPhone(it) },
+                placeholder = { Text(text = "Phone/Email") }
+            )
+            TextField(
+                value = state.name ?: "",
+                onValueChange = { viewModel.setName(it) },
+                placeholder = { Text(text = "Name") }
+            )
         }
     }
 }

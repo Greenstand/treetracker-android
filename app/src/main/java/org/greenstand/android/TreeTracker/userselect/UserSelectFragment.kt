@@ -23,8 +23,7 @@ class UserSelectFragment : Fragment() {
         return createCompose(1) {
             TreeTrackerTheme {
                 UserSelectScreen(
-                    viewModel = viewModel,
-                    navController = findNavController()
+                    viewModel = viewModel
                 )
             }
         }

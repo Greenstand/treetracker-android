@@ -11,10 +11,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 
 @Composable
-fun UserSelectScreen(viewModel: UserSelectViewModel, navController: NavController) {
+fun UserSelectScreen(viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     Scaffold {
 
         val users by viewModel.planterInfoList.observeAsState(emptyList())

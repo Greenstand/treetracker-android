@@ -12,5 +12,5 @@ val viewModelModule = module {
     viewModel { SplashScreenViewModel(get()) }
     viewModel { DashboardViewModel() }
     viewModel { LanguagePickerViewModel(get(), get()) }
-    viewModel { SignupViewModel() }
+    viewModel { SignupViewModel(get()) }
 }

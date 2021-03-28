@@ -42,7 +42,7 @@ fun LanguageSelectScreen(
                     if (isFromTopBar) {
                         navController.popBackStack()
                     } else {
-                        navController.navigate(NavRoute.SignupView.route)
+                        navController.navigate(NavRoute.SignupFlow.route)
                     }
                     viewModel.refreshAppLanguage(activity)
                           },

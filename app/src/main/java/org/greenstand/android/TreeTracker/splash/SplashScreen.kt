@@ -35,9 +35,9 @@ fun SplashScreen(
         val hasUserSetup = false // fixme: Change this back to true when we want to go to the DashBoard
 
         if (!hasUserSetup) {
-            navController.navigate("language/false")
+            navController.navigate(NavRoute.Language.create(isFromTopBar = false))
         } else {
-            navController.navigate(NavRoute.DashboardView.route)
+            navController.navigate(NavRoute.Dashboard.route)
         }
     }
 

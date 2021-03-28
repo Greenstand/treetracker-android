@@ -8,6 +8,9 @@ import android.util.Size
 import android.view.TextureView
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraX
 import androidx.camera.core.ImageCapture
@@ -16,12 +19,36 @@ import androidx.camera.core.ImageCapture
 //import androidx.camera.core.PreviewConfig
 import java.io.File
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 //import org.greenstand.android.TreeTracker.utilities.AutoFitPreviewBuilder
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel.Companion.FOCUS_THRESHOLD
 import org.koin.android.ext.android.inject
 import timber.log.Timber
+
+class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
+
+    companion object {
+        const val SELFIE_MODE = "SELFIE_MODE"
+        const val FOCUS_METRIC_VALUE = "FOCUS_METRIC_VALUE"
+        const val TAKEN_IMAGE_PATH = "TAKEN_IMAGE_PATH"
+    }
+
+    override fun createIntent(context: Context, selfieMode: Boolean): Intent {
+        return Intent(context, ImageCaptureActivity::class.java).apply {
+            putExtra(SELFIE_MODE, selfieMode)
+        }
+    }
+
+    override fun parseResult(resultCode: Int, intent: Intent?): String? {
+        if (resultCode == Activity.RESULT_OK) {
+            return intent?.getStringExtra(TAKEN_IMAGE_PATH)
+        }
+        return null
+    }
+
+}
 
 class ImageCaptureActivity : AppCompatActivity() {
 
@@ -41,6 +68,23 @@ class ImageCaptureActivity : AppCompatActivity() {
                 putExtra(SELFIE_MODE, selfieMode)
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val captureSelfie = intent.extras?.getBoolean(SELFIE_MODE, false) ?: false
+
+        setContent {
+            CameraScreen(isSelfieMode = captureSelfie) {
+                val data = Intent().apply {
+                    putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, it)
+                }
+                setResult(Activity.RESULT_OK, data)
+                finish()
+            }
+        }
+
     }
 //
 //    override fun onCreate(savedInstanceState: Bundle?) {

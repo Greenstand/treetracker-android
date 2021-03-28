@@ -10,12 +10,16 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import org.greenstand.android.TreeTracker.camera.Camera
+import org.greenstand.android.TreeTracker.camera.CameraControl
+import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.databinding.TreeTrackerActivityBinding
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.models.*
 import org.greenstand.android.TreeTracker.signup.SignupFlow
 import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.koin.android.ext.android.inject
 
@@ -60,26 +64,43 @@ private fun Host() {
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
     TreeTrackerTheme {
-        NavHost(navController, startDestination = NavRoute.SplashScreen.route) {
-            composable(NavRoute.SplashScreen.route) {
+        NavHost(navController, startDestination = NavRoute.Splash.route) {
+            composable(NavRoute.Splash.route) {
                 SplashScreen()
             }
 
             composable(
-                route = NavRoute.LanguagePickerView.route,
-                arguments = listOf(navArgument("isFromTopBar") { type = NavType.BoolType })
+                route = NavRoute.Language.route,
+                arguments = NavRoute.Language.arguments
             ) { backStackEntry ->
                 LanguageSelectScreen(
-                    isFromTopBar = backStackEntry.arguments?.getBoolean("isFromTopBar") ?: false
+                    isFromTopBar = NavRoute.Language.isFromTopBar(backStackEntry)
                 )
             }
 
-            composable(NavRoute.DashboardView.route) {
+            composable(NavRoute.SignupFlow.route) {
+                SignupFlow()
+            }
+
+            composable(NavRoute.Dashboard.route) {
                 DashboardScreen()
             }
 
-            composable(NavRoute.SignupView.route) {
-                SignupFlow()
+            composable(NavRoute.Dashboard.route) {
+                DashboardScreen()
+            }
+
+            composable(NavRoute.UserSelect.route) {
+                UserSelectScreen()
+            }
+
+            composable(
+                route = NavRoute.Camera.route,
+                arguments = NavRoute.Camera.arguments
+            ) {
+                CameraScreen(
+                    isSelfieMode = NavRoute.Camera.isSelfieMode(it)
+                )
             }
         }
     }
