@@ -66,6 +66,17 @@ sealed class NavRoute {
         fun create(isSelfieMode: Boolean) = "camera/$isSelfieMode"
     }
 
+    object ImageReview : NavRoute() {
+        override val route: String = "camera-review/{photoPath}"
+        override val arguments = listOf(navArgument("photoPath") { type = NavType.StringType })
+
+        fun photoPath(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("photoPath") ?: ""
+        }
+
+        fun create(photoPath: String) = "camera-review/$photoPath"
+    }
+
     object Language : NavRoute() {
         override val route: String = "language/{isFromTopBar}"
         override val arguments = listOf(navArgument("isFromTopBar") { type = NavType.BoolType })

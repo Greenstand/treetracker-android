@@ -29,12 +29,7 @@ fun CameraScreen(
         isSelfieMode = isSelfieMode,
         cameraControl = cameraControl,
         onImageCaptured = {
-            Log.d("JONATHAN", "Image taken: $it")
             onImageResult(it)
-//            navBackStackEntry?.savedStateHandle?.set<String>("imagePath", it)
-//            val path = navBackStackEntry?.savedStateHandle?.get<String>("imagePath")
-//            Log.d("JONATHAN", "$path")
-//            navController.popBackStack()
         }
     )
 
