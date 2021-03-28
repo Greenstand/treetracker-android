@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.dashboard
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,10 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.TextButton
 
 @Composable
 fun DashboardScreen(
@@ -30,26 +30,8 @@ fun DashboardScreen(
     val navController = LocalNavHostController.current
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("TreeTracker") },
-                navigationIcon = {
-                    Text(
-                        text = "Org",
-                        modifier = Modifier.clickable {
-                            navController.navigate(NavRoute.Org.route)
-                        }
-                    )
-                },
-                actions = {
-                    Text(
-                        text = "Language",
-                        modifier = Modifier.clickable {
-                            navController.navigate(NavRoute.Language.create(isFromTopBar = true))
-                        }
-                    )
-                }
-            )
-        }
+            DashboardTopBar(navController)
+        },
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -84,6 +66,28 @@ fun DashboardScreen(
             }
         }
     }
+}
+
+@Composable
+fun DashboardTopBar(navController: NavController) {
+    ActionBar(
+        leftAction = {
+            TextButton(
+                modifier = Modifier.align(Alignment.Center),
+                stringRes = R.string.organization,
+                onClick = { navController.navigate(NavRoute.Org.route)  }
+            )
+        },
+        centerAction = {
+            Text("Treetracker", modifier = Modifier.align(Alignment.Center),)
+        },
+        rightAction = {
+            TextButton(
+                modifier = Modifier.align(Alignment.Center),
+                stringRes = R.string.language,
+                onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
+            )
+        })
 }
 
 @Preview

@@ -24,6 +24,7 @@ import androidx.navigation.compose.navigate
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.Language
+import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.models.NavRoute
 
 @Composable
@@ -37,19 +38,23 @@ fun LanguageSelectScreen(
 
     Scaffold(
         bottomBar = {
-            Button(
-                onClick = {
-                    if (isFromTopBar) {
-                        navController.popBackStack()
-                    } else {
-                        navController.navigate(NavRoute.SignupFlow.route)
+            ActionBar(
+                rightAction = {
+                    Button(
+                        onClick = {
+                            if (isFromTopBar) {
+                                navController.popBackStack()
+                            } else {
+                                navController.navigate(NavRoute.SignupFlow.route)
+                            }
+                            viewModel.refreshAppLanguage(activity)
+                                  },
+                        Modifier.align(Alignment.Center)
+                    ) {
+                        Text("Next")
                     }
-                    viewModel.refreshAppLanguage(activity)
-                          },
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Text("Next")
-            }
+                }
+            )
         },
     ) {
         LazyColumn(

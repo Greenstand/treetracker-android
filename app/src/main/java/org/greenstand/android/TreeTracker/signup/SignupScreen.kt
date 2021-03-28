@@ -1,10 +1,6 @@
 package org.greenstand.android.TreeTracker.signup
 
-import android.util.Log
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.registerForActivityResult
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -12,24 +8,18 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.camera.Camera
-import org.greenstand.android.TreeTracker.camera.CameraControl
-import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
-import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.splash.SplashScreen
-import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.greenstand.android.TreeTracker.view.ActionBar
 
 @Composable
 fun SignupFlow(
@@ -56,16 +46,13 @@ fun SignupFlow(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("TreeTracker") },
-                actions = {
-                    Text(
-                        text = "Language",
-                        modifier = Modifier
-                            .clickable(onClick = {
-                                navController.navigate(NavRoute.Language.create(isFromTopBar = true))
-                            })
-                            .padding(8.dp)
+            ActionBar(
+                centerAction = { Text("Treetracker") },
+                rightAction = {
+                    org.greenstand.android.TreeTracker.view.TextButton(
+                        modifier = Modifier.align(Alignment.Center),
+                        stringRes = R.string.language,
+                        onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
                     )
                 }
             )
