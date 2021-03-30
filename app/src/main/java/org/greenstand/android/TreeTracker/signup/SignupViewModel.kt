@@ -10,7 +10,14 @@ data class SignUpState(
     val emailPhone: String? = null,
     val name: String? = null,
     val photoPath: String? = null,
+    val credentialType: CredentialType = CredentialType.Email
+
 )
+
+enum class CredentialType {
+    Phone,
+    Email
+}
 
 class SignupViewModel(private val users: Users) : ViewModel() {
 
@@ -46,5 +53,4 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         }
         return false
     }
-
 }

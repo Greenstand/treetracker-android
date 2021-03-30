@@ -35,7 +35,7 @@ fun SignupFlow(
             scope.launch {
                 if (viewModel.setPhotoPath(it)) {
                     navController.navigate(NavRoute.Dashboard.route) {
-                        // TODO fix popup behavior to match app flow
+//                        // TODO fix popup behavior to match app flow
                         popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -65,9 +65,11 @@ fun SignupFlow(
                     .padding(8.dp)
             ) {
                 // TODO disable button until input fields are valid
-                Button(onClick = {
-                    cameraLauncher.launch(true)
-                }) {
+                Button(
+                    onClick = {
+                        cameraLauncher.launch(true)
+                    }
+                ) {
                     Text("Next")
                 }
             }
@@ -78,6 +80,28 @@ fun SignupFlow(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
+
+            Row( // TODO: Make sure that the button changes colors when it's clicked.
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        // TODO: update viewModel with selected credential type
+                    }
+                ) {
+                    Text(text = "Email")
+                }
+
+                Button(
+                    onClick = {
+                        // TODO: update viewModel with selected credential type
+                    }
+                ) {
+                    Text(text = "Phone")
+                }
+            }
+
             TextField(
                 value = state.emailPhone ?: "",
                 onValueChange = { viewModel.setEmailPhone(it) },

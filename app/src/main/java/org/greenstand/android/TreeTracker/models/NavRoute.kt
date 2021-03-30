@@ -6,14 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NamedNavArgument
 import androidx.navigation.compose.navArgument
 
-enum class NavRoutea(val route: String) {
-
-    SplashScreen("splash"),
-    LanguagePickerView("language/{isFromTopBar}"),
-    DashboardView("dashboard"),
-    SignupView("signup")
-}
-
 sealed class NavRoute {
 
     abstract val route: String
@@ -87,5 +79,4 @@ sealed class NavRoute {
 
         fun create(isFromTopBar: Boolean) = "language/$isFromTopBar"
     }
-
 }
