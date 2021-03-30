@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.userselect
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -81,6 +83,7 @@ fun UserSelectScreen(viewModel: UserSelectViewModel = viewModel(factory = LocalV
                         .clickable {
                             viewModel.selectUser(user)
                         }
+                        .background(color = if (state.selectedPlanter?.id == user.id) Color.Gray else Color.White)
                 )
             }
         }

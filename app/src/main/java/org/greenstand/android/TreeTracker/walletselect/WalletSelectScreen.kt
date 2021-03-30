@@ -78,7 +78,7 @@ fun WalletSelectScreen(planterInfoId: Long, viewModel: WalletSelectViewModel = v
                     Text("Them")
                 }
             }
-            state.alternatePlanters?.let { -> alternatePlanters
+            state.alternatePlanters?.let { alternatePlanters ->
                 items(alternatePlanters) { planter ->
                     WalletItem(planter) {
 
