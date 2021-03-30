@@ -33,6 +33,7 @@ class Users(
         email: String?,
         identifier: String,
         photoPath: String,
+        isPowerUser: Boolean = false
     ) {
         withContext(Dispatchers.IO) {
 
@@ -50,7 +51,8 @@ class Users(
                 latitude = location?.latitude ?: 0.0,
                 createdAt = time,
                 uploaded = false,
-                recordUuid = UUID.randomUUID().toString()
+                recordUuid = UUID.randomUUID().toString(),
+                isPowerUser = isPowerUser,
             )
 
             val userId = dao.insertPlanterInfo(entity).also {

@@ -40,6 +40,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                     identifier = emailPhone ?: "",
                     organization = null,
                     photoPath = photoPath,
+                    isPowerUser = false
                 )
             }
             return true
