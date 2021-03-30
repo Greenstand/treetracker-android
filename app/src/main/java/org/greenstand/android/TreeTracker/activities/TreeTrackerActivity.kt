@@ -21,6 +21,7 @@ import org.greenstand.android.TreeTracker.signup.SignupFlow
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
 import org.koin.android.ext.android.inject
 
 val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error { "No active ViewModel factory found!" } }
@@ -90,6 +91,10 @@ private fun Host() {
 
             composable(NavRoute.UserSelect.route) {
                 UserSelectScreen()
+            }
+
+            composable(NavRoute.WalletSelect.route) {
+                WalletSelectScreen(planterInfoId = NavRoute.WalletSelect.getPlanterInfoId(it))
             }
 
             composable(

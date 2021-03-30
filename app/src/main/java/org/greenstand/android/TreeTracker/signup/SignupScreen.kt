@@ -20,6 +20,7 @@ import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
 fun SignupFlow(
@@ -49,11 +50,7 @@ fun SignupFlow(
             ActionBar(
                 centerAction = { Text("Treetracker") },
                 rightAction = {
-                    org.greenstand.android.TreeTracker.view.TextButton(
-                        modifier = Modifier.align(Alignment.Center),
-                        stringRes = R.string.language,
-                        onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
-                    )
+                    LanguageButton()
                 }
             )
         },
