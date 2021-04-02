@@ -7,6 +7,7 @@ import org.greenstand.android.TreeTracker.ui.*
 val Colors = darkColors(
     primary = colorPrimary,
     secondary = accentOrange,
+    background = colorPrimaryDark,
     surface = colorPrimaryDark,
     onSurface = colorPrimaryDark
 

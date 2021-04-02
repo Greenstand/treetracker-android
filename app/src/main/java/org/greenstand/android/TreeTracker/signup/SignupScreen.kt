@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.ui.colorPrimary
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.TreeTrackerTextButton
 
 @Composable
@@ -92,7 +94,10 @@ fun SignupFlow(
                         // TODO: update viewModel with selected credential type
                     }
                 ) {
-                    Text(text = "Email")
+                    Text(
+                        text = "Email",
+                        color = Color.Black
+                    )
                 }
 
                 Button(
@@ -100,25 +105,27 @@ fun SignupFlow(
                         // TODO: update viewModel with selected credential type
                     }
                 ) {
-                    Text(text = "Phone")
+                    Text(
+                        text = "Phone",
+                        color = Color.Black
+                    )
                 }
             }
 
             if (state.showEmailText) {
-                TextField(
-                    modifier = Modifier.padding(top = 16.dp),
+                BorderedTextField( // FixMe: The highlight for the textfield is still green! This should be fixed! OR! Make it highlight green by just using an OutlinedTextField
                     value = state.emailText,
-                    onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
-                    placeholder = { Text(text = "Phone/Email") } // TODO: throw this into a strings.xml
+                    onValueChangeListener = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
+                    placeholder = { Text(text = "Email", color = Color.White) } // TODO: throw this into a strings.xml
                 )
             }
 
             if (state.showPhoneText) {
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier.padding(top = 16.dp),
                     value = state.phoneText,
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
-                    placeholder = { Text(text = "Phone") } // TODO: throw this into a strings.xml
+                    label = { Text(text = "Phone", color = Color.White) } // TODO: throw this into a strings.xml
                 )
             }
 
@@ -126,7 +133,7 @@ fun SignupFlow(
                 modifier = Modifier.padding(top = 16.dp),
                 value = state.name ?: "",
                 onValueChange = { updatedName -> viewModel.updateName(updatedName) },
-                placeholder = { Text(text = "Name") } // TODO: throw this into a strings.xml
+                placeholder = { Text(text = "Name", color = Color.White) } // TODO: throw this into a strings.xml
             )
         }
     }
