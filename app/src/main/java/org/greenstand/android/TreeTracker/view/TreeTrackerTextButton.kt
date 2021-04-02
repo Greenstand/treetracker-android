@@ -9,7 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TextButton(
+fun TreeTrackerTextButton(
     modifier: Modifier = Modifier,
     stringRes: Int,
     onClick: () -> Unit,

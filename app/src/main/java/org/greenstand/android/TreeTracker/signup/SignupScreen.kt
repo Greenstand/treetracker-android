@@ -19,7 +19,9 @@ import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.ui.colorPrimary
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.TreeTrackerTextButton
 
 @Composable
 fun SignupFlow(
@@ -47,9 +49,9 @@ fun SignupFlow(
     Scaffold(
         topBar = {
             ActionBar(
-                centerAction = { Text("Treetracker") },
+                centerAction = { Text("Treetracker", color = colorPrimary) },
                 rightAction = {
-                    org.greenstand.android.TreeTracker.view.TextButton(
+                    TreeTrackerTextButton(
                         modifier = Modifier.align(Alignment.Center),
                         stringRes = R.string.language,
                         onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
@@ -102,15 +104,29 @@ fun SignupFlow(
                 }
             }
 
+            if (state.showEmailText) {
+                TextField(
+                    modifier = Modifier.padding(top = 16.dp),
+                    value = state.emailText,
+                    onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
+                    placeholder = { Text(text = "Phone/Email") } // TODO: throw this into a strings.xml
+                )
+            }
+
+            if (state.showPhoneText) {
+                TextField(
+                    modifier = Modifier.padding(top = 16.dp),
+                    value = state.phoneText,
+                    onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
+                    placeholder = { Text(text = "Phone") } // TODO: throw this into a strings.xml
+                )
+            }
+
             TextField(
-                value = state.emailPhone ?: "",
-                onValueChange = { viewModel.setEmailPhone(it) },
-                placeholder = { Text(text = "Phone/Email") }
-            )
-            TextField(
+                modifier = Modifier.padding(top = 16.dp),
                 value = state.name ?: "",
-                onValueChange = { viewModel.setName(it) },
-                placeholder = { Text(text = "Name") }
+                onValueChange = { updatedName -> viewModel.updateName(updatedName) },
+                placeholder = { Text(text = "Name") } // TODO: throw this into a strings.xml
             )
         }
     }

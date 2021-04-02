@@ -16,12 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.TextButton
+import org.greenstand.android.TreeTracker.view.TreeTrackerTextButton
 
 @Composable
 fun DashboardScreen(
@@ -31,7 +31,7 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             DashboardTopBar(navController)
-        },
+        }
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -43,7 +43,7 @@ fun DashboardScreen(
                 onClick = { /*TODO*/ }
             ) {
                 Text(
-                    text = "Upload",
+                    text = "Upload"
                 )
             }
             Button(
@@ -53,7 +53,7 @@ fun DashboardScreen(
                 }
             ) {
                 Text(
-                    text = "Track",
+                    text = "Track"
                 )
             }
             Button(
@@ -61,7 +61,7 @@ fun DashboardScreen(
                 onClick = { /*TODO*/ }
             ) {
                 Text(
-                    text = "Messages",
+                    text = "Messages"
                 )
             }
         }
@@ -72,22 +72,23 @@ fun DashboardScreen(
 fun DashboardTopBar(navController: NavController) {
     ActionBar(
         leftAction = {
-            TextButton(
+            TreeTrackerTextButton(
                 modifier = Modifier.align(Alignment.Center),
                 stringRes = R.string.organization,
-                onClick = { navController.navigate(NavRoute.Org.route)  }
+                onClick = { navController.navigate(NavRoute.Org.route) }
             )
         },
         centerAction = {
-            Text("Treetracker", modifier = Modifier.align(Alignment.Center),)
+            Text("Treetracker", modifier = Modifier.align(Alignment.Center))
         },
         rightAction = {
-            TextButton(
+            TreeTrackerTextButton(
                 modifier = Modifier.align(Alignment.Center),
                 stringRes = R.string.language,
                 onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
             )
-        })
+        }
+    )
 }
 
 @Preview
