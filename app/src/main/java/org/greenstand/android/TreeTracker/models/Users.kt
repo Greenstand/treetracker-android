@@ -25,6 +25,8 @@ class Users(
 
     suspend fun getUsers(): List<PlanterInfoEntity> = dao.getAllPlanterInfo()
 
+    suspend fun getUser(planterInfoId: Long): PlanterInfoEntity? = dao.getPlanterInfoById(planterInfoId)
+
     suspend fun createUser(
         firstName: String,
         lastName: String,
