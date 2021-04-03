@@ -4,11 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.entity.*
 
 @Database(
     entities = [
@@ -16,7 +12,8 @@ import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
         PlanterInfoEntity::class,
         TreeAttributeEntity::class,
         TreeCaptureEntity::class,
-        LocationDataEntity::class
+        LocationDataEntity::class,
+        SessionEntity::class,
     ],
     version = 8,
     exportSchema = true

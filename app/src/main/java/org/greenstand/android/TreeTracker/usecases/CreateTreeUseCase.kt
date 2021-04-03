@@ -30,7 +30,8 @@ class CreateTreeUseCase(
             longitude = params.meanLongitude,
             latitude = params.meanLatitude,
             accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
-            createAt = timeInSeconds
+            createAt = timeInSeconds,
+            wallet = ""
         )
         analytics.treePlanted()
         val attributeEntitites = params.treeCaptureAttributes().map {
