@@ -2,10 +2,21 @@ package org.greenstand.android.TreeTracker.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity.Companion.TABLE
 
-@Entity(tableName = TABLE)
+@Entity(
+    tableName = TABLE,
+    foreignKeys = [
+        ForeignKey(
+            entity = PlanterInfoEntity::class,
+            parentColumns = [PlanterInfoEntity.ID],
+            childColumns = [SessionEntity.PLANTER_INFO_ID],
+            onUpdate = ForeignKey.CASCADE
+        )
+    ]
+)
 data class SessionEntity(
     @ColumnInfo(name = RECORD_UUID)
     var uuid: Long,
@@ -25,6 +36,8 @@ data class SessionEntity(
     var wallet: String,
     @ColumnInfo(name = UPLOADED)
     var isUploaded: Boolean,
+    @ColumnInfo(name = BUNDLE_ID)
+    var bundleId: String? = null,
 ) {
 
 
@@ -45,5 +58,6 @@ data class SessionEntity(
         const val TOTAL_PLANTED = "total_planted"
         const val PLANTED_WITH_CONNECTION = "planted_with_connection"
         const val WALLET = "wallet"
+        const val BUNDLE_ID = "bundle_id"
     }
 }
