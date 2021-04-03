@@ -40,7 +40,8 @@ class CreatePlanterInfoUseCase(
                 latitude = location?.latitude ?: 0.0,
                 createdAt = time,
                 uploaded = false,
-                recordUuid = UUID.randomUUID().toString()
+                recordUuid = UUID.randomUUID().toString(),
+                isPowerUser = false,
             )
 
             dao.insertPlanterInfo(entity).also {
