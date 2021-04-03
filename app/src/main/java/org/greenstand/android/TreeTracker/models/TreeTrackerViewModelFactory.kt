@@ -11,27 +11,20 @@ import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.core.KoinComponent
+import org.koin.core.get
 
 @Suppress("UNCHECKED_CAST")
-class TreeTrackerViewModelFactory(
-    private val splashScreenViewModel: SplashScreenViewModel,
-    private val languagePickerViewModel: LanguagePickerViewModel,
-    private val dashboardViewModel: DashboardViewModel,
-    private val signupViewModel: SignupViewModel,
-    private val userSelectViewModel: UserSelectViewModel,
-    private val orgPickerViewModel: OrgPickerViewModel,
-    private val walletSelectViewModel: WalletSelectViewModel,
-) : ViewModelProvider.NewInstanceFactory(), KoinComponent {
+class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), KoinComponent {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(UserSelectViewModel::class.java) -> userSelectViewModel as T
-            modelClass.isAssignableFrom(DashboardViewModel::class.java) -> dashboardViewModel as T
-            modelClass.isAssignableFrom(SignupViewModel::class.java) -> signupViewModel as T
-            modelClass.isAssignableFrom(LanguagePickerViewModel::class.java) -> languagePickerViewModel as T
-            modelClass.isAssignableFrom(OrgPickerViewModel::class.java) -> orgPickerViewModel as T
-            modelClass.isAssignableFrom(WalletSelectViewModel::class.java) -> walletSelectViewModel as T
-            modelClass.isAssignableFrom(SplashScreenViewModel::class.java) -> splashScreenViewModel as T
+            modelClass.isAssignableFrom(UserSelectViewModel::class.java) -> get<UserSelectViewModel>() as T
+            modelClass.isAssignableFrom(DashboardViewModel::class.java) -> get<DashboardViewModel>() as T
+            modelClass.isAssignableFrom(SignupViewModel::class.java) -> get<SignupViewModel>() as T
+            modelClass.isAssignableFrom(LanguagePickerViewModel::class.java) -> get<LanguagePickerViewModel>() as T
+            modelClass.isAssignableFrom(OrgPickerViewModel::class.java) -> get<OrgPickerViewModel>() as T
+            modelClass.isAssignableFrom(WalletSelectViewModel::class.java) -> get<WalletSelectViewModel>() as T
+            modelClass.isAssignableFrom(SplashScreenViewModel::class.java) -> get<SplashScreenViewModel>() as T
             else -> throw RuntimeException("Unable to create instance of ${modelClass.simpleName}. Did you forget to update the TreeTrackerViewModelFactory?")
         }
     }
