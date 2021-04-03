@@ -125,7 +125,7 @@ val appModule = module {
 
     single { GsonBuilder().serializeNulls().create() }
 
-    single { TreeTrackerViewModelFactory(get(), get(), get(), get(), get(), get(), get()) }
+    single { TreeTrackerViewModelFactory() }
 
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
