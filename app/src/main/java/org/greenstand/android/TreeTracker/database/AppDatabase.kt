@@ -4,7 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import org.greenstand.android.TreeTracker.database.entity.*
+import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.SessionEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
+
 
 @Database(
     entities = [
