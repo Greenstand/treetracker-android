@@ -1,10 +1,10 @@
 package org.greenstand.android.TreeTracker.languagepicker
 
 import android.app.Activity
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
@@ -24,13 +24,14 @@ import androidx.navigation.compose.navigate
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.Language
-import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.DepthButton
 
 @Composable
 fun LanguageSelectScreen(
     isFromTopBar: Boolean,
-    viewModel: LanguagePickerViewModel = viewModel(factory = LocalViewModelFactory.current)
+    viewModel: LanguagePickerViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val currentLanguage by viewModel.currentLanguage.observeAsState()
     val navController = LocalNavHostController.current
@@ -66,23 +67,32 @@ fun LanguageSelectScreen(
                 Text("Current Language: $currentLanguage")
             }
             items(Language.values()) { language ->
-                Text(
-                    text = language.toString(),
-                    modifier = Modifier
-                        .clickable {
-                            viewModel.setLanguage(language)
-                        }
-                        .padding(16.dp)
-                )
+                LanguageButton(text = language.toString()) {
+                    viewModel.setLanguage(language)
+                }
             }
         }
     }
 }
 
+@Composable
+fun LanguageButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    DepthButton(
+        onClick = onClick,
+        modifier = Modifier.padding(16.dp).size(height = 46.dp, width = 84.dp)) {
+        Text(text)
+    }
+}
+
+
+
 @Preview
 @Composable
 fun LanguageSelectScreen_Preview(
-    @PreviewParameter(LanguagePickerPreviewProvider::class) viewModel: LanguagePickerViewModel
+    @PreviewParameter(LanguagePickerPreviewProvider::class) viewModel: LanguagePickerViewModel,
 ) {
     LanguageSelectScreen(
         true,
