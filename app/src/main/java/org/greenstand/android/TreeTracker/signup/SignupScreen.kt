@@ -9,6 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -89,6 +90,7 @@ fun SignupFlow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
+
                 Button(
                     onClick = {
                         // TODO: update viewModel with selected credential type
@@ -113,27 +115,28 @@ fun SignupFlow(
             }
 
             if (state.showEmailText) {
-                BorderedTextField( // FixMe: The highlight for the textfield is still green! This should be fixed! OR! Make it highlight green by just using an OutlinedTextField
+                BorderedTextField(
                     value = state.emailText,
-                    onValueChangeListener = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
-                    placeholder = { Text(text = "Email", color = Color.White) } // TODO: throw this into a strings.xml
+                    padding = PaddingValues(16.dp),
+                    onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
+                    placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) }
                 )
             }
 
             if (state.showPhoneText) {
-                OutlinedTextField(
-                    modifier = Modifier.padding(top = 16.dp),
+                BorderedTextField(
                     value = state.phoneText,
+                    padding = PaddingValues(16.dp),
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
-                    label = { Text(text = "Phone", color = Color.White) } // TODO: throw this into a strings.xml
+                    placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) }
                 )
             }
 
-            TextField(
-                modifier = Modifier.padding(top = 16.dp),
+            BorderedTextField(
                 value = state.name ?: "",
+                padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> viewModel.updateName(updatedName) },
-                placeholder = { Text(text = "Name", color = Color.White) } // TODO: throw this into a strings.xml
+                placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) }
             )
         }
     }
