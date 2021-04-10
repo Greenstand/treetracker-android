@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +68,21 @@ fun BoxScope.LanguageButton() {
 
 @Preview(widthDp = 100, heightDp = 100)
 @Composable
+fun DepthButtonTogglePreview() {
+    var isSelected by remember { mutableStateOf(false) }
+
+    DepthButton(
+        onClick = {
+            isSelected = !isSelected
+        },
+        isSelected = isSelected
+    ) {
+        Text("Toggle", Modifier.align(Alignment.Center))
+    }
+}
+
+@Preview(widthDp = 100, heightDp = 100)
+@Composable
 fun DepthButtonPreview() {
     DepthButton(
         onClick = {
@@ -78,15 +97,20 @@ fun DepthButtonPreview() {
 fun DepthButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
+    colors: ButtonColors = AppButtonColors.Default,
+    isSelected: Boolean? = null,
     content: @Composable (BoxScope.() -> Unit)
 ) {
-    val depth = 15f
+    val depth = 20f
+    val contentColor by colors.contentColor(isEnabled)
     var isPressed by remember { mutableStateOf(false) }
+    isSelected?.let { isPressed = isSelected }
     val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
     Box(modifier = modifier) {
         DepthSurface(
-            color = Color.Gray,
-            shadowColor = Color.DarkGray,
+            color = contentColor,
+            shadowColor = colors.backgroundColor(isEnabled).value,
             isPressed = isPressed,
             depth = depth,
             modifier = Modifier
@@ -95,9 +119,14 @@ fun DepthButton(
                     detectTapGestures(
                         onPress = {
                             isPressed = true
+                            if (isSelected != null) {
+                                onClick()
+                            }
                             awaitRelease()
-                            isPressed = false
-                            onClick()
+                            if (isSelected == null) {
+                                isPressed = false
+                                onClick()
+                            }
                         }
                     )
                 }
@@ -114,14 +143,13 @@ fun DepthButton(
     }
 }
 
-
 @Composable
 fun DepthSurface(
     modifier: Modifier,
     isPressed: Boolean,
     color: Color,
     shadowColor: Color,
-    depth: Float = 15f,
+    depth: Float = 20f,
 ) {
 
     val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
@@ -157,5 +185,46 @@ fun DepthSurface(
             topLeft = Offset(x = gutter, y = innerHeightOffset),
             size = innerSize
         )
+    }
+}
+
+@Immutable
+class DepthButtonColors(
+    private val shadowColor: Color,
+    private val color: Color,
+    private val disabledShadowColor: Color,
+    private val disabledColor: Color
+) : ButtonColors {
+
+    @Composable
+    override fun backgroundColor(enabled: Boolean): State<Color> {
+        return rememberUpdatedState(if (enabled) shadowColor else disabledShadowColor)
+    }
+
+    @Composable
+    override fun contentColor(enabled: Boolean): State<Color> {
+        return rememberUpdatedState(if (enabled) color else disabledColor)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as DepthButtonColors
+
+        if (shadowColor != other.shadowColor) return false
+        if (color != other.color) return false
+        if (disabledShadowColor != other.disabledShadowColor) return false
+        if (disabledColor != other.disabledColor) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = shadowColor.hashCode()
+        result = 31 * result + color.hashCode()
+        result = 31 * result + disabledShadowColor.hashCode()
+        result = 31 * result + disabledColor.hashCode()
+        return result
     }
 }
