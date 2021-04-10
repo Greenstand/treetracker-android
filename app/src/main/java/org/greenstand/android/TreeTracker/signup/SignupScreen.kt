@@ -114,17 +114,15 @@ fun SignupFlow(
                 }
             }
 
-            if (uiState.showEmailText) {
-                BorderedTextField(
+            when (uiState.credentialType) {
+                CredentialType.Email -> BorderedTextField(
                     value = uiState.emailText,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) }
                 )
-            }
 
-            if (uiState.showPhoneText) {
-                BorderedTextField(
+                CredentialType.Phone -> BorderedTextField(
                     value = uiState.phoneText,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
