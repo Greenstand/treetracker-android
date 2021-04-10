@@ -12,6 +12,7 @@ val colorPrimaryLight = Color(0xFF585B5D)
 
 val black54 = Color(0xFF8A000000)
 val lightGrey = Color(0xFFD3D3D3)
+val mediumGrey = Color(0xff9e9e9e)
 val cautionOrange = Color(0xFFFFFFAE42)
 
 // **Note: Component Colors (These should NEVER reference a hash color directly)

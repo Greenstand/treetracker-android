@@ -24,6 +24,10 @@ sealed class NavRoute {
         override val route: String = "signup-flow"
     }
 
+    object NameEntryView : NavRoute() {
+        override val route: String = "signup_flow/nameEntryView"
+    }
+
     object Name : NavRoute() {
         override val route: String = "name/{identifier}"
         override val arguments = listOf(navArgument("identifier") { type = NavType.StringType })
