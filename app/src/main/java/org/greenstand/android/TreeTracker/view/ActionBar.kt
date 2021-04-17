@@ -2,11 +2,14 @@ package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.greenstand.android.TreeTracker.ui.colorPrimaryDark
+
 
 @Composable
 fun ActionBar(
@@ -14,10 +17,12 @@ fun ActionBar(
     centerAction: @Composable (BoxScope.() -> Unit) = { },
     rightAction: @Composable (BoxScope.() -> Unit) = { },
 ) {
-    BottomAppBar(
-        elevation = 16.dp,
-        backgroundColor = colorPrimaryDark,
-        contentColor = colorPrimaryDark
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+            .height(80.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(modifier = Modifier.weight(1f)) {
             leftAction()

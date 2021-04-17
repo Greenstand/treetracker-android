@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 
@@ -16,9 +17,10 @@ import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
         PlanterInfoEntity::class,
         TreeAttributeEntity::class,
         TreeCaptureEntity::class,
-        LocationDataEntity::class
+        LocationDataEntity::class,
+        SessionEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -41,7 +43,8 @@ abstract class AppDatabase : RoomDatabase() {
                             MIGRATION_3_4,
                             MIGRATION_4_5,
                             MIGRATION_5_6,
-                            MIGRATION_6_7
+                            MIGRATION_6_7,
+                            MIGRATION_7_8,
                         )
                         .build()
                 }

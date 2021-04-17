@@ -51,6 +51,17 @@ sealed class NavRoute {
         override val route: String = "user-select"
     }
 
+    object WalletSelect : NavRoute() {
+        override val route: String = "wallet-select/{planterInfoId}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+
+        fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+
+        fun create(planterInfoId: Long) = "wallet-select/$planterInfoId"
+    }
+
     object Camera : NavRoute() {
         override val route: String = "camera/{isSelfieMode}"
         override val arguments = listOf(navArgument("isSelfieMode") { type = NavType.BoolType })
@@ -81,6 +92,6 @@ sealed class NavRoute {
             return backStackEntry.arguments?.getBoolean("isFromTopBar") ?: false
         }
 
-        fun create(isFromTopBar: Boolean) = "language/$isFromTopBar"
+        fun create(isFromTopBar: Boolean = true) = "language/$isFromTopBar"
     }
 }

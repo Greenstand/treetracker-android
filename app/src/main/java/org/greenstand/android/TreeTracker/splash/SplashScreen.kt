@@ -1,9 +1,13 @@
 package org.greenstand.android.TreeTracker.splash
 
+import android.Manifest
+import androidx.activity.compose.registerForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -15,6 +19,7 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
@@ -27,25 +32,47 @@ fun SplashScreen(
     viewModel: SplashScreenViewModel = viewModel(factory = LocalViewModelFactory.current),
     navController: NavHostController = LocalNavHostController.current
 ) {
+    val scope = rememberCoroutineScope()
+    val permissionRequester = registerForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { result ->
+            scope.launch {
+                if (result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+                    result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+                ) {
+                    Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
-    LaunchedEffect(true) {
-        Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
-        viewModel.migratePreferences()
-        delay(1000)
+                    viewModel.migratePreferences()
+                    delay(1000)
 
-        val hasUserSetup = false // fixme: Change this back to true when we want to go to the DashBoard
+                    val hasUserSetup =
+                        false // fixme: Change this back to true when we want to go to the DashBoard
 
-        if (!hasUserSetup) {
-            navController.navigate(NavRoute.Language.create(isFromTopBar = false)) {
-                popUpTo(NavRoute.Splash.route) { inclusive = true }
-                launchSingleTop = true
-            }
-        } else {
-            navController.navigate(NavRoute.Dashboard.route) {
-                popUpTo(NavRoute.Splash.route) { inclusive = true }
-                launchSingleTop = true
+                    if (!hasUserSetup) {
+                        navController.navigate(NavRoute.Language.create(isFromTopBar = false)) {
+                            popUpTo(NavRoute.Splash.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    } else {
+                        navController.navigate(NavRoute.Dashboard.route) {
+                            popUpTo(NavRoute.Splash.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                }
             }
         }
+    )
+
+    LaunchedEffect(true) {
+        permissionRequester.launch(
+            arrayOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        )
     }
 
     Image(
@@ -58,7 +85,9 @@ fun SplashScreen(
 
 @Preview
 @Composable
-fun SplashScreenPreview(@PreviewParameter(SplashScreenPreviewProvider::class) viewModel: SplashScreenViewModel) {
+fun SplashScreenPreview(
+    @PreviewParameter(SplashScreenPreviewProvider::class) viewModel: SplashScreenViewModel
+) {
     SplashScreen(
         viewModel = viewModel,
         navController = rememberNavController()

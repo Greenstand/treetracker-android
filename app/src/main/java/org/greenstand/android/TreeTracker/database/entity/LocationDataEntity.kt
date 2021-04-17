@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
     tableName = LocationDataEntity.TABLE
 )
 data class LocationDataEntity(
-    @ColumnInfo(name = LocationDataEntity.JSON_VALUE)
+    @ColumnInfo(name = JSON_VALUE)
     var locationDataJson: String
 ) {
     @PrimaryKey(autoGenerate = true)

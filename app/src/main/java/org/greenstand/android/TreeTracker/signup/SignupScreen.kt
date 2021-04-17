@@ -21,7 +21,7 @@ import org.greenstand.android.TreeTracker.ui.colorPrimary
 import org.greenstand.android.TreeTracker.ui.mediumGrey
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.BorderedTextField
-import org.greenstand.android.TreeTracker.view.TreeTrackerTextButton
+import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
 fun SignupFlow(
@@ -38,11 +38,7 @@ fun SignupFlow(
             ActionBar(
                 centerAction = { Text("Treetracker", color = colorPrimary) },
                 rightAction = {
-                    TreeTrackerTextButton(
-                        modifier = Modifier.align(Alignment.Center),
-                        stringRes = R.string.language,
-                        onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
-                    )
+                    LanguageButton()
                 }
             )
         },
@@ -135,6 +131,8 @@ fun SignupFlow(
 
 @Preview
 @Composable
-fun SignupScreen_Preview(@PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel) {
+fun SignupScreen_Preview(
+    @PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel
+) {
     SignupFlow(viewModel = viewModel)
 }

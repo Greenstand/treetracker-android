@@ -32,6 +32,7 @@ import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.*
+import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -67,6 +68,8 @@ val appModule = module {
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get()) }
 
     viewModel { SplashScreenViewModel(get()) }
+
+    viewModel { WalletSelectViewModel(get()) }
 
     single { Users(get(), get(), get()) }
 
@@ -122,7 +125,7 @@ val appModule = module {
 
     single { GsonBuilder().serializeNulls().create() }
 
-    single { TreeTrackerViewModelFactory(get(), get(), get(), get(), get(), get()) }
+    single { TreeTrackerViewModelFactory() }
 
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
 

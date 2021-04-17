@@ -29,7 +29,9 @@ data class PlanterInfoEntity(
     @ColumnInfo(name = BUNDLE_ID)
     var bundleId: String? = null,
     @ColumnInfo(name = RECORD_UUID, defaultValue = "")
-    var recordUuid: String
+    var recordUuid: String,
+    @ColumnInfo(name = POWER_USER, defaultValue = "0")
+    var isPowerUser: Boolean,
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -52,5 +54,6 @@ data class PlanterInfoEntity(
         const val CREATED_AT = "created_at"
         const val BUNDLE_ID = "bundle_id"
         const val RECORD_UUID = "record_uuid"
+        const val POWER_USER = "power_user"
     }
 }

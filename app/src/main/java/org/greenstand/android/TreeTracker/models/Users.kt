@@ -25,6 +25,8 @@ class Users(
 
     suspend fun getUsers(): List<PlanterInfoEntity> = dao.getAllPlanterInfo()
 
+    suspend fun getUser(planterInfoId: Long): PlanterInfoEntity? = dao.getPlanterInfoById(planterInfoId)
+
     suspend fun createUser(
         firstName: String,
         lastName: String,
@@ -33,6 +35,7 @@ class Users(
         email: String?,
         identifier: String,
         photoPath: String,
+        isPowerUser: Boolean = false
     ) {
         withContext(Dispatchers.IO) {
 
@@ -50,7 +53,8 @@ class Users(
                 latitude = location?.latitude ?: 0.0,
                 createdAt = time,
                 uploaded = false,
-                recordUuid = UUID.randomUUID().toString()
+                recordUuid = UUID.randomUUID().toString(),
+                isPowerUser = isPowerUser,
             )
 
             val userId = dao.insertPlanterInfo(entity).also {
@@ -65,7 +69,6 @@ class Users(
                 planterInfoId = userId,
             )
         }
-
     }
 
     suspend fun startUserSession(
@@ -102,5 +105,4 @@ class Users(
     fun endUserSession() {
         currentSessionUser = null
     }
-
 }

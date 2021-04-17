@@ -21,6 +21,7 @@ import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTextButton
 
 @Composable
@@ -82,17 +83,15 @@ fun DashboardTopBar(navController: NavController) {
             Text("Treetracker", modifier = Modifier.align(Alignment.Center))
         },
         rightAction = {
-            TreeTrackerTextButton(
-                modifier = Modifier.align(Alignment.Center),
-                stringRes = R.string.language,
-                onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
-            )
+            LanguageButton()
         }
     )
 }
 
 @Preview
 @Composable
-fun DashboardScreen_Preview(@PreviewParameter(DashboardPreviewParameter::class) viewModel: DashboardViewModel) {
+fun DashboardScreen_Preview(
+    @PreviewParameter(DashboardPreviewParameter::class) viewModel: DashboardViewModel
+) {
     DashboardScreen(viewModel = viewModel)
 }

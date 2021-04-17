@@ -69,6 +69,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                     identifier = currentIdentifier,
                     organization = null,
                     photoPath = photoPath,
+                    isPowerUser = false
                 )
             }
             return true
