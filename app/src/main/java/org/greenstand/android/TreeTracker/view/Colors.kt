@@ -10,8 +10,8 @@ object AppColors {
     val Green = Color(0xFF75B926)
     val GreenShadow = Color(0xFF507924)
 
-    val GreenDisabled = Color(0xFF75B926)
-    val GreenShadowDisabled = Color(0xFF507924)
+    val GreenDisabled = Color(0xAD52811A)
+    val GreenShadowDisabled = Color(0xAA273C12)
 
     val Purple = Color(0XFFC614A7)
     val PurpleShadow = Color(0XFF7C0868)
