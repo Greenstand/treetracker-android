@@ -59,9 +59,10 @@ fun TextButton(
 }
 
 @Composable
-fun BoxScope.NextButton(
+fun BoxScope.ArrowButton(
     isEnabled: Boolean = true,
     colors: ButtonColors = AppButtonColors.ProgressGreen,
+    isLeft: Boolean,
     onClick: () -> Unit,
 ) {
     DepthButton(
@@ -73,29 +74,7 @@ fun BoxScope.NextButton(
         onClick = onClick,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.arrow_right),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(color = AppColors.GrayShadow)
-        )
-    }
-}
-
-@Composable
-fun BoxScope.BackButton(
-    isEnabled: Boolean = true,
-    colors: ButtonColors = AppButtonColors.ProgressGreen,
-    onClick: () -> Unit,
-) {
-    DepthButton(
-        isEnabled = isEnabled,
-        colors = colors,
-        modifier = Modifier
-            .align(Alignment.Center)
-            .size(height = 62.dp, width = 62.dp),
-        onClick = onClick,
-    ) {
-        Image(
-            modifier = Modifier.rotate(180f),
+            modifier = if (isLeft) Modifier.rotate(180f) else Modifier,
             painter = painterResource(id = R.drawable.arrow_right),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = AppColors.GrayShadow)

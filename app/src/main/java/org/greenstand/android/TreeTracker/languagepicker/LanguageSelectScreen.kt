@@ -25,8 +25,8 @@ import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.NextButton
 
 @Composable
 fun LanguageSelectScreen(
@@ -41,7 +41,7 @@ fun LanguageSelectScreen(
         bottomBar = {
             ActionBar(
                 rightAction = {
-                    NextButton {
+                    ArrowButton(isLeft = false) {
                         if (isFromTopBar) {
                             navController.popBackStack()
                         } else {

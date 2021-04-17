@@ -20,10 +20,9 @@ import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.BackButton
+import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.NextButton
 
 @Composable
 fun WalletSelectScreen(planterInfoId: Long, viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -51,12 +50,14 @@ fun WalletSelectScreen(planterInfoId: Long, viewModel: WalletSelectViewModel = v
         bottomBar = {
             ActionBar(
                 rightAction = {
-                    NextButton(isEnabled = state.selectedPlanter != null) {
+                    ArrowButton(
+                        isLeft = false,
+                        isEnabled = state.selectedPlanter != null) {
 
                     }
                 },
                 leftAction = {
-                    BackButton {
+                    ArrowButton(isLeft = true) {
                         navController.popBackStack()
                     }
                 }
