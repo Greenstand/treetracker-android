@@ -10,7 +10,7 @@ import org.greenstand.android.TreeTracker.utilities.Validation
 data class SignUpState(
     val name: String? = null,
     val photoPath: String? = null,
-    val credential: Credential = Credential.Email,
+    val credential: Credential = Credential.Email(),
 )
 
 sealed class Credential {
@@ -25,7 +25,7 @@ sealed class Credential {
      */
     abstract val isValid: Boolean
 
-    object Email : Credential() {
+    class Email : Credential() {
 
         override var text: String = ""
 
@@ -33,7 +33,7 @@ sealed class Credential {
             get() = Validation.isEmailValid(text)
     }
 
-    object Phone : Credential() {
+    class Phone : Credential() {
 
         override var text: String = ""
 
@@ -62,23 +62,11 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
     fun updateEmail(email: String) {
         // TODO validate data and show errors if needed, after click
-        var credential = _state.value?.credential
-        if (credential == null) {
-            credential = Credential.Email.apply { text = email }
-        } else {
-            credential.text = email
-        }
-        _state.value = _state.value?.copy(credential = credential)
+        _state.value = _state.value?.copy(credential = Credential.Email().apply { text = email })
     }
 
     fun updatePhone(phone: String) {
-        var credential = _state.value?.credential
-        if (credential == null) {
-            credential = Credential.Phone.apply { text = phone }
-        } else {
-            credential.text = phone
-        }
-        _state.value = _state.value?.copy(credential = credential)
+        _state.value = _state.value?.copy(credential = Credential.Phone().apply { text = phone })
     }
 
     fun updateCredentialType(updatedCredential: Credential) {

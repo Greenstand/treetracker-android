@@ -18,6 +18,7 @@ import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
@@ -73,52 +74,52 @@ fun SignupFlow(
                 Button(
                     modifier = Modifier.padding(end = 4.dp),
                     onClick = {
-                        viewModel.updateCredentialType(Credential.Email)
+                        viewModel.updateCredentialType(Credential.Email())
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = if (state.credential is Credential.Email) {
-                            MaterialTheme.colors.primary
+                            Green
                         } else {
                             MediumGray
                         }
                     )
                 ) {
                     Text(
-                        text = "Email",
-                        color = Color.Black
+                        text = stringResource(id = R.string.email_placeholder),
+                        color = Color.Black,
                     )
                 }
 
                 Button(
                     modifier = Modifier.padding(start = 4.dp),
                     onClick = {
-                        viewModel.updateCredentialType(Credential.Phone)
+                        viewModel.updateCredentialType(Credential.Phone())
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = if (state.credential is Credential.Phone) {
-                            MaterialTheme.colors.primary
+                            Green
                         } else {
                             MediumGray
                         }
                     )
                 ) {
                     Text(
-                        text = "Phone",
-                        color = Color.Black
+                        text = stringResource(id = R.string.phone_placeholder),
+                        color = Color.Black,
                     )
                 }
             }
 
-            when (state.credential) {
-                Credential.Email -> BorderedTextField(
-                    value = state.credential.text,
+            when (val credential = state.credential) {
+                is Credential.Email -> BorderedTextField(
+                    value = credential.text,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) }
                 )
 
-                Credential.Phone -> BorderedTextField(
-                    value = state.credential.text,
+                is Credential.Phone -> BorderedTextField(
+                    value = credential.text,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) }

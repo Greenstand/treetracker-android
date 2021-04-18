@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -35,7 +36,8 @@ fun BorderedTextField(
             onValueChange = onValueChange,
             placeholder = placeholder,
             colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent
+                focusedIndicatorColor = Color.Transparent,
+                backgroundColor = MaterialTheme.colors.primary,
             ),
         )
     }
