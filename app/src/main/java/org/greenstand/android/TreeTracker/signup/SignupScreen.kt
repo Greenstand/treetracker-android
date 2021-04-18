@@ -73,10 +73,10 @@ fun SignupFlow(
                 Button(
                     modifier = Modifier.padding(end = 4.dp),
                     onClick = {
-                        viewModel.updateCredentialType(CredentialType.Email)
+                        viewModel.updateCredentialType(Credential.Email)
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (state.credentialType == CredentialType.Email) {
+                        backgroundColor = if (state.credential is Credential.Email) {
                             MaterialTheme.colors.primary
                         } else {
                             MediumGray
@@ -92,10 +92,10 @@ fun SignupFlow(
                 Button(
                     modifier = Modifier.padding(start = 4.dp),
                     onClick = {
-                        viewModel.updateCredentialType(CredentialType.Phone)
+                        viewModel.updateCredentialType(Credential.Phone)
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (state.credentialType == CredentialType.Phone) {
+                        backgroundColor = if (state.credential is Credential.Phone) {
                             MaterialTheme.colors.primary
                         } else {
                             MediumGray
@@ -109,16 +109,16 @@ fun SignupFlow(
                 }
             }
 
-            when (state.credentialType) {
-                CredentialType.Email -> BorderedTextField(
-                    value = state.emailText,
+            when (state.credential) {
+                Credential.Email -> BorderedTextField(
+                    value = state.credential.text,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) }
                 )
 
-                CredentialType.Phone -> BorderedTextField(
-                    value = state.phoneText,
+                Credential.Phone -> BorderedTextField(
+                    value = state.credential.text,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) }

@@ -4,31 +4,42 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.utilities.Validation
 
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
-    val emailText: String = "",
-    val phoneText: String = "",
     val name: String? = null,
     val photoPath: String? = null,
-    val credentialType: CredentialType = CredentialType.Email,
-    val showEmailText: Boolean = true,
-    val showPhoneText: Boolean = false,
+    val credential: Credential = Credential.Email,
 )
 
-enum class CredentialType {
-    Phone,
-    Email,
-}
-
-sealed class Credential(
+sealed class Credential {
 
     /**
-     * The information for the credential type.
+     * The actual credential value
      */
-    var info: String = ""
-) {
-    class Email : Credential()
+    abstract var text: String
+
+    /**
+     * Whether or not this credential is valid
+     */
+    abstract val isValid: Boolean
+
+    object Email : Credential() {
+
+        override var text: String = ""
+
+        override val isValid: Boolean
+            get() = Validation.isEmailValid(text)
+    }
+
+    object Phone : Credential() {
+
+        override var text: String = ""
+
+        override val isValid: Boolean
+            get() = Validation.isValidPhoneNumber(text)
+    }
 }
 
 class SignupViewModel(private val users: Users) : ViewModel() {
@@ -51,19 +62,31 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
     fun updateEmail(email: String) {
         // TODO validate data and show errors if needed, after click
-        _state.value = _state.value?.copy(emailText = email)
+        var credential = _state.value?.credential
+        if (credential == null) {
+            credential = Credential.Email.apply { text = email }
+        } else {
+            credential.text = email
+        }
+        _state.value = _state.value?.copy(credential = credential)
     }
 
     fun updatePhone(phone: String) {
-        _state.value = _state.value?.copy(phoneText = phone)
+        var credential = _state.value?.credential
+        if (credential == null) {
+            credential = Credential.Phone.apply { text = phone }
+        } else {
+            credential.text = phone
+        }
+        _state.value = _state.value?.copy(credential = credential)
     }
 
-    fun updateCredentialType(updatedType: CredentialType) {
-        _state.value = _state.value?.copy(credentialType = updatedType)
+    fun updateCredentialType(updatedCredential: Credential) {
+        _state.value = _state.value?.copy(credential = updatedCredential)
     }
 
     private val currentIdentifier: String
-        get() = _state.value?.emailText ?: _state.value?.phoneText ?: ""
+        get() = _state.value?.credential?.text ?: ""
 
     suspend fun setPhotoPath(photoPath: String?): Boolean {
         if (photoPath != null) {
@@ -73,8 +96,16 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                     // TODO fix user data usage
                     firstName = name?.split(" ")?.get(0) ?: "",
                     lastName = name?.split(" ")?.get(0) ?: "",
-                    phone = phoneText,
-                    email = emailText,
+                    phone = if (state.credential is Credential.Phone) {
+                        state.credential.text
+                    } else {
+                        null
+                    },
+                    email = if (state.credential is Credential.Email) {
+                        state.credential.text
+                    } else {
+                        null
+                    },
                     identifier = currentIdentifier,
                     organization = null,
                     photoPath = photoPath,
