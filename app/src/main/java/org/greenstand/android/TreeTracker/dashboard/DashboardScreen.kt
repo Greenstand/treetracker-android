@@ -22,7 +22,7 @@ import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TreeTrackerTextButton
+import org.greenstand.android.TreeTracker.view.TextButton
 
 @Composable
 fun DashboardScreen(
@@ -73,7 +73,7 @@ fun DashboardScreen(
 fun DashboardTopBar(navController: NavController) {
     ActionBar(
         leftAction = {
-            TreeTrackerTextButton(
+            TextButton(
                 modifier = Modifier.align(Alignment.Center),
                 stringRes = R.string.organization,
                 onClick = { navController.navigate(NavRoute.Org.route) }

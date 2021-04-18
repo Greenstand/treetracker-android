@@ -23,10 +23,9 @@ import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.ui.colorPrimary
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.BorderedTextField
-import org.greenstand.android.TreeTracker.view.TreeTrackerTextButton
+import org.greenstand.android.TreeTracker.view.TextButton
 
 @Composable
 fun NameEntryView(
@@ -54,9 +53,9 @@ fun NameEntryView(
     Scaffold( // TODO: This scaffold should be moved to a host view so we don't have to keep replacing it
         topBar = {
             ActionBar(
-                centerAction = { Text("Treetracker", color = colorPrimary) },
+                centerAction = { Text(stringResource(id = R.string.treetracker)) },
                 rightAction = {
-                    TreeTrackerTextButton(
+                    TextButton(
                         modifier = Modifier.align(Alignment.Center),
                         stringRes = R.string.language,
                         onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }

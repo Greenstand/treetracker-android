@@ -17,9 +17,8 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.ui.colorPrimary
-import org.greenstand.android.TreeTracker.ui.mediumGrey
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
 
@@ -27,7 +26,7 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 fun SignupFlow(
     viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val uiState by viewModel.state.observeAsState(SignUpState())
+    val state by viewModel.state.observeAsState(SignUpState())
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
@@ -36,7 +35,7 @@ fun SignupFlow(
     Scaffold( // TODO: This scaffold should be moved to a host view so we don't have to repeat code
         topBar = {
             ActionBar(
-                centerAction = { Text("Treetracker", color = colorPrimary) },
+                centerAction = { Text(stringResource(id = R.string.treetracker)) },
                 rightAction = {
                     LanguageButton()
                 }
@@ -77,10 +76,10 @@ fun SignupFlow(
                         viewModel.updateCredentialType(CredentialType.Email)
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (uiState.credentialType == CredentialType.Email) {
+                        backgroundColor = if (state.credentialType == CredentialType.Email) {
                             MaterialTheme.colors.primary
                         } else {
-                            mediumGrey
+                            MediumGray
                         }
                     )
                 ) {
@@ -96,10 +95,10 @@ fun SignupFlow(
                         viewModel.updateCredentialType(CredentialType.Phone)
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (uiState.credentialType == CredentialType.Phone) {
+                        backgroundColor = if (state.credentialType == CredentialType.Phone) {
                             MaterialTheme.colors.primary
                         } else {
-                            mediumGrey
+                            MediumGray
                         }
                     )
                 ) {
@@ -110,16 +109,16 @@ fun SignupFlow(
                 }
             }
 
-            when (uiState.credentialType) {
+            when (state.credentialType) {
                 CredentialType.Email -> BorderedTextField(
-                    value = uiState.emailText,
+                    value = state.emailText,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) }
                 )
 
                 CredentialType.Phone -> BorderedTextField(
-                    value = uiState.phoneText,
+                    value = state.phoneText,
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) }

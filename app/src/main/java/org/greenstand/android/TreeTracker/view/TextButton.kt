@@ -36,7 +36,7 @@ import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.models.NavRoute
 
 @Composable
-fun TreeTrackerTextButton(
+fun TextButton(
     modifier: Modifier = Modifier,
     stringRes: Int,
     enabled: Boolean = true,

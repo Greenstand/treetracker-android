@@ -14,12 +14,21 @@ data class SignUpState(
     val credentialType: CredentialType = CredentialType.Email,
     val showEmailText: Boolean = true,
     val showPhoneText: Boolean = false,
-
 )
 
 enum class CredentialType {
     Phone,
-    Email
+    Email,
+}
+
+sealed class Credential(
+
+    /**
+     * The information for the credential type.
+     */
+    var info: String = ""
+) {
+    class Email : Credential()
 }
 
 class SignupViewModel(private val users: Users) : ViewModel() {
