@@ -1,7 +1,6 @@
 package org.greenstand.android.TreeTracker.languagepicker
 
 import android.app.Activity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,22 +14,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.navigate
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.AppButtonColors
-import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
 
 @Composable
@@ -46,25 +41,13 @@ fun LanguageSelectScreen(
         bottomBar = {
             ActionBar(
                 rightAction = {
-                    DepthButton(
-                        colors = AppButtonColors.ProgressGreen,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(height = 62.dp, width = 62.dp),
-                        onClick = {
-                            if (isFromTopBar) {
-                                navController.popBackStack()
-                            } else {
-                                navController.navigate(NavRoute.SignupFlow.route)
-                            }
-                            viewModel.refreshAppLanguage(activity)
+                    ArrowButton(isLeft = false) {
+                        if (isFromTopBar) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate(NavRoute.SignupFlow.route)
                         }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow_right),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(AppColors.GrayShadow)
-                        )
+                        viewModel.refreshAppLanguage(activity)
                     }
                 }
             )

@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -21,11 +22,14 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -50,6 +54,30 @@ fun TextButton(
     ) {
         Text(
             text = stringResource(id = stringRes)
+        )
+    }
+}
+
+@Composable
+fun BoxScope.ArrowButton(
+    isEnabled: Boolean = true,
+    colors: ButtonColors = AppButtonColors.ProgressGreen,
+    isLeft: Boolean,
+    onClick: () -> Unit,
+) {
+    DepthButton(
+        isEnabled = isEnabled,
+        colors = colors,
+        modifier = Modifier
+            .align(Alignment.Center)
+            .size(height = 62.dp, width = 62.dp),
+        onClick = onClick,
+    ) {
+        Image(
+            modifier = if (isLeft) Modifier.rotate(180f) else Modifier,
+            painter = painterResource(id = R.drawable.arrow_right),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color = AppColors.GrayShadow)
         )
     }
 }
