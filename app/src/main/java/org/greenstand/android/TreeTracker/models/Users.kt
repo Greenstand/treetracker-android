@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.models
 
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -8,6 +7,7 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import timber.log.Timber
+import java.util.*
 
 data class SessionUser(
     val planterInfo: PlanterInfoEntity,
@@ -26,6 +26,8 @@ class Users(
     suspend fun getUsers(): List<PlanterInfoEntity> = dao.getAllPlanterInfo()
 
     suspend fun getUser(planterInfoId: Long): PlanterInfoEntity? = dao.getPlanterInfoById(planterInfoId)
+
+    suspend fun getPowerUser(): PlanterInfoEntity? = dao.getPowerUser()
 
     suspend fun createUser(
         firstName: String,
