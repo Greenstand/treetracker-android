@@ -1,8 +1,8 @@
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.activity.compose.registerForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +12,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,9 +25,7 @@ import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.BorderedTextField
-import org.greenstand.android.TreeTracker.view.TextButton
+import org.greenstand.android.TreeTracker.view.*
 
 @Composable
 fun NameEntryView(
@@ -37,12 +37,12 @@ fun NameEntryView(
 
     val cameraLauncher = registerForActivityResult(
         contract = CaptureImageContract(),
-        onResult = {
+        onResult = { photoPath ->
             scope.launch {
-                if (viewModel.setPhotoPath(it)) {
+                if (viewModel.setPhotoPath(photoPath)) {
                     navController.navigate(NavRoute.Dashboard.route) {
 //                        // TODO fix popup behavior to match app flow
-                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
+                        popUpTo(NavRoute.Dashboard.route) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
@@ -50,35 +50,40 @@ fun NameEntryView(
         }
     )
 
-    Scaffold( // TODO: This scaffold should be moved to a host view so we don't have to keep replacing it
+    Scaffold(
         topBar = {
             ActionBar(
                 centerAction = { Text(stringResource(id = R.string.treetracker)) },
                 rightAction = {
-                    TextButton(
-                        modifier = Modifier.align(Alignment.Center),
-                        stringRes = R.string.language,
-                        onClick = { navController.navigate(NavRoute.Language.create(isFromTopBar = true)) }
-                    )
+                    DepthButton(
+                        onClick = {
+                            navController.navigate(NavRoute.Language.create(true))
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(text = stringResource(id = R.string.language))
+                    }
                 }
             )
         },
         bottomBar = {
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                // TODO disable button until input fields are valid
-                Button(
-                    onClick = {
-                        cameraLauncher.launch(true)
+            ActionBar(
+                rightAction = {
+                    DepthButton(
+                        onClick = {
+                            cameraLauncher.launch(true)
+                        },
+                        modifier = Modifier.align(Alignment.Center).size(62.dp, 62.dp),
+                        colors = AppButtonColors.ProgressGreen
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.arrow_right),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(AppColors.GrayShadow)
+                        )
                     }
-                ) {
-                    Text("Next")
                 }
-            }
+            )
         }
     ) {
         Column(

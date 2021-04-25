@@ -32,18 +32,15 @@ fun SignupFlow(
 ) {
     val state by viewModel.state.observeAsState(SignUpState())
     val navController = LocalNavHostController.current
-    val scope = rememberCoroutineScope()
 
-    // TODO: Handle the back behavior! Send the user back to the email, name entry screen!
-
-    Scaffold( // TODO: This scaffold should be moved to a host view so we don't have to repeat code
+    Scaffold(
         topBar = {
             ActionBar(
                 centerAction = { Text(stringResource(id = R.string.treetracker)) },
                 rightAction = {
                     DepthButton(
                         onClick = {
-                            // navController.navigate(NavRoute.Language.route)
+                            navController.navigate(NavRoute.Language.create(true))
                         },
                         modifier = Modifier.padding(16.dp)
                     ) {
