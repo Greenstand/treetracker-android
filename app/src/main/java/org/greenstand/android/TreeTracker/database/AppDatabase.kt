@@ -11,7 +11,6 @@ import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 
-
 @Database(
     entities = [
         PlanterCheckInEntity::class,
