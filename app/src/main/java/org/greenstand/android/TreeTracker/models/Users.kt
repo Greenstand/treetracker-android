@@ -1,6 +1,6 @@
 package org.greenstand.android.TreeTracker.models
 
-import java.util.UUID
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -26,6 +26,8 @@ class Users(
     suspend fun getUsers(): List<PlanterInfoEntity> = dao.getAllPlanterInfo()
 
     suspend fun getUser(planterInfoId: Long): PlanterInfoEntity? = dao.getPlanterInfoById(planterInfoId)
+
+    suspend fun getPowerUser(): PlanterInfoEntity? = dao.getPowerUser()
 
     suspend fun createUser(
         firstName: String,

@@ -8,12 +8,20 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
+import androidx.navigation.compose.KEY_ROUTE
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
-import org.greenstand.android.TreeTracker.models.*
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.Language
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.NameEntryView
 import org.greenstand.android.TreeTracker.signup.SignupFlow
@@ -96,7 +104,10 @@ private fun Host() {
                 UserSelectScreen()
             }
 
-            composable(NavRoute.WalletSelect.route) {
+            composable(
+                route = NavRoute.WalletSelect.route,
+                arguments = NavRoute.WalletSelect.arguments
+            ) {
                 WalletSelectScreen(planterInfoId = NavRoute.WalletSelect.getPlanterInfoId(it))
             }
 

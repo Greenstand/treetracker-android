@@ -11,7 +11,7 @@ import org.greenstand.android.TreeTracker.models.Users
 data class WalletSelectState(
     val currentPlanter: PlanterInfoEntity? = null,
     val alternatePlanters: List<PlanterInfoEntity>? = null,
-    val isWalletSelected: Boolean = false,
+    val selectedPlanter: PlanterInfoEntity? = null,
 )
 
 class WalletSelectViewModel(
@@ -30,6 +30,14 @@ class WalletSelectViewModel(
             _state.value = WalletSelectState(
                 currentPlanter = currentPlanter,
                 alternatePlanters = alternatePlanters
+            )
+        }
+    }
+
+    fun selectPlanter(planterInfoId: Long) {
+        viewModelScope.launch {
+            _state.value = _state.value?.copy(
+                selectedPlanter = users.getUsers().find { planterInfoId == it.id }
             )
         }
     }

@@ -43,12 +43,10 @@ fun SplashScreen(
                     Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
                     viewModel.migratePreferences()
+
                     delay(1000)
 
-                    val hasUserSetup =
-                        false // fixme: Change this back to true when we want to go to the DashBoard
-
-                    if (!hasUserSetup) {
+                    if (viewModel.requiresInitialSetup()) {
                         navController.navigate(NavRoute.Language.create(isFromTopBar = false)) {
                             popUpTo(NavRoute.Splash.route) { inclusive = true }
                             launchSingleTop = true

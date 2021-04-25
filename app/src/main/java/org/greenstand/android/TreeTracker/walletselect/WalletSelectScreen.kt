@@ -1,7 +1,9 @@
 package org.greenstand.android.TreeTracker.walletselect
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
@@ -14,13 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TextButton
 
 @Composable
 fun WalletSelectScreen(
@@ -51,35 +53,37 @@ fun WalletSelectScreen(
         bottomBar = {
             ActionBar(
                 rightAction = {
-                    TextButton(
-                        enabled = state.isWalletSelected,
-                        modifier = Modifier.align(Alignment.Center),
-                        stringRes = R.string.next,
-                        onClick = { }
-                    )
+                    ArrowButton(
+                        isLeft = false,
+                        isEnabled = state.selectedPlanter != null
+                    ) {
+                    }
                 },
                 leftAction = {
-                    TextButton(
-                        modifier = Modifier.align(Alignment.Center),
-                        stringRes = R.string.back,
-                        onClick = { navController.popBackStack() },
-                    )
+                    ArrowButton(isLeft = true) {
+                        navController.popBackStack()
+                    }
                 }
             )
         },
     ) {
-        LazyColumn {
-            state.currentPlanter?.let { planter ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            state.currentPlanter?.let { currentPlanter ->
                 item {
                     Text("You")
-                    WalletItem(planter) {
+                    WalletItem(currentPlanter, state.selectedPlanter == currentPlanter) {
+                        viewModel.selectPlanter(it)
                     }
                     Text("Them")
                 }
             }
             state.alternatePlanters?.let { alternatePlanters ->
                 items(alternatePlanters) { planter ->
-                    WalletItem(planter) {
+                    WalletItem(planter, state.selectedPlanter == planter) {
+                        viewModel.selectPlanter(it)
                     }
                 }
             }
@@ -88,13 +92,17 @@ fun WalletSelectScreen(
 }
 
 @Composable
-fun WalletItem(planterInfo: PlanterInfoEntity, onClick: (Long) -> Unit) {
-    Text(
-        text = planterInfo.identifier,
-        Modifier
-            .clickable {
-                onClick(planterInfo.id)
-            }
+fun WalletItem(planterInfo: PlanterInfoEntity, isSelected: Boolean, onClick: (Long) -> Unit) {
+    DepthButton(
+        modifier = Modifier
             .padding(16.dp)
-    )
+            .size(height = 80.dp, width = 156.dp),
+        isSelected = isSelected,
+        onClick = { onClick(planterInfo.id) }
+    ) {
+        Column {
+            Text(text = planterInfo.firstName)
+            Text(text = planterInfo.identifier)
+        }
+    }
 }
