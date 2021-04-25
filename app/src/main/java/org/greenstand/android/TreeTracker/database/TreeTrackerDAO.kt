@@ -29,6 +29,9 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM planter_info WHERE _id = :id")
     suspend fun getPlanterInfoById(id: Long): PlanterInfoEntity?
 
+    @Query("SELECT * FROM planter_info WHERE power_user = 1")
+    suspend fun getPowerUser(): PlanterInfoEntity?
+
     @Update
     suspend fun updatePlanterInfo(planterInfoEntity: PlanterInfoEntity)
 

@@ -14,7 +14,19 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
-import org.greenstand.android.TreeTracker.models.*
+import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.Organizations
+import org.greenstand.android.TreeTracker.models.OrganizationsFake
+import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
+import org.greenstand.android.TreeTracker.models.TreeUploader
+import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
@@ -31,7 +43,15 @@ import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
 import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
-import org.greenstand.android.TreeTracker.viewmodels.*
+import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
+import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
+import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
+import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
+import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
+import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
+import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
+import org.greenstand.android.TreeTracker.viewmodels.TreeHeightViewModel
+import org.greenstand.android.TreeTracker.viewmodels.TreePreviewViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -67,7 +87,7 @@ val appModule = module {
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get()) }
 
-    viewModel { SplashScreenViewModel(get()) }
+    viewModel { SplashScreenViewModel(get(), get()) }
 
     viewModel { WalletSelectViewModel(get()) }
 
