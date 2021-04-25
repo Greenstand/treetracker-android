@@ -25,10 +25,7 @@ import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
-fun WalletSelectScreen(
-    planterInfoId: Long,
-    viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
-) {
+fun WalletSelectScreen(planterInfoId: Long, viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)) {
 
     val state by viewModel.state.observeAsState(initial = WalletSelectState())
 
@@ -37,7 +34,7 @@ fun WalletSelectScreen(
     }
 
     val navController = LocalNavHostController.current
-
+    
     Scaffold(
         topBar = {
             ActionBar(
@@ -55,8 +52,8 @@ fun WalletSelectScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.selectedPlanter != null
-                    ) {
+                        isEnabled = state.selectedPlanter != null) {
+
                     }
                 },
                 leftAction = {
@@ -98,11 +95,11 @@ fun WalletItem(planterInfo: PlanterInfoEntity, isSelected: Boolean, onClick: (Lo
             .padding(16.dp)
             .size(height = 80.dp, width = 156.dp),
         isSelected = isSelected,
-        onClick = { onClick(planterInfo.id) }
-    ) {
+        onClick = { onClick(planterInfo.id) }) {
         Column {
             Text(text = planterInfo.firstName)
             Text(text = planterInfo.identifier)
         }
     }
+
 }

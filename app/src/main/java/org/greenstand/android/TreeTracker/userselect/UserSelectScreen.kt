@@ -25,9 +25,7 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TextButton
 
 @Composable
-fun UserSelectScreen(
-    viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
-) {
+fun UserSelectScreen(viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)) {
 
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(UserSelectState())
@@ -56,9 +54,8 @@ fun UserSelectScreen(
                         enabled = state.selectedPlanter != null,
                         onClick = {
                             state.selectedPlanter?.id?.let {
-                                navController.navigate(NavRoute.WalletSelect.create(it))
+                                navController.navigate(NavRoute.WalletSelect.create(it)) }
                             }
-                        }
                     )
                 },
                 leftAction = {

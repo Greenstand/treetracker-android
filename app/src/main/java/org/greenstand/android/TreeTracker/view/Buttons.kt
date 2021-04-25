@@ -114,6 +114,7 @@ fun DepthButtonTogglePreview() {
 fun DepthButtonPreview() {
     DepthButton(
         onClick = {
+
         }
     ) {
         Text("Button", Modifier.align(Alignment.Center))

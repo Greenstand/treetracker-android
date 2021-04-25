@@ -21,8 +21,6 @@ object AppColors {
 
     val Orange = Color(0XFFF19400)
     val OrangeShadow = Color(0XFFEA6225)
-
-    val MediumGray = Color(0xFF9E9E9E)
 }
 
 object AppButtonColors {
@@ -40,6 +38,7 @@ object AppButtonColors {
         disabledColor = AppColors.GreenDisabled,
         disabledShadowColor = AppColors.GreenShadowDisabled
     )
+
 }
 
 val Colors = darkColors(
