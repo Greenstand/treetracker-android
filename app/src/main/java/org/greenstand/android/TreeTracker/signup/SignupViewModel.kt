@@ -47,14 +47,6 @@ class SignupViewModel(private val users: Users) : ViewModel() {
     private val _state = MutableLiveData(SignUpState())
     val state: LiveData<SignUpState> = _state
 
-    /**
-     * Note: There needs to be some type of validation to ensure that the user
-     * enters an email and that the email CredentialType has been properly selected.
-     * Same with the phone.
-     *
-     * We can't have the user enter an email when selecting the phone credential
-     */
-
     fun updateName(name: String) {
         // TODO validate data and show errors if needed, after click
         _state.value = _state.value?.copy(name = name)
