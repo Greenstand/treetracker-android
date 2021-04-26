@@ -1,30 +1,26 @@
 package org.greenstand.android.TreeTracker.signup
 
-import androidx.compose.foundation.Image
+import androidx.activity.compose.registerForActivityResult
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.*
-import org.greenstand.android.TreeTracker.view.AppColors.Green
-import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
 fun SignupFlow(
@@ -32,42 +28,46 @@ fun SignupFlow(
 ) {
     val state by viewModel.state.observeAsState(SignUpState())
     val navController = LocalNavHostController.current
+    val scope = rememberCoroutineScope()
+
+    val cameraLauncher = registerForActivityResult(
+        contract = CaptureImageContract(),
+        onResult = {
+            scope.launch {
+                if (viewModel.setPhotoPath(it)) {
+                    navController.navigate(NavRoute.Dashboard.route) {
+                        // TODO fix popup behavior to match app flow
+                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
+        }
+    )
 
     Scaffold(
         topBar = {
             ActionBar(
-                centerAction = { Text(stringResource(id = R.string.treetracker)) },
+                centerAction = { Text("Treetracker") },
                 rightAction = {
-                    DepthButton(
-                        onClick = {
-                            navController.navigate(NavRoute.Language.create(true))
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(text = stringResource(id = R.string.language))
-                    }
+                    LanguageButton()
                 }
             )
         },
         bottomBar = {
-
-            ActionBar(
-                rightAction = {
-                    DepthButton(
-                        onClick = {
-                            navController.navigate(NavRoute.NameEntryView.route)
-                        },
-                        modifier = Modifier.align(Alignment.Center).size(62.dp, 62.dp),
-                        colors = AppButtonColors.ProgressGreen
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow_right),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(AppColors.GrayShadow)
-                        )
-                    }
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                // TODO disable button until input fields are valid
+                Button(onClick = {
+                    cameraLauncher.launch(true)
+                }) {
+                    Text("Next")
                 }
-            )
+            }
         }
     ) {
         Column(
@@ -75,88 +75,120 @@ fun SignupFlow(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
+            TextField(
+                value = state.emailPhone ?: "",
+                onValueChange = { viewModel.setEmailPhone(it) },
+                placeholder = { Text(text = "Phone/Email") }
+            )
+            TextField(
+                value = state.name ?: "",
+                onValueChange = { viewModel.setName(it) },
+                placeholder = { Text(text = "Name") }
+            )
+        }
+    }
+}
 
+@Composable
+fun EnterPhoneEmail(
+    emailPhone: String,
+    onNavForward: () -> Unit,
+    onNavBackward: () -> Unit,
+    onNavLanguage: () -> Unit,
+    onEmailPhoneChanged: (String) -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("TreeTracker") },
+                actions = {
+                    Text(
+                        text = "Language",
+                        modifier = Modifier
+                            .clickable(onClick = onNavLanguage)
+                            .padding(8.dp)
+                    )
+                }
+            )
+        },
+        bottomBar = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             ) {
-
-                DepthButton(
-                    modifier = Modifier
-                        .padding(end = 4.dp)
-                        .size(62.dp, 40.dp),
-                    onClick = {
-                        viewModel.updateCredentialType(Credential.Email())
-                    },
-                    colors = DepthButtonColors(
-                        color = if (state.credential is Credential.Email) {
-                            Green
-                        } else {
-                            MediumGray
-                        },
-                        shadowColor = AppColors.GrayShadow,
-                        disabledColor = AppColors.GrayShadow,
-                        disabledShadowColor = AppColors.GrayShadow
-                    ),
-                    isSelected = state.credential is Credential.Email
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.email_placeholder),
-                        color = Color.Black,
-                    )
-                }
-
-                DepthButton(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(62.dp, 40.dp),
-                    onClick = {
-                        viewModel.updateCredentialType(Credential.Phone())
-                    },
-                    colors = DepthButtonColors(
-                        color = if (state.credential is Credential.Phone) {
-                            Green
-                        } else {
-                            MediumGray
-                        },
-                        shadowColor = AppColors.GrayShadow,
-                        disabledColor = AppColors.GrayShadow,
-                        disabledShadowColor = AppColors.GrayShadow
-                    ),
-                    isSelected = state.credential is Credential.Phone
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.phone_placeholder),
-                        color = Color.Black,
-                    )
+                Button(onClick = onNavForward) {
+                    Text("Next")
                 }
             }
+        }
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            TextField(
+                value = emailPhone,
+                onValueChange = onEmailPhoneChanged,
+                placeholder = { Text(text = "Phone / Email") }
+            )
+        }
+    }
+}
 
-            when (val credential = state.credential) {
-                is Credential.Email -> BorderedTextField(
-                    value = credential.text,
-                    padding = PaddingValues(16.dp),
-                    onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
-                    placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-                )
-
-                is Credential.Phone -> BorderedTextField(
-                    value = credential.text,
-                    padding = PaddingValues(16.dp),
-                    onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
-                    placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-                )
+@Composable
+fun EnterName(
+    name: String,
+    onNameChanged: (String) -> Unit,
+    onNavForward: () -> Unit,
+    onNavBackward: () -> Unit,
+    onNavLanguage: () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("TreeTracker") },
+                actions = {
+                    Text(
+                        text = "Language",
+                        modifier = Modifier
+                            .clickable(onClick = onNavLanguage)
+                            .padding(8.dp)
+                    )
+                }
+            )
+        },
+        bottomBar = {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Button(onClick = onNavForward) {
+                    Text("Next")
+                }
             }
+        }
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            TextField(
+                value = name,
+                onValueChange = onNameChanged,
+                placeholder = { Text(text = "Name") }
+            )
         }
     }
 }
 
 @Preview
 @Composable
-fun SignupScreen_Preview(
-    @PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel
-) {
+fun SignupScreen_Preview(@PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel) {
     SignupFlow(viewModel = viewModel)
 }

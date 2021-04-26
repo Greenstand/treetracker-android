@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.splash
 
+
 import android.Manifest
 import androidx.activity.compose.registerForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,9 +38,8 @@ fun SplashScreen(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { result ->
             scope.launch {
-                if (result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
-                    result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-                ) {
+                if (result[Manifest.permission.ACCESS_FINE_LOCATION] == true
+                    && result[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
                     Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
                     viewModel.migratePreferences()
@@ -63,14 +63,11 @@ fun SplashScreen(
     )
 
     LaunchedEffect(true) {
-        permissionRequester.launch(
-            arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        )
+        permissionRequester.launch(arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION))
     }
 
     Image(
@@ -83,9 +80,7 @@ fun SplashScreen(
 
 @Preview
 @Composable
-fun SplashScreenPreview(
-    @PreviewParameter(SplashScreenPreviewProvider::class) viewModel: SplashScreenViewModel
-) {
+fun SplashScreenPreview(@PreviewParameter(SplashScreenPreviewProvider::class) viewModel: SplashScreenViewModel) {
     SplashScreen(
         viewModel = viewModel,
         navController = rememberNavController()

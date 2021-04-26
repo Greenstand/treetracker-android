@@ -81,11 +81,12 @@ fun LanguageButton(
         isSelected = isSelected,
         modifier = Modifier
             .padding(16.dp)
-            .size(height = 80.dp, width = 156.dp)
-    ) {
+            .size(height = 80.dp, width = 156.dp)) {
         Text(text)
     }
 }
+
+
 
 @Preview
 @Composable
