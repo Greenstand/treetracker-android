@@ -1,30 +1,42 @@
 package org.greenstand.android.TreeTracker.signup
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.*
+import androidx.navigation.compose.navigate
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
+import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.DepthButtonColors
+import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
 fun SignupFlow(
@@ -37,36 +49,19 @@ fun SignupFlow(
         topBar = {
             ActionBar(
                 centerAction = { Text(stringResource(id = R.string.treetracker)) },
-                rightAction = {
-                    DepthButton(
-                        onClick = {
-                            navController.navigate(NavRoute.Language.create(true))
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(text = stringResource(id = R.string.language))
-                    }
-                }
+                rightAction = { LanguageButton() }
             )
         },
         bottomBar = {
-
             ActionBar(
+                leftAction = {
+                    ArrowButton(isLeft = true) {
+                        navController.popBackStack()
+                    }
+                },
                 rightAction = {
-                    DepthButton(
-                        onClick = {
-                            navController.navigate(NavRoute.NameEntryView.route)
-                        },
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(62.dp, 62.dp),
-                        colors = AppButtonColors.ProgressGreen
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow_right),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(AppColors.GrayShadow)
-                        )
+                    ArrowButton(isLeft = false) {
+                        navController.navigate(NavRoute.NameEntryView.route)
                     }
                 }
             )
