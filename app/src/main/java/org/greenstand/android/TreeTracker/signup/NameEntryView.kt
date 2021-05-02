@@ -1,6 +1,6 @@
 package org.greenstand.android.TreeTracker.signup
 
-import androidx.activity.compose.registerForActivityResult
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -35,20 +35,17 @@ fun NameEntryView(
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
-    val cameraLauncher = registerForActivityResult(
-        contract = CaptureImageContract(),
-        onResult = { photoPath ->
-            scope.launch {
-                if (viewModel.setPhotoPath(photoPath)) {
-                    navController.navigate(NavRoute.Dashboard.route) {
+    val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { photoPath ->
+        scope.launch {
+            if (viewModel.setPhotoPath(photoPath)) {
+                navController.navigate(NavRoute.Dashboard.route) {
 //                        // TODO fix popup behavior to match app flow
-                        popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
+                    popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
+                    launchSingleTop = true
                 }
             }
         }
-    )
+    }
 
     Scaffold(
         topBar = {

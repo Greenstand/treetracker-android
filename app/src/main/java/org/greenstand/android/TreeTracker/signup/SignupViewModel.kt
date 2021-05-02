@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.utilities.Validation
+import timber.log.Timber
 
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
@@ -69,6 +70,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         get() = _state.value?.credential?.text ?: ""
 
     suspend fun setPhotoPath(photoPath: String?): Boolean {
+        Timber.i("SetPhotoPath called!")
         if (photoPath != null) {
             val state: SignUpState = _state.value ?: return false
             with(state) {

@@ -57,7 +57,9 @@ fun SignupFlow(
                         onClick = {
                             navController.navigate(NavRoute.NameEntryView.route)
                         },
-                        modifier = Modifier.align(Alignment.Center).size(62.dp, 62.dp),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(62.dp, 62.dp),
                         colors = AppButtonColors.ProgressGreen
                     ) {
                         Image(
