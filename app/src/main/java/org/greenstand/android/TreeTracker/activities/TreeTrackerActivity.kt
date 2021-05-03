@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
@@ -22,6 +23,7 @@ import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
+import org.greenstand.android.TreeTracker.signup.NameEntryView
 import org.greenstand.android.TreeTracker.signup.SignupFlow
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
@@ -86,6 +88,10 @@ private fun Host() {
                 SignupFlow()
             }
 
+            composable(NavRoute.NameEntryView.route) {
+                NameEntryView()
+            }
+
             composable(NavRoute.Dashboard.route) {
                 DashboardScreen()
             }
@@ -100,7 +106,8 @@ private fun Host() {
 
             composable(
                 route = NavRoute.WalletSelect.route,
-                arguments = NavRoute.WalletSelect.arguments) {
+                arguments = NavRoute.WalletSelect.arguments
+            ) {
                 WalletSelectScreen(planterInfoId = NavRoute.WalletSelect.getPlanterInfoId(it))
             }
 

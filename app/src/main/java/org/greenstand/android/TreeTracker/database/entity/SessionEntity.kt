@@ -40,7 +40,6 @@ data class SessionEntity(
     var bundleId: String? = null,
 ) {
 
-
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
     var id: Long = 0

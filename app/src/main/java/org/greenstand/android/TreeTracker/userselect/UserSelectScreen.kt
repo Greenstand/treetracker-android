@@ -26,7 +26,9 @@ import org.greenstand.android.TreeTracker.view.*
 
 @ExperimentalFoundationApi
 @Composable
-fun UserSelectScreen(viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)) {
+fun UserSelectScreen(
+    viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
+) {
 
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(UserSelectState())
