@@ -1,12 +1,21 @@
 package org.greenstand.android.TreeTracker.userselect
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,7 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.navigate
 import org.greenstand.android.TreeTracker.R
@@ -22,9 +35,13 @@ import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.DepthButtonColors
+import org.greenstand.android.TreeTracker.view.TextButton
 
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserSelectScreen(
     viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
@@ -67,7 +84,8 @@ fun UserSelectScreen(
     ) {
         LazyVerticalGrid(
             cells = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
+            modifier = Modifier.padding(it),  // Padding for bottom bar.
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {
             items(state.planters) { user ->
                 UserButton(
@@ -76,24 +94,6 @@ fun UserSelectScreen(
                 ) { viewModel.selectUser(user) }
             }
         }
-
-        //        Column(
-        //            verticalArrangement = Arrangement.Center,
-        //            horizontalAlignment = Alignment.CenterHorizontally
-        //        ) {
-        //            Text("User Select")
-        //            state.planters.forEach { user ->
-        //                Text(
-        //                    text = "${user.firstName} ${user.lastName}",
-        //                    modifier = Modifier
-        //                        .padding(16.dp)
-        //                        .clickable {
-        //                            viewModel.selectUser(user)
-        //                        }
-        //                        .background(color = if (state.selectedPlanter?.id == user.id) Color.Gray else Color.White)
-        //                )
-        //            }
-        //        }
     }
 }
 
@@ -109,7 +109,8 @@ fun UserButton(
         onClick = onClick,
         isSelected = isSelected,
         modifier = Modifier
-            .size(height = 220.dp, width = 156.dp)
+            .size(width = 156.dp, height = 296.dp)
+            .wrapContentHeight()
             .padding(8.dp),
         colors = DepthButtonColors(
             color = AppColors.Gray,
@@ -118,6 +119,54 @@ fun UserButton(
             disabledShadowColor = AppColors.GrayShadow
         )
     ) {
-        Text(text = "${user.firstName}\n${user.lastName}")
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // User profile picture.
+            Box(  // TODO: Fetch user profile picture.
+                modifier = Modifier
+                    .padding(8.dp)
+                    .aspectRatio(1.0f)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(AppColors.LightGray)
+            )
+
+            // User text data: Name, phone, and number of tokens.
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = "Name\nPhone",  // TODO: Fetch user name and phone number.
+                    color = AppColors.LightGray,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = FontFamily.SansSerif,  // TODO: Change font to Montserrat.
+                )
+
+                Row(
+                    modifier = Modifier.padding(top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(  // TODO: Change into 'Plant' icon.
+                        modifier = Modifier
+                            .size(width = 20.dp, height = 28.dp)
+                            .background(AppColors.LightGray)
+                    )
+                    Text(
+                        text = "1,234",  // TODO: Fetch user's token count.
+                        modifier = Modifier.padding(start = 4.dp),
+                        color = AppColors.LightGray,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = FontFamily.SansSerif,
+                    )  // Text placeholder for number of tokens.
+                }
+            }
+        }
     }
 }
