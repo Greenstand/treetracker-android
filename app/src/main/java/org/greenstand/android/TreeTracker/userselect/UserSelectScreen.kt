@@ -6,8 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -109,8 +108,7 @@ fun UserButton(
         onClick = onClick,
         isSelected = isSelected,
         modifier = Modifier
-            .size(width = 156.dp, height = 296.dp)
-            .wrapContentHeight()
+            .size(width = 156.dp, height = 248.dp)
             .padding(8.dp),
         colors = DepthButtonColors(
             color = AppColors.Gray,
@@ -120,15 +118,17 @@ fun UserButton(
         )
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // User profile picture.
             Box(  // TODO: Fetch user profile picture.
                 modifier = Modifier
-                    .padding(8.dp)
-                    .aspectRatio(1.0f)
-                    .fillMaxWidth()
+                    .padding(1.dp)
+                    .size(156.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .background(AppColors.LightGray)
             )
@@ -138,30 +138,30 @@ fun UserButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .padding(horizontal = 12.dp, vertical = 2.dp)
             ) {
                 Text(
                     text = "Name\nPhone",  // TODO: Fetch user name and phone number.
                     color = AppColors.LightGray,
-                    fontSize = 16.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = FontFamily.SansSerif,  // TODO: Change font to Montserrat.
                 )
 
                 Row(
-                    modifier = Modifier.padding(top = 4.dp),
+                    modifier = Modifier.padding(top = 2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(  // TODO: Change into 'Plant' icon.
                         modifier = Modifier
-                            .size(width = 20.dp, height = 28.dp)
+                            .size(width = 20.dp, height = 22.dp)
                             .background(AppColors.LightGray)
                     )
                     Text(
                         text = "1,234",  // TODO: Fetch user's token count.
                         modifier = Modifier.padding(start = 4.dp),
                         color = AppColors.LightGray,
-                        fontSize = 24.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = FontFamily.SansSerif,
                     )  // Text placeholder for number of tokens.
