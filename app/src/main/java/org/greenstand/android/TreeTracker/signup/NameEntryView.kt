@@ -1,8 +1,10 @@
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,8 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,7 +25,10 @@ import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
 fun NameEntryView(
@@ -39,7 +42,7 @@ fun NameEntryView(
         scope.launch {
             if (viewModel.setPhotoPath(photoPath)) {
                 navController.navigate(NavRoute.Dashboard.route) {
-//                        // TODO fix popup behavior to match app flow
+                    // TODO fix popup behavior to match app flow
                     popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
                     launchSingleTop = true
                 }
@@ -51,33 +54,19 @@ fun NameEntryView(
         topBar = {
             ActionBar(
                 centerAction = { Text(stringResource(id = R.string.treetracker)) },
-                rightAction = {
-                    DepthButton(
-                        onClick = {
-                            navController.navigate(NavRoute.Language.create(true))
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(text = stringResource(id = R.string.language))
-                    }
-                }
+                rightAction = { LanguageButton() }
             )
         },
         bottomBar = {
             ActionBar(
+                leftAction = {
+                    ArrowButton(isLeft = true) {
+                        navController.popBackStack()
+                    }
+                },
                 rightAction = {
-                    DepthButton(
-                        onClick = {
-                            cameraLauncher.launch(true)
-                        },
-                        modifier = Modifier.align(Alignment.Center).size(62.dp, 62.dp),
-                        colors = AppButtonColors.ProgressGreen
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow_right),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(AppColors.GrayShadow)
-                        )
+                    ArrowButton(isLeft = false) {
+                        cameraLauncher.launch(true)
                     }
                 }
             )
