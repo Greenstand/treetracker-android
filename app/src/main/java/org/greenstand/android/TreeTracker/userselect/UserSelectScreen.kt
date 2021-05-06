@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -45,7 +46,6 @@ import org.greenstand.android.TreeTracker.view.TextButton
 fun UserSelectScreen(
     viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
-
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(UserSelectState())
 
@@ -89,7 +89,7 @@ fun UserSelectScreen(
             items(state.planters) { user ->
                 UserButton(
                     user = user,
-                    state = state,
+                    isSelected = state.selectedPlanter?.id == user.id,
                 ) { viewModel.selectUser(user) }
             }
         }
@@ -99,17 +99,19 @@ fun UserSelectScreen(
 @Composable
 fun UserButton(
     user: PlanterInfoEntity,
-    state: UserSelectState,
+    isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val isSelected = state.selectedPlanter?.id == user.id
-
     DepthButton(
         onClick = onClick,
         isSelected = isSelected,
+
         modifier = Modifier
-            .size(width = 156.dp, height = 248.dp)
-            .padding(8.dp),
+            .padding(8.dp)
+            .width(156.dp)
+            .wrapContentHeight(),
+        contentAlignment = Alignment.TopCenter,
+
         colors = DepthButtonColors(
             color = AppColors.Gray,
             shadowColor = if (isSelected) AppColors.GreenShadow else AppColors.GrayShadow,
@@ -119,29 +121,31 @@ fun UserButton(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .padding(bottom = 12.dp)  // Bottom side can be clipped by the button.
                 .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .wrapContentHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // User profile picture.
             Box(  // TODO: Fetch user profile picture.
                 modifier = Modifier
                     .padding(1.dp)
-                    .size(156.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1.0f)
                     .clip(RoundedCornerShape(5.dp))
                     .background(AppColors.LightGray)
-            )
+            )  // Box placeholder for user profile picture.
 
-            // User text data: Name, phone, and number of tokens.
+            // User text data: Name, phone number, and token count.
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 12.dp, vertical = 2.dp)
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
+                // User name and phone number.
                 Text(
-                    text = "Name\nPhone",  // TODO: Fetch user name and phone number.
+                    text = "${user.firstName}\n${user.phone}",
                     color = AppColors.LightGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -149,17 +153,19 @@ fun UserButton(
                 )
 
                 Row(
-                    modifier = Modifier.padding(top = 2.dp),
+                    modifier = Modifier.padding(top = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(  // TODO: Change into 'Plant' icon.
                         modifier = Modifier
                             .size(width = 20.dp, height = 22.dp)
                             .background(AppColors.LightGray)
-                    )
+                    )  // Box placeholder for 'Plant' icon.
+
                     Text(
                         text = "1,234",  // TODO: Fetch user's token count.
                         modifier = Modifier.padding(start = 4.dp),
+
                         color = AppColors.LightGray,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
