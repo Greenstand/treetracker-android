@@ -121,19 +121,38 @@ fun DepthButtonPreview() {
 }
 
 @Composable
+        /**
+         * Button with toggle down animation. Now enables wrap content functionality.
+         * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
+         *
+         * @param onClick The callback function for click event.
+         * @param modifier The modifier to be applied to the layout.
+         * @param contentAlignment The alignment of content inside the button.
+         * @param isEnabled Set button enabled state.
+         * @param isSelected Set button selected state (if selected, will toggle down).
+         * @param colors The colors of the button. See [AppButtonColors], can be customized.
+         * @param content The child content of the button.
+         */
 fun DepthButton(
     onClick: () -> Unit,
+
     modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.Center,
+
     isEnabled: Boolean = true,
-    colors: ButtonColors = AppButtonColors.Default,
     isSelected: Boolean? = null,
+
+    colors: ButtonColors = AppButtonColors.Default,
     content: @Composable (BoxScope.() -> Unit)
 ) {
     val depth = 20f
     val contentColor by colors.contentColor(isEnabled)
+
     var isPressed by remember { mutableStateOf(false) }
     isSelected?.let { isPressed = isSelected }
+
     val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
+
     Box(modifier = modifier) {
         DepthSurface(
             color = contentColor,
@@ -141,7 +160,7 @@ fun DepthButton(
             isPressed = isPressed,
             depth = depth,
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize()  // Match the 'content' size, this enables wrap_content.
                 .pointerInput(true) {
                     detectTapGestures(
                         onPress = {
@@ -158,9 +177,10 @@ fun DepthButton(
                     )
                 }
         )
+
         Box(
-            Modifier
-                .align(Alignment.Center)
+            modifier = Modifier
+                .align(contentAlignment)
                 .offset {
                     IntOffset(0, (depth * offsetAnimation).toInt())
                 }
