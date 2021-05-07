@@ -7,6 +7,8 @@ object AppColors {
     val Gray = Color(0XFF191C1F)
     val GrayShadow = Color.Black
 
+    val LightGray = Color(0xFFD8D8D8)
+
     val Green = Color(0xFF75B926)
     val GreenShadow = Color(0xFF507924)
 
