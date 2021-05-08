@@ -22,7 +22,7 @@ class PlanterUploader(
     private val uploadImageUseCase: UploadImageUseCase,
     private val gson: Gson,
     private val objectStorageClient: ObjectStorageClient,
-    private val user: User
+    private val user: Planter
 ) {
 
     suspend fun uploadPlanters() {

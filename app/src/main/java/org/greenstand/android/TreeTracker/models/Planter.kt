@@ -5,7 +5,7 @@ import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 
 @Deprecated("Use Users instead")
-class User(
+class Planter(
     private val preferences: Preferences
 ) {
 

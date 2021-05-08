@@ -1,18 +1,14 @@
 package org.greenstand.android.TreeTracker.models
 
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.models.user.User
 import timber.log.Timber
-
-data class SessionUser(
-    val planterInfo: PlanterInfoEntity,
-    val planterCheckIn: PlanterCheckInEntity
-)
+import java.util.*
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,
@@ -20,14 +16,38 @@ class Users(
     private val analytics: Analytics
 ) {
 
-    var currentSessionUser: SessionUser? = null
+    var currentSessionUser: User? = null
         private set
 
-    suspend fun getUsers(): List<PlanterInfoEntity> = dao.getAllPlanterInfo()
+    suspend fun getUsers(): List<User> {
+        val planterInfoList = dao.getAllPlanterInfo()
+        val planterCheckIns = dao.getPlanterCheckInsById(planterInfoList.map { it.id })
+        val planterIdsToICheckIns = planterCheckIns
+            .groupBy { it.planterInfoId }
+            .map { planterCheckInsForUser ->
+                planterCheckInsForUser.key to planterCheckInsForUser.value.find { planterCheckIn ->
+                    !planterCheckIn.localPhotoPath.isNullOrEmpty()
+                }
+            }.toMap()
+        return planterInfoList.mapNotNull { planterInfo ->
+            createUser(planterInfo, planterIdsToICheckIns[planterInfo.id])
+        }
+    }
 
-    suspend fun getUser(planterInfoId: Long): PlanterInfoEntity? = dao.getPlanterInfoById(planterInfoId)
+    suspend fun getUser(planterInfoId: Long): User? {
+        return createUser(
+            dao.getPlanterInfoById(planterInfoId),
+            dao.getAllPlanterCheckInsForPlanterInfoId(planterInfoId)
+                .find { !it.localPhotoPath.isNullOrEmpty() })
+    }
 
-    suspend fun getPowerUser(): PlanterInfoEntity? = dao.getPowerUser()
+    suspend fun getPowerUser(): User? {
+        val planterInfo = dao.getPowerUser() ?: return null
+        return createUser(
+            planterInfo,
+            dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
+                .find { !it.localPhotoPath.isNullOrEmpty() })
+    }
 
     suspend fun createUser(
         firstName: String,
@@ -91,13 +111,10 @@ class Users(
                 photoUrl = null
             )
 
-            val planterCheckInId = dao.insertPlanterCheckIn(planterCheckInEntity)
+            dao.insertPlanterCheckIn(planterCheckInEntity)
 
             dao.getPlanterInfoById(planterInfoId)?.let { planterInfo ->
-                currentSessionUser = SessionUser(
-                    planterCheckIn = planterCheckInEntity,
-                    planterInfo = planterInfo
-                )
+                currentSessionUser = createUser(planterInfo, planterCheckInEntity)
             } ?: Timber.e("Could not find planter info of id $planterInfoId")
 
             analytics.userCheckedIn()
@@ -106,5 +123,18 @@ class Users(
 
     fun endUserSession() {
         currentSessionUser = null
+    }
+
+    private fun createUser(planterInfoEntity: PlanterInfoEntity?, planterCheckInEntity: PlanterCheckInEntity?): User? {
+        planterInfoEntity ?: return null
+        planterCheckInEntity ?: return null
+        return User(
+            id = planterInfoEntity.id,
+            wallet = planterInfoEntity.identifier,
+            firstName = planterInfoEntity.firstName,
+            lastName = planterInfoEntity.lastName,
+            photoPath = planterCheckInEntity.localPhotoPath ?: "",
+            isPowerUser = planterInfoEntity.isPowerUser
+        )
     }
 }

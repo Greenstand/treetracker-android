@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.activities
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -30,14 +29,14 @@ import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.StepCounter
-import org.greenstand.android.TreeTracker.models.User
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val languageSwitcher: LanguageSwitcher by inject()
-    private val user: User by inject()
+    private val user: Planter by inject()
     private val analytics: Analytics by inject()
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val locationDataCapturer: LocationDataCapturer by inject()

@@ -4,19 +4,19 @@ import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
-import java.util.UUID
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.models.Convergence
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
-import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
+import java.util.*
 
 class NewTreeViewModel(
-    private val user: User,
+    private val user: Planter,
     private val locationDataCapturer: LocationDataCapturer,
     private val createTreeUseCase: CreateTreeUseCase,
     private val analytics: Analytics,

@@ -1,9 +1,9 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.Planter
 
-class ValidateCheckInStatusUseCase constructor(private val user: User) : UseCase<Unit, Boolean>() {
+class ValidateCheckInStatusUseCase constructor(private val user: Planter) : UseCase<Unit, Boolean>() {
 
     override suspend fun execute(params: Unit): Boolean {
         val currentTimestampSeconds = System.currentTimeMillis() / 1000

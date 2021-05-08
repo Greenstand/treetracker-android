@@ -6,7 +6,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
-import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.Planter
 
 data class CreatePlanterCheckInParams(
     val localPhotoPath: String,
@@ -18,7 +18,7 @@ class CreatePlanterCheckInUseCase(
     private val locationUpdateManager: LocationUpdateManager,
     private val doa: TreeTrackerDAO,
     private val analytics: Analytics,
-    private val user: User
+    private val user: Planter
 ) : UseCase<CreatePlanterCheckInParams, Long>() {
 
     override suspend fun execute(params: CreatePlanterCheckInParams): Long =

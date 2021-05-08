@@ -5,12 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.user.User
+import java.util.Collections.emptyList
 
 data class UserSelectState(
-    val planters: List<PlanterInfoEntity> = emptyList(),
-    val selectedPlanter: PlanterInfoEntity? = null,
+    val users: List<User> = emptyList(),
+    val selectedUser: User? = null,
 )
 
 class UserSelectViewModel(private val users: Users) : ViewModel() {
@@ -21,14 +22,14 @@ class UserSelectViewModel(private val users: Users) : ViewModel() {
     init {
         viewModelScope.launch {
             _state.value = UserSelectState(
-                planters = users.getUsers(),
+                users = users.getUsers(),
             )
         }
     }
 
-    fun selectUser(planterInfo: PlanterInfoEntity) {
+    fun selectUser(user: User) {
         _state.value = _state.value?.copy(
-            selectedPlanter = planterInfo
+            selectedUser = user
         )
     }
 }

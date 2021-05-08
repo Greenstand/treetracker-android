@@ -27,7 +27,7 @@ class LocationDataCapturerTest {
     private lateinit var locationDataCapturer: LocationDataCapturer
 
     @MockK(relaxed = true)
-    private lateinit var user: User
+    private lateinit var user: Planter
 
     @MockK(relaxed = true)
     private lateinit var locationUpdateManager: LocationUpdateManager

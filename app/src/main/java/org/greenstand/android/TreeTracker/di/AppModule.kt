@@ -21,11 +21,11 @@ import org.greenstand.android.TreeTracker.models.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
+import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
-import org.greenstand.android.TreeTracker.models.User
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -101,7 +101,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { User(get()) }
+    single { Planter(get()) }
 
     single { Analytics(get(), get(), get()) }
 

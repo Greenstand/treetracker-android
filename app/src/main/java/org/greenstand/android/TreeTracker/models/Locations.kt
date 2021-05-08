@@ -10,12 +10,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import java.lang.IllegalStateException
-import java.util.Deque
-import java.util.LinkedList
-import java.util.UUID
-import kotlin.math.pow
-import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.TimeoutCancellationException
@@ -25,6 +19,9 @@ import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import timber.log.Timber
+import java.util.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class LocationUpdateManager(
     private val locationManager: LocationManager,
@@ -140,7 +137,7 @@ enum class Accuracy {
 }
 
 class LocationDataCapturer(
-    private val userManager: User,
+    private val userManager: Planter,
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO,
     private val configuration: Configuration,
