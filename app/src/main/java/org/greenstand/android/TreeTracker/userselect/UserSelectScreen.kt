@@ -33,8 +33,8 @@ import androidx.navigation.compose.navigate
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.DepthButton
@@ -63,9 +63,9 @@ fun UserSelectScreen(
                     TextButton(
                         modifier = Modifier.align(Alignment.Center),
                         stringRes = R.string.next,
-                        enabled = state.selectedPlanter != null,
+                        enabled = state.selectedUser != null,
                         onClick = {
-                            state.selectedPlanter?.id?.let {
+                            state.selectedUser?.id?.let {
                                 navController.navigate(NavRoute.WalletSelect.create(it))
                             }
                         }
@@ -86,10 +86,10 @@ fun UserSelectScreen(
             modifier = Modifier.padding(it),  // Padding for bottom bar.
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {
-            items(state.planters) { user ->
+            items(state.users) { user ->
                 UserButton(
                     user = user,
-                    isSelected = state.selectedPlanter?.id == user.id,
+                    isSelected = state.selectedUser?.id == user.id,
                 ) { viewModel.selectUser(user) }
             }
         }
@@ -98,7 +98,7 @@ fun UserSelectScreen(
 
 @Composable
 fun UserButton(
-    user: PlanterInfoEntity,
+    user: User,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -145,7 +145,7 @@ fun UserButton(
             ) {
                 // User name and phone number.
                 Text(
-                    text = "${user.firstName}\n${user.phone}",
+                    text = "${user.firstName}\n${user.wallet}",
                     color = AppColors.LightGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,

@@ -6,15 +6,9 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.models.user.User
 import timber.log.Timber
 import java.util.*
-
-data class SessionUser(
-    val planterInfo: PlanterInfoEntity,
-    val planterCheckIn: PlanterCheckInEntity
-)
-
-
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,
@@ -22,12 +16,18 @@ class Users(
     private val analytics: Analytics
 ) {
 
-    var currentSessionUser: SessionUser? = null
+    var currentSessionUser: User? = null
         private set
 
-    suspend fun getUsers(): List<PlanterInfoEntity> = dao.getAllPlanterInfo()
+    suspend fun getUsers(): List<User> {
+        val planterInfoList = dao.getAllPlanterInfo()
+        val planterCheckIns = dao.getPlanterCheckInsById(planterInfoList.map { it.id })
+        TODO()
+    }
 
-    suspend fun getUser(planterInfoId: Long): PlanterInfoEntity? = dao.getPlanterInfoById(planterInfoId)
+    suspend fun getUser(planterInfoId: Long): User? {
+        return createUser(dao.getPlanterInfoById(planterInfoId), dao.getAllPlanterCheckInsForPlanterInfoId(planterInfoId).first())
+    }
 
     suspend fun getPowerUser(): PlanterInfoEntity? = dao.getPowerUser()
 
@@ -93,13 +93,10 @@ class Users(
                 photoUrl = null
             )
 
-            val planterCheckInId = dao.insertPlanterCheckIn(planterCheckInEntity)
+            dao.insertPlanterCheckIn(planterCheckInEntity)
 
             dao.getPlanterInfoById(planterInfoId)?.let { planterInfo ->
-                currentSessionUser = SessionUser(
-                    planterCheckIn = planterCheckInEntity,
-                    planterInfo = planterInfo
-                )
+                currentSessionUser = createUser(planterInfo, planterCheckInEntity)
             } ?: Timber.e("Could not find planter info of id $planterInfoId")
 
             analytics.userCheckedIn()
@@ -109,4 +106,14 @@ class Users(
     fun endUserSession() {
         currentSessionUser = null
     }
+
+    private fun createUser(planterInfoEntity: PlanterInfoEntity, planterCheckInEntity: PlanterCheckInEntity) =
+        User(
+            id = planterInfoEntity.id,
+            wallet = planterInfoEntity.identifier,
+            firstName = planterInfoEntity.firstName,
+            lastName = planterInfoEntity.lastName,
+            photoPath = planterCheckInEntity.localPhotoPath ?: "",
+            isPowerUser = planterInfoEntity.isPowerUser
+        )
 }

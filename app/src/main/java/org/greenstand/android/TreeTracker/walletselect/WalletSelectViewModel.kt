@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.user.User
 
 data class WalletSelectState(
-    val currentPlanter: PlanterInfoEntity? = null,
-    val alternatePlanters: List<PlanterInfoEntity>? = null,
-    val selectedPlanter: PlanterInfoEntity? = null,
+    val currentUser: User? = null,
+    val alternateUsers: List<User>? = null,
+    val selectedUser: User? = null,
 )
 
 class WalletSelectViewModel(
@@ -28,8 +28,8 @@ class WalletSelectViewModel(
                 .filter { it.id != currentPlanter?.id }
 
             _state.value = WalletSelectState(
-                currentPlanter = currentPlanter,
-                alternatePlanters = alternatePlanters
+                currentUser = currentPlanter,
+                alternateUsers = alternatePlanters
             )
         }
     }
