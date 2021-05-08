@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.models
 
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -8,11 +7,14 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import timber.log.Timber
+import java.util.*
 
 data class SessionUser(
     val planterInfo: PlanterInfoEntity,
     val planterCheckIn: PlanterCheckInEntity
 )
+
+
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,

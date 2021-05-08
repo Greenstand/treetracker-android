@@ -32,7 +32,7 @@ import org.greenstand.android.TreeTracker.databinding.FragmentMapBinding
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
-import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TreeClusterRenderer
 import org.greenstand.android.TreeTracker.utilities.mainActivity
@@ -53,7 +53,7 @@ class MapsFragment :
     private val vm: MapViewModel by viewModel()
     private val locationUpdateManager: LocationUpdateManager by inject()
     private val dao: TreeTrackerDAO by inject()
-    private val user: User by inject()
+    private val user: Planter by inject()
 
     private var mapFragment: SupportMapFragment? = null
     private var map: GoogleMap? = null

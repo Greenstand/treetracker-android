@@ -14,14 +14,14 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class SplashFragment : Fragment() {
 
-    private val user: User by inject()
+    private val user: Planter by inject()
     private val preferencesMigrator: PreferencesMigrator by inject()
 
     override fun onCreateView(

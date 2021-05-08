@@ -16,11 +16,11 @@ import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_EMAIL_PHONE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_INFO_CREATED
 import org.greenstand.android.TreeTracker.data.TreeColor
-import org.greenstand.android.TreeTracker.models.User
+import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class Analytics(
-    private val user: User,
+    private val user: Planter,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val deviceUtils: DeviceUtils
 ) {
