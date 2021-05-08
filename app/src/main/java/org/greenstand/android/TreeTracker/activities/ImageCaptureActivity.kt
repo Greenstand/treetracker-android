@@ -7,40 +7,23 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.ImageBitmap
-import org.greenstand.android.TreeTracker.camera.CameraScreen
-import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
-import android.graphics.BitmapFactory
-
-import android.graphics.Bitmap
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.navigation.compose.*
-import java.lang.Exception
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.popUpTo
+import androidx.navigation.compose.rememberNavController
+import org.greenstand.android.TreeTracker.camera.CameraScreen
+import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.view.LocalImage
+import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
-
-@Composable
-fun loadLocalImage(
-    imagePath: String,
-): State<ImageBitmap?> {
-    return produceState(initialValue = null, imagePath) {
-        try {
-            value = BitmapFactory.decodeFile(imagePath).asImageBitmap()
-        } catch (e: Exception) { }
-    }
-}
 
 class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
 
@@ -134,14 +117,11 @@ class ImageCaptureActivity : AppCompatActivity() {
                                 }
                             }
                         ) {
-                            val bitmap by loadLocalImage(imagePath = NavRoute.ImageReview.photoPath(backStackEntry))
-                            bitmap?.let {
-                                Image(
-                                    bitmap = it,
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
+                            LocalImage(
+                                imagePath = NavRoute.ImageReview.photoPath(backStackEntry),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
                     }
                 }
