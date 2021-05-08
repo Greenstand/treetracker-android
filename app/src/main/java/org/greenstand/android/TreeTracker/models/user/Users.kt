@@ -22,14 +22,32 @@ class Users(
     suspend fun getUsers(): List<User> {
         val planterInfoList = dao.getAllPlanterInfo()
         val planterCheckIns = dao.getPlanterCheckInsById(planterInfoList.map { it.id })
-        TODO()
+        val planterIdsToICheckIns = planterCheckIns
+            .groupBy { it.planterInfoId }
+            .map { planterCheckInsForUser ->
+                planterCheckInsForUser.key to planterCheckInsForUser.value.find { planterCheckIn ->
+                    !planterCheckIn.localPhotoPath.isNullOrEmpty()
+                }
+            }.toMap()
+        return planterInfoList.mapNotNull { planterInfo ->
+            createUser(planterInfo, planterIdsToICheckIns[planterInfo.id])
+        }
     }
 
     suspend fun getUser(planterInfoId: Long): User? {
-        return createUser(dao.getPlanterInfoById(planterInfoId), dao.getAllPlanterCheckInsForPlanterInfoId(planterInfoId).first())
+        return createUser(
+            dao.getPlanterInfoById(planterInfoId),
+            dao.getAllPlanterCheckInsForPlanterInfoId(planterInfoId)
+                .find { !it.localPhotoPath.isNullOrEmpty() })
     }
 
-    suspend fun getPowerUser(): PlanterInfoEntity? = dao.getPowerUser()
+    suspend fun getPowerUser(): User? {
+        val planterInfo = dao.getPowerUser() ?: return null
+        return createUser(
+            planterInfo,
+            dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
+                .find { !it.localPhotoPath.isNullOrEmpty() })
+    }
 
     suspend fun createUser(
         firstName: String,
@@ -107,8 +125,10 @@ class Users(
         currentSessionUser = null
     }
 
-    private fun createUser(planterInfoEntity: PlanterInfoEntity, planterCheckInEntity: PlanterCheckInEntity) =
-        User(
+    private fun createUser(planterInfoEntity: PlanterInfoEntity?, planterCheckInEntity: PlanterCheckInEntity?): User? {
+        planterInfoEntity ?: return null
+        planterCheckInEntity ?: return null
+        return User(
             id = planterInfoEntity.id,
             wallet = planterInfoEntity.identifier,
             firstName = planterInfoEntity.firstName,
@@ -116,4 +136,5 @@ class Users(
             photoPath = planterCheckInEntity.localPhotoPath ?: "",
             isPowerUser = planterInfoEntity.isPowerUser
         )
+    }
 }

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
@@ -55,7 +55,7 @@ fun WalletSelectScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.selectedPlanter != null
+                        isEnabled = state.selectedUser != null
                     ) {
                     }
                 },
@@ -71,18 +71,18 @@ fun WalletSelectScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            state.currentPlanter?.let { currentPlanter ->
+            state.currentUser?.let { currentUser ->
                 item {
                     Text("You")
-                    WalletItem(currentPlanter, state.selectedPlanter == currentPlanter) {
+                    WalletItem(currentUser, state.selectedUser == currentUser) {
                         viewModel.selectPlanter(it)
                     }
                     Text("Them")
                 }
             }
-            state.alternatePlanters?.let { alternatePlanters ->
-                items(alternatePlanters) { planter ->
-                    WalletItem(planter, state.selectedPlanter == planter) {
+            state.alternateUsers?.let { alternateUsers ->
+                items(alternateUsers) { user ->
+                    WalletItem(user, state.selectedUser == user) {
                         viewModel.selectPlanter(it)
                     }
                 }
@@ -92,17 +92,17 @@ fun WalletSelectScreen(
 }
 
 @Composable
-fun WalletItem(planterInfo: PlanterInfoEntity, isSelected: Boolean, onClick: (Long) -> Unit) {
+fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
     DepthButton(
         modifier = Modifier
             .padding(16.dp)
             .size(height = 80.dp, width = 156.dp),
         isSelected = isSelected,
-        onClick = { onClick(planterInfo.id) }
+        onClick = { onClick(user.id) }
     ) {
         Column {
-            Text(text = planterInfo.firstName)
-            Text(text = planterInfo.identifier)
+            Text(text = user.firstName)
+            Text(text = user.wallet)
         }
     }
 }

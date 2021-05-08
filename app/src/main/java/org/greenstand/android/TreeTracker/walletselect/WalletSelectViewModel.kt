@@ -37,7 +37,7 @@ class WalletSelectViewModel(
     fun selectPlanter(planterInfoId: Long) {
         viewModelScope.launch {
             _state.value = _state.value?.copy(
-                selectedPlanter = users.getUsers().find { planterInfoId == it.id }
+                selectedUser = users.getUsers().find { planterInfoId == it.id }
             )
         }
     }
