@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.4.30'
+    ext.kotlin_version = '1.4.32'
     repositories {
         google()
         jcenter()
@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0-alpha14'
+        classpath 'com.android.tools.build:gradle:7.0.0-alpha15'
         classpath 'com.google.gms:google-services:4.3.3'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -33,7 +33,7 @@ allprojects {
     }
 
     ext {
-        compose_version = "1.0.0-beta01"
+        compose_version = "1.0.0-beta06"
         androidSupportVersion = '1.0.0'
         retrofit2Version = '2.6.0'
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"

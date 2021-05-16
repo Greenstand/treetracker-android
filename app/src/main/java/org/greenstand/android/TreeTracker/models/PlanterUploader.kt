@@ -62,7 +62,7 @@ class PlanterUploader(
                 // Find the image this user first took during registration
                 // This image is the oldest image for PlanterCheckIn
                 val registrationPhotoUrl = dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
-                    .minBy { it.createdAt }
+                    .minByOrNull { it.createdAt }
                     ?.photoUrl
                     ?: ""
 
