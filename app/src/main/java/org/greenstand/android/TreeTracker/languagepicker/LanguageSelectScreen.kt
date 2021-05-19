@@ -27,6 +27,7 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
 fun LanguageSelectScreen(
@@ -38,6 +39,9 @@ fun LanguageSelectScreen(
     val activity = LocalContext.current as Activity
 
     Scaffold(
+        topBar = {
+            LanguageTopBar()
+        },
         bottomBar = {
             ActionBar(
                 rightAction = {
@@ -68,6 +72,13 @@ fun LanguageSelectScreen(
             }
         }
     }
+}
+
+@Composable
+fun LanguageTopBar() {
+    ActionBar(
+        centerAction = { TopBarTitle() }
+    )
 }
 
 @Composable

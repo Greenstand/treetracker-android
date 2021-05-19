@@ -23,6 +23,7 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TextButton
+import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
 fun DashboardScreen(
@@ -79,12 +80,8 @@ fun DashboardTopBar(navController: NavController) {
                 onClick = { navController.navigate(NavRoute.Org.route) }
             )
         },
-        centerAction = {
-            Text("Treetracker", modifier = Modifier.align(Alignment.Center))
-        },
-        rightAction = {
-            LanguageButton()
-        }
+        centerAction = { TopBarTitle() },
+        rightAction = { LanguageButton() }
     )
 }
 
