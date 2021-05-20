@@ -28,15 +28,9 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.*
 import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
-import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.BorderedTextField
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthButtonColors
-import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
 fun SignupFlow(
@@ -48,7 +42,7 @@ fun SignupFlow(
     Scaffold(
         topBar = {
             ActionBar(
-                centerAction = { Text(stringResource(id = R.string.treetracker)) },
+                centerAction = { TopBarTitle() },
                 rightAction = { LanguageButton() }
             )
         },
