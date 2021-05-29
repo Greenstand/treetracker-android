@@ -1,7 +1,5 @@
 package org.greenstand.android.TreeTracker.camera
 
-import android.util.Log
-import android.util.Size
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -13,12 +11,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import timber.log.Timber
+import java.io.File
 
 @Composable
 fun Camera(
     isSelfieMode: Boolean = false,
     cameraControl: CameraControl,
-    onImageCaptured: (String) -> Unit
+    onImageCaptured: (File) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -59,7 +58,7 @@ fun Camera(
                             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                                 ImageUtils.resizeImage(file.absolutePath, isSelfieMode)
                                 Timber.tag("CameraXApp").d("Photo capture succeeded: ${file.absolutePath}")
-                                onImageCaptured(file.absolutePath)
+                                onImageCaptured(file)
                             }
 
                             override fun onError(exception: ImageCaptureException) {

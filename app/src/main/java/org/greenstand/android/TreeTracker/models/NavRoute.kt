@@ -78,10 +78,12 @@ sealed class NavRoute {
         override val arguments = listOf(navArgument("photoPath") { type = NavType.StringType })
 
         fun photoPath(backStackEntry: NavBackStackEntry): String {
-            return backStackEntry.arguments?.getString("photoPath") ?: ""
+            return backStackEntry.arguments?.getString("photoPath")?.replace('*', '/') ?: ""
         }
 
-        fun create(photoPath: String) = "camera-review/$photoPath"
+        fun create(photoPath: String): String {
+            return "camera-review/${photoPath.replace('/', '*')}"
+        }
     }
 
     object Language : NavRoute() {

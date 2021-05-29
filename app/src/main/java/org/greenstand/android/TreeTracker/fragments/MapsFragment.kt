@@ -21,11 +21,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.databinding.FragmentMapBinding
@@ -152,11 +148,11 @@ class MapsFragment :
                 }
             }
             R.id.goToUploadsButton -> {
-                findNavController().navigate(
-                    MapsFragmentDirections.actionMapsFragmentToDataFragment(
-                        true
-                    )
-                )
+//                findNavController().navigate(
+//                    MapsFragmentDirections.actionMapsFragmentToDataFragment(
+//                        true
+//                    )
+//                )
             }
         }
     }

@@ -16,8 +16,6 @@ import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.models.NavRoute
@@ -84,7 +82,7 @@ class ImageCaptureActivity : AppCompatActivity() {
                         route = NavRoute.Camera.route,
                     ) {
                         CameraScreen(isSelfieMode = captureSelfie) {
-                            navController.navigate(NavRoute.ImageReview.create(it))
+                            navController.navigate(NavRoute.ImageReview.create(it.path))
                         }
                     }
 
