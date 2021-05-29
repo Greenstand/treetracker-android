@@ -157,7 +157,7 @@ fun DepthButton(
                         },
                         onPress = {
                             isPressed = true
-                            awaitRelease()
+                            tryAwaitRelease()
                             if (isSelected == null) {
                                 isPressed = false
                             }
@@ -199,7 +199,7 @@ fun DepthSurface(
             width = outerSize.width - innerSizeDelta,
             height = outerSize.height - depth
         )
-        val cornerRadius = CornerRadius(x = 16f, y = 16f)
+        val cornerRadius = CornerRadius(x = 30f, y = 30f)
 
         val tempOffset = (offsetAnimation * depth) - gutter
         val innerHeightOffset = if (tempOffset < gutter) {

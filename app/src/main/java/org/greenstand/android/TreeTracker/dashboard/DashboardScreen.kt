@@ -1,13 +1,11 @@
 package org.greenstand.android.TreeTracker.dashboard
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,11 +17,9 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TextButton
-import org.greenstand.android.TreeTracker.view.TopBarTitle
+import org.greenstand.android.TreeTracker.view.*
 
+@ExperimentalComposeApi
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
@@ -39,32 +35,27 @@ fun DashboardScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Button(
-                modifier = Modifier.padding(16.dp),
-                onClick = { /*TODO*/ }
-            ) {
-                Text(
-                    text = "Upload"
-                )
-            }
-            Button(
-                modifier = Modifier.padding(16.dp),
+            DashBoardButton(
+                text = "Upload",
+                colors = AppButtonColors.UploadOrange,
+                onClick = {
+
+                }
+            )
+            DashBoardButton(
+                text = "Messages",
+                colors = AppButtonColors.MessagePurple,
+                onClick = {
+
+                }
+            )
+            DashBoardButton(
+                text = "Track",
+                colors = AppButtonColors.ProgressGreen,
                 onClick = {
                     navController.navigate(NavRoute.UserSelect.route)
                 }
-            ) {
-                Text(
-                    text = "Track"
-                )
-            }
-            Button(
-                modifier = Modifier.padding(16.dp),
-                onClick = { /*TODO*/ }
-            ) {
-                Text(
-                    text = "Messages"
-                )
-            }
+            )
         }
     }
 }
@@ -84,6 +75,25 @@ fun DashboardTopBar(navController: NavController) {
     )
 }
 
+@ExperimentalComposeApi
+@Composable
+fun DashBoardButton(text: String, onClick: () -> Unit, colors: ButtonColors) {
+    DepthButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(170.dp)
+            .padding(horizontal = 20.dp, vertical = 10.dp),
+        colors = colors,
+        onClick = onClick
+    ) {
+        Text(
+            text = text,
+            style = TextStyles.DarkText
+        )
+    }
+}
+
+@ExperimentalComposeApi
 @Preview
 @Composable
 fun DashboardScreen_Preview(
