@@ -46,7 +46,10 @@ fun SignupFlow(
                     }
                 },
                 rightAction = {
-                    ArrowButton(isLeft = false) {
+                    ArrowButton(
+                        isLeft = false,
+                        isEnabled = state.credential.text.isNotBlank()
+                    ) {
                         navController.navigate(NavRoute.NameEntryView.route)
                     }
                 }

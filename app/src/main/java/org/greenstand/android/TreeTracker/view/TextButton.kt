@@ -149,7 +149,8 @@ fun DepthButton(
             depth = depth,
             modifier = Modifier
                 .matchParentSize()  // Match the 'content' size, this enables wrap_content.
-                .pointerInput(true) {
+                .pointerInput(isEnabled) {
+                    if (!isEnabled) return@pointerInput
                     detectTapGestures(
                         onTap = {
                             onClick()

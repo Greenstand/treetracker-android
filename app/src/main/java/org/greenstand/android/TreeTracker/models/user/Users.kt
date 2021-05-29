@@ -58,8 +58,8 @@ class Users(
         identifier: String,
         photoPath: String,
         isPowerUser: Boolean = false
-    ) {
-        withContext(Dispatchers.IO) {
+    ): Long {
+        return withContext(Dispatchers.IO) {
 
             val location = locationUpdateManager.currentLocation
             val time = location?.time ?: System.currentTimeMillis()
@@ -90,6 +90,7 @@ class Users(
                 localPhotoPath = photoPath,
                 planterInfoId = userId,
             )
+            userId
         }
     }
 

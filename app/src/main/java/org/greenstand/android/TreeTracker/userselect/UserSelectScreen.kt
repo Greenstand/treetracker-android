@@ -131,7 +131,7 @@ fun UserButton(
             ) {
                 // User name and phone number.
                 Text(
-                    text = "${user.firstName}\n${user.wallet}",
+                    text = "${user.firstName} ${user.lastName}\n${user.wallet}",
                     color = AppColors.LightGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
