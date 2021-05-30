@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.popUpTo
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
@@ -34,17 +32,25 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 fun NameEntryView(
     viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
-    val uiState by viewModel.state.observeAsState(SignUpState())
+    val state by viewModel.state.observeAsState(SignUpState())
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
     val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { photoPath ->
         scope.launch {
-            if (viewModel.setPhotoPath(photoPath)) {
-                navController.navigate(NavRoute.Dashboard.route) {
-                    // TODO fix popup behavior to match app flow
-                    popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
-                    launchSingleTop = true
+            viewModel.createUser(photoPath)?.let { user ->
+                if (user.isPowerUser) {
+                    // In initial signup flow, clear stack and go to dashboard
+                    navController.navigate(NavRoute.Dashboard.route) {
+                        popUpTo(NavRoute.Language.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                } else {
+                    // In tracking flow, clear login stack and go to wallet selection flow
+                    navController.navigate(NavRoute.WalletSelect.create(user.id)) {
+                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
         }
@@ -65,7 +71,10 @@ fun NameEntryView(
                     }
                 },
                 rightAction = {
-                    ArrowButton(isLeft = false) {
+                    ArrowButton(
+                        isLeft = false,
+                        isEnabled = state.name != null
+                    ) {
                         cameraLauncher.launch(true)
                     }
                 }
@@ -79,7 +88,7 @@ fun NameEntryView(
         ) {
 
             BorderedTextField(
-                value = uiState.name ?: "",
+                value = state.name ?: "",
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> viewModel.updateName(updatedName) },
                 placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) }

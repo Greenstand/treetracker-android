@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.Validation
-import timber.log.Timber
 
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
@@ -69,15 +69,14 @@ class SignupViewModel(private val users: Users) : ViewModel() {
     private val currentIdentifier: String
         get() = _state.value?.credential?.text ?: ""
 
-    suspend fun setPhotoPath(photoPath: String?): Boolean {
-        Timber.i("SetPhotoPath called!")
+    suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
-            val state: SignUpState = _state.value ?: return false
-            with(state) {
+            val state: SignUpState = _state.value ?: return null
+            val userId = with(state) {
                 users.createUser(
                     // TODO fix user data usage
-                    firstName = name?.split(" ")?.get(0) ?: "",
-                    lastName = name?.split(" ")?.get(0) ?: "",
+                    firstName = extractName(name, true),
+                    lastName = extractName(name, false),
                     phone = if (state.credential is Credential.Phone) {
                         state.credential.text
                     } else {
@@ -94,8 +93,23 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                     isPowerUser = users.getPowerUser() == null,
                 )
             }
-            return true
+            return users.getUser(userId)
         }
-        return false
+        return null
+    }
+
+    private fun extractName(name: String?, isFirstName: Boolean): String {
+        name ?: return ""
+
+        val names = name.split(" ")
+        if (names.size == 1) {
+            return if (isFirstName) name else ""
+        }
+
+        return if (isFirstName) {
+            names[0]
+        } else {
+            names[1]
+        }
     }
 }

@@ -3,25 +3,16 @@ package org.greenstand.android.TreeTracker.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
-import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.Language
-import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
+import org.greenstand.android.TreeTracker.models.*
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.NameEntryView
 import org.greenstand.android.TreeTracker.signup.SignupFlow
@@ -39,6 +30,7 @@ class TreeTrackerActivity : ComponentActivity() {
     private val languageSwitcher: LanguageSwitcher by inject()
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
 
+    @ExperimentalComposeApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,13 +53,12 @@ class TreeTrackerActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalComposeApi
 @Composable
 private fun Host() {
 
     val navController = LocalNavHostController.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
     TreeTrackerTheme {
         NavHost(navController, startDestination = NavRoute.Splash.route) {
