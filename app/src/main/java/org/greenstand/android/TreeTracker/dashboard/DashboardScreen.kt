@@ -1,18 +1,19 @@
 package org.greenstand.android.TreeTracker.dashboard
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
@@ -24,11 +25,26 @@ import org.greenstand.android.TreeTracker.view.*
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
+    val context = LocalContext.current
     val navController = LocalNavHostController.current
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+
+    viewModel.showSnackBar = { stringRes ->
+        scope.launch {
+            scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = context.getString(stringRes),
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             DashboardTopBar(navController)
-        }
+        },
+        scaffoldState = scaffoldState,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -39,7 +55,7 @@ fun DashboardScreen(
                 text = "Upload",
                 colors = AppButtonColors.UploadOrange,
                 onClick = {
-
+                    viewModel.sync()
                 }
             )
             DashBoardButton(

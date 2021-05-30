@@ -32,7 +32,7 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 fun NameEntryView(
     viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
-    val uiState by viewModel.state.observeAsState(SignUpState())
+    val state by viewModel.state.observeAsState(SignUpState())
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
@@ -73,7 +73,7 @@ fun NameEntryView(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = uiState.name != null
+                        isEnabled = state.name != null
                     ) {
                         cameraLauncher.launch(true)
                     }
@@ -88,7 +88,7 @@ fun NameEntryView(
         ) {
 
             BorderedTextField(
-                value = uiState.name ?: "",
+                value = state.name ?: "",
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> viewModel.updateName(updatedName) },
                 placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) }
