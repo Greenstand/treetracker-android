@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
@@ -91,7 +95,16 @@ fun NameEntryView(
                 value = state.name ?: "",
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> viewModel.updateName(updatedName) },
-                placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) }
+                placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Go,
+                ),
+                keyboardActions = KeyboardActions(
+                    onGo = {
+                        cameraLauncher.launch(true)
+                    }
+                )
             )
         }
     }

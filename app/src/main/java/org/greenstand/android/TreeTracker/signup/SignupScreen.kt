@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -21,7 +23,9 @@ import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.AppColors.GrayShadow
 import org.greenstand.android.TreeTracker.view.AppColors.Green
+import org.greenstand.android.TreeTracker.view.AppColors.GreenShadow
 import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
 
 @Composable
@@ -66,56 +70,23 @@ fun SignupFlow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-
-                DepthButton(
-                    modifier = Modifier
-                        .padding(end = 4.dp)
-                        .size(62.dp, 40.dp),
+                CredentialButton(
+                    credential = state.credential,
+                    credentialType = Credential.Email::class.java,
+                    placeholderTextRes = R.string.email_placeholder,
                     onClick = {
                         viewModel.updateCredentialType(Credential.Email())
-                    },
-                    colors = DepthButtonColors(
-                        color = if (state.credential is Credential.Email) {
-                            Green
-                        } else {
-                            MediumGray
-                        },
-                        shadowColor = AppColors.GrayShadow,
-                        disabledColor = AppColors.GrayShadow,
-                        disabledShadowColor = AppColors.GrayShadow
-                    ),
-                    isSelected = state.credential is Credential.Email
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.email_placeholder),
-                        color = Color.Black,
-                    )
-                }
+                    }
+                )
 
-                DepthButton(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(62.dp, 40.dp),
+                CredentialButton(
+                    credential = state.credential,
+                    credentialType = Credential.Phone::class.java,
+                    placeholderTextRes = R.string.phone_placeholder,
                     onClick = {
                         viewModel.updateCredentialType(Credential.Phone())
-                    },
-                    colors = DepthButtonColors(
-                        color = if (state.credential is Credential.Phone) {
-                            Green
-                        } else {
-                            MediumGray
-                        },
-                        shadowColor = AppColors.GrayShadow,
-                        disabledColor = AppColors.GrayShadow,
-                        disabledShadowColor = AppColors.GrayShadow
-                    ),
-                    isSelected = state.credential is Credential.Phone
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.phone_placeholder),
-                        color = Color.Black,
-                    )
-                }
+                    }
+                )
             }
 
             when (val credential = state.credential) {
@@ -124,7 +95,15 @@ fun SignupFlow(
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Go,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onGo = {
+                            navController.navigate(NavRoute.NameEntryView.route)
+                        }
+                    )
                 )
 
                 is Credential.Phone -> BorderedTextField(
@@ -132,10 +111,53 @@ fun SignupFlow(
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Go,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onGo = {
+                            navController.navigate(NavRoute.NameEntryView.route)
+                        }
+                    )
                 )
             }
         }
+    }
+}
+
+@Composable
+fun <T : Credential> CredentialButton(
+    credential: Credential,
+    credentialType: Class<T>,
+    placeholderTextRes: Int,
+    onClick: () -> Unit,
+) {
+    DepthButton(
+        modifier = Modifier
+            .padding(end = 4.dp)
+            .size(120.dp, 50.dp),
+        onClick = onClick,
+        colors = DepthButtonColors(
+            color = if (credentialType.isInstance(credential)) {
+                Green
+            } else {
+                MediumGray
+            },
+            shadowColor = if (credentialType.isInstance(credential)) {
+                GreenShadow
+            } else {
+                GrayShadow
+            },
+            disabledColor = GrayShadow,
+            disabledShadowColor = GrayShadow
+        ),
+        isSelected = credentialType.isInstance(credential)
+    ) {
+        Text(
+            text = stringResource(id = placeholderTextRes),
+            color = Color.Black,
+        )
     }
 }
 
