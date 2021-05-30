@@ -3,10 +3,7 @@ package org.greenstand.android.TreeTracker.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,6 +30,7 @@ class TreeTrackerActivity : ComponentActivity() {
     private val languageSwitcher: LanguageSwitcher by inject()
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
 
+    @ExperimentalComposeApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,6 +53,7 @@ class TreeTrackerActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalComposeApi
 @Composable
 private fun Host() {
 
