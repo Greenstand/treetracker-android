@@ -11,6 +11,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
@@ -49,9 +50,10 @@ fun ImageReviewScreen(photoPath: String) {
         }
     ) {
         LocalImage(
+            modifier = Modifier.fillMaxSize(),
             imagePath = photoPath,
             contentDescription = null,
-            modifier = Modifier.fillMaxSize()
+            contentScale = ContentScale.Fit
         )
     }
 }
