@@ -304,6 +304,6 @@ afterEvaluate {
     // ktlint git precommit hook is insalled to .git folder in project root when running app in
     // Intellij by the developer or when triggering gradle build. This ensures ktlint format is
     // executed before code is committed.
-//    tasks["preBuild"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
-//    tasks["clean"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
+    tasks["preBuild"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
+    tasks["clean"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
 }
