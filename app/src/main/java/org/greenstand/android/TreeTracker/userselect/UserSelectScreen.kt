@@ -113,14 +113,18 @@ fun UserButton(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // User profile picture.
-            Box(  // TODO: Fetch user profile picture.
+            Box(
                 modifier = Modifier
                     .padding(1.dp)
                     .fillMaxWidth()
                     .aspectRatio(1.0f)
-                    .clip(RoundedCornerShape(5.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .background(AppColors.LightGray)
-            )  // Box placeholder for user profile picture.
+            ) {
+                LocalImage(
+                    imagePath = user.photoPath,
+                    modifier = Modifier.fillMaxSize().aspectRatio(0.6f))
+            }  // Box placeholder for user profile picture.
 
             // User text data: Name, phone number, and token count.
             Column(
