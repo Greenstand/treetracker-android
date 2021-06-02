@@ -14,11 +14,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.view.*
 
@@ -40,20 +40,17 @@ fun WalletSelectScreen(
         topBar = {
             ActionBar(
                 leftAction = {
-                    Box(
-                        modifier = Modifier
-                            .width(100.dp)
-                            .height(100.dp)
-                            .padding(15.dp, 10.dp, 10.dp, 10.dp)
-                            .aspectRatio(1.0f)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(AppColors.LightGray)
-                    ) {
-                        state.selectedUser?.photoPath?.let {
-                            LocalImage(
-                                imagePath = it,
-                                modifier = Modifier.fillMaxSize().aspectRatio(0.6f))
-                        }
+                    state.selectedUser?.photoPath?.let {
+                        LocalImage(
+                            modifier = Modifier
+                                .width(100.dp)
+                                .height(100.dp)
+                                .padding(15.dp, 10.dp, 10.dp, 10.dp)
+                                .aspectRatio(1.0f)
+                                .clip(RoundedCornerShape(percent = 10)),
+                            imagePath = it,
+                            contentScale = ContentScale.Crop
+                        )
                     }
                 }
             )
