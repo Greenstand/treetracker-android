@@ -15,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -113,14 +114,15 @@ fun UserButton(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // User profile picture.
-            Box(  // TODO: Fetch user profile picture.
+            LocalImage(
+                imagePath = user.photoPath,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .padding(1.dp)
                     .fillMaxWidth()
+                    .wrapContentHeight()
                     .aspectRatio(1.0f)
-                    .clip(RoundedCornerShape(5.dp))
-                    .background(AppColors.LightGray)
-            )  // Box placeholder for user profile picture.
+                    .clip(RoundedCornerShape(percent = 10))
+            )
 
             // User text data: Name, phone number, and token count.
             Column(

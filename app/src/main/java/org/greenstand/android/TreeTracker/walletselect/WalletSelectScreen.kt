@@ -1,11 +1,10 @@
 package org.greenstand.android.TreeTracker.walletselect
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,15 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.models.user.User
-import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.*
 
 @Composable
 fun WalletSelectScreen(
@@ -41,12 +39,19 @@ fun WalletSelectScreen(
     Scaffold(
         topBar = {
             ActionBar(
-                rightAction = { LanguageButton() },
-                centerAction = {
-                    Text("Treetracker", modifier = Modifier.align(Alignment.Center))
-                },
                 leftAction = {
-                    // selfie image
+                    state.selectedUser?.photoPath?.let {
+                        LocalImage(
+                            modifier = Modifier
+                                .width(100.dp)
+                                .height(100.dp)
+                                .padding(15.dp, 10.dp, 10.dp, 10.dp)
+                                .aspectRatio(1.0f)
+                                .clip(RoundedCornerShape(percent = 10)),
+                            imagePath = it,
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             )
         },
