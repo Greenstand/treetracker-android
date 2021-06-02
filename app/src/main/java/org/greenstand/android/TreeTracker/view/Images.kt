@@ -9,19 +9,22 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun LocalImage(
     modifier: Modifier = Modifier,
     imagePath: String,
     contentDescription: String? = null,
+    contentScale: ContentScale,
 ) {
     val bitmap by loadLocalImage(imagePath = imagePath)
     bitmap?.let {
         Image(
             bitmap = it,
             contentDescription = contentDescription,
-            modifier = modifier
+            modifier = modifier,
+            contentScale = contentScale
         )
     }
 }
