@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.capture
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,6 @@ class TreeCaptureViewModel(profilePicUrl: String) : ViewModel() {
 class TreeCaptureViewModelFactory(private val profilePicUrl: String) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        Log.d("JONATHAN", "FACTORY")
         return TreeCaptureViewModel(profilePicUrl) as T
     }
 }
