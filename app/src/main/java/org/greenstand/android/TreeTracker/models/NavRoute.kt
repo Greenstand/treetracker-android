@@ -74,7 +74,7 @@ sealed class NavRoute {
         override val route: String = "wallet-select/{planterInfoId}"
         override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
 
-        fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
             return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
         }
 
@@ -96,11 +96,11 @@ sealed class NavRoute {
         override val arguments = listOf(navArgument("photoPath") { type = NavType.StringType })
 
         fun photoPath(backStackEntry: NavBackStackEntry): String {
-            return backStackEntry.arguments?.getString("photoPath")?.replace('*', '/') ?: ""
+            return backStackEntry.arguments?.getString("photoPath").fromSafeNavUrl()
         }
 
         fun create(photoPath: String): String {
-            return "camera-review/${photoPath.replace('/', '*')}"
+            return "camera-review/${photoPath.toSafeNavUrl()}"
         }
     }
 
@@ -111,7 +111,7 @@ sealed class NavRoute {
         override val route: String = "language/{isFromTopBar}"
         override val arguments = listOf(navArgument("isFromTopBar") { type = NavType.BoolType })
 
-        fun isFromTopBar(backStackEntry: NavBackStackEntry): Boolean {
+        private fun isFromTopBar(backStackEntry: NavBackStackEntry): Boolean {
             return backStackEntry.arguments?.getBoolean("isFromTopBar") ?: false
         }
 
@@ -122,13 +122,19 @@ sealed class NavRoute {
         override val content: @Composable (NavBackStackEntry) -> Unit =  {
             TreeCaptureScreen(getProfilePicUrl(it))
         }
-        override val route: String = "tree-capture/{profilePicUrl}"
+        override val route: String = "capture/{profilePicUrl}"
         override val arguments = listOf(navArgument("profilePicUrl") { type = NavType.StringType })
 
-        fun getProfilePicUrl(backStackEntry: NavBackStackEntry): String {
-            return backStackEntry.arguments?.getString("profilePicUrl", "") ?: ""
+        private fun getProfilePicUrl(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("profilePicUrl", "").fromSafeNavUrl()
         }
 
-        fun create(profilePicUrl: String) = "tree-capture/$profilePicUrl"
+        fun create(profilePicUrl: String) = "capture/${profilePicUrl.toSafeNavUrl()}"
     }
 }
+
+// Navigation uses '/' to denote params or nesting. Having a param that contains '/'
+// will break the navigation. These replace '/' with '*' while navigating
+private fun String?.toSafeNavUrl(): String = this?.replace('/', '*') ?: ""
+private fun String?.fromSafeNavUrl(): String = this?.replace('*', '/') ?: ""
+

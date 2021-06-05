@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.walletselect
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -72,9 +71,7 @@ fun WalletSelectScreen(
                         isLeft = false,
                         isEnabled = state.selectedUser != null
                     ) {
-                        Log.d("JONATHAN", "Click arrow")
                         state.currentUser?.photoPath?.let {
-                            Log.d("JONATHAN", "navigating")
                             navController.navigate(NavRoute.TreeCapture.create(it))
                         }
                     }
