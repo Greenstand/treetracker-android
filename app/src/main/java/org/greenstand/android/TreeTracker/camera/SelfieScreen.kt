@@ -9,20 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import java.io.File
+import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.root.LocalNavHostController
 
 @Composable
-fun CameraScreen(
-    isSelfieMode: Boolean,
-    onImageResult: (File) -> Unit = {}
-) {
-
+fun SelfieScreen() {
+    val navController = LocalNavHostController.current
     val cameraControl = remember { CameraControl() }
     Camera(
-        isSelfieMode = isSelfieMode,
+        isSelfieMode = true,
         cameraControl = cameraControl,
         onImageCaptured = {
-            onImageResult(it)
+            navController.navigate(NavRoute.ImageReview.create(it.path))
         }
     )
 

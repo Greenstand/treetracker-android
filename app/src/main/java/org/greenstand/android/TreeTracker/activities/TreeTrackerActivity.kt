@@ -3,27 +3,13 @@ package org.greenstand.android.TreeTracker.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import org.greenstand.android.TreeTracker.camera.CameraScreen
-import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
-import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
-import org.greenstand.android.TreeTracker.models.*
-import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
-import org.greenstand.android.TreeTracker.signup.NameEntryView
-import org.greenstand.android.TreeTracker.signup.SignupFlow
-import org.greenstand.android.TreeTracker.splash.SplashScreen
-import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
-import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
-import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
+import androidx.compose.runtime.ExperimentalComposeApi
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.Language
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
+import org.greenstand.android.TreeTracker.root.Root
 import org.koin.android.ext.android.inject
-
-val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error { "No active ViewModel factory found!" } }
-val LocalNavHostController = compositionLocalOf<NavHostController> { error { "No NavHostController found!" } }
 
 class TreeTrackerActivity : ComponentActivity() {
 
@@ -41,75 +27,7 @@ class TreeTrackerActivity : ComponentActivity() {
         }
 
         setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalViewModelFactory provides viewModelFactory,
-                LocalNavHostController provides navController
-            ) {
-                Host()
-            }
-        }
-    }
-}
-
-@ExperimentalComposeApi
-@Composable
-private fun Host() {
-
-    val navController = LocalNavHostController.current
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-    TreeTrackerTheme {
-        NavHost(navController, startDestination = NavRoute.Splash.route) {
-            composable(NavRoute.Splash.route) {
-                SplashScreen()
-            }
-
-            composable(
-                route = NavRoute.Language.route,
-                arguments = NavRoute.Language.arguments
-            ) { backStackEntry ->
-                LanguageSelectScreen(
-                    isFromTopBar = NavRoute.Language.isFromTopBar(backStackEntry)
-                )
-            }
-
-            composable(NavRoute.SignupFlow.route) {
-                SignupFlow()
-            }
-
-            composable(NavRoute.NameEntryView.route) {
-                NameEntryView()
-            }
-
-            composable(NavRoute.Dashboard.route) {
-                DashboardScreen()
-            }
-
-            composable(NavRoute.Org.route) {
-                OrgPickerScreen()
-            }
-
-            composable(NavRoute.UserSelect.route) {
-                UserSelectScreen()
-            }
-
-            composable(
-                route = NavRoute.WalletSelect.route,
-                arguments = NavRoute.WalletSelect.arguments
-            ) {
-                WalletSelectScreen(planterInfoId = NavRoute.WalletSelect.getPlanterInfoId(it))
-            }
-
-            composable(
-                route = NavRoute.Camera.route,
-                arguments = NavRoute.Camera.arguments
-            ) {
-                CameraScreen(
-                    isSelfieMode = NavRoute.Camera.isSelfieMode(it)
-                )
-            }
+            Root(viewModelFactory)
         }
     }
 }
