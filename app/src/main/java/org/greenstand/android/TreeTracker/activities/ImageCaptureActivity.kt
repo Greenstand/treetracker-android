@@ -9,11 +9,10 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.greenstand.android.TreeTracker.camera.CameraScreen
-import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.addNavRoute
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 
@@ -72,21 +71,11 @@ class ImageCaptureActivity : AppCompatActivity() {
                 LocalNavHostController provides navController
             ) {
                 TreeTrackerTheme {
-                    NavHost(navController, startDestination = NavRoute.Camera.route) {
-                        composable(
-                            route = NavRoute.Camera.route,
-                        ) {
-                            CameraScreen(isSelfieMode = captureSelfie) {
-                                navController.navigate(NavRoute.ImageReview.create(it.path))
-                            }
-                        }
-
-                        composable(
-                            route = NavRoute.ImageReview.route,
-                            arguments = NavRoute.ImageReview.arguments,
-                        ) { backStackEntry ->
-                            ImageReviewScreen(photoPath = NavRoute.ImageReview.photoPath(backStackEntry))
-                        }
+                    NavHost(navController, startDestination = NavRoute.Selfie.route) {
+                        listOf(
+                            NavRoute.Selfie,
+                            NavRoute.ImageReview,
+                        ).forEach { addNavRoute(it) }
                     }
                 }
             }

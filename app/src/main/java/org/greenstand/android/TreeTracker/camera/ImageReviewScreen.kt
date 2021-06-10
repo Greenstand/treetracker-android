@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
-import org.greenstand.android.TreeTracker.activities.LocalNavHostController
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.LocalImage
 
 @Composable
@@ -30,9 +30,9 @@ fun ImageReviewScreen(photoPath: String) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(onClick = {
-                    navController.navigate(NavRoute.Camera.create(isSelfieMode = true)) {
+                    navController.navigate(NavRoute.Selfie.route) {
                         launchSingleTop = true
-                        popUpTo(NavRoute.Camera.route) { inclusive = true }
+                        popUpTo(NavRoute.Selfie.route) { inclusive = true }
                     }
                 }) {
                     Text("Retake")

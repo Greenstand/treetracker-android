@@ -1,7 +1,12 @@
 package org.greenstand.android.TreeTracker.walletselect
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,10 +22,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.activities.LocalNavHostController
-import org.greenstand.android.TreeTracker.activities.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.user.User
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.LocalImage
 
 @Composable
 fun WalletSelectScreen(
@@ -62,6 +71,9 @@ fun WalletSelectScreen(
                         isLeft = false,
                         isEnabled = state.selectedUser != null
                     ) {
+                        state.currentUser?.photoPath?.let {
+                            navController.navigate(NavRoute.TreeCapture.create(it))
+                        }
                     }
                 },
                 leftAction = {
