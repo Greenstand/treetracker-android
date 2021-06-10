@@ -4,11 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
@@ -49,7 +45,7 @@ fun TextButton(
     // TODO customize button visuals
     Button(
         onClick = onClick,
-        modifier = modifier.size(height = 46.dp, width = 110.dp),
+        modifier = modifier.size(height = 46.dp, width = 120.dp),
         enabled = enabled,
     ) {
         Text(
@@ -70,7 +66,7 @@ fun BoxScope.ArrowButton(
         colors = colors,
         modifier = Modifier
             .align(Alignment.Center)
-            .size(height = 62.dp, width = 62.dp),
+            .wrapContentSize(),
         onClick = onClick,
     ) {
         Image(
@@ -86,7 +82,8 @@ fun BoxScope.ArrowButton(
 fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
     TextButton(
-        modifier = Modifier.align(Alignment.Center),
+        modifier = Modifier.align(Alignment.Center)
+            .wrapContentSize(),
         stringRes = R.string.language,
         onClick = {
             navController.navigate(NavRoute.Language.create())
