@@ -49,6 +49,7 @@ fun UserSelectScreen(
 ) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(UserSelectState())
+    viewModel.getUsers()
 
     Scaffold(
         bottomBar = {
@@ -84,7 +85,7 @@ fun UserSelectScreen(
     ) {
         LazyVerticalGrid(
             cells = GridCells.Fixed(2),
-            modifier = Modifier.padding(it),  // Padding for bottom bar.
+            modifier = Modifier.padding(it), // Padding for bottom bar.
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {
             items(state.users) { user ->
@@ -122,7 +123,7 @@ fun UserButton(
     ) {
         Column(
             modifier = Modifier
-                .padding(bottom = 12.dp)  // Bottom side can be clipped by the button.
+                .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
                 .fillMaxWidth()
                 .wrapContentHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,28 +152,28 @@ fun UserButton(
                     color = AppColors.LightGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    fontFamily = FontFamily.SansSerif,  // TODO: Change font to Montserrat.
+                    fontFamily = FontFamily.SansSerif, // TODO: Change font to Montserrat.
                 )
 
                 Row(
                     modifier = Modifier.padding(top = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(  // TODO: Change into 'Plant' icon.
+                    Box( // TODO: Change into 'Plant' icon.
                         modifier = Modifier
                             .size(width = 20.dp, height = 22.dp)
                             .background(AppColors.LightGray)
-                    )  // Box placeholder for 'Plant' icon.
+                    ) // Box placeholder for 'Plant' icon.
 
                     Text(
-                        text = "1,234",  // TODO: Fetch user's token count.
+                        text = "1,234", // TODO: Fetch user's token count.
                         modifier = Modifier.padding(start = 4.dp),
 
                         color = AppColors.LightGray,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = FontFamily.SansSerif,
-                    )  // Text placeholder for number of tokens.
+                    ) // Text placeholder for number of tokens.
                 }
             }
         }
