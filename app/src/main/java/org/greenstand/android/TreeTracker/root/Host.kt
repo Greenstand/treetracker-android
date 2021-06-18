@@ -28,11 +28,11 @@ fun Host() {
                 NavRoute.WalletSelect,
                 NavRoute.Selfie,
                 NavRoute.TreeCapture,
+                NavRoute.MessagesUserSelect,
             ).forEach { addNavRoute(it) }
         }
     }
 }
-
 
 fun NavGraphBuilder.addNavRoute(navRoute: NavRoute) {
     addDestination(
