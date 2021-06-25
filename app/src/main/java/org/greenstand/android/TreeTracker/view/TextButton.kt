@@ -72,14 +72,33 @@ fun BoxScope.ArrowButton(
 
 @Composable
 fun BoxScope.LanguageButton() {
-    val navController = LocalNavHostController.current
-    TextButton(
-        modifier = Modifier.align(Alignment.Center),
-        stringRes = R.string.language,
+        val navController = LocalNavHostController.current
+    DepthButton(
+
+        modifier = Modifier
+            .padding(18.dp)
+            .size(height = 46.dp, width = 120.dp),
+        contentAlignment = Alignment.Center,
+
+        colors = AppButtonColors.Default,
         onClick = {
             navController.navigate(NavRoute.Language.create())
         }
-    )
+
+
+    ) {
+            Text(
+                text = stringResource(id =  R.string.language),
+                color = AppColors.Green,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif,  // TODO: Change font to Montserrat.
+
+            )
+
+    }
+
+
 }
 
 @Preview(widthDp = 100, heightDp = 100)
