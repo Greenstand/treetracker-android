@@ -4,11 +4,22 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -109,18 +120,18 @@ fun DepthButtonPreview() {
 }
 
 @Composable
-        /**
-         * Button with toggle down animation. Now enables wrap content functionality.
-         * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
-         *
-         * @param onClick The callback function for click event.
-         * @param modifier The modifier to be applied to the layout.
-         * @param contentAlignment The alignment of content inside the button.
-         * @param isEnabled Set button enabled state.
-         * @param isSelected Set button selected state (if selected, will toggle down).
-         * @param colors The colors of the button. See [AppButtonColors], can be customized.
-         * @param content The child content of the button.
-         */
+/**
+ * Button with toggle down animation. Now enables wrap content functionality.
+ * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
+ *
+ * @param onClick The callback function for click event.
+ * @param modifier The modifier to be applied to the layout.
+ * @param contentAlignment The alignment of content inside the button.
+ * @param isEnabled Set button enabled state.
+ * @param isSelected Set button selected state (if selected, will toggle down).
+ * @param colors The colors of the button. See [AppButtonColors], can be customized.
+ * @param content The child content of the button.
+ */
 fun DepthButton(
     onClick: () -> Unit,
 
@@ -148,7 +159,7 @@ fun DepthButton(
             isPressed = isPressed,
             depth = depth,
             modifier = Modifier
-                .matchParentSize()  // Match the 'content' size, this enables wrap_content.
+                .matchParentSize() // Match the 'content' size, this enables wrap_content.
                 .pointerInput(isEnabled) {
                     if (!isEnabled) return@pointerInput
                     detectTapGestures(
@@ -225,10 +236,10 @@ fun DepthSurface(
 
 @Immutable
 class DepthButtonColors(
-    private val shadowColor: Color,
-    private val color: Color,
-    private val disabledShadowColor: Color,
-    private val disabledColor: Color
+    val shadowColor: Color,
+    val color: Color,
+    val disabledShadowColor: Color,
+    val disabledColor: Color
 ) : ButtonColors {
 
     @Composable
