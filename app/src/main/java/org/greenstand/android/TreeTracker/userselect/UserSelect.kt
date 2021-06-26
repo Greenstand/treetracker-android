@@ -17,6 +17,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,6 @@ import org.greenstand.android.TreeTracker.view.TextButton
 import org.greenstand.android.TreeTracker.view.TextStyles
 import org.greenstand.android.TreeTracker.view.UserButton
 
-@ExperimentalComposeApi
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserSelect(
@@ -64,10 +64,7 @@ fun UserSelect(
                                 .align(Alignment.Center)
                                 .size(height = 70.dp, width = 70.dp),
                         ) {
-                            Text("+", style = TextStyle(
-                                fontSize = TextUnit(54f, TextUnitType.Sp),
-                                color = AppColors.GrayShadow
-                            ))
+                            Text("+")
                         }
                     }
                 },
