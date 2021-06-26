@@ -192,7 +192,11 @@ fun DepthButton(
             modifier = Modifier
                 .align(contentAlignment)
                 .offset {
-                    IntOffset(0, (depth * offsetAnimation).toInt())
+                    when(shape) {
+                       DepthSurfaceShape.Rectangle -> IntOffset(0, (depth * offsetAnimation).toInt())
+                       DepthSurfaceShape.Circle -> IntOffset(0, (depth * offsetAnimation - depth).toInt())
+                    }
+
                 }
         ) {
             content()
@@ -287,22 +291,8 @@ fun DepthSurfaceCircle(
     depth: Float = 20f,
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
-
-        val innerSizeDelta = 4
-        val gutter = innerSizeDelta / 2f
-
+        val gutter = 2
         val outerSize = Size(size.width - depth, size.height - depth)
-        val innerSize = Size(
-            width = outerSize.width - innerSizeDelta,
-            height = outerSize.height - innerSizeDelta
-        )
-
-        val tempOffset = (offset * depth) - gutter
-        val innerHeightOffset = if (tempOffset < gutter) {
-            gutter
-        } else {
-            tempOffset
-        }
 
         // Bottom stretched circle
         drawArc(
@@ -329,7 +319,7 @@ fun DepthSurfaceCircle(
         // top circle
         drawCircle(
             color = color,
-            radius = outerSize.height / 2 - innerSizeDelta,
+            radius = outerSize.height / 2 - gutter,
             center = Offset(
                 x = size.width / 2,
                 y = size.height / 2 + (offset * depth) - (depth / 2)
