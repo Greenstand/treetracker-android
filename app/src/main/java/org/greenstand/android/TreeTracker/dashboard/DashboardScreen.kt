@@ -77,7 +77,7 @@ fun DashboardScreen(
                 text = "Messages",
                 colors = AppButtonColors.MessagePurple,
                 onClick = {
-
+                    navController.navigate(NavRoute.MessagesUserSelect.route)
                 }
             )
             DashBoardButton(
