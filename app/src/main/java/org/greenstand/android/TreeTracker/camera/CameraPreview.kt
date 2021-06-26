@@ -5,9 +5,8 @@ import android.hardware.Camera
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
-import timber.log.Timber
 import java.io.IOException
-
+import timber.log.Timber
 
 /** A basic Camera preview class  */
 class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView(context), SurfaceHolder.Callback {
@@ -51,19 +50,19 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
         val width = View.resolveSize(suggestedMinimumWidth, widthMeasureSpec)
         val height = View.resolveSize(suggestedMinimumHeight, heightMeasureSpec)
 
-        if(supportedPreviewSizes != null) {
+        if (supportedPreviewSizes != null) {
             optimalPreviewSize = getOptimalPreviewSize(supportedPreviewSizes, height, width)
-            Timber.i("Found Optimal Camera Preview Size: ${optimalPreviewSize.toString()}")
+            Timber.i("Found Optimal Camera Preview Size: $optimalPreviewSize")
         }
 
-        if(optimalPreviewSize != null) {
-            val ratio : Int
-            if(optimalPreviewSize!!.height >= optimalPreviewSize!!.width)
+        if (optimalPreviewSize != null) {
+            val ratio: Int
+            if (optimalPreviewSize!!.height >= optimalPreviewSize!!.width)
                 ratio = optimalPreviewSize!!.height / optimalPreviewSize!!.width
             else
                 ratio = optimalPreviewSize!!.width / optimalPreviewSize!!.height
 
-            setMeasuredDimension(width*ratio, height)
+            setMeasuredDimension(width * ratio, height)
         }
     }
 
@@ -133,7 +132,6 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
         } catch (e: IOException) {
             Timber.d("Error setting camera preview: " + e.message)
         }
-
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -171,7 +169,6 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
             camera?.setDisplayOrientation(90)
             camera?.setPreviewDisplay(holder)
             camera?.startPreview()
-
         } catch (e: Exception) {
             Timber.d("Error starting camera preview: " + e.message)
         }
@@ -180,7 +177,7 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
     /**
      * Adding Pinch To Zoom while taking new tree images
      */
-    //TODO: re-enable pinch to zoom.  This introduces a crash on some phones
+    // TODO: re-enable pinch to zoom.  This introduces a crash on some phones
     // Fatal Exception: java.lang.RuntimeException
     // Camera is being used after Camera.release() was called
     /*
@@ -229,5 +226,4 @@ class CameraPreview(context: Context, private val camera: Camera?) : SurfaceView
         return sqrt(x * x + y * y)
     }
     */
-
 }

@@ -16,12 +16,14 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-data class TreeAttributeEntity(@ColumnInfo(name = KEY)
-                               var key: String,
-                               @ColumnInfo(name = VALUE)
-                               var value: String,
-                               @ColumnInfo(name = TREE_CAPTURE_ID, index = true)
-                               var treeCaptureId: Long) {
+data class TreeAttributeEntity(
+    @ColumnInfo(name = KEY)
+    var key: String,
+    @ColumnInfo(name = VALUE)
+    var value: String,
+    @ColumnInfo(name = TREE_CAPTURE_ID, index = true)
+    var treeCaptureId: Long
+) {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)

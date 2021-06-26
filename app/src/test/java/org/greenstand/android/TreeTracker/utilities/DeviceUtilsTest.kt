@@ -6,7 +6,5 @@ class DeviceUtilsTest {
 
     @Test
     fun deviceId() {
-
     }
-
 }

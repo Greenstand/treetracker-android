@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.fragments
 
-
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -35,7 +34,11 @@ class DataFragment : Fragment() {
         menu.clear()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         bindings = FragmentDataBinding.inflate(inflater)
 
         mainActivity().bindings.toolbarTitle.setText(R.string.data)
@@ -45,26 +48,35 @@ class DataFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.treeData.observe(this, Observer { treeData ->
-            bindings.fragmentDataTotalTreesValue.text = treeData.totalTrees.toString()
-            bindings.fragmentDataLocatedValue.text = treeData.treesSynced.toString()
-            bindings.fragmentDataToSyncValue.text = treeData.treesToSync.toString()
-        })
-
-        viewModel.toasts.observe(this, Observer {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        })
-
-        viewModel.isSyncing.observe(this, Observer { isSyncing ->
-            val textId = if (isSyncing) {
-                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                R.string.stop
-            } else {
-                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                R.string.sync
+        viewModel.treeData.observe(
+            this,
+            Observer { treeData ->
+                bindings.fragmentDataTotalTreesValue.text = treeData.totalTrees.toString()
+                bindings.fragmentDataLocatedValue.text = treeData.treesSynced.toString()
+                bindings.fragmentDataToSyncValue.text = treeData.treesToSync.toString()
             }
-            bindings.fragmentDataSyncButton.setText(textId)
-        })
+        )
+
+        viewModel.toasts.observe(
+            this,
+            Observer {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        viewModel.isSyncing.observe(
+            this,
+            Observer { isSyncing ->
+                val textId = if (isSyncing) {
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    R.string.stop
+                } else {
+                    requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    R.string.sync
+                }
+                bindings.fragmentDataSyncButton.setText(textId)
+            }
+        )
 
         bindings.fragmentDataSyncButton.setOnClickListener {
             viewModel.sync()

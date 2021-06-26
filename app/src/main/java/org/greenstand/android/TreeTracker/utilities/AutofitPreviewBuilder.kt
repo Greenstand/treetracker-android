@@ -1,21 +1,14 @@
 package org.greenstand.android.TreeTracker.utilities
 
-import android.content.Context
-import android.graphics.Matrix
-import android.hardware.display.DisplayManager
-import android.util.Log
-import android.util.Size
 import android.view.*
-import androidx.camera.core.Preview
-//import androidx.camera.core.PreviewConfig
-import java.lang.ref.WeakReference
+// import androidx.camera.core.PreviewConfig
 import java.util.*
 //
-///**
+// /**
 // * Builder for [Preview] that takes in a [WeakReference] of the view finder and [PreviewConfig],
 // * then instantiates a [Preview] which automatically resizes and rotates reacting to config changes.
 // */
-//class AutoFitPreviewBuilder private constructor(
+// class AutoFitPreviewBuilder private constructor(
 //    config: PreviewConfig, viewFinderRef: WeakReference<TextureView>) {
 //
 //    /** Public instance of preview use-case which can be used by consumers of this adapter */
@@ -221,4 +214,4 @@ import java.util.*
 //        fun build(config: PreviewConfig, viewFinder: TextureView) =
 //            AutoFitPreviewBuilder(config, WeakReference(viewFinder)).useCase
 //    }
-//}
+// }

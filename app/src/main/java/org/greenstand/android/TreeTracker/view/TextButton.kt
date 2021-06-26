@@ -119,6 +119,18 @@ fun DepthButtonPreview() {
     }
 }
 
+@Preview(widthDp = 100, heightDp = 100)
+@Composable
+fun DepthButtonCirclePreview() {
+    DepthButton(
+        shape = DepthSurfaceShape.Circle,
+        onClick = {
+        }
+    ) {
+        Text("Button", Modifier.align(Alignment.Center))
+    }
+}
+
 @Composable
 /**
  * Button with toggle down animation. Now enables wrap content functionality.
@@ -134,15 +146,13 @@ fun DepthButtonPreview() {
  */
 fun DepthButton(
     onClick: () -> Unit,
-
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.Center,
-
     isEnabled: Boolean = true,
     isSelected: Boolean? = null,
-
     colors: ButtonColors = AppButtonColors.Default,
-    content: @Composable (BoxScope.() -> Unit)
+    shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
+    content: @Composable (BoxScope.() -> Unit),
 ) {
     val depth = 20f
     val contentColor by colors.contentColor(isEnabled)
@@ -158,6 +168,7 @@ fun DepthButton(
             shadowColor = colors.backgroundColor(isEnabled).value,
             isPressed = isPressed,
             depth = depth,
+            shape = shape,
             modifier = Modifier
                 .matchParentSize() // Match the 'content' size, this enables wrap_content.
                 .pointerInput(isEnabled) {
@@ -189,6 +200,11 @@ fun DepthButton(
     }
 }
 
+enum class DepthSurfaceShape {
+    Rectangle,
+    Circle
+}
+
 @Composable
 fun DepthSurface(
     modifier: Modifier,
@@ -196,10 +212,38 @@ fun DepthSurface(
     color: Color,
     shadowColor: Color,
     depth: Float = 20f,
+    shape: DepthSurfaceShape,
 ) {
-
     val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
 
+    when (shape) {
+        DepthSurfaceShape.Rectangle ->
+            DepthSurfaceRectangle(
+                modifier = modifier,
+                color = color,
+                shadowColor = shadowColor,
+                offset = offsetAnimation,
+                depth = depth,
+            )
+        DepthSurfaceShape.Circle ->
+            DepthSurfaceCircle(
+                modifier = modifier,
+                color = color,
+                shadowColor = shadowColor,
+                offset = offsetAnimation,
+                depth = depth,
+            )
+    }
+}
+
+@Composable
+fun DepthSurfaceRectangle(
+    modifier: Modifier,
+    color: Color,
+    shadowColor: Color,
+    offset: Float,
+    depth: Float = 20f,
+) {
     Canvas(modifier = modifier.fillMaxSize()) {
 
         val innerSizeDelta = 4
@@ -212,7 +256,7 @@ fun DepthSurface(
         )
         val cornerRadius = CornerRadius(x = 30f, y = 30f)
 
-        val tempOffset = (offsetAnimation * depth) - gutter
+        val tempOffset = (offset * depth) - gutter
         val innerHeightOffset = if (tempOffset < gutter) {
             gutter
         } else {
@@ -230,6 +274,66 @@ fun DepthSurface(
             cornerRadius = cornerRadius,
             topLeft = Offset(x = gutter, y = innerHeightOffset),
             size = innerSize
+        )
+    }
+}
+
+@Composable
+fun DepthSurfaceCircle(
+    modifier: Modifier,
+    color: Color,
+    shadowColor: Color,
+    offset: Float,
+    depth: Float = 20f,
+) {
+    Canvas(modifier = modifier.fillMaxSize()) {
+
+        val innerSizeDelta = 4
+        val gutter = innerSizeDelta / 2f
+
+        val outerSize = Size(size.width - depth, size.height - depth)
+        val innerSize = Size(
+            width = outerSize.width - innerSizeDelta,
+            height = outerSize.height - innerSizeDelta
+        )
+
+        val tempOffset = (offset * depth) - gutter
+        val innerHeightOffset = if (tempOffset < gutter) {
+            gutter
+        } else {
+            tempOffset
+        }
+
+        // Bottom stretched circle
+        drawArc(
+            color = shadowColor,
+            startAngle = 180f,
+            sweepAngle = 180f,
+            useCenter = true,
+            topLeft = Offset(x = depth / 2, y = 0f),
+            size = outerSize
+        )
+        drawRect(
+            color = shadowColor,
+            topLeft = Offset(x = depth / 2, y = outerSize.height / 2),
+            size = Size(outerSize.width, depth),
+        )
+        drawArc(
+            color = shadowColor,
+            startAngle = 0f,
+            sweepAngle = 180f,
+            useCenter = true,
+            topLeft = Offset(x = depth / 2, y = depth),
+            size = outerSize
+        )
+        // top circle
+        drawCircle(
+            color = color,
+            radius = outerSize.height / 2 - innerSizeDelta,
+            center = Offset(
+                x = size.width / 2,
+                y = size.height / 2 + (offset * depth) - (depth / 2)
+            ),
         )
     }
 }

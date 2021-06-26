@@ -20,7 +20,6 @@ object TextStyles {
         fontSize = TextUnit(24f, TextUnitType.Sp),
         fontWeight = FontWeight.Bold
     )
-
 }
 
 @Composable

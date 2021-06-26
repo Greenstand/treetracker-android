@@ -7,8 +7,10 @@ import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class TreeSyncWorker(context: Context,
-                     workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters), KoinComponent {
+class TreeSyncWorker(
+    context: Context,
+    workerParameters: WorkerParameters
+) : CoroutineWorker(context, workerParameters), KoinComponent {
     private val syncDataBundleUseCase: SyncDataUseCase by inject()
     private val syncNotificationManager: SyncNotificationManager by inject()
 

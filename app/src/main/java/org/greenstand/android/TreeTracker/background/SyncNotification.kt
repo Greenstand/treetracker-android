@@ -12,12 +12,14 @@ import androidx.core.app.NotificationManagerCompat
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.TextUtils
 
-class SyncNotificationManager(private val notificationManagerCompat: NotificationManagerCompat,
-                              private val context: Context) {
+class SyncNotificationManager(
+    private val notificationManagerCompat: NotificationManagerCompat,
+    private val context: Context
+) {
 
     fun showNotification() {
         createNotificationChannel()
-        
+
         val stopText = TextUtils.createColorizedText(context.getString(R.string.stop), context, R.color.stop_red)
 
         val builder = NotificationCompat.Builder(context, SYNC_CHANNEL_ID)

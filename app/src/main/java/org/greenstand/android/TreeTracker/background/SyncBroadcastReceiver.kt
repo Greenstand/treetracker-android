@@ -8,7 +8,6 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import timber.log.Timber
 
-
 class SyncBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -16,7 +15,7 @@ class SyncBroadcastReceiver : BroadcastReceiver(), KoinComponent {
         val workManager: WorkManager by inject()
         val syncNotification: SyncNotificationManager by inject()
 
-        when(intent.action) {
+        when (intent.action) {
             ACTION_STOP -> {
                 workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
                 syncNotification.removeNotification()
@@ -28,5 +27,4 @@ class SyncBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     companion object {
         const val ACTION_STOP = "ACTION_STOP"
     }
-
 }
