@@ -3,8 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs"
-apply plugin: "org.jlleitschuh.gradle.ktlint"
-apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
@@ -292,18 +290,3 @@ configurations.all {
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-ktlint {
-    version.set("0.39.0")
-    android.set(true)
-    outputToConsole.set(true)
-    outputColorName.set("RED")
-}
-
-afterEvaluate {
-    // ktlint git precommit hook is insalled to .git folder in project root when running app in
-    // Intellij by the developer or when triggering gradle build. This ensures ktlint format is
-    // executed before code is committed.
-    tasks["preBuild"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
-    tasks["clean"].dependsOn parent.tasks.findByName("addKtlintFormatGitPreCommitHook")
-}

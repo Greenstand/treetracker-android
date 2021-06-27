@@ -7,9 +7,11 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.map.TreeMapMarker
 
-class TreeClusterRenderer(private val context: Context,
-                          map: GoogleMap,
-                          clusterManager: ClusterManager<TreeMapMarker>) : DefaultClusterRenderer<TreeMapMarker>(context, map, clusterManager) {
+class TreeClusterRenderer(
+    private val context: Context,
+    map: GoogleMap,
+    clusterManager: ClusterManager<TreeMapMarker>
+) : DefaultClusterRenderer<TreeMapMarker>(context, map, clusterManager) {
 
     init {
         minClusterSize = 5
@@ -18,5 +20,4 @@ class TreeClusterRenderer(private val context: Context,
     override fun getColor(clusterSize: Int): Int {
         return context.resources.getColor(R.color.cautionOrange)
     }
-
 }

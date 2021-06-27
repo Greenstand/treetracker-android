@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 
-
 class SyncService : JobIntentService() {
 
     private val jobScope = CoroutineScope(Dispatchers.IO)
@@ -39,6 +38,5 @@ class SyncService : JobIntentService() {
         fun enqueueWork(context: Context) {
             enqueueWork(context, SyncService::class.java, JOB_ID, Intent(context, SyncService::class.java))
         }
-
     }
 }

@@ -16,7 +16,7 @@ data class Org(
     val captureInputs: List<String>
 )
 
-class OrgPickerViewModelPreview: PreviewParameterProvider<OrgPickerViewModel> {
+class OrgPickerViewModelPreview : PreviewParameterProvider<OrgPickerViewModel> {
     override val values = sequenceOf(OrgPickerViewModel(OrganizationsFake()))
     override val count: Int = values.count()
 }
@@ -34,7 +34,7 @@ interface Organizations {
 
 class OrganizationsImpl(
     private val dao: TreeTrackerDAO
-) : Organizations{
+) : Organizations {
 
     var currentOrg: Org? = null
         private set
@@ -55,10 +55,9 @@ class OrganizationsImpl(
         currentOrg = org
         // TODO set org as current in db
     }
-
 }
 
-class OrganizationsFake : Organizations{
+class OrganizationsFake : Organizations {
 
     private val themeOne = lightColors()
     private val themeTwo = lightColors(
@@ -111,5 +110,4 @@ class OrganizationsFake : Organizations{
     override suspend fun setCurrentOrg(org: Org?) {
         currentOrg = org
     }
-
 }

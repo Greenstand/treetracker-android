@@ -11,8 +11,10 @@ import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
-class LoginViewModel(private val dao: TreeTrackerDAO,
-                     private val planterCheckInUseCase: PlanterCheckInUseCase): ViewModel()  {
+class LoginViewModel(
+    private val dao: TreeTrackerDAO,
+    private val planterCheckInUseCase: PlanterCheckInUseCase
+) : ViewModel() {
 
     private var email: String? = null
     private var phone: String? = null
@@ -50,7 +52,7 @@ class LoginViewModel(private val dao: TreeTrackerDAO,
             if (!Validation.isValidPhoneNumber(phone.orEmpty())) {
                 loginButtonStateMutableLiveData.value = false
             }
-            //errorMessageMutableLiveData.value = R.string.invalid_identification
+            // errorMessageMutableLiveData.value = R.string.invalid_identification
         }
     }
 
@@ -63,7 +65,7 @@ class LoginViewModel(private val dao: TreeTrackerDAO,
             if (!Validation.isEmailValid(email.orEmpty())) {
                 loginButtonStateMutableLiveData.value = false
             }
-            //errorMessageMutableLiveData.value = R.string.invalid_identification
+            // errorMessageMutableLiveData.value = R.string.invalid_identification
         }
     }
 

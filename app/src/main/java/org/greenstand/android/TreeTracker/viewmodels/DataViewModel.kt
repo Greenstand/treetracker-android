@@ -11,11 +11,12 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
-
-class DataViewModel(private val dao: TreeTrackerDAO,
-                    private val workManager: WorkManager,
-                    private val analytics: Analytics,
-                    private val syncNotification: SyncNotificationManager) : ViewModel() {
+class DataViewModel(
+    private val dao: TreeTrackerDAO,
+    private val workManager: WorkManager,
+    private val analytics: Analytics,
+    private val syncNotification: SyncNotificationManager
+) : ViewModel() {
 
     private val treeInfoLiveData = MutableLiveData<TreeData>()
     private val toastLiveData = MutableLiveData<Int>()
@@ -25,14 +26,13 @@ class DataViewModel(private val dao: TreeTrackerDAO,
     val toasts: LiveData<Int> = toastLiveData
     val isSyncing: LiveData<Boolean> = isSyncingLiveData
 
-
     private var _isSyncing: Boolean? by Delegates.observable<Boolean?>(null) { _, _, startedSyncing ->
 
         startedSyncing ?: return@observable
 
         if (startedSyncing) {
             updateTimerJob = viewModelScope.launch {
-                while(true) {
+                while (true) {
                     delay(750)
                     updateData()
                 }
@@ -43,7 +43,7 @@ class DataViewModel(private val dao: TreeTrackerDAO,
     private var updateTimerJob: Job? = null
 
     private val syncObserver = Observer<List<WorkInfo>> { infoList ->
-        when(infoList.map { it.state }.elementAtOrNull(0)) {
+        when (infoList.map { it.state }.elementAtOrNull(0)) {
             WorkInfo.State.BLOCKED -> {
                 if (_isSyncing != null) {
                     toastLiveData.value = R.string.sync_blocked
@@ -79,7 +79,6 @@ class DataViewModel(private val dao: TreeTrackerDAO,
 
         workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
             .observeForever(syncObserver)
-
     }
 
     fun sync() {
@@ -104,7 +103,6 @@ class DataViewModel(private val dao: TreeTrackerDAO,
             }
         }
     }
-
 
     private suspend fun loadTreeInfo(): TreeData {
         return withContext(Dispatchers.IO) {
@@ -143,6 +141,8 @@ class DataViewModel(private val dao: TreeTrackerDAO,
     }
 }
 
-data class TreeData(val treesSynced: Int,
-                    val treesToSync: Int,
-                    val totalTrees: Int)
+data class TreeData(
+    val treesSynced: Int,
+    val treesToSync: Int,
+    val totalTrees: Int
+)

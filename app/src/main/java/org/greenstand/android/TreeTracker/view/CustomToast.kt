@@ -12,5 +12,4 @@ object CustomToast {
     fun showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
         Toast.makeText(appContext, message, duration).show()
     }
-
 }

@@ -1,6 +1,6 @@
 package org.greenstand.android.TreeTracker.database.views
 
-//@DatabaseView("""
+// @DatabaseView("""
 //        SELECT
 //        tree_capture.uuid,
 //        tree_capture._id as treeCaptureId,
@@ -17,7 +17,7 @@ package org.greenstand.android.TreeTracker.database.views
 //        from tree_capture
 //        inner join planter_check_in on tree_capture.planter_checkin_id = planter_check_in._id
 //        inner join planter_info on planter_check_in.planter_info_id = planter_info._id""")
-//data class TreeUploadDbView(
+// data class TreeUploadDbView(
 //    @ColumnInfo(name = TreeCaptureEntity.UUID)
 //    var uuid: String,
 //    @ColumnInfo(name = "planterInfoId")
@@ -40,4 +40,4 @@ package org.greenstand.android.TreeTracker.database.views
 //    var accuracy: Double,
 //    @ColumnInfo(name = TreeCaptureEntity.CREATED_AT)
 //    var createAt: Long
-//)
+// )
