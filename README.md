@@ -14,8 +14,8 @@ https://github.com/Greenstand/treetracker-android/milestone/17
 
 ## Project Details
 
-This is the Android app for the TreeTracker open source project (www.treetracker.org). 
-This project coordinates tree planting employment for people living in extreme poverty.
+This is the Android app for Greenstands Treetracker open source project (www.treetracker.org). 
+This project coordinates the digital capture of tree planting data in the field allowing to establish employment for people living in extreme poverty based on tree planting.
 The Android segment allows people to track and verify reforestation plantings,
 paying planters on a per planting basis.
 
