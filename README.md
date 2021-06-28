@@ -15,9 +15,8 @@ https://github.com/Greenstand/treetracker-android/milestone/17
 ## Project Details
 
 This is the Android app for Greenstands Treetracker open source project (www.treetracker.org). 
-This project coordinates the digital capture of tree planting data in the field allowing to establish employment for people living in extreme poverty based on tree planting.
-The Android segment allows people to track and verify reforestation plantings,
-paying planters on a per planting basis.
+This project coordinates the digital capture of tree growth data in the field, allowing to establish employment for people living in extreme poverty based on tree planting.
+The Android segment is the data collection tool that transports the information into the next service through a data pipeline towards the veryification service.
 
 For more on design intent and the app's user story see the [wiki in this repository](https://github.com/Greenstand/treetracker-android/wiki/User-Story)
 
@@ -25,11 +24,10 @@ For more on design intent and the app's user story see the [wiki in this reposit
 &nbsp;
 
 ## Project Setup
-Developers will need to ask the #android channel in Slack for the treetracker.keys.properties file to build gradle for the application.
+Developers will need to ask the #android_chat channel in Slack for the treetracker.keys.properties file to build gradle for the application.
 
 For development, select the build variant _dev_. This build variant is configured to allow trees to be added without a specific accuracy.  
 
-&nbsp;
 &nbsp;
 
 ## QC Deployment
