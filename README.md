@@ -4,15 +4,10 @@
 
 ## Current Milestones and Issue Topics
 
-### Update for JustDigIt
-
-Priority features for one of our main whitelabel deployments
-https://github.com/Greenstand/treetracker-android/milestone/10
-
 ### Next feature release
 
 Feature we are currently prioritizing
-https://github.com/Greenstand/treetracker-android/milestone/9
+https://github.com/Greenstand/treetracker-android/milestone/17
 
 &nbsp;
 &nbsp;
