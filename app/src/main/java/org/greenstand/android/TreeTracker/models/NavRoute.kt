@@ -11,6 +11,7 @@ import org.greenstand.android.TreeTracker.camera.SelfieScreen
 import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
+import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.NameEntryView
 import org.greenstand.android.TreeTracker.signup.SignupFlow
@@ -26,49 +27,49 @@ sealed class NavRoute {
     open val deepLinks: List<NavDeepLink> = emptyList()
 
     object Splash : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             SplashScreen()
         }
         override val route: String = "splash"
     }
 
     object SignupFlow : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             SignupFlow()
         }
         override val route: String = "signup-flow"
     }
 
     object NameEntryView : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             NameEntryView()
         }
         override val route: String = "signup-flow/nameEntryView"
     }
 
     object Org : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             OrgPickerScreen()
         }
         override val route: String = "org"
     }
 
     object Dashboard : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             DashboardScreen()
         }
         override val route: String = "dashboard"
     }
 
     object UserSelect : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             UserSelectScreen()
         }
         override val route: String = "user-select"
     }
 
     object WalletSelect : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             WalletSelectScreen(getPlanterInfoId(it))
         }
         override val route: String = "wallet-select/{planterInfoId}"
@@ -82,14 +83,14 @@ sealed class NavRoute {
     }
 
     object Selfie : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             SelfieScreen()
         }
         override val route: String = "selfie"
     }
 
     object ImageReview : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             ImageReviewScreen(photoPath(it))
         }
         override val route: String = "camera-review/{photoPath}"
@@ -105,7 +106,7 @@ sealed class NavRoute {
     }
 
     object Language : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             LanguageSelectScreen(isFromTopBar(it))
         }
         override val route: String = "language/{isFromTopBar}"
@@ -119,7 +120,7 @@ sealed class NavRoute {
     }
 
     object TreeCapture : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit =  {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
             TreeCaptureScreen(getProfilePicUrl(it))
         }
         override val route: String = "capture/{profilePicUrl}"
@@ -131,10 +132,16 @@ sealed class NavRoute {
 
         fun create(profilePicUrl: String) = "capture/${profilePicUrl.toSafeNavUrl()}"
     }
+
+    object MessagesUserSelect : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            MessagesUserSelectScreen()
+        }
+        override val route: String = "messages-user-select"
+    }
 }
 
 // Navigation uses '/' to denote params or nesting. Having a param that contains '/'
 // will break the navigation. These replace '/' with '*' while navigating
 private fun String?.toSafeNavUrl(): String = this?.replace('/', '*') ?: ""
 private fun String?.fromSafeNavUrl(): String = this?.replace('*', '/') ?: ""
-

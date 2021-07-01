@@ -4,11 +4,22 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -127,30 +138,40 @@ fun DepthButtonPreview() {
     }
 }
 
+@Preview(widthDp = 100, heightDp = 100)
 @Composable
-        /**
-         * Button with toggle down animation. Now enables wrap content functionality.
-         * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
-         *
-         * @param onClick The callback function for click event.
-         * @param modifier The modifier to be applied to the layout.
-         * @param contentAlignment The alignment of content inside the button.
-         * @param isEnabled Set button enabled state.
-         * @param isSelected Set button selected state (if selected, will toggle down).
-         * @param colors The colors of the button. See [AppButtonColors], can be customized.
-         * @param content The child content of the button.
-         */
+fun DepthButtonCirclePreview() {
+    DepthButton(
+        shape = DepthSurfaceShape.Circle,
+        onClick = {
+        }
+    ) {
+        Text("Button", Modifier.align(Alignment.Center))
+    }
+}
+
+@Composable
+/**
+ * Button with toggle down animation. Now enables wrap content functionality.
+ * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
+ *
+ * @param onClick The callback function for click event.
+ * @param modifier The modifier to be applied to the layout.
+ * @param contentAlignment The alignment of content inside the button.
+ * @param isEnabled Set button enabled state.
+ * @param isSelected Set button selected state (if selected, will toggle down).
+ * @param colors The colors of the button. See [AppButtonColors], can be customized.
+ * @param content The child content of the button.
+ */
 fun DepthButton(
     onClick: () -> Unit,
-
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.Center,
-
     isEnabled: Boolean = true,
     isSelected: Boolean? = null,
-
     colors: ButtonColors = AppButtonColors.Default,
-    content: @Composable (BoxScope.() -> Unit)
+    shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
+    content: @Composable (BoxScope.() -> Unit),
 ) {
     val depth = 20f
     val contentColor by colors.contentColor(isEnabled)
@@ -166,8 +187,9 @@ fun DepthButton(
             shadowColor = colors.backgroundColor(isEnabled).value,
             isPressed = isPressed,
             depth = depth,
+            shape = shape,
             modifier = Modifier
-                .matchParentSize()  // Match the 'content' size, this enables wrap_content.
+                .matchParentSize() // Match the 'content' size, this enables wrap_content.
                 .pointerInput(isEnabled) {
                     if (!isEnabled) return@pointerInput
                     detectTapGestures(
@@ -189,12 +211,21 @@ fun DepthButton(
             modifier = Modifier
                 .align(contentAlignment)
                 .offset {
-                    IntOffset(0, (depth * offsetAnimation).toInt())
+                    when(shape) {
+                       DepthSurfaceShape.Rectangle -> IntOffset(0, (depth * offsetAnimation).toInt())
+                       DepthSurfaceShape.Circle -> IntOffset(0, (depth * offsetAnimation - depth).toInt())
+                    }
+
                 }
         ) {
             content()
         }
     }
+}
+
+enum class DepthSurfaceShape {
+    Rectangle,
+    Circle
 }
 
 @Composable
@@ -204,10 +235,38 @@ fun DepthSurface(
     color: Color,
     shadowColor: Color,
     depth: Float = 20f,
+    shape: DepthSurfaceShape,
 ) {
-
     val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
 
+    when (shape) {
+        DepthSurfaceShape.Rectangle ->
+            DepthSurfaceRectangle(
+                modifier = modifier,
+                color = color,
+                shadowColor = shadowColor,
+                offset = offsetAnimation,
+                depth = depth,
+            )
+        DepthSurfaceShape.Circle ->
+            DepthSurfaceCircle(
+                modifier = modifier,
+                color = color,
+                shadowColor = shadowColor,
+                offset = offsetAnimation,
+                depth = depth,
+            )
+    }
+}
+
+@Composable
+fun DepthSurfaceRectangle(
+    modifier: Modifier,
+    color: Color,
+    shadowColor: Color,
+    offset: Float,
+    depth: Float = 20f,
+) {
     Canvas(modifier = modifier.fillMaxSize()) {
 
         val innerSizeDelta = 4
@@ -220,7 +279,7 @@ fun DepthSurface(
         )
         val cornerRadius = CornerRadius(x = 30f, y = 30f)
 
-        val tempOffset = (offsetAnimation * depth) - gutter
+        val tempOffset = (offset * depth) - gutter
         val innerHeightOffset = if (tempOffset < gutter) {
             gutter
         } else {
@@ -242,12 +301,58 @@ fun DepthSurface(
     }
 }
 
+@Composable
+fun DepthSurfaceCircle(
+    modifier: Modifier,
+    color: Color,
+    shadowColor: Color,
+    offset: Float,
+    depth: Float = 20f,
+) {
+    Canvas(modifier = modifier.fillMaxSize()) {
+        val gutter = 2
+        val outerSize = Size(size.width - depth, size.height - depth)
+
+        // Bottom stretched circle
+        drawArc(
+            color = shadowColor,
+            startAngle = 180f,
+            sweepAngle = 180f,
+            useCenter = true,
+            topLeft = Offset(x = depth / 2, y = 0f),
+            size = outerSize
+        )
+        drawRect(
+            color = shadowColor,
+            topLeft = Offset(x = depth / 2, y = outerSize.height / 2),
+            size = Size(outerSize.width, depth),
+        )
+        drawArc(
+            color = shadowColor,
+            startAngle = 0f,
+            sweepAngle = 180f,
+            useCenter = true,
+            topLeft = Offset(x = depth / 2, y = depth),
+            size = outerSize
+        )
+        // top circle
+        drawCircle(
+            color = color,
+            radius = outerSize.height / 2 - gutter,
+            center = Offset(
+                x = size.width / 2,
+                y = size.height / 2 + (offset * depth) - (depth / 2)
+            ),
+        )
+    }
+}
+
 @Immutable
 class DepthButtonColors(
-    private val shadowColor: Color,
-    private val color: Color,
-    private val disabledShadowColor: Color,
-    private val disabledColor: Color
+    val shadowColor: Color,
+    val color: Color,
+    val disabledShadowColor: Color,
+    val disabledColor: Color
 ) : ButtonColors {
 
     @Composable

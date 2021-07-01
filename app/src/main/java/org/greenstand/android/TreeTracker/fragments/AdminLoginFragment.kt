@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.databinding.FragmentAdminLoginBinding
 import org.greenstand.android.TreeTracker.utilities.hashString
 

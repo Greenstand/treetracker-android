@@ -6,9 +6,11 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import timber.log.Timber
 
-data class UploadImageParams(val imagePath: String,
-                             val lat: Double,
-                             val long: Double)
+data class UploadImageParams(
+    val imagePath: String,
+    val lat: Double,
+    val long: Double
+)
 
 class UploadImageUseCase(private val doSpaces: ObjectStorageClient) : UseCase<UploadImageParams, String?>() {
 
@@ -20,10 +22,10 @@ class UploadImageUseCase(private val doSpaces: ObjectStorageClient) : UseCase<Up
         } catch (ace: AmazonClientException) {
             Timber.e(
                 "Caught an AmazonClientException, which " +
-                        "means the client encountered " +
-                        "an internal error while trying to " +
-                        "communicate with S3, " +
-                        "such as not being able to access the network."
+                    "means the client encountered " +
+                    "an internal error while trying to " +
+                    "communicate with S3, " +
+                    "such as not being able to access the network."
             )
             Timber.e("Error Message: ${ace.message}")
             null
