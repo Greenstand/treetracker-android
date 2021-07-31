@@ -10,6 +10,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
+import java.util.Deque
+import java.util.LinkedList
+import java.util.UUID
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.TimeoutCancellationException
@@ -19,9 +24,6 @@ import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import timber.log.Timber
-import java.util.*
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class LocationUpdateManager(
     private val locationManager: LocationManager,
@@ -43,7 +45,6 @@ class LocationUpdateManager(
     }
 
     private val locationUpdateListener = object : android.location.LocationListener {
-
         override fun onLocationChanged(location: Location) {
             currentLocation = location
             Timber.d("Posting location value $currentLocation")
@@ -52,14 +53,6 @@ class LocationUpdateManager(
 
         override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
             Timber.d("Location status changed %s %d", p0, p1)
-        }
-
-        override fun onProviderEnabled(p0: String?) {
-            Timber.d("Provider enabled %s", p0)
-        }
-
-        override fun onProviderDisabled(p0: String?) {
-            Timber.d("Provider disabled %s", p0)
         }
     }
 

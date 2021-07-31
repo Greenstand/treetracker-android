@@ -1,7 +1,7 @@
 package org.greenstand.android.TreeTracker.splash
 
 import android.Manifest
-import androidx.activity.compose.registerForActivityResult
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +31,8 @@ fun SplashScreen(
     navController: NavHostController = LocalNavHostController.current
 ) {
     val scope = rememberCoroutineScope()
-    val permissionRequester = registerForActivityResult(
+
+    val permissionRequester = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { result ->
             scope.launch {
