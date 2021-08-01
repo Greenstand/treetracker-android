@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.user.User
 
@@ -16,6 +17,7 @@ data class WalletSelectState(
 
 class WalletSelectViewModel(
     private val users: Users,
+    private val stepCounter: StepCounter,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<WalletSelectState>()
@@ -39,6 +41,13 @@ class WalletSelectViewModel(
             _state.value = _state.value?.copy(
                 selectedUser = users.getUsers().find { planterInfoId == it.id }
             )
+        }
+    }
+
+    fun startSession(user: User) {
+        viewModelScope.launch {
+            stepCounter.enable()
+            users.startUserSession("", user.id)
         }
     }
 }

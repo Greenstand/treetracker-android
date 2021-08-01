@@ -12,6 +12,7 @@ class Configuration(
 
     private val LOCATION_DATA_CONFIG_KEY: PrefKey = PrefKeys.SYSTEM_SETTINGS +
         PrefKey("location-data-config")
+
     var locationDataConfig: LocationDataConfig
         private set
 

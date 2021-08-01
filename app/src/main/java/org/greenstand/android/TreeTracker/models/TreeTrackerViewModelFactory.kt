@@ -2,7 +2,7 @@ package org.greenstand.android.TreeTracker.models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import java.lang.RuntimeException
+import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
@@ -25,6 +25,7 @@ class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), Koin
             modelClass.isAssignableFrom(OrgPickerViewModel::class.java) -> get<OrgPickerViewModel>() as T
             modelClass.isAssignableFrom(WalletSelectViewModel::class.java) -> get<WalletSelectViewModel>() as T
             modelClass.isAssignableFrom(SplashScreenViewModel::class.java) -> get<SplashScreenViewModel>() as T
+            modelClass.isAssignableFrom(TreeImageReviewViewModel::class.java) -> get<TreeImageReviewViewModel>() as T
             else -> throw RuntimeException("Unable to create instance of ${modelClass.simpleName}. Did you forget to update the TreeTrackerViewModelFactory?")
         }
     }
