@@ -7,10 +7,11 @@ import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.LocalImage
@@ -21,7 +22,7 @@ fun TreeImageReviewScreen(
     viewModel: TreeImageReviewViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
 
-//    val state by viewModel.state.observeAsState(TreeImageReviewState())
+    val state by viewModel.state.observeAsState(TreeImageReviewState())
     val navController = LocalNavHostController.current
 
     Scaffold(
@@ -30,21 +31,13 @@ fun TreeImageReviewScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(onClick = {
-//                    navController.popBackStack()
-                    navController.navigate(NavRoute.TreeCapture.create(viewModel.profilePicPath)) {
-                        launchSingleTop = true
-                        popUpTo(NavRoute.TreeCapture.create(viewModel.profilePicPath)) { inclusive = true }
-                    }
+                    navController.popBackStack()
                 }) {
                     Text("Retake")
                 }
                 Button(onClick = {
                     viewModel.approveImage()
-//                    navController.popBackStack()
-                    navController.navigate(NavRoute.TreeCapture.create(viewModel.profilePicPath)) {
-                        launchSingleTop = true
-                        popUpTo(NavRoute.TreeCapture.create(viewModel.profilePicPath)) { inclusive = true }
-                    }
+                    navController.popBackStack()
                 }) {
                     Text("Accept")
                 }

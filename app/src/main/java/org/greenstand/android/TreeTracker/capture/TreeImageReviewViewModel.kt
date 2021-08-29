@@ -20,8 +20,6 @@ class TreeImageReviewViewModel(
     private val _state = MutableLiveData(TreeImageReviewState())
     val state: LiveData<TreeImageReviewState> = _state
 
-    val profilePicPath: String = users.currentSessionUser?.photoPath ?: ""
-
     fun approveImage() {
         viewModelScope.launch {
             treeCapturer.saveTree()
@@ -29,11 +27,3 @@ class TreeImageReviewViewModel(
     }
 
 }
-
-//class TreeImageReviewViewModelFactory(private val imagePath: String)
-//    : ViewModelProvider.Factory, KoinComponent {
-//    @Suppress("UNCHECKED_CAST")
-//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//        return TreeImageReviewViewModel(imagePath, get()) as T
-//    }
-//}
