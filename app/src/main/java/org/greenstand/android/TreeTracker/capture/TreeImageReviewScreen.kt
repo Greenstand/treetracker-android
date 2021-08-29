@@ -9,9 +9,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.LocalImage
@@ -24,6 +26,7 @@ fun TreeImageReviewScreen(
 
     val state by viewModel.state.observeAsState(TreeImageReviewState())
     val navController = LocalNavHostController.current
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         bottomBar = {
@@ -36,8 +39,10 @@ fun TreeImageReviewScreen(
                     Text("Retake")
                 }
                 Button(onClick = {
-                    viewModel.approveImage()
-                    navController.popBackStack()
+                    scope.launch {
+                        viewModel.approveImage()
+                        navController.popBackStack()
+                    }
                 }) {
                     Text("Accept")
                 }

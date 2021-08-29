@@ -22,7 +22,7 @@ class Users(
     suspend fun getUsers(): List<User> {
         val planterInfoList = dao.getAllPlanterInfo()
         val planterCheckIns = dao.getPlanterCheckInsById(planterInfoList.map { it.id })
-        val planterIdsToICheckIns = planterCheckIns
+        val planterIdsToCheckIns = planterCheckIns
             .groupBy { it.planterInfoId }
             .map { planterCheckInsForUser ->
                 planterCheckInsForUser.key to planterCheckInsForUser.value.find { planterCheckIn ->
@@ -30,7 +30,7 @@ class Users(
                 }
             }.toMap()
         return planterInfoList.mapNotNull { planterInfo ->
-            createUser(planterInfo, planterIdsToICheckIns[planterInfo.id])
+            createUser(planterInfo, planterIdsToCheckIns[planterInfo.id])
         }
     }
 

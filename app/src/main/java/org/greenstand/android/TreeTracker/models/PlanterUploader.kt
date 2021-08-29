@@ -29,7 +29,7 @@ class PlanterUploader(
         withContext(Dispatchers.IO) {
             uploadPlanterImages()
             uploadPlanterInfo()
-            deleteLocalImagesThatWereUploaded()
+//            deleteLocalImagesThatWereUploaded()
         }
     }
 

@@ -3,8 +3,6 @@ package org.greenstand.android.TreeTracker.capture
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.Users
 
@@ -20,10 +18,8 @@ class TreeImageReviewViewModel(
     private val _state = MutableLiveData(TreeImageReviewState())
     val state: LiveData<TreeImageReviewState> = _state
 
-    fun approveImage() {
-        viewModelScope.launch {
-            treeCapturer.saveTree()
-        }
+    suspend fun approveImage() {
+        treeCapturer.saveTree()
     }
 
 }
