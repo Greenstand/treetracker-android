@@ -136,7 +136,7 @@ class LocationDataCapturer(
     private val configuration: Configuration,
     private val gson: Gson
 ) {
-    private var locationsDeque: Deque<Location> = LinkedList<Location>()
+    private var locationsDeque: Deque<Location> = LinkedList()
     var generatedTreeUuid: UUID? = null
         private set
     private var lastConvergenceWithinRange: Convergence? = null
@@ -211,6 +211,9 @@ class LocationDataCapturer(
     }
 
     fun start() {
+        if (!locationUpdateManager.isUpdating) {
+            locationUpdateManager.startLocationUpdates()
+        }
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
     }
 

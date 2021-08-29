@@ -9,6 +9,7 @@ import androidx.navigation.compose.navArgument
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
 import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
+import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
@@ -131,6 +132,22 @@ sealed class NavRoute {
         }
 
         fun create(profilePicUrl: String) = "capture/${profilePicUrl.toSafeNavUrl()}"
+    }
+
+    object TreeImageReview : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            TreeImageReviewScreen(photoPath(it))
+        }
+        override val route: String = "tree-image-review/{photoPath}"
+        override val arguments = listOf(navArgument("photoPath") { type = NavType.StringType })
+
+        fun photoPath(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("photoPath").fromSafeNavUrl()
+        }
+
+        fun create(photoPath: String): String {
+            return "tree-image-review/${photoPath.toSafeNavUrl()}"
+        }
     }
 
     object MessagesUserSelect : NavRoute() {

@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.models
 
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -8,7 +9,6 @@ import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.user.User
 import timber.log.Timber
-import java.util.*
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,
@@ -22,7 +22,7 @@ class Users(
     suspend fun getUsers(): List<User> {
         val planterInfoList = dao.getAllPlanterInfo()
         val planterCheckIns = dao.getPlanterCheckInsById(planterInfoList.map { it.id })
-        val planterIdsToICheckIns = planterCheckIns
+        val planterIdsToCheckIns = planterCheckIns
             .groupBy { it.planterInfoId }
             .map { planterCheckInsForUser ->
                 planterCheckInsForUser.key to planterCheckInsForUser.value.find { planterCheckIn ->
@@ -30,7 +30,7 @@ class Users(
                 }
             }.toMap()
         return planterInfoList.mapNotNull { planterInfo ->
-            createUser(planterInfo, planterIdsToICheckIns[planterInfo.id])
+            createUser(planterInfo, planterIdsToCheckIns[planterInfo.id])
         }
     }
 
@@ -98,6 +98,7 @@ class Users(
         localPhotoPath: String,
         planterInfoId: Long
     ) {
+        endUserSession()
         withContext(Dispatchers.IO) {
 
             val location = locationUpdateManager.currentLocation

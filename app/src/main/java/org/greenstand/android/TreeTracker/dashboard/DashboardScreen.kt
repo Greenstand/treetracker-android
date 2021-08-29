@@ -16,6 +16,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +57,7 @@ fun DashboardScreen(
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val state by viewModel.state.observeAsState(DashboardState())
 
     viewModel.showSnackBar = { stringRes ->
         scope.launch {
@@ -96,12 +99,12 @@ fun DashboardScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     DashboardUploadProgressBar(
-                        progress = (viewModel.state.value?.treesSynced ?: 1)
-                            .toFloat() / (viewModel.state.value?.totalTrees ?: 1),
+                        progress = (state.treesSynced)
+                            .toFloat() / (state.totalTrees),
                         modifier = Modifier.weight(1f),
                     )
                     Text(
-                        text = (viewModel.state.value?.treesToSync ?: 0).toString(),
+                        text = (state.treesToSync).toString(),
                         modifier = Modifier.weight(1f),
                         color = AppColors.MediumGray,
                         fontSize = 16.sp,
