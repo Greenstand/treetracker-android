@@ -75,6 +75,7 @@ fun Camera(
                         )
                         .build()
 
+                    cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
                         lifecycleOwner, cameraSelector, preview, imageCapture)
 
