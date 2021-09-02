@@ -5,20 +5,20 @@ import androidx.lifecycle.Observer
 import androidx.work.*
 import androidx.work.WorkInfo.*
 import androidx.work.WorkInfo.State.SUCCEEDED
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
 import kotlinx.coroutines.*
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
 
 data class DashboardState(
-    val treesSynced: Int,
-    val treesToSync: Int,
-    val totalTrees: Int
+    val treesSynced: Int = 0,
+    val treesToSync: Int = 0,
+    val totalTrees: Int = 0,
 )
 
 class DashboardViewModel(
@@ -42,6 +42,9 @@ class DashboardViewModel(
                     updateData()
                 }
             }
+        } else {
+            updateTimerJob?.cancel()
+            updateTimerJob = null
         }
     }
 
@@ -115,11 +118,13 @@ class DashboardViewModel(
             val notSyncedTreeCount = dao.getNonUploadedTreeImageCount()
             val treeCount = syncedTreeCount + notSyncedTreeCount
 
-            _state.value = DashboardState(
-                totalTrees = treeCount,
-                treesToSync = notSyncedTreeCount,
-                treesSynced = syncedTreeCount,
-            )
+            withContext(Dispatchers.Main) {
+                _state.value = DashboardState(
+                    totalTrees = treeCount,
+                    treesToSync = notSyncedTreeCount,
+                    treesSynced = syncedTreeCount,
+                )
+            }
         }
     }
 

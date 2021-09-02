@@ -71,8 +71,9 @@ fun WalletSelectScreen(
                         isLeft = false,
                         isEnabled = state.selectedUser != null
                     ) {
-                        state.currentUser?.photoPath?.let {
-                            navController.navigate(NavRoute.TreeCapture.create(it))
+                        state.currentUser?.let { user ->
+                            viewModel.startSession(user)
+                            navController.navigate(NavRoute.TreeCapture.create(user.photoPath))
                         }
                     }
                 },
