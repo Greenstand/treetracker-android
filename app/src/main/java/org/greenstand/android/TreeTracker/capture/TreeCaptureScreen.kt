@@ -48,7 +48,7 @@ fun TreeCaptureScreen(
             ActionBar(
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        navController.popBackStack()
+                        navController.navigate(NavRoute.Dashboard.route)
                     }
                 },
                 centerAction = {
