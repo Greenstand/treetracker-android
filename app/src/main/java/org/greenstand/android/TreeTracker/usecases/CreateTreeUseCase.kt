@@ -34,10 +34,10 @@ class CreateTreeUseCase(
             wallet = ""
         )
         analytics.treePlanted()
-        val attributeEntitites: List<TreeAttributeEntity>? = params.treeCaptureAttributes().entries.map {
-            TreeAttributeEntity("${it.key}", "${it.value}" , -1)
-        }
-
+        val attributeEntitites = params.treeCaptureAttributes().map {
+            TreeAttributeEntity(it.key, it.value, -1)
+        }.toList()
+        Timber.d("Inserting TreeCapture entity $entity")
         dao.insertTreeWithAttributes(entity, attributeEntitites)
 
     }

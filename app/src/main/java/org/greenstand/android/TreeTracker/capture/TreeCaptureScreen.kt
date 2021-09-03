@@ -47,9 +47,12 @@ fun TreeCaptureScreen(
         bottomBar = {
             ActionBar(
                 leftAction = {
-                    ArrowButton(isLeft = true) {
-                        navController.navigate(NavRoute.Dashboard.route)
-                    }
+                    ArrowButton(isLeft = true,
+                        onClick = { navController.navigate(NavRoute.Dashboard.route){
+                            popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                            launchSingleTop = true
+
+                        }},)
                 },
                 centerAction = {
                     DepthButton(
