@@ -10,6 +10,7 @@ import org.greenstand.android.TreeTracker.utilities.Validation
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
     val name: String? = null,
+    val organization: String? = null,
     val photoPath: String? = null,
     val credential: Credential = Credential.Email(),
 )
@@ -52,6 +53,9 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         // TODO validate data and show errors if needed, after click
         _state.value = _state.value?.copy(name = name)
     }
+    fun updateOrganization(organization: String) {
+        _state.value = _state.value?.copy(organization = organization)
+    }
 
     fun updateEmail(email: String) {
         // TODO validate data and show errors if needed, after click
@@ -88,7 +92,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                         null
                     },
                     identifier = currentIdentifier,
-                    organization = null,
+                    organization = organization,
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,
                 )

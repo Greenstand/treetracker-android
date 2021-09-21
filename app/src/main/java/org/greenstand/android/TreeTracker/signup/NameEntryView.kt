@@ -106,6 +106,21 @@ fun NameEntryView(
                     }
                 )
             )
+            BorderedTextField(
+                value = state.organization ?: "",
+                padding = PaddingValues(4.dp),
+                onValueChange = { updatedOrganization -> viewModel.updateOrganization(updatedOrganization) },
+                placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Go,
+                ),
+                keyboardActions = KeyboardActions(
+                    onGo = {
+                        cameraLauncher.launch(true)
+                    }
+                )
+            )
         }
     }
 }
