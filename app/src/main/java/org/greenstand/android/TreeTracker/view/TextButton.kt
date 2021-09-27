@@ -48,7 +48,7 @@ fun TextButton(
     // TODO customize button visuals
     Button(
         onClick = onClick,
-        modifier = modifier.size(height = 46.dp, width = 110.dp),
+        modifier = modifier.size(height = 46.dp, width = 120.dp),
         enabled = enabled,
     ) {
         Text(
