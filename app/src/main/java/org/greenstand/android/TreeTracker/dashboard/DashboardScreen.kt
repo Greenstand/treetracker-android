@@ -2,12 +2,16 @@ package org.greenstand.android.TreeTracker.dashboard
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
@@ -28,6 +32,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -43,6 +48,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TextButton
 import org.greenstand.android.TreeTracker.view.TextStyles
@@ -78,15 +84,28 @@ fun DashboardScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 10.dp),
+                .padding(bottom = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
+            Box(
+                modifier = Modifier.weight(.3f),
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = state.totalTrees.toString(),
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AppColors.Orange
+                )
+            }
+
             // Upload indicator and button.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.Top,
             ) {
                 // Upload indicator.
@@ -94,7 +113,7 @@ fun DashboardScreen(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight()
-                        .padding(start = 20.dp, top = 20.dp, bottom = 20.dp),
+                        .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -110,19 +129,27 @@ fun DashboardScreen(
                         fontSize = 16.sp,
                     )
                 }
-
+                Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
                 DashBoardButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .weight(1f),
                     text = "Upload",
                     colors = AppButtonColors.UploadOrange,
                     onClick = {
                         viewModel.sync()
-                    }
+                    },
+                    shape = DepthSurfaceShape.Circle
                 )
             }
 
             DashBoardButton(
                 text = "Messages",
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .fillMaxSize(),
                 colors = AppButtonColors.MessagePurple,
                 onClick = {
                     navController.navigate(NavRoute.MessagesUserSelect.route)
@@ -131,7 +158,10 @@ fun DashboardScreen(
 
             DashBoardButton(
                 text = "Track",
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .fillMaxSize(),
                 colors = AppButtonColors.ProgressGreen,
                 onClick = {
                     navController.navigate(NavRoute.UserSelect.route)
@@ -194,14 +224,14 @@ fun DashBoardButton(
     text: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    colors: ButtonColors
+    colors: ButtonColors,
+    shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
 ) {
     DepthButton(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 10.dp),
+        modifier = modifier,
         colors = colors,
-        onClick = onClick
+        onClick = onClick,
+        shape = shape,
     ) {
         Text(
             text = text,
