@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -45,10 +46,10 @@ fun TextButton(
     onClick: () -> Unit,
 ) {
     // TODO customize button visuals
-    DepthButton(
+    Button(
         onClick = onClick,
-        modifier = modifier.size(height = 60.dp, width = 110.dp),
-        isEnabled = enabled,
+        modifier = modifier.size(height = 46.dp, width = 120.dp),
+        enabled = enabled,
     ) {
         Text(
             text = stringResource(id = stringRes)

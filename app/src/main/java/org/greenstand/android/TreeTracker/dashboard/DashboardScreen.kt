@@ -174,13 +174,7 @@ fun DashboardScreen(
 @Composable
 fun DashboardTopBar(navController: NavController) {
     ActionBar(
-        leftAction = {
-            TextButton(
-                modifier = Modifier.align(Alignment.Center),
-                stringRes = R.string.organization,
-                onClick = { navController.navigate(NavRoute.Org.route) }
-            )
-        },
+
         centerAction = { TopBarTitle() },
         rightAction = { LanguageButton() }
     )
