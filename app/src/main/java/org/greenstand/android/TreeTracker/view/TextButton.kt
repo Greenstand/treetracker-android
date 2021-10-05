@@ -1,14 +1,13 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
@@ -28,10 +27,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
@@ -192,9 +193,15 @@ fun DepthButton(
             modifier = Modifier
                 .align(contentAlignment)
                 .offset {
-                    when(shape) {
-                       DepthSurfaceShape.Rectangle -> IntOffset(0, (depth * offsetAnimation).toInt())
-                       DepthSurfaceShape.Circle -> IntOffset(0, (depth * offsetAnimation - depth).toInt())
+                    when (shape) {
+                        DepthSurfaceShape.Rectangle -> IntOffset(
+                            0,
+                            (depth * offsetAnimation).toInt()
+                        )
+                        DepthSurfaceShape.Circle -> IntOffset(
+                            0,
+                            (depth * offsetAnimation - depth).toInt()
+                        )
                     }
 
                 }
@@ -288,7 +295,7 @@ fun DepthSurfaceCircle(
     color: Color,
     shadowColor: Color,
     offset: Float,
-    depth: Float = 20f,
+    depth: Float,
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
         val gutter = 2
@@ -326,6 +333,43 @@ fun DepthSurfaceCircle(
             ),
         )
     }
+}
+
+@Composable
+fun ImageCaptureCircle(
+    modifier: Modifier,
+    color: Color,
+    shadowColor: Color,
+    ){
+    Canvas(modifier = modifier.background(shape = CircleShape, color = color)
+
+        ){
+        drawCircle(
+            color = shadowColor,
+            radius = 50f ,
+            center = Offset(
+                x = size.width  / 2,
+                y = size.height / 2
+            ),
+            style = Stroke(
+                width = 5.dp.toPx()
+            )
+        )
+        drawCircle(
+            color = shadowColor,
+            radius = 30f,
+            center = Offset(
+                x = size.width / 2,
+                y = size.height / 2
+            ),
+
+        )
+
+
+
+    }
+
+
 }
 
 @Immutable
