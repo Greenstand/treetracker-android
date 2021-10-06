@@ -26,12 +26,7 @@ import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraControl
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
-import org.greenstand.android.TreeTracker.view.LocalImage
+import org.greenstand.android.TreeTracker.view.*
 
 @Composable
 fun TreeCaptureScreen(
@@ -68,7 +63,12 @@ fun TreeCaptureScreen(
                         },
                         shape = DepthSurfaceShape.Circle
                     ) {
-                        // TODO add icon
+                        ImageCaptureCircle(
+                            modifier = Modifier
+                                .size(72.dp, 72.dp),
+                            color = AppColors.Green,
+                            shadowColor = AppColors.Gray,
+                        )
                     }
                 }
             )

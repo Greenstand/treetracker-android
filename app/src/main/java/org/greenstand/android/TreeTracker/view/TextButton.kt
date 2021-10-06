@@ -133,18 +133,18 @@ fun DepthButtonCirclePreview() {
 }
 
 @Composable
-/**
- * Button with toggle down animation. Now enables wrap content functionality.
- * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
- *
- * @param onClick The callback function for click event.
- * @param modifier The modifier to be applied to the layout.
- * @param contentAlignment The alignment of content inside the button.
- * @param isEnabled Set button enabled state.
- * @param isSelected Set button selected state (if selected, will toggle down).
- * @param colors The colors of the button. See [AppButtonColors], can be customized.
- * @param content The child content of the button.
- */
+        /**
+         * Button with toggle down animation. Now enables wrap content functionality.
+         * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
+         *
+         * @param onClick The callback function for click event.
+         * @param modifier The modifier to be applied to the layout.
+         * @param contentAlignment The alignment of content inside the button.
+         * @param isEnabled Set button enabled state.
+         * @param isSelected Set button selected state (if selected, will toggle down).
+         * @param colors The colors of the button. See [AppButtonColors], can be customized.
+         * @param content The child content of the button.
+         */
 fun DepthButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -273,7 +273,6 @@ fun DepthSurfaceRectangle(
         } else {
             tempOffset
         }
-
         drawRoundRect(
             color = shadowColor,
             cornerRadius = cornerRadius,
@@ -340,15 +339,16 @@ fun ImageCaptureCircle(
     modifier: Modifier,
     color: Color,
     shadowColor: Color,
-    ){
-    Canvas(modifier = modifier.background(shape = CircleShape, color = color)
+) {
+    Canvas(
+        modifier = modifier.background(shape = CircleShape, color = color)
 
-        ){
+    ) {
         drawCircle(
             color = shadowColor,
-            radius = 50f ,
+            radius = 50f,
             center = Offset(
-                x = size.width  / 2,
+                x = size.width / 2,
                 y = size.height / 2
             ),
             style = Stroke(
@@ -362,14 +362,8 @@ fun ImageCaptureCircle(
                 x = size.width / 2,
                 y = size.height / 2
             ),
-
         )
-
-
-
     }
-
-
 }
 
 @Immutable

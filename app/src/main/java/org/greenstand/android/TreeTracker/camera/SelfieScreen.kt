@@ -26,10 +26,7 @@ fun SelfieScreen() {
             ActionBar(
                 centerAction = {
                     TopBarTitle()
-                    Modifier
-                        .padding(bottom = 30.dp)
-                        .fillMaxSize()
-                },
+                   },
             ) }
     ) {
         Camera(
@@ -42,19 +39,31 @@ fun SelfieScreen() {
                 navController.navigate(NavRoute.ImageReview.create(it.path))
             }
         )
-
         Box(
             modifier = Modifier.fillMaxSize()
                 .padding(bottom = 10.dp),
             contentAlignment = Alignment.BottomCenter
-        ) {
+        ){
+            DepthButton(
+                modifier = Modifier
+                    .size(72.dp, 72.dp)
+                    .clickable { cameraControl.captureImage() },
+                onClick = { cameraControl.captureImage() },
+                colors = DepthButtonColors(
+                    color = AppColors.Green,
+                    shadowColor =   AppColors.GreenShadow,
+                    disabledColor = AppColors.GrayShadow,
+                    disabledShadowColor = AppColors.GrayShadow
+                ),
+                shape = DepthSurfaceShape.Circle,
+            ) {
                 ImageCaptureCircle(
                     modifier = Modifier
-                        .size(72.dp, 72.dp)
-                        .clickable { cameraControl.captureImage() },
+                        .size(72.dp, 72.dp),
                     color = AppColors.Green,
                     shadowColor = AppColors.Gray,
                 )
+            }
         }
     }
 }
