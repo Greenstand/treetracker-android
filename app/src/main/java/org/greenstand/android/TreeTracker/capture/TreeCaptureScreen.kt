@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.capture
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -90,7 +91,8 @@ fun TreeCaptureScreen(
                         .height(100.dp)
                         .padding(15.dp, 10.dp, 10.dp, 10.dp)
                         .aspectRatio(1.0f)
-                        .clip(RoundedCornerShape(percent = 10)),
+                        .clip(RoundedCornerShape(percent = 10))
+                        .clickable { navController.navigate(NavRoute.UserSelect.route) },
                     imagePath = state.profilePicUrl,
                     contentScale = ContentScale.Crop
                 )

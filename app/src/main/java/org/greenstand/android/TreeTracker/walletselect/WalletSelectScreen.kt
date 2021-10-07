@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.walletselect
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,7 +63,8 @@ fun WalletSelectScreen(
                                          end =10.dp,
                                          bottom = 10.dp)
                                 .aspectRatio(1.0f)
-                                .clip(RoundedCornerShape(percent = 10)),
+                                .clip(RoundedCornerShape(percent = 10))
+                                .clickable { navController.navigate(NavRoute.UserSelect.route) },
                             imagePath = it,
                             contentScale = ContentScale.Crop,
                         )

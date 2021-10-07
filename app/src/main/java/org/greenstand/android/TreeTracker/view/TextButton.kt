@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -35,9 +36,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.dashboard.DashboardState
+import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
+import org.greenstand.android.TreeTracker.models.Language
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 
 @Composable
 fun TextButton(
@@ -85,13 +92,21 @@ fun BoxScope.ArrowButton(
 @Composable
 fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
-    TextButton(
-        modifier = Modifier.align(Alignment.Center),
-        stringRes = R.string.language,
+    val languageViewModel: LanguagePickerViewModel =
+        viewModel(factory = LocalViewModelFactory.current)
+    val language: String =
+        languageViewModel.currentLanguage.observeAsState(Language).value.toString()
+
+    DepthButton(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .size(80.dp, 54.dp),
         onClick = {
             navController.navigate(NavRoute.Language.create())
         }
-    )
+    ) {
+        Text(language)
+    }
 }
 
 @Preview(widthDp = 100, heightDp = 100)
