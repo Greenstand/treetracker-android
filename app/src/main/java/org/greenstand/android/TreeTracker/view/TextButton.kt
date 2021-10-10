@@ -100,7 +100,7 @@ fun BoxScope.LanguageButton() {
     DepthButton(
         modifier = Modifier
             .align(Alignment.Center)
-            .size(80.dp, 54.dp),
+            .size(width = 100.dp, 60.dp),
         onClick = {
             navController.navigate(NavRoute.Language.create())
         }
