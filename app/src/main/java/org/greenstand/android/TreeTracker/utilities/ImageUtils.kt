@@ -384,6 +384,10 @@ object ImageUtils {
         val matrix = Matrix()
         val rotationOffset = if (captureSelfie) -90f else 90f
         matrix.setRotate(rotationOffset) // Offsets the -90 degree rotation on resize
+        if(captureSelfie){
+            //Flips image to what to prevent mirroring in selfie mode
+            matrix.preScale(1.0f, -1.0f)
+        }
         val rotatedBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
             bmOptions.outWidth, bmOptions.outHeight, matrix, true
@@ -397,6 +401,14 @@ object ImageUtils {
         )
         val fileOutputStream = FileOutputStream(path)
         byteArrayBitmapStream.writeTo(fileOutputStream)
+    }
+    fun flip(src: Bitmap): Bitmap? {
+        // create new matrix for transformation
+        val matrix = Matrix()
+        matrix.preScale(-1.0f, 1.0f)
+
+        // return transformed image
+        return Bitmap.createBitmap(src, 0, 0, src.width, src.height, matrix, true)
     }
 
     fun base64Image(path: String): String {
