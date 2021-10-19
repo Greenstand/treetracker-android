@@ -103,8 +103,6 @@ fun ImageReviewScreen(photoPath: String) {
                                 contentDescription = null,
                                 modifier = Modifier.size(width = 54.dp, height = 54.dp)
                                     .align(Center)
-
-
                             )
                         }
                     }
