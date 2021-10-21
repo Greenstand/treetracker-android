@@ -1,10 +1,24 @@
 package org.greenstand.android.TreeTracker.preferences
 
 import android.content.SharedPreferences
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 class Preferences(
     private val prefs: SharedPreferences
 ) {
+
+    private val prefUpdateFlow: MutableSharedFlow<Pair<SharedPreferences, String>> = MutableSharedFlow()
+    private val preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+            prefUpdateFlow.tryEmit(prefs to key)
+        }
+
+    init {
+        prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
 
     private var _planterInfoId: Long? = null
 
@@ -30,6 +44,16 @@ class Preferences(
 
     fun getInt(prefKey: PrefKey, default: Int = -1): Int {
         return prefs.getInt(computePath(prefKey), default)
+    }
+
+    fun observeInt(key: PrefKey, default: Int = -1): Flow<Int> {
+        return prefUpdateFlow.filter { it.second == computePath(key) }
+            .map { getInt(key, default) }
+    }
+
+    fun observeString(key: PrefKey, default: String? = null): Flow<String?> {
+        return prefUpdateFlow.filter { it.second == computePath(key) }
+            .map { getString(key, default) }
     }
 
     private fun computePath(prefKey: PrefKey): String {

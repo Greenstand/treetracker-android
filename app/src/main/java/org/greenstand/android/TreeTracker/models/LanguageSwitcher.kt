@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
-import java.util.*
+import java.util.Locale
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapNotNull
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -61,6 +63,11 @@ class LanguageSwitcher(private val prefs: Preferences) {
 
     fun currentLanguage(): Language {
         return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en") ?: "")
+    }
+
+    fun observeCurrentLanguage(): Flow<Language> {
+        return prefs.observeString(LANGUAGE_PREF_KEY, "en")
+            .mapNotNull { langString -> langString?.let { Language.fromString(it) } }
     }
 
     companion object {
