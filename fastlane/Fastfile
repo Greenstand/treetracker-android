@@ -52,7 +52,9 @@ platform :android do
         app: "1:422699885542:android:aab16ef8fc4e5968a0ec27",
         testers: "zaven@greenstand.com, jay@greenstand.com",
         groups: "Greenstand",
-        release_notes: "A new release!"
+        release_notes: "A new release!",
+        firebase_cli_token: ENV["FIREBASE_TOKEN"]
+
       )
 
     slack(message: "A new Greenstand Beta Build has been released on Firebase",
