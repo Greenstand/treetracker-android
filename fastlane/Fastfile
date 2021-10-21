@@ -65,6 +65,17 @@ platform :android do
                    },
         default_payloads: ['git_branch'])
 
+  end
+
+  desc "Test app desitribution"
+  lane :test_dist do
+
+    firebase_app_distribution(
+        app: "1:422699885542:android:aab16ef8fc4e5968a0ec27",
+        testers: "zaven@greenstand.com, jay@greenstand.com",
+        groups: "Greenstand",
+        release_notes: "A new release!"
+      )
 
   end
 

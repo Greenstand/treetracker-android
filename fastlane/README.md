@@ -31,6 +31,11 @@ Bump version code and push
 fastlane android firebase_beta
 ```
 Release a build on Firebase Beta
+### android test_dist
+```
+fastlane android test_dist
+```
+Test app desitribution
 ### android beta_release
 ```
 fastlane android beta_release
