@@ -32,7 +32,13 @@ class TreeCaptureViewModel(
 
     fun onImageCaptured(imageFile: File) {
         viewModelScope.launch {
-            treeCapturer.setImage(imageFile)
+            treeCapturer.
+            setImage(imageFile)
+        }
+    }
+    fun addNote(note: String){
+        viewModelScope.launch {
+            treeCapturer.setNote(note)
         }
     }
 
