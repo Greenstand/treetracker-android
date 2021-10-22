@@ -70,29 +70,6 @@ platform :android do
   end
 
 
-  desc "Submit a new JustDigIt Beta Build to Crashlytics Beta"
-  lane :justdiggit_beta do
-  
-    versionReleased = bump_version_code()
-
-    git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
-
-    gradle(task: "clean assembleJustdiggitDebug")
-    crashlytics(groups: "all-testers")
-
-    slack(message: "A new Justdiggit Beta Build has been released on Fabric",
-        default_payloads: ['git_branch'])
-
-    slack(message: "A new Justdiggit Beta Build has been released on Fabric",
-        slack_url: ENV["SLACK_URL_QC"],
-        payload: {
-                     "Build Number" => versionReleased,
-                   },
-        default_payloads: ['git_branch'])
-  
-  end
-
-
   desc "Deploy a new version to the Google Play"
   lane :deploy do
 
