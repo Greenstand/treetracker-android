@@ -23,4 +23,6 @@ jobs:
       run: |
         gem install bundler
         bundle install
-  
+    - name: Run fastlane
+      run: |
+        bundle exec fastlane firebase_beta

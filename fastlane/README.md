@@ -31,21 +31,6 @@ Bump version code and push
 fastlane android firebase_beta
 ```
 Release a build on Firebase Beta
-### android test_dist
-```
-fastlane android test_dist
-```
-Test app desitribution
-### android beta_release
-```
-fastlane android beta_release
-```
-Job for Travis to Submit a new Greenstand Beta Build to Crashlytics Beta
-### android justdiggit_beta
-```
-fastlane android justdiggit_beta
-```
-Submit a new JustDigIt Beta Build to Crashlytics Beta
 ### android deploy
 ```
 fastlane android deploy
