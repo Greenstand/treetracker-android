@@ -8,9 +8,9 @@ import java.util.Locale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import org.greenstand.android.TreeTracker.preferences.UserPrefKey
 
 enum class Language(val locale: Locale) {
     ENGLISH(Locale("en")),
@@ -71,6 +71,6 @@ class LanguageSwitcher(private val prefs: Preferences) {
     }
 
     companion object {
-        val LANGUAGE_PREF_KEY = PrefKeys.USER_SETTINGS + UserPrefKey("language")
+        val LANGUAGE_PREF_KEY = PrefKeys.USER_SETTINGS + PrefKey("language")
     }
 }

@@ -10,10 +10,10 @@ class Preferences(
     private val prefs: SharedPreferences
 ) {
 
-    private val prefUpdateFlow: MutableSharedFlow<Pair<SharedPreferences, String>> = MutableSharedFlow()
+    private val prefUpdateFlow: MutableSharedFlow<String> = MutableSharedFlow(replay = 1)
     private val preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener =
-        SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            prefUpdateFlow.tryEmit(prefs to key)
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            prefUpdateFlow.tryEmit(key)
         }
 
     init {
@@ -47,12 +47,12 @@ class Preferences(
     }
 
     fun observeInt(key: PrefKey, default: Int = -1): Flow<Int> {
-        return prefUpdateFlow.filter { it.second == computePath(key) }
+        return prefUpdateFlow.filter { it == computePath(key) }
             .map { getInt(key, default) }
     }
 
     fun observeString(key: PrefKey, default: String? = null): Flow<String?> {
-        return prefUpdateFlow.filter { it.second == computePath(key) }
+        return prefUpdateFlow.filter { it == computePath(key) }
             .map { getString(key, default) }
     }
 
