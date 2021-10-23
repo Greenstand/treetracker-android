@@ -23,7 +23,6 @@ class LanguagePickerViewModel(
         languageSwitcher.observeCurrentLanguage()
             .onEach { _currentLanguage.value = it }
             .launchIn(viewModelScope)
-
     }
 
     fun setLanguage(language: Language) {
