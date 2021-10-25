@@ -13,7 +13,7 @@ import org.koin.core.get
 
 data class TreeCaptureState(
     val profilePicUrl: String,
-    val isGettingLocation: Boolean = false,
+   val isGettingLocation: Boolean = false,
 )
 
 class TreeCaptureViewModel(
@@ -37,6 +37,7 @@ class TreeCaptureViewModel(
     }
 
 }
+
 
 class TreeCaptureViewModelFactory(private val profilePicUrl: String)
     : ViewModelProvider.Factory, KoinComponent {
