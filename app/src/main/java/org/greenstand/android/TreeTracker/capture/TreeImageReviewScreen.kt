@@ -90,7 +90,6 @@ fun TreeImageReviewScreen(
                             modifier = Modifier
                                 .size(width = 54.dp, height = 54.dp)
                                 .align(Alignment.CenterVertically)
-
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.check_icon),
@@ -127,7 +126,6 @@ fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel)
             TextField(
                 value = text,
                 onValueChange = { text = it },
-
                 )
         },
         buttons = {
