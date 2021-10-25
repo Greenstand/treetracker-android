@@ -55,7 +55,9 @@ fun TreeImageReviewScreen(
                     ) {
                         DepthButton(
                             onClick = {
-                                navController.popBackStack()
+                                navController.navigate(NavRoute.Selfie.route) {
+                                    navController.popBackStack()
+                                }
                             },
                             colors = DepthButtonColors(
                                 color = AppColors.Red,
@@ -88,6 +90,7 @@ fun TreeImageReviewScreen(
                             modifier = Modifier
                                 .size(width = 54.dp, height = 54.dp)
                                 .align(Alignment.CenterVertically)
+
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.check_icon),
@@ -124,6 +127,7 @@ fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel)
             TextField(
                 value = text,
                 onValueChange = { text = it },
+
                 )
         },
         buttons = {

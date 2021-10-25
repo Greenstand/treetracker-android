@@ -12,10 +12,12 @@ data class TreeImageReviewState(
     val note: String = "",
     val isDialogOpen: Boolean = false
 )
+
 class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
     private val users: Users,
 ) : ViewModel() {
+
     private val _state = MutableLiveData(TreeImageReviewState())
     val state: LiveData<TreeImageReviewState> = _state
 
@@ -31,5 +33,7 @@ class TreeImageReviewViewModel(
     }
     fun setDialogState(state: Boolean){
         _state.value = _state.value?.copy(isDialogOpen = state)
+
     }
+
 }
