@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
@@ -21,7 +22,7 @@ interface TreeTrackerDAO {
     suspend fun getPlanterInfoIdByIdentifier(identifier: String): Long?
 
     @Query("SELECT * FROM planter_info")
-    suspend fun getAllPlanterInfo(): List<PlanterInfoEntity>
+    suspend fun getAllPlanterInfo(): Flow<List<PlanterInfoEntity>>
 
     @Query("SELECT * FROM planter_info where uploaded = 0")
     suspend fun getAllPlanterInfoToUpload(): List<PlanterInfoEntity>
