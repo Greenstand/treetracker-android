@@ -55,9 +55,7 @@ fun TreeImageReviewScreen(
                     ) {
                         DepthButton(
                             onClick = {
-                                navController.navigate(NavRoute.Selfie.route) {
-                                    navController.popBackStack()
-                                }
+                                navController.popBackStack()
                             },
                             colors = DepthButtonColors(
                                 color = AppColors.Red,
