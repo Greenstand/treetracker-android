@@ -22,7 +22,10 @@ interface TreeTrackerDAO {
     suspend fun getPlanterInfoIdByIdentifier(identifier: String): Long?
 
     @Query("SELECT * FROM planter_info")
-    suspend fun getAllPlanterInfo(): Flow<List<PlanterInfoEntity>>
+    fun getAllPlanterInfo(): Flow<List<PlanterInfoEntity>>
+
+    @Query("SELECT * FROM planter_info")
+    suspend fun getAllPlanterInfoList(): List<PlanterInfoEntity>
 
     @Query("SELECT * FROM planter_info where uploaded = 0")
     suspend fun getAllPlanterInfoToUpload(): List<PlanterInfoEntity>
