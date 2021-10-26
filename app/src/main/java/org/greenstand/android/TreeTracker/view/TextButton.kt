@@ -1,13 +1,12 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
@@ -22,6 +21,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -32,10 +32,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.dashboard.DashboardState
@@ -345,6 +347,32 @@ fun DepthSurfaceCircle(
                 x = size.width / 2,
                 y = size.height / 2 + (offset * depth) - (depth / 2)
             ),
+        )
+    }
+}
+
+@Composable
+fun OrangeAddButton(
+    modifier: Modifier,
+) {
+    DepthButton(
+        onClick = {},
+        shape = DepthSurfaceShape.Circle,
+        colors = AppButtonColors.UploadOrange,
+        modifier = modifier
+            .size(height = 70.dp, width = 70.dp),
+    ) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(start = 30.dp, end = 30.dp, top = 10.dp, bottom = 10.dp)
+                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
+        )
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(top = 30.dp, bottom = 30.dp, start = 10.dp, end = 10.dp)
+                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
         )
     }
 }
