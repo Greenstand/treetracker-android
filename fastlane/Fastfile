@@ -58,6 +58,9 @@ platform :android do
       )
 
     slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        payload: {
+                     "Build Number" => versionReleased,
+                   },
         default_payloads: ['git_branch'])
 
     slack(message: "A new Greenstand Beta Build has been released on Firebase",
