@@ -86,17 +86,9 @@ fun WalletSelectScreen(
                     }
                 },
                 centerAction = {
-                        DepthButton(
-                            onClick = { navController.navigate(NavRoute.SignupFlow.route) },
-                            shape = DepthSurfaceShape.Circle,
-                            colors = AppButtonColors.UploadOrange,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(height = 70.dp, width = 70.dp),
-                        ) {
-                            Text("+", color= Color.Black, fontWeight = FontWeight.Bold, fontSize = 50.sp)
-                        }
-
+                    OrangeAddButton(modifier = Modifier
+                                                 .align(Alignment.Center)
+                                                 .clickable { navController.navigate(NavRoute.SignupFlow.route) })
                 },
                 leftAction = {
                     ArrowButton(isLeft = true) {

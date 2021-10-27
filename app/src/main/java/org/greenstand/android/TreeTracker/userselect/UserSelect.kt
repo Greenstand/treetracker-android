@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.userselect
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,17 +28,7 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.AppButtonColors
-import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.Colors
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthButtonColors
-import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
-import org.greenstand.android.TreeTracker.view.TextButton
-import org.greenstand.android.TreeTracker.view.TextStyles
-import org.greenstand.android.TreeTracker.view.UserButton
+import org.greenstand.android.TreeTracker.view.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -56,16 +47,9 @@ fun UserSelect(
             ActionBar(
                 centerAction = {
                     if (isCreateUserEnabled) {
-                        DepthButton(
-                            onClick = { navController.navigate(NavRoute.SignupFlow.route) },
-                            shape = DepthSurfaceShape.Circle,
-                            colors = AppButtonColors.UploadOrange,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(height = 70.dp, width = 70.dp),
-                        ) {
-                            Text("+")
-                        }
+                        OrangeAddButton(modifier = Modifier
+                            .align(Alignment.Center)
+                            .clickable { navController.navigate(NavRoute.SignupFlow.route) })
                     }
                 },
                 rightAction = {
