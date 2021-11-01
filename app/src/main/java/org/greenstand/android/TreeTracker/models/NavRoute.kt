@@ -15,7 +15,8 @@ import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.NameEntryView
-import org.greenstand.android.TreeTracker.signup.SignupFlow
+import org.greenstand.android.TreeTracker.signup.CredentialEntryView
+import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
@@ -36,7 +37,7 @@ sealed class NavRoute {
 
     object SignupFlow : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            SignupFlow()
+            SignUpScreen()
         }
         override val route: String = "signup-flow"
     }
