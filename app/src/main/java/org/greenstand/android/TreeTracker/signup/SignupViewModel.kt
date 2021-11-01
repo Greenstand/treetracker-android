@@ -13,10 +13,14 @@ data class SignUpState(
     val email: String? = null,
     val phone: String? = null,
     val organization: String? = null,
-    val nameEntryStage: Boolean = false,
     val photoPath: String? = null,
     val credential: Credential = Credential.Email(),
    )
+data class CredentialState(
+    val nameEntryStage: Boolean = false,
+    val isEmailValid: Boolean = false,
+    val isPhoneValid: Boolean = false,
+    )
 
 sealed class Credential {
 
@@ -51,6 +55,8 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
     private val _state = MutableLiveData(SignUpState())
     val state: LiveData<SignUpState> = _state
+    private val _credentialState = MutableLiveData(CredentialState())
+    val credentialState: LiveData<CredentialState> = _credentialState
 
     fun updateName(name: String) {
         // TODO validate data and show errors if needed, after click
@@ -63,11 +69,12 @@ class SignupViewModel(private val users: Users) : ViewModel() {
     fun updateEmail(email: String) {
         // TODO validate data and show errors if needed, after click
         _state.value = _state.value?.copy(email = email)
+        _credentialState.value = _credentialState.value?.copy(isEmailValid = Validation.isEmailValid(email))
     }
 
     fun updatePhone(phone: String) {
         _state.value = _state.value?.copy(phone = phone)
-        _state.value = _state.value?.copy(credential = Credential.Phone())
+        _credentialState.value = _credentialState.value?.copy(isPhoneValid = Validation.isEmailValid(phone))
 
     }
 
@@ -75,7 +82,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         _state.value = _state.value?.copy(credential = updatedCredential)
     }
     fun updateSignUpState(state: Boolean){
-        _state.value = _state.value?.copy(nameEntryStage = state)
+        _credentialState.value = _credentialState.value?.copy(nameEntryStage = state)
     }
 
     private val currentIdentifier: String
