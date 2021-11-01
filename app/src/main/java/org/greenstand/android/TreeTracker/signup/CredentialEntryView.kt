@@ -46,6 +46,7 @@ fun CredentialEntryView(
     viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.observeAsState(SignUpState())
+    val credentialState by viewModel.credentialState.observeAsState(CredentialState())
     val navController = LocalNavHostController.current
 
     Scaffold(
@@ -65,6 +66,7 @@ fun CredentialEntryView(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
+                        isEnabled = (credentialState.isEmailValid || credentialState.isPhoneValid)
                     ) {
                         viewModel.updateSignUpState(true)
                     }

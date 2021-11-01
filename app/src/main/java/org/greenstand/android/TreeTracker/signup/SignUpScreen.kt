@@ -12,7 +12,7 @@ import org.koin.core.context.GlobalContext.get
 
 @Composable
 fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
-   val state by viewModel.state.observeAsState(SignUpState())
+   val state by viewModel.credentialState.observeAsState(CredentialState())
 
    if(state.nameEntryStage) {
       NameEntryView(viewModel)
