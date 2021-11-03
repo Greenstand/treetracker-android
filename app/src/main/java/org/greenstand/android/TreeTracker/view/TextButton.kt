@@ -354,9 +354,10 @@ fun DepthSurfaceCircle(
 @Composable
 fun OrangeAddButton(
     modifier: Modifier,
-) {
+    onClick: () -> Unit,
+    ) {
     DepthButton(
-        onClick = {},
+        onClick = onClick,
         shape = DepthSurfaceShape.Circle,
         colors = AppButtonColors.UploadOrange,
         modifier = modifier

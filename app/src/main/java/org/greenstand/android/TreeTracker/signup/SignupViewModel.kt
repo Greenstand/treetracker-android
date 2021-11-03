@@ -74,7 +74,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
     fun updatePhone(phone: String) {
         _state.value = _state.value?.copy(phone = phone)
-        _credentialState.value = _credentialState.value?.copy(isPhoneValid = Validation.isEmailValid(phone))
+        _credentialState.value = _credentialState.value?.copy(isPhoneValid = Validation.isValidPhoneNumber(phone))
 
     }
 
@@ -96,7 +96,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                     // TODO fix user data usage
                     firstName = extractName(name, true),
                     lastName = extractName(name, false),
-                    phone = if (!state.email.isNullOrBlank()) state.phone else null,
+                    phone = if (!state.phone.isNullOrBlank()) state.phone else null,
                     email = if (!state.email.isNullOrBlank()) state.email else null,
                     identifier = currentIdentifier,
                     organization = organization,
