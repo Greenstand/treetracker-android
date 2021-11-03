@@ -84,48 +84,8 @@ fun UserButton(
     selectedColor: Color,
     onClick: () -> Unit
 ) {
-    SelectableImageDetail(
-        user.photoPath,
-        isSelected,
-        buttonColors,
-        selectedColor,
-        onClick
-    ) {
-        Text(
-            text = "${user.firstName} ${user.lastName}\n${user.wallet}",
-            color = AppColors.LightGray,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = FontFamily.SansSerif,
-        )
-        Row(
-            modifier = Modifier.padding(top = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box( // TODO: Change into 'Plant' icon.
-                modifier = Modifier
-                    .size(width = 20.dp, height = 22.dp)
-                    .background(AppColors.LightGray)
-            )
-            Text(
-                text = "1,234", // TODO: Fetch user's token count.
-                modifier = Modifier.padding(start = 4.dp),
-                color = AppColors.LightGray,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = FontFamily.SansSerif,
-            )
-        }
-    }
-}
-@Composable
-fun WalletUserButton(
-    user: User,
-    isSelected: Boolean,
-    buttonColors: DepthButtonColors,
-    selectedColor: Color,
-    onClick: () -> Unit
-) {
+    val credential: String? = if (user.email.isNullOrEmpty()) user.phone else user.email
+
     SelectableImageDetail(
         user.photoPath,
         isSelected,
@@ -141,7 +101,7 @@ fun WalletUserButton(
             fontFamily = FontFamily.SansSerif,
         )
         Text(
-            text = "+1 55 555 5555", // TODO: Fetch user's phone number.
+            text = "$credential", // TODO: Fetch user's phone number.
             color = AppColors.LightGray,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,

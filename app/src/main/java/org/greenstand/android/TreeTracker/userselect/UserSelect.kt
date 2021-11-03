@@ -48,8 +48,8 @@ fun UserSelect(
                 centerAction = {
                     if (isCreateUserEnabled) {
                         OrangeAddButton(modifier = Modifier
-                            .align(Alignment.Center)
-                            .clickable { navController.navigate(NavRoute.SignupFlow.route) })
+                            .align(Alignment.Center),
+                            onClick = { navController.navigate(NavRoute.SignupFlow.route)})
                     }
                 },
                 rightAction = {

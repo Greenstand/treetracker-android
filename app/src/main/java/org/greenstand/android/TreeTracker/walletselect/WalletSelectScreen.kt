@@ -87,8 +87,8 @@ fun WalletSelectScreen(
                 },
                 centerAction = {
                     OrangeAddButton(modifier = Modifier
-                                                 .align(Alignment.Center)
-                                                 .clickable { navController.navigate(NavRoute.SignupFlow.route) })
+                                                 .align(Alignment.Center),
+                        onClick = { navController.navigate(NavRoute.SignupFlow.route)})
                 },
                 leftAction = {
                     ArrowButton(isLeft = true) {
@@ -145,7 +145,7 @@ fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
                                      bottom = 30.dp)
             )
 
-            WalletUserButton(
+            UserButton(
                 user = user,
                 isSelected = isSelected,
                 AppButtonColors.Default,
