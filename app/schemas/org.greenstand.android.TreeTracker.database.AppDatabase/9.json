@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "08c230291fc8ee085454a845d5d34a5b",
+    "identityHash": "2ef94b4ec00f4b0bc85bfaf6324a374f",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -93,7 +93,7 @@
       },
       {
         "tableName": "planter_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`planter_identifier` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `organization` TEXT, `phone` TEXT, `email` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT, `record_uuid` TEXT NOT NULL DEFAULT '', `power_user` INTEGER NOT NULL DEFAULT 0, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`planter_identifier` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `organization` TEXT, `phone` TEXT, `email` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT, `record_uuid` TEXT NOT NULL DEFAULT '', `power_user` INTEGER NOT NULL DEFAULT 0, `local_photo_path` TEXT NOT NULL DEFAULT '', `photo_url` TEXT DEFAULT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "identifier",
@@ -176,6 +176,20 @@
             "defaultValue": "0"
           },
           {
+            "fieldPath": "localPhotoPath",
+            "columnName": "local_photo_path",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "photoUrl",
+            "columnName": "photo_url",
+            "affinity": "TEXT",
+            "notNull": false,
+            "defaultValue": "NULL"
+          },
+          {
             "fieldPath": "id",
             "columnName": "_id",
             "affinity": "INTEGER",
@@ -206,6 +220,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_planter_info_uploaded` ON `${TABLE_NAME}` (`uploaded`)"
+          },
+          {
+            "name": "index_planter_info_local_photo_path",
+            "unique": false,
+            "columnNames": [
+              "local_photo_path"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_planter_info_local_photo_path` ON `${TABLE_NAME}` (`local_photo_path`)"
           }
         ],
         "foreignKeys": []
@@ -547,7 +570,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '08c230291fc8ee085454a845d5d34a5b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2ef94b4ec00f4b0bc85bfaf6324a374f')"
     ]
   }
 }
