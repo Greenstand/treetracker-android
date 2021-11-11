@@ -46,6 +46,8 @@ platform :android do
 
     git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
+    push_to_git_remote
+
     gradle(task: "clean assembleGreenstandBeta")
 
     firebase_app_distribution(
