@@ -355,7 +355,7 @@ fun DepthSurfaceCircle(
 fun OrangeAddButton(
     modifier: Modifier,
     onClick: () -> Unit,
-    ) {
+) {
     DepthButton(
         onClick = onClick,
         shape = DepthSurfaceShape.Circle,
