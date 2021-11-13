@@ -46,14 +46,11 @@ import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
-import org.greenstand.android.TreeTracker.viewmodels.DataViewModel
 import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
-import org.greenstand.android.TreeTracker.viewmodels.TermsPolicyViewModel
 import org.greenstand.android.TreeTracker.viewmodels.TreeHeightViewModel
-import org.greenstand.android.TreeTracker.viewmodels.TreePreviewViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -65,15 +62,9 @@ val appModule = module {
 
     viewModel { SignupViewModel() }
 
-    viewModel { TermsPolicyViewModel(get(), get()) }
-
     viewModel { TreeHeightViewModel(get(), get(), get(), get()) }
 
-    viewModel { DataViewModel(get(), get(), get(), get()) }
-
     viewModel { MapViewModel(get(), get(), get(), get(), get(), get(), get()) }
-
-    viewModel { TreePreviewViewModel(get(), get()) }
 
     viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
 
