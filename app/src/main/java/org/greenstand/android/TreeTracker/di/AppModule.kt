@@ -50,7 +50,6 @@ import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
-import org.greenstand.android.TreeTracker.viewmodels.TreeHeightViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -61,8 +60,6 @@ val appModule = module {
     viewModel { LoginViewModel(get(), get()) }
 
     viewModel { SignupViewModel() }
-
-    viewModel { TreeHeightViewModel(get(), get(), get(), get()) }
 
     viewModel { MapViewModel(get(), get(), get(), get(), get(), get(), get()) }
 

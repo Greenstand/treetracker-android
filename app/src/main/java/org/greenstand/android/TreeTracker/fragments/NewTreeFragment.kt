@@ -18,7 +18,12 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import org.greenstand.android.TreeTracker.databinding.FragmentNewTreeBinding
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.utilities.*
+import org.greenstand.android.TreeTracker.utilities.CameraHelper
+import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.dismissKeyboard
+import org.greenstand.android.TreeTracker.utilities.mainActivity
+import org.greenstand.android.TreeTracker.utilities.vibrate
+import org.greenstand.android.TreeTracker.utilities.visibleIf
 import org.greenstand.android.TreeTracker.view.CustomToast
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -51,7 +56,6 @@ class NewTreeFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         with(mainActivity()) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-            bindings.toolbarTitle.setText(R.string.new_tree)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
