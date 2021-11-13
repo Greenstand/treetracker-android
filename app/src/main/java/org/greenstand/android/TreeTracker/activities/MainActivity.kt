@@ -21,7 +21,6 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.application.Permissions
 import org.greenstand.android.TreeTracker.databinding.ActivityMainBinding
-import org.greenstand.android.TreeTracker.fragments.DataFragment
 import org.greenstand.android.TreeTracker.fragments.MapsFragmentDirections
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
@@ -111,15 +110,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val bundle: Bundle?
         when (item.itemId) {
-            R.id.action_data -> {
-                fragment = DataFragment()
-                bundle = intent.extras
-                fragment?.arguments = bundle
-
-                findNavController(R.id.nav_host_fragment)
-                    .navigate(MapsFragmentDirections.actionMapsFragmentToDataFragment())
-                return true
-            }
             R.id.action_about -> {
                 findNavController(R.id.nav_host_fragment)
                     .navigate(MapsFragmentDirections.actionMapsFragmentToAboutFragment())

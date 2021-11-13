@@ -11,6 +11,7 @@ import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
 import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
+@Deprecated("Old Version")
 class LoginViewModel(
     private val dao: TreeTrackerDAO,
     private val planterCheckInUseCase: PlanterCheckInUseCase
