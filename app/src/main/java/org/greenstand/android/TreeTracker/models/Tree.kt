@@ -1,11 +1,11 @@
 package org.greenstand.android.TreeTracker.models
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import java.util.UUID
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class Tree(
+data class Tree(
     val treeUuid: UUID,
     val planterCheckInId: Long,
     val content: String,

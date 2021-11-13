@@ -1,14 +1,11 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
@@ -16,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -28,15 +26,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
+import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 
 @Composable
 fun TextButton(
@@ -48,7 +51,7 @@ fun TextButton(
     // TODO customize button visuals
     Button(
         onClick = onClick,
-        modifier = modifier.size(height = 46.dp, width = 110.dp),
+        modifier = modifier.size(height = 46.dp, width = 120.dp),
         enabled = enabled,
     ) {
         Text(
@@ -84,13 +87,21 @@ fun BoxScope.ArrowButton(
 @Composable
 fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
-    TextButton(
-        modifier = Modifier.align(Alignment.Center),
-        stringRes = R.string.language,
+    val languageViewModel: LanguagePickerViewModel =
+        viewModel(factory = LocalViewModelFactory.current)
+    val language: String =
+        languageViewModel.currentLanguage.observeAsState(Language).value.toString()
+
+    DepthButton(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .size(width = 100.dp, 60.dp),
         onClick = {
             navController.navigate(NavRoute.Language.create())
         }
-    )
+    ) {
+        Text(language)
+    }
 }
 
 @Preview(widthDp = 100, heightDp = 100)
@@ -132,18 +143,18 @@ fun DepthButtonCirclePreview() {
 }
 
 @Composable
-/**
- * Button with toggle down animation. Now enables wrap content functionality.
- * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
- *
- * @param onClick The callback function for click event.
- * @param modifier The modifier to be applied to the layout.
- * @param contentAlignment The alignment of content inside the button.
- * @param isEnabled Set button enabled state.
- * @param isSelected Set button selected state (if selected, will toggle down).
- * @param colors The colors of the button. See [AppButtonColors], can be customized.
- * @param content The child content of the button.
- */
+        /**
+         * Button with toggle down animation. Now enables wrap content functionality.
+         * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
+         *
+         * @param onClick The callback function for click event.
+         * @param modifier The modifier to be applied to the layout.
+         * @param contentAlignment The alignment of content inside the button.
+         * @param isEnabled Set button enabled state.
+         * @param isSelected Set button selected state (if selected, will toggle down).
+         * @param colors The colors of the button. See [AppButtonColors], can be customized.
+         * @param content The child content of the button.
+         */
 fun DepthButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -192,9 +203,15 @@ fun DepthButton(
             modifier = Modifier
                 .align(contentAlignment)
                 .offset {
-                    when(shape) {
-                       DepthSurfaceShape.Rectangle -> IntOffset(0, (depth * offsetAnimation).toInt())
-                       DepthSurfaceShape.Circle -> IntOffset(0, (depth * offsetAnimation - depth).toInt())
+                    when (shape) {
+                        DepthSurfaceShape.Rectangle -> IntOffset(
+                            0,
+                            (depth * offsetAnimation).toInt()
+                        )
+                        DepthSurfaceShape.Circle -> IntOffset(
+                            0,
+                            (depth * offsetAnimation - depth).toInt()
+                        )
                     }
 
                 }
@@ -266,7 +283,6 @@ fun DepthSurfaceRectangle(
         } else {
             tempOffset
         }
-
         drawRoundRect(
             color = shadowColor,
             cornerRadius = cornerRadius,
@@ -288,7 +304,7 @@ fun DepthSurfaceCircle(
     color: Color,
     shadowColor: Color,
     offset: Float,
-    depth: Float = 20f,
+    depth: Float,
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
         val gutter = 2
@@ -323,6 +339,65 @@ fun DepthSurfaceCircle(
             center = Offset(
                 x = size.width / 2,
                 y = size.height / 2 + (offset * depth) - (depth / 2)
+            ),
+        )
+    }
+}
+
+@Composable
+fun OrangeAddButton(
+    modifier: Modifier,
+    onClick: () -> Unit,
+) {
+    DepthButton(
+        onClick = onClick,
+        shape = DepthSurfaceShape.Circle,
+        colors = AppButtonColors.UploadOrange,
+        modifier = modifier
+            .size(height = 70.dp, width = 70.dp),
+    ) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(start = 30.dp, end = 30.dp, top = 10.dp, bottom = 10.dp)
+                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
+        )
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(top = 30.dp, bottom = 30.dp, start = 10.dp, end = 10.dp)
+                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
+        )
+    }
+}
+
+@Composable
+fun ImageCaptureCircle(
+    modifier: Modifier,
+    color: Color,
+    shadowColor: Color,
+) {
+    Canvas(
+        modifier = modifier.background(shape = CircleShape, color = color)
+
+    ) {
+        drawCircle(
+            color = shadowColor,
+            radius = 50f,
+            center = Offset(
+                x = size.width / 2,
+                y = size.height / 2
+            ),
+            style = Stroke(
+                width = 5.dp.toPx()
+            )
+        )
+        drawCircle(
+            color = shadowColor,
+            radius = 30f,
+            center = Offset(
+                x = size.width / 2,
+                y = size.height / 2
             ),
         )
     }

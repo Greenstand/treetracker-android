@@ -14,7 +14,8 @@ data class CreatePlanterInfoParams(
     val organization: String?,
     val phone: String?,
     val email: String?,
-    val identifier: String
+    val identifier: String,
+    val photoPath: String,
 )
 
 class CreatePlanterInfoUseCase(
@@ -42,6 +43,7 @@ class CreatePlanterInfoUseCase(
                 uploaded = false,
                 recordUuid = UUID.randomUUID().toString(),
                 isPowerUser = false,
+                localPhotoPath = params.photoPath,
             )
 
             dao.insertPlanterInfo(entity).also {

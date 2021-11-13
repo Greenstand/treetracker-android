@@ -1,6 +1,9 @@
 package org.greenstand.android.TreeTracker.models
 
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -8,7 +11,6 @@ import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.user.User
 import timber.log.Timber
-import java.util.*
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,
@@ -19,34 +21,24 @@ class Users(
     var currentSessionUser: User? = null
         private set
 
-    suspend fun getUsers(): List<User> {
-        val planterInfoList = dao.getAllPlanterInfo()
-        val planterCheckIns = dao.getPlanterCheckInsById(planterInfoList.map { it.id })
-        val planterIdsToICheckIns = planterCheckIns
-            .groupBy { it.planterInfoId }
-            .map { planterCheckInsForUser ->
-                planterCheckInsForUser.key to planterCheckInsForUser.value.find { planterCheckIn ->
-                    !planterCheckIn.localPhotoPath.isNullOrEmpty()
-                }
-            }.toMap()
-        return planterInfoList.mapNotNull { planterInfo ->
-            createUser(planterInfo, planterIdsToICheckIns[planterInfo.id])
-        }
+    fun users(): Flow<List<User>> {
+        return dao.getAllPlanterInfo()
+            .map { planters -> planters.mapNotNull { createUser(it) } }
+    }
+
+    suspend fun getUserList(): List<User> {
+        return dao.getAllPlanterInfoList()
+            .mapNotNull { planter -> createUser(planter) }
     }
 
     suspend fun getUser(planterInfoId: Long): User? {
         return createUser(
-            dao.getPlanterInfoById(planterInfoId),
-            dao.getAllPlanterCheckInsForPlanterInfoId(planterInfoId)
-                .find { !it.localPhotoPath.isNullOrEmpty() })
+            dao.getPlanterInfoById(planterInfoId))
     }
 
     suspend fun getPowerUser(): User? {
         val planterInfo = dao.getPowerUser() ?: return null
-        return createUser(
-            planterInfo,
-            dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
-                .find { !it.localPhotoPath.isNullOrEmpty() })
+        return createUser(planterInfo)
     }
 
     suspend fun createUser(
@@ -77,6 +69,7 @@ class Users(
                 uploaded = false,
                 recordUuid = UUID.randomUUID().toString(),
                 isPowerUser = isPowerUser,
+                localPhotoPath = photoPath,
             )
 
             val userId = dao.insertPlanterInfo(entity).also {
@@ -98,6 +91,7 @@ class Users(
         localPhotoPath: String,
         planterInfoId: Long
     ) {
+        endUserSession()
         withContext(Dispatchers.IO) {
 
             val location = locationUpdateManager.currentLocation
@@ -115,7 +109,7 @@ class Users(
             dao.insertPlanterCheckIn(planterCheckInEntity)
 
             dao.getPlanterInfoById(planterInfoId)?.let { planterInfo ->
-                currentSessionUser = createUser(planterInfo, planterCheckInEntity)
+                currentSessionUser = createUser(planterInfo)
             } ?: Timber.e("Could not find planter info of id $planterInfoId")
 
             analytics.userCheckedIn()
@@ -126,15 +120,14 @@ class Users(
         currentSessionUser = null
     }
 
-    private fun createUser(planterInfoEntity: PlanterInfoEntity?, planterCheckInEntity: PlanterCheckInEntity?): User? {
+    private fun createUser(planterInfoEntity: PlanterInfoEntity?): User? {
         planterInfoEntity ?: return null
-        planterCheckInEntity ?: return null
         return User(
             id = planterInfoEntity.id,
             wallet = planterInfoEntity.identifier,
             firstName = planterInfoEntity.firstName,
             lastName = planterInfoEntity.lastName,
-            photoPath = planterCheckInEntity.localPhotoPath ?: "",
+            photoPath = planterInfoEntity.localPhotoPath ?: "",
             isPowerUser = planterInfoEntity.isPowerUser
         )
     }

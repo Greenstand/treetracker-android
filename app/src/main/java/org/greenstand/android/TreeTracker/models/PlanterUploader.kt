@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.models
 
 import com.google.gson.Gson
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
@@ -11,7 +12,6 @@ import org.greenstand.android.TreeTracker.usecases.UploadImageParams
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
-import java.io.File
 
 /**
  * Uploads all user data including the users photos
@@ -29,7 +29,7 @@ class PlanterUploader(
         withContext(Dispatchers.IO) {
             uploadPlanterImages()
             uploadPlanterInfo()
-            deleteLocalImagesThatWereUploaded()
+//            deleteLocalImagesThatWereUploaded()
         }
     }
 
@@ -62,7 +62,7 @@ class PlanterUploader(
                 // Find the image this user first took during registration
                 // This image is the oldest image for PlanterCheckIn
                 val registrationPhotoUrl = dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
-                    .minBy { it.createdAt }
+                    .minByOrNull { it.createdAt }
                     ?.photoUrl
                     ?: ""
 

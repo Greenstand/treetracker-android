@@ -46,16 +46,23 @@ platform :android do
 
     git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
+    push_to_git_remote
+
     gradle(task: "clean assembleGreenstandBeta")
 
     firebase_app_distribution(
         app: "1:422699885542:android:aab16ef8fc4e5968a0ec27",
         testers: "zaven@greenstand.com, jay@greenstand.com",
         groups: "Greenstand",
-        release_notes: "A new release!"
+        release_notes: "A new release!",
+        firebase_cli_token: ENV["FIREBASE_TOKEN"]
+
       )
 
     slack(message: "A new Greenstand Beta Build has been released on Firebase",
+        payload: {
+                     "Build Number" => versionReleased,
+                   },
         default_payloads: ['git_branch'])
 
     slack(message: "A new Greenstand Beta Build has been released on Firebase",
@@ -65,50 +72,6 @@ platform :android do
                    },
         default_payloads: ['git_branch'])
 
-
-  end
-
-
-  desc "Job for Travis to Submit a new Greenstand Beta Build to Crashlytics Beta"
-  lane :beta_release do
-
-    gradle(task: "clean assembleGreenstandDebug")
-    crashlytics(groups: "all-testers")
-  
-    slack(message: "A new Greenstand Beta Build has been released on Fabric",
-        default_payloads: ['git_branch'])
-
-    slack(message: "A new Greenstand Beta Build has been released on Fabric",
-        slack_url: ENV["SLACK_URL_QC"],
-        payload: {
-                     "Build Number" => versionReleased,
-                   },
-        default_payloads: ['git_branch'])
-
-  end
-
-
-
-  desc "Submit a new JustDigIt Beta Build to Crashlytics Beta"
-  lane :justdiggit_beta do
-  
-    versionReleased = bump_version_code()
-
-    git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
-
-    gradle(task: "clean assembleJustdiggitDebug")
-    crashlytics(groups: "all-testers")
-
-    slack(message: "A new Justdiggit Beta Build has been released on Fabric",
-        default_payloads: ['git_branch'])
-
-    slack(message: "A new Justdiggit Beta Build has been released on Fabric",
-        slack_url: ENV["SLACK_URL_QC"],
-        payload: {
-                     "Build Number" => versionReleased,
-                   },
-        default_payloads: ['git_branch'])
-  
   end
 
 

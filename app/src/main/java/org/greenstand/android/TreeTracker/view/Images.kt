@@ -40,7 +40,7 @@ fun loadLocalImage(
     imagePath: String,
 ): State<ImageBitmap?> {
     val scope = rememberCoroutineScope()
-    return produceState(initialValue = null, imagePath) {
+    return produceState<ImageBitmap?>(initialValue = null, imagePath) {
         scope.launch {
             try {
                 value = BitmapFactory.decodeFile(imagePath).asImageBitmap()

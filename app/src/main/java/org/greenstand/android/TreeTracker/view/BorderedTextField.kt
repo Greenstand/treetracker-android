@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 fun BorderedTextField(
     padding: PaddingValues = PaddingValues(0.dp),
     value: String,
+
     onValueChange: (String) -> Unit,
     placeholder: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -33,6 +34,8 @@ fun BorderedTextField(
                 BorderStroke(0.5.dp, SolidColor(Color.White)),
                 RoundedCornerShape(16.dp),
             )
+            .padding(padding)
+
     ) {
         TextField(
             modifier = Modifier.padding(8.dp),

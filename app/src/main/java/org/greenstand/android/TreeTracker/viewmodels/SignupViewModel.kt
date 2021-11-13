@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.data.UserInfo
 
+@Deprecated("Old Version")
 class SignupViewModel : ViewModel() {
 
     lateinit var userIdentification: String
