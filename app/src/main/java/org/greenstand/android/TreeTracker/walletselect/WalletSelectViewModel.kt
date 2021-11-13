@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Users
@@ -11,7 +14,7 @@ import org.greenstand.android.TreeTracker.models.user.User
 
 data class WalletSelectState(
     val currentUser: User? = null,
-    val alternateUsers: List<User>? = null,
+    val alternateUsers: List<User> = emptyList(),
     val selectedUser: User? = null,
 )
 
@@ -25,21 +28,22 @@ class WalletSelectViewModel(
 
     fun loadPlanter(planterInfoId: Long) {
         viewModelScope.launch {
-            val currentPlanter = users.getUser(planterInfoId)
-            val alternatePlanters = users.getUsers()
-                .filter { it.id != currentPlanter?.id }
-
-            _state.value = WalletSelectState(
-                currentUser = currentPlanter,
-                alternateUsers = alternatePlanters
-            )
+            val currentUser = users.getUser(planterInfoId)
+            users.users()
+                .map { users -> users.filter { it.id != currentUser?.id } }
+                .onEach { users ->
+                    _state.value = WalletSelectState(
+                        currentUser = currentUser,
+                        alternateUsers = users
+                    )}
+                .launchIn(this)
         }
     }
 
     fun selectPlanter(planterInfoId: Long) {
         viewModelScope.launch {
             _state.value = _state.value?.copy(
-                selectedUser = users.getUsers().find { planterInfoId == it.id }
+                selectedUser = users.getUserList().find { planterInfoId == it.id }
             )
         }
     }
