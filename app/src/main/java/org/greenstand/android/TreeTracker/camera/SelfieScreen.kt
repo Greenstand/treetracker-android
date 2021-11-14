@@ -1,6 +1,9 @@
 package org.greenstand.android.TreeTracker.camera
 
+import android.content.res.Resources
 import android.graphics.Color
+import android.util.DisplayMetrics
+import android.util.Size
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -21,6 +24,7 @@ import org.greenstand.android.TreeTracker.view.*
 fun SelfieScreen() {
     val navController = LocalNavHostController.current
     val cameraControl = remember { CameraControl() }
+
     Scaffold(
         topBar = {
             ActionBar(
@@ -29,18 +33,19 @@ fun SelfieScreen() {
                    },
             ) }
     ) {
-        Camera(
-            isSelfieMode = true,
-            cameraControl = cameraControl,
+            Camera(
+                isSelfieMode = true,
+                cameraControl = cameraControl,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.0f),
+                onImageCaptured = {
+                    navController.navigate(NavRoute.ImageReview.create(it.path))
+                }
+            )
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 30.dp, bottom = 150.dp),
-            onImageCaptured = {
-                navController.navigate(NavRoute.ImageReview.create(it.path))
-            }
-        )
-        Box(
-            modifier = Modifier.fillMaxSize()
                 .padding(bottom = 10.dp),
             contentAlignment = Alignment.BottomCenter
         ){

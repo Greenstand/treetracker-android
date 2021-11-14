@@ -10,10 +10,16 @@ import org.greenstand.android.TreeTracker.utilities.Validation
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
     val name: String? = null,
+    val email: String? = null,
+    val phone: String? = null,
     val organization: String? = null,
     val photoPath: String? = null,
+    val nameEntryStage: Boolean = false,
+    val isEmailValid: Boolean = false,
+    val isPhoneValid: Boolean = false,
+    val canGoToNextScreen: Boolean = false,
     val credential: Credential = Credential.Email(),
-)
+   )
 
 sealed class Credential {
 
@@ -59,15 +65,22 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
     fun updateEmail(email: String) {
         // TODO validate data and show errors if needed, after click
-        _state.value = _state.value?.copy(credential = Credential.Email().apply { text = email })
+        _state.value = _state.value?.copy(email = email)
+        _state.value = _state.value?.copy(isEmailValid = Validation.isEmailValid(email))
     }
 
     fun updatePhone(phone: String) {
-        _state.value = _state.value?.copy(credential = Credential.Phone().apply { text = phone })
+        _state.value = _state.value?.copy(phone = phone)
+        _state.value = _state.value?.copy(isPhoneValid = Validation.isValidPhoneNumber(phone))
+
     }
 
     fun updateCredentialType(updatedCredential: Credential) {
         _state.value = _state.value?.copy(credential = updatedCredential)
+    }
+
+    fun updateSignUpState(state: Boolean){
+        _state.value = _state.value?.copy(nameEntryStage = state)
     }
 
     private val currentIdentifier: String
@@ -81,17 +94,9 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                     // TODO fix user data usage
                     firstName = extractName(name, true),
                     lastName = extractName(name, false),
-                    phone = if (state.credential is Credential.Phone) {
-                        state.credential.text
-                    } else {
-                        null
-                    },
-                    email = if (state.credential is Credential.Email) {
-                        state.credential.text
-                    } else {
-                        null
-                    },
-                    identifier = currentIdentifier,
+                    phone = state.phone,
+                    email = state.email,
+                    identifier = extractIdentifier(state),
                     organization = organization,
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,
@@ -114,6 +119,18 @@ class SignupViewModel(private val users: Users) : ViewModel() {
             names[0]
         } else {
             names[1]
+        }
+    }
+
+    private fun extractIdentifier(state: SignUpState):String{
+        return when {
+            (!state.email.isNullOrBlank()) -> {
+                state.email
+            }(!state.phone.isNullOrBlank()) -> {
+                state.phone
+            }else -> {
+                currentIdentifier
+            }
         }
     }
 }
