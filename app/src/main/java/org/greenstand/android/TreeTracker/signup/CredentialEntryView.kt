@@ -13,8 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +22,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors.GrayShadow
 import org.greenstand.android.TreeTracker.view.AppColors.Green
@@ -42,10 +37,7 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
-fun CredentialEntryView(
-    viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current),
-) {
-    val state by viewModel.state.observeAsState(SignUpState())
+fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
 
     Scaffold(
@@ -67,7 +59,7 @@ fun CredentialEntryView(
                         isLeft = false,
                         isEnabled = (state.isEmailValid || state.isPhoneValid)
                     ) {
-                        viewModel.updateSignUpState(true)
+                        viewModel.goToNameEntry()
                     }
                 }
             )
@@ -102,7 +94,7 @@ fun CredentialEntryView(
                 )
             }
 
-            when (val credential = state.credential) {
+            when (state.credential) {
                 is Credential.Email -> BorderedTextField(
                     value = state.email ?: "",
                     padding = PaddingValues(16.dp),
@@ -114,7 +106,7 @@ fun CredentialEntryView(
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            navController.navigate(NavRoute.NameEntryView.route)
+                            viewModel.goToNameEntry()
                         }
                     )
                 )
@@ -130,7 +122,7 @@ fun CredentialEntryView(
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            navController.navigate(NavRoute.NameEntryView.route)
+                            viewModel.goToNameEntry()
                         }
                     )
                 )
@@ -179,5 +171,5 @@ fun <T : Credential> CredentialButton(
 fun SignupScreen_Preview(
     @PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel
 ) {
-    CredentialEntryView(viewModel = viewModel)
+    CredentialEntryView(viewModel = viewModel, state = SignUpState())
 }

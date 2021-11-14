@@ -21,7 +21,6 @@ fun Host() {
                 NavRoute.Splash,
                 NavRoute.Language,
                 NavRoute.SignupFlow,
-                NavRoute.NameEntryView,
                 NavRoute.Dashboard,
                 NavRoute.Org,
                 NavRoute.UserSelect,

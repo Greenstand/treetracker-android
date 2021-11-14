@@ -10,9 +10,9 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
    val state by viewModel.state.observeAsState(SignUpState())
 
-   if(state.nameEntryStage) {
-      NameEntryView(viewModel)
+   if (state.isCredentialView) {
+      CredentialEntryView(viewModel, state)
    } else {
-      CredentialEntryView(viewModel)
+      NameEntryView(viewModel, state)
    }
 }

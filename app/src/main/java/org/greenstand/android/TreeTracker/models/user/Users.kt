@@ -127,7 +127,7 @@ class Users(
             wallet = planterInfoEntity.identifier,
             firstName = planterInfoEntity.firstName,
             lastName = planterInfoEntity.lastName,
-            photoPath = planterInfoEntity.localPhotoPath ?: "",
+            photoPath = planterInfoEntity.localPhotoPath,
             isPowerUser = planterInfoEntity.isPowerUser
         )
     }
