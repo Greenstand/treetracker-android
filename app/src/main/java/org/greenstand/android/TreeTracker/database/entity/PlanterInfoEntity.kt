@@ -32,6 +32,10 @@ data class PlanterInfoEntity(
     var recordUuid: String,
     @ColumnInfo(name = POWER_USER, defaultValue = "0")
     var isPowerUser: Boolean,
+    @ColumnInfo(name = LOCAL_PHOTO_PATH, index = true, defaultValue = "")
+    var localPhotoPath: String,
+    @ColumnInfo(name = PHOTO_URL, defaultValue = "NULL")
+    var photoUrl: String? = null,
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -55,5 +59,7 @@ data class PlanterInfoEntity(
         const val BUNDLE_ID = "bundle_id"
         const val RECORD_UUID = "record_uuid"
         const val POWER_USER = "power_user"
+        const val LOCAL_PHOTO_PATH = "local_photo_path"
+        const val PHOTO_URL = "photo_url"
     }
 }

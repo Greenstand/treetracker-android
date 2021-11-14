@@ -17,7 +17,7 @@ def loadExtraProperties(String fileName) {
 loadExtraProperties("treetracker.keys.properties")
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '30.0.3'
 
 
@@ -240,9 +240,9 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
 
     //Database
-    implementation 'androidx.room:room-runtime:2.3.0'
-    implementation 'androidx.room:room-ktx:2.3.0'
-    kapt "androidx.room:room-compiler:2.3.0"
+    implementation 'androidx.room:room-runtime:2.4.0-beta01'
+    implementation 'androidx.room:room-ktx:2.4.0-beta01'
+    kapt "androidx.room:room-compiler:2.4.0-beta01"
 
     devImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 
