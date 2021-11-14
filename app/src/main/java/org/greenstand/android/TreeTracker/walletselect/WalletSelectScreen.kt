@@ -30,12 +30,7 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.AppButtonColors
-import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.LocalImage
-import org.greenstand.android.TreeTracker.view.WalletUserButton
+import org.greenstand.android.TreeTracker.view.*
 
 
 @Composable
