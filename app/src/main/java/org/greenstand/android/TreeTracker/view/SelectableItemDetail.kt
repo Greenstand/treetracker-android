@@ -84,8 +84,6 @@ fun UserButton(
     selectedColor: Color,
     onClick: () -> Unit
 ) {
-    val wallet: String? = user.wallet
-
     SelectableImageDetail(
         user.photoPath,
         isSelected,
