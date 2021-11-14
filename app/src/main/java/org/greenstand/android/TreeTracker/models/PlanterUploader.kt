@@ -27,13 +27,14 @@ class PlanterUploader(
 
     suspend fun uploadPlanters() {
         withContext(Dispatchers.IO) {
+            uploadLegacyPlanterImages()
             uploadPlanterImages()
             uploadPlanterInfo()
 //            deleteLocalImagesThatWereUploaded()
         }
     }
 
-    private suspend fun uploadPlanterImages() {
+    private suspend fun uploadLegacyPlanterImages() {
         dao.getPlanterCheckInsToUpload()
             .filter { it.photoUrl == null && it.localPhotoPath != null }
             .forEach { planterCheckIn ->
@@ -51,6 +52,24 @@ class PlanterUploader(
             }
     }
 
+    private suspend fun uploadPlanterImages() {
+        dao.getAllPlanterInfoToUpload()
+            .filter { it.photoUrl == null && it.localPhotoPath.isNotEmpty() }
+            .forEach { planterInfo ->
+                val imageUrl = uploadImageUseCase.execute(
+                    UploadImageParams(
+                        imagePath = planterInfo.localPhotoPath,
+                        lat = planterInfo.latitude,
+                        long = planterInfo.longitude
+                    )
+                )
+                imageUrl?.let {
+                    planterInfo.photoUrl = imageUrl
+                    dao.updatePlanterInfo(planterInfo)
+                }
+            }
+    }
+
     private suspend fun uploadPlanterInfo() {
         val planterInfoToUpload = dao.getAllPlanterInfoToUpload()
 
@@ -59,13 +78,6 @@ class PlanterUploader(
 
         val registrationRequests = planterInfoToUpload
             .map { planterInfo ->
-                // Find the image this user first took during registration
-                // This image is the oldest image for PlanterCheckIn
-                val registrationPhotoUrl = dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
-                    .minByOrNull { it.createdAt }
-                    ?.photoUrl
-                    ?: ""
-
                 RegistrationRequest(
                     planterIdentifier = planterInfo.identifier,
                     firstName = planterInfo.firstName,
@@ -76,7 +88,7 @@ class PlanterUploader(
                     lat = planterInfo.latitude,
                     lon = planterInfo.longitude,
                     recordUuid = planterInfo.recordUuid,
-                    imageUrl = registrationPhotoUrl
+                    imageUrl = planterInfo.photoUrl ?: ""
                 )
             }
 

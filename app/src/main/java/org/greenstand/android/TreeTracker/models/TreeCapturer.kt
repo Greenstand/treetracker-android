@@ -9,7 +9,7 @@ class TreeCapturer(
     private val stepCounter: StepCounter,
     private val createTreeUseCase: CreateTreeUseCase,
     private val deviceOrientation: DeviceOrientation,
-    private val users: Users,
+    private val sessionTracker: SessionTracker,
 ) {
 
     private var newTreeUuid: UUID? = null
@@ -35,7 +35,7 @@ class TreeCapturer(
     suspend fun setImage(imageFile: File) {
         val tree = Tree(
             treeUuid = newTreeUuid!!,
-            planterCheckInId = users.currentSessionUser?.id ?: -1,
+            planterCheckInId = sessionTracker.currentUser?.id ?: -1,
             content = "",
             photoPath = imageFile.absolutePath,
             convergence?.longitudeConvergence?.mean ?: 0.0,
@@ -62,6 +62,4 @@ class TreeCapturer(
             createTreeUseCase.execute(it)
         }
     }
-
-
 }

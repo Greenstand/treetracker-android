@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
@@ -166,4 +167,13 @@ interface TreeTrackerDAO {
 
     @Query("DELETE FROM location_data WHERE uploaded = 1")
     suspend fun purgeUploadedTreeLocations()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSession(sessionEntity: SessionEntity): Long
+
+    @Update
+    suspend fun updateSession(sessionEntity: SessionEntity): Long
+
+    @Query("SELECT * FROM session WHERE _id = :id")
+    suspend fun getSessionById(id: Long): SessionEntity
 }

@@ -19,7 +19,7 @@ import org.greenstand.android.TreeTracker.database.entity.SessionEntity.Companio
 )
 data class SessionEntity(
     @ColumnInfo(name = RECORD_UUID)
-    var uuid: Long,
+    var uuid: String,
     @ColumnInfo(name = PLANTER_INFO_ID, index = true)
     var planterInfoId: Long,
     @ColumnInfo(name = START_TIME)

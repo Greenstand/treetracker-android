@@ -24,6 +24,7 @@ import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
@@ -81,7 +82,7 @@ val appModule = module {
 
     viewModel { SplashScreenViewModel(get(), get()) }
 
-    viewModel { WalletSelectViewModel(get(), get()) }
+    viewModel { WalletSelectViewModel(get(), get(), get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 
@@ -90,6 +91,8 @@ val appModule = module {
     single { Users(get(), get(), get()) }
 
     single { TreeCapturer(get(), get(), get(), get(), get()) }
+
+    single { SessionTracker(get(), get(), get()) }
 
     single<Organizations> { OrganizationsFake() }
 

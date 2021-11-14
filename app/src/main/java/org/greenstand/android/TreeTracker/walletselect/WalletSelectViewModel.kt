@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.user.User
@@ -21,6 +22,7 @@ data class WalletSelectState(
 class WalletSelectViewModel(
     private val users: Users,
     private val stepCounter: StepCounter,
+    private val sessionTracker: SessionTracker,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<WalletSelectState>()
@@ -51,7 +53,7 @@ class WalletSelectViewModel(
     fun startSession(user: User) {
         viewModelScope.launch {
             stepCounter.enable()
-            users.startUserSession("", user.id)
+            sessionTracker.startSession(user.id)
         }
     }
 }

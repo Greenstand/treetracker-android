@@ -10,7 +10,6 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.user.User
-import timber.log.Timber
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,
@@ -78,56 +77,17 @@ class Users(
                 localPhotoPath = photoPath,
             )
 
-            val userId = dao.insertPlanterInfo(entity).also {
+            dao.insertPlanterInfo(entity).also {
                 analytics.userInfoCreated(
                     phone = phone.orEmpty(),
                     email = email.orEmpty()
                 )
             }
-
-            startUserSession(
-                localPhotoPath = photoPath,
-                planterInfoId = userId,
-            )
-            userId
         }
     }
 
     suspend fun doesUserExists(identifier: String): Boolean{
         return getUserWithIdentifier(identifier) != null
-    }
-
-    suspend fun startUserSession(
-        localPhotoPath: String,
-        planterInfoId: Long
-    ) {
-        endUserSession()
-        withContext(Dispatchers.IO) {
-
-            val location = locationUpdateManager.currentLocation
-            val time = location?.time ?: System.currentTimeMillis()
-
-            val planterCheckInEntity = PlanterCheckInEntity(
-                planterInfoId = planterInfoId,
-                localPhotoPath = localPhotoPath,
-                longitude = location?.longitude ?: 0.0,
-                latitude = location?.latitude ?: 0.0,
-                createdAt = time,
-                photoUrl = null
-            )
-
-            dao.insertPlanterCheckIn(planterCheckInEntity)
-
-            dao.getPlanterInfoById(planterInfoId)?.let { planterInfo ->
-                currentSessionUser = createUser(planterInfo)
-            } ?: Timber.e("Could not find planter info of id $planterInfoId")
-
-            analytics.userCheckedIn()
-        }
-    }
-
-    fun endUserSession() {
-        currentSessionUser = null
     }
 
     private suspend fun createUser(planterInfoEntity: PlanterInfoEntity?): User? {
