@@ -94,9 +94,9 @@ class SignupViewModel(private val users: Users) : ViewModel() {
                     // TODO fix user data usage
                     firstName = extractName(name, true),
                     lastName = extractName(name, false),
-                    phone = if (!state.phone.isNullOrBlank()) state.phone else null,
-                    email = if (!state.email.isNullOrBlank()) state.email else null,
-                    identifier = currentIdentifier,
+                    phone = state.phone,
+                    email = state.email,
+                    identifier = extractIdentifier(state),
                     organization = organization,
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,
@@ -119,6 +119,18 @@ class SignupViewModel(private val users: Users) : ViewModel() {
             names[0]
         } else {
             names[1]
+        }
+    }
+
+    private fun extractIdentifier(state: SignUpState):String{
+        return when {
+            (!state.email.isNullOrBlank()) -> {
+                state.email
+            }(!state.phone.isNullOrBlank()) -> {
+                state.phone
+            }else -> {
+                currentIdentifier
+            }
         }
     }
 }

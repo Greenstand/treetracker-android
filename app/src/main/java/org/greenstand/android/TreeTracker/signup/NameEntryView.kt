@@ -80,7 +80,7 @@ fun NameEntryView(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = (state.name != null && state.organization != null)
+                        isEnabled = state.name != null
                     ) {
                         cameraLauncher.launch(true)
                     }
@@ -120,7 +120,7 @@ fun NameEntryView(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        if (state.name != null && state.organization != null) {
+                        if (state.name != null) {
                             cameraLauncher.launch(true)
                         }
                     }

@@ -84,7 +84,7 @@ fun UserButton(
     selectedColor: Color,
     onClick: () -> Unit
 ) {
-    val credential: String? = if (user.email.isNullOrEmpty()) user.phone else user.email
+    val wallet: String? = user.wallet
 
     SelectableImageDetail(
         user.photoPath,
@@ -95,13 +95,6 @@ fun UserButton(
     ) {
         Text(
             text = "${user.firstName} ${user.lastName}\n${user.wallet}",
-            color = AppColors.LightGray,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = FontFamily.SansSerif,
-        )
-        Text(
-            text = "$credential", // TODO: Fetch user's phone number.
             color = AppColors.LightGray,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
