@@ -7,6 +7,7 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.Users
 import timber.log.Timber
@@ -15,7 +16,7 @@ class CreateTreeUseCase(
     private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics,
-    private val users: Users,
+    private val sessionTracker: SessionTracker,
 ) : UseCase<Tree, Long>() {
 
     override suspend fun execute(params: Tree): Long = withContext(Dispatchers.IO) {
@@ -26,6 +27,7 @@ class CreateTreeUseCase(
         val entity = TreeCaptureEntity(
             uuid = params.treeUuid.toString(),
             planterCheckInId = params.planterCheckInId,
+            sessionId = params.sessionId,
             localPhotoPath = params.photoPath,
             photoUrl = null,
             noteContent = params.content,
@@ -33,7 +35,7 @@ class CreateTreeUseCase(
             latitude = params.meanLatitude,
             accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
             createAt = timeInSeconds,
-            wallet = users.currentSessionUser?.wallet!!
+            wallet = sessionTracker.currentUser?.wallet ?: ""
         )
         analytics.treePlanted()
         val attributeEntitites = params.treeCaptureAttributes().map {

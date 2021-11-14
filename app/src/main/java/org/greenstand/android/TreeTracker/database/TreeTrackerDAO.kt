@@ -172,7 +172,7 @@ interface TreeTrackerDAO {
     suspend fun insertSession(sessionEntity: SessionEntity): Long
 
     @Update
-    suspend fun updateSession(sessionEntity: SessionEntity): Long
+    suspend fun updateSession(sessionEntity: SessionEntity)
 
     @Query("SELECT * FROM session WHERE _id = :id")
     suspend fun getSessionById(id: Long): SessionEntity

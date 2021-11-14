@@ -36,7 +36,6 @@ import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
-import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.usecases.CreatePlanterInfoUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
@@ -64,7 +63,7 @@ val appModule = module {
 
     viewModel { SignupViewModel() }
 
-    viewModel { MapViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
 

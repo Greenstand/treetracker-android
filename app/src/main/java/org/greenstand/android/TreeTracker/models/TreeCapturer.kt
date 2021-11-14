@@ -35,7 +35,7 @@ class TreeCapturer(
     suspend fun setImage(imageFile: File) {
         val tree = Tree(
             treeUuid = newTreeUuid!!,
-            planterCheckInId = sessionTracker.currentUser?.id ?: -1,
+            sessionId = sessionTracker.currentUser?.id ?: -1,
             content = "",
             photoPath = imageFile.absolutePath,
             convergence?.longitudeConvergence?.mean ?: 0.0,

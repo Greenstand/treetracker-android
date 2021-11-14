@@ -9,9 +9,9 @@ import androidx.room.PrimaryKey
     tableName = TreeCaptureEntity.TABLE,
     foreignKeys = [
         ForeignKey(
-            entity = PlanterCheckInEntity::class,
-            parentColumns = [PlanterCheckInEntity.ID],
-            childColumns = [TreeCaptureEntity.PLANTER_CHECK_IN_ID],
+            entity = SessionEntity::class,
+            parentColumns = [SessionEntity.ID],
+            childColumns = [TreeCaptureEntity.SESSION_ID],
             onUpdate = ForeignKey.CASCADE
         )
     ]
@@ -21,6 +21,8 @@ data class TreeCaptureEntity(
     var uuid: String,
     @ColumnInfo(name = PLANTER_CHECK_IN_ID, index = true)
     var planterCheckInId: Long,
+    @ColumnInfo(name = SESSION_ID, defaultValue = "-1", index = true)
+    var sessionId: Long,
     @ColumnInfo(name = LOCAL_PHOTO_PATH)
     var localPhotoPath: String?,
     @ColumnInfo(name = PHOTO_URL)
@@ -37,7 +39,7 @@ data class TreeCaptureEntity(
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
     var createAt: Long,
-    @ColumnInfo(name = WALLET)
+    @ColumnInfo(name = WALLET, defaultValue = "")
     var wallet: String,
     @ColumnInfo(name = BUNDLE_ID)
     var bundleId: String? = null
@@ -53,6 +55,7 @@ data class TreeCaptureEntity(
         const val ID = "_id"
         const val UUID = "uuid"
         const val PLANTER_CHECK_IN_ID = "planter_checkin_id"
+        const val SESSION_ID = "session_id"
         const val LOCAL_PHOTO_PATH = "local_photo_path"
         const val PHOTO_URL = "photo_url"
         const val NOTE_CONTENT = "note_content"
