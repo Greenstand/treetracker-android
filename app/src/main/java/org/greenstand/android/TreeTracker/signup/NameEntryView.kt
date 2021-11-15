@@ -15,7 +15,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,6 +41,7 @@ fun NameEntryView(
     val state by viewModel.state.observeAsState(SignUpState())
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
 
     val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { photoPath ->
         scope.launch {
@@ -77,7 +80,7 @@ fun NameEntryView(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.name != null
+                        isEnabled = (state.name != null && state.organization != null)
                     ) {
                         cameraLauncher.launch(true)
                     }
@@ -102,8 +105,8 @@ fun NameEntryView(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        cameraLauncher.launch(true)
-                    }
+                        focusManager.moveFocus(FocusDirection.Down)
+                        }
                 )
             )
             BorderedTextField(
@@ -117,7 +120,9 @@ fun NameEntryView(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        cameraLauncher.launch(true)
+                        if (state.name != null && state.organization != null) {
+                            cameraLauncher.launch(true)
+                        }
                     }
                 )
             )

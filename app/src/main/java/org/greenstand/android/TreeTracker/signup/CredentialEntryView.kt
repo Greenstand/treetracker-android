@@ -42,10 +42,11 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
-fun SignupFlow(
+fun CredentialEntryView(
     viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.observeAsState(SignUpState())
+    val credentialState by viewModel.credentialState.observeAsState(CredentialState())
     val navController = LocalNavHostController.current
 
     Scaffold(
@@ -65,9 +66,9 @@ fun SignupFlow(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.credential.text.isNotBlank()
+                        isEnabled = (credentialState.isEmailValid || credentialState.isPhoneValid)
                     ) {
-                        navController.navigate(NavRoute.NameEntryView.route)
+                        viewModel.updateSignUpState(true)
                     }
                 }
             )
@@ -104,7 +105,7 @@ fun SignupFlow(
 
             when (val credential = state.credential) {
                 is Credential.Email -> BorderedTextField(
-                    value = credential.text,
+                    value = state.email ?: "",
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
@@ -120,7 +121,7 @@ fun SignupFlow(
                 )
 
                 is Credential.Phone -> BorderedTextField(
-                    value = credential.text,
+                    value = state.phone ?: "",
                     padding = PaddingValues(16.dp),
                     onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
@@ -179,5 +180,5 @@ fun <T : Credential> CredentialButton(
 fun SignupScreen_Preview(
     @PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel
 ) {
-    SignupFlow(viewModel = viewModel)
+    CredentialEntryView(viewModel = viewModel)
 }

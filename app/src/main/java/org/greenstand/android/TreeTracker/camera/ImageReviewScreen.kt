@@ -35,20 +35,6 @@ fun ImageReviewScreen(photoPath: String) {
     val activity = LocalContext.current as Activity
 
     Scaffold(
-        topBar = {
-            ActionBar(
-                centerAction = {
-                    DepthButton(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(width = 100.dp, 60.dp),
-                        onClick = { }
-                    ) {
-                        Text("NOTE")
-                    }
-                }
-            )
-        },
         bottomBar = {
             ActionBar(
                 centerAction = {
@@ -103,6 +89,8 @@ fun ImageReviewScreen(photoPath: String) {
                                 contentDescription = null,
                                 modifier = Modifier.size(width = 54.dp, height = 54.dp)
                                     .align(Center)
+
+
                             )
                         }
                     }
