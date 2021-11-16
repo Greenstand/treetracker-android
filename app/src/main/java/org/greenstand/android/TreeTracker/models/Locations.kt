@@ -51,6 +51,11 @@ class LocationUpdateManager(
             locationUpdates.postValue(location)
         }
 
+        override fun onProviderEnabled(provider: String) {}
+
+        override fun onProviderDisabled(provider: String) {}
+
+
         override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
             Timber.d("Location status changed %s %d", p0, p1)
         }
