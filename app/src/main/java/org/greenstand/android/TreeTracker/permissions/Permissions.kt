@@ -3,37 +3,30 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthButtonColors
-import android.location.*
 import android.provider.Settings
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
-
-
+import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.root.LocalNavHostController
 
 @ExperimentalPermissionsApi
 @Composable
 fun PermissionRequest(){
+
+    val navController = LocalNavHostController.current
 
     val permissionsState = rememberMultiplePermissionsState(
             permissions = listOf(
@@ -62,63 +55,93 @@ fun PermissionRequest(){
                 when(perm.permission) {
                     Manifest.permission.CAMERA -> {
                         when {
-                            perm.hasPermission -> {
-                                Text(text = "Camera permission accepted")
-
-                            }
-                            perm.shouldShowRationale -> {
-                                Text(text = "Camera permission is needed" +
-                                        "to access the camera")
-                            }
-                            perm.hasBeenDeniedForever() -> {
-                                Text(text = "Camera permission was permanently" +
-                                        "denied. You can enable it in the app" +
-                                        "settings.")
-                            }
-                        }
-                    }
-                    Manifest.permission.ACCESS_COARSE_LOCATION -> {
-                        when {
-                            perm.hasPermission  -> {
-                                    //call function to check if location is enabled
-                                    enableLocation()
-                            }
                             (perm.shouldShowRationale || !perm.permissionRequested) -> {
                                 AlertDialog(
-                                    onDismissRequest = {},
+                                    onDismissRequest = { navController.popBackStack()},
                                     title = {
-                                           Text(text = "Accept Location permission")
+                                        Text(text = stringResource(R.string.accept_camera_permission_header))
                                     },
                                     text = {
-                                           "Location is needed for this app to allow it track trees, accept this permission to use the tree tracking feature"
+                                        stringResource(R.string.accept_camera_permission_message)
                                     },
                                     buttons = {
                                         Button(
                                             modifier = Modifier.wrapContentSize(),
-                                            onClick = {  perm.launchPermissionRequest()}
+                                            onClick = {
+                                                perm.launchPermissionRequest()
+                                                navController.popBackStack()
+                                            }
                                         ) {
                                             Text(
-                                                text = "Accept permission"
+                                                text = stringResource(R.string.accept_permission)
                                             )
                                         }
                                     })}
-                            perm.hasBeenDeniedForever() -> {
-                                Text(text = "Record audio permission was permanently" +
-                                        "denied. You can enable it in the app" +
-                                        "settings.")
+
+                        }
+                    }Manifest.permission.ACCESS_FINE_LOCATION -> {
+                        when {
+                            perm.hasPermission -> {
+                                //Check if location is enabled from the LocationUpdateManager before calling enableLocation
                             }
+                            (perm.shouldShowRationale || !perm.permissionRequested) -> {
+                                AlertDialog(
+                                    onDismissRequest = { navController.popBackStack()},
+                                    title = {
+                                        Text(text = stringResource(R.string.accept_location_permission_header))
+                                    },
+                                    text = {
+                                        stringResource(R.string.accept_location_permission_message)
+                                    },
+                                    buttons = {
+                                        Button(
+                                            modifier = Modifier.wrapContentSize(),
+                                            onClick = {
+                                                perm.launchPermissionRequest()
+                                                navController.popBackStack()
+                                            }
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.accept_permission)
+                                            )
+                                        }
+                                    })}
+
+                        }
+                    }Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                        when {
+                            perm.hasPermission -> {
+
+                            }
+                            (perm.shouldShowRationale || !perm.permissionRequested) -> {
+                                AlertDialog(
+                                    onDismissRequest = { navController.popBackStack()},
+                                    title = {
+                                        Text(text = stringResource(R.string.accept_location_permission_header))
+                                    },
+                                    text = {
+                                        stringResource(R.string.accept_location_permission_message)
+                                         },
+                                    buttons = {
+                                        Button(
+                                            modifier = Modifier.wrapContentSize(),
+                                            onClick = {
+                                                perm.launchPermissionRequest()
+                                                navController.popBackStack()
+                                            }
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.accept_permission)
+                                            )
+                                        }
+                                    })}
                         }
                     }
-                }
-            }
 
+                        }
+                    }
+    }
 
-
-}
-@OptIn(ExperimentalPermissionsApi::class)
-fun PermissionState.hasBeenDeniedForever(): Boolean {
-    return this.permissionRequested && !this.shouldShowRationale
-}
 
 fun isLocationEnabledCheck(){
 

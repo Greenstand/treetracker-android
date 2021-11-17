@@ -17,14 +17,14 @@ def loadExtraProperties(String fileName) {
 loadExtraProperties("treetracker.keys.properties")
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '30.0.3'
 
 
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 128
         versionName "1.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -230,10 +230,6 @@ dependencies {
 
     //Permissions management library for Jetpack Compose
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
-
-    //Data Store
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-
 
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
