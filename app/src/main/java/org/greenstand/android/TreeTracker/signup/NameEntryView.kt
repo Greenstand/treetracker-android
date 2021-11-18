@@ -10,8 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,23 +20,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
 
 @Composable
-fun NameEntryView(
-    viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)
-) {
-    val state by viewModel.state.observeAsState(SignUpState())
+fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -74,13 +67,13 @@ fun NameEntryView(
             ActionBar(
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        navController.popBackStack()
+                        viewModel.goToCredentialEntry()
                     }
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = (state.name != null && state.organization != null)
+                        isEnabled = state.name != null
                     ) {
                         cameraLauncher.launch(true)
                     }
@@ -120,7 +113,7 @@ fun NameEntryView(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        if (state.name != null && state.organization != null) {
+                        if (state.name != null) {
                             cameraLauncher.launch(true)
                         }
                     }

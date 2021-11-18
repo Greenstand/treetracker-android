@@ -1,14 +1,18 @@
 package org.greenstand.android.TreeTracker.walletselect
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,23 +20,17 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.*
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.NonDisposableHandle.parent
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.*
-import org.greenstand.android.TreeTracker.R
-import kotlin.Lazy
 
 
 @Composable
@@ -64,11 +62,7 @@ fun WalletSelectScreen(
                                          bottom = 10.dp)
                                 .aspectRatio(1.0f)
                                 .clip(RoundedCornerShape(percent = 10))
-                                .clickable { navController.navigate(NavRoute.UserSelect.route){
-                                    popUpTo(NavRoute.Dashboard.route)
-                                    launchSingleTop = true
-                                }
-                                             },
+                                .clickable { navController.navigate(NavRoute.UserSelect.route) },
                             imagePath = it,
                             contentScale = ContentScale.Crop,
                         )
@@ -89,11 +83,13 @@ fun WalletSelectScreen(
                         }
                     }
                 },
-                centerAction = {
-                    OrangeAddButton(modifier = Modifier
-                                                 .align(Alignment.Center),
-                        onClick = { navController.navigate(NavRoute.SignupFlow.route)})
-                },
+                // Disabled for now. 2.0 will not have this feature.
+//                centerAction = {
+//                    OrangeAddButton(
+//                        modifier = Modifier.align(Alignment.Center),
+//                        onClick = { navController.navigate(NavRoute.SignupFlow.route) },
+//                    )
+//                },
                 leftAction = {
                     ArrowButton(isLeft = true) {
                         navController.popBackStack()

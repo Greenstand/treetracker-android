@@ -24,8 +24,6 @@ import org.greenstand.android.TreeTracker.view.*
 fun SelfieScreen() {
     val navController = LocalNavHostController.current
     val cameraControl = remember { CameraControl() }
-    val displayMetrics = Resources.getSystem().displayMetrics
-    val dpWidth = (displayMetrics.widthPixels / displayMetrics.density + 0.5).toInt()
 
     Scaffold(
         topBar = {

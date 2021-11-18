@@ -14,13 +14,12 @@ data class SignUpState(
     val phone: String? = null,
     val organization: String? = null,
     val photoPath: String? = null,
-    val credential: Credential = Credential.Email(),
-   )
-data class CredentialState(
-    val nameEntryStage: Boolean = false,
+    val isCredentialView: Boolean = true,
     val isEmailValid: Boolean = false,
     val isPhoneValid: Boolean = false,
-    )
+    val canGoToNextScreen: Boolean = false,
+    val credential: Credential = Credential.Email(),
+)
 
 sealed class Credential {
 
@@ -55,11 +54,8 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
     private val _state = MutableLiveData(SignUpState())
     val state: LiveData<SignUpState> = _state
-    private val _credentialState = MutableLiveData(CredentialState())
-    val credentialState: LiveData<CredentialState> = _credentialState
 
     fun updateName(name: String) {
-        // TODO validate data and show errors if needed, after click
         _state.value = _state.value?.copy(name = name)
     }
     fun updateOrganization(organization: String) {
@@ -67,38 +63,53 @@ class SignupViewModel(private val users: Users) : ViewModel() {
     }
 
     fun updateEmail(email: String) {
-        // TODO validate data and show errors if needed, after click
-        _state.value = _state.value?.copy(email = email)
-        _credentialState.value = _credentialState.value?.copy(isEmailValid = Validation.isEmailValid(email))
+        _state.value = _state.value?.copy(
+            email = email,
+            isEmailValid = Validation.isEmailValid(email)
+        )
     }
 
     fun updatePhone(phone: String) {
-        _state.value = _state.value?.copy(phone = phone)
-        _credentialState.value = _credentialState.value?.copy(isPhoneValid = Validation.isValidPhoneNumber(phone))
-
+        _state.value = _state.value?.copy(
+            phone = phone,
+            isPhoneValid = Validation.isValidPhoneNumber(phone)
+        )
     }
 
     fun updateCredentialType(updatedCredential: Credential) {
         _state.value = _state.value?.copy(credential = updatedCredential)
     }
-    fun updateSignUpState(state: Boolean){
-        _credentialState.value = _credentialState.value?.copy(nameEntryStage = state)
+
+    fun goToNameEntry() {
+        _state.value = _state.value?.copy(
+            isCredentialView = false,
+            canGoToNextScreen = false,
+        )
     }
 
-    private val currentIdentifier: String
-        get() = _state.value?.credential?.text ?: ""
+    fun goToCredentialEntry() {
+        _state.value = _state.value?.copy(
+            isCredentialView = true,
+            organization = null,
+            name = null,
+            canGoToNextScreen = true,
+        )
+    }
+
+    fun updateSignUpState(state: Boolean){
+        _state.value = _state.value?.copy(isCredentialView = state)
+    }
 
     suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
-            val state: SignUpState = _state.value ?: return null
-            val userId = with(state) {
+            val userId = with(_state.value ?: return null) {
                 users.createUser(
                     // TODO fix user data usage
                     firstName = extractName(name, true),
                     lastName = extractName(name, false),
-                    phone = if (!state.phone.isNullOrBlank()) state.phone else null,
-                    email = if (!state.email.isNullOrBlank()) state.email else null,
-                    identifier = currentIdentifier,
+                    phone = phone,
+                    email = email,
+                    identifier = extractIdentifier(this),
                     organization = organization,
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,
@@ -122,5 +133,12 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         } else {
             names[1]
         }
+    }
+
+    private fun extractIdentifier(state: SignUpState): String {
+        return when(state.credential) {
+            is Credential.Email -> state.email
+            is Credential.Phone -> state.phone
+        } ?: "DEFAULT"
     }
 }
