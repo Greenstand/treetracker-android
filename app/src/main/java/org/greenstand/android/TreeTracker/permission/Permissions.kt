@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -19,25 +18,17 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import android.provider.Settings
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.permission.PermissionItemsState
-import org.greenstand.android.TreeTracker.permission.PermissionViewModel
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 
 @ExperimentalPermissionsApi
 @Composable
-fun PermissionRequest(
-    viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current)
-) {
+fun PermissionRequest() {
+
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(PermissionItemsState())
     val permissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
