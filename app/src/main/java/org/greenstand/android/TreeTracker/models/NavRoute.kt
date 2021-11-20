@@ -6,6 +6,7 @@ import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.compose.NamedNavArgument
 import androidx.navigation.compose.navArgument
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
 import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
@@ -113,6 +114,7 @@ sealed class NavRoute {
     }
 
     object TreeCapture : NavRoute() {
+        @ExperimentalPermissionsApi
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             TreeCaptureScreen(getProfilePicUrl(it))
         }
