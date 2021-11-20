@@ -60,15 +60,15 @@ fun PermissionRequest(
             }
         }
     )
-
     permissionsState.permissions.forEach { perm ->
         when (perm.permission) {
             Manifest.permission.CAMERA -> {
                 when {
                     perm.hasPermission -> {
+                        //Check if location is enabled from the LocationUpdateManager before calling enableLocation
                         return
                     }
-                    perm.shouldShowRationale -> {
+                    (perm.shouldShowRationale || !perm.permissionRequested) -> {
                         AlertDialog(
                             onDismissRequest = { navController.popBackStack() },
                             title = {
@@ -76,7 +76,7 @@ fun PermissionRequest(
                             },
                             text = {
                                 Text(
-                                    text = stringResource(R.string.accept_camera_permission_message),
+                                    text = stringResource(R.string.accept_location_permission_message),
                                     color = Color.Green
                                 )
                             },
@@ -94,41 +94,76 @@ fun PermissionRequest(
                                 }
                             })
                     }
-                    else -> {
-                             PermissionDeniedPermanentlyDialog(navController)
-                    }
 
                 }
             }
             Manifest.permission.ACCESS_FINE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
-                        if(state.isLocationEnabled == false){
-                            enableLocation()
-                        }
+                        // TODO Check if location is enabled from the LocationUpdateManager before calling enableLocation
                         return
                     }
-                    perm.shouldShowRationale -> {
-                        LocationRationaleDialog(navController = navController, perm = perm)
+                    (perm.shouldShowRationale || !perm.permissionRequested) -> {
+                        AlertDialog(
+                            onDismissRequest = { navController.popBackStack() },
+                            title = {
+                                Text(text = stringResource(R.string.accept_location_permission_header)
+                                )
+                            },
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.accept_location_permission_message),
+                                    color = Color.Green
+                                )
+                            },
+                            buttons = {
+                                Button(
+                                    modifier = Modifier.wrapContentSize(),
+                                    onClick = {
+                                        perm.launchPermissionRequest()
+                                        navController.popBackStack()
+                                    }
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.accept_permission)
+                                    )
+                                }
+                            })
                     }
-                    else -> {
-                            PermissionDeniedPermanentlyDialog(navController)
-                    }
+
                 }
             }
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
-                        if(viewModel.isLocationEnabled() == false){
-                            enableLocation()
-                        }
+                        // TODO Check if location is enabled from the LocationUpdateManager before calling enableLocation
                         return
                     }
-                    perm.shouldShowRationale -> {
-                        LocationRationaleDialog(navController = navController, perm = perm)
-                    }
-                    else -> {
-                            PermissionDeniedPermanentlyDialog(navController)
+                    (perm.shouldShowRationale || !perm.permissionRequested) -> {
+                        AlertDialog(
+                            onDismissRequest = { navController.popBackStack() },
+                            title = {
+                                Text(text = stringResource(R.string.accept_location_permission_header))
+                            },
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.accept_location_permission_message),
+                                    color = Color.Green
+                                )
+                            },
+                            buttons = {
+                                Button(
+                                    modifier = Modifier.wrapContentSize(),
+                                    onClick = {
+                                        perm.launchPermissionRequest()
+                                        navController.popBackStack()
+                                    }
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.accept_permission)
+                                    )
+                                }
+                            })
                     }
                 }
             }
@@ -136,34 +171,8 @@ fun PermissionRequest(
     }
 }
 
+fun isLocationEnabledCheck() {
 
-@ExperimentalPermissionsApi
-@Composable
-fun LocationRationaleDialog(navController: NavHostController, perm: PermissionState) {
-    AlertDialog(
-        onDismissRequest = { navController.popBackStack() },
-        title = {
-            Text(text = stringResource(R.string.accept_location_permission_header))
-        },
-        text = {
-            Text(
-                text = stringResource(R.string.accept_location_permission_message),
-                color = Color.Green
-            )
-        },
-        buttons = {
-            Button(
-                modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    perm.launchPermissionRequest()
-                    navController.popBackStack()
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.accept_permission)
-                )
-            }
-        })
 }
 
 @Composable
@@ -171,38 +180,4 @@ fun enableLocation() {
     val activity: Context = LocalContext.current as Activity
     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
     startActivity(activity, intent, null)
-}
-
-@Composable
-fun PermissionDeniedPermanentlyDialog(navController: NavHostController,viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current)) {
-    val activity: Context = LocalContext.current as Activity
-    val intent = Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", "org.greenstand.android.TreeTracker.debug", null)
-    )
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-    AlertDialog(
-        onDismissRequest = { navController.popBackStack() },
-        title = {
-            Text(text = stringResource(R.string.open_settings_header))
-        },
-        text = {
-            Text(
-                text = stringResource(R.string.open_settings_message),
-                color = Color.Green
-            )
-        },
-        buttons = {
-            Button(
-                modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    startActivity(activity, intent, null)
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.open_settings)
-                )
-            }
-        })
 }
