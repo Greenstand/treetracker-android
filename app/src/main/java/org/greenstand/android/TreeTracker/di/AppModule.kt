@@ -30,6 +30,7 @@ import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
+import org.greenstand.android.TreeTracker.permission.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
@@ -82,6 +83,8 @@ val appModule = module {
     viewModel { WalletSelectViewModel(get(), get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
+
+    viewModel { PermissionViewModel(get()) }
 
     single { Users(get(), get(), get()) }
 
