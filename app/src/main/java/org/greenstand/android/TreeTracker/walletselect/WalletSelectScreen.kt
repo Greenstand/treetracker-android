@@ -132,7 +132,7 @@ fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
     ) {
         item {
 
-            val image: Painter = if (isSelected) painterResource(id = R.drawable.person_red) else painterResource(id = R.drawable.treetracker_logo)
+            val image: Painter = if (isSelected) painterResource(id = R.drawable.active_offer) else painterResource(id = R.drawable.inactive_offer)
             Image(
                 painter = image,
                 contentDescription = "",
