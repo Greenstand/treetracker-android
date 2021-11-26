@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.dashboard
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,14 +25,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -88,13 +92,20 @@ fun DashboardScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Box(
+            Row(
                 modifier = Modifier.weight(.3f),
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
+                    contentDescription = "",
+                    modifier = Modifier.align(CenterVertically)
+                                       .padding(top = 5.dp,bottom =10.dp, end = 10.dp)
+                                       .size(width = 30.dp,height = 30.dp)
+                )
                 Text(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier.align(CenterVertically),
                     text = state.totalTrees.toString(),
-                    fontSize = 32.sp,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = AppColors.Orange
                 )
@@ -135,17 +146,18 @@ fun DashboardScreen(
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .weight(1f),
-                    text = "Upload",
+                    text = "UPLOAD",
                     colors = AppButtonColors.UploadOrange,
                     onClick = {
                         viewModel.sync()
                     },
-                    shape = DepthSurfaceShape.Circle
+                    shape = DepthSurfaceShape.Circle,
+                    image = painterResource(id = R.drawable.upload_arrow)
                 )
             }
 
             DashBoardButton(
-                text = "Messages",
+                text = "MESSAGES",
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -153,11 +165,12 @@ fun DashboardScreen(
                 colors = AppButtonColors.MessagePurple,
                 onClick = {
                     navController.navigate(NavRoute.MessagesUserSelect.route)
-                }
+                },
+                image = painterResource(id = R.drawable.message_icon)
             )
 
             DashBoardButton(
-                text = "Track",
+                text = "TRACK",
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -165,7 +178,8 @@ fun DashboardScreen(
                 colors = AppButtonColors.ProgressGreen,
                 onClick = {
                     navController.navigate(NavRoute.UserSelect.route)
-                }
+                },
+                image = painterResource(id = R.drawable.tracking_placeholder)
             )
         }
     }
@@ -226,6 +240,7 @@ fun DashBoardButton(
     onClick: () -> Unit,
     colors: ButtonColors,
     shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
+    image: Painter,
 ) {
     DepthButton(
         modifier = modifier,
@@ -233,9 +248,17 @@ fun DashBoardButton(
         onClick = onClick,
         shape = shape,
     ) {
+        Image(
+            painter = image,
+            contentDescription = "",
+            modifier = Modifier.align(Alignment.Center)
+                               .padding(top = 25.dp,bottom =60.dp)
+        )
         Text(
             text = text,
-            style = TextStyles.DarkText
+            style = TextStyles.DarkText,
+            modifier = Modifier.align(Alignment.BottomCenter)
+                               .padding(bottom = 20.dp),
         )
     }
 }
