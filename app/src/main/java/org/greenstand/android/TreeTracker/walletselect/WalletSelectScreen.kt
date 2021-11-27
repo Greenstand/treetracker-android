@@ -47,11 +47,12 @@ fun WalletSelectScreen(
 
     val navController = LocalNavHostController.current
 
+
     Scaffold(
         topBar = {
             ActionBar(
                 leftAction = {
-                    state.selectedUser?.photoPath?.let {
+                    state.currentUser?.photoPath?.let {
                         LocalImage(
                             modifier = Modifier
                                 .width(100.dp)
