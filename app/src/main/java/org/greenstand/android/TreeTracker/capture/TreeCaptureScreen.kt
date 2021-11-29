@@ -22,13 +22,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraControl
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.models.PermissionRequest
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.*
 
+@ExperimentalPermissionsApi
 @Composable
 fun TreeCaptureScreen(
     profilePicUrl: String,
@@ -38,6 +41,8 @@ fun TreeCaptureScreen(
     val navController = LocalNavHostController.current
     val cameraControl = remember { CameraControl() }
     val scope = rememberCoroutineScope()
+
+    PermissionRequest()
 
     Scaffold(
         bottomBar = {
