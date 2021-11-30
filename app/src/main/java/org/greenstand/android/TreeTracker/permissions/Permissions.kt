@@ -26,8 +26,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.permission.PermissionItemsState
-import org.greenstand.android.TreeTracker.permission.PermissionViewModel
+import org.greenstand.android.TreeTracker.permissions.PermissionItemsState
+import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 
@@ -96,7 +96,7 @@ fun PermissionRequest(
                         )
                     }
                     else -> {
-                             PermissionDeniedPermanentlyDialog(navController)
+                        PermissionDeniedPermanentlyDialog(navController)
                     }
 
                 }
@@ -113,14 +113,14 @@ fun PermissionRequest(
                         LocationRationaleDialog(navController = navController, perm = perm)
                     }
                     else -> {
-                            PermissionDeniedPermanentlyDialog(navController)
+                        PermissionDeniedPermanentlyDialog(navController)
                     }
                 }
             }
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
-                        if(viewModel.isLocationEnabled() == false){
+                        if(state.isLocationEnabled == false){
                             enableLocation()
                         }
                         return
@@ -129,7 +129,7 @@ fun PermissionRequest(
                         LocationRationaleDialog(navController = navController, perm = perm)
                     }
                     else -> {
-                            PermissionDeniedPermanentlyDialog(navController)
+                        PermissionDeniedPermanentlyDialog(navController)
                     }
                 }
             }
@@ -176,13 +176,8 @@ fun enableLocation() {
 }
 
 @Composable
-fun PermissionDeniedPermanentlyDialog(navController: NavHostController,viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current)) {
+fun PermissionDeniedPermanentlyDialog(navController: NavHostController) {
     val activity: Context = LocalContext.current as Activity
-    val intent = Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", "org.greenstand.android.TreeTracker.debug", null)
-    )
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
     AlertDialog(
         onDismissRequest = { navController.popBackStack() },
@@ -199,6 +194,11 @@ fun PermissionDeniedPermanentlyDialog(navController: NavHostController,viewModel
             Button(
                 modifier = Modifier.wrapContentSize(),
                 onClick = {
+                    val intent = Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", "org.greenstand.android.TreeTracker.debug", null)
+                    )
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(activity, intent, null)
                 }
             ) {
