@@ -65,49 +65,21 @@ fun PermissionRequest(
         when (perm.permission) {
             Manifest.permission.CAMERA -> {
                 when {
-                    perm.hasPermission -> {
-                        return
-                    }
+                    perm.hasPermission -> { }
                     perm.shouldShowRationale -> {
-                        AlertDialog(
-                            onDismissRequest = { navController.popBackStack() },
-                            title = {
-                                Text(text = stringResource(R.string.accept_camera_permission_header))
-                            },
-                            text = {
-                                Text(
-                                    text = stringResource(R.string.accept_camera_permission_message),
-                                    color = Color.Green
-                                )
-                            },
-                            buttons = {
-                                Button(
-                                    modifier = Modifier.wrapContentSize(),
-                                    onClick = {
-                                        perm.launchPermissionRequest()
-                                        navController.popBackStack()
-                                    }
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.accept_permission)
-                                    )
-                                }
-                            }
-                        )
+                        CameraRationaleDialog(navController = navController, perm = perm)
                     }
                     else -> {
                         PermissionDeniedPermanentlyDialog(navController)
                     }
-
                 }
             }
             Manifest.permission.ACCESS_FINE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
-                        if(state.isLocationEnabled == false){
+                        if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
-                        return
                     }
                     perm.shouldShowRationale -> {
                         LocationRationaleDialog(navController = navController, perm = perm)
@@ -120,10 +92,9 @@ fun PermissionRequest(
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
-                        if(state.isLocationEnabled == false){
+                        if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
-                        return
                     }
                     perm.shouldShowRationale -> {
                         LocationRationaleDialog(navController = navController, perm = perm)
@@ -137,7 +108,6 @@ fun PermissionRequest(
     }
 }
 
-
 @ExperimentalPermissionsApi
 @Composable
 fun LocationRationaleDialog(navController: NavHostController, perm: PermissionState) {
@@ -149,6 +119,36 @@ fun LocationRationaleDialog(navController: NavHostController, perm: PermissionSt
         text = {
             Text(
                 text = stringResource(R.string.accept_location_permission_message),
+                color = Color.Green
+            )
+        },
+        buttons = {
+            Button(
+                modifier = Modifier.wrapContentSize(),
+                onClick = {
+                    perm.launchPermissionRequest()
+                    navController.popBackStack()
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.accept_permission)
+                )
+            }
+        }
+    )
+}
+
+@ExperimentalPermissionsApi
+@Composable
+fun CameraRationaleDialog(navController: NavHostController, perm: PermissionState) {
+    AlertDialog(
+        onDismissRequest = { navController.popBackStack() },
+        title = {
+            Text(text = stringResource(R.string.accept_camera_permission_header))
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.accept_camera_permission_message),
                 color = Color.Green
             )
         },
