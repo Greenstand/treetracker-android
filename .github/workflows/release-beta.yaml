@@ -15,11 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-#    - name: Set up keys
-#      run: 'echo FIREBASE_TOKEN="$FIREBASE_TOKEN" > fastlane/fastlane.env'
-#      shell: bash
-#      env:
-#        FIREBASE_TOKEN: ${{secrets.FIREBASE_TOKEN}}
+      with:
+        fetch-depth: 0
+        ref: master
+        token: ${{ secrets.GH_TOKEN }}
     - name: Set up keys
       run: 'echo s3_dev_identity_pool_id=$S3_TEST_IDENTITY_POOL_ID > treetracker.keys.properties' 
       shell: bash
@@ -44,3 +43,5 @@ jobs:
         FIREBASE_TOKEN: ${{secrets.FIREBASE_TOKEN}}
         SLACK_URL: ${{secrets.SLACK_URL}}
         SLACK_URL_QC: ${{secrets.SLACK_URL_QC}}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
