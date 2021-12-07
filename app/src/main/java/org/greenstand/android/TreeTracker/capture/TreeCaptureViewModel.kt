@@ -13,7 +13,8 @@ import org.koin.core.get
 
 data class TreeCaptureState(
     val profilePicUrl: String,
-   val isGettingLocation: Boolean = false,
+    val isGettingLocation: Boolean = false,
+    val isLocationAvailable: Boolean? = null,
 )
 
 class TreeCaptureViewModel(
@@ -26,7 +27,7 @@ class TreeCaptureViewModel(
 
     suspend fun captureLocation() {
         _state.value = _state.value?.copy(isGettingLocation = true)
-        treeCapturer.pinLocation()
+        _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation())
         _state.value = _state.value?.copy(isGettingLocation = false)
     }
 
