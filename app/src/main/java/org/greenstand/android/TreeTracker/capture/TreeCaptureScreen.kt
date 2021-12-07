@@ -9,20 +9,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import org.greenstand.android.TreeTracker.R
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraControl
@@ -48,12 +48,15 @@ fun TreeCaptureScreen(
         bottomBar = {
             ActionBar(
                 leftAction = {
-                    ArrowButton(isLeft = true,
-                        onClick = { navController.navigate(NavRoute.Dashboard.route){
-                            popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                            launchSingleTop = true
-
-                        }},)
+                    ArrowButton(
+                        isLeft = true,
+                        onClick = {
+                            navController.navigate(NavRoute.Dashboard.route) {
+                                popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        },
+                    )
                 },
                 centerAction = {
                     DepthButton(
@@ -63,8 +66,8 @@ fun TreeCaptureScreen(
                         isEnabled = !state.isGettingLocation,
                         onClick = {
                             scope.launch {
-                              viewModel.captureLocation()
-                              cameraControl.captureImage()
+                                viewModel.captureLocation()
+                                cameraControl.captureImage()
                             }
                         },
                         shape = DepthSurfaceShape.Circle
@@ -80,12 +83,15 @@ fun TreeCaptureScreen(
             )
         }
     ) {
+        BadLocationDialog(state = state, navController = navController)
         Camera(
             isSelfieMode = false,
             cameraControl = cameraControl,
             onImageCaptured = {
                 viewModel.onImageCaptured(it)
-                navController.navigate(NavRoute.TreeImageReview.create(it.path))
+                if (state.isLocationAvailable == true) {
+                    navController.navigate(NavRoute.TreeImageReview.create(it.path))
+                }
             }
         )
         ActionBar(
@@ -115,5 +121,56 @@ fun TreeCaptureScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun BadLocationDialog(state: TreeCaptureState, navController: NavHostController) {
+    if (state.isLocationAvailable == false) {
+        AlertDialog(
+            onDismissRequest = { navController.popBackStack() },
+            title = {
+                Text(text = stringResource(R.string.poor_gps_header))
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.poor_gps_message),
+                    color = Color.Green
+                )
+            },
+            buttons = {
+                Row(
+                    modifier = Modifier
+                        .padding(all = 8.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+
+                ) {
+                    Button(
+                        modifier = Modifier.wrapContentSize(),
+                        onClick = {
+                            navController.navigate(NavRoute.Dashboard.route) {
+                                popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    ) {
+                        Text(
+                            text = "Cancel"
+                        )
+                    }
+                    Button(
+                        modifier = Modifier.wrapContentSize(),
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Text(
+                            text = "Retry"
+                        )
+                    }
+                }
+            }
+        )
     }
 }
