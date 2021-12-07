@@ -22,8 +22,9 @@ class TreeCapturer(
         locationDataCapturer.converge()
 
         newTreeUuid = locationDataCapturer.generatedTreeUuid
-        convergence = locationDataCapturer.convergence()
-
+        if (locationDataCapturer.lastConvergenceWithinRange != null || locationDataCapturer.currentConvergence != null) {
+            convergence = locationDataCapturer.convergence()
+        }
         locationDataCapturer.turnOffTreeCaptureMode()
     }
 
