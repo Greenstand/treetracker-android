@@ -120,7 +120,7 @@ class Users(
         currentSessionUser = null
     }
 
-    private fun createUser(planterInfoEntity: PlanterInfoEntity?): User? {
+    private suspend fun createUser(planterInfoEntity: PlanterInfoEntity?): User? {
         planterInfoEntity ?: return null
         return User(
             id = planterInfoEntity.id,
@@ -128,7 +128,8 @@ class Users(
             firstName = planterInfoEntity.firstName,
             lastName = planterInfoEntity.lastName,
             photoPath = planterInfoEntity.localPhotoPath,
-            isPowerUser = planterInfoEntity.isPowerUser
+            isPowerUser = planterInfoEntity.isPowerUser,
+            numberOfTrees = dao.getTreesByEachPlanter(planterInfoEntity.identifier).toString()
         )
     }
 }

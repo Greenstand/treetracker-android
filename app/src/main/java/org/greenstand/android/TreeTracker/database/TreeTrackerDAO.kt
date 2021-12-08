@@ -90,6 +90,9 @@ interface TreeTrackerDAO {
     @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url is null")
     suspend fun getNonUploadedTreeImageCount(): Int
 
+    @Query("SELECT COUNT(*) FROM tree_capture WHERE wallet = :wallet")
+    suspend fun getTreesByEachPlanter(wallet: String): Int
+
     @Transaction
     @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 0")
     suspend fun getNonUploadedTreeCaptureCount(): Int
