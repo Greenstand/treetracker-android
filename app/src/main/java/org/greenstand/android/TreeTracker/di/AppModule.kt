@@ -29,6 +29,7 @@ import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
@@ -108,6 +109,8 @@ val appModule = module {
     single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
 
     single { androidContext().resources }
+
+    single { MessagesRepo(get()) }
 
     single { LocationUpdateManager(get(), get(), get()) }
 
