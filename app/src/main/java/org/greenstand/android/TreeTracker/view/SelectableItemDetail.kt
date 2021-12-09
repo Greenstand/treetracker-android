@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.user.User
 
 @Composable
@@ -102,13 +105,15 @@ fun UserButton(
             modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box( // TODO: Change into 'Plant' icon.
+            Image(
+                painter = painterResource(id = R.drawable.white_leaf),
+                contentDescription = "",
                 modifier = Modifier
-                    .size(width = 20.dp, height = 22.dp)
-                    .background(AppColors.LightGray)
+                    .align(Alignment.CenterVertically)
+                    .size(width = 20.dp,height = 22.dp)
             )
             Text(
-                text = "1,234", // TODO: Fetch user's token count.
+                text = user.numberOfTrees, // TODO: Fetch user's token count.
                 modifier = Modifier.padding(start = 4.dp),
                 color = AppColors.LightGray,
                 fontSize = 16.sp,
