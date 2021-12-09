@@ -6,6 +6,7 @@ import androidx.multidex.MultiDex
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
+import org.greenstand.android.TreeTracker.di.networkModule
 import org.greenstand.android.TreeTracker.di.roomModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -26,7 +27,8 @@ class TreeTrackerApplication : Application() {
             androidContext(applicationContext)
             modules(
                 appModule,
-                roomModule
+                roomModule,
+                networkModule,
             )
         }
 
