@@ -21,7 +21,6 @@ class RetrofitBuilder {
 
     companion object {
         private const val BASE_ENDPOINT = "https://dev-k8s.treetracker.org"
-//        private const val BASE_ENDPOINT = " https://jsonplaceholder.typicode.com"
     }
 
 }
