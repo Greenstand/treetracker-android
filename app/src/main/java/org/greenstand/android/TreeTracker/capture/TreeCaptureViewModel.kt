@@ -26,7 +26,7 @@ class TreeCaptureViewModel(
     val state: LiveData<TreeCaptureState> = _state
 
     suspend fun captureLocation() {
-        _state.value = _state.value?.copy(isGettingLocation = true,isLocationAvailable = treeCapturer.pinLocation())
+        _state.value = _state.value?.copy(isGettingLocation = true, isLocationAvailable = treeCapturer.pinLocation())
         _state.value = _state.value?.copy(isGettingLocation = false)
     }
 
