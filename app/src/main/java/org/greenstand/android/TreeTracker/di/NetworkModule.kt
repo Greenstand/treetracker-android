@@ -1,6 +1,5 @@
 package org.greenstand.android.TreeTracker.di
 
-import org.greenstand.android.TreeTracker.models.messages.network.MessagesApi
 import org.greenstand.android.TreeTracker.models.messages.network.MessagesApiService
 import org.greenstand.android.TreeTracker.models.messages.network.RetrofitBuilder
 import org.koin.dsl.module
@@ -12,5 +11,4 @@ val networkModule = module {
 
     single { get<Retrofit>().create(MessagesApiService::class.java) }
 
-    single { MessagesApi(get()) }
 }
