@@ -26,7 +26,7 @@ class TreeCapturer(
             convergence = locationDataCapturer.convergence()
             locationDataCapturer.turnOffTreeCaptureMode()
             true
-        }else{
+        } else {
             locationDataCapturer.turnOffTreeCaptureMode()
             false
         }
