@@ -46,6 +46,7 @@
             android:configChanges="locale"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"
             >
 
             <intent-filter>
@@ -78,7 +79,8 @@
             android:name=".background.SyncService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <receiver android:name=".background.SyncBroadcastReceiver">
+        <receiver android:name=".background.SyncBroadcastReceiver"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="ACTION_STOP"/>
             </intent-filter>
