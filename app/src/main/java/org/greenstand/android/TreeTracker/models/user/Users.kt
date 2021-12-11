@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.user.User
 
@@ -16,9 +15,6 @@ class Users(
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics
 ) {
-
-    var currentSessionUser: User? = null
-        private set
 
     fun users(): Flow<List<User>> {
         return dao.getAllPlanterInfo()

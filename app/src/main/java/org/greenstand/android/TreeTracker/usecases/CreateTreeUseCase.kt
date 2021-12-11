@@ -9,7 +9,6 @@ import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Tree
-import org.greenstand.android.TreeTracker.models.Users
 import timber.log.Timber
 
 class CreateTreeUseCase(
@@ -26,7 +25,7 @@ class CreateTreeUseCase(
 
         val entity = TreeCaptureEntity(
             uuid = params.treeUuid.toString(),
-            planterCheckInId = params.planterCheckInId,
+            planterCheckInId = -1,
             sessionId = params.sessionId,
             localPhotoPath = params.photoPath,
             photoUrl = null,

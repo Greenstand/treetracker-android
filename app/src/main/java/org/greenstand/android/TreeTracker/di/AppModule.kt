@@ -161,8 +161,6 @@ val appModule = module {
 
     factory { CreateTreeUseCase(get(), get(), get(), get()) }
 
-    factory { CreateFakeTreesUseCase(get(), get(), get(), get()) }
-
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
     factory { CreatePlanterCheckInUseCase(get(), get(), get(), get()) }
