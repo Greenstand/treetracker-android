@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "873795d23a0499d2060d45e5758e8eef",
+    "identityHash": "b3a448e27d349fe5d6589f447302f668",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -295,7 +295,7 @@
       },
       {
         "tableName": "tree_capture",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `planter_checkin_id` INTEGER NOT NULL, `session_id` INTEGER NOT NULL DEFAULT -1, `local_photo_path` TEXT, `photo_url` TEXT, `note_content` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `accuracy` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `wallet` TEXT NOT NULL DEFAULT '', `bundle_id` TEXT, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`planter_checkin_id`) REFERENCES `planter_check_in`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`session_id`) REFERENCES `session`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `planter_checkin_id` INTEGER NOT NULL, `session_id` INTEGER NOT NULL DEFAULT -1, `local_photo_path` TEXT, `photo_url` TEXT, `note_content` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `accuracy` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `wallet` TEXT NOT NULL DEFAULT '', `bundle_id` TEXT, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`session_id`) REFERENCES `session`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -421,17 +421,6 @@
         ],
         "foreignKeys": [
           {
-            "table": "planter_check_in",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "planter_checkin_id"
-            ],
-            "referencedColumns": [
-              "_id"
-            ]
-          },
-          {
             "table": "session",
             "onDelete": "NO ACTION",
             "onUpdate": "CASCADE",
@@ -494,7 +483,7 @@
       },
       {
         "tableName": "session",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`record_uuid` TEXT NOT NULL, `planter_info_id` INTEGER NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `total_planted` INTEGER, `planted_with_connection` INTEGER, `organization` TEXT, `wallet` TEXT NOT NULL, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`planter_info_id`) REFERENCES `planter_info`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`record_uuid` TEXT NOT NULL, `planter_info_id` INTEGER NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `total_planted` INTEGER NOT NULL, `planted_with_connection` INTEGER, `organization` TEXT, `wallet` TEXT NOT NULL, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`planter_info_id`) REFERENCES `planter_info`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -524,7 +513,7 @@
             "fieldPath": "totalPlanted",
             "columnName": "total_planted",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "plantedWithConnection",
@@ -598,7 +587,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '873795d23a0499d2060d45e5758e8eef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b3a448e27d349fe5d6589f447302f668')"
     ]
   }
 }

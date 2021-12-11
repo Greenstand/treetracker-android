@@ -60,6 +60,7 @@ class TreeCapturer(
     suspend fun saveTree() {
         currentTree?.let {
             createTreeUseCase.execute(it)
+            sessionTracker.treePlanted()
         }
     }
 }

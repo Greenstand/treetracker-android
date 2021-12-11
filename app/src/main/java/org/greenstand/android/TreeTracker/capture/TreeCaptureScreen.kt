@@ -30,7 +30,13 @@ import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.PermissionRequest
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
+import org.greenstand.android.TreeTracker.view.ImageCaptureCircle
+import org.greenstand.android.TreeTracker.view.LocalImage
 
 @ExperimentalPermissionsApi
 @Composable
@@ -49,14 +55,15 @@ fun TreeCaptureScreen(
         bottomBar = {
             ActionBar(
                 leftAction = {
-                    ArrowButton(
-                        isLeft = true,
+                    ArrowButton(isLeft = true,
                         onClick = {
-                            navController.navigate(NavRoute.Dashboard.route) {
-                                popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        },
+                            scope.launch {
+                                viewModel.endSession()
+                                navController.navigate(NavRoute.Dashboard.route) {
+                                    popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            }},
                     )
                 },
                 centerAction = {
@@ -85,7 +92,7 @@ fun TreeCaptureScreen(
         }
     ) {
         BadLocationDialog(state = state, navController = navController)
-        
+
         Camera(
             isSelfieMode = false,
             cameraControl = cameraControl,
@@ -105,7 +112,12 @@ fun TreeCaptureScreen(
                         .padding(15.dp, 10.dp, 10.dp, 10.dp)
                         .aspectRatio(1.0f)
                         .clip(RoundedCornerShape(percent = 10))
-                        .clickable { navController.navigate(NavRoute.UserSelect.route) },
+                        .clickable {
+                            scope.launch {
+                                viewModel.endSession()
+                                navController.navigate(NavRoute.UserSelect.route)
+                            }
+                        },
                     imagePath = state.profilePicUrl,
                     contentScale = ContentScale.Crop
                 )

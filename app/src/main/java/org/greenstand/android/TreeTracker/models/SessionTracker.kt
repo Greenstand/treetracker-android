@@ -34,7 +34,7 @@ class SessionTracker(
                 startTime = time,
                 isUploaded = false,
                 endTime = null,
-                totalPlanted = null,
+                totalPlanted = 0,
                 organization = planterInfo.organization, // TODO change to use current device org
                 plantedWithConnection = 0,
             )
@@ -47,14 +47,19 @@ class SessionTracker(
 
     suspend fun endSession() {
         currentSessionId?.let { id ->
-            val session = dao.getSessionById(id)
-            dao.updateSession(session.copy(
-                totalPlanted = treesPlanted,
-                endTime = System.currentTimeMillis(),
-            ))
+            val session = dao.getSessionById(id).apply {
+                totalPlanted = treesPlanted
+                endTime = System.currentTimeMillis()
+            }
+            dao.updateSession(session)
+            treesPlanted = 0
+            currentUser = null
+            currentSessionId = null
         }
-        treesPlanted = 0
-        currentUser = null
+    }
+
+    fun treePlanted() {
+        treesPlanted++
     }
 
 }

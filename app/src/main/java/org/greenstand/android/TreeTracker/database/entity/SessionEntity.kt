@@ -27,7 +27,7 @@ data class SessionEntity(
     @ColumnInfo(name = END_TIME)
     var endTime: Long?,
     @ColumnInfo(name = TOTAL_PLANTED)
-    var totalPlanted: Int?,
+    var totalPlanted: Int,
     @ColumnInfo(name = PLANTED_WITH_CONNECTION)
     var plantedWithConnection: Int?,
     @ColumnInfo(name = ORGANIZATION)
