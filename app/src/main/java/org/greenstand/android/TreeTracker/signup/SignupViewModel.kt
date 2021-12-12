@@ -19,6 +19,7 @@ data class SignUpState(
     val isPhoneValid: Boolean = false,
     val canGoToNextScreen: Boolean = false,
     val credential: Credential = Credential.Email(),
+    val autofocusTextEnabled: Boolean = false
 )
 
 sealed class Credential {
@@ -78,6 +79,10 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
     fun updateCredentialType(updatedCredential: Credential) {
         _state.value = _state.value?.copy(credential = updatedCredential)
+    }
+
+    fun enableAutofocus() {
+        _state.value = _state.value?.copy(autofocusTextEnabled = true)
     }
 
     fun goToNameEntry() {
