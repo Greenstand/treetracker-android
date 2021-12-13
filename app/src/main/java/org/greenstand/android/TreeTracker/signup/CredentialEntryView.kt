@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,6 +40,7 @@ import org.greenstand.android.TreeTracker.view.TopBarTitle
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         topBar = {
@@ -59,7 +61,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         isLeft = false,
                         isEnabled = (state.isEmailValid || state.isPhoneValid)
                     ) {
-                        viewModel.goToNameEntry()
+                        viewModel.doesCredentialExist()
                     }
                 }
             )
@@ -102,11 +104,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Go,
+                        imeAction = ImeAction.Done,
                     ),
                     keyboardActions = KeyboardActions(
-                        onGo = {
-                            viewModel.goToNameEntry()
+                        onDone = {
+                            focusManager.clearFocus()
                         }
                     )
                 )
@@ -118,11 +120,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Go,
+                        imeAction = ImeAction.Done,
                     ),
                     keyboardActions = KeyboardActions(
-                        onGo = {
-                            viewModel.goToNameEntry()
+                        onDone = {
+                            focusManager.clearFocus()
                         }
                     )
                 )
