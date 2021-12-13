@@ -87,6 +87,10 @@ class Users(
         }
     }
 
+    suspend fun checkPlanterExists(identifier: String): Boolean{
+        return dao.checkIfPlanterExists(identifier) >= 1
+    }
+
     suspend fun startUserSession(
         localPhotoPath: String,
         planterInfoId: Long
