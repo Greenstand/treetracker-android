@@ -1,6 +1,14 @@
 package org.greenstand.android.TreeTracker.signup
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
@@ -34,7 +42,6 @@ import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
 
     Scaffold(
         topBar = {
@@ -101,11 +108,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done,
+                        imeAction = ImeAction.Go,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
+                        onGo = {
+                            viewModel.goToNameEntry()
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -120,11 +127,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Done,
+                        imeAction = ImeAction.Go,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
+                        onGo = {
+                            viewModel.goToNameEntry()
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
