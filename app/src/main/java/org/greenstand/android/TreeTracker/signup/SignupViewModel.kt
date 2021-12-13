@@ -3,6 +3,8 @@ package org.greenstand.android.TreeTracker.signup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.Validation
@@ -81,11 +83,23 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         _state.value = _state.value?.copy(credential = updatedCredential)
     }
 
+    fun doesCredentialExist() {
+        val credential = _state.value?.let { extractIdentifier(it) }!!
+
+        viewModelScope.launch {
+            if (users.checkPlanterExists(credential)) {
+                //TODO(UPDATE UI TO SHOW DIALOG TO SIGN IN WITH EXISTING ACCOUNT OR TRY A SEPERATE EMAIL/ADDRESS)
+            } else {
+                goToNameEntry()
+            }
+        }
+    }
+
     fun enableAutofocus() {
         _state.value = _state.value?.copy(autofocusTextEnabled = true)
     }
 
-    fun goToNameEntry() {
+    private fun goToNameEntry() {
         _state.value = _state.value?.copy(
             isCredentialView = false,
             canGoToNextScreen = false,
