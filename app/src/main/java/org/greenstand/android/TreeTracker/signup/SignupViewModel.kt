@@ -19,6 +19,7 @@ data class SignUpState(
     val isCredentialView: Boolean = true,
     val isEmailValid: Boolean = false,
     val isPhoneValid: Boolean = false,
+    val existingUser: User? = null,
     val canGoToNextScreen: Boolean = false,
     val credential: Credential = Credential.Email(),
 )
@@ -87,11 +88,19 @@ class SignupViewModel(private val users: Users) : ViewModel() {
 
         viewModelScope.launch {
             if (users.checkPlanterExists(credential)) {
-                //TODO(UPDATE UI TO SHOW DIALOG TO SIGN IN WITH EXISTING ACCOUNT OR TRY A SEPERATE EMAIL/ADDRESS)
+                _state.value = _state.value?.copy(
+                    existingUser = users.getUserWithIdentifier(credential),
+                )
             } else {
                 goToNameEntry()
             }
         }
+    }
+
+    fun closeExistingUserDialog() {
+        _state.value = _state.value?.copy(
+            existingUser = null,
+        )
     }
 
     private fun goToNameEntry() {
