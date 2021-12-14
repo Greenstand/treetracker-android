@@ -36,6 +36,12 @@ class Users(
             dao.getPlanterInfoById(planterInfoId))
     }
 
+    suspend fun getUserWithIdentifier(identifier: String): User? {
+        return createUser(
+            dao.getPlanterInfoById(identifier)
+        )
+    }
+
     suspend fun getPowerUser(): User? {
         val planterInfo = dao.getPowerUser() ?: return null
         return createUser(planterInfo)
