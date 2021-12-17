@@ -12,7 +12,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
@@ -25,7 +30,10 @@ fun BorderedTextField(
     onValueChange: (String) -> Unit,
     placeholder: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions()
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    onFocusChanged: ((FocusState) -> Unit) = {},
+    focusRequester: FocusRequester = FocusRequester.Default,
+    autofocusEnabled: Boolean = false
 ) {
     Box(
         modifier = Modifier
@@ -38,7 +46,10 @@ fun BorderedTextField(
 
     ) {
         TextField(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(8.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged(onFocusChanged),
             value = value,
             onValueChange = onValueChange,
             placeholder = placeholder,
@@ -50,5 +61,11 @@ fun BorderedTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions
         )
+    }
+
+    LaunchedEffect(Unit) {
+        if (autofocusEnabled) {
+            focusRequester.requestFocus()
+        }
     }
 }
