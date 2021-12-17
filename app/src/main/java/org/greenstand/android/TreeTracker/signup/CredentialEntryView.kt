@@ -13,8 +13,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,6 +41,7 @@ import org.greenstand.android.TreeTracker.view.TopBarTitle
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
@@ -108,7 +111,10 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         onGo = {
                             viewModel.goToNameEntry()
                         }
-                    )
+                    ),
+                    onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
+                    focusRequester = focusRequester,
+                    autofocusEnabled = state.autofocusTextEnabled
                 )
 
                 is Credential.Phone -> BorderedTextField(
@@ -124,7 +130,10 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         onGo = {
                             viewModel.goToNameEntry()
                         }
-                    )
+                    ),
+                    onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
+                    focusRequester = focusRequester,
+                    autofocusEnabled = state.autofocusTextEnabled
                 )
             }
         }
