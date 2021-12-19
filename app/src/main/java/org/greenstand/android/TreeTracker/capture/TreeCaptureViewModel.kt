@@ -8,17 +8,21 @@ import androidx.lifecycle.viewModelScope
 import java.io.File
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.TreeCapturer
+import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
+import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
 data class TreeCaptureState(
     val profilePicUrl: String,
-   val isGettingLocation: Boolean = false,
+    val isGettingLocation: Boolean = false,
+    val isCreatingFakeTrees: Boolean = false,
 )
 
 class TreeCaptureViewModel(
     profilePicUrl: String,
     private val treeCapturer: TreeCapturer,
+    private val createFakeTreesUseCase: CreateFakeTreesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableLiveData(TreeCaptureState(profilePicUrl))
@@ -36,6 +40,12 @@ class TreeCaptureViewModel(
         }
     }
 
+    suspend fun createFakeTrees() {
+        _state.value = _state.value?.copy(isCreatingFakeTrees = true)
+        createFakeTreesUseCase.execute(CreateFakeTreesParams(500))
+        _state.value = _state.value?.copy(isCreatingFakeTrees = false)
+    }
+
 }
 
 
@@ -43,6 +53,6 @@ class TreeCaptureViewModelFactory(private val profilePicUrl: String)
     : ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return TreeCaptureViewModel(profilePicUrl, get()) as T
+        return TreeCaptureViewModel(profilePicUrl, get(), get()) as T
     }
 }

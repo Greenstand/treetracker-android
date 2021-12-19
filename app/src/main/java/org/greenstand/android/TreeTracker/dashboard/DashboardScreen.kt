@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.dashboard
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,7 +53,6 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TextButton
 import org.greenstand.android.TreeTracker.view.TextStyles
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
@@ -98,9 +96,10 @@ fun DashboardScreen(
                 Image(
                     painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
                     contentDescription = "",
-                    modifier = Modifier.align(CenterVertically)
-                                       .padding(top = 5.dp,bottom =10.dp, end = 10.dp)
-                                       .size(width = 30.dp,height = 30.dp)
+                    modifier = Modifier
+                        .align(CenterVertically)
+                        .padding(top = 5.dp, bottom = 10.dp, end = 10.dp)
+                        .size(width = 30.dp, height = 30.dp)
                 )
                 Text(
                     modifier = Modifier.align(CenterVertically),
