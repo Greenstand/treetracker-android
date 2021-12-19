@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.capture
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
@@ -16,11 +17,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraControl
 import org.greenstand.android.TreeTracker.models.FeatureFlags
@@ -104,17 +109,24 @@ fun TreeCaptureScreen(
                 if (FeatureFlags.DEBUG_ENABLED) {
                     DepthButton(
                         modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(height = 70.dp, width = 70.dp),
+                            .size(height = 70.dp, width = 70.dp)
+                            .align(Alignment.Center),
                         isEnabled = !state.isCreatingFakeTrees,
                         onClick = {
                             scope.launch {
                                 viewModel.createFakeTrees()
                             }
                         },
-                        colors = AppButtonColors.UploadOrange,
+                        colors = AppButtonColors.ProgressGreen,
                         shape = DepthSurfaceShape.Circle
-                    ) { /* EMPTY */ }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.Center).size(30.dp, 30.dp),
+                            colorFilter = ColorFilter.tint(Color.Black)
+                        )
+                    }
                 }
             }
         )
