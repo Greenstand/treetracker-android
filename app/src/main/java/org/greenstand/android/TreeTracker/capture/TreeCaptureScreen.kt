@@ -1,15 +1,12 @@
 package org.greenstand.android.TreeTracker.capture
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +23,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraControl
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.PermissionRequest
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -101,19 +99,25 @@ fun TreeCaptureScreen(
                     imagePath = state.profilePicUrl,
                     contentScale = ContentScale.Crop
                 )
+            },
+            rightAction = {
+                if (FeatureFlags.DEBUG_ENABLED) {
+                    DepthButton(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(height = 70.dp, width = 70.dp),
+                        isEnabled = !state.isCreatingFakeTrees,
+                        onClick = {
+                            scope.launch {
+                                viewModel.createFakeTrees()
+                            }
+                        },
+                        colors = AppButtonColors.UploadOrange,
+                        shape = DepthSurfaceShape.Circle
+                    ) { /* EMPTY */ }
+                }
             }
         )
-        if (state.isGettingLocation) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(height = 70.dp, width = 70.dp),
-                    color = AppColors.Green
-                )
-            }
-        }
+        showLoadingSpinner(state.isGettingLocation || state.isCreatingFakeTrees)
     }
 }
