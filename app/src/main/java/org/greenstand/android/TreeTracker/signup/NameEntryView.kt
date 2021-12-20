@@ -29,6 +29,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
 fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
@@ -59,8 +60,12 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
     Scaffold(
         topBar = {
             ActionBar(
-                centerAction = { Text(stringResource(id = R.string.treetracker)) },
-                rightAction = { LanguageButton() }
+                centerAction = {
+                    TopBarTitle()
+                },
+                rightAction = {
+                    LanguageButton()
+                }
             )
         },
         bottomBar = {
