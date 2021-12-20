@@ -10,7 +10,6 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.utilities.TextUtils
 
 class SyncNotificationManager(
     private val notificationManagerCompat: NotificationManagerCompat,
@@ -20,15 +19,12 @@ class SyncNotificationManager(
     fun showNotification() {
         createNotificationChannel()
 
-        val stopText = TextUtils.createColorizedText(context.getString(R.string.stop), context, R.color.stop_red)
-
         val builder = NotificationCompat.Builder(context, SYNC_CHANNEL_ID)
             .setSmallIcon(R.drawable.logo)
             .setContentTitle(context.getString(R.string.syncing))
             .setContentText(context.getString(R.string.uploading_trees))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setColor(context.resources.getColor(R.color.colorPrimary))
-            .addAction(R.drawable.save_icon, stopText, createStopSyncPendingIntent())
             .setProgress(0, 0, true)
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build())
