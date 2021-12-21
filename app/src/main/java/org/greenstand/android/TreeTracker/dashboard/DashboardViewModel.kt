@@ -59,7 +59,13 @@ class DashboardViewModel(
 
                 _isSyncing = false
             }
-            SUCCEEDED,
+            SUCCEEDED -> {
+                if (_isSyncing != null) {
+                    showSnackBar?.invoke(R.string.sync_successful)
+                }
+
+                _isSyncing = false
+            }
             State.CANCELLED,
             State.FAILED -> {
                 if (_isSyncing != null) {
