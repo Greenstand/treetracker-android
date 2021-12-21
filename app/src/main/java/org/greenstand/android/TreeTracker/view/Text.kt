@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -34,6 +35,7 @@ fun BoxScope.TopBarTitle() {
         modifier = Modifier
             .height(100.dp)
             .width(100.dp)
+            .align(Alignment.Center)
             .padding(all = 15.dp)
     )
 }
