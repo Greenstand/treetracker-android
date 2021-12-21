@@ -2,31 +2,30 @@ package org.greenstand.android.TreeTracker.models.messages
 
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QuestionResponse
-import org.greenstand.android.TreeTracker.models.messages.network.responses.SurveyResponse
 
-fun QuestionResponse.toQuestions(): Question {
+fun QuestionResponse.toQuestion(): Question {
     return Question(
-        prompt = prompt,
-        choices = choices
-    )
-}
-
-fun SurveyResponse.toSurvey(): Survey {
-    return Survey(
-        questions = questions?.map { it.toQuestions() },
-        answers = answers,
+        prompt = prompt!!,
+        choices = choices!!
     )
 }
 
 fun MessageResponse.toMessage(): Message {
-    return Message(
-        from = from,
-        to = to,
-        subject = subject,
-        body = body,
-        composedAt = composedAt,
-        parentMessageId = parentMessageId,
-        videoLink = videoLink,
-        survey = survey.toSurvey()
-    )
+    return when {
+        survey.questions != null -> return SurveyMessage(
+            from = from,
+            to = to,
+            composedAt = composedAt,
+            questions = survey.questions.map { it.toQuestion() },
+            answers = survey.answers!!
+        )
+        else -> TextMessage(
+            from = from,
+            to = to,
+            composedAt = composedAt,
+            subject = subject,
+            body = body,
+            parentMessageId = parentMessageId,
+        )
+    }
 }
