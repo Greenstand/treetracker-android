@@ -211,8 +211,8 @@ fun ExistingUserDialog(
                     AppButtonColors.Default,
                     Green
                 ) {
-                    navController.navigate(NavRoute.Dashboard.route) {
-                        popUpTo(NavRoute.Language.route) { inclusive = true }
+                    navController.navigate(NavRoute.WalletSelect.create(it.id)) {
+                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
                         launchSingleTop = true
                     }
                 }

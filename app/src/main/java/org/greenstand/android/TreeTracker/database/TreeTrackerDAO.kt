@@ -34,13 +34,10 @@ interface TreeTrackerDAO {
     suspend fun getPlanterInfoById(id: Long): PlanterInfoEntity?
 
     @Query("SELECT * FROM planter_info WHERE planter_identifier = :identity")
-    suspend fun getPlanterInfoById(identity: String): PlanterInfoEntity?
+    suspend fun getPlanterInfoByIdentifier(identity: String): PlanterInfoEntity?
 
     @Query("SELECT * FROM planter_info WHERE power_user = 1")
     suspend fun getPowerUser(): PlanterInfoEntity?
-
-    @Query("SELECT COUNT(*) FROM planter_info WHERE planter_identifier = :identifier LIMIT 1")
-    suspend fun checkIfPlanterExists(identifier: String): Int
 
     @Update
     suspend fun updatePlanterInfo(planterInfoEntity: PlanterInfoEntity)

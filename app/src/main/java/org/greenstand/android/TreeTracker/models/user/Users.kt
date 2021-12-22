@@ -38,7 +38,7 @@ class Users(
 
     suspend fun getUserWithIdentifier(identifier: String): User? {
         return createUser(
-            dao.getPlanterInfoById(identifier)
+            dao.getPlanterInfoByIdentifier(identifier)
         )
     }
 
@@ -94,7 +94,7 @@ class Users(
     }
 
     suspend fun checkPlanterExists(identifier: String): Boolean{
-        return dao.checkIfPlanterExists(identifier) >= 1
+        return getUserWithIdentifier(identifier) != null
     }
 
     suspend fun startUserSession(
