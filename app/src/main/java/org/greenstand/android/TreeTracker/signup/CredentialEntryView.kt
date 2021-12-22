@@ -115,10 +115,10 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done,
+                        imeAction = ImeAction.Go,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
+                        onGo = {
                             focusManager.clearFocus()
                         }
                     ),
@@ -134,10 +134,10 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Done,
+                        imeAction = ImeAction.Go,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
+                        onGo = {
                             focusManager.clearFocus()
                         }
                     ),
@@ -212,8 +212,8 @@ fun ExistingUserDialog(
                     AppButtonColors.Default,
                     Green
                 ) {
-                    navController.navigate(NavRoute.Dashboard.route) {
-                        popUpTo(NavRoute.Language.route) { inclusive = true }
+                    navController.navigate(NavRoute.WalletSelect.create(it.id)) {
+                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
