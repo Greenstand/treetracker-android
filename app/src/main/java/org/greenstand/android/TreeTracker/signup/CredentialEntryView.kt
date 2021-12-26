@@ -15,12 +15,15 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -51,7 +55,21 @@ import org.greenstand.android.TreeTracker.view.TopBarTitle
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+
+    val showSnackbar = { message: String ->
+        coroutineScope.launch {
+            focusManager.clearFocus()
+            scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = message
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -76,7 +94,8 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     }
                 }
             )
-        }
+        },
+        scaffoldState = scaffoldState
     ) {
         if (state.existingUser != null) {
             ExistingUserDialog(viewModel = viewModel, navController = navController, state = state)
@@ -125,7 +144,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            viewModel.doesCredentialExist()
+                            if (state.isEmailValid || state.isPhoneValid) {
+                                viewModel.doesCredentialExist()
+                            } else {
+                                showSnackbar.invoke(context.getString(R.string.email_invalid_message))
+                            }
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -144,7 +167,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            viewModel.doesCredentialExist()
+                            if (state.isEmailValid || state.isPhoneValid) {
+                                viewModel.doesCredentialExist()
+                            } else {
+                                showSnackbar.invoke(context.getString(R.string.phone_invalid_message))
+                            }
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
