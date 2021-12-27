@@ -143,10 +143,8 @@ class LocationDataCapturer(
     private var locationsDeque: Deque<Location> = LinkedList()
     var generatedTreeUuid: UUID? = null
         private set
-    var lastConvergenceWithinRange: Convergence? = null
-        private set
-    var currentConvergence: Convergence? = null
-        private set
+    private var lastConvergenceWithinRange: Convergence? = null
+    private var currentConvergence: Convergence? = null
     private var convergenceStatus: ConvergenceStatus? = null
 
     private val locationObserver: Observer<Location?> = Observer { location ->
@@ -214,6 +212,10 @@ class LocationDataCapturer(
                 treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
             }
         }
+    }
+
+    fun isLocationCoordinateAvailable(): Boolean {
+        return (lastConvergenceWithinRange != null || currentConvergence != null)
     }
 
     fun start() {

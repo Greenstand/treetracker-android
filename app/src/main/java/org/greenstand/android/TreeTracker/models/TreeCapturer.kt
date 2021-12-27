@@ -22,7 +22,7 @@ class TreeCapturer(
         locationDataCapturer.converge()
 
         newTreeUuid = locationDataCapturer.generatedTreeUuid
-        return if (locationDataCapturer.lastConvergenceWithinRange != null || locationDataCapturer.currentConvergence != null) {
+        return if (locationDataCapturer.isLocationCoordinateAvailable()) {
             convergence = locationDataCapturer.convergence()
             locationDataCapturer.turnOffTreeCaptureMode()
             true
