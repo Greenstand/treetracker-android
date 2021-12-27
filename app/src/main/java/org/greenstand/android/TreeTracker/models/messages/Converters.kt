@@ -14,6 +14,7 @@ fun MessageResponse.toMessage(): Message {
     return when {
         survey.questions.isNotEmpty() && survey.questions.first().prompt != null ->
             return SurveyMessage(
+                id = id,
                 from = from,
                 to = to,
                 composedAt = composedAt,
@@ -21,6 +22,7 @@ fun MessageResponse.toMessage(): Message {
                 answers = survey.answers.filterNotNull()
             )
         else -> TextMessage(
+            id = id,
             from = from,
             to = to,
             composedAt = composedAt,
