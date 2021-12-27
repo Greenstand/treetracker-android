@@ -5,20 +5,21 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Ques
 
 fun QuestionResponse.toQuestion(): Question {
     return Question(
-        prompt = prompt!!,
-        choices = choices!!
+        prompt = prompt ?: "NULL PROMPT",
+        choices = choices ?: emptyList()
     )
 }
 
 fun MessageResponse.toMessage(): Message {
     return when {
-        survey.questions != null -> return SurveyMessage(
-            from = from,
-            to = to,
-            composedAt = composedAt,
-            questions = survey.questions.map { it.toQuestion() },
-            answers = survey.answers!!
-        )
+        survey.questions.isNotEmpty() && survey.questions.first().prompt != null ->
+            return SurveyMessage(
+                from = from,
+                to = to,
+                composedAt = composedAt,
+                questions = survey.questions.map { it.toQuestion() },
+                answers = survey.answers.filterNotNull()
+            )
         else -> TextMessage(
             from = from,
             to = to,

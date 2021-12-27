@@ -10,4 +10,14 @@ class MessagesRepo(private val apiService: MessagesApiService) {
         val result = apiService.getMessages(wallet)
         return@withContext result.messages.map { it.toMessage() }
     }
+
+    suspend fun getTextMessages(
+        wallet: String,
+        from: String,
+        to: String): List<TextMessage> = withContext(Dispatchers.IO) {
+        return@withContext getMessages(wallet)
+            .filterIsInstance<TextMessage>()
+            .filter { (it.from == from || it.from == to) && (it.to == to || it.to == from) }
+            .sortedBy { it.composedAt }
+    }
 }
