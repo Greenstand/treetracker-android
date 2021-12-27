@@ -4,14 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import org.greenstand.android.TreeTracker.R
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import org.greenstand.android.TreeTracker.R
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,8 +37,7 @@ import org.greenstand.android.TreeTracker.view.*
 fun TreeCaptureScreen(
     profilePicUrl: String,
 ) {
-    val viewModel: TreeCaptureViewModel =
-        viewModel(factory = TreeCaptureViewModelFactory(profilePicUrl))
+    val viewModel: TreeCaptureViewModel = viewModel(factory = TreeCaptureViewModelFactory(profilePicUrl))
     val state by viewModel.state.observeAsState(TreeCaptureState(profilePicUrl))
     val navController = LocalNavHostController.current
     val cameraControl = remember { CameraControl() }
@@ -90,6 +85,7 @@ fun TreeCaptureScreen(
         }
     ) {
         BadLocationDialog(state = state, navController = navController)
+        
         Camera(
             isSelfieMode = false,
             cameraControl = cameraControl,
@@ -142,7 +138,6 @@ fun TreeCaptureScreen(
         showLoadingSpinner(state.isGettingLocation || state.isCreatingFakeTrees)
     }
 }
-
 
 @Composable
 fun BadLocationDialog(state: TreeCaptureState, navController: NavHostController) {

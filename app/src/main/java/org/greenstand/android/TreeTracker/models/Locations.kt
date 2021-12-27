@@ -143,8 +143,10 @@ class LocationDataCapturer(
     private var locationsDeque: Deque<Location> = LinkedList()
     var generatedTreeUuid: UUID? = null
         private set
-    private var lastConvergenceWithinRange: Convergence? = null
-    private var currentConvergence: Convergence? = null
+    var lastConvergenceWithinRange: Convergence? = null
+        private set
+    var currentConvergence: Convergence? = null
+        private set
     private var convergenceStatus: ConvergenceStatus? = null
 
     private val locationObserver: Observer<Location?> = Observer { location ->
