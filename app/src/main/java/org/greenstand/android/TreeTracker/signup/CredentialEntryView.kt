@@ -118,7 +118,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            viewModel.goToNameEntry()
+                            viewModel.doesCredentialExist()
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -137,7 +137,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            viewModel.goToNameEntry()
+                            viewModel.doesCredentialExist()
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -204,14 +204,14 @@ fun ExistingUserDialog(
             )
         },
         buttons = {
-            state.existingUser?.let {
+            state.existingUser?.let { user ->
                 UserButton(
-                    user = it,
+                    user = user,
                     isSelected = false,
                     AppButtonColors.Default,
                     Green
                 ) {
-                    navController.navigate(NavRoute.WalletSelect.create(it.id)) {
+                    navController.navigate(NavRoute.WalletSelect.create(user.id)) {
                         popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
                         launchSingleTop = true
                     }

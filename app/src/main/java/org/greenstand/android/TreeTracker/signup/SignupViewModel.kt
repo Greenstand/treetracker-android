@@ -88,7 +88,7 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         val credential = _state.value?.let { extractIdentifier(it) }!!
 
         viewModelScope.launch {
-            if (users.checkPlanterExists(credential)) {
+            if (users.doesUserExists(credential)) {
                 _state.value = _state.value?.copy(
                     existingUser = users.getUserWithIdentifier(credential),
                 )

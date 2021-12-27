@@ -93,7 +93,7 @@ class Users(
         }
     }
 
-    suspend fun checkPlanterExists(identifier: String): Boolean{
+    suspend fun doesUserExists(identifier: String): Boolean{
         return getUserWithIdentifier(identifier) != null
     }
 
