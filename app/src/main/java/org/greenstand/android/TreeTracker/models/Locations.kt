@@ -56,13 +56,13 @@ class LocationUpdateManager(
             Timber.d("Location status changed %s %d", p0, p1)
         }
 
-        override fun onProviderEnabled(p0: String?) {
-            Timber.d("Provider enabled %s", p0)
-        }
-
-        override fun onProviderDisabled(p0: String?) {
-            Timber.d("Provider disabled %s", p0)
-        }
+//        override fun onProviderEnabled(p0: String?) {
+//            Timber.d("Provider enabled %s", p0)
+//        }
+//
+//        override fun onProviderDisabled(p0: String?) {
+//            Timber.d("Provider disabled %s", p0)
+//        }
     }
 
     fun startLocationUpdates(): Boolean {

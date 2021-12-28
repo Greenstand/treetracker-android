@@ -71,7 +71,7 @@ class AutoFitPreviewBuilder private constructor(
 
         // Every time the view finder is updated, recompute layout
         useCase.onPreviewOutputUpdateListener = Preview.OnPreviewOutputUpdateListener {
-            val viewFinder =
+            var viewFinder =
                 viewFinderRef.get() ?: return@OnPreviewOutputUpdateListener
             Log.d(TAG, "Preview output changed. " +
                     "Size: ${it.textureSize}. Rotation: ${it.rotationDegrees}")
@@ -82,7 +82,7 @@ class AutoFitPreviewBuilder private constructor(
             parent.addView(viewFinder, 0)
 
             // Update internal texture
-            viewFinder.surfaceTexture = it.surfaceTexture
+            viewFinder.setSurfaceTexture(it.surfaceTexture)
 
             // Apply relevant transformations
             bufferRotation = it.rotationDegrees
