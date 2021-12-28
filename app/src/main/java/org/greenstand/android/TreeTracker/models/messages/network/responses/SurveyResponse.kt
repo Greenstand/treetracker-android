@@ -4,6 +4,6 @@ class SurveyResponse(
     val id: String?,
     val title: String?,
     val response: Boolean,
-    val questions: List<QuestionResponse>?,
-    val answers: List<String>?,
+    val questions: List<QuestionResponse>,
+    val answers: List<String?>,
 )
