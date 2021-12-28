@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.models.messages.network.responses
 import com.google.gson.annotations.SerializedName
 
 data class MessageResponse(
+    val id: String,
     val from: String,
     val to: String,
     val subject: String,
