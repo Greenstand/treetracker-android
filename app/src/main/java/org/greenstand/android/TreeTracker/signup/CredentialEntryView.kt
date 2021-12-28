@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,15 +21,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.UserButton
+import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors.GrayShadow
 import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.AppColors.GreenShadow
@@ -62,12 +70,15 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         isLeft = false,
                         isEnabled = (state.isEmailValid || state.isPhoneValid)
                     ) {
-                        viewModel.goToNameEntry()
+                        viewModel.doesCredentialExist()
                     }
                 }
             )
         }
     ) {
+        if (state.existingUser != null) {
+            ExistingUserDialog(viewModel = viewModel, navController = navController, state = state)
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -109,7 +120,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            viewModel.goToNameEntry()
+                            viewModel.doesCredentialExist()
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -128,7 +139,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
-                            viewModel.goToNameEntry()
+                            viewModel.doesCredentialExist()
                         }
                     ),
                     onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -173,6 +184,53 @@ fun <T : Credential> CredentialButton(
             color = Color.Black,
         )
     }
+}
+
+@Composable
+fun ExistingUserDialog(
+    viewModel: SignupViewModel,
+    navController: NavHostController,
+    state: SignUpState
+) {
+    AlertDialog(
+        onDismissRequest = {
+            viewModel.closeExistingUserDialog()
+        },
+        title = {
+            Text(text = stringResource(R.string.user_exists_header))
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.user_exists_message),
+                color = Color.Green
+            )
+        },
+        buttons = {
+            state.existingUser?.let { user ->
+                UserButton(
+                    user = user,
+                    isSelected = false,
+                    AppButtonColors.Default,
+                    Green
+                ) {
+                    navController.navigate(NavRoute.WalletSelect.create(user.id)) {
+                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
+            Button(
+                modifier = Modifier.wrapContentSize(),
+                onClick = {
+                    viewModel.closeExistingUserDialog()
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.cancel)
+                )
+            }
+        }
+    )
 }
 
 @Preview
