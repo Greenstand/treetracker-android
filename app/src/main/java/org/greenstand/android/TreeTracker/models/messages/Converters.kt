@@ -12,7 +12,7 @@ fun QuestionResponse.toQuestion(): Question {
 
 fun MessageResponse.toMessage(): Message {
     return when {
-        survey.questions.isNotEmpty() && survey.questions.first().prompt != null ->
+        survey.questions.isNotEmpty() && survey.questions.first().choices.isNullOrEmpty() ->
             return SurveyMessage(
                 id = id,
                 from = from,
