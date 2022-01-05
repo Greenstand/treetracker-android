@@ -361,18 +361,10 @@ object ImageUtils {
         // Calculate your sampleSize based on the requiredWidth and
         // originalWidth
         // For e.g you want the width to stay consistent at 500dp
-        var requiredWidth = 800
+        var requiredWidth = 1920
 
-        if (imageHeight > imageWidth) {
-            requiredWidth = 600
-        }
 
-        var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
-
-        // If the original image is smaller than required, don't sample
-        if (sampleSize < 1) {
-            sampleSize = 1
-        }
+        var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()    ).toDouble()).toInt()
 
         bmOptions.inSampleSize = sampleSize
         bmOptions.inPurgeable = true
@@ -393,7 +385,7 @@ object ImageUtils {
             bmOptions.outWidth, bmOptions.outHeight, matrix, true
         )
 
-        val compressionQuality = 100
+        val compressionQuality = 70
         val byteArrayBitmapStream = ByteArrayOutputStream()
         rotatedBitmap.compress(
             Bitmap.CompressFormat.JPEG, compressionQuality,
