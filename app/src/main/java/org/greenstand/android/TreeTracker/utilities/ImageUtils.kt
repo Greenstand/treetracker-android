@@ -364,7 +364,7 @@ object ImageUtils {
         var requiredWidth = 1920
 
 
-        var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()    ).toDouble()).toInt()
+        var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
         bmOptions.inSampleSize = sampleSize
         bmOptions.inPurgeable = true
