@@ -16,15 +16,20 @@ class TreeCapturer(
     private var convergence: Convergence? = null
     private var currentTree: Tree? = null
 
-    suspend fun pinLocation() {
+    suspend fun pinLocation(): Boolean {
         locationDataCapturer.start()
         locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
 
         newTreeUuid = locationDataCapturer.generatedTreeUuid
-        convergence = locationDataCapturer.convergence()
-
-        locationDataCapturer.turnOffTreeCaptureMode()
+        return if (locationDataCapturer.isLocationCoordinateAvailable()) {
+            convergence = locationDataCapturer.convergence()
+            locationDataCapturer.turnOffTreeCaptureMode()
+            true
+        } else {
+            locationDataCapturer.turnOffTreeCaptureMode()
+            false
+        }
     }
 
     suspend fun setImage(imageFile: File) {
