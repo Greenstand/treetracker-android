@@ -17,6 +17,7 @@ data class TreeCaptureState(
     val profilePicUrl: String,
     val isGettingLocation: Boolean = false,
     val isCreatingFakeTrees: Boolean = false,
+    val isLocationAvailable: Boolean? = null,
 )
 
 class TreeCaptureViewModel(
@@ -30,8 +31,7 @@ class TreeCaptureViewModel(
 
     suspend fun captureLocation() {
         _state.value = _state.value?.copy(isGettingLocation = true)
-        treeCapturer.pinLocation()
-        _state.value = _state.value?.copy(isGettingLocation = false)
+        _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation(), isGettingLocation = false)
     }
 
     fun onImageCaptured(imageFile: File) {
