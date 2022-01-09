@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.UserEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.models.user.User
 import timber.log.Timber
 
@@ -22,29 +22,25 @@ class Users(
         private set
 
     fun users(): Flow<List<User>> {
-        return dao.getAllPlanterInfo()
-            .map { planters -> planters.mapNotNull { createUser(it) } }
+        return dao.getAllUsers()
+            .map { userEntities -> userEntities.mapNotNull { createUser(it) } }
     }
 
     suspend fun getUserList(): List<User> {
-        return dao.getAllPlanterInfoList()
-            .mapNotNull { planter -> createUser(planter) }
+        return dao.getAllUsersList().mapNotNull { createUser(it) }
     }
 
-    suspend fun getUser(planterInfoId: Long): User? {
-        return createUser(
-            dao.getPlanterInfoById(planterInfoId))
+    suspend fun getUser(userId: Long): User? {
+        return createUser(dao.getUserById(userId))
     }
 
-    suspend fun getUserWithIdentifier(identifier: String): User? {
-        return createUser(
-            dao.getPlanterInfoByIdentifier(identifier)
-        )
+    suspend fun getUserWithWallet(wallet: String): User? {
+        return createUser(dao.getUserByWallet(wallet))
     }
 
     suspend fun getPowerUser(): User? {
-        val planterInfo = dao.getPowerUser() ?: return null
-        return createUser(planterInfo)
+        val userEntity = dao.getPowerUser() ?: return null
+        return createUser(userEntity)
     }
 
     suspend fun createUser(
@@ -53,7 +49,7 @@ class Users(
         organization: String?,
         phone: String?,
         email: String?,
-        identifier: String,
+        wallet: String,
         photoPath: String,
         isPowerUser: Boolean = false
     ): Long {
@@ -62,8 +58,8 @@ class Users(
             val location = locationUpdateManager.currentLocation
             val time = location?.time ?: System.currentTimeMillis()
 
-            val entity = PlanterInfoEntity(
-                identifier = identifier,
+            val entity = UserEntity(
+                wallet = wallet,
                 firstName = firstName,
                 lastName = lastName,
                 organization = organization,
@@ -73,12 +69,13 @@ class Users(
                 latitude = location?.latitude ?: 0.0,
                 createdAt = time,
                 uploaded = false,
-                recordUuid = UUID.randomUUID().toString(),
-                isPowerUser = isPowerUser,
-                localPhotoPath = photoPath,
+                uuid = UUID.randomUUID().toString(),
+                powerUser = isPowerUser,
+                photoPath = photoPath,
+                photoUrl = null,
             )
 
-            val userId = dao.insertPlanterInfo(entity).also {
+            val userId = dao.insertUser(entity).also {
                 analytics.userInfoCreated(
                     phone = phone.orEmpty(),
                     email = email.orEmpty()
@@ -94,7 +91,7 @@ class Users(
     }
 
     suspend fun doesUserExists(identifier: String): Boolean{
-        return getUserWithIdentifier(identifier) != null
+        return getUserWithWallet(identifier) != null
     }
 
     suspend fun startUserSession(
@@ -119,7 +116,7 @@ class Users(
             dao.insertPlanterCheckIn(planterCheckInEntity)
 
             dao.getPlanterInfoById(planterInfoId)?.let { planterInfo ->
-                currentSessionUser = createUser(planterInfo)
+//                currentSessionUser = createUser(planterInfo)
             } ?: Timber.e("Could not find planter info of id $planterInfoId")
 
             analytics.userCheckedIn()
@@ -130,16 +127,16 @@ class Users(
         currentSessionUser = null
     }
 
-    private suspend fun createUser(planterInfoEntity: PlanterInfoEntity?): User? {
-        planterInfoEntity ?: return null
+    private suspend fun createUser(userEntity: UserEntity?): User? {
+        userEntity ?: return null
         return User(
-            id = planterInfoEntity.id,
-            wallet = planterInfoEntity.identifier,
-            firstName = planterInfoEntity.firstName,
-            lastName = planterInfoEntity.lastName,
-            photoPath = planterInfoEntity.localPhotoPath,
-            isPowerUser = planterInfoEntity.isPowerUser,
-            numberOfTrees = dao.getTreesByEachPlanter(planterInfoEntity.identifier).toString()
+            id = userEntity.id,
+            wallet = userEntity.wallet,
+            firstName = userEntity.firstName,
+            lastName = userEntity.lastName,
+            photoPath = userEntity.photoPath,
+            isPowerUser = userEntity.powerUser,
+            numberOfTrees = "a"//dao.getTreesByEachPlanter(planterInfoEntity.identifier).toString()
         )
     }
 }

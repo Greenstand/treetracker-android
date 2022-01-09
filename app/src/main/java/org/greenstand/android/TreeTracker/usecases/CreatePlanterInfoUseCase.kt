@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 
 data class CreatePlanterInfoParams(
@@ -30,8 +30,8 @@ class CreatePlanterInfoUseCase(
             val location = locationUpdateManager.currentLocation
             val time = location?.time ?: System.currentTimeMillis()
 
-            val entity = PlanterInfoEntity(
-                identifier = params.identifier,
+            val entity = UserEntity(
+                wallet = params.identifier,
                 firstName = params.firstName,
                 lastName = params.lastName,
                 organization = params.organization,
@@ -41,12 +41,13 @@ class CreatePlanterInfoUseCase(
                 latitude = location?.latitude ?: 0.0,
                 createdAt = time,
                 uploaded = false,
-                recordUuid = UUID.randomUUID().toString(),
-                isPowerUser = false,
-                localPhotoPath = params.photoPath,
+                uuid = UUID.randomUUID().toString(),
+                powerUser = false,
+                photoPath = params.photoPath,
+                photoUrl = null,
             )
 
-            dao.insertPlanterInfo(entity).also {
+            dao.insertUser(entity).also {
                 analytics.userInfoCreated(
                     phone = params.phone.orEmpty(),
                     email = params.email.orEmpty()

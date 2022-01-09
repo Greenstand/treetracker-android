@@ -1,18 +1,21 @@
 package org.greenstand.android.TreeTracker.models
 
 import com.google.gson.Gson
+import java.io.File
+import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.usecases.*
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestParams
+import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
+import org.greenstand.android.TreeTracker.usecases.UploadImageParams
+import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
-import java.io.File
-import kotlin.coroutines.coroutineContext
 
 class TreeUploader(
     private val uploadImageUseCase: UploadImageUseCase,
