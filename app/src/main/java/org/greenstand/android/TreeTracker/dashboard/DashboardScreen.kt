@@ -105,7 +105,7 @@ fun DashboardScreen(
                 )
                 Text(
                     modifier = Modifier.align(CenterVertically),
-                    text = state.totalTrees.toString(),
+                    text = state.treesSynced.toString(),
                     fontWeight = FontWeight.Bold,
                     color = CustomTheme.textColors.uploadText,
                     style = CustomTheme.typography.large
@@ -131,12 +131,12 @@ fun DashboardScreen(
                         verticalArrangement = Arrangement.SpaceBetween,
                     ) {
                         DashboardUploadProgressBar(
-                            progress = (state.treesSynced)
-                                .toFloat() / (state.totalTrees),
+                            progress = (state.treesRemainingToSync)
+                                .toFloat() / (state.totalTreesToSync),
                             modifier = Modifier.weight(1f),
                         )
                         Text(
-                            text = (state.treesToSync).toString(),
+                            text = (state.treesRemainingToSync).toString(),
                             modifier = Modifier.weight(1f),
                             color = CustomTheme.textColors.lightText,
                             style = CustomTheme.typography.medium,

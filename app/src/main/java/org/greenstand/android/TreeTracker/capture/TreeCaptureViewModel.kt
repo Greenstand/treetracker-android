@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import java.io.File
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -23,6 +24,7 @@ data class TreeCaptureState(
 class TreeCaptureViewModel(
     profilePicUrl: String,
     private val treeCapturer: TreeCapturer,
+    private val sessionTracker: SessionTracker,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
 ) : ViewModel() {
 
@@ -40,6 +42,10 @@ class TreeCaptureViewModel(
         }
     }
 
+    suspend fun endSession() {
+        sessionTracker.endSession()
+    }
+
     suspend fun createFakeTrees() {
         _state.value = _state.value?.copy(isCreatingFakeTrees = true)
         createFakeTreesUseCase.execute(CreateFakeTreesParams(500))
@@ -53,6 +59,6 @@ class TreeCaptureViewModelFactory(private val profilePicUrl: String)
     : ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return TreeCaptureViewModel(profilePicUrl, get(), get()) as T
+        return TreeCaptureViewModel(profilePicUrl, get(), get(), get()) as T
     }
 }

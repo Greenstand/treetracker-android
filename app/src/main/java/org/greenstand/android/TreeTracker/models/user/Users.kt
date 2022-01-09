@@ -8,18 +8,13 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.models.user.User
-import timber.log.Timber
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics
 ) {
-
-    var currentSessionUser: User? = null
-        private set
 
     fun users(): Flow<List<User>> {
         return dao.getAllUsers()
@@ -75,18 +70,12 @@ class Users(
                 photoUrl = null,
             )
 
-            val userId = dao.insertUser(entity).also {
+            dao.insertUser(entity).also {
                 analytics.userInfoCreated(
                     phone = phone.orEmpty(),
                     email = email.orEmpty()
                 )
             }
-
-            startUserSession(
-                localPhotoPath = photoPath,
-                planterInfoId = userId,
-            )
-            userId
         }
     }
 
@@ -94,41 +83,13 @@ class Users(
         return getUserWithWallet(identifier) != null
     }
 
-    suspend fun startUserSession(
-        localPhotoPath: String,
-        planterInfoId: Long
-    ) {
-        endUserSession()
-        withContext(Dispatchers.IO) {
-
-            val location = locationUpdateManager.currentLocation
-            val time = location?.time ?: System.currentTimeMillis()
-
-            val planterCheckInEntity = PlanterCheckInEntity(
-                planterInfoId = planterInfoId,
-                localPhotoPath = localPhotoPath,
-                longitude = location?.longitude ?: 0.0,
-                latitude = location?.latitude ?: 0.0,
-                createdAt = time,
-                photoUrl = null
-            )
-
-            dao.insertPlanterCheckIn(planterCheckInEntity)
-
-            dao.getPlanterInfoById(planterInfoId)?.let { planterInfo ->
-//                currentSessionUser = createUser(planterInfo)
-            } ?: Timber.e("Could not find planter info of id $planterInfoId")
-
-            analytics.userCheckedIn()
-        }
-    }
-
-    fun endUserSession() {
-        currentSessionUser = null
-    }
-
     private suspend fun createUser(userEntity: UserEntity?): User? {
         userEntity ?: return null
+
+        val treeCount = dao.getSessionsByUserWallet(userEntity.wallet).map {
+            dao.getTreeCountFromSessionId(it.id)
+        }.sum()
+
         return User(
             id = userEntity.id,
             wallet = userEntity.wallet,
@@ -136,7 +97,7 @@ class Users(
             lastName = userEntity.lastName,
             photoPath = userEntity.photoPath,
             isPowerUser = userEntity.powerUser,
-            numberOfTrees = "a"//dao.getTreesByEachPlanter(planterInfoEntity.identifier).toString()
+            numberOfTrees = treeCount
         )
     }
 }

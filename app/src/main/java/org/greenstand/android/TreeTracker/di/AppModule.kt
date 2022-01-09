@@ -14,6 +14,7 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
+import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
@@ -24,6 +25,8 @@ import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
@@ -71,7 +74,7 @@ val appModule = module {
 
     viewModel { LanguagePickerViewModel(get(), get()) }
 
-    viewModel { DashboardViewModel(get(), get(), get(), get()) }
+    viewModel { DashboardViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { OrgPickerViewModel(get()) }
 
@@ -79,9 +82,9 @@ val appModule = module {
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 
-    viewModel { SplashScreenViewModel(get(), get()) }
+    viewModel { SplashScreenViewModel(get(), get(), get(), get()) }
 
-    viewModel { WalletSelectViewModel(get(), get()) }
+    viewModel { WalletSelectViewModel(get(), get(), get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 
@@ -105,7 +108,7 @@ val appModule = module {
 
     single { DeviceUtils }
 
-    single { SyncNotificationManager(get(), get()) }
+    single { SyncNotificationManager(get()) }
 
     single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
 
@@ -127,7 +130,8 @@ val appModule = module {
             get(),
             get(),
             get(),
-            get()
+            get(),
+            get(),
         )
     }
 
@@ -136,6 +140,8 @@ val appModule = module {
     single {
         ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
     }
+
+    single { SessionTracker(get(), get(), get(), get()) }
 
     single { StepCounter(get(), get()) }
 
@@ -147,7 +153,11 @@ val appModule = module {
 
     single { TreeTrackerViewModelFactory() }
 
+    factory { TreesToSyncHelper(get(), get()) }
+
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
+
+    factory { SessionUploader(get(), get(), get()) }
 
     factory { PreferencesMigrator(get(), get()) }
 
@@ -159,7 +169,7 @@ val appModule = module {
 
     factory { CreateTreeUseCase(get(), get(), get(), get()) }
 
-    factory { CreateFakeTreesUseCase(get(), get(), get(), get()) }
+    factory { CreateFakeTreesUseCase(get(), get(), get()) }
 
     factory { CreatePlanterInfoUseCase(get(), get(), get()) }
 
@@ -173,5 +183,5 @@ val appModule = module {
 
     factory { TreeUploader(get(), get(), get(), get(), get()) }
 
-    factory { SyncDataUseCase(get(), get(), get(), get()) }
+    factory { SyncDataUseCase(get(), get(), get(), get(), get()) }
 }
