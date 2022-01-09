@@ -47,6 +47,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -90,6 +91,12 @@ fun DashboardScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
+            //sample usage of theme would be deleted after you approve this approach
+            Text(
+                text = ("SAMPLE TEXT"),
+                style = CustomTheme.typography.medium,
+                color = CustomTheme.colors.green
+            )
             Row(
                 modifier = Modifier.weight(.3f),
             ) {
@@ -250,14 +257,16 @@ fun DashBoardButton(
         Image(
             painter = image,
             contentDescription = "",
-            modifier = Modifier.align(Alignment.Center)
-                               .padding(top = 25.dp,bottom =60.dp)
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(top = 25.dp, bottom = 60.dp)
         )
         Text(
             text = text,
             style = TextStyles.DarkText,
-            modifier = Modifier.align(Alignment.BottomCenter)
-                               .padding(bottom = 20.dp),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 20.dp),
         )
     }
 }
