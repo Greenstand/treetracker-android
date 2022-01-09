@@ -31,6 +31,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -343,7 +344,6 @@ fun DepthSurfaceCircle(
         )
     }
 }
-
 @Composable
 fun OrangeAddButton(
     modifier: Modifier,
@@ -354,19 +354,14 @@ fun OrangeAddButton(
         shape = DepthSurfaceShape.Circle,
         colors = AppButtonColors.UploadOrange,
         modifier = modifier
-            .size(height = 70.dp, width = 70.dp),
+            .size(height = 70.dp, width = 66.dp),
     ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(start = 30.dp, end = 30.dp, top = 10.dp, bottom = 10.dp)
-                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
-        )
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(top = 30.dp, bottom = 30.dp, start = 10.dp, end = 10.dp)
-                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
+        Image(
+            painter = painterResource(id = R.drawable.add),
+            contentDescription = "",
+            modifier = Modifier
+                .size(55.dp)
+                .padding(top = 5.dp)
         )
     }
 }
