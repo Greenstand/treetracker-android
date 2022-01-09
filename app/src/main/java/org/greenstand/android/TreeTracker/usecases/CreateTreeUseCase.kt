@@ -4,8 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.Users
@@ -33,7 +33,7 @@ class CreateTreeUseCase(
             latitude = params.meanLatitude,
             accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
             createAt = timeInSeconds,
-            wallet = users.currentSessionUser?.wallet!!
+//            wallet = users.currentSessionUser?.wallet!!
         )
         analytics.treePlanted()
         val attributeEntitites = params.treeCaptureAttributes().map {

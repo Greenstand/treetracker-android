@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.views
+package org.greenstand.android.TreeTracker.database.legacy.views
 
 class TreeMapMarkerDbView(
     val latitude: Double,

@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.entity
+package org.greenstand.android.TreeTracker.database.legacy.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -30,12 +30,6 @@ data class PlanterInfoEntity(
     var bundleId: String? = null,
     @ColumnInfo(name = RECORD_UUID, defaultValue = "")
     var recordUuid: String,
-    @ColumnInfo(name = POWER_USER, defaultValue = "0")
-    var isPowerUser: Boolean,
-    @ColumnInfo(name = LOCAL_PHOTO_PATH, index = true, defaultValue = "")
-    var localPhotoPath: String,
-    @ColumnInfo(name = PHOTO_URL, defaultValue = "NULL")
-    var photoUrl: String? = null,
 ) {
 
     @PrimaryKey(autoGenerate = true)
@@ -58,8 +52,5 @@ data class PlanterInfoEntity(
         const val CREATED_AT = "created_at"
         const val BUNDLE_ID = "bundle_id"
         const val RECORD_UUID = "record_uuid"
-        const val POWER_USER = "power_user"
-        const val LOCAL_PHOTO_PATH = "local_photo_path"
-        const val PHOTO_URL = "photo_url"
     }
 }

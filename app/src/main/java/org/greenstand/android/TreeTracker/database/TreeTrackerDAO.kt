@@ -8,12 +8,13 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.database.views.TreeMapMarkerDbView
+import org.greenstand.android.TreeTracker.database.entity.UserEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.legacy.views.TreeMapMarkerDbView
 
 @Dao
 interface TreeTrackerDAO {
@@ -24,8 +25,14 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM planter_info")
     fun getAllPlanterInfo(): Flow<List<PlanterInfoEntity>>
 
+    @Query("SELECT * FROM user")
+    fun getAllUsers(): Flow<List<UserEntity>>
+
     @Query("SELECT * FROM planter_info")
     suspend fun getAllPlanterInfoList(): List<PlanterInfoEntity>
+
+    @Query("SELECT * FROM user")
+    suspend fun getAllUsersList(): List<UserEntity>
 
     @Query("SELECT * FROM planter_info where uploaded = 0")
     suspend fun getAllPlanterInfoToUpload(): List<PlanterInfoEntity>
@@ -33,17 +40,26 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM planter_info WHERE _id = :id")
     suspend fun getPlanterInfoById(id: Long): PlanterInfoEntity?
 
+    @Query("SELECT * FROM user WHERE _id = :id")
+    suspend fun getUserById(id: Long): UserEntity?
+
     @Query("SELECT * FROM planter_info WHERE planter_identifier = :identity")
     suspend fun getPlanterInfoByIdentifier(identity: String): PlanterInfoEntity?
 
-    @Query("SELECT * FROM planter_info WHERE power_user = 1")
-    suspend fun getPowerUser(): PlanterInfoEntity?
+    @Query("SELECT * FROM user WHERE wallet = :wallet")
+    suspend fun getUserByWallet(wallet: String): UserEntity?
+
+    @Query("SELECT * FROM user WHERE power_user = 1")
+    suspend fun getPowerUser(): UserEntity?
 
     @Update
     suspend fun updatePlanterInfo(planterInfoEntity: PlanterInfoEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlanterInfo(planterInfoEntity: PlanterInfoEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUser(userEntity: UserEntity): Long
 
     @Delete
     suspend fun deletePlanterInfo(planterInfoEntity: PlanterInfoEntity)
@@ -93,8 +109,8 @@ interface TreeTrackerDAO {
     @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url is null")
     suspend fun getNonUploadedTreeImageCount(): Int
 
-    @Query("SELECT COUNT(*) FROM tree_capture WHERE wallet = :wallet")
-    suspend fun getTreesByEachPlanter(wallet: String): Int
+//    @Query("SELECT COUNT(*) FROM tree_capture WHERE wallet = :wallet")
+//    suspend fun getTreesByEachPlanter(wallet: String): Int
 
     @Transaction
     @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 0")

@@ -107,7 +107,7 @@ class SignupViewModel(
         viewModelScope.launch {
             if (users.doesUserExists(credential)) {
                 _state.value = _state.value?.copy(
-                    existingUser = users.getUserWithIdentifier(credential),
+                    existingUser = users.getUserWithWallet(credential),
                 )
             } else {
                 goToNameEntry()
@@ -149,12 +149,11 @@ class SignupViewModel(
         if (photoPath != null) {
             val userId = with(_state.value ?: return null) {
                 users.createUser(
-                    // TODO fix user data usage
                     firstName = extractName(name, true),
                     lastName = extractName(name, false),
                     phone = phone,
                     email = email,
-                    identifier = extractIdentifier(this),
+                    wallet = extractIdentifier(this),
                     organization = organization,
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,

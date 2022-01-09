@@ -51,7 +51,7 @@ class WalletSelectViewModel(
     fun startSession(user: User) {
         viewModelScope.launch {
             stepCounter.enable()
-            users.startUserSession("", user.id)
+//            users.startUserSession("", user.id)
         }
     }
 }
