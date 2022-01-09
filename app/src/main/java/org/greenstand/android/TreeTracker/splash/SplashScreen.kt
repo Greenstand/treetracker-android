@@ -39,7 +39,7 @@ fun SplashScreen(
                 if (isLocationPermissionGranted(result)) {
                     Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
-                    viewModel.migratePreferencesIfNeeded()
+                    viewModel.bootstrap()
 
                     delay(1000)
 

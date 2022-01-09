@@ -14,7 +14,9 @@ class SplashScreenPreviewProvider : PreviewParameterProvider<SplashScreenViewMod
                 PreviewUtils.previewSharedPrefs,
                 preferences = Preferences(PreviewUtils.previewSharedPrefs)
             ),
-            getKoin().get()
+            getKoin().get(),
+            getKoin().get(),
+            getKoin().get(),
         )
     )
 

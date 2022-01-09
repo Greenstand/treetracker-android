@@ -20,7 +20,7 @@ data class TreeEntity(
     @ColumnInfo(name = "uuid")
     var uuid: String,
     @ColumnInfo(name = "session_id", index = true)
-    var session_id: Long,
+    var sessionId: Long,
     @ColumnInfo(name = "photo_path")
     var photoPath: String?,
     @ColumnInfo(name = "photo_url")

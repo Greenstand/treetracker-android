@@ -7,15 +7,15 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "session")
 data class SessionEntity(
     @ColumnInfo(name = "uuid")
-    var uuid: Long,
+    var uuid: String,
     @ColumnInfo(name = "origin_wallet", index = true)
-    var originWallet: Long,
+    var originWallet: String,
     @ColumnInfo(name = "destination_wallet")
     var destinationWallet: String,
     @ColumnInfo(name = "start_time")
     var startTime: Long,
     @ColumnInfo(name = "end_time")
-    var endTime: Long?,
+    var endTime: Long? = null,
     @ColumnInfo(name = "organization")
     var organization: String?,
     @ColumnInfo(name = "uploaded")

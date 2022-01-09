@@ -118,7 +118,7 @@ fun UserButton(
                     .size(width = 20.dp,height = 22.dp)
             )
             Text(
-                text = user.numberOfTrees, // TODO: Fetch user's token count.
+                text = user.numberOfTrees.toString(), // TODO: Fetch user's token count.
                 modifier = Modifier.padding(start = 4.dp),
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.medium,
