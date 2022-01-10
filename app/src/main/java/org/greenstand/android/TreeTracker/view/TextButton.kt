@@ -368,15 +368,15 @@ fun OrangeAddButton(
 
 @Composable
 fun CaptureButton(
-    modifier: Modifier = Modifier.size(70.dp),
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     isEnabled: Boolean
 ) {
     DepthButton(
-        modifier = modifier,
+        modifier = modifier.size(70.dp),
         isEnabled = isEnabled,
         colors = AppButtonColors.ProgressGreen,
-        onClick =onClick,
+        onClick = onClick,
         shape = DepthSurfaceShape.Circle,
         depth = 10f
     ) {
