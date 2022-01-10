@@ -60,26 +60,19 @@ fun TreeCaptureScreen(
                     )
                 },
                 centerAction = {
-                    DepthButton(
-                        modifier = Modifier
+                    CaptureButton(
+                        modifier =  Modifier
+                            .size(70.dp)
                             .align(Alignment.Center)
-                            .size(height = 70.dp, width = 70.dp),
-                        isEnabled = !state.isGettingLocation,
+                        ,
                         onClick = {
                             scope.launch {
                                 viewModel.captureLocation()
                                 cameraControl.captureImage()
                             }
                         },
-                        shape = DepthSurfaceShape.Circle
-                    ) {
-                        ImageCaptureCircle(
-                            modifier = Modifier
-                                .size(72.dp, 72.dp),
-                            color = AppColors.Green,
-                            shadowColor = AppColors.Gray,
-                        )
-                    }
+                        isEnabled = !state.isGettingLocation,
+                    )
                 }
             )
         }
