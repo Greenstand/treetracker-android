@@ -354,7 +354,7 @@ fun OrangeAddButton(
         shape = DepthSurfaceShape.Circle,
         colors = AppButtonColors.UploadOrange,
         modifier = modifier
-            .size(height = 70.dp, width = 66.dp),
+            .size(70.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.add),
