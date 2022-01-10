@@ -390,29 +390,6 @@ fun CaptureButton(
 }
 
 @Composable
-fun CaptureButton(
-    modifier: Modifier = Modifier.size(70.dp),
-    onClick: () -> Unit,
-    isEnabled: Boolean
-) {
-    DepthButton(
-        modifier = modifier,
-        isEnabled = isEnabled,
-        colors = AppButtonColors.ProgressGreen,
-        onClick =onClick,
-        shape = DepthSurfaceShape.Circle,
-        depth = 10f
-    ) {
-        ImageCaptureCircle(
-            modifier = Modifier
-                .size(60.dp),
-            color = AppColors.Green,
-            shadowColor = AppColors.Gray,
-        )
-    }
-}
-
-@Composable
 fun ImageCaptureCircle(
     modifier: Modifier,
     color: Color,
