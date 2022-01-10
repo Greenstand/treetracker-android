@@ -62,7 +62,6 @@ fun TreeCaptureScreen(
                 centerAction = {
                     CaptureButton(
                         modifier =  Modifier
-                            .size(70.dp)
                             .align(Alignment.Center)
                         ,
                         onClick = {
