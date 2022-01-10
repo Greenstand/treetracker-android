@@ -63,7 +63,12 @@ fun WalletSelectScreen(
                                          bottom = 10.dp)
                                 .aspectRatio(1.0f)
                                 .clip(RoundedCornerShape(percent = 10))
-                                .clickable { navController.navigate(NavRoute.UserSelect.route) },
+                                .clickable {
+                                    navController.navigate(NavRoute.UserSelect.route) {
+                                        popUpTo(NavRoute.Dashboard.route)
+                                        launchSingleTop = true
+                                    }
+                                           },
                             imagePath = it,
                             contentScale = ContentScale.Crop,
                         )
