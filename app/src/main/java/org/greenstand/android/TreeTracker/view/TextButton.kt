@@ -162,11 +162,11 @@ fun DepthButton(
     contentAlignment: Alignment = Alignment.Center,
     isEnabled: Boolean = true,
     isSelected: Boolean? = null,
+    depth: Float = 20f,
     colors: ButtonColors = AppButtonColors.Default,
     shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
     content: @Composable (BoxScope.() -> Unit),
 ) {
-    val depth = 20f
     val contentColor by colors.contentColor(isEnabled)
 
     var isPressed by remember { mutableStateOf(false) }
@@ -362,6 +362,29 @@ fun OrangeAddButton(
             modifier = Modifier
                 .size(55.dp)
                 .padding(top = 5.dp)
+        )
+    }
+}
+
+@Composable
+fun CaptureButton(
+    modifier: Modifier = Modifier.size(70.dp),
+    onClick: () -> Unit,
+    isEnabled: Boolean
+) {
+    DepthButton(
+        modifier = modifier,
+        isEnabled = isEnabled,
+        colors = AppButtonColors.ProgressGreen,
+        onClick =onClick,
+        shape = DepthSurfaceShape.Circle,
+        depth = 10f
+    ) {
+        ImageCaptureCircle(
+            modifier = Modifier
+                .size(60.dp),
+            color = AppColors.Green,
+            shadowColor = AppColors.Gray,
         )
     }
 }
