@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -91,12 +92,7 @@ fun DashboardScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            //sample usage of theme would be deleted after you approve this approach
-            Text(
-                text = ("SAMPLE TEXT"),
-                style = CustomTheme.typography.medium,
-                color = CustomTheme.colors.green
-            )
+
             Row(
                 modifier = Modifier.weight(.3f),
             ) {
@@ -111,9 +107,9 @@ fun DashboardScreen(
                 Text(
                     modifier = Modifier.align(CenterVertically),
                     text = state.totalTrees.toString(),
-                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
-                    color = AppColors.Orange
+                    color = CustomTheme.colors.orange,
+                    style = CustomTheme.typography.large
                 )
             }
 
@@ -142,17 +138,16 @@ fun DashboardScreen(
                     Text(
                         text = (state.treesToSync).toString(),
                         modifier = Modifier.weight(1f),
-                        color = AppColors.MediumGray,
-                        fontSize = 16.sp,
+                        color = CustomTheme.colors.white,
+                        style = CustomTheme.typography.medium,
                     )
                 }
                 Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
-                DashBoardButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .weight(1f),
-                    text = "UPLOAD",
+                DashBoardButton(modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .weight(1f),
+                    text = stringResource(R.string.upload),
                     colors = AppButtonColors.UploadOrange,
                     onClick = {
                         viewModel.sync()
@@ -163,7 +158,7 @@ fun DashboardScreen(
             }
 
             DashBoardButton(
-                text = "MESSAGES",
+                text = stringResource(R.string.messages),
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -176,7 +171,7 @@ fun DashboardScreen(
             )
 
             DashBoardButton(
-                text = "TRACK",
+                text = stringResource(R.string.track),
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -263,7 +258,8 @@ fun DashBoardButton(
         )
         Text(
             text = text,
-            style = TextStyles.DarkText,
+            style = CustomTheme.typography.medium,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp),

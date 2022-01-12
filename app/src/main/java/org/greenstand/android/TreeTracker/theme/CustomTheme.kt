@@ -20,12 +20,15 @@ data class CustomColors(
     val white: Color,
     val black: Color,
     val green: Color,
+    val orange: Color,
 )
 
 @Immutable
 data class CustomTypography(
     val small: TextStyle,
-    val medium: TextStyle
+    val regular: TextStyle,
+    val medium: TextStyle,
+    val large: TextStyle
 )
 
 @Immutable
@@ -38,13 +41,16 @@ val LocalCustomColors = staticCompositionLocalOf {
     CustomColors(
         white = Color.Unspecified,
         black = Color.Unspecified,
-        green = Color.Unspecified
+        green = Color.Unspecified,
+        orange = Color.Unspecified
     )
 }
 val LocalCustomTypography = staticCompositionLocalOf {
     CustomTypography(
         small = TextStyle.Default,
-        medium = TextStyle.Default
+        regular = TextStyle.Default,
+        medium = TextStyle.Default,
+        large = TextStyle.Default
     )
 }
 val LocalCustomElevation = staticCompositionLocalOf {
@@ -66,11 +72,14 @@ fun CustomTheme(
     val textColors = CustomColors(
         white = Color(0xFFF0F0F0),
         green = AppColors.Green,
-        black = Color(0xFF191C1F)
+        black = Color(0xFF191C1F),
+        orange = Color(0xFFF19400)
     )
     val customTypography = CustomTypography(
         small = TextStyle(fontSize = 12.sp, fontFamily = montserrat),
-        medium = TextStyle(fontSize = 16.sp)
+        regular = TextStyle(fontSize = 14.sp, fontFamily = montserrat),
+        medium = TextStyle(fontSize = 16.sp),
+        large = TextStyle(fontSize = 24.sp, fontFamily = montserrat)
     )
     val customElevation = CustomElevation(
         default = 4.dp,
