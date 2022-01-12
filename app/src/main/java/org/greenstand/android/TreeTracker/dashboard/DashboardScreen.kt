@@ -92,7 +92,6 @@ fun DashboardScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-
             Row(
                 modifier = Modifier.weight(.3f),
             ) {
