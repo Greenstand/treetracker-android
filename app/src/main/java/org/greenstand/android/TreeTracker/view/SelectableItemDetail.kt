@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun SelectableImageDetail(
@@ -96,11 +97,10 @@ fun UserButton(
     ) {
         Text(
             text = "${user.firstName} ${user.lastName}\n${user.wallet}",
-            color = AppColors.LightGray,
-            fontSize = 12.sp,
+            color = CustomTheme.colors.white,
+            style = CustomTheme.typography.small,
             fontWeight = FontWeight.SemiBold,
-            fontFamily = FontFamily.SansSerif,
-        )
+            )
         Row(
             modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -115,11 +115,10 @@ fun UserButton(
             Text(
                 text = user.numberOfTrees, // TODO: Fetch user's token count.
                 modifier = Modifier.padding(start = 4.dp),
-                color = AppColors.LightGray,
-                fontSize = 16.sp,
+                color = CustomTheme.colors.white,
+                style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.SemiBold,
-                fontFamily = FontFamily.SansSerif,
-            )
+                )
         }
     }
 }
