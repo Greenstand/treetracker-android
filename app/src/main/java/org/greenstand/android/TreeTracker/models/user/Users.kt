@@ -41,7 +41,6 @@ class Users(
     suspend fun createUser(
         firstName: String,
         lastName: String,
-        organization: String?,
         phone: String?,
         email: String?,
         wallet: String,
@@ -57,7 +56,6 @@ class Users(
                 wallet = wallet,
                 firstName = firstName,
                 lastName = lastName,
-                organization = organization,
                 phone = phone,
                 email = email,
                 longitude = location?.longitude ?: 0.0,
