@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
@@ -41,6 +42,7 @@ import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun TextButton(
@@ -101,7 +103,13 @@ fun BoxScope.LanguageButton() {
             navController.navigate(NavRoute.Language.create())
         }
     ) {
-        Text(language)
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = language,
+            fontWeight = FontWeight.Bold,
+            color = CustomTheme.colors.green,
+            style = CustomTheme.typography.regular
+        )
     }
 }
 

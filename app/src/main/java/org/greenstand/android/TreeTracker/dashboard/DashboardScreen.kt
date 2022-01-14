@@ -259,6 +259,7 @@ fun DashBoardButton(
             text = text,
             style = CustomTheme.typography.medium,
             fontWeight = FontWeight.Bold,
+            color = CustomTheme.colors.black,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp),
