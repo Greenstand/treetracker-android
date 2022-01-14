@@ -9,6 +9,7 @@ import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.root.Root
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.koin.android.ext.android.inject
 
 class TreeTrackerActivity : ComponentActivity() {
@@ -27,7 +28,9 @@ class TreeTrackerActivity : ComponentActivity() {
         }
 
         setContent {
-            Root(viewModelFactory)
+            CustomTheme {
+                Root(viewModelFactory)
+            }
         }
     }
 }

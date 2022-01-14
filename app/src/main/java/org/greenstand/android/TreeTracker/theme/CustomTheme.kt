@@ -60,9 +60,22 @@ val LocalCustomElevation = staticCompositionLocalOf {
     )
 }
 
+object CustomTheme {
+    val colors: CustomColors
+        @Composable
+        get() = LocalCustomColors.current
+    val typography: CustomTypography
+        @Composable
+        get() = LocalCustomTypography.current
+    val elevation: CustomElevation
+        @Composable
+        get() = LocalCustomElevation.current
+}
+
 @Composable
 fun CustomTheme(
-    /* ... */
+    colors: CustomColors = CustomTheme.colors,
+    typography: CustomTypography = CustomTheme.typography,
     content: @Composable () -> Unit
 ) {
     val montserrat = FontFamily(
@@ -78,7 +91,7 @@ fun CustomTheme(
     val customTypography = CustomTypography(
         small = TextStyle(fontSize = 12.sp, fontFamily = montserrat),
         regular = TextStyle(fontSize = 14.sp, fontFamily = montserrat),
-        medium = TextStyle(fontSize = 16.sp),
+        medium = TextStyle(fontSize = 16.sp, fontFamily = montserrat),
         large = TextStyle(fontSize = 24.sp, fontFamily = montserrat)
     )
     val customElevation = CustomElevation(
@@ -91,17 +104,4 @@ fun CustomTheme(
         LocalCustomElevation provides customElevation,
         content = content
     )
-}
-
-
-object CustomTheme {
-    val colors: CustomColors
-        @Composable
-        get() = LocalCustomColors.current
-    val typography: CustomTypography
-        @Composable
-        get() = LocalCustomTypography.current
-    val elevation: CustomElevation
-        @Composable
-        get() = LocalCustomElevation.current
 }
