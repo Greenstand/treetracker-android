@@ -16,7 +16,6 @@ data class SignUpState(
     val name: String? = null,
     val email: String? = null,
     val phone: String? = null,
-    val organization: String? = null,
     val photoPath: String? = null,
     val isCredentialView: Boolean = true,
     val isEmailValid: Boolean = false,
@@ -76,10 +75,6 @@ class SignupViewModel(
         _state.value = _state.value?.copy(name = name)
     }
 
-    fun updateOrganization(organization: String) {
-        _state.value = _state.value?.copy(organization = organization)
-    }
-
     fun updateEmail(email: String) {
         _state.value = _state.value?.copy(
             email = email,
@@ -135,14 +130,9 @@ class SignupViewModel(
     fun goToCredentialEntry() {
         _state.value = _state.value?.copy(
             isCredentialView = true,
-            organization = null,
             name = null,
             canGoToNextScreen = true,
         )
-    }
-
-    fun updateSignUpState(state: Boolean){
-        _state.value = _state.value?.copy(isCredentialView = state)
     }
 
     suspend fun createUser(photoPath: String?): User? {
@@ -154,7 +144,6 @@ class SignupViewModel(
                     phone = phone,
                     email = email,
                     wallet = extractIdentifier(this),
-                    organization = organization,
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,
                 )

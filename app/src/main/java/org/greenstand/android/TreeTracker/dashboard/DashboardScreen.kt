@@ -179,12 +179,12 @@ fun DashboardScreen(
                         verticalArrangement = Arrangement.Center,
                     ) {
                         DashboardUploadProgressBar(
-                            progress = (state.treesSynced)
-                                .toFloat() / (state.totalTrees),
+                            progress = (state.treesRemainingToSync)
+                                .toFloat() / (state.totalTreesToSync),
                             modifier = Modifier.weight(1f),
                         )
                         Text(
-                            text = (state.treesToSync).toString(),
+                            text = (state.treesRemainingToSync).toString(),
                             modifier = Modifier.weight(1f),
                             color = CustomTheme.textColors.lightText,
                             style = CustomTheme.typography.medium,

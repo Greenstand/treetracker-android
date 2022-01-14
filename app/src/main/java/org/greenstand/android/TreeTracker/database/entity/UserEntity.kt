@@ -14,8 +14,6 @@ data class UserEntity(
     var firstName: String,
     @ColumnInfo(name = "last_name")
     var lastName: String,
-    @ColumnInfo(name = "organization")
-    var organization: String?,
     @ColumnInfo(name = "phone")
     var phone: String?,
     @ColumnInfo(name = "email")
