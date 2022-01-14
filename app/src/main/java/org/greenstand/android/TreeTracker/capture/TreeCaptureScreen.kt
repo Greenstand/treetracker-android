@@ -44,11 +44,10 @@ import org.greenstand.android.TreeTracker.models.PermissionRequest
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
-import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
-import org.greenstand.android.TreeTracker.view.ImageCaptureCircle
 import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.showLoadingSpinner
 
