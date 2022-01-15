@@ -1,8 +1,6 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -20,10 +18,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -97,7 +93,7 @@ fun UserButton(
     ) {
         Text(
             text = "${user.firstName} ${user.lastName}\n${user.wallet}",
-            color = CustomTheme.colors.white,
+            color = CustomTheme.textColors.lightText,
             style = CustomTheme.typography.small,
             fontWeight = FontWeight.SemiBold,
             )
@@ -115,7 +111,7 @@ fun UserButton(
             Text(
                 text = user.numberOfTrees, // TODO: Fetch user's token count.
                 modifier = Modifier.padding(start = 4.dp),
-                color = CustomTheme.colors.white,
+                color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.SemiBold,
                 )

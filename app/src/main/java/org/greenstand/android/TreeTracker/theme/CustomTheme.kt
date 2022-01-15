@@ -9,18 +9,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.view.AppColors
 
 @Immutable
-data class CustomColors(
-    val white: Color,
-    val black: Color,
-    val green: Color,
-    val orange: Color,
+data class CustomTextColors(
+    val lightText: Color,
+    val darkText: Color,
+    val primaryText: Color,
+    val uploadText: Color,
 )
 
 @Immutable
@@ -31,18 +29,13 @@ data class CustomTypography(
     val large: TextStyle
 )
 
-@Immutable
-data class CustomElevation(
-    val default: Dp,
-    val pressed: Dp
-)
 
 val LocalCustomColors = staticCompositionLocalOf {
-    CustomColors(
-        white = Color.Unspecified,
-        black = Color.Unspecified,
-        green = Color.Unspecified,
-        orange = Color.Unspecified
+    CustomTextColors(
+        lightText = Color.Unspecified,
+        darkText = Color.Unspecified,
+        primaryText = Color.Unspecified,
+        uploadText = Color.Unspecified
     )
 }
 val LocalCustomTypography = staticCompositionLocalOf {
@@ -53,28 +46,19 @@ val LocalCustomTypography = staticCompositionLocalOf {
         large = TextStyle.Default
     )
 }
-val LocalCustomElevation = staticCompositionLocalOf {
-    CustomElevation(
-        default = Dp.Unspecified,
-        pressed = Dp.Unspecified
-    )
-}
 
 object CustomTheme {
-    val colors: CustomColors
+    val textColors: CustomTextColors
         @Composable
         get() = LocalCustomColors.current
     val typography: CustomTypography
         @Composable
         get() = LocalCustomTypography.current
-    val elevation: CustomElevation
-        @Composable
-        get() = LocalCustomElevation.current
 }
 
 @Composable
 fun CustomTheme(
-    colors: CustomColors = CustomTheme.colors,
+    textColors: CustomTextColors = CustomTheme.textColors,
     typography: CustomTypography = CustomTheme.typography,
     content: @Composable () -> Unit
 ) {
@@ -82,11 +66,11 @@ fun CustomTheme(
         Font(R.font.montserrat),
         Font(R.font.montserrat_bold, FontWeight.Bold)
     )
-    val textColors = CustomColors(
-        white = Color(0xFFF0F0F0),
-        green = AppColors.Green,
-        black = Color(0xFF191C1F),
-        orange = Color(0xFFF19400)
+    val textColors = CustomTextColors(
+        lightText = Color(0xFFF0F0F0),
+        primaryText = AppColors.Green,
+        darkText = Color(0xFF191C1F),
+        uploadText = Color(0xFFF19400)
     )
     val customTypography = CustomTypography(
         small = TextStyle(fontSize = 12.sp, fontFamily = montserrat),
@@ -94,14 +78,9 @@ fun CustomTheme(
         medium = TextStyle(fontSize = 16.sp, fontFamily = montserrat),
         large = TextStyle(fontSize = 24.sp, fontFamily = montserrat)
     )
-    val customElevation = CustomElevation(
-        default = 4.dp,
-        pressed = 8.dp
-    )
     CompositionLocalProvider(
         LocalCustomColors provides textColors,
         LocalCustomTypography provides customTypography,
-        LocalCustomElevation provides customElevation,
         content = content
     )
 }

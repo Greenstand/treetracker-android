@@ -99,7 +99,7 @@ fun LanguageButton(
             modifier = Modifier.align(Alignment.Center),
             text = text,
             fontWeight = FontWeight.Bold,
-            color = CustomTheme.colors.green,
+            color = CustomTheme.textColors.primaryText,
             style = CustomTheme.typography.regular
         )
     }
