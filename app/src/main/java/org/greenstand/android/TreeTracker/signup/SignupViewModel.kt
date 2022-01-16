@@ -20,6 +20,7 @@ data class SignUpState(
     val isEmailValid: Boolean = false,
     val isPhoneValid: Boolean = false,
     val existingUser: User? = null,
+    val isCreatingNewUser: Boolean = false,
     val canGoToNextScreen: Boolean = false,
     val credential: Credential = Credential.Email(),
     val autofocusTextEnabled: Boolean = false
@@ -64,6 +65,10 @@ class SignupViewModel(private val users: Users) : ViewModel() {
     }
     fun updateOrganization(organization: String) {
         _state.value = _state.value?.copy(organization = organization)
+    }
+
+    fun updateCreatingNewUser(value: Boolean) {
+        _state.value = _state.value?.copy(isCreatingNewUser = value)
     }
 
     fun updateEmail(email: String) {

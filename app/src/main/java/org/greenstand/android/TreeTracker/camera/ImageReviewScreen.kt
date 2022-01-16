@@ -26,10 +26,16 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.view.*
 
 @Composable
-fun ImageReviewScreen(photoPath: String) {
+fun ImageReviewScreen(
+    photoPath: String,
+    viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current),
+) {
 
     val navController = LocalNavHostController.current
     val activity = LocalContext.current as Activity
@@ -70,6 +76,7 @@ fun ImageReviewScreen(photoPath: String) {
                                 val data = Intent().apply {
                                     putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, photoPath)
                                 }
+                                viewModel.updateCreatingNewUser(true)
                                 activity.setResult(AppCompatActivity.RESULT_OK, data)
                                 activity.finish()
 
