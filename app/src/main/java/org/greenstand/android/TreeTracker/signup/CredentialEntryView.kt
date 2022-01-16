@@ -115,7 +115,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
                     placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
+                        keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Go,
                         autoCorrect = false,
                     ),
