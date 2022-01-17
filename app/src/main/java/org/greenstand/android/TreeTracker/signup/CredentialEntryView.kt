@@ -160,27 +160,26 @@ fun <T : Credential> CredentialButton(
 ) {
     DepthButton(
         modifier = Modifier
-            .padding(end = 4.dp)
-            .size(120.dp, 50.dp),
+            .size(width = 120.dp, height = 70.dp),
         onClick = onClick,
         colors = DepthButtonColors(
             color = if (credentialType.isInstance(credential)) {
-                Green
-            } else {
-                MediumGray
-            },
-            shadowColor = if (credentialType.isInstance(credential)) {
                 GreenShadow
             } else {
-                GrayShadow
+                Green
             },
-            disabledColor = GrayShadow,
-            disabledShadowColor = GrayShadow
+            shadowColor = if (credentialType.isInstance(credential)) {
+                Green
+            } else {
+                GreenShadow
+            },
+            disabledColor = Green,
+            disabledShadowColor = GreenShadow
         ),
         isSelected = credentialType.isInstance(credential)
     ) {
         Text(
-            text = stringResource(id = placeholderTextRes),
+            text = stringResource(id = placeholderTextRes).uppercase(),
             color = Color.Black,
         )
     }
