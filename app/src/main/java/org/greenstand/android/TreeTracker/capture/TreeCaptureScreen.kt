@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.capture
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +49,7 @@ fun TreeCaptureScreen(
     Scaffold(
         bottomBar = {
             ActionBar(
+                modifier = Modifier.background(color = AppColors.Gray),
                 leftAction = {
                     ArrowButton(
                         isLeft = true,
@@ -120,7 +122,9 @@ fun TreeCaptureScreen(
                         Image(
                             painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
                             contentDescription = null,
-                            modifier = Modifier.align(Alignment.Center).size(30.dp, 30.dp),
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(30.dp, 30.dp),
                             colorFilter = ColorFilter.tint(Color.Black)
                         )
                     }
