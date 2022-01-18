@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -236,7 +237,10 @@ fun DepthSurface(
     depth: Float = 20f,
     shape: DepthSurfaceShape,
 ) {
-    val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
+    val offsetAnimation: Float by animateFloatAsState(
+        targetValue = if (isPressed) 1f else 0f,
+        animationSpec = tween(durationMillis = 100)
+    )
 
     when (shape) {
         DepthSurfaceShape.Rectangle ->
