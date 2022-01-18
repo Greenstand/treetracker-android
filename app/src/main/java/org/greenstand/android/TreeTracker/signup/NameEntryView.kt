@@ -99,6 +99,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Go,
+                    autoCorrect = false,
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
