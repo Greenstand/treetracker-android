@@ -23,6 +23,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -180,8 +182,10 @@ fun <T : Credential> CredentialButton(
         isSelected = credentialType.isInstance(credential)
     ) {
         Text(
-            text = stringResource(id = placeholderTextRes),
-            color = Color.Black,
+            text = stringResource(id = placeholderTextRes).uppercase(),
+            color = CustomTheme.textColors.darkText,
+            fontWeight = FontWeight.Bold,
+            style = CustomTheme.typography.regular,
         )
     }
 }
