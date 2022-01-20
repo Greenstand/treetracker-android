@@ -150,7 +150,7 @@ fun DashboardScreen(
                         viewModel.sync()
                     },
                     shape = DepthSurfaceShape.Circle,
-                    image = painterResource(id = R.drawable.upload_arrow)
+                    image = painterResource(id = R.drawable.upload_icon)
                 )
             }
 
@@ -177,7 +177,7 @@ fun DashboardScreen(
                 onClick = {
                     navController.navigate(NavRoute.UserSelect.route)
                 },
-                image = painterResource(id = R.drawable.tracking_placeholder)
+                image = painterResource(id = R.drawable.track_icon)
             )
         }
     }
