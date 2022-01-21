@@ -138,47 +138,35 @@ fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         item {
+            val image: Painter = painterResource(id = R.drawable.active_offer)
+            val arrowImage: Painter = if (isSelected) painterResource(id = R.drawable.active_arrow) else painterResource(id = R.drawable.inactive_arrow)
+            val modifier = if (!isSelected) Modifier.alpha(0.4f) else Modifier
 
-            val image: Painter = painterResource(id = R.drawable.inactive_offer)
-            val arrowImage: Painter = painterResource(id = R.drawable.inactive_arrow)
-
-
-
-                Image(
-                    painter = image,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .height(140.dp)
-                        .width(120.dp)
-//                        .padding(
-//                            start = 20.dp,
-//                            top = 10.dp,
-//                            end = 10.dp,
-//                            bottom = 30.dp
-//                        )
-                        .alpha(0.4f)
-                )
-                Image(
-                    painter = arrowImage,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .height(30.dp)
-                        .width(55.dp)
-                        .padding(
-                            end = 20.dp,
-                        )
-                )
-
-
+            Image(
+                painter = image,
+                contentDescription = "",
+                modifier = modifier
+                    .height(140.dp)
+                    .width(120.dp)
+            )
+            Image(
+                painter = arrowImage,
+                contentDescription = "",
+                modifier = Modifier
+                    .height(40.dp)
+                    .width(65.dp)
+                    .padding(
+                        end = 20.dp,
+                        start = 10.dp
+                    )
+            )
             UserButton(
                 user = user,
                 isSelected = isSelected,
                 AppButtonColors.Default,
                 AppColors.Green,
                 onClick = { onClick(user.id) },
-                )
+            )
         }
     }
-
 }
-
