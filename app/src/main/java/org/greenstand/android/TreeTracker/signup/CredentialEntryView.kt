@@ -119,6 +119,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Go,
+                        autoCorrect = false,
                     ),
                     keyboardActions = KeyboardActions(
                         onGo = {
