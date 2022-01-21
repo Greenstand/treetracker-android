@@ -15,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
@@ -93,7 +95,13 @@ fun LanguageButton(
             .padding(16.dp)
             .size(height = 80.dp, width = 156.dp)
     ) {
-        Text(text)
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = text,
+            fontWeight = FontWeight.Bold,
+            color = CustomTheme.textColors.primaryText,
+            style = CustomTheme.typography.regular
+        )
     }
 }
 

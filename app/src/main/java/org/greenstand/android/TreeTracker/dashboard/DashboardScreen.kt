@@ -35,11 +35,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
@@ -47,13 +47,13 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TextStyles
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @OptIn(ExperimentalComposeApi::class)
@@ -104,9 +104,9 @@ fun DashboardScreen(
                 Text(
                     modifier = Modifier.align(CenterVertically),
                     text = state.totalTrees.toString(),
-                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
-                    color = AppColors.Orange
+                    color = CustomTheme.textColors.uploadText,
+                    style = CustomTheme.typography.large
                 )
             }
 
@@ -135,28 +135,27 @@ fun DashboardScreen(
                     Text(
                         text = (state.treesToSync).toString(),
                         modifier = Modifier.weight(1f),
-                        color = AppColors.MediumGray,
-                        fontSize = 16.sp,
+                        color = CustomTheme.textColors.lightText,
+                        style = CustomTheme.typography.medium,
                     )
                 }
                 Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
-                DashBoardButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .weight(1f),
-                    text = "UPLOAD",
+                DashBoardButton(modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .weight(1f),
+                    text = stringResource(R.string.upload),
                     colors = AppButtonColors.UploadOrange,
                     onClick = {
                         viewModel.sync()
                     },
                     shape = DepthSurfaceShape.Circle,
-                    image = painterResource(id = R.drawable.upload_arrow)
+                    image = painterResource(id = R.drawable.upload_icon)
                 )
             }
 
             DashBoardButton(
-                text = "MESSAGES",
+                text = stringResource(R.string.messages),
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -169,7 +168,7 @@ fun DashboardScreen(
             )
 
             DashBoardButton(
-                text = "TRACK",
+                text = stringResource(R.string.track),
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -178,7 +177,7 @@ fun DashboardScreen(
                 onClick = {
                     navController.navigate(NavRoute.UserSelect.route)
                 },
-                image = painterResource(id = R.drawable.tracking_placeholder)
+                image = painterResource(id = R.drawable.track_icon)
             )
         }
     }
@@ -250,14 +249,18 @@ fun DashBoardButton(
         Image(
             painter = image,
             contentDescription = "",
-            modifier = Modifier.align(Alignment.Center)
-                               .padding(top = 25.dp,bottom =60.dp)
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(top = 25.dp, bottom = 40.dp)
         )
         Text(
             text = text,
-            style = TextStyles.DarkText,
-            modifier = Modifier.align(Alignment.BottomCenter)
-                               .padding(bottom = 20.dp),
+            style = CustomTheme.typography.medium,
+            fontWeight = FontWeight.Bold,
+            color = CustomTheme.textColors.darkText,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 20.dp),
         )
     }
 }
