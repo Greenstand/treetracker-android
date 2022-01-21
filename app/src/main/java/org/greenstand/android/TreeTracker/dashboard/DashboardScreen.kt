@@ -251,7 +251,7 @@ fun DashBoardButton(
             contentDescription = "",
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(top = 25.dp, bottom = 60.dp)
+                .padding(top = 25.dp, bottom = 40.dp)
         )
         Text(
             text = text,

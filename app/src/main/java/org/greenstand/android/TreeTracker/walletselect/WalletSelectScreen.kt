@@ -2,12 +2,7 @@ package org.greenstand.android.TreeTracker.walletselect
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -19,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -143,20 +139,36 @@ fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
     ) {
         item {
 
-            val image: Painter = if (isSelected) painterResource(id = R.drawable.active_offer) else painterResource(id = R.drawable.inactive_offer)
-            Image(
-                painter = image,
-                contentDescription = "",
-                        modifier = Modifier
-                            .height(150.dp)
-                            .width(150.dp)
-                            .padding(
-                                start = 20.dp,
-                                top = 10.dp,
-                                end = 10.dp,
-                                bottom = 30.dp
-                            )
-            )
+            val image: Painter = painterResource(id = R.drawable.inactive_offer)
+            val arrowImage: Painter = painterResource(id = R.drawable.inactive_arrow)
+
+
+
+                Image(
+                    painter = image,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(140.dp)
+                        .width(120.dp)
+//                        .padding(
+//                            start = 20.dp,
+//                            top = 10.dp,
+//                            end = 10.dp,
+//                            bottom = 30.dp
+//                        )
+                        .alpha(0.4f)
+                )
+                Image(
+                    painter = arrowImage,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(30.dp)
+                        .width(55.dp)
+                        .padding(
+                            end = 20.dp,
+                        )
+                )
+
 
             UserButton(
                 user = user,
@@ -169,3 +181,4 @@ fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
     }
 
 }
+
