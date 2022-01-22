@@ -150,7 +150,7 @@ fun DashboardScreen(
                         viewModel.sync()
                     },
                     shape = DepthSurfaceShape.Circle,
-                    image = painterResource(id = R.drawable.upload_arrow)
+                    image = painterResource(id = R.drawable.upload_icon)
                 )
             }
 
@@ -177,7 +177,7 @@ fun DashboardScreen(
                 onClick = {
                     navController.navigate(NavRoute.UserSelect.route)
                 },
-                image = painterResource(id = R.drawable.tracking_placeholder)
+                image = painterResource(id = R.drawable.track_icon)
             )
         }
     }
@@ -251,7 +251,7 @@ fun DashBoardButton(
             contentDescription = "",
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(top = 25.dp, bottom = 60.dp)
+                .padding(top = 25.dp, bottom = 40.dp)
         )
         Text(
             text = text,

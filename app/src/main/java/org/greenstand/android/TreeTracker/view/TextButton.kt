@@ -78,10 +78,10 @@ fun BoxScope.ArrowButton(
         onClick = onClick,
     ) {
         Image(
-            modifier = if (isLeft) Modifier.rotate(180f) else Modifier,
-            painter = painterResource(id = R.drawable.arrow_right),
+            modifier = Modifier
+                .size(height = 45.dp, width = 45.dp),
+            painter = if (isLeft) painterResource(id = R.drawable.arrow_left_green) else painterResource(id = R.drawable.arrow_right_green),
             contentDescription = null,
-            colorFilter = ColorFilter.tint(color = AppColors.GrayShadow)
         )
     }
 }
