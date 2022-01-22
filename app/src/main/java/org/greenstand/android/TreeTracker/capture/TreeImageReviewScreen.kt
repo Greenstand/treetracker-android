@@ -53,47 +53,15 @@ fun TreeImageReviewScreen(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        DepthButton(
-                            onClick = {
-                                navController.popBackStack()
-                            },
-                            colors = DepthButtonColors(
-                                color = AppColors.Red,
-                                shadowColor = AppColors.RedShadow,
-                                disabledColor = AppColors.RedShadow,
-                                disabledShadowColor = AppColors.RedShadow
-                            ),
-                            modifier = Modifier
-                                .size(width = 54.dp, height = 54.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.cancel_image),
-                                contentDescription = null,
-                                )
-                        }
-                        DepthButton(
+                        DeclineButton(onClick = { navController.popBackStack() })
+                        AcceptButton(
                             onClick = {
                                 scope.launch {
                                     viewModel.approveImage()
                                     navController.popBackStack()
                                 }
                             },
-                            colors = DepthButtonColors(
-                                color = Color.Green,
-                                shadowColor = AppColors.GreenShadow,
-                                disabledColor = AppColors.GreenDisabled,
-                                disabledShadowColor = AppColors.GreenShadowDisabled
-                            ),
-                            modifier = Modifier
-                                .size(width = 54.dp, height = 54.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.check_icon),
-                                contentDescription = null,
-                                )
-                        }
+                        )
                     }
                 }
             )
@@ -110,6 +78,7 @@ fun TreeImageReviewScreen(
         )
     }
 }
+
 @Composable
 fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel) {
     var text by remember { mutableStateOf(state.note) }
@@ -124,7 +93,7 @@ fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel)
             TextField(
                 value = text,
                 onValueChange = { text = it },
-                )
+            )
         },
         buttons = {
             Row(

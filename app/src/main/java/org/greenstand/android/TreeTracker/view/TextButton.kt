@@ -87,6 +87,40 @@ fun BoxScope.ArrowButton(
 }
 
 @Composable
+fun AcceptButton(
+    onClick: () -> Unit,
+) {
+    DepthButton(
+        colors = AppButtonColors.ProgressGreen,
+        modifier = Modifier
+            .size(height = 60.dp, width = 60.dp),
+        onClick = onClick,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.thumbs_up_green),
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+fun DeclineButton(
+    onClick: () -> Unit,
+) {
+    DepthButton(
+        colors = AppButtonColors.DeclineRed,
+        modifier = Modifier
+            .size(height = 60.dp, width = 60.dp),
+        onClick = onClick,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.thumbs_down_red),
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
 fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
     val languageViewModel: LanguagePickerViewModel =
