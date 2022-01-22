@@ -48,23 +48,27 @@ fun TreeImageReviewScreen(
             )
         },
         bottomBar = {
-            ActionBar(
-                centerAction = {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        DeclineButton(onClick = { navController.popBackStack() })
-                        AcceptButton(
-                            onClick = {
-                                scope.launch {
-                                    viewModel.approveImage()
-                                    navController.popBackStack()
-                                }
-                            },
-                        )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                DeclineButton(
+                    modifier = Modifier.padding(end = 24.dp),
+                    onClick = {
+                        navController.popBackStack()
                     }
-                }
-            )
+                )
+                AcceptButton(
+                    onClick = {
+                        scope.launch {
+                            viewModel.approveImage()
+                            navController.popBackStack()
+                        }
+                    },
+                )
+            }
         }
     ) {
         if (state.isDialogOpen) {
