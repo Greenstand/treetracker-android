@@ -88,11 +88,12 @@ fun BoxScope.ArrowButton(
 
 @Composable
 fun AcceptButton(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     DepthButton(
         colors = AppButtonColors.ProgressGreen,
-        modifier = Modifier
+        modifier = modifier
             .size(height = 60.dp, width = 60.dp),
         onClick = onClick,
     ) {
@@ -105,11 +106,12 @@ fun AcceptButton(
 
 @Composable
 fun DeclineButton(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     DepthButton(
         colors = AppButtonColors.DeclineRed,
-        modifier = Modifier
+        modifier = modifier
             .size(height = 60.dp, width = 60.dp),
         onClick = onClick,
     ) {

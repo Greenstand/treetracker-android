@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.NavRoute
@@ -36,66 +37,31 @@ fun ImageReviewScreen(photoPath: String) {
 
     Scaffold(
         bottomBar = {
-            ActionBar(
-                centerAction = {
-                    Row(
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        DepthButton(
-                            onClick = {
-                                navController.navigate(NavRoute.Selfie.route) {
-                                    launchSingleTop = true
-                                    popUpTo(NavRoute.Selfie.route) { inclusive = true }
-                                }
-                            },
-                            colors = DepthButtonColors(
-                                color = AppColors.Red,
-                                shadowColor = AppColors.RedShadow,
-                                disabledColor = AppColors.RedShadow,
-                                disabledShadowColor = AppColors.RedShadow
-                            ),
-                            modifier = Modifier.size(width = 54.dp, height = 54.dp)
-                                .align(CenterVertically)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.cancel_image),
-                                contentDescription = null,
-                                modifier = Modifier.size(width = 54.dp, height = 54.dp)
-                                    .align(Center)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(30.dp))
-                        DepthButton(
-                            onClick = {
-                                val data = Intent().apply {
-                                    putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, photoPath)
-                                }
-                                activity.setResult(AppCompatActivity.RESULT_OK, data)
-                                activity.finish()
-
-                            },
-                            colors = DepthButtonColors(
-                                color = Color.Green,
-                                shadowColor = AppColors.GreenShadow,
-                                disabledColor = AppColors.GreenDisabled,
-                                disabledShadowColor = AppColors.GreenShadowDisabled
-                            ),
-                            modifier = Modifier.size(width = 54.dp, height = 54.dp)
-                                .align(CenterVertically)
-
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.check_icon),
-                                contentDescription = null,
-                                modifier = Modifier.size(width = 54.dp, height = 54.dp)
-                                    .align(Center)
-
-
-                            )
-                        }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                DeclineButton(
+                    modifier = Modifier.padding(end = 24.dp),
+                    onClick = {
+                    navController.navigate(NavRoute.Selfie.route) {
+                        launchSingleTop = true
+                        popUpTo(NavRoute.Selfie.route) { inclusive = true }
                     }
                 }
-            )
+                )
+                AcceptButton(
+                    onClick = {
+                        val data = Intent().apply {
+                            putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, photoPath)
+                        }
+                        activity.setResult(AppCompatActivity.RESULT_OK, data)
+                        activity.finish()
+                    },
+                )
+            }
         }
     ) {
         LocalImage(
