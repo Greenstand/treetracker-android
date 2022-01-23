@@ -20,7 +20,7 @@ class SyncNotificationManager(
         createNotificationChannel()
 
         val builder = NotificationCompat.Builder(context, SYNC_CHANNEL_ID)
-            .setSmallIcon(R.drawable.logo)
+            .setSmallIcon(R.drawable.greenstand_logo)
             .setContentTitle(context.getString(R.string.syncing))
             .setContentText(context.getString(R.string.uploading_trees))
             .setPriority(NotificationCompat.PRIORITY_LOW)
