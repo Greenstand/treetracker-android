@@ -165,23 +165,10 @@ fun <T : Credential> CredentialButton(
 ) {
     DepthButton(
         modifier = Modifier
-            .padding(end = 4.dp)
+            .padding(end = 12.dp)
             .size(120.dp, 50.dp),
         onClick = onClick,
-        colors = DepthButtonColors(
-            color = if (credentialType.isInstance(credential)) {
-                GreenShadow
-            } else {
-                Green
-            },
-            shadowColor = if (credentialType.isInstance(credential)) {
-                Green
-            } else {
-                GreenShadow
-            },
-            disabledColor = Green,
-            disabledShadowColor = GreenShadow
-        ),
+        colors = AppButtonColors.ProgressGreen,
         isSelected = credentialType.isInstance(credential)
     ) {
         Text(
