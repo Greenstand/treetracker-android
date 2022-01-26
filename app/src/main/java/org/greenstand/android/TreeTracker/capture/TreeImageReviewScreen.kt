@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.*
@@ -48,55 +47,29 @@ fun TreeImageReviewScreen(
             )
         },
         bottomBar = {
-            ActionBar(
-                centerAction = {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        DepthButton(
-                            onClick = {
-                                navController.popBackStack()
-                            },
-                            colors = DepthButtonColors(
-                                color = AppColors.Red,
-                                shadowColor = AppColors.RedShadow,
-                                disabledColor = AppColors.RedShadow,
-                                disabledShadowColor = AppColors.RedShadow
-                            ),
-                            modifier = Modifier
-                                .size(width = 54.dp, height = 54.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.cancel_image),
-                                contentDescription = null,
-                                )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                ApprovalButton(
+                    modifier = Modifier.padding(end = 24.dp),
+                    onClick = {
+                        navController.popBackStack()
+                    },
+                    approval = false
+                )
+                ApprovalButton(
+                    onClick = {
+                        scope.launch {
+                            viewModel.approveImage()
+                            navController.popBackStack()
                         }
-                        DepthButton(
-                            onClick = {
-                                scope.launch {
-                                    viewModel.approveImage()
-                                    navController.popBackStack()
-                                }
-                            },
-                            colors = DepthButtonColors(
-                                color = Color.Green,
-                                shadowColor = AppColors.GreenShadow,
-                                disabledColor = AppColors.GreenDisabled,
-                                disabledShadowColor = AppColors.GreenShadowDisabled
-                            ),
-                            modifier = Modifier
-                                .size(width = 54.dp, height = 54.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.check_icon),
-                                contentDescription = null,
-                                )
-                        }
-                    }
-                }
-            )
+                    },
+                    approval = true
+                )
+            }
         }
     ) {
         if (state.isDialogOpen) {
@@ -110,6 +83,7 @@ fun TreeImageReviewScreen(
         )
     }
 }
+
 @Composable
 fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel) {
     var text by remember { mutableStateOf(state.note) }
@@ -124,7 +98,7 @@ fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel)
             TextField(
                 value = text,
                 onValueChange = { text = it },
-                )
+            )
         },
         buttons = {
             Row(
