@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
@@ -24,13 +25,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -266,6 +270,38 @@ fun DepthButtonPreview() {
         }
     ) {
         Text("Button", Modifier.align(Alignment.Center))
+    }
+}
+
+@Composable
+fun userImageButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    imagePath: String,
+) {
+    DepthButton(
+        modifier = modifier
+            .width(100.dp)
+            .height(100.dp)
+            .padding(
+                start = 15.dp,
+                top = 10.dp,
+                end = 10.dp,
+                bottom = 10.dp
+            )
+            .aspectRatio(1.0f)
+            .clip(RoundedCornerShape(10.dp)),
+        onClick = onClick,
+    ) {
+        LocalImage(
+            modifier = Modifier
+                .padding(bottom = 12.dp, end = 1.dp)
+                .fillMaxSize()
+                .aspectRatio(1.0f)
+                .clip(RoundedCornerShape(10.dp)),
+            imagePath = imagePath,
+            contentScale = ContentScale.Crop
+        )
     }
 }
 
