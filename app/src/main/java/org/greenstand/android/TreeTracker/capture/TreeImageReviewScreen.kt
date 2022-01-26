@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.*
@@ -54,19 +53,21 @@ fun TreeImageReviewScreen(
                     .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                DeclineButton(
+                ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = {
                         navController.popBackStack()
-                    }
+                    },
+                    approval = false
                 )
-                AcceptButton(
+                ApprovalButton(
                     onClick = {
                         scope.launch {
                             viewModel.approveImage()
                             navController.popBackStack()
                         }
                     },
+                    approval = true
                 )
             }
         }

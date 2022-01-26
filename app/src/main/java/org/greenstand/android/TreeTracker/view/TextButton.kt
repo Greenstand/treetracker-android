@@ -87,36 +87,27 @@ fun BoxScope.ArrowButton(
 }
 
 @Composable
-fun AcceptButton(
+        /**
+         * @param onClick The callback function for click event.
+         * @param modifier The modifier to be applied to the layout.
+         * @param approval Set the type of button to display(if approval is true, shows green thumps up button )
+         */
+fun ApprovalButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    approval: Boolean,
 ) {
+    val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
+    val image =
+        if (approval) painterResource(id = R.drawable.thumbs_up_green) else painterResource(id = R.drawable.thumbs_down_red)
     DepthButton(
-        colors = AppButtonColors.ProgressGreen,
+        colors = color,
         modifier = modifier
             .size(height = 60.dp, width = 60.dp),
         onClick = onClick,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.thumbs_up_green),
-            contentDescription = null,
-        )
-    }
-}
-
-@Composable
-fun DeclineButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    DepthButton(
-        colors = AppButtonColors.DeclineRed,
-        modifier = modifier
-            .size(height = 60.dp, width = 60.dp),
-        onClick = onClick,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.thumbs_down_red),
+            painter = image,
             contentDescription = null,
         )
     }
