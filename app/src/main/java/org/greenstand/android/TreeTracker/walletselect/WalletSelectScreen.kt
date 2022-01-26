@@ -49,26 +49,14 @@ fun WalletSelectScreen(
             ActionBar(
                 leftAction = {
                     state.currentUser?.photoPath?.let {
-                        LocalImage(
-                            modifier = Modifier
-                                .width(100.dp)
-                                .height(100.dp)
-                                .padding(
-                                    start = 15.dp,
-                                    top = 10.dp,
-                                    end = 10.dp,
-                                    bottom = 10.dp
-                                )
-                                .aspectRatio(1.0f)
-                                .clip(RoundedCornerShape(percent = 10))
-                                .clickable {
-                                    navController.navigate(NavRoute.UserSelect.route) {
-                                        popUpTo(NavRoute.Dashboard.route)
-                                        launchSingleTop = true
-                                    }
-                                },
-                            imagePath = it,
-                            contentScale = ContentScale.Crop,
+                        userImageButton(
+                            onClick = {
+                                navController.navigate(NavRoute.UserSelect.route) {
+                                    popUpTo(NavRoute.Dashboard.route)
+                                    launchSingleTop = true
+                                }
+                            },
+                            imagePath = it
                         )
                     }
                 }
