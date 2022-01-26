@@ -92,16 +92,14 @@ fun TreeCaptureScreen(
         )
         ActionBar(
             leftAction = {
-                LocalImage(
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(100.dp)
-                        .padding(15.dp, 10.dp, 10.dp, 10.dp)
-                        .aspectRatio(1.0f)
-                        .clip(RoundedCornerShape(percent = 10))
-                        .clickable { navController.navigate(NavRoute.UserSelect.route) },
-                    imagePath = state.profilePicUrl,
-                    contentScale = ContentScale.Crop
+                userImageButton(
+                    onClick = {
+                        navController.navigate(NavRoute.UserSelect.route) {
+                            popUpTo(NavRoute.Dashboard.route)
+                            launchSingleTop = true
+                        }
+                    },
+                    imagePath = state.profilePicUrl
                 )
             },
             rightAction = {
