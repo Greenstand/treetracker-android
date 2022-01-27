@@ -87,6 +87,33 @@ fun BoxScope.ArrowButton(
 }
 
 @Composable
+        /**
+         * @param onClick The callback function for click event.
+         * @param modifier The modifier to be applied to the layout.
+         * @param approval Set the type of button to display(if approval is true, shows green thumps up button )
+         */
+fun ApprovalButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    approval: Boolean,
+) {
+    val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
+    val image =
+        if (approval) painterResource(id = R.drawable.thumbs_up_green) else painterResource(id = R.drawable.thumbs_down_red)
+    DepthButton(
+        colors = color,
+        modifier = modifier
+            .size(height = 60.dp, width = 60.dp),
+        onClick = onClick,
+    ) {
+        Image(
+            painter = image,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
 fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
     val languageViewModel: LanguagePickerViewModel =
