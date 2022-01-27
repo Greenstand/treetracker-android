@@ -83,8 +83,10 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 100.dp)
         ) {
 
             Row(
@@ -163,23 +165,10 @@ fun <T : Credential> CredentialButton(
 ) {
     DepthButton(
         modifier = Modifier
-            .padding(end = 4.dp)
+            .padding(end = 12.dp)
             .size(120.dp, 50.dp),
         onClick = onClick,
-        colors = DepthButtonColors(
-            color = if (credentialType.isInstance(credential)) {
-                Green
-            } else {
-                MediumGray
-            },
-            shadowColor = if (credentialType.isInstance(credential)) {
-                GreenShadow
-            } else {
-                GrayShadow
-            },
-            disabledColor = GrayShadow,
-            disabledShadowColor = GrayShadow
-        ),
+        colors = AppButtonColors.ProgressGreen,
         isSelected = credentialType.isInstance(credential)
     ) {
         Text(
