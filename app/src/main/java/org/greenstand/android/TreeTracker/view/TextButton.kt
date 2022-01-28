@@ -274,7 +274,7 @@ fun DepthButtonPreview() {
 }
 
 @Composable
-fun userImageButton(
+fun UserImageButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     imagePath: String,
