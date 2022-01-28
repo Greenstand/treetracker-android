@@ -53,7 +53,7 @@ fun SelectableImageDetail(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .aspectRatio(1.0f)
-                    .clip(RoundedCornerShape( 10.dp)),
+                    .clip(RoundedCornerShape(10.dp)),
             )
             Column(
                 modifier = Modifier
