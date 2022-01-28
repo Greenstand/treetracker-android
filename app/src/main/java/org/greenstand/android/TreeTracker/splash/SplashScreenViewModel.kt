@@ -9,9 +9,9 @@ class SplashScreenViewModel(
     private val users: Users,
 ) : ViewModel() {
 
-    fun migratePreferences() {
+    fun migratePreferencesIfNeeded() {
         preferencesMigrator.migrateIfNeeded()
     }
 
-    suspend fun requiresInitialSetup(): Boolean = users.getPowerUser() == null
+    suspend fun isInitialSetupRequired(): Boolean = users.getPowerUser() == null
 }
