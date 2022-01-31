@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 // Dequeue breaks equals so state will not be updated when navigating
@@ -54,7 +55,10 @@ sealed class Credential {
     }
 }
 
-class SignupViewModel(private val users: Users) : ViewModel() {
+class SignupViewModel(
+    private val users: Users,
+    private val checkForInternetUseCase: CheckForInternetUseCase
+) : ViewModel() {
 
     private val _state = MutableLiveData(SignUpState())
     val state: LiveData<SignUpState> = _state
@@ -62,6 +66,11 @@ class SignupViewModel(private val users: Users) : ViewModel() {
     fun updateName(name: String) {
         _state.value = _state.value?.copy(name = name)
     }
+
+    fun isInternetAvailable() : Boolean{
+       return  checkForInternetUseCase.isInternetServiceAvailable()
+    }
+
     fun updateOrganization(organization: String) {
         _state.value = _state.value?.copy(organization = organization)
     }
@@ -84,7 +93,10 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         _state.value = _state.value?.copy(credential = updatedCredential)
     }
 
-    fun doesCredentialExist() {
+    /**
+     *  update _state according to user existence
+     */
+    fun updateStateAccToUserExistence() {
         val credential = _state.value?.let { extractIdentifier(it) }!!
 
         viewModelScope.launch {

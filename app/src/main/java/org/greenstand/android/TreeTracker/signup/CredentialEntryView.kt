@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.signup
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,11 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -37,16 +39,19 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.AppButtonColors
-import org.greenstand.android.TreeTracker.view.AppColors.GrayShadow
 import org.greenstand.android.TreeTracker.view.AppColors.Green
-import org.greenstand.android.TreeTracker.view.AppColors.GreenShadow
-import org.greenstand.android.TreeTracker.view.AppColors.MediumGray
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthButtonColors
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
+import androidx.core.content.ContextCompat.startActivity
+
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+import org.greenstand.android.TreeTracker.utilities.Constants
+
 
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
@@ -72,7 +77,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         isLeft = false,
                         isEnabled = (state.isEmailValid || state.isPhoneValid)
                     ) {
-                        viewModel.doesCredentialExist()
+                        viewModel.updateStateAccToUserExistence()
                     }
                 }
             )
@@ -93,67 +98,109 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                CredentialButton(
-                    credential = state.credential,
-                    credentialType = Credential.Email::class.java,
-                    placeholderTextRes = R.string.email_placeholder,
-                    onClick = {
-                        viewModel.updateCredentialType(Credential.Email())
-                    }
-                )
-
-                CredentialButton(
-                    credential = state.credential,
-                    credentialType = Credential.Phone::class.java,
-                    placeholderTextRes = R.string.phone_placeholder,
-                    onClick = {
-                        viewModel.updateCredentialType(Credential.Phone())
-                    }
-                )
+                RenderEmailCredentialButton(state, viewModel)
+                RenderPhoneCredentialButton(state, viewModel)
             }
 
             when (state.credential) {
-                is Credential.Email -> BorderedTextField(
-                    value = state.email ?: "",
-                    padding = PaddingValues(16.dp),
-                    onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
-                    placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Go,
-                        autoCorrect = false,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onGo = {
-                            viewModel.doesCredentialExist()
-                        }
-                    ),
-                    onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
-                    focusRequester = focusRequester,
-                    autofocusEnabled = state.autofocusTextEnabled
-                )
-
-                is Credential.Phone -> BorderedTextField(
-                    value = state.phone ?: "",
-                    padding = PaddingValues(16.dp),
-                    onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
-                    placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Go,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onGo = {
-                            viewModel.doesCredentialExist()
-                        }
-                    ),
-                    onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
-                    focusRequester = focusRequester,
-                    autofocusEnabled = state.autofocusTextEnabled
-                )
+                is Credential.Email -> RenderEmailTextField(state, viewModel, focusRequester)
+                is Credential.Phone -> RenderPhoneTextField(state, viewModel, focusRequester)
             }
+
+            if (viewModel.isInternetAvailable())
+                RenderViewWebMapText()
         }
     }
+}
+
+@Composable
+fun RenderEmailCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
+    CredentialButton(
+        credential = state.credential,
+        credentialType = Credential.Email::class.java,
+        placeholderTextRes = R.string.email_placeholder,
+        onClick = {
+            viewModel.updateCredentialType(Credential.Email())
+        }
+    )
+}
+
+@Composable
+fun RenderPhoneCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
+    CredentialButton(
+        credential = state.credential,
+        credentialType = Credential.Phone::class.java,
+        placeholderTextRes = R.string.phone_placeholder,
+        onClick = {
+            viewModel.updateCredentialType(Credential.Phone())
+        }
+    )
+}
+
+@Composable
+fun RenderViewWebMapText() {
+    val context = LocalContext.current
+
+    val navigateToWebPage: () -> Unit = {
+        val url = Constants.TREE_TRACKER_URL
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(context, i, null)
+    }
+
+    Text(
+        text = stringResource(id = R.string.viewLiveWebMap),
+        Modifier
+            .padding(top = (200).dp)
+            .clickable(onClick = navigateToWebPage),
+        color = Color.White,
+        style = TextStyle(textDecoration = TextDecoration.Underline)
+    )
+}
+
+@Composable
+private fun RenderEmailTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
+    BorderedTextField(
+        value = state.email ?: "",
+        padding = PaddingValues(16.dp),
+        onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
+        placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Go,
+            autoCorrect = false,
+        ),
+        keyboardActions = KeyboardActions(
+            onGo = {
+                viewModel.updateStateAccToUserExistence()
+            }
+        ),
+        onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
+        focusRequester = focusRequester,
+        autofocusEnabled = state.autofocusTextEnabled
+    )
+}
+
+@Composable
+private fun RenderPhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
+    BorderedTextField(
+        value = state.phone ?: "",
+        padding = PaddingValues(16.dp),
+        onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
+        placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Phone,
+            imeAction = ImeAction.Go,
+        ),
+        keyboardActions = KeyboardActions(
+            onGo = {
+                viewModel.updateStateAccToUserExistence()
+            }
+        ),
+        onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
+        focusRequester = focusRequester,
+        autofocusEnabled = state.autofocusTextEnabled
+    )
 }
 
 @Composable
