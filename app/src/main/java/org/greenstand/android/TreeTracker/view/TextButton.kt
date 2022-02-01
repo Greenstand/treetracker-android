@@ -24,12 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -125,29 +123,24 @@ fun ApprovalButton(
          * @param content The text content of the dialog. Can be left empty if it is an input dialog
          * @param onPositiveClick The callback action for clicking the positive approval button.
          * @param onNegativeClick The callback action for clicking the negative approval button.
-         * @param isTextInputAvailable if set to true, the dialog would include an input text field.
          * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
-         * @param showPositiveButtonDialog Determines whether to display the positive button in the dialog.
-         * @param showNegativeButtonDialog Determines whether to display the negative button in the dialog.
          */
 fun CustomDialog(
     dialogIcon: Painter = painterResource(id = R.drawable.greenstand_logo),
     title: String = "",
     content: String = "",
-    onPositiveClick: () -> Unit = {},
-    onNegativeClick: () -> Unit = {},
-    isTextInputAvailable: Boolean = false,
+    onPositiveClick: (() -> Unit)? = null,
+    onNegativeClick: (() -> Unit)? = null,
     textInputValue: String = "",
-    onTextInputValueChange: (String) -> Unit = {},
-    showPositiveButtonDialog: Boolean = true,
-    showNegativeButtonDialog: Boolean = false,
+    onTextInputValueChange: ((String) -> Unit)? = null,
 ) {
     AlertDialog(
         onDismissRequest = { },
         title = {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -156,7 +149,6 @@ fun CustomDialog(
                     contentDescription = null,
                     modifier = Modifier
                         .size(width = 16.dp, height = 16.dp)
-
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
@@ -171,26 +163,26 @@ fun CustomDialog(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(2.dp)
-            .border(1.dp, color = Color(0xFF75B926), shape = RoundedCornerShape(percent = 10))
+            .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
             .clip(RoundedCornerShape(percent = 10)),
-        backgroundColor = Color(0XFF191C1F),
+        backgroundColor = AppColors.Gray,
         text = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
             ) {
-
                 Text(
                     text = content,
                     color = CustomTheme.textColors.primaryText,
                     style = CustomTheme.typography.regular,
                     modifier = Modifier.padding(bottom = 5.dp)
                 )
-                if (isTextInputAvailable) {
+                onTextInputValueChange?.let {
                     TextField(
                         value = textInputValue,
-                        onValueChange = onTextInputValueChange,
+                        modifier = Modifier.wrapContentHeight(),
+                        onValueChange = it
                     )
                 }
             }
@@ -202,20 +194,21 @@ fun CustomDialog(
                     .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                if (showNegativeButtonDialog) {
+                onNegativeClick?.let {
                     ApprovalButton(
                         modifier = Modifier
                             .padding(end = 24.dp)
                             .size(40.dp),
-                        onClick = onNegativeClick,
+                        onClick = it,
                         approval = false
                     )
                 }
-                if (showPositiveButtonDialog) {
+
+                onPositiveClick?.let {
                     ApprovalButton(
                         modifier = Modifier
                             .size(40.dp),
-                        onClick = onPositiveClick,
+                        onClick = it,
                         approval = true
                     )
                 }
