@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -33,27 +34,24 @@ fun SelectableImageDetail(
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    val columnModifier = Modifier
+        .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
+        .fillMaxWidth()
+        .wrapContentHeight()
     DepthButton(
         onClick = onClick,
         isSelected = isSelected,
         modifier = Modifier
             .padding(8.dp)
             .width(156.dp)
+            .clip(RoundedCornerShape(10.dp))
             .wrapContentHeight(),
         contentAlignment = Alignment.TopCenter,
-        colors = DepthButtonColors(
-            color = buttonColors.color,
-            shadowColor = if (isSelected) selectedColor else buttonColors.shadowColor,
-            disabledColor = buttonColors.disabledColor,
-            disabledShadowColor = buttonColors.disabledShadowColor
-        )
     ) {
         Column(
-            modifier = Modifier
-                .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
-                .fillMaxWidth()
-                .wrapContentHeight(),
+            modifier = if (isSelected) columnModifier.padding(start = 1.dp, end = 1.dp) else columnModifier.padding(1.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
         ) {
             LocalImage(
                 imagePath = photoPath,
@@ -62,7 +60,7 @@ fun SelectableImageDetail(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .aspectRatio(1.0f)
-                    .clip(RoundedCornerShape(percent = 10)),
+                    .clip(RoundedCornerShape(10.dp)),
             )
             Column(
                 modifier = Modifier
