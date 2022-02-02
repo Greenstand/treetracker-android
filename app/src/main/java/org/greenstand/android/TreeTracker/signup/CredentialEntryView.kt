@@ -49,6 +49,8 @@ import androidx.core.content.ContextCompat.startActivity
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import org.greenstand.android.TreeTracker.utilities.Constants
 
@@ -57,6 +59,7 @@ import org.greenstand.android.TreeTracker.utilities.Constants
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
     val focusRequester = remember { FocusRequester() }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -77,7 +80,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         isLeft = false,
                         isEnabled = (state.isEmailValid || state.isPhoneValid)
                     ) {
-                        viewModel.updateStateAccToUserExistence()
+                        viewModel.submitInfo()
                     }
                 }
             )
@@ -98,23 +101,28 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                RenderEmailCredentialButton(state, viewModel)
-                RenderPhoneCredentialButton(state, viewModel)
+                EmailCredentialButton(state, viewModel)
+                PhoneCredentialButton(state, viewModel)
             }
 
             when (state.credential) {
-                is Credential.Email -> RenderEmailTextField(state, viewModel, focusRequester)
-                is Credential.Phone -> RenderPhoneTextField(state, viewModel, focusRequester)
+                is Credential.Email -> EmailTextField(state, viewModel, focusRequester)
+                is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester)
             }
 
-            if (viewModel.isInternetAvailable())
-                RenderViewWebMapText()
+            val navigateToWebPage: () -> Unit = {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(Constants.TREE_TRACKER_URL)
+                startActivity(context, intent, null)
+            }
+
+            ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
         }
     }
 }
 
 @Composable
-fun RenderEmailCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
+fun EmailCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
     CredentialButton(
         credential = state.credential,
         credentialType = Credential.Email::class.java,
@@ -126,7 +134,7 @@ fun RenderEmailCredentialButton(state: SignUpState, viewModel: SignupViewModel) 
 }
 
 @Composable
-fun RenderPhoneCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
+fun PhoneCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
     CredentialButton(
         credential = state.credential,
         credentialType = Credential.Phone::class.java,
@@ -138,28 +146,21 @@ fun RenderPhoneCredentialButton(state: SignUpState, viewModel: SignupViewModel) 
 }
 
 @Composable
-fun RenderViewWebMapText() {
-    val context = LocalContext.current
-
-    val navigateToWebPage: () -> Unit = {
-        val url = Constants.TREE_TRACKER_URL
-        val i = Intent(Intent.ACTION_VIEW)
-        i.data = Uri.parse(url)
-        startActivity(context, i, null)
+fun ViewWebMapText(isVisible: Boolean, onClick: () -> Unit) {
+    if (isVisible) {
+        Text(
+            text = stringResource(id = R.string.viewLiveWebMap),
+            Modifier
+                .padding(top = 200.dp)
+                .clickable(onClick = onClick),
+            color = Color.White,
+            style = TextStyle(textDecoration = TextDecoration.Underline),
+        )
     }
-
-    Text(
-        text = stringResource(id = R.string.viewLiveWebMap),
-        Modifier
-            .padding(top = (200).dp)
-            .clickable(onClick = navigateToWebPage),
-        color = Color.White,
-        style = TextStyle(textDecoration = TextDecoration.Underline)
-    )
 }
 
 @Composable
-private fun RenderEmailTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
+private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
     BorderedTextField(
         value = state.email ?: "",
         padding = PaddingValues(16.dp),
@@ -172,7 +173,7 @@ private fun RenderEmailTextField(state: SignUpState, viewModel: SignupViewModel,
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                viewModel.updateStateAccToUserExistence()
+                viewModel.submitInfo()
             }
         ),
         onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -182,7 +183,7 @@ private fun RenderEmailTextField(state: SignUpState, viewModel: SignupViewModel,
 }
 
 @Composable
-private fun RenderPhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
+private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
     BorderedTextField(
         value = state.phone ?: "",
         padding = PaddingValues(16.dp),
@@ -194,7 +195,7 @@ private fun RenderPhoneTextField(state: SignUpState, viewModel: SignupViewModel,
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                viewModel.updateStateAccToUserExistence()
+                viewModel.submitInfo()
             }
         ),
         onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },

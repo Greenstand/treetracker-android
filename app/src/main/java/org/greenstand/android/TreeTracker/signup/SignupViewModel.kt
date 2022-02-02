@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.user.User
@@ -23,7 +24,8 @@ data class SignUpState(
     val existingUser: User? = null,
     val canGoToNextScreen: Boolean = false,
     val credential: Credential = Credential.Email(),
-    val autofocusTextEnabled: Boolean = false
+    val autofocusTextEnabled: Boolean = false,
+    val isInternetAvailable: Boolean = false
 )
 
 sealed class Credential {
@@ -63,12 +65,15 @@ class SignupViewModel(
     private val _state = MutableLiveData(SignUpState())
     val state: LiveData<SignUpState> = _state
 
-    fun updateName(name: String) {
-        _state.value = _state.value?.copy(name = name)
+    init {
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = checkForInternetUseCase.execute(Unit)
+            _state.value = _state.value?.copy(isInternetAvailable = result)
+        }
     }
 
-    fun isInternetAvailable() : Boolean{
-       return  checkForInternetUseCase.isInternetServiceAvailable()
+    fun updateName(name: String) {
+        _state.value = _state.value?.copy(name = name)
     }
 
     fun updateOrganization(organization: String) {
@@ -96,7 +101,7 @@ class SignupViewModel(
     /**
      *  update _state according to user existence
      */
-    fun updateStateAccToUserExistence() {
+    fun submitInfo() {
         val credential = _state.value?.let { extractIdentifier(it) }!!
 
         viewModelScope.launch {
