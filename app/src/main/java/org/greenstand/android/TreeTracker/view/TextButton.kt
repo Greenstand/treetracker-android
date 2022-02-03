@@ -3,12 +3,15 @@ package org.greenstand.android.TreeTracker.view
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
@@ -20,13 +23,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -111,6 +114,107 @@ fun ApprovalButton(
             contentDescription = null,
         )
     }
+}
+
+@Composable
+        /**
+         * @param dialogIcon Icon to be displayed in the dialog.
+         * @param title The Dialog's title text.
+         * @param content The text content of the dialog. Can be left empty if it is an input dialog
+         * @param onPositiveClick The callback action for clicking the positive approval button.
+         * @param onNegativeClick The callback action for clicking the negative approval button.
+         * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
+         */
+fun CustomDialog(
+    dialogIcon: Painter = painterResource(id = R.drawable.greenstand_logo),
+    title: String = "",
+    content: String = "",
+    onPositiveClick: (() -> Unit)? = null,
+    onNegativeClick: (() -> Unit)? = null,
+    textInputValue: String = "",
+    onTextInputValueChange: ((String) -> Unit)? = null,
+) {
+    AlertDialog(
+        onDismissRequest = { },
+        title = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = dialogIcon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 16.dp, height = 16.dp)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = title,
+                    color = CustomTheme.textColors.primaryText,
+                    style = CustomTheme.typography.medium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(2.dp)
+            .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
+            .clip(RoundedCornerShape(percent = 10)),
+        backgroundColor = AppColors.Gray,
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Text(
+                    text = content,
+                    color = CustomTheme.textColors.primaryText,
+                    style = CustomTheme.typography.regular,
+                    modifier = Modifier.padding(bottom = 5.dp)
+                )
+                onTextInputValueChange?.let {
+                    TextField(
+                        value = textInputValue,
+                        modifier = Modifier.wrapContentHeight(),
+                        onValueChange = it
+                    )
+                }
+            }
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                onNegativeClick?.let {
+                    ApprovalButton(
+                        modifier = Modifier
+                            .padding(end = 24.dp)
+                            .size(40.dp),
+                        onClick = it,
+                        approval = false
+                    )
+                }
+
+                onPositiveClick?.let {
+                    ApprovalButton(
+                        modifier = Modifier
+                            .size(40.dp),
+                        onClick = it,
+                        approval = true
+                    )
+                }
+            }
+        },
+    )
 }
 
 @Composable
