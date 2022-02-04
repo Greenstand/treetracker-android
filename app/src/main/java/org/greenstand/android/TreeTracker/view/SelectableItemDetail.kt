@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.user.User
@@ -90,10 +91,20 @@ fun UserButton(
         onClick
     ) {
         Text(
-            text = "${user.firstName} ${user.lastName}\n${user.wallet}",
+            text = "${user.firstName} ${user.lastName}",
             color = CustomTheme.textColors.lightText,
             style = CustomTheme.typography.small,
             fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+            )
+        Text(
+            text = user.wallet,
+            color = CustomTheme.textColors.lightText,
+            style = CustomTheme.typography.small,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
             )
         Row(
             modifier = Modifier.padding(top = 4.dp),
