@@ -74,7 +74,20 @@ fun TreeCaptureScreen(
             )
         }
     ) {
-        BadLocationDialog(state = state, navController = navController)
+        if (state.isLocationAvailable == false) {
+            CustomDialog(
+                dialogIcon = painterResource(id = R.drawable.error_outline),
+                title = stringResource(R.string.poor_gps_header),
+                content = stringResource(R.string.poor_gps_message),
+                onPositiveClick = { navController.popBackStack() },
+                onNegativeClick = {
+                    navController.navigate(NavRoute.Dashboard.route) {
+                        popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
         
         Camera(
             isSelfieMode = false,
@@ -126,56 +139,5 @@ fun TreeCaptureScreen(
             }
         )
         showLoadingSpinner(state.isGettingLocation || state.isCreatingFakeTrees)
-    }
-}
-
-@Composable
-fun BadLocationDialog(state: TreeCaptureState, navController: NavHostController) {
-    if (state.isLocationAvailable == false) {
-        AlertDialog(
-            onDismissRequest = { navController.popBackStack() },
-            title = {
-                Text(text = stringResource(R.string.poor_gps_header))
-            },
-            text = {
-                Text(
-                    text = stringResource(R.string.poor_gps_message),
-                    color = Color.Green
-                )
-            },
-            buttons = {
-                Row(
-                    modifier = Modifier
-                        .padding(all = 8.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
-
-                ) {
-                    Button(
-                        modifier = Modifier.wrapContentSize(),
-                        onClick = {
-                            navController.navigate(NavRoute.Dashboard.route) {
-                                popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                    ) {
-                        Text(
-                            text = "Cancel"
-                        )
-                    }
-                    Button(
-                        modifier = Modifier.wrapContentSize(),
-                        onClick = {
-                            navController.popBackStack()
-                        }
-                    ) {
-                        Text(
-                            text = "Retry"
-                        )
-                    }
-                }
-            }
-        )
     }
 }
