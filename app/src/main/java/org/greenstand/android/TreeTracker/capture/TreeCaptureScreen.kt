@@ -2,9 +2,7 @@ package org.greenstand.android.TreeTracker.capture
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,10 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -92,16 +88,14 @@ fun TreeCaptureScreen(
         )
         ActionBar(
             leftAction = {
-                LocalImage(
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(100.dp)
-                        .padding(15.dp, 10.dp, 10.dp, 10.dp)
-                        .aspectRatio(1.0f)
-                        .clip(RoundedCornerShape(percent = 10))
-                        .clickable { navController.navigate(NavRoute.UserSelect.route) },
-                    imagePath = state.profilePicUrl,
-                    contentScale = ContentScale.Crop
+                UserImageButton(
+                    onClick = {
+                        navController.navigate(NavRoute.UserSelect.route) {
+                            popUpTo(NavRoute.Dashboard.route)
+                            launchSingleTop = true
+                        }
+                    },
+                    imagePath = state.profilePicUrl
                 )
             },
             rightAction = {
