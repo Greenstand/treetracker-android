@@ -1,6 +1,6 @@
 package org.greenstand.android.TreeTracker.capture
 
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -86,49 +86,16 @@ fun TreeImageReviewScreen(
 
 @Composable
 fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel) {
-    var text by remember { mutableStateOf(state.note) }
-    AlertDialog(
-        onDismissRequest = {
+    CustomDialog(
+        dialogIcon = painterResource(id = R.drawable.note),
+        title = stringResource(R.string.add_note_to_tree),
+        textInputValue = state.note,
+        onTextInputValueChange = { text -> viewModel.updateNote(text) },
+        onPositiveClick = {
+            viewModel.addNote()
+        },
+        onNegativeClick = {
             viewModel.setDialogState(false)
-        },
-        title = {
-            Text(text = stringResource(R.string.add_note_to_tree))
-        },
-        text = {
-            TextField(
-                value = text,
-                onValueChange = { text = it },
-            )
-        },
-        buttons = {
-            Row(
-                modifier = Modifier
-                    .padding(all = 8.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                DepthButton(
-                    onClick = {
-                        viewModel.addNote(text)
-                    },
-                    colors = DepthButtonColors(
-                        color = Color.Green,
-                        shadowColor = AppColors.GreenShadow,
-                        disabledColor = AppColors.GreenDisabled,
-                        disabledShadowColor = AppColors.GreenShadowDisabled
-                    ),
-                    modifier = Modifier
-                        .size(width = 54.dp, height = 54.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.check_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(width = 54.dp, height = 54.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-            }
         }
     )
 }

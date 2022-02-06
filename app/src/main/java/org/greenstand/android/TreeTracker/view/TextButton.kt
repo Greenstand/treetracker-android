@@ -185,7 +185,7 @@ fun CustomDialog(
                     TextField(
                         value = textInputValue,
                         modifier = Modifier.wrapContentHeight(),
-                        onValueChange = it
+                        onValueChange = onTextInputValueChange
                     )
                 }
             }

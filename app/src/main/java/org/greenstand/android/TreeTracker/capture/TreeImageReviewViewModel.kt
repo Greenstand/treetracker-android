@@ -22,10 +22,14 @@ class TreeImageReviewViewModel(
     suspend fun approveImage() {
         treeCapturer.saveTree()
     }
-    fun addNote(note: String){
+
+    fun updateNote(note: String) {
+        _state.value = _state.value?.copy(note = note)
+    }
+
+    fun addNote(){
         viewModelScope.launch {
-            _state.value = _state.value?.copy(note = note)
-            treeCapturer.setNote(note)
+            treeCapturer.setNote(_state.value!!.note)
             _state.value = _state.value?.copy(isDialogOpen = false)
         }
     }
