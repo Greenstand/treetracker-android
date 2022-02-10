@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.camera.Camera
@@ -78,7 +77,7 @@ fun TreeCaptureScreen(
             CustomDialog(
                 dialogIcon = painterResource(id = R.drawable.error_outline),
                 title = stringResource(R.string.poor_gps_header),
-                content = stringResource(R.string.poor_gps_message),
+                textContent = stringResource(R.string.poor_gps_message),
                 onPositiveClick = { navController.popBackStack() },
                 onNegativeClick = {
                     navController.navigate(NavRoute.Dashboard.route) {

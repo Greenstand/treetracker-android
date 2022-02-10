@@ -5,10 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
@@ -17,10 +14,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import android.provider.Settings
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,7 +65,7 @@ fun PermissionRequest(
                     perm.shouldShowRationale -> {
                         CustomDialog(
                             title = stringResource(R.string.accept_camera_permission_header),
-                            content = stringResource(R.string.accept_camera_permission_message),
+                            textContent = stringResource(R.string.accept_camera_permission_message),
                             onNegativeClick = {
                                 navController.popBackStack()
                             },
@@ -124,7 +119,7 @@ fun PermissionRequest(
 fun LocationRationaleDialog(navController: NavHostController, perm: PermissionState) {
     CustomDialog(
         title = stringResource(R.string.accept_location_permission_header),
-        content = stringResource(R.string.accept_location_permission_message),
+        textContent = stringResource(R.string.accept_location_permission_message),
         onNegativeClick = {
             navController.popBackStack()
         },
@@ -148,7 +143,7 @@ fun PermissionDeniedPermanentlyDialog(navController: NavHostController) {
 
     CustomDialog(
         title = stringResource(R.string.open_settings_header),
-        content = stringResource(R.string.open_settings_message),
+        textContent = stringResource(R.string.open_settings_message),
         onNegativeClick = {
             navController.popBackStack()
         },
