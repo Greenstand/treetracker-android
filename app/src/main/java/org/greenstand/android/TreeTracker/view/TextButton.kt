@@ -130,7 +130,7 @@ fun ApprovalButton(
 fun CustomDialog(
     dialogIcon: Painter = painterResource(id = R.drawable.greenstand_logo),
     title: String = "",
-    textContent: String = "",
+    textContent: String? = null,
     content: @Composable() (() -> Unit)? = null,
     onPositiveClick: (() -> Unit)? = null,
     onNegativeClick: (() -> Unit)? = null,
@@ -175,12 +175,14 @@ fun CustomDialog(
                     .fillMaxWidth()
                     .wrapContentHeight()
             ) {
-                Text(
-                    text = textContent,
-                    color = CustomTheme.textColors.primaryText,
-                    style = CustomTheme.typography.regular,
-                    modifier = Modifier.padding(bottom = 5.dp)
-                )
+                textContent?.let {
+                    Text(
+                        text = it,
+                        color = CustomTheme.textColors.primaryText,
+                        style = CustomTheme.typography.regular,
+                        modifier = Modifier.padding(bottom = 5.dp)
+                    )
+                }
                 onTextInputValueChange?.let {
                     TextField(
                         value = textInputValue,
@@ -188,10 +190,12 @@ fun CustomDialog(
                         onValueChange = onTextInputValueChange
                     )
                 }
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
                     content?.let { it() }
                 }
             }
