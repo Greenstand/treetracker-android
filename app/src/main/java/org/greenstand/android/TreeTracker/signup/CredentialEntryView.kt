@@ -49,10 +49,9 @@ import androidx.core.content.ContextCompat.startActivity
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import org.greenstand.android.TreeTracker.utilities.Constants
+import org.greenstand.android.TreeTracker.view.CustomDialog
 
 
 @Composable
@@ -234,20 +233,13 @@ fun ExistingUserDialog(
     navController: NavHostController,
     state: SignUpState
 ) {
-    AlertDialog(
-        onDismissRequest = {
+    CustomDialog(
+        title = stringResource(R.string.user_exists_header),
+        textContent = stringResource(R.string.user_exists_message),
+        onNegativeClick = {
             viewModel.closeExistingUserDialog()
         },
-        title = {
-            Text(text = stringResource(R.string.user_exists_header))
-        },
-        text = {
-            Text(
-                text = stringResource(R.string.user_exists_message),
-                color = Color.Green
-            )
-        },
-        buttons = {
+        content = {
             state.existingUser?.let { user ->
                 UserButton(
                     user = user,
@@ -260,16 +252,6 @@ fun ExistingUserDialog(
                         launchSingleTop = true
                     }
                 }
-            }
-            Button(
-                modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    viewModel.closeExistingUserDialog()
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.cancel)
-                )
             }
         }
     )
