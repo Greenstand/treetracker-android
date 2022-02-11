@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
+import org.greenstand.android.TreeTracker.usecases.CreateLegacyTreeUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
@@ -166,7 +167,9 @@ val appModule = module {
 
     factory { CreateTreeUseCase(get(), get(), get(), get()) }
 
-    factory { CreateFakeTreesUseCase(get(), get(), get()) }
+    factory { CreateLegacyTreeUseCase(get(), get()) }
+
+    factory { CreateFakeTreesUseCase(get(), get(), get(), get(), get(), get()) }
 
     factory { CheckForInternetUseCase() }
 

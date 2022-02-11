@@ -193,6 +193,25 @@ interface TreeTrackerDAO {
     @Insert
     suspend fun insertTree(treeEntity: TreeEntity): Long
 
+    @Transaction
+    suspend fun insertTreeWithAttributes(
+        tree: TreeCaptureEntity,
+        attributes: List<TreeAttributeEntity>?
+    ): Long {
+        val treeId = insertTreeCapture(tree)
+        attributes?.forEach {
+            it.treeCaptureId = treeId
+            insertTreeAttribute(it)
+        }
+        return treeId
+    }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTreeCapture(treeCaptureEntity: TreeCaptureEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTreeAttribute(treeAttributeEntity: TreeAttributeEntity): Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLocationData(locationEntity: LocationEntity): Long
 
