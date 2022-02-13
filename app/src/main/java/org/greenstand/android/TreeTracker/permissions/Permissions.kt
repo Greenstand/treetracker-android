@@ -5,10 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
@@ -17,10 +14,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import android.provider.Settings
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,6 +25,7 @@ import org.greenstand.android.TreeTracker.permissions.PermissionItemsState
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.view.CustomDialog
 
 @ExperimentalPermissionsApi
 @Composable
@@ -65,9 +61,19 @@ fun PermissionRequest(
         when (perm.permission) {
             Manifest.permission.CAMERA -> {
                 when {
-                    perm.hasPermission -> { }
+                    perm.hasPermission -> {}
                     perm.shouldShowRationale -> {
-                        CameraRationaleDialog(navController = navController, perm = perm)
+                        CustomDialog(
+                            title = stringResource(R.string.accept_camera_permission_header),
+                            textContent = stringResource(R.string.accept_camera_permission_message),
+                            onNegativeClick = {
+                                navController.popBackStack()
+                            },
+                            onPositiveClick = {
+                                perm.launchPermissionRequest()
+                                navController.popBackStack()
+                            }
+                        )
                     }
                     else -> {
                         PermissionDeniedPermanentlyDialog(navController)
@@ -111,59 +117,15 @@ fun PermissionRequest(
 @ExperimentalPermissionsApi
 @Composable
 fun LocationRationaleDialog(navController: NavHostController, perm: PermissionState) {
-    AlertDialog(
-        onDismissRequest = { navController.popBackStack() },
-        title = {
-            Text(text = stringResource(R.string.accept_location_permission_header))
+    CustomDialog(
+        title = stringResource(R.string.accept_location_permission_header),
+        textContent = stringResource(R.string.accept_location_permission_message),
+        onNegativeClick = {
+            navController.popBackStack()
         },
-        text = {
-            Text(
-                text = stringResource(R.string.accept_location_permission_message),
-                color = Color.Green
-            )
-        },
-        buttons = {
-            Button(
-                modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    perm.launchPermissionRequest()
-                    navController.popBackStack()
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.accept_permission)
-                )
-            }
-        }
-    )
-}
-
-@ExperimentalPermissionsApi
-@Composable
-fun CameraRationaleDialog(navController: NavHostController, perm: PermissionState) {
-    AlertDialog(
-        onDismissRequest = { navController.popBackStack() },
-        title = {
-            Text(text = stringResource(R.string.accept_camera_permission_header))
-        },
-        text = {
-            Text(
-                text = stringResource(R.string.accept_camera_permission_message),
-                color = Color.Green
-            )
-        },
-        buttons = {
-            Button(
-                modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    perm.launchPermissionRequest()
-                    navController.popBackStack()
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.accept_permission)
-                )
-            }
+        onPositiveClick = {
+            perm.launchPermissionRequest()
+            navController.popBackStack()
         }
     )
 }
@@ -179,33 +141,19 @@ fun enableLocation() {
 fun PermissionDeniedPermanentlyDialog(navController: NavHostController) {
     val activity: Context = LocalContext.current as Activity
 
-    AlertDialog(
-        onDismissRequest = { navController.popBackStack() },
-        title = {
-            Text(text = stringResource(R.string.open_settings_header))
+    CustomDialog(
+        title = stringResource(R.string.open_settings_header),
+        textContent = stringResource(R.string.open_settings_message),
+        onNegativeClick = {
+            navController.popBackStack()
         },
-        text = {
-            Text(
-                text = stringResource(R.string.open_settings_message),
-                color = Color.Green
+        onPositiveClick = {
+            val intent = Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", "org.greenstand.android.TreeTracker.debug", null)
             )
-        },
-        buttons = {
-            Button(
-                modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    val intent = Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", "org.greenstand.android.TreeTracker.debug", null)
-                    )
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(activity, intent, null)
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.open_settings)
-                )
-            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(activity, intent, null)
         }
     )
 }
