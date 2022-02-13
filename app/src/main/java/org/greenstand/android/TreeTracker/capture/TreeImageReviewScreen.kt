@@ -1,12 +1,13 @@
 package org.greenstand.android.TreeTracker.capture
 
-
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -85,16 +86,49 @@ fun TreeImageReviewScreen(
 
 @Composable
 fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel) {
-    CustomDialog(
-        dialogIcon = painterResource(id = R.drawable.note),
-        title = stringResource(R.string.add_note_to_tree),
-        textInputValue = state.note,
-        onTextInputValueChange = { text -> viewModel.updateNote(text) },
-        onPositiveClick = {
-            viewModel.addNote()
-        },
-        onNegativeClick = {
+    var text by remember { mutableStateOf(state.note) }
+    AlertDialog(
+        onDismissRequest = {
             viewModel.setDialogState(false)
+        },
+        title = {
+            Text(text = stringResource(R.string.add_note_to_tree))
+        },
+        text = {
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+            )
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .padding(all = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                DepthButton(
+                    onClick = {
+                        viewModel.addNote(text)
+                    },
+                    colors = DepthButtonColors(
+                        color = Color.Green,
+                        shadowColor = AppColors.GreenShadow,
+                        disabledColor = AppColors.GreenDisabled,
+                        disabledShadowColor = AppColors.GreenShadowDisabled
+                    ),
+                    modifier = Modifier
+                        .size(width = 54.dp, height = 54.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.check_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(width = 54.dp, height = 54.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+            }
         }
     )
 }
