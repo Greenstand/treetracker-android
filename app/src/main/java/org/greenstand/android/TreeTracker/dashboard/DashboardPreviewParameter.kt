@@ -7,7 +7,7 @@ import org.koin.core.get
 class DashboardPreviewParameter : PreviewParameterProvider<DashboardViewModel>, KoinComponent {
 
     override val values: Sequence<DashboardViewModel> = sequenceOf(
-        DashboardViewModel(get(), get(), get(), get())
+        DashboardViewModel(get(), get(), get(), get(), get())
     )
 
     override val count: Int = values.count()

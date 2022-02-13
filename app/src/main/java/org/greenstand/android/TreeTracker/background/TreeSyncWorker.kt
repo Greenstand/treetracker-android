@@ -15,12 +15,8 @@ class TreeSyncWorker(
     private val syncNotificationManager: SyncNotificationManager by inject()
 
     override suspend fun doWork(): Result {
-        syncNotificationManager.showNotification()
-
+        setForeground(syncNotificationManager.createForegroundInfo(applicationContext, id))
         syncDataBundleUseCase.execute(Unit)
-
-        syncNotificationManager.removeNotification()
-
         return Result.success()
     }
 

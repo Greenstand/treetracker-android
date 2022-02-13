@@ -16,7 +16,6 @@ data class SignUpState(
     val name: String? = null,
     val email: String? = null,
     val phone: String? = null,
-    val organization: String? = null,
     val photoPath: String? = null,
     val isCredentialView: Boolean = true,
     val isEmailValid: Boolean = false,
@@ -76,10 +75,6 @@ class SignupViewModel(
         _state.value = _state.value?.copy(name = name)
     }
 
-    fun updateOrganization(organization: String) {
-        _state.value = _state.value?.copy(organization = organization)
-    }
-
     fun updateEmail(email: String) {
         _state.value = _state.value?.copy(
             email = email,
@@ -107,7 +102,7 @@ class SignupViewModel(
         viewModelScope.launch {
             if (users.doesUserExists(credential)) {
                 _state.value = _state.value?.copy(
-                    existingUser = users.getUserWithIdentifier(credential),
+                    existingUser = users.getUserWithWallet(credential),
                 )
             } else {
                 goToNameEntry()
@@ -135,27 +130,20 @@ class SignupViewModel(
     fun goToCredentialEntry() {
         _state.value = _state.value?.copy(
             isCredentialView = true,
-            organization = null,
             name = null,
             canGoToNextScreen = true,
         )
-    }
-
-    fun updateSignUpState(state: Boolean){
-        _state.value = _state.value?.copy(isCredentialView = state)
     }
 
     suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
             val userId = with(_state.value ?: return null) {
                 users.createUser(
-                    // TODO fix user data usage
                     firstName = extractName(name, true),
                     lastName = extractName(name, false),
                     phone = phone,
                     email = email,
-                    identifier = extractIdentifier(this),
-                    organization = organization,
+                    wallet = extractIdentifier(this),
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,
                 )

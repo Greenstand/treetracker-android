@@ -22,7 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import timber.log.Timber
 
 class LocationUpdateManager(
@@ -138,7 +138,8 @@ class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO,
     private val configuration: Configuration,
-    private val gson: Gson
+    private val gson: Gson,
+    private val sessionTracker: SessionTracker,
 ) {
     private var locationsDeque: Deque<Location> = LinkedList()
     var generatedTreeUuid: UUID? = null
@@ -211,7 +212,12 @@ class LocationDataCapturer(
                     )
                 val jsonValue = gson.toJson(locationData)
                 Timber.d("Inserting new location data $jsonValue")
-                treeTrackerDAO.insertLocationData(LocationDataEntity(jsonValue))
+                treeTrackerDAO.insertLocationData(
+                    LocationEntity(
+                        locationDataJson = jsonValue,
+                        sessionId = sessionTracker.currentSessionId,
+                    )
+                )
             }
         }
     }

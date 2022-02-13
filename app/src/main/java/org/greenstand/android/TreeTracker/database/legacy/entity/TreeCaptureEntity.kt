@@ -1,4 +1,4 @@
-package org.greenstand.android.TreeTracker.database.entity
+package org.greenstand.android.TreeTracker.database.legacy.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -37,8 +37,6 @@ data class TreeCaptureEntity(
     var uploaded: Boolean = false,
     @ColumnInfo(name = CREATED_AT)
     var createAt: Long,
-    @ColumnInfo(name = WALLET)
-    var wallet: String,
     @ColumnInfo(name = BUNDLE_ID)
     var bundleId: String? = null
 ) {
@@ -62,6 +60,5 @@ data class TreeCaptureEntity(
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"
         const val BUNDLE_ID = "bundle_id"
-        const val WALLET = "wallet"
     }
 }

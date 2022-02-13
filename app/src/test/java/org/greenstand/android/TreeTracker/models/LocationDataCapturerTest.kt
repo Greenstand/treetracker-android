@@ -41,6 +41,9 @@ class LocationDataCapturerTest {
     @MockK(relaxed = true)
     private lateinit var treeTrackerDAO: TreeTrackerDAO
 
+    @MockK(relaxed = true)
+    private lateinit var sessionTracker: SessionTracker
+
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -54,7 +57,8 @@ class LocationDataCapturerTest {
             locationUpdateManager,
             treeTrackerDAO,
             configuration,
-            GsonBuilder().serializeNulls().create()
+            GsonBuilder().serializeNulls().create(),
+            sessionTracker,
         )
     }
 
