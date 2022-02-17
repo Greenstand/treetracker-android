@@ -153,6 +153,14 @@ class LocationDataCapturer(
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
 
+
+            // I think would fix the crash
+            // The reason that we get a crash below on some builds is because of concurrency issues
+            // A location update arrives between ending the session and stopping the location observer
+            if(sessionTracker.currentSessionId == null){
+                return@Observer;
+            }
+
             val locationDataConfig = configuration.locationDataConfig
             val convergenceDataSize = locationDataConfig.convergenceDataSize
             if (isInTreeCaptureMode()) {
@@ -173,15 +181,15 @@ class LocationDataCapturer(
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
-                            "[${currentConvergence?.longitudeConvergence?.mean}]. \n" +
-                            "Longitude standard deviation value: " +
-                            "[${currentConvergence?.longitudeConvergence?.standardDeviation}]"
+                                "[${currentConvergence?.longitudeConvergence?.mean}]. \n" +
+                                "Longitude standard deviation value: " +
+                                "[${currentConvergence?.longitudeConvergence?.standardDeviation}]"
                     )
                     Timber.d(
                         "Convergence: Latitude Mean: " +
-                            "[${currentConvergence?.latitudeConvergence?.mean}]. \n " +
-                            "Latitude standard deviation value: " +
-                            "[${currentConvergence?.latitudeConvergence?.standardDeviation}]"
+                                "[${currentConvergence?.latitudeConvergence?.mean}]. \n " +
+                                "Latitude standard deviation value: " +
+                                "[${currentConvergence?.latitudeConvergence?.standardDeviation}]"
                     )
 
                     val longStdDev = currentConvergence?.longitudinalStandardDeviation()
