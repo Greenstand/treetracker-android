@@ -95,7 +95,6 @@ android {
 
         prerelease {
             initWith(debug)
-            applicationIdSuffix ".prerelease"
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
@@ -118,7 +117,6 @@ android {
         }
 
         beta {
-            applicationIdSuffix ".test"
             resValue "string", "app_name", "Tree Tracker(test)"
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_test_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-test-images"'
@@ -132,7 +130,6 @@ android {
 
         dev {
             initWith(debug)
-            applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-dev-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-dev-batch-uploads"'
