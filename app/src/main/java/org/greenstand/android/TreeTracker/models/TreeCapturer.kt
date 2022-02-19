@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.models
 
+import org.greenstand.android.TreeTracker.models.location.Convergence
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import java.io.File
 import java.util.UUID
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
@@ -17,7 +19,6 @@ class TreeCapturer(
     private var currentTree: Tree? = null
 
     suspend fun pinLocation(): Boolean {
-        locationDataCapturer.start()
         locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
 
