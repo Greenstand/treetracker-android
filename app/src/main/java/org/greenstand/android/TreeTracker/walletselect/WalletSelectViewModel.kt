@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.user.User
 
 data class WalletSelectState(
@@ -23,6 +24,7 @@ class WalletSelectViewModel(
     private val users: Users,
     private val stepCounter: StepCounter,
     private val sessionTracker: SessionTracker,
+    private val locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<WalletSelectState>()
@@ -57,5 +59,6 @@ class WalletSelectViewModel(
             destinationWallet = _state.value!!.selectedUser!!.wallet,
             organization = "TEMP"
         )
+        locationDataCapturer.startGpsUpdates()
     }
 }
