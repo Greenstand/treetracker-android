@@ -109,7 +109,9 @@ fun TreeCaptureScreen(
                 dialogIcon = painterResource(id = R.drawable.error_outline),
                 title = stringResource(R.string.poor_gps_header),
                 textContent = stringResource(R.string.poor_gps_message),
-                onPositiveClick = { navController.popBackStack() },
+                onPositiveClick = {
+                                  // TODO: we want to retry the capture on a positive click
+                                  },
                 onNegativeClick = {
                     navController.navigate(NavRoute.Dashboard.route) {
                         popUpTo(NavRoute.Dashboard.route) { inclusive = true }
