@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -39,14 +41,25 @@ fun SelectableImageDetail(
         .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
         .fillMaxWidth()
         .wrapContentHeight()
+    val userButtonModifier = Modifier
+        .padding(8.dp)
+        .width(156.dp)
+        .clip(RoundedCornerShape(10.dp))
+        .wrapContentHeight()
+
     DepthButton(
         onClick = onClick,
         isSelected = isSelected,
-        modifier = Modifier
-            .padding(8.dp)
-            .width(156.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .wrapContentHeight(),
+        modifier = if (isSelected) userButtonModifier
+            .border(
+                width = 1.dp, brush = Brush.verticalGradient(
+                    colors = listOf(
+                        AppColors.Gray,
+                        AppColors.Green
+                    )
+                ),
+                shape = RoundedCornerShape(10.dp)
+            ) else userButtonModifier,
         contentAlignment = Alignment.TopCenter,
     ) {
         Column(
@@ -115,7 +128,7 @@ fun UserButton(
                 contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .size(width = 20.dp,height = 22.dp)
+                    .size(width = 20.dp, height = 22.dp)
             )
             Text(
                 text = user.numberOfTrees.toString(), // TODO: Fetch user's token count.
