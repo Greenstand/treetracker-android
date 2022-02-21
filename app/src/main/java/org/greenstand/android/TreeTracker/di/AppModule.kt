@@ -19,8 +19,8 @@ import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.Planter
@@ -82,7 +82,7 @@ val appModule = module {
 
     viewModel { SplashScreenViewModel(get(), get(), get(), get()) }
 
-    viewModel { WalletSelectViewModel(get(), get(), get()) }
+    viewModel { WalletSelectViewModel(get(), get(), get(), get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 

@@ -6,9 +6,9 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Tree
+import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import java.util.*
 

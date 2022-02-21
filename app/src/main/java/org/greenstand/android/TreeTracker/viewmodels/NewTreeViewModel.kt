@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import java.util.UUID
 import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.models.Convergence
+import org.greenstand.android.TreeTracker.models.location.Convergence
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
