@@ -134,6 +134,7 @@ android {
             initWith(debug)
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "Tree Tracker(dev)"
+            buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_dev_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-dev-images"'
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-dev-batch-uploads"'
             buildConfigField 'Boolean', 'ENABLE_FABRIC', "false"
