@@ -30,7 +30,7 @@ class CreateTreeUseCase(
             longitude = params.meanLongitude,
             latitude = params.meanLatitude,
             createdAt = time,
-            extraData = gson.toJson(params.treeCaptureAttributes()),
+            extraAttributes = params.treeCaptureAttributes(),
         )
 
         Timber.d("Inserting TreeCapture entity $entity")

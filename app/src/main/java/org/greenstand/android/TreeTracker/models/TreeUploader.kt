@@ -151,7 +151,7 @@ class TreeUploader(
                 stepCount = null,
                 deltaStepCount = null,
                 rotationMatrix = null,
-                extraData = gson.toJson(tree.extraData)
+                extraAttributes = gson.toJson(tree.extraAttributes)
             )
         }
 

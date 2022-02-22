@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "7c845efe1c7e5ddb54a1a68dceb3abc9",
+    "identityHash": "23d5e66afb3158086a80439d1257f3a2",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -714,7 +714,7 @@
       },
       {
         "tableName": "tree",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `session_id` INTEGER NOT NULL, `photo_path` TEXT, `photo_url` TEXT, `note` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT DEFAULT NULL, `extra_data` TEXT DEFAULT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`session_id`) REFERENCES `session`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `session_id` INTEGER NOT NULL, `photo_path` TEXT, `photo_url` TEXT, `note` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT DEFAULT NULL, `extra_attributes` TEXT DEFAULT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`session_id`) REFERENCES `session`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -778,8 +778,8 @@
             "defaultValue": "NULL"
           },
           {
-            "fieldPath": "extraData",
-            "columnName": "extra_data",
+            "fieldPath": "extraAttributes",
+            "columnName": "extra_attributes",
             "affinity": "TEXT",
             "notNull": false,
             "defaultValue": "NULL"
@@ -835,7 +835,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c845efe1c7e5ddb54a1a68dceb3abc9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '23d5e66afb3158086a80439d1257f3a2')"
     ]
   }
 }

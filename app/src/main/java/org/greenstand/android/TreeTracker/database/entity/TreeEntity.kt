@@ -37,8 +37,8 @@ data class TreeEntity(
     var createdAt: Long,
     @ColumnInfo(name = "bundle_id", defaultValue = "NULL")
     var bundleId: String? = null,
-    @ColumnInfo(name = "extra_data", defaultValue = "NULL")
-    var extraData: String? = null,
+    @ColumnInfo(name = "extra_attributes", defaultValue = "NULL")
+    var extraAttributes: Map<String, String>? = null,
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
