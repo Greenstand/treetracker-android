@@ -129,7 +129,7 @@ fun DashboardScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     DashboardUploadProgressBar(
-                        progress = (state.treesSynced)
+                        progress = (state.treesToSync)
                             .toFloat() / (state.totalTrees),
                         modifier = Modifier.weight(1f),
                     )
