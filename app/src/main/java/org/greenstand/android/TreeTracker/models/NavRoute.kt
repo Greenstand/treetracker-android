@@ -19,6 +19,7 @@ import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
+import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
 
 sealed class NavRoute {
 
@@ -74,6 +75,20 @@ sealed class NavRoute {
         }
 
         fun create(planterInfoId: Long) = "wallet-select/$planterInfoId"
+    }
+
+    object AddWallet : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            AddWalletScreen(getPlanterInfoId(it))
+        }
+        override val route: String = "add-wallet/{planterInfoId}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+
+        fun create(planterInfoId: Long) = "add-wallet/$planterInfoId"
     }
 
     object Selfie : NavRoute() {
