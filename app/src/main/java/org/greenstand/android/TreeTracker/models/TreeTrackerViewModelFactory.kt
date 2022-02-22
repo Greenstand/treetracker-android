@@ -11,6 +11,7 @@ import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
+import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
@@ -25,6 +26,7 @@ class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), Koin
             modelClass.isAssignableFrom(LanguagePickerViewModel::class.java) -> get<LanguagePickerViewModel>() as T
             modelClass.isAssignableFrom(OrgPickerViewModel::class.java) -> get<OrgPickerViewModel>() as T
             modelClass.isAssignableFrom(WalletSelectViewModel::class.java) -> get<WalletSelectViewModel>() as T
+            modelClass.isAssignableFrom(AddWalletViewModel::class.java) -> get<AddWalletViewModel>() as T
             modelClass.isAssignableFrom(SplashScreenViewModel::class.java) -> get<SplashScreenViewModel>() as T
             modelClass.isAssignableFrom(TreeImageReviewViewModel::class.java) -> get<TreeImageReviewViewModel>() as T
             modelClass.isAssignableFrom(PermissionViewModel::class.java) -> get<PermissionViewModel>() as T
