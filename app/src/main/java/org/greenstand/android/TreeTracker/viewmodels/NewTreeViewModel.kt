@@ -3,17 +3,17 @@ package org.greenstand.android.TreeTracker.viewmodels
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.util.UUID
 import org.greenstand.android.TreeTracker.activities.ImageCaptureActivity
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.models.Convergence
+import org.greenstand.android.TreeTracker.models.location.Convergence
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
-import java.util.*
 
 class NewTreeViewModel(
     private val user: Planter,
@@ -52,7 +52,7 @@ class NewTreeViewModel(
 
         val newTree = Tree(
             treeUuid = newTreeUuid!!,
-            planterCheckInId = user.planterCheckinId ?: -1,
+            sessionId = user.planterCheckinId ?: -1,
             content = note,
             photoPath = photoPath!!,
             convergence?.longitudeConvergence?.mean ?: 0.0,

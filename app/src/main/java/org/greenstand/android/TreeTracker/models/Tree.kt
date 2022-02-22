@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Tree(
     val treeUuid: UUID,
-    val planterCheckInId: Long,
+    val sessionId: Long,
     val content: String,
     val photoPath: String,
     val meanLongitude: Double,

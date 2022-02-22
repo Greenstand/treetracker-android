@@ -3,8 +3,12 @@ package org.greenstand.android.TreeTracker.signup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 // Dequeue breaks equals so state will not be updated when navigating
@@ -12,13 +16,15 @@ data class SignUpState(
     val name: String? = null,
     val email: String? = null,
     val phone: String? = null,
-    val organization: String? = null,
     val photoPath: String? = null,
     val isCredentialView: Boolean = true,
     val isEmailValid: Boolean = false,
     val isPhoneValid: Boolean = false,
+    val existingUser: User? = null,
     val canGoToNextScreen: Boolean = false,
     val credential: Credential = Credential.Email(),
+    val autofocusTextEnabled: Boolean = false,
+    val isInternetAvailable: Boolean = false
 )
 
 sealed class Credential {
@@ -50,16 +56,23 @@ sealed class Credential {
     }
 }
 
-class SignupViewModel(private val users: Users) : ViewModel() {
+class SignupViewModel(
+    private val users: Users,
+    private val checkForInternetUseCase: CheckForInternetUseCase
+) : ViewModel() {
 
     private val _state = MutableLiveData(SignUpState())
     val state: LiveData<SignUpState> = _state
 
+    init {
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = checkForInternetUseCase.execute(Unit)
+            _state.value = _state.value?.copy(isInternetAvailable = result)
+        }
+    }
+
     fun updateName(name: String) {
         _state.value = _state.value?.copy(name = name)
-    }
-    fun updateOrganization(organization: String) {
-        _state.value = _state.value?.copy(organization = organization)
     }
 
     fun updateEmail(email: String) {
@@ -80,7 +93,34 @@ class SignupViewModel(private val users: Users) : ViewModel() {
         _state.value = _state.value?.copy(credential = updatedCredential)
     }
 
-    fun goToNameEntry() {
+    /**
+     *  update _state according to user existence
+     */
+    fun submitInfo() {
+        val credential = _state.value?.let { extractIdentifier(it) }!!
+
+        viewModelScope.launch {
+            if (users.doesUserExists(credential)) {
+                _state.value = _state.value?.copy(
+                    existingUser = users.getUserWithWallet(credential),
+                )
+            } else {
+                goToNameEntry()
+            }
+        }
+    }
+
+    fun closeExistingUserDialog() {
+        _state.value = _state.value?.copy(
+            existingUser = null,
+        )
+    }
+
+    fun enableAutofocus() {
+        _state.value = _state.value?.copy(autofocusTextEnabled = true)
+    }
+
+    private fun goToNameEntry() {
         _state.value = _state.value?.copy(
             isCredentialView = false,
             canGoToNextScreen = false,
@@ -90,27 +130,20 @@ class SignupViewModel(private val users: Users) : ViewModel() {
     fun goToCredentialEntry() {
         _state.value = _state.value?.copy(
             isCredentialView = true,
-            organization = null,
             name = null,
             canGoToNextScreen = true,
         )
-    }
-
-    fun updateSignUpState(state: Boolean){
-        _state.value = _state.value?.copy(isCredentialView = state)
     }
 
     suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
             val userId = with(_state.value ?: return null) {
                 users.createUser(
-                    // TODO fix user data usage
                     firstName = extractName(name, true),
                     lastName = extractName(name, false),
                     phone = phone,
                     email = email,
-                    identifier = extractIdentifier(this),
-                    organization = organization,
+                    wallet = extractIdentifier(this),
                     photoPath = photoPath,
                     isPowerUser = users.getPowerUser() == null,
                 )

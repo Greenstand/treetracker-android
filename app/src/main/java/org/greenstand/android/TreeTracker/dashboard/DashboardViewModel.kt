@@ -17,8 +17,8 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 
 data class DashboardState(
     val treesSynced: Int = 0,
-    val treesToSync: Int = 0,
-    val totalTrees: Int = 0,
+    val treesRemainingToSync: Int = 0,
+    val totalTreesToSync: Int = 0,
 )
 
 class DashboardViewModel(
@@ -26,6 +26,7 @@ class DashboardViewModel(
     private val workManager: WorkManager,
     private val analytics: Analytics,
     private val syncNotification: SyncNotificationManager,
+    private val treesToSyncHelper: TreesToSyncHelper,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<DashboardState>()
@@ -59,7 +60,13 @@ class DashboardViewModel(
 
                 _isSyncing = false
             }
-            SUCCEEDED,
+            SUCCEEDED -> {
+                if (_isSyncing != null) {
+                    showSnackBar?.invoke(R.string.sync_successful)
+                }
+
+                _isSyncing = false
+            }
             State.CANCELLED,
             State.FAILED -> {
                 if (_isSyncing != null) {
@@ -75,23 +82,26 @@ class DashboardViewModel(
 
                 _isSyncing = true
             }
-            else -> { }
+            State.ENQUEUED -> {
+                if (_isSyncing != null) {
+                    showSnackBar?.invoke(R.string.sync_preparing)
+                }
+
+                _isSyncing = true
+            }
         }
     }
 
     init {
         updateData()
-
         workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
             .observeForever(syncObserver)
-
     }
 
     fun sync() {
         viewModelScope.launch {
             if (_isSyncing == null || _isSyncing == false) {
-                val treesToSync =
-                    withContext(Dispatchers.IO) { dao.getNonUploadedTreeCaptureCount() }
+                val treesToSync = treesToSyncHelper.getTreeCountToSync()
                 when (treesToSync) {
                     0 -> showSnackBar?.invoke(R.string.nothing_to_sync)
                     else -> startDataSynchronization()
@@ -103,7 +113,6 @@ class DashboardViewModel(
                 updateTimerJob?.cancel()
                 updateTimerJob = null
                 workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
-                syncNotification.removeNotification()
 
                 _state.value?.let { (total, synced, waiting) ->
                     analytics.stopButtonTapped(total, synced, waiting)
@@ -114,14 +123,14 @@ class DashboardViewModel(
 
     private fun updateData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val syncedTreeCount = dao.getUploadedTreeImageCount()
-            val notSyncedTreeCount = dao.getNonUploadedTreeImageCount()
-            val treeCount = syncedTreeCount + notSyncedTreeCount
+            val syncedTreeCount = dao.getUploadedTreeImageCount() + dao.getUploadedTreeCount()
+            val notSyncedTreeCount = dao.getNonUploadedTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
+            val totalTreesToSync = treesToSyncHelper.getTreeCountToSync()
 
             withContext(Dispatchers.Main) {
                 _state.value = DashboardState(
-                    totalTrees = treeCount,
-                    treesToSync = notSyncedTreeCount,
+                    totalTreesToSync = totalTreesToSync,
+                    treesRemainingToSync = notSyncedTreeCount,
                     treesSynced = syncedTreeCount,
                 )
             }
@@ -131,6 +140,7 @@ class DashboardViewModel(
     private fun startDataSynchronization() {
         val request = OneTimeWorkRequestBuilder<TreeSyncWorker>()
             .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.SECONDS)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .build()
 
         workManager.enqueueUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID, ExistingWorkPolicy.KEEP, request)

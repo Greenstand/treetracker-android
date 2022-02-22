@@ -7,6 +7,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import timber.log.Timber
 
@@ -14,7 +15,8 @@ class SyncDataUseCase(
     private val treeUploader: TreeUploader,
     private val uploadLocationDataUseCase: UploadLocationDataUseCase,
     private val dao: TreeTrackerDAO,
-    private val planterUploader: PlanterUploader
+    private val planterUploader: PlanterUploader,
+    private val sessionUploader: SessionUploader,
 ) : UseCase<Unit, Boolean>() {
 
     private val TAG = "SyncDataUseCase"
@@ -22,56 +24,62 @@ class SyncDataUseCase(
     override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {
 
-            uploadPlanters()
-
-            var treeIdList = dao.getAllTreeCaptureIdsToUpload()
-
-            while (treeIdList.isNotEmpty() && coroutineContext.isActive) {
-                uploadTrees(treeIdList)
-                val remainingIds = dao.getAllTreeCaptureIdsToUpload()
-                if (!treeIdList.containsAll(remainingIds)) {
-                    treeIdList = remainingIds
-                } else {
-                    if (remainingIds.isNotEmpty()) {
-                        Timber.tag(TAG)
-                            .e("Remaining trees failed to upload, ending sync...")
-                    }
-                    break
-                }
+            safeWork("User Upload") {
+                planterUploader.uploadPlanters()
             }
-            uploadTreeLocationData()
+
+            safeWork("Session Upload") {
+                sessionUploader.upload()
+            }
+
+            treeUpload(
+                onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
+                onUpload = { treeUploader.uploadLegacyTrees(it) }
+            )
+
+            treeUpload(
+                onGetTreeIds = { dao.getAllTreeIdsToUpload() },
+                onUpload = { treeUploader.uploadTrees(it) }
+            )
+
+            safeWork("Location Upload") {
+                uploadLocationDataUseCase.execute(Unit)
+            }
         }
         return true
     }
 
-    private suspend fun uploadPlanters() {
-        if (coroutineContext.isActive) {
-            runCatching {
-                planterUploader.uploadPlanters()
+    private suspend fun treeUpload(
+        onGetTreeIds: suspend () -> List<Long>,
+        onUpload: suspend (List<Long>) -> Unit
+    ) {
+        var treeIds = onGetTreeIds()
+        while (treeIds.isNotEmpty() && coroutineContext.isActive) {
+            safeWork("Tree Upload") {
+                onUpload(treeIds)
             }
-        } else {
-            coroutineContext.cancel()
+            val remainingIds = dao.getAllTreeIdsToUpload()
+            if (!treeIds.containsAll(remainingIds)) {
+                treeIds = remainingIds
+            } else {
+                if (remainingIds.isNotEmpty()) {
+                    Timber.tag(TAG)
+                        .e("Remaining trees failed to upload, ending tree sync...")
+                }
+                break
+            }
         }
     }
 
-    private suspend fun uploadTrees(treeIds: List<Long>) {
-        Timber.tag(TAG).d("Uploading ${treeIds.size} trees")
+    private suspend fun safeWork(tag: String, action: suspend () -> Unit) {
         try {
             if (coroutineContext.isActive) {
-                treeUploader.uploadTrees(treeIds)
+                action()
             } else {
                 coroutineContext.cancel()
             }
         } catch (e: Exception) {
-            Timber.e("NewTree upload failed")
-        }
-    }
-
-    private suspend fun uploadTreeLocationData() {
-        Timber.tag(TAG).d("Processing tree location data")
-        kotlin.runCatching {
-            uploadLocationDataUseCase.execute(Unit)
-            Timber.tag(TAG).d("Uploading tree location data complete")
+            Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
         }
     }
 }

@@ -1,8 +1,6 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -20,12 +19,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun SelectableImageDetail(
@@ -36,27 +35,24 @@ fun SelectableImageDetail(
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    val columnModifier = Modifier
+        .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
+        .fillMaxWidth()
+        .wrapContentHeight()
     DepthButton(
         onClick = onClick,
         isSelected = isSelected,
         modifier = Modifier
             .padding(8.dp)
             .width(156.dp)
+            .clip(RoundedCornerShape(10.dp))
             .wrapContentHeight(),
         contentAlignment = Alignment.TopCenter,
-        colors = DepthButtonColors(
-            color = buttonColors.color,
-            shadowColor = if (isSelected) selectedColor else buttonColors.shadowColor,
-            disabledColor = buttonColors.disabledColor,
-            disabledShadowColor = buttonColors.disabledShadowColor
-        )
     ) {
         Column(
-            modifier = Modifier
-                .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
-                .fillMaxWidth()
-                .wrapContentHeight(),
+            modifier = if (isSelected) columnModifier.padding(start = 1.dp, end = 1.dp) else columnModifier.padding(1.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
         ) {
             LocalImage(
                 imagePath = photoPath,
@@ -65,7 +61,7 @@ fun SelectableImageDetail(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .aspectRatio(1.0f)
-                    .clip(RoundedCornerShape(percent = 10)),
+                    .clip(RoundedCornerShape(10.dp)),
             )
             Column(
                 modifier = Modifier
@@ -95,12 +91,21 @@ fun UserButton(
         onClick
     ) {
         Text(
-            text = "${user.firstName} ${user.lastName}\n${user.wallet}",
-            color = AppColors.LightGray,
-            fontSize = 12.sp,
+            text = "${user.firstName} ${user.lastName}",
+            color = CustomTheme.textColors.lightText,
+            style = CustomTheme.typography.small,
             fontWeight = FontWeight.SemiBold,
-            fontFamily = FontFamily.SansSerif,
-        )
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+            )
+        Text(
+            text = user.wallet,
+            color = CustomTheme.textColors.lightText,
+            style = CustomTheme.typography.small,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+            )
         Row(
             modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -113,13 +118,12 @@ fun UserButton(
                     .size(width = 20.dp,height = 22.dp)
             )
             Text(
-                text = user.numberOfTrees, // TODO: Fetch user's token count.
+                text = user.numberOfTrees.toString(), // TODO: Fetch user's token count.
                 modifier = Modifier.padding(start = 4.dp),
-                color = AppColors.LightGray,
-                fontSize = 16.sp,
+                color = CustomTheme.textColors.lightText,
+                style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.SemiBold,
-                fontFamily = FontFamily.SansSerif,
-            )
+                )
         }
     }
 }

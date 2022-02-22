@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.models
 
+import org.greenstand.android.TreeTracker.models.location.Convergence
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import java.io.File
 import java.util.UUID
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
@@ -9,28 +11,32 @@ class TreeCapturer(
     private val stepCounter: StepCounter,
     private val createTreeUseCase: CreateTreeUseCase,
     private val deviceOrientation: DeviceOrientation,
-    private val users: Users,
+    private val sessionTracker: SessionTracker,
 ) {
 
     private var newTreeUuid: UUID? = null
     private var convergence: Convergence? = null
     private var currentTree: Tree? = null
 
-    suspend fun pinLocation() {
-        locationDataCapturer.start()
+    suspend fun pinLocation(): Boolean {
         locationDataCapturer.turnOnTreeCaptureMode()
         locationDataCapturer.converge()
 
         newTreeUuid = locationDataCapturer.generatedTreeUuid
-        convergence = locationDataCapturer.convergence()
-
-        locationDataCapturer.turnOffTreeCaptureMode()
+        return if (locationDataCapturer.isLocationCoordinateAvailable()) {
+            convergence = locationDataCapturer.convergence()
+            locationDataCapturer.turnOffTreeCaptureMode()
+            true
+        } else {
+            locationDataCapturer.turnOffTreeCaptureMode()
+            false
+        }
     }
 
     suspend fun setImage(imageFile: File) {
         val tree = Tree(
             treeUuid = newTreeUuid!!,
-            planterCheckInId = users.currentSessionUser?.id ?: -1,
+            sessionId = sessionTracker.currentSessionId,
             content = "",
             photoPath = imageFile.absolutePath,
             convergence?.longitudeConvergence?.mean ?: 0.0,
@@ -57,6 +63,4 @@ class TreeCapturer(
             createTreeUseCase.execute(it)
         }
     }
-
-
 }

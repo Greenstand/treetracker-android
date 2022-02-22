@@ -49,26 +49,12 @@ fun SelfieScreen() {
                 .padding(bottom = 10.dp),
             contentAlignment = Alignment.BottomCenter
         ){
-            DepthButton(
-                modifier = Modifier
-                    .size(72.dp, 72.dp)
-                    .clickable { cameraControl.captureImage() },
-                onClick = { cameraControl.captureImage() },
-                colors = DepthButtonColors(
-                    color = AppColors.Green,
-                    shadowColor =   AppColors.GreenShadow,
-                    disabledColor = AppColors.GrayShadow,
-                    disabledShadowColor = AppColors.GrayShadow
-                ),
-                shape = DepthSurfaceShape.Circle,
-            ) {
-                ImageCaptureCircle(
-                    modifier = Modifier
-                        .size(72.dp, 72.dp),
-                    color = AppColors.Green,
-                    shadowColor = AppColors.Gray,
-                )
-            }
+            CaptureButton(
+                onClick = {
+                    cameraControl.captureImage()
+                },
+                isEnabled = true
+            )
         }
     }
 }

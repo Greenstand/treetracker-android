@@ -36,26 +36,17 @@ fun SplashScreen(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { result ->
             scope.launch {
-                if (result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
-                    result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-                ) {
+                if (isLocationPermissionGranted(result)) {
                     Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
-                    viewModel.migratePreferences()
+                    viewModel.bootstrap()
 
                     delay(1000)
 
-                    if (viewModel.requiresInitialSetup()) {
-                        navController.navigate(NavRoute.Language.create(isFromTopBar = false)) {
-                            popUpTo(NavRoute.Splash.route) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    } else {
-                        navController.navigate(NavRoute.Dashboard.route) {
-                            popUpTo(NavRoute.Splash.route) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    }
+                    if (viewModel.isInitialSetupRequired())
+                        navigateToLanguageScreen(navController)
+                    else
+                        navigateToDashboardScreen(navController)
                 }
             }
         }
@@ -78,6 +69,25 @@ fun SplashScreen(
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
     )
+}
+
+private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean {
+    return result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+            result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+}
+
+private fun navigateToLanguageScreen(navController: NavHostController) {
+    navController.navigate(NavRoute.Language.create(isFromTopBar = false)) {
+        popUpTo(NavRoute.Splash.route) { inclusive = true }
+        launchSingleTop = true
+    }
+}
+
+private fun navigateToDashboardScreen(navController: NavHostController) {
+    navController.navigate(NavRoute.Dashboard.route) {
+        popUpTo(NavRoute.Splash.route) { inclusive = true }
+        launchSingleTop = true
+    }
 }
 
 @Preview

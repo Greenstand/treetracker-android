@@ -2,22 +2,7 @@ package org.greenstand.android.TreeTracker.database
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import org.greenstand.android.TreeTracker.database.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeCaptureEntity
-
-val MIGRATION_7_8 = object : Migration(7, 8) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        val planterInfoMigration = """ALTER TABLE ${PlanterInfoEntity.TABLE}
-            | ADD COLUMN ${PlanterInfoEntity.POWER_USER} INTEGER NOT NULL DEFAULT 0
-            | """.trimMargin()
-        database.execSQL(planterInfoMigration)
-
-        val treeCaptureMigration = """ALTER TABLE ${TreeCaptureEntity.TABLE}
-            | ADD COLUMN ${TreeCaptureEntity.WALLET} TEXT NOT NULL DEFAULT ""
-            | """.trimMargin()
-        database.execSQL(treeCaptureMigration)
-    }
-}
+import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
 
 val MIGRATION_6_7 = object : Migration(6, 7) {
 

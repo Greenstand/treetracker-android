@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
@@ -20,16 +23,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -40,6 +45,7 @@ import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun TextButton(
@@ -76,12 +82,152 @@ fun BoxScope.ArrowButton(
         onClick = onClick,
     ) {
         Image(
-            modifier = if (isLeft) Modifier.rotate(180f) else Modifier,
-            painter = painterResource(id = R.drawable.arrow_right),
+            modifier = Modifier
+                .size(height = 45.dp, width = 45.dp),
+            painter = if (isLeft) painterResource(id = R.drawable.arrow_left_green) else painterResource(id = R.drawable.arrow_right_green),
             contentDescription = null,
-            colorFilter = ColorFilter.tint(color = AppColors.GrayShadow)
         )
     }
+}
+
+@Composable
+        /**
+         * @param onClick The callback function for click event.
+         * @param modifier The modifier to be applied to the layout.
+         * @param approval Set the type of button to display(if approval is true, shows green thumps up button )
+         */
+fun ApprovalButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    approval: Boolean,
+) {
+    val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
+    val image =
+        if (approval) painterResource(id = R.drawable.thumbs_up_green) else painterResource(id = R.drawable.thumbs_down_red)
+    DepthButton(
+        colors = color,
+        modifier = modifier
+            .size(height = 60.dp, width = 60.dp),
+        onClick = onClick,
+    ) {
+        Image(
+            painter = image,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+        /**
+         * @param dialogIcon Icon to be displayed in the dialog.
+         * @param title The Dialog's title text.
+         * @param textContent The text content of the dialog. Can be left empty if it is an input dialog
+         * @param content Composable's content. Allows you display other composable in the dialog as content
+         * @param onPositiveClick The callback action for clicking the positive approval button.
+         * @param onNegativeClick The callback action for clicking the negative approval button.
+         * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
+         */
+fun CustomDialog(
+    dialogIcon: Painter = painterResource(id = R.drawable.greenstand_logo),
+    title: String = "",
+    textContent: String? = null,
+    content: @Composable() (() -> Unit)? = null,
+    onPositiveClick: (() -> Unit)? = null,
+    onNegativeClick: (() -> Unit)? = null,
+    textInputValue: String = "",
+    onTextInputValueChange: ((String) -> Unit)? = null,
+) {
+    AlertDialog(
+        onDismissRequest = { },
+        title = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = dialogIcon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 16.dp, height = 16.dp)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = title,
+                    color = CustomTheme.textColors.primaryText,
+                    style = CustomTheme.typography.medium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(2.dp)
+            .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
+            .clip(RoundedCornerShape(percent = 10)),
+        backgroundColor = AppColors.Gray,
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                textContent?.let {
+                    Text(
+                        text = it,
+                        color = CustomTheme.textColors.primaryText,
+                        style = CustomTheme.typography.regular,
+                        modifier = Modifier.padding(bottom = 5.dp)
+                    )
+                }
+                onTextInputValueChange?.let {
+                    TextField(
+                        value = textInputValue,
+                        modifier = Modifier.wrapContentHeight(),
+                        onValueChange = onTextInputValueChange
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    content?.let { it() }
+                }
+            }
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                onNegativeClick?.let {
+                    ApprovalButton(
+                        modifier = Modifier
+                            .padding(end = 24.dp)
+                            .size(40.dp),
+                        onClick = it,
+                        approval = false
+                    )
+                }
+
+                onPositiveClick?.let {
+                    ApprovalButton(
+                        modifier = Modifier
+                            .size(40.dp),
+                        onClick = it,
+                        approval = true
+                    )
+                }
+            }
+        },
+    )
 }
 
 @Composable
@@ -100,7 +246,13 @@ fun BoxScope.LanguageButton() {
             navController.navigate(NavRoute.Language.create())
         }
     ) {
-        Text(language)
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = language,
+            fontWeight = FontWeight.Bold,
+            color = CustomTheme.textColors.primaryText,
+            style = CustomTheme.typography.regular
+        )
     }
 }
 
@@ -127,6 +279,38 @@ fun DepthButtonPreview() {
         }
     ) {
         Text("Button", Modifier.align(Alignment.Center))
+    }
+}
+
+@Composable
+fun UserImageButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    imagePath: String,
+) {
+    DepthButton(
+        modifier = modifier
+            .width(100.dp)
+            .height(100.dp)
+            .padding(
+                start = 15.dp,
+                top = 10.dp,
+                end = 10.dp,
+                bottom = 10.dp
+            )
+            .aspectRatio(1.0f)
+            .clip(RoundedCornerShape(10.dp)),
+        onClick = onClick,
+    ) {
+        LocalImage(
+            modifier = Modifier
+                .padding(bottom = 12.dp, end = 1.dp)
+                .fillMaxSize()
+                .aspectRatio(1.0f)
+                .clip(RoundedCornerShape(10.dp)),
+            imagePath = imagePath,
+            contentScale = ContentScale.Crop
+        )
     }
 }
 
@@ -161,11 +345,11 @@ fun DepthButton(
     contentAlignment: Alignment = Alignment.Center,
     isEnabled: Boolean = true,
     isSelected: Boolean? = null,
+    depth: Float = 20f,
     colors: ButtonColors = AppButtonColors.Default,
     shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
     content: @Composable (BoxScope.() -> Unit),
 ) {
-    val depth = 20f
     val contentColor by colors.contentColor(isEnabled)
 
     var isPressed by remember { mutableStateOf(false) }
@@ -235,7 +419,10 @@ fun DepthSurface(
     depth: Float = 20f,
     shape: DepthSurfaceShape,
 ) {
-    val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
+    val offsetAnimation: Float by animateFloatAsState(
+        targetValue = if (isPressed) 1f else 0f,
+        animationSpec = tween(durationMillis = 100)
+    )
 
     when (shape) {
         DepthSurfaceShape.Rectangle ->
@@ -343,7 +530,6 @@ fun DepthSurfaceCircle(
         )
     }
 }
-
 @Composable
 fun OrangeAddButton(
     modifier: Modifier,
@@ -354,19 +540,37 @@ fun OrangeAddButton(
         shape = DepthSurfaceShape.Circle,
         colors = AppButtonColors.UploadOrange,
         modifier = modifier
-            .size(height = 70.dp, width = 70.dp),
+            .size(70.dp)
     ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(start = 30.dp, end = 30.dp, top = 10.dp, bottom = 10.dp)
-                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
+        Image(
+            painter = painterResource(id = R.drawable.add),
+            contentDescription = "",
+            modifier = Modifier
+                .size(55.dp)
+                .padding(top = 5.dp)
         )
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(top = 30.dp, bottom = 30.dp, start = 10.dp, end = 10.dp)
-                .background(color = Color.Black, shape = RoundedCornerShape(10.dp))
+    }
+}
+
+@Composable
+fun CaptureButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    isEnabled: Boolean
+) {
+    DepthButton(
+        modifier = modifier.size(70.dp),
+        isEnabled = isEnabled,
+        colors = AppButtonColors.ProgressGreen,
+        onClick = onClick,
+        shape = DepthSurfaceShape.Circle,
+        depth = 10f
+    ) {
+        ImageCaptureCircle(
+            modifier = Modifier
+                .size(60.dp),
+            color = AppColors.Green,
+            shadowColor = AppColors.Gray,
         )
     }
 }

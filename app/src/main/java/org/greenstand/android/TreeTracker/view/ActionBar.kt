@@ -13,12 +13,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ActionBar(
+    modifier: Modifier = Modifier,
     leftAction: @Composable (BoxScope.() -> Unit) = { },
     centerAction: @Composable (BoxScope.() -> Unit) = { },
     rightAction: @Composable (BoxScope.() -> Unit) = { },
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(4.dp)
             .height(80.dp),

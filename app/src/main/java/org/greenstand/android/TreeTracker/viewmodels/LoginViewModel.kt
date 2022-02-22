@@ -7,14 +7,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.usecases.PlanterCheckInParams
-import org.greenstand.android.TreeTracker.usecases.PlanterCheckInUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 @Deprecated("Old Version")
 class LoginViewModel(
     private val dao: TreeTrackerDAO,
-    private val planterCheckInUseCase: PlanterCheckInUseCase
 ) : ViewModel() {
 
     private var email: String? = null
@@ -70,15 +67,15 @@ class LoginViewModel(
         }
     }
 
-    suspend fun isUserPresentOnDevice(): Boolean {
-        return dao.getPlanterInfoIdByIdentifier(userIdentification) != null
-    }
+//    suspend fun isUserPresentOnDevice(): Boolean {
+//        return dao.getPlanterInfoIdByIdentifier(userIdentification) != null
+//    }
 
     private fun confirm(onConfirmationComplete: () -> Unit) {
         viewModelScope.launch(Dispatchers.Main) {
 
-            planterCheckInUseCase.execute(PlanterCheckInParams(localPhotoPath = photoPath!!,
-                                                               identifier = userIdentification))
+//            planterCheckInUseCase.execute(PlanterCheckInParams(localPhotoPath = photoPath!!,
+//                                                               identifier = userIdentification))
 
             onConfirmationComplete()
         }

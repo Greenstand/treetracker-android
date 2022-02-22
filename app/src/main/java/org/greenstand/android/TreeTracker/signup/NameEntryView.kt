@@ -1,9 +1,9 @@
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -29,6 +28,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
 fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
@@ -59,8 +59,12 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
     Scaffold(
         topBar = {
             ActionBar(
-                centerAction = { Text(stringResource(id = R.string.treetracker)) },
-                rightAction = { LanguageButton() }
+                centerAction = {
+                    TopBarTitle()
+                },
+                rightAction = {
+                    LanguageButton()
+                }
             )
         },
         bottomBar = {
@@ -81,12 +85,12 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
             )
         }
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+        Box(
+            contentAlignment = Alignment.TopCenter,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 120.dp)
         ) {
-
             BorderedTextField(
                 value = state.name ?: "",
                 padding = PaddingValues(4.dp),
@@ -95,21 +99,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Go,
-                ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                        }
-                )
-            )
-            BorderedTextField(
-                value = state.organization ?: "",
-                padding = PaddingValues(4.dp),
-                onValueChange = { updatedOrganization -> viewModel.updateOrganization(updatedOrganization) },
-                placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Go,
+                    autoCorrect = false,
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {

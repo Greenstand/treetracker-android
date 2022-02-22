@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import org.greenstand.android.TreeTracker.R
@@ -25,10 +24,10 @@ import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -40,7 +39,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     private val locationDataCapturer: LocationDataCapturer by inject()
     private val stepCounter: StepCounter by inject()
     private val deviceOrientation: DeviceOrientation by inject()
-    private var fragment: Fragment? = null
 
     lateinit var bindings: ActivityMainBinding
     /**
@@ -178,7 +176,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     @SuppressLint("MissingPermission")
     private fun startPeriodicUpdates() {
-
         if (areNecessaryPermissionsNotGranted()) {
             Toast.makeText(
                 this,
@@ -229,6 +226,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
 
         locationUpdateManager.startLocationUpdates()
-        locationDataCapturer.start()
+        locationDataCapturer.startGpsUpdates()
     }
 }

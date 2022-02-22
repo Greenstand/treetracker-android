@@ -46,6 +46,7 @@
             android:configChanges="locale"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"
             >
 
             <intent-filter>
@@ -63,6 +64,9 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="a1a27770fb1f13f8ce4a3939116272205df62792" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -77,12 +81,6 @@
         <service
             android:name=".background.SyncService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <receiver android:name=".background.SyncBroadcastReceiver">
-            <intent-filter>
-                <action android:name="ACTION_STOP"/>
-            </intent-filter>
-        </receiver>
 
     </application>
 </manifest>

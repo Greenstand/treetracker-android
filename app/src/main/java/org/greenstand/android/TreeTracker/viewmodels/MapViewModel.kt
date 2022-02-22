@@ -4,16 +4,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
-import org.greenstand.android.TreeTracker.usecases.ValidateCheckInStatusUseCase
 
+@Deprecated("")
 class MapViewModel constructor(
-    private val validateCheckInStatusUseCase: ValidateCheckInStatusUseCase,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val locationDataCapturer: LocationDataCapturer,
     locationUpdateManager: LocationUpdateManager,
@@ -29,16 +28,11 @@ class MapViewModel constructor(
     }
 
     suspend fun checkForValidUser() {
-        if (validateCheckInStatusUseCase.execute(Unit)) {
-            checkInStatusLiveData.postValue(true)
-        } else {
-            user.expireCheckInStatus()
-            checkInStatusLiveData.postValue(false)
-        }
+
     }
 
     suspend fun requiresLogin(): Boolean {
-        return !validateCheckInStatusUseCase.execute(Unit)
+        return false
     }
 
     fun getPlanterName(): String {
