@@ -109,7 +109,9 @@ fun TreeCaptureScreen(
                 dialogIcon = painterResource(id = R.drawable.error_outline),
                 title = stringResource(R.string.poor_gps_header),
                 textContent = stringResource(R.string.poor_gps_message),
-                onPositiveClick = { navController.popBackStack() },
+                onPositiveClick = {
+                    viewModel.updateBadGpsDialogState(null)
+                },
                 onNegativeClick = {
                     navController.navigate(NavRoute.Dashboard.route) {
                         popUpTo(NavRoute.Dashboard.route) { inclusive = true }

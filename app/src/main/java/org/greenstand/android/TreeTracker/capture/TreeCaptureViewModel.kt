@@ -44,6 +44,10 @@ class TreeCaptureViewModel(
         }
     }
 
+    fun updateBadGpsDialogState(state: Boolean?){
+        _state.value = _state.value?.copy(isLocationAvailable = state)
+    }
+
     suspend fun endSession() {
         locationDataCapturer.stopGpsUpdates()
         sessionTracker.endSession()
