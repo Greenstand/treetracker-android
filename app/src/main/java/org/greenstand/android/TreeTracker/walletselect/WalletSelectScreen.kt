@@ -32,6 +32,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.OrangeAddButton
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.UserImageButton
 
@@ -84,13 +85,12 @@ fun WalletSelectScreen(
                         }
                     }
                 },
-                // Disabled for now. 2.0 will not have this feature.
-//                centerAction = {
-//                    OrangeAddButton(
-//                        modifier = Modifier.align(Alignment.Center),
-//                        onClick = { navController.navigate(NavRoute.SignupFlow.route) },
-//                    )
-//                },
+                centerAction = {
+                    OrangeAddButton(
+                        modifier = Modifier.align(Alignment.Center),
+                        onClick = { navController.navigate(NavRoute.AddWallet.create(state.currentUser!!.id)) },
+                    )
+                },
                 leftAction = {
                     ArrowButton(isLeft = true) {
                         navController.popBackStack()
