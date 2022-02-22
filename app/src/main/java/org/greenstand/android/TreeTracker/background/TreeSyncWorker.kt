@@ -59,7 +59,7 @@ class TreeSyncWorker(
             .setContentTitle(applicationContext.getString(R.string.app_name))
             .setLocalOnly(true)
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
-            .setContentText("Updating widget")
+            .setContentText(applicationContext.getString(R.string.uploading_trees))
             .build()
         return ForegroundInfo(1337, notification)
     }
