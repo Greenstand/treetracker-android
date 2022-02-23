@@ -36,6 +36,10 @@ class CreateFakeTreesUseCase(
                 meanLongitude = 0.0,
                 meanLatitude = 0.0
             )
+            tree.addTreeAttribute(Tree.Attributes.DBH_ATTR_KEY, "10");
+            tree.addTreeAttribute(Tree.Attributes.ABS_STEP_COUNT_KEY, "10");
+            tree.addTreeAttribute(Tree.Attributes.DELTA_STEP_COUNT_KEY, "10");
+            tree.addTreeAttribute(Tree.Attributes.ROTATION_MATRIX_KEY, "[12,12,12]");
 
             createTreeUseCase.execute(tree)
         }
