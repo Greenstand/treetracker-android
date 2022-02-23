@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,7 +28,22 @@ fun SelfieTutorial(onCompleteClick: (() -> Unit)) {
         content = {
             ImageCapturing(
                 image = selfieIllustration,
-                text = "to take a selfie to continue your registration."
+                text = stringResource(R.string.selfie_instruction)
+            )
+        },
+        onCompleteClick = onCompleteClick
+    )
+
+}
+
+@Composable
+fun TreeCaptureTutorial(onCompleteClick: (() -> Unit)) {
+    val treeCapturingIllustration: Painter = painterResource(id = R.drawable.tree_capturing_illustration)
+    TutorialDialog(
+        content = {
+            ImageCapturing(
+                image =treeCapturingIllustration,
+                text = stringResource(R.string.tracking_instruction)
             )
         },
         onCompleteClick = onCompleteClick
@@ -47,7 +63,7 @@ fun ImageCapturing(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Click on",
+            text = stringResource(R.string.click_on),
             color = CustomTheme.textColors.primaryText,
             style = CustomTheme.typography.medium,
             fontWeight = FontWeight.Bold,
@@ -81,14 +97,18 @@ fun TutorialDialog(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .alpha(0.4f)
+            .alpha(0.8f)
             .padding(2.dp)
             .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
             .clip(RoundedCornerShape(percent = 10)),
         backgroundColor = AppColors.Gray,
         text = content,
         buttons = {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp)
+            ) {
                 ApprovalButton(
                     modifier = Modifier
                         .size(40.dp)
