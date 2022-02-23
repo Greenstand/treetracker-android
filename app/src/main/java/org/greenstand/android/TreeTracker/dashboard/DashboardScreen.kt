@@ -206,7 +206,7 @@ fun DashboardScreen(
                     )
                 }
             }
-            if (FeatureFlags.DEBUG_ENABLED) {
+            if (FeatureFlags.MESSAGES_ENABLED) {
                 DashBoardButton(
                     text = stringResource(R.string.messages),
                     modifier = Modifier

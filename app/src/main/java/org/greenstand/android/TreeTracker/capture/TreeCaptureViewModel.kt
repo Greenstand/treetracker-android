@@ -55,7 +55,7 @@ class TreeCaptureViewModel(
 
     suspend fun createFakeTrees() {
         _state.value = _state.value?.copy(isCreatingFakeTrees = true)
-        createFakeTreesUseCase.execute(CreateFakeTreesParams(500))
+        createFakeTreesUseCase.execute(CreateFakeTreesParams(50))
         _state.value = _state.value?.copy(isCreatingFakeTrees = false)
     }
 
