@@ -5,9 +5,9 @@ import org.greenstand.android.TreeTracker.BuildConfig
 object FeatureFlags {
     val DEBUG_ENABLED: Boolean = (
         BuildConfig.BUILD_TYPE == "dev" ||
-            BuildConfig.BUILD_TYPE == "debug" ||
-            BuildConfig.BUILD_TYPE == "beta"
+            BuildConfig.BUILD_TYPE == "debug"
         )
+    val BETA: Boolean = BuildConfig.BUILD_TYPE == "beta"
     val MESSAGES_ENABLED: Boolean = (
             BuildConfig.BUILD_TYPE == "dev" ||
                     BuildConfig.BUILD_TYPE == "debug"
