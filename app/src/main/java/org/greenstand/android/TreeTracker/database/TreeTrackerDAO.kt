@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
@@ -253,4 +254,24 @@ interface TreeTrackerDAO {
 
     @Query("UPDATE session SET uploaded = :isUploaded WHERE _id IN (:ids)")
     suspend fun updateSessionUploadStatus(ids: List<Long>, isUploaded: Boolean)
+
+    @Query("SELECT * FROM device_config WHERE uploaded = 0")
+    suspend fun getDeviceConfigsToUpload(): List<DeviceConfigEntity>
+
+    @Query("SELECT * FROM device_config WHERE _id = (:id)")
+    suspend fun getDeviceConfigById(id: Long): DeviceConfigEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDeviceConfig(deviceConfig: DeviceConfigEntity): Long
+
+    @Query("UPDATE device_config SET bundle_id = :bundleId WHERE _id IN (:ids)")
+    suspend fun updateDeviceConfigBundleIds(ids: List<Long>, bundleId: String)
+
+    @Query("UPDATE device_config SET uploaded = :isUploaded WHERE _id IN (:ids)")
+    suspend fun updateDeviceConfigUploadStatus(ids: List<Long>, isUploaded: Boolean)
+
+    @Query("SELECT * FROM device_config ORDER BY logged_at DESC LIMIT 1")
+    suspend fun getLatestDeviceConfig(): DeviceConfigEntity?
+
+
 }

@@ -21,7 +21,7 @@ class UploadBundle
         @SerializedName("captures")
         val treeCaptures: List<TreeCaptureRequest>? = null,
         @SerializedName("device_configurations")
-        val deviceConfig: List<DeviceRequest> = listOf(DeviceRequest()),
+        val deviceConfig: List<DeviceConfigRequest>? = null,
         @SerializedName("sessions")
         val sessions: List<SessionRequest>? = null,
         @SerializedName("tracks")
@@ -45,6 +45,7 @@ class UploadBundle
             treeCaptures: List<TreeCaptureRequest>? = null,
             sessions: List<SessionRequest>? = null,
             tracks: List<TracksRequest>? = null,
+            deviceConfigs: List<DeviceConfigRequest>? = null,
         ): UploadBundle {
             return UploadBundle(
                 version = 2,
@@ -52,6 +53,7 @@ class UploadBundle
                 treeCaptures = treeCaptures,
                 sessions = sessions,
                 tracks = tracks,
+                deviceConfig = deviceConfigs,
             )
         }
     }

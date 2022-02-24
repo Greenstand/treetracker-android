@@ -2,9 +2,20 @@ package org.greenstand.android.TreeTracker.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "session")
+@Entity(
+    tableName = "session",
+    foreignKeys = [
+        ForeignKey(
+            entity = DeviceConfigEntity::class,
+            parentColumns = ["_id"],
+            childColumns = ["device_config_id"],
+            onUpdate = ForeignKey.CASCADE
+        )
+    ]
+)
 data class SessionEntity(
     @ColumnInfo(name = "uuid")
     var uuid: String,

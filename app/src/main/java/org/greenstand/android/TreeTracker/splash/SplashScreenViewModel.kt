@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
+import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
@@ -13,10 +14,12 @@ class SplashScreenViewModel(
     private val users: Users,
     private val treesToSyncHelper: TreesToSyncHelper,
     private val sessionTracker: SessionTracker,
+    private val deviceConfigUpdater: DeviceConfigUpdater,
 ) : ViewModel() {
 
     suspend fun bootstrap() {
         preferencesMigrator.migrateIfNeeded()
+        deviceConfigUpdater.saveLatestConfig()
 
         // If session was not ended properly (user/system killed app)...
         // or we never initialized the sync count...

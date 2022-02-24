@@ -9,4 +9,6 @@ data class SessionRequest(
     @SerializedName("target_wallet")
     val targetWallet: String,
     val organization: String,
+    @SerializedName("device_configuration_id")
+    val deviceConfigId: String,
 )
