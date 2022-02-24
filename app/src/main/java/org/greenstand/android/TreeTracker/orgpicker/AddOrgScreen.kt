@@ -1,9 +1,12 @@
-package org.greenstand.android.TreeTracker.walletselect.addwallet
+package org.greenstand.android.TreeTracker.orgpicker
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
@@ -16,26 +19,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.DepthButton
 
 @Composable
-fun AddWalletScreen(
+fun AddOrgScreen(
     userId: Long,
-    viewModel: AddWalletViewModel = viewModel(factory = AddWalletViewModelFactory(userId))
+    destinationWallet: String,
+    viewModel: AddOrgViewModel = viewModel(factory = AddOrgViewModelFactory(userId, destinationWallet))
 ) {
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
-    val state by viewModel.state.observeAsState(AddWalletState())
+    val state by viewModel.state.observeAsState(AddOrgState())
 
     Scaffold(
         bottomBar = {
@@ -48,7 +56,6 @@ fun AddWalletScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.walletName.isNotBlank()
                     ) {
                         scope.launch {
                             viewModel.startSession()
@@ -59,17 +66,16 @@ fun AddWalletScreen(
             )
         }
     ) {
-        Box(
-            contentAlignment = Alignment.TopCenter,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 120.dp)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.height(120.dp))
             BorderedTextField(
-                value = state.walletName,
+                value = state.orgName,
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> viewModel.updateWalletName(updatedName) },
-                placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) },
+                onValueChange = { updatedName -> viewModel.updateOrgName(updatedName) },
+                placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Go,
@@ -79,12 +85,29 @@ fun AddWalletScreen(
                     onGo = {
                         scope.launch {
                             viewModel.startSession()
-                            navController.navigate(NavRoute.AddOrg.create(userId, state.walletName))
+                            navController.navigate(NavRoute.TreeCapture.create(state.userImagePath))
                         }
                     }
                 )
             )
+            state.previousOrgName?.let { prevOrgName ->
+                DepthButton(
+                    onClick = { viewModel.applyOrgAutofill() },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(height = 80.dp, width = 156.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = prevOrgName,
+                        fontWeight = FontWeight.Bold,
+                        color = CustomTheme.textColors.primaryText,
+                        style = CustomTheme.typography.regular,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
         }
     }
 }
-
