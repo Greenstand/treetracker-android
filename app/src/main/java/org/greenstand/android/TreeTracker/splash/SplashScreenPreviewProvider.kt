@@ -4,7 +4,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.utilities.PreviewUtils
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class SplashScreenPreviewProvider : PreviewParameterProvider<SplashScreenViewModel>, KoinComponent {
 

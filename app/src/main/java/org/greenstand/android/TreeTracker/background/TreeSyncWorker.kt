@@ -13,8 +13,8 @@ import androidx.work.WorkerParameters
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.MainActivity
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class TreeSyncWorker(
     context: Context,

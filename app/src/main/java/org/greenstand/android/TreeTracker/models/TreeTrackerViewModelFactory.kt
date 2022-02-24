@@ -12,8 +12,8 @@ import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 @Suppress("UNCHECKED_CAST")
 class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), KoinComponent {
