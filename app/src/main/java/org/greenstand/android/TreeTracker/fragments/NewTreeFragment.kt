@@ -26,7 +26,7 @@ import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.utilities.visibleIf
 import org.greenstand.android.TreeTracker.view.CustomToast
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class NewTreeFragment :

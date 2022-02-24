@@ -10,8 +10,8 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 data class AddWalletState(
     val walletName: String = "",

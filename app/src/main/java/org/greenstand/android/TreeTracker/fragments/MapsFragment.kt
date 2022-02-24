@@ -39,7 +39,7 @@ import org.greenstand.android.TreeTracker.utilities.mainActivity
 import org.greenstand.android.TreeTracker.utilities.vibrate
 import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class MapsFragment :
