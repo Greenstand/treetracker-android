@@ -49,7 +49,6 @@ fun SelfieScreen() {
                 .padding(bottom = 10.dp),
             contentAlignment = Alignment.BottomCenter
         ){
-            TreeCaptureReviewTutorial({})
             CaptureButton(
                 onClick = {
                     cameraControl.captureImage()

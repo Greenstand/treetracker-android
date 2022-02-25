@@ -102,40 +102,114 @@ fun ImageCapturing(
 }
 
 @Composable
-fun TreeCaptureReview(){
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight(),
-    horizontalAlignment = Alignment.Start) {
-        Row(modifier = Modifier.fillMaxWidth().wrapContentHeight(), horizontalArrangement = Arrangement.Start) {
+fun TreeCaptureReview() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = CenterVertically
+        ) {
             Text(
-                text = "",
+                text = "Click on the button to add note.",
                 color = CustomTheme.textColors.primaryText,
-                modifier = Modifier.fillMaxWidth(0.7f).padding(end= 30.dp),
-                //textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .padding(end = 30.dp),
                 style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.Bold,
             )
 
-            Box(modifier = Modifier
-                .wrapContentHeight(),
-            contentAlignment = Center){
+            Box(
+                modifier = Modifier
+                    .wrapContentHeight(),
+                contentAlignment = Center
+            ) {
                 DepthButton(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(width = 100.dp, 60.dp),
+                    isEnabled = false,
                     onClick = { }
                 ) {
                     Text(stringResource(R.string.note))
                 }
                 Image(
+                    modifier = Modifier.padding(top = 30.dp),
                     painter = painterResource(id = R.drawable.touch_gesture),
                     contentDescription = null
                 )
             }
 
         }
-        
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.capture_tutorial),
+                color = CustomTheme.textColors.primaryText,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .padding(end = 30.dp),
+                style = CustomTheme.typography.medium,
+                fontWeight = FontWeight.Bold,
+            )
+            Box(
+                modifier = Modifier
+                    .wrapContentHeight(),
+                contentAlignment = Center
+            ) {
+                ApprovalButton(onClick = { /*TODO*/ }, approval = true)
+                Image(
+                    modifier = Modifier.padding(top = 30.dp),
+                    painter = painterResource(id = R.drawable.touch_gesture),
+                    contentDescription = null
+                )
+            }
+
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.recapture_tutorial),
+                color = CustomTheme.textColors.primaryText,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .padding(end = 30.dp),
+                style = CustomTheme.typography.medium,
+                fontWeight = FontWeight.Bold,
+            )
+            Box(
+                modifier = Modifier
+                    .wrapContentHeight(),
+                contentAlignment = Center
+            ) {
+                ApprovalButton(onClick = { /*TODO*/ }, approval = false)
+                Image(
+                    modifier = Modifier.padding(top = 30.dp),
+                    painter = painterResource(id = R.drawable.touch_gesture),
+                    contentDescription = null
+                )
+            }
+        }
+
     }
 }
 
