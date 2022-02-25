@@ -8,6 +8,9 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -52,6 +55,18 @@ fun TreeCaptureTutorial(onCompleteClick: (() -> Unit)) {
 }
 
 @Composable
+fun TreeCaptureReviewTutorial(onCompleteClick: (() -> Unit)) {
+    val treeCapturingIllustration: Painter = painterResource(id = R.drawable.tree_capturing_illustration)
+    TutorialDialog(
+        content = {
+          TreeCaptureReview()
+        },
+        onCompleteClick = onCompleteClick
+    )
+
+}
+
+@Composable
 fun ImageCapturing(
     image: Painter,
     text: String
@@ -83,6 +98,44 @@ fun ImageCapturing(
             painter = image,
             contentDescription = null
         )
+    }
+}
+
+@Composable
+fun TreeCaptureReview(){
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight(),
+    horizontalAlignment = Alignment.Start) {
+        Row(modifier = Modifier.fillMaxWidth().wrapContentHeight(), horizontalArrangement = Arrangement.Start) {
+            Text(
+                text = "",
+                color = CustomTheme.textColors.primaryText,
+                modifier = Modifier.fillMaxWidth(0.7f).padding(end= 30.dp),
+                //textAlign = TextAlign.Center,
+                style = CustomTheme.typography.medium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Box(modifier = Modifier
+                .wrapContentHeight(),
+            contentAlignment = Center){
+                DepthButton(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(width = 100.dp, 60.dp),
+                    onClick = { }
+                ) {
+                    Text(stringResource(R.string.note))
+                }
+                Image(
+                    painter = painterResource(id = R.drawable.touch_gesture),
+                    contentDescription = null
+                )
+            }
+
+        }
+        
     }
 }
 
