@@ -66,7 +66,10 @@ fun UserSelect(
                         isLeft = true,
                         colors = navigationButtonColors,
                         onClick = {
-                            navController.popBackStack()
+                            navController.navigate(NavRoute.Dashboard.route) {
+                                popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }

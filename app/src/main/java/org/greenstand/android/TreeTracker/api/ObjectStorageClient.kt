@@ -123,9 +123,9 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
         val acl = AccessControlList()
         acl.grantPermission(GroupGrantee.AllUsers, Permission.Read)
 
-        val timeStamp = SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Date())
+        val timeStamp = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Date())
 
-        val dosKey = timeStamp + '_'.toString() + UUID.randomUUID() + '_'.toString() + bundleId
+        val dosKey = timeStamp + '_'.toString() + UUID.randomUUID() + '_'.toString() + bundleId + ".json"
 
         val objectMetadata = ObjectMetadata().apply {
             contentLength = inputStream.available().toLong()

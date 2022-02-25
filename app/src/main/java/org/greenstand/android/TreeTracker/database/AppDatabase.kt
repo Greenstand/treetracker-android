@@ -5,6 +5,7 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
@@ -33,6 +34,7 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEnti
         AutoMigration(from = 7, to = 8)
     ],
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun treeTrackerDao(): TreeTrackerDAO

@@ -25,6 +25,8 @@ fun Host() {
                 NavRoute.Org,
                 NavRoute.UserSelect,
                 NavRoute.WalletSelect,
+                NavRoute.AddWallet,
+                NavRoute.AddOrg,
                 NavRoute.TreeImageReview,
                 NavRoute.Selfie,
                 NavRoute.TreeCapture,

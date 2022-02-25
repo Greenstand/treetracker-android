@@ -14,11 +14,13 @@ import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
+import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
+import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
 
 sealed class NavRoute {
 
@@ -74,6 +76,40 @@ sealed class NavRoute {
         }
 
         fun create(planterInfoId: Long) = "wallet-select/$planterInfoId"
+    }
+
+    object AddWallet : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            AddWalletScreen(getPlanterInfoId(it))
+        }
+        override val route: String = "add-wallet/{planterInfoId}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+
+        fun create(planterInfoId: Long) = "add-wallet/$planterInfoId"
+    }
+
+    object AddOrg : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            AddOrgScreen(getPlanterInfoId(it), getDestinationWallet(it))
+        }
+        override val route: String = "add-org/{planterInfoId}/{destinationWallet}"
+        override val arguments = listOf(
+            navArgument("planterInfoId") { type = NavType.LongType },
+            navArgument("destinationWallet") { type = NavType.StringType })
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+
+        private fun getDestinationWallet(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("destinationWallet") ?: ""
+        }
+
+        fun create(planterInfoId: Long, destinationWallet: String) = "add-org/$planterInfoId/$destinationWallet"
     }
 
     object Selfie : NavRoute() {

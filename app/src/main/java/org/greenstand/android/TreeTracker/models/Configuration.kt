@@ -33,7 +33,7 @@ class Configuration(
 data class LocationDataConfig(
     val minTimeBetweenUpdates: Long = 1000L,
     val minDistanceBetweenUpdates: Float = 0F,
-    val convergenceTimeout: Long = 60000L,
+    val convergenceTimeout: Long = 20000L,
     val convergenceDataSize: Int = 5,
     val lonStdDevThreshold: Float = 0.00001F,
     val latStdDevThreshold: Float = 0.00001F
