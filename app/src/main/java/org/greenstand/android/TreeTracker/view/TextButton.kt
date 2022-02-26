@@ -48,25 +48,6 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
-fun TextButton(
-    modifier: Modifier = Modifier,
-    stringRes: Int,
-    enabled: Boolean = true,
-    onClick: () -> Unit,
-) {
-    // TODO customize button visuals
-    Button(
-        onClick = onClick,
-        modifier = modifier.size(height = 46.dp, width = 120.dp),
-        enabled = enabled,
-    ) {
-        Text(
-            text = stringResource(id = stringRes)
-        )
-    }
-}
-
-@Composable
 fun BoxScope.ArrowButton(
     isEnabled: Boolean = true,
     colors: ButtonColors = AppButtonColors.ProgressGreen,
