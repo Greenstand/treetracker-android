@@ -58,7 +58,7 @@ class SyncDataUseCase(
             safeWork("Tree Upload") {
                 onUpload(treeIds)
             }
-            val remainingIds = dao.getAllTreeIdsToUpload()
+            val remainingIds = onGetTreeIds()
             if (!treeIds.containsAll(remainingIds)) {
                 treeIds = remainingIds
             } else {
