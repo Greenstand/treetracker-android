@@ -84,7 +84,7 @@ val appModule = module {
 
     viewModel { SplashScreenViewModel(get(), get(), get(), get(), get()) }
 
-    viewModel { WalletSelectViewModel(get(), get(), get(), get()) }
+    viewModel { WalletSelectViewModel(get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 

@@ -19,7 +19,6 @@ class DeviceConfigUpdater(
             config.appBuild != BuildConfig.VERSION_CODE ||
             config.osVersion != Build.VERSION.RELEASE ||
             config.sdkVersion != Build.VERSION.SDK_INT) {
-                Timber.tag("JONATHAN").d("CHANGE DETECTED")
             saveNewDeviceConfig()
         }
     }

@@ -51,8 +51,7 @@ fun AddWalletScreen(
                         isEnabled = state.walletName.isNotBlank()
                     ) {
                         scope.launch {
-                            viewModel.startSession()
-                            navController.navigate(NavRoute.TreeCapture.create(state.userImagePath))
+                            navController.navigate(NavRoute.AddOrg.create(userId, state.walletName))
                         }
                     }
                 }
@@ -78,7 +77,6 @@ fun AddWalletScreen(
                 keyboardActions = KeyboardActions(
                     onGo = {
                         scope.launch {
-                            viewModel.startSession()
                             navController.navigate(NavRoute.AddOrg.create(userId, state.walletName))
                         }
                     }

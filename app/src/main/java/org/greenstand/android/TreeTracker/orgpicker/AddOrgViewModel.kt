@@ -58,7 +58,9 @@ class AddOrgViewModel(
     }
 
     suspend fun startSession() {
-        preferences.edit().putString(PREV_ORG_KEY, _state.value?.orgName).apply()
+        if (!_state.value?.orgName.isNullOrBlank()) {
+            preferences.edit().putString(PREV_ORG_KEY, _state.value?.orgName).apply()
+        }
         stepCounter.enable()
         sessionTracker.startSession(
             userId = userId,
