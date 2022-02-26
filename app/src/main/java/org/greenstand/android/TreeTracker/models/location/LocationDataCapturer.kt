@@ -35,6 +35,7 @@ class LocationDataCapturer(
     var currentConvergence: Convergence? = null
         private set
     private var convergenceStatus: ConvergenceStatus? = null
+    private var areLocationUpdatesOn: Boolean = false
 
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
@@ -112,13 +113,21 @@ class LocationDataCapturer(
     }
 
     fun startGpsUpdates() {
+        if (areLocationUpdatesOn) {
+            return
+        }
         locationUpdateManager.startLocationUpdates()
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
+        areLocationUpdatesOn = true
     }
 
     fun stopGpsUpdates() {
+        if (!areLocationUpdatesOn) {
+            return
+        }
         locationUpdateManager.locationUpdateLiveData.removeObserver(locationObserver)
         locationUpdateManager.stopLocationUpdates()
+        areLocationUpdatesOn = false
     }
 
     /**

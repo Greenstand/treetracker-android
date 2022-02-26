@@ -69,7 +69,7 @@ val appModule = module {
 
     viewModel { OrgPickerViewModel(get()) }
 
-    viewModel { UserSelectViewModel(get()) }
+    viewModel { UserSelectViewModel(get(), get()) }
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 
