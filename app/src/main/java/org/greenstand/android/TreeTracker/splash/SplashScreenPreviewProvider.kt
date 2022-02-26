@@ -17,6 +17,7 @@ class SplashScreenPreviewProvider : PreviewParameterProvider<SplashScreenViewMod
             getKoin().get(),
             getKoin().get(),
             getKoin().get(),
+            getKoin().get(),
         )
     )
 

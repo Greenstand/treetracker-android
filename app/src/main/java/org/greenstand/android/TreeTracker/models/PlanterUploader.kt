@@ -26,7 +26,7 @@ class PlanterUploader(
     private val user: Planter
 ) {
 
-    suspend fun uploadPlanters() {
+    suspend fun upload() {
         withContext(Dispatchers.IO) {
             uploadLegacyPlanterImages()
             uploadUserImages()

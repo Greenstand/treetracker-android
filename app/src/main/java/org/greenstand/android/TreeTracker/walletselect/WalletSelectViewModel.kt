@@ -22,9 +22,6 @@ data class WalletSelectState(
 
 class WalletSelectViewModel(
     private val users: Users,
-    private val stepCounter: StepCounter,
-    private val sessionTracker: SessionTracker,
-    private val locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<WalletSelectState>()
@@ -50,15 +47,5 @@ class WalletSelectViewModel(
                 selectedUser = users.getUserList().find { planterInfoId == it.id }
             )
         }
-    }
-
-    suspend fun startSession() {
-        stepCounter.enable()
-        sessionTracker.startSession(
-            userId = _state.value!!.currentUser!!.id,
-            destinationWallet = _state.value!!.selectedUser!!.wallet,
-            organization = "TEMP"
-        )
-        locationDataCapturer.startGpsUpdates()
     }
 }
