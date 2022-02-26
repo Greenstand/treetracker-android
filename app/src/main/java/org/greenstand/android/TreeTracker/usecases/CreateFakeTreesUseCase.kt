@@ -24,7 +24,7 @@ class CreateFakeTreesUseCase(
 ) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
-        for (i in 1..params.amount / 2) {
+        for (i in 1..(params.amount / 2) + 1) {
 
             val file = ImageUtils.createTestImageFile(context)
 

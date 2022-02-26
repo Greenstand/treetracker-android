@@ -11,7 +11,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -50,7 +50,7 @@ class TreeSyncWorker(
 
         val PENDING_INTENT_FLAG_MUTABLE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
         val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-            .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, MainActivity::class.java), PENDING_INTENT_FLAG_MUTABLE))
+            .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), PENDING_INTENT_FLAG_MUTABLE))
             .setSmallIcon(R.drawable.upload_icon)
             .setOngoing(true)
             .setAutoCancel(true)
