@@ -3,8 +3,11 @@ package org.greenstand.android.TreeTracker.capture
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +46,8 @@ import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
+import org.greenstand.android.TreeTracker.view.SelfieTutorial
+import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
 import org.greenstand.android.TreeTracker.view.UserImageButton
 import org.greenstand.android.TreeTracker.view.showLoadingSpinner
 
@@ -100,6 +105,18 @@ fun TreeCaptureScreen(
                         },
                         isEnabled = !state.isGettingLocation,
                     )
+                },
+                rightAction = {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .aspectRatio(1.0f)
+                            .clickable {
+                                viewModel.updateCaptureTutorialDialog(true)
+                            },
+                        painter = painterResource(id = R.drawable.info_icon),
+                        contentDescription = null,
+                    )
                 }
             )
         }
@@ -117,6 +134,13 @@ fun TreeCaptureScreen(
                         popUpTo(NavRoute.Dashboard.route) { inclusive = true }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+        if (state.showCaptureTutorial == true) {
+            TreeCaptureTutorial(
+                onCompleteClick = {
+                    viewModel.updateCaptureTutorialDialog(false)
                 }
             )
         }

@@ -1,11 +1,15 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import com.google.gson.annotations.SerializedName
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class UploadBundle
     constructor(
         @SerializedName("pack_format_version")
-        val version: Int,
+        val version: String,
+      
+        @SerializedName("device_id")
+        val deviceId: String = DeviceUtils.deviceId,
 
         // V1
         @SerializedName("trees")
@@ -13,7 +17,7 @@ class UploadBundle
         @SerializedName("registrations")
         val registrations: List<RegistrationRequest>? = null,
         @SerializedName("devices")
-        val devices: List<DeviceRequest> = listOf(DeviceRequest()),
+        val devices: List<DeviceRequest>? = null,
 
         // V2
         @SerializedName("wallet_registrations")
@@ -34,9 +38,10 @@ class UploadBundle
             newTreeRequests: List<NewTreeRequest>? = null,
             registrations: List<RegistrationRequest>? = null): UploadBundle {
             return UploadBundle(
-                version = 1,
+                version = "1",
                 trees = newTreeRequests,
                 registrations = registrations,
+                devices = listOf(DeviceRequest()),
             )
         }
 
@@ -48,7 +53,7 @@ class UploadBundle
             deviceConfigs: List<DeviceConfigRequest>? = null,
         ): UploadBundle {
             return UploadBundle(
-                version = 2,
+                version = "2",
                 walletRegistrations = walletRegistration,
                 treeCaptures = treeCaptures,
                 sessions = sessions,

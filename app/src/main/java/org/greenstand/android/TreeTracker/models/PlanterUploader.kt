@@ -1,7 +1,6 @@
 package org.greenstand.android.TreeTracker.models
 
 import com.google.gson.Gson
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
@@ -13,6 +12,7 @@ import org.greenstand.android.TreeTracker.usecases.UploadImageParams
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
+import java.io.File
 
 /**
  * Uploads all user data including the users photos
@@ -123,7 +123,8 @@ class PlanterUploader(
             .map { user ->
                 WalletRegistrationRequest(
                     wallet = user.wallet,
-                    name = user.firstName + " " + user.lastName,
+                    firstName = user.firstName,
+                    lastName = user.lastName,
                     phone = user.phone,
                     email = user.email,
                     lat = user.latitude,

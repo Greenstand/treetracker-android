@@ -7,7 +7,7 @@ import android.content.res.Resources
 import java.util.Locale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
-import org.greenstand.android.TreeTracker.activities.MainActivity
+import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -44,7 +44,7 @@ class LanguageSwitcher(private val prefs: Preferences) {
         setLanguage(newLanguage, res)
 
         activity.finish()
-        activity.startActivity(Intent(activity, MainActivity::class.java))
+        activity.startActivity(Intent(activity, TreeTrackerActivity::class.java))
     }
 
     fun setLanguage(language: Language, res: Resources) {

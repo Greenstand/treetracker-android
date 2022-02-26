@@ -24,7 +24,7 @@ class CreateFakeTreesUseCase(
 ) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
-        for (i in 1..params.amount / 2) {
+        for (i in 1..(params.amount / 2) + 1) {
 
             val file = ImageUtils.createTestImageFile(context)
 
@@ -36,6 +36,13 @@ class CreateFakeTreesUseCase(
                 meanLongitude = 0.0,
                 meanLatitude = 0.0
             )
+
+            with(tree) {
+                addTreeAttribute(Tree.DBH_ATTR_KEY, "10");
+                addTreeAttribute(Tree.ABS_STEP_COUNT_KEY, "10");
+                addTreeAttribute(Tree.DELTA_STEP_COUNT_KEY, "10");
+                addTreeAttribute(Tree.ROTATION_MATRIX_KEY, "[12,12,12]");
+            }
 
             createTreeUseCase.execute(tree)
         }

@@ -51,22 +51,13 @@ import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
-import org.greenstand.android.TreeTracker.viewmodels.LoginViewModel
-import org.greenstand.android.TreeTracker.viewmodels.MapViewModel
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
-import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-
-    viewModel { LoginViewModel(get()) }
-
-    viewModel { SignupViewModel() }
-
-    viewModel { MapViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
 
@@ -171,7 +162,7 @@ val appModule = module {
 
     factory { UploadLocationDataUseCase(get(), get()) }
 
-    factory { CreateTreeUseCase(get(), get(), get(), get()) }
+    factory { CreateTreeUseCase(get(), get(), get()) }
 
     factory { CreateLegacyTreeUseCase(get(), get()) }
 
