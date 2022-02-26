@@ -1,6 +1,8 @@
 package org.greenstand.android.TreeTracker.capture
 
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -60,6 +62,7 @@ fun TreeImageReviewScreen(
                     approval = false
                 )
                 ApprovalButton(
+                    modifier = Modifier.padding(end = 24.dp),
                     onClick = {
                         scope.launch {
                             viewModel.approveImage()
@@ -68,11 +71,27 @@ fun TreeImageReviewScreen(
                     },
                     approval = true
                 )
+                Image(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clickable {
+                            viewModel.updateReviewTutorialDialog(true)
+                        },
+                    painter = painterResource(id = R.drawable.info_icon),
+                    contentDescription = null,
+                )
             }
         }
     ) {
         if (state.isDialogOpen) {
             NoteDialog(state = state, viewModel = viewModel)
+        }
+        if (state.showReviewTutorial == true) {
+            TreeCaptureReviewTutorial(
+                onCompleteClick = {
+                    viewModel.updateReviewTutorialDialog(false)
+                }
+            )
         }
         LocalImage(
             modifier = Modifier.fillMaxSize(),

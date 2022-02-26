@@ -26,7 +26,6 @@ data class SignUpState(
     val autofocusTextEnabled: Boolean = false,
     val isInternetAvailable: Boolean = false,
     val showSelfieTutorial: Boolean? = null,
-    val initialSetUp: Boolean? = null,
 )
 
 sealed class Credential {
@@ -69,7 +68,7 @@ class SignupViewModel(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
-            _state.value = _state.value?.copy(isInternetAvailable = result, initialSetUp = isInitialSetupRequired() )
+            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired() )
         }
     }
 
@@ -119,7 +118,7 @@ class SignupViewModel(
     }
 
     fun updateSelfieTutorialDialog(state: Boolean){
-        _state.value = _state.value?.copy(showSelfieTutorial = state, initialSetUp = null)
+        _state.value = _state.value?.copy(showSelfieTutorial = state)
     }
 
     suspend fun isInitialSetupRequired(): Boolean = users.getPowerUser() == null

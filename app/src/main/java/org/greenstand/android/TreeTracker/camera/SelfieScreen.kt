@@ -76,7 +76,7 @@ fun SelfieScreen() {
                 .padding(bottom = 10.dp),
             contentAlignment = Alignment.BottomCenter
         ) {
-            if (state.showSelfieTutorial == true || state.initialSetUp == true) {
+            if (state.showSelfieTutorial == true) {
                 SelfieTutorial(
                     onCompleteClick = {
                         viewModel.updateSelfieTutorialDialog(false)
