@@ -13,7 +13,7 @@ class UploadBundle
         @SerializedName("registrations")
         val registrations: List<RegistrationRequest>? = null,
         @SerializedName("devices")
-        val devices: List<DeviceRequest> = listOf(DeviceRequest()),
+        val devices: List<DeviceRequest>? = null,
 
         // V2
         @SerializedName("wallet_registrations")
@@ -37,6 +37,7 @@ class UploadBundle
                 version = 1,
                 trees = newTreeRequests,
                 registrations = registrations,
+                devices = listOf(DeviceRequest()),
             )
         }
 
