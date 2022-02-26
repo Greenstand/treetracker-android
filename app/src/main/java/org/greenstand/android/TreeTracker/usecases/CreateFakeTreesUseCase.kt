@@ -101,7 +101,7 @@ class CreateFakeTreesUseCase(
     ): PlanterInfoEntity {
         return withContext(Dispatchers.IO) {
             val location = locationUpdateManager.currentLocation
-            val time = location?.time ?: System.currentTimeMillis()
+            val time = location?.time ?: System.currentTimeMillis() / 1000
 
             val entity = PlanterInfoEntity(
                 identifier = identifier + time,
@@ -126,7 +126,7 @@ class CreateFakeTreesUseCase(
         planterInfoId: Long,
     ) {
         val location = locationUpdateManager.currentLocation
-        val time = location?.time ?: System.currentTimeMillis()
+        val time = location?.time ?: System.currentTimeMillis() / 1000
 
         val planterCheckInEntity = PlanterCheckInEntity(
             planterInfoId = planterInfoId,
