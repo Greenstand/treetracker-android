@@ -1,10 +1,14 @@
 package org.greenstand.android.TreeTracker.models
 
+import android.os.Build
+import androidx.room.ColumnInfo
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
@@ -37,10 +41,12 @@ class SessionTracker(
                 destinationWallet = destinationWallet,
                 startTime = time,
                 isUploaded = false,
-                organization = organization, // TODO change to use current device org
+                organization = organization,
+                deviceConfigId = dao.getLatestDeviceConfig()!!.id,
             )
 
             _currentSessionId = dao.insertSession(sessionEntity)
+
             preferences.edit().putLong(SESSION_ID_KEY, _currentSessionId ?: -1).commit()
         }
     }

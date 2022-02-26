@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "23d5e66afb3158086a80439d1257f3a2",
+    "identityHash": "96c2d24842e1c9ad5af4445f300a637e",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -430,7 +430,7 @@
       },
       {
         "tableName": "session",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`device_config_id`) REFERENCES `device_config`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -510,7 +510,19 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_session_origin_wallet` ON `${TABLE_NAME}` (`origin_wallet`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "device_config",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "device_config_id"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "user",
@@ -830,12 +842,80 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "device_config",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `app_version` TEXT NOT NULL, `app_build` INTEGER NOT NULL, `os_version` TEXT NOT NULL, `sdk_version` INTEGER NOT NULL, `logged_at` INTEGER NOT NULL, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appVersion",
+            "columnName": "app_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appBuild",
+            "columnName": "app_build",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "osVersion",
+            "columnName": "os_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sdkVersion",
+            "columnName": "sdk_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loggedAt",
+            "columnName": "logged_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUploaded",
+            "columnName": "uploaded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bundleId",
+            "columnName": "bundle_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '23d5e66afb3158086a80439d1257f3a2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '96c2d24842e1c9ad5af4445f300a637e')"
     ]
   }
 }

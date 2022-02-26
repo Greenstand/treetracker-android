@@ -44,6 +44,7 @@ class DashboardViewModel(
                 }
             }
         } else {
+            updateData()
             updateTimerJob?.cancel()
             updateTimerJob = null
         }

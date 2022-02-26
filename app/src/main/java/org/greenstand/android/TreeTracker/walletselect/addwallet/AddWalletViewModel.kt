@@ -10,8 +10,8 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 data class AddWalletState(
     val walletName: String = "",
@@ -21,9 +21,6 @@ data class AddWalletState(
 class AddWalletViewModel(
     private val userId: Long,
     private val users: Users,
-    private val stepCounter: StepCounter,
-    private val sessionTracker: SessionTracker,
-    private val locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<AddWalletState>()
@@ -42,22 +39,12 @@ class AddWalletViewModel(
             walletName = destinationWallet
         )
     }
-
-    suspend fun startSession() {
-        stepCounter.enable()
-        sessionTracker.startSession(
-            userId = userId,
-            destinationWallet = _state.value!!.walletName,
-            organization = "TEMP"
-        )
-        locationDataCapturer.startGpsUpdates()
-    }
 }
 
 class AddWalletViewModelFactory(private val userId: Long)
     : ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return AddWalletViewModel(userId, get(), get(), get(), get()) as T
+        return AddWalletViewModel(userId, get()) as T
     }
 }

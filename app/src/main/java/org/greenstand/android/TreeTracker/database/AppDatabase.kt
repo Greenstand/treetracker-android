@@ -6,6 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
@@ -29,6 +30,7 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEnti
         UserEntity::class,
         LocationEntity::class,
         TreeEntity::class,
+        DeviceConfigEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 7, to = 8)

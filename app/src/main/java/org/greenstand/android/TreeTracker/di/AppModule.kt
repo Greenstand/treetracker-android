@@ -17,6 +17,8 @@ import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
+import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
@@ -55,7 +57,7 @@ import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
@@ -80,9 +82,9 @@ val appModule = module {
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 
-    viewModel { SplashScreenViewModel(get(), get(), get(), get()) }
+    viewModel { SplashScreenViewModel(get(), get(), get(), get(), get()) }
 
-    viewModel { WalletSelectViewModel(get(), get(), get(), get()) }
+    viewModel { WalletSelectViewModel(get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 
@@ -91,6 +93,8 @@ val appModule = module {
     single { Users(get(), get(), get()) }
 
     single { TreeCapturer(get(), get(), get(), get(), get()) }
+
+    single { DeviceConfigUpdater(get(), get()) }
 
     single<Organizations> { OrganizationsFake() }
 
@@ -157,6 +161,8 @@ val appModule = module {
 
     factory { SessionUploader(get(), get(), get()) }
 
+    factory { DeviceConfigUploader(get(), get(), get()) }
+
     factory { PreferencesMigrator(get(), get()) }
 
     factory { LanguageSwitcher(get()) }
@@ -177,5 +183,5 @@ val appModule = module {
 
     factory { TreeUploader(get(), get(), get(), get(), get()) }
 
-    factory { SyncDataUseCase(get(), get(), get(), get(), get()) }
+    factory { SyncDataUseCase(get(), get(), get(), get(), get(), get()) }
 }

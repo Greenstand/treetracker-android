@@ -6,6 +6,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.TreeUploader
@@ -17,6 +18,7 @@ class SyncDataUseCase(
     private val dao: TreeTrackerDAO,
     private val planterUploader: PlanterUploader,
     private val sessionUploader: SessionUploader,
+    private val deviceConfigUploader: DeviceConfigUploader,
 ) : UseCase<Unit, Boolean>() {
 
     private val TAG = "SyncDataUseCase"
@@ -24,8 +26,12 @@ class SyncDataUseCase(
     override suspend fun execute(params: Unit): Boolean {
         withContext(Dispatchers.IO) {
 
+            safeWork("Device Config Upload") {
+                deviceConfigUploader.upload()
+            }
+
             safeWork("User Upload") {
-                planterUploader.uploadPlanters()
+                planterUploader.upload()
             }
 
             safeWork("Session Upload") {
@@ -58,7 +64,7 @@ class SyncDataUseCase(
             safeWork("Tree Upload") {
                 onUpload(treeIds)
             }
-            val remainingIds = dao.getAllTreeIdsToUpload()
+            val remainingIds = onGetTreeIds()
             if (!treeIds.containsAll(remainingIds)) {
                 treeIds = remainingIds
             } else {

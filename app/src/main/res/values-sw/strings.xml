@@ -1,58 +1,91 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="greenstand_welcome_text" ><b>Karibu TreeTracker</b></string>
-    <string name="phone_text_hint" >Numba ya Simu</string>
-    <string name="email_text_hint" >Barua Pepe (hiari)</string>
-    <string name="login_button_title" >Ingia</string>
-    <string name="signup_button_titile" >JISAJILI</string>
-    <string name="first_name_hint" >Jina la kwanza</string>
-    <string name="last_name_hint" >Jina la mwisho</string>
-    <string name="organization_text_hint" > Shirika (hiari)</string>
-    <string name="storagePermissQuestion" >Ruhusu<b> Tree Tracker</b> kufikia hifadhi yako?</string>
-    <string name="locationPermissionQuestion" >Ruhusu <b>Tree Tracker</b>kupata eneo lako?</string>
-    <string name="cameraPermissionQuestion" >Ruhusu <b>Tree Tracker</b>kupata kamera yako?</string>
-    <string name="storage_permission_title" ><b>Ruhusa ya Hifadhi</b></string>
-    <string name="location_permission_title" ><b>Idhini ya Mahali</b></string>
-    <string name="camera_permission_title" ><b>Ruhusa ya Kamera</b></string>
-    <string name="sync_started">Kutuma Kumeanza</string>
-    <string name="sync_stopped">Kutuma kusimamishwa</string>
-    <string name="nothing_to_sync">Hakuna miti ya kutuma</string>
-    <string name="sync_successful">Imetumwa Imefanikiwa</string>
-    <string name="mark_gps">Weka Alama ya GPS</string>
-    <string name="gps_location_assessment">Tathmini Eneo</string>
-    <string name="next">"ijayo"</string>
-    <string name="treetracker">TreeTracker</string>
+
+    <string name="treetracker">Treetracker</string>
     <string name="ok">Sawa</string>
-    <string name="your_note">Maelezo yako</string>
+    <string name="your_note">Taarifa za ziada</string>
     <string name="remove_photo">Ondoa picha</string>
-    <string name="cancel">Futa</string>
-    <string name="save">Hifadhi</string>
+    <string name="tree_height_save_error" translatable="false">Tafadhali jaribu tena</string> 
+    <string name="tree_height_title">Chagua urefu wa mti</string>
+    <string name="cancel">Sitisha</string> 
+    <string name="save">Hifadhi</string> 
+    <string name="mark_gps">Weka GPS</string> 
+    <string name="password">Nenosiri</string> 
+    <string name="organization">Taasisi</string> 
+    <string name="gps_location_assessment">Tathmini ya pahala</string> 
+    <string name="enable_location_access">Wezesha kupata pahala</string> 
+    <string name="you_must_enable_location_access_in_your_settings_in_order_to_continue">Unatakiwa uwezeshe upatikanaji wa pahala ili kuweza kuendelea!</string> 
+    <string name="location_permission_alert_title">Ruhusu Treetracker kupata pahala?</string> 
+    <string name="location_permission_alert_message">Tafadhali fungua Settings na ruhusu Treetracker kupata pahala</string> 
+    <string name="change_language">Badilisha lugha</string> 
+    <string name="language">Lugha</string> 
+    <string name="stop">Sitisha</string> 
+    <string name="add_tree">ONGEZA MTI</string> 
+    <!--Strings add for fragment_new_tree.xml-->
+    <string name="tree">Mti</string> 
+    <string name="sync_blocked" translatable="false">Kutuma na kupokea kumesitishwa</string> 
+    <string name="sync_started">Kutuma na kupokea kumeanza</string> 
+    <string name="sync_preparing">Kutuma na kupokea kunatayarishwa</string> 
+    <string name="sync_stopped">kutuma na kupokea kumesimama</string> 
+    <string name="nothing_to_sync">Hakuna cha kutuma na kupokea</string> 
+    <string name="sync_failed">Kutuma na kupokea imeshinkikana, tafadhali jaribu tena</string> 
+    <string name="sync_successful">Kutuma na kupokea kumefanikiwa</string> 
+    <string name="tree_saved" translatable="false">mti umehifadhiwa</string> 
+    <string name="next" translatable="false">Inayofuata</string> 
+    <string name="back" translatable="false">Rudi nyuma</string> 
+    <!--Strings for the Login fragment-->
+    <string name="greenstand_welcome_text" translatable="false"><b>Greenstand Treetracker</b></string>
+    <string name="phone_text_hint" translatable="false">Namba ya simu</string> 
+    <string name="email_text_hint" translatable="false">au anuani ya barua pepe</string> 
+    <string name="login_button_title" translatable="false">INGIA</string> 
+    <string name="signup_button_titile" translatable="false">JISAJILI</string> 
+    <string name="first_name_hint" translatable="false">Jina la kwanza</string>
+    <string name="last_name_hint" translatable="false">Jina la ukoo</string> 
+    <string name="organization_text_hint" translatable="false">Taasisi (hiyari)</string> 
+    <string name="email_placeholder">Barua pepe</string> 
+    <string name="phone_placeholder">Simu</string> 
+    <string name="name_placeholder">Jina</string> 
+    <string name="storagePermissQuestion" translatable="false">Ruhusu <b>Treetracker</b> kuingia kwenye hifadhi yako?</string> 
+    <string name="locationPermissionQuestion" translatable="false">Ruhusu <b>Treetracker</b> kupata pahala ulipo?</string> 
+    <string name="cameraPermissionQuestion" translatable="false">Ruhusu <b>Treetracker</b> kuwezesha kamera yako?</string>
+    <string name="storage_permission_title" translatable="false"><b>Ruhusa ya hifadhi</b></string> 
+    <string name="location_permission_title" translatable="false"><b>Ruhusa ya pahala</b></string> 
+    <string name="camera_permission_title" translatable="false"><b>Ruhusa ya kamera</b></string> 
+    <string name="focus_warning">Tumegundua picha yako haiko sawa. \n Tadadhali bonyeza rudi nyuma na piga picha upya kama inahitajika.</string>
+    <string name="organization_pre_fill" translatable="false">""</string>
+    <string name="syncing" translatable="false">Inatuma na kupokea....</string> 
+    <string name="uploading_trees" translatable="false">Inatuma miti</string>
+    <string name="admin_password" translatable="false">Nenosiri la msimamizi</string> 
+    <string name="config_parameters" translatable="false">Mipangilio</string> 
+    <string name="location_data_config" translatable="false">Mipangilio ya taarifa za pahala</string> 
+    <string name="min_time_btwn_updates" translatable="false">Muda kati ya update</string> 
+    <string name="min_distance_between_updates" translatable="false">Umbali kati ya sasisha</string> 
+    <string name="convergence_timeout" translatable="false">Inashindwa kupata tarifa za pahala</string> 
+    <string name="convergence_timeout_hint" translatable="false">Convergence Timeout in milliseconds</string>
+    <string name="convergence_data_size" translatable="false">Ukubwa wa kifurushi cha taarifa</string> 
+    <string name="convergence_data_size_hint" translatable="false">Ukubwa wa kifurushi cha taarifa kinachohitajika</string> 
+    <string name="lon_std_dev_threshold" translatable="false">Longitude Standard Dev Threshold</string> 
+    <string name="lat_std_dev_threshold" translatable="false">Latitude Standard Dev Threshold</string>
+    <string name="add_note_to_tree">Ongeza taarifa ya mti</string> 
+    <string name="note">TAARIFA</string> 
 
-    <string name="password">Nenosiri</string>
-    <string name="organization">Shirika</string>
-
-
-    <string name="sync_failed">Shida ya mtandao, jaribu tena</string>
-
-    <string name="enable_location_access">Wezesha upatikanaji wa eneo</string>
-
-    <string name="location_permission_alert_title">Ruhusu TreeTracker kufikia eneo?</string>
-    <string name="location_permission_alert_message">Tafadhali fungua Mipangilio na ufungua ruhusa ya eneo kwa
-        TreeTracker
-    </string>
-
-    <string name="add_tree">Ongeza mti</string>
-    <string name="tree">mti</string>
-
-    <string name="you_must_enable_location_access_in_your_settings_in_order_to_continue">Lazima uwezesha mipangilio ya
-        upatikanaji wa eneo ili uendelee!
-    </string>
-
-    <!-- Signup Screen -->
-    <string name="email_placeholder">Barua pepe</string>
-    <string name="phone_placeholder">Simu</string>
-    <string name="name_placeholder">Jina</string>
-    <string name="viewLiveWebMap">Tazama ramani ya wavuti ya moja kwa moja!</string>
-
+    <!--Strings for the permission management and rationale--> 
+    <string name="accept_camera_permission_header">Kubali ruhusa kwa kamera </string> 
+    <string name="accept_camera_permission_message">Kamera inahitajika ili App iweze kupata picha za miti, Kubali ruhusa hii ili kupiga picha</string> 
+    <string name="accept_permission">Kubali ruhusa</string> 
+    <string name="accept_location_permission_header">Kubali ruhusa ya pahala</string> 
+    <string name="accept_location_permission_message">Taarifa za pahala zinahitajika ili App iweze kufuatilia miti, Kubali ruhusa hii ili kuwezesha ufuatiliaji wa miti</string> 
+    <string name="open_settings_header">Kubali ruhusa</string> 
+    <string name="open_settings_message">Umewahi kukataa ruhusa hii hapo awali hivyo unahitaji kukubali kwenye mpangilio wa App. Fungua mpangilio hapo chini ili kukubali ruhusa zinazohitajika.</string>
+<string name="open_settings">Fungua mpangilio</string> 
+    <string name="user_exists_header">Mtumiaji yupo tayari</string> 
+    <string name="user_exists_message">Fungua taarifa zako ili kuweza kuendelea na akaunti hii</string> 
+    <string name="poor_gps_message">GPS yako haina nguvu.\n Jaribu yafuatayo.\n 1. hakikisha kuwa hupo ndani ya jengo.\n 2. Elekea kwenye mpangilio Kisha Eneo Kisha modi ya vyanzo halafu bonyeza usahihi wa juu.\n 3. GPS inakuwa na nguvu anga linapokuwa wazi. Usipoona anga, GPS haina nguvu ya kutosha.</string>
+    <string name="poor_gps_header">Imeshindikana kufuatilia mti</string> 
+    <string name="upload">TUMA MITI</string> 
+    <string name="messages">UJUMBE</string> 
+    <string name="track">FUATILIA</string> 
+    <string name="viewLiveWebMap">Angalia ramani hai!</string> 
 </resources>
+
 

@@ -79,8 +79,9 @@ fun WalletSelectScreen(
                     ) {
                         scope.launch {
                             state.currentUser?.let { user ->
-                                viewModel.startSession()
-                                navController.navigate(NavRoute.TreeCapture.create(user.photoPath))
+                                navController.navigate(NavRoute.AddOrg.create(
+                                    state.currentUser!!.id,
+                                    state.selectedUser!!.wallet))
                             }
                         }
                     }

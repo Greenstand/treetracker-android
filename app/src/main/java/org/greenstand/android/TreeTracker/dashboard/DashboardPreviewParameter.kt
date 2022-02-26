@@ -1,8 +1,8 @@
 package org.greenstand.android.TreeTracker.dashboard
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 class DashboardPreviewParameter : PreviewParameterProvider<DashboardViewModel>, KoinComponent {
 
