@@ -1,11 +1,15 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import com.google.gson.annotations.SerializedName
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class UploadBundle
     constructor(
         @SerializedName("pack_format_version")
         val version: String,
+      
+        @SerializedName("device_id")
+        val deviceId: String = DeviceUtils.deviceId,
 
         // V1
         @SerializedName("trees")

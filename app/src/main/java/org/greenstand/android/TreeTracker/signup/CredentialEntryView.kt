@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.signup
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,11 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -31,27 +31,23 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.view.ActionBar
-import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
-import androidx.core.content.ContextCompat.startActivity
-
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.ui.platform.LocalContext
-import org.greenstand.android.TreeTracker.utilities.Constants
-import org.greenstand.android.TreeTracker.view.CustomDialog
+import org.greenstand.android.TreeTracker.view.UserButton
 
 
 @Composable
@@ -77,7 +73,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = (state.isEmailValid || state.isPhoneValid)
+                        isEnabled = state.isCredentialValid
                     ) {
                         viewModel.submitInfo()
                     }
@@ -172,7 +168,9 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                viewModel.submitInfo()
+                if(state.isCredentialValid) {
+                    viewModel.submitInfo()
+                }
             }
         ),
         onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
@@ -194,7 +192,9 @@ private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focus
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                viewModel.submitInfo()
+                if(state.isCredentialValid) {
+                    viewModel.submitInfo()
+                }
             }
         ),
         onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
