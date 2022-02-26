@@ -1,10 +1,11 @@
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -77,7 +79,8 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.name != null
+                        isEnabled = !state.firstName.isNullOrBlank() &&
+                                !state.lastName.isNullOrBlank()
                     ) {
                         cameraLauncher.launch(true)
                     }
@@ -85,17 +88,32 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
             )
         }
     ) {
-        Box(
-            contentAlignment = Alignment.TopCenter,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 120.dp)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.height(120.dp))
             BorderedTextField(
-                value = state.name ?: "",
+                value = state.firstName ?: "",
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> viewModel.updateName(updatedName) },
-                placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) },
+                onValueChange = { updatedName -> viewModel.updateFirstName(updatedName) },
+                placeholder = { Text(text = stringResource(id = R.string.first_name_hint), color = Color.White) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next,
+                    autoCorrect = false,
+                ),
+                keyboardActions = KeyboardActions(
+                    onGo = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                )
+            )
+            BorderedTextField(
+                value = state.lastName ?: "",
+                padding = PaddingValues(4.dp),
+                onValueChange = { updatedName -> viewModel.updateLastName(updatedName) },
+                placeholder = { Text(text = stringResource(id = R.string.last_name_hint), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Go,
@@ -103,12 +121,13 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        if (state.name != null) {
+                        if (!state.firstName.isNullOrBlank() && !state.lastName.isNullOrBlank()) {
                             cameraLauncher.launch(true)
                         }
                     }
                 )
             )
         }
+
     }
 }
