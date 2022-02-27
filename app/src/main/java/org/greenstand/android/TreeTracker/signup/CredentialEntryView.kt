@@ -96,8 +96,8 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                EmailCredentialButton(state, viewModel)
                 PhoneCredentialButton(state, viewModel)
+                EmailCredentialButton(state, viewModel)
             }
 
             when (state.credential) {

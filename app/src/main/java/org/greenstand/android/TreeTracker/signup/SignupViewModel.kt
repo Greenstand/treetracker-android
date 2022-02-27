@@ -22,7 +22,7 @@ data class SignUpState(
     val isCredentialValid: Boolean = false,
     val existingUser: User? = null,
     val canGoToNextScreen: Boolean = false,
-    val credential: Credential = Credential.Email(),
+    val credential: Credential = Credential.Phone(),
     val autofocusTextEnabled: Boolean = false,
     val isInternetAvailable: Boolean = false,
     val showSelfieTutorial: Boolean? = null,
