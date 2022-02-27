@@ -1,9 +1,12 @@
 package org.greenstand.android.TreeTracker.signup
 
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.Users
@@ -181,4 +184,9 @@ class SignupViewModel(
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
     }
+}
+
+@Composable
+fun getComposeViewModelOwner(): ViewModelStoreOwner {
+    return LocalViewModelStoreOwner.current!!
 }

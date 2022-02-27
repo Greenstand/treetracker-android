@@ -3,11 +3,17 @@ package org.greenstand.android.TreeTracker.signup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.koin.androidx.compose.getKoin
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.qualifier.named
 
 @Composable
-fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
+fun SignUpScreen() {
+   val scope = getKoin().getOrCreateScope("SIGN_UP_SCOPE", named("SIGN_UP"))
+   val viewModel = getViewModel<SignupViewModel>(
+      owner = getComposeViewModelOwner(),
+      scope = scope
+   )
    val state by viewModel.state.observeAsState(SignUpState())
 
    if (state.isCredentialView) {

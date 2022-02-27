@@ -25,14 +25,21 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.signup.SignUpState
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
+import org.greenstand.android.TreeTracker.signup.getComposeViewModelOwner
 import org.greenstand.android.TreeTracker.view.*
+import org.koin.androidx.compose.getKoin
 import org.koin.androidx.compose.getViewModel
+import org.koin.core.qualifier.named
 
 @Composable
 fun SelfieScreen() {
     val navController = LocalNavHostController.current
     val cameraControl = remember { CameraControl() }
-    val viewModel = getViewModel<SignupViewModel>()
+    val scope = getKoin().getOrCreateScope("SIGN_UP_SCOPE", named("SIGN_UP"));
+    val viewModel = getViewModel<SignupViewModel>(
+        owner = getComposeViewModelOwner(),
+        scope = scope
+    )
     val state by viewModel.state.observeAsState(SignUpState())
 
     Scaffold(

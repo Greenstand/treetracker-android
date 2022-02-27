@@ -29,6 +29,7 @@ fun Host() {
                 NavRoute.AddOrg,
                 NavRoute.TreeImageReview,
                 NavRoute.Selfie,
+                NavRoute.ImageReview,
                 NavRoute.TreeCapture,
                 NavRoute.MessagesUserSelect,
             ).forEach { addNavRoute(it) }

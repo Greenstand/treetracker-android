@@ -36,26 +36,6 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
-    val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { photoPath ->
-        scope.launch {
-            viewModel.createUser(photoPath)?.let { user ->
-                if (user.isPowerUser) {
-                    // In initial signup flow, clear stack and go to dashboard
-                    navController.navigate(NavRoute.Dashboard.route) {
-                        popUpTo(NavRoute.Language.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                } else {
-                    // In tracking flow, clear login stack and go to wallet selection flow
-                    navController.navigate(NavRoute.WalletSelect.create(user.id)) {
-                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }
-    }
-
     Scaffold(
         topBar = {
             ActionBar(
@@ -79,7 +59,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         isLeft = false,
                         isEnabled = state.name != null
                     ) {
-                        cameraLauncher.launch(true)
+                        navController.navigate(NavRoute.Selfie.route)
                     }
                 }
             )
@@ -104,7 +84,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 keyboardActions = KeyboardActions(
                     onGo = {
                         if (state.name != null) {
-                            cameraLauncher.launch(true)
+                            navController.navigate(NavRoute.Selfie.route)
                         }
                     }
                 )

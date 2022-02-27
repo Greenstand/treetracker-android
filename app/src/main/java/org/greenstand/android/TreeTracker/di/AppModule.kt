@@ -58,9 +58,14 @@ import org.greenstand.android.TreeTracker.viewmodels.SignupViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
+
+    scope(named("SIGN_UP")) {
+        viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
+    }
 
     viewModel { LoginViewModel(get()) }
 
@@ -79,8 +84,6 @@ val appModule = module {
     viewModel { OrgPickerViewModel(get()) }
 
     viewModel { UserSelectViewModel(get()) }
-
-    viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 
     viewModel { SplashScreenViewModel(get(), get(), get(), get(), get()) }
 
