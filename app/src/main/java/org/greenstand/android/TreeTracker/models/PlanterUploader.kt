@@ -122,6 +122,7 @@ class PlanterUploader(
         val walletRegistrations = usersToUpload
             .map { user ->
                 WalletRegistrationRequest(
+                    walletId = user.uuid,
                     wallet = user.wallet,
                     firstName = user.firstName,
                     lastName = user.lastName,

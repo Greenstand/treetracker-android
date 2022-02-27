@@ -14,6 +14,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 
 data class DashboardState(
     val treesSynced: Int = 0,
@@ -25,9 +26,13 @@ class DashboardViewModel(
     private val dao: TreeTrackerDAO,
     private val workManager: WorkManager,
     private val analytics: Analytics,
-    private val syncNotification: SyncNotificationManager,
     private val treesToSyncHelper: TreesToSyncHelper,
+    locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
+
+    init {
+        locationDataCapturer.stopGpsUpdates()
+    }
 
     private val _state = MutableLiveData<DashboardState>()
     val state: LiveData<DashboardState> = _state
