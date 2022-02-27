@@ -24,20 +24,6 @@ class UploadLocationDataUseCase(
         try {
             Timber.d("Processing tree location data")
             withContext(Dispatchers.IO) {
-                // Legacy
-                val legacyLocationEntities = dao.getTreeLocationData()
-                val legacyLocations = legacyLocationEntities.map {
-                    gson.fromJson(it.locationDataJson, LocationData::class.java)
-                }
-                val legacyTreeLocJsonArray = gson.toJson(mapOf("locations" to legacyLocations))
-                storageClient.uploadBundle(
-                    legacyTreeLocJsonArray,
-                    "loc_data_${legacyTreeLocJsonArray.md5()}"
-                )
-                dao.updateLegacyLocationDataUploadStatus(legacyLocationEntities.map { it.id }, true)
-                dao.purgeUploadedTreeLocations()
-                Timber.d("Completed uploading ${legacyLocationEntities.size} legacy GPS locations")
-
                 // V2
                 val locationEntities = dao.getLocationData()
                 val sessionIdToLocations = locationEntities.groupBy { it.sessionId }
