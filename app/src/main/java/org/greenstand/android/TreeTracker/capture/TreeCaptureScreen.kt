@@ -170,7 +170,7 @@ fun TreeCaptureScreen(
                 )
             },
             rightAction = {
-                if (FeatureFlags.DEBUG_ENABLED) {
+                if (FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
                     DepthButton(
                         modifier = Modifier
                             .size(height = 70.dp, width = 70.dp)
