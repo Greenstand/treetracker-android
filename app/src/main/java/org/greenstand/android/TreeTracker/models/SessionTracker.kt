@@ -31,7 +31,7 @@ class SessionTracker(
 
         withContext(Dispatchers.IO) {
             val location = locationUpdateManager.currentLocation
-            val time = location?.time ?: System.currentTimeMillis() / 1000
+            val time = location?.time ?: System.currentTimeMillis()
 
             val userEntity = dao.getUserById(userId) ?: throw IllegalStateException("Could not find user of id $userId")
 
