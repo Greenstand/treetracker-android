@@ -15,25 +15,30 @@ class DeviceConfigUploader(
 
     suspend fun upload() {
         val deviceConfigsToUpload = dao.getDeviceConfigsToUpload()
-        val deviceConfigRequests = deviceConfigsToUpload.map { config ->
-            DeviceConfigRequest(
-                id = config.uuid,
-                appVersion = config.appVersion,
-                appBuild = config.appBuild,
-                osVersion = config.osVersion,
-                sdkVersion = config.sdkVersion,
-                loggedAt = config.loggedAt,
+
+        if(deviceConfigsToUpload.isNotEmpty()) {
+            val deviceConfigRequests = deviceConfigsToUpload.map { config ->
+                DeviceConfigRequest(
+                    id = config.uuid,
+                    appVersion = config.appVersion,
+                    appBuild = config.appBuild,
+                    osVersion = config.osVersion,
+                    sdkVersion = config.sdkVersion,
+                    loggedAt = config.loggedAt,
+                )
+            }
+
+            val jsonBundle = gson.toJson(
+                UploadBundle.createV2(
+                    deviceConfigs = deviceConfigRequests
+                )
             )
+            val bundleId = jsonBundle.md5() + "_deviceConfigs"
+            val deviceConfigIds = deviceConfigsToUpload.map { it.id }
+
+            dao.updateDeviceConfigBundleIds(deviceConfigIds, bundleId)
+            objectStorageClient.uploadBundle(jsonBundle, bundleId)
+            dao.updateDeviceConfigUploadStatus(deviceConfigIds, true)
         }
-
-        val jsonBundle = gson.toJson(UploadBundle.createV2(
-            deviceConfigs = deviceConfigRequests
-        ))
-        val bundleId = jsonBundle.md5() + "_deviceConfigs"
-        val deviceConfigIds = deviceConfigsToUpload.map { it.id }
-
-        dao.updateDeviceConfigBundleIds(deviceConfigIds, bundleId)
-        objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        dao.updateDeviceConfigUploadStatus(deviceConfigIds, true)
     }
 }

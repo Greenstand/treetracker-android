@@ -21,7 +21,7 @@ class CreateLegacyTreeUseCase(
 
     override suspend fun execute(params: CreateLegacyTreeParams): Long = withContext(Dispatchers.IO) {
         val location = locationUpdateManager.currentLocation
-        val time = location?.time ?: System.currentTimeMillis() / 1000
+        val time = location?.time ?: System.currentTimeMillis()
         val timeInSeconds = time / 1000
 
 

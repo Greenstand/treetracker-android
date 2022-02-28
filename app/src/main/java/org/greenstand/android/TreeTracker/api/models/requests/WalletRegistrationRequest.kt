@@ -3,8 +3,8 @@ package org.greenstand.android.TreeTracker.api.models.requests
 import com.google.gson.annotations.SerializedName
 
 data class WalletRegistrationRequest(
-    @SerializedName("originating_wallet_registration_id")
-    val walletId: String,
+    @SerializedName("id")
+    val registrationId: String,
     @SerializedName("wallet")
     val wallet: String,
     @SerializedName("user_photo_url")

@@ -25,7 +25,7 @@ class DeviceConfigUpdater(
 
     private suspend fun saveNewDeviceConfig(): DeviceConfigEntity {
         val location = locationUpdateManager.currentLocation
-        val time = (location?.time ?: System.currentTimeMillis()) / 1000
+        val time = location?.time ?: System.currentTimeMillis()
 
         val deviceConfigEntity = DeviceConfigEntity(
             uuid = UUID.randomUUID().toString(),

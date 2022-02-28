@@ -19,6 +19,8 @@ import androidx.room.PrimaryKey
 data class SessionEntity(
     @ColumnInfo(name = "uuid")
     var uuid: String,
+    @ColumnInfo(name = "origin_user_id")
+    var originUserId: String,
     @ColumnInfo(name = "origin_wallet", index = true)
     var originWallet: String,
     @ColumnInfo(name = "destination_wallet")
