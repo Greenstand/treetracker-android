@@ -37,7 +37,7 @@ class SessionTracker(
 
             val sessionEntity = SessionEntity(
                 uuid = UUID.randomUUID().toString(),
-                originUserId=userEntity.uuid,
+                originUserId = userEntity.uuid,
                 originWallet = userEntity.wallet,
                 destinationWallet = destinationWallet,
                 startTime = time,

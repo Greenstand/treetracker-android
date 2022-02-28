@@ -7,18 +7,16 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Tree
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 
 class CreateTreeUseCase(
-    private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics,
+    private val timeProvider: TimeProvider,
 ) : UseCase<Tree, Long>() {
 
     override suspend fun execute(params: Tree): Long = withContext(Dispatchers.IO) {
-        val location = locationUpdateManager.currentLocation
-        val time = location?.time ?: System.currentTimeMillis()
-
         val entity = TreeEntity(
             uuid = params.treeUuid.toString(),
             sessionId = params.sessionId,
@@ -27,7 +25,7 @@ class CreateTreeUseCase(
             note = params.content,
             longitude = params.meanLongitude,
             latitude = params.meanLatitude,
-            createdAt = time,
+            createdAt = timeProvider.currentTime(),
             extraAttributes = params.treeCaptureAttributes(),
         )
 
