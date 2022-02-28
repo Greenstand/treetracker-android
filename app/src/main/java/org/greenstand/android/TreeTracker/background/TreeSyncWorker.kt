@@ -25,8 +25,8 @@ class TreeSyncWorker(
 
     override suspend fun doWork(): Result {
         setForeground(syncNotificationManager.createForegroundInfo(applicationContext, id))
-        syncDataBundleUseCase.execute(Unit)
-        return Result.success()
+        val result = syncDataBundleUseCase.execute(Unit)
+        return if (result) Result.success() else Result.failure()
     }
 
     companion object {

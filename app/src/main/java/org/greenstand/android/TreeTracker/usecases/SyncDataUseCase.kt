@@ -1,10 +1,7 @@
 package org.greenstand.android.TreeTracker.usecases
 
+import kotlinx.coroutines.*
 import kotlin.coroutines.coroutineContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
@@ -24,33 +21,39 @@ class SyncDataUseCase(
     private val TAG = "SyncDataUseCase"
 
     override suspend fun execute(params: Unit): Boolean {
-        withContext(Dispatchers.IO) {
+        try {
+            withContext(Dispatchers.IO) {
 
-            safeWork("Device Config Upload") {
-                deviceConfigUploader.upload()
+                executeIfContextActive("Device Config Upload") {
+                    deviceConfigUploader.upload()
+                }
+
+                executeIfContextActive("User Upload") {
+                    planterUploader.upload()
+                }
+
+                executeIfContextActive("Session Upload") {
+                    sessionUploader.upload()
+                }
+
+                treeUpload(
+                    onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
+                    onUpload = { treeUploader.uploadLegacyTrees(it) }
+                )
+
+                treeUpload(
+                    onGetTreeIds = { dao.getAllTreeIdsToUpload() },
+                    onUpload = { treeUploader.uploadTrees(it) }
+                )
+
+                executeIfContextActive("Location Upload") {
+                    uploadLocationDataUseCase.execute(Unit)
+                }
+
             }
-
-            safeWork("User Upload") {
-                planterUploader.upload()
-            }
-
-            safeWork("Session Upload") {
-                sessionUploader.upload()
-            }
-
-            treeUpload(
-                onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
-                onUpload = { treeUploader.uploadLegacyTrees(it) }
-            )
-
-            treeUpload(
-                onGetTreeIds = { dao.getAllTreeIdsToUpload() },
-                onUpload = { treeUploader.uploadTrees(it) }
-            )
-
-            safeWork("Location Upload") {
-                uploadLocationDataUseCase.execute(Unit)
-            }
+        } catch(e: Exception) {
+            Timber.e("Error occured during syncing data. ${e.localizedMessage}")
+            return false
         }
         return true
     }
@@ -61,7 +64,7 @@ class SyncDataUseCase(
     ) {
         var treeIds = onGetTreeIds()
         while (treeIds.isNotEmpty() && coroutineContext.isActive) {
-            safeWork("Tree Upload") {
+            executeIfContextActive("Tree Upload") {
                 onUpload(treeIds)
             }
             val remainingIds = onGetTreeIds()
@@ -77,7 +80,7 @@ class SyncDataUseCase(
         }
     }
 
-    private suspend fun safeWork(tag: String, action: suspend () -> Unit) {
+    private suspend fun executeIfContextActive(tag: String, action: suspend () -> Unit) {
         try {
             if (coroutineContext.isActive) {
                 action()
@@ -86,6 +89,7 @@ class SyncDataUseCase(
             }
         } catch (e: Exception) {
             Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            throw e
         }
     }
 }

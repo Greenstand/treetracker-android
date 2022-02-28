@@ -73,10 +73,17 @@ class DashboardViewModel(
 
                 _isSyncing = false
             }
-            State.CANCELLED,
-            State.FAILED -> {
+            State.CANCELLED -> {
+
                 if (_isSyncing != null) {
                     showSnackBar?.invoke(R.string.sync_stopped)
+                }
+
+                _isSyncing = false
+            }
+            State.FAILED -> {
+                if (_isSyncing != null) {
+                    showSnackBar?.invoke(R.string.sync_failed)
                 }
 
                 _isSyncing = false
@@ -146,7 +153,6 @@ class DashboardViewModel(
     private fun startDataSynchronization() {
         val request = OneTimeWorkRequestBuilder<TreeSyncWorker>()
             .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.SECONDS)
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .build()
 
         workManager.enqueueUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID, ExistingWorkPolicy.KEEP, request)
