@@ -220,6 +220,7 @@ fun BoxScope.LanguageButton() {
         languageViewModel.currentLanguage.observeAsState(Language).value.toString()
 
     DepthButton(
+        colors = AppButtonColors.ProgressGreen,
         modifier = Modifier
             .align(Alignment.Center)
             .size(width = 100.dp, 60.dp),
@@ -231,7 +232,7 @@ fun BoxScope.LanguageButton() {
             modifier = Modifier.align(Alignment.Center),
             text = language,
             fontWeight = FontWeight.Bold,
-            color = CustomTheme.textColors.primaryText,
+            color = CustomTheme.textColors.darkText,
             style = CustomTheme.typography.regular
         )
     }
