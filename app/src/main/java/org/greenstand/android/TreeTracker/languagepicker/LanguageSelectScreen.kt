@@ -26,6 +26,7 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
@@ -89,6 +90,7 @@ fun LanguageButton(
     onClick: () -> Unit,
 ) {
     DepthButton(
+        colors = AppButtonColors.ProgressGreen,
         onClick = onClick,
         isSelected = isSelected,
         modifier = Modifier
@@ -99,7 +101,7 @@ fun LanguageButton(
             modifier = Modifier.align(Alignment.Center),
             text = text,
             fontWeight = FontWeight.Bold,
-            color = CustomTheme.textColors.primaryText,
+            color = CustomTheme.textColors.darkText,
             style = CustomTheme.typography.regular
         )
     }
