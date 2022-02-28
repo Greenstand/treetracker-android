@@ -78,39 +78,43 @@ class PlanterUploader(
         Timber.tag(TAG)
             .d("Uploading Planter Info for ${planterInfoToUpload.size} planters")
 
-        val registrationRequests = planterInfoToUpload
-            .map { planterInfo ->
-                // Find the image this user first took during registration
-                // This image is the oldest image for PlanterCheckIn
-                val registrationPhotoUrl = dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
-                    .minByOrNull { it.createdAt }
-                    ?.photoUrl
-                    ?: ""
+        if(planterInfoToUpload.isNotEmpty()) {
+            val registrationRequests = planterInfoToUpload
+                .map { planterInfo ->
+                    // Find the image this user first took during registration
+                    // This image is the oldest image for PlanterCheckIn
+                    val registrationPhotoUrl =
+                        dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
+                            .minByOrNull { it.createdAt }
+                            ?.photoUrl
+                            ?: ""
 
-                RegistrationRequest(
-                    planterIdentifier = planterInfo.identifier,
-                    firstName = planterInfo.firstName,
-                    lastName = planterInfo.lastName,
-                    organization = planterInfo.organization,
-                    phone = planterInfo.phone,
-                    email = planterInfo.email,
-                    lat = planterInfo.latitude,
-                    lon = planterInfo.longitude,
-                    recordUuid = planterInfo.recordUuid,
-                    imageUrl = registrationPhotoUrl
-                )
-            }
+                    RegistrationRequest(
+                        planterIdentifier = planterInfo.identifier,
+                        firstName = planterInfo.firstName,
+                        lastName = planterInfo.lastName,
+                        organization = planterInfo.organization,
+                        phone = planterInfo.phone,
+                        email = planterInfo.email,
+                        lat = planterInfo.latitude,
+                        lon = planterInfo.longitude,
+                        recordUuid = planterInfo.recordUuid,
+                        imageUrl = registrationPhotoUrl
+                    )
+                }
 
-        val jsonBundle = gson.toJson(UploadBundle.createV1(registrations = registrationRequests))
-        val bundleId = jsonBundle.md5() + "_registrations"
-        val planterInfoIds = planterInfoToUpload.map { it.id }
+            val jsonBundle =
+                gson.toJson(UploadBundle.createV1(registrations = registrationRequests))
+            val bundleId = jsonBundle.md5() + "_registrations"
+            val planterInfoIds = planterInfoToUpload.map { it.id }
 
-        // Update the trees in DB with the bundleId
-        dao.updatePlanterInfoBundleIds(planterInfoIds, bundleId)
+            // Update the trees in DB with the bundleId
+            dao.updatePlanterInfoBundleIds(planterInfoIds, bundleId)
 
-        objectStorageClient.uploadBundle(jsonBundle, bundleId)
+            objectStorageClient.uploadBundle(jsonBundle, bundleId)
 
-        dao.updatePlanterInfoUploadStatus(planterInfoIds, true)
+            dao.updatePlanterInfoUploadStatus(planterInfoIds, true)
+        }
     }
 
     private suspend fun uploadUsers() {
@@ -119,32 +123,35 @@ class PlanterUploader(
         Timber.tag(TAG)
             .d("Uploading ${usersToUpload.size} users")
 
-        val walletRegistrations = usersToUpload
-            .map { user ->
-                WalletRegistrationRequest(
-                    walletId = user.uuid,
-                    wallet = user.wallet,
-                    firstName = user.firstName,
-                    lastName = user.lastName,
-                    phone = user.phone,
-                    email = user.email,
-                    lat = user.latitude,
-                    lon = user.longitude,
-                    imageUrl = user.photoUrl!!,
-                    createdAt = user.createdAt,
-                )
-            }
+        if(usersToUpload.isNotEmpty()) {
+            val walletRegistrations = usersToUpload
+                .map { user ->
+                    WalletRegistrationRequest(
+                        registrationId = user.uuid,
+                        wallet = user.wallet,
+                        firstName = user.firstName,
+                        lastName = user.lastName,
+                        phone = user.phone,
+                        email = user.email,
+                        lat = user.latitude,
+                        lon = user.longitude,
+                        imageUrl = user.photoUrl!!,
+                        createdAt = user.createdAt,
+                    )
+                }
 
-        val jsonBundle = gson.toJson(UploadBundle.createV2(walletRegistration = walletRegistrations))
-        val bundleId = jsonBundle.md5() + "_registrations"
-        val userIds = usersToUpload.map { it.id }
+            val jsonBundle =
+                gson.toJson(UploadBundle.createV2(walletRegistration = walletRegistrations))
+            val bundleId = jsonBundle.md5() + "_registrations"
+            val userIds = usersToUpload.map { it.id }
 
-        // Update the trees in DB with the bundleId
-        dao.updateUserBundleIds(userIds, bundleId)
+            // Update the trees in DB with the bundleId
+            dao.updateUserBundleIds(userIds, bundleId)
 
-        objectStorageClient.uploadBundle(jsonBundle, bundleId)
+            objectStorageClient.uploadBundle(jsonBundle, bundleId)
 
-        dao.updateUserUploadStatus(userIds, true)
+            dao.updateUserUploadStatus(userIds, true)
+        }
     }
 
     private suspend fun deleteLocalImagesThatWereUploaded() {

@@ -5,7 +5,10 @@ import com.google.gson.annotations.SerializedName
 data class SessionRequest(
     @SerializedName("id")
     val sessionId: String,
-    val wallet: String,
+    @SerializedName("originating_wallet_registration_id")
+    val originUserId: String,
+//    @SerializedName("origin_wallet")
+//    val wallet: String,
     @SerializedName("target_wallet")
     val targetWallet: String,
     val organization: String,

@@ -24,5 +24,5 @@ class TreeCaptureRequest(
     @SerializedName("rotation_matrix")
     val rotationMatrix: String?,
     @SerializedName("extra_attributes")
-    val extraAttributes: String,
+    val extraAttributes: String?,
 )

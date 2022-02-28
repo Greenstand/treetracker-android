@@ -20,7 +20,8 @@ class SessionUploader(
         val sessionRequests = sessionsToUpload.map { session ->
             SessionRequest(
                 sessionId = session.uuid,
-                wallet = session.originWallet,
+//                wallet = session.originWallet,
+                originUserId = session.originUserId,
                 targetWallet = session.destinationWallet,
                 organization = session.organization ?: "",
                 deviceConfigId = dao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "96c2d24842e1c9ad5af4445f300a637e",
+    "identityHash": "f9a135e8da0264f8328b579a0eafb34d",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -430,11 +430,17 @@
       },
       {
         "tableName": "session",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`device_config_id`) REFERENCES `device_config`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_user_id` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`device_config_id`) REFERENCES `device_config`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
             "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "originUserId",
+            "columnName": "origin_user_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -915,7 +921,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '96c2d24842e1c9ad5af4445f300a637e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f9a135e8da0264f8328b579a0eafb34d')"
     ]
   }
 }
