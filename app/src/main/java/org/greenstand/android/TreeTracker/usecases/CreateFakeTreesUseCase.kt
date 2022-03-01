@@ -10,6 +10,7 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import java.util.*
 
 data class CreateFakeTreesParams(val amount: Int)
@@ -21,6 +22,7 @@ class CreateFakeTreesUseCase(
     private val dao: TreeTrackerDAO,
     private val locationUpdateManager: LocationUpdateManager,
     private val createLegacyTreeUseCase: CreateLegacyTreeUseCase,
+    private val timeProvider: TimeProvider,
 ) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
@@ -101,7 +103,7 @@ class CreateFakeTreesUseCase(
     ): PlanterInfoEntity {
         return withContext(Dispatchers.IO) {
             val location = locationUpdateManager.currentLocation
-            val time = location?.time ?: System.currentTimeMillis()
+            val time = timeProvider.currentTime()
 
             val entity = PlanterInfoEntity(
                 identifier = identifier + time,
@@ -126,7 +128,7 @@ class CreateFakeTreesUseCase(
         planterInfoId: Long,
     ) {
         val location = locationUpdateManager.currentLocation
-        val time = location?.time ?: System.currentTimeMillis()
+        val time = timeProvider.currentTime()
 
         val planterCheckInEntity = PlanterCheckInEntity(
             planterInfoId = planterInfoId,

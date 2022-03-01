@@ -10,11 +10,13 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
 
 class Users(
     private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    private val timeProvider: TimeProvider,
 ) {
 
     fun users(): Flow<List<User>> {
@@ -51,7 +53,7 @@ class Users(
         return withContext(Dispatchers.IO) {
 
             val location = locationUpdateManager.currentLocation
-            val time = location?.time ?: System.currentTimeMillis()
+            val time = timeProvider.currentTime()
 
             val entity = UserEntity(
                 wallet = wallet,

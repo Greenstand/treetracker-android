@@ -7,8 +7,9 @@ data class SessionRequest(
     val sessionId: String,
     @SerializedName("originating_wallet_registration_id")
     val originUserId: String,
-//    @SerializedName("origin_wallet")
-//    val wallet: String,
+    // Disabled temporarily
+    //    @SerializedName("origin_wallet")
+    //    val wallet: String,
     @SerializedName("target_wallet")
     val targetWallet: String,
     val organization: String,
