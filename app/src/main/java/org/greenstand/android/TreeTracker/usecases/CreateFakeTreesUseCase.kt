@@ -31,7 +31,7 @@ class CreateFakeTreesUseCase(
             val file = ImageUtils.createTestImageFile(context)
 
             val tree = Tree(
-                sessionId = sessionTracker.currentSessionId,
+                sessionId = sessionTracker.currentSessionId!!,
                 photoPath = file.absolutePath,
                 content = "My Note",
                 treeUuid = UUID.randomUUID(),
@@ -147,7 +147,7 @@ class CreateFakeTreesUseCase(
             CreateLegacyTreeParams(
                 planterInfoId,
                 Tree(
-                    sessionId = sessionTracker.currentSessionId,
+                    sessionId = sessionTracker.currentSessionId!!,
                     photoPath = ImageUtils.createTestImageFile(context).absolutePath,
                     content = "My Legacy Note",
                     treeUuid = UUID.randomUUID(),

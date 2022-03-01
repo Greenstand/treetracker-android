@@ -85,25 +85,28 @@ class LocationDataCapturer(
                 }
             }
 
-            MainScope().launch(Dispatchers.IO) {
-                val locationData =
-                    LocationData(
-                        userManager.planterCheckinId,
-                        latitude,
-                        longitude,
-                        accuracy,
-                        generatedTreeUuid?.toString(),
-                        convergenceStatus,
-                        System.currentTimeMillis()
-                    )
-                val jsonValue = gson.toJson(locationData)
-                Timber.d("Inserting new location data $jsonValue")
-                treeTrackerDAO.insertLocationData(
-                    LocationEntity(
-                        locationDataJson = jsonValue,
-                        sessionId = sessionTracker.currentSessionId,
-                    )
-                )
+            sessionTracker.currentSessionId?.let { currentSessionId ->
+
+                MainScope().launch(Dispatchers.IO) {
+                    val locationData =
+                        LocationData(
+                            userManager.planterCheckinId,
+                            latitude,
+                            longitude,
+                            accuracy,
+                            generatedTreeUuid?.toString(),
+                            convergenceStatus,
+                            System.currentTimeMillis()
+                        )
+                    val jsonValue = gson.toJson(locationData)
+                    Timber.d("Inserting new location data $jsonValue")
+                        treeTrackerDAO.insertLocationData(
+                            LocationEntity(
+                                locationDataJson = jsonValue,
+                                sessionId = currentSessionId,
+                            )
+                        )
+                }
             }
         }
     }

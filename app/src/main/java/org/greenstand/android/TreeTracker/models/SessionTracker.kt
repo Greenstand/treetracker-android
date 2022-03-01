@@ -23,8 +23,8 @@ class SessionTracker(
 ) {
 
     private var _currentSessionId: Long? = null
-    val currentSessionId: Long
-        get() = _currentSessionId ?: throw IllegalStateException("Session ID cannot be null when accessed")
+    val currentSessionId: Long?
+        get() = _currentSessionId //?: throw IllegalStateException("Session ID cannot be null when accessed")
 
     suspend fun startSession(userId: Long, destinationWallet: String, organization: String) {
         endSession()
