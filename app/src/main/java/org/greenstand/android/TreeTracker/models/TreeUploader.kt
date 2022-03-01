@@ -158,7 +158,7 @@ class TreeUploader(
         val jsonBundle = gson.toJson(UploadBundle.createV2(treeCaptures = treeRequestList))
 
         // Create a hash ID to reference this upload bundle later
-        val bundleId = jsonBundle.md5()
+        val bundleId = "${jsonBundle.md5()}_captures"
 
         // Update the trees in DB with the bundleId
         dao.updateTreesBundleIds(trees.map { it.id }, bundleId)

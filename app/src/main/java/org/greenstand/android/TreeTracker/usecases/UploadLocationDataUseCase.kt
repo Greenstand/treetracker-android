@@ -54,7 +54,7 @@ class UploadLocationDataUseCase(
                 ))
                 storageClient.uploadBundle(
                     dataBundle,
-                    "loc_data_${dataBundle.md5()}"
+                    "${dataBundle.md5()}_tracks"
                 )
 
                 dao.updateLocationDataUploadStatus(locationEntities.map { it.id }, true)
