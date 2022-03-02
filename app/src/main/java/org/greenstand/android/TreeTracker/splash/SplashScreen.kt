@@ -43,10 +43,12 @@ fun SplashScreen(
 
                     delay(1000)
 
-                    if (viewModel.isInitialSetupRequired())
+                    if (viewModel.isInitialSetupRequired()) {
+                        viewModel.startGPSUpdatesForSignup()
                         navigateToLanguageScreen(navController)
-                    else
+                    } else {
                         navigateToDashboardScreen(navController)
+                    }
                 }
             }
         }

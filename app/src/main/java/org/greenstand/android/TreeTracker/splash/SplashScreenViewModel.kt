@@ -7,6 +7,7 @@ import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 
 class SplashScreenViewModel(
@@ -15,6 +16,7 @@ class SplashScreenViewModel(
     private val treesToSyncHelper: TreesToSyncHelper,
     private val sessionTracker: SessionTracker,
     private val deviceConfigUpdater: DeviceConfigUpdater,
+    private val locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
     suspend fun bootstrap() {
@@ -32,4 +34,8 @@ class SplashScreenViewModel(
     }
 
     suspend fun isInitialSetupRequired(): Boolean = users.getPowerUser() == null
+
+    fun startGPSUpdatesForSignup() {
+        locationDataCapturer.startGpsUpdates()
+    }
 }
