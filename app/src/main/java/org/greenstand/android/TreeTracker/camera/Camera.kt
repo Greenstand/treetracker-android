@@ -2,20 +2,19 @@ package org.greenstand.android.TreeTracker.camera
 
 import android.util.DisplayMetrics
 import android.util.Size
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import timber.log.Timber
 import java.io.File
@@ -87,6 +86,7 @@ fun Camera(
                             object : ImageCapture.OnImageSavedCallback {
                                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                                     ImageUtils.resizeImage(file.absolutePath, isSelfieMode)
+                                    ImageUtils.orientImage(file.absolutePath)
                                     Timber.tag("CameraXApp")
                                         .d("Photo capture succeeded: ${file.absolutePath}")
                                     onImageCaptured(file)
