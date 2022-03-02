@@ -153,14 +153,6 @@ android {
             buildConfigField 'Boolean', 'ORG_LINK', "true"
         }
 
-        justdiggit {
-            dimension "version"
-            applicationIdSuffix ".justdiggit"
-            buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
-            buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
-            buildConfigField 'Boolean', 'TREE_DBH_FEATURE_ENABLED', "true"
-            buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "false"
-        }
     }
 
     useLibrary 'org.apache.http.legacy'
