@@ -193,8 +193,8 @@ fun DashboardScreen(
                     DashBoardButton(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(bottom = 40.dp)
-                            .fillMaxHeight()
+                            .padding(bottom = 30.dp, top = 5.dp)
+                            .fillMaxWidth(0.5f)
                             .aspectRatio(1f),
                         text = stringResource(R.string.upload),
                         colors = AppButtonColors.UploadOrange,
