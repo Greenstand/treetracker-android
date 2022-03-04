@@ -1,12 +1,14 @@
 package org.greenstand.android.TreeTracker.utilities
 
+import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 
 class TimeProvider(private val locationUpdateManager: LocationUpdateManager) {
 
-    fun currentTime(): Long {
+    fun currentTime(): Instant {
         val location = locationUpdateManager.currentLocation
-        return location?.time ?: System.currentTimeMillis()
+        val locationTime = location?.time?.let { Instant.fromEpochMilliseconds(it) }
+        return locationTime ?: Instant.fromEpochMilliseconds(System.currentTimeMillis())
     }
 
 }

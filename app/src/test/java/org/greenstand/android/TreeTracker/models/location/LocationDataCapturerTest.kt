@@ -18,6 +18,7 @@ import org.greenstand.android.TreeTracker.models.LocationDataConfig
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -38,6 +39,8 @@ class LocationDataCapturerTest {
 
     @MockK(relaxed = true)
     private lateinit var configuration: Configuration
+    @MockK(relaxed = true)
+    private lateinit var timeProvider: TimeProvider
     @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var preferences: Preferences
@@ -63,6 +66,7 @@ class LocationDataCapturerTest {
             configuration,
             GsonBuilder().serializeNulls().create(),
             sessionTracker,
+            timeProvider,
         )
     }
 
