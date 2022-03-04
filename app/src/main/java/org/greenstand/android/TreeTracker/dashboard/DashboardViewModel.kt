@@ -1,20 +1,29 @@
 package org.greenstand.android.TreeTracker.dashboard
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.work.*
-import androidx.work.WorkInfo.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.work.BackoffPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkInfo.State
 import androidx.work.WorkInfo.State.SUCCEEDED
-import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
-import kotlinx.coroutines.*
+import androidx.work.WorkManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
 
 data class DashboardState(
     val treesSynced: Int = 0,
@@ -136,8 +145,8 @@ class DashboardViewModel(
 
     private fun updateData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val syncedTreeCount = dao.getUploadedTreeImageCount() + dao.getUploadedTreeCount()
-            val notSyncedTreeCount = dao.getNonUploadedTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
+            val syncedTreeCount = dao.getUploadedLegacyTreeImageCount() + dao.getUploadedTreeImageCount()
+            val notSyncedTreeCount = dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
             val totalTreesToSync = treesToSyncHelper.getTreeCountToSync()
 
             withContext(Dispatchers.Main) {
