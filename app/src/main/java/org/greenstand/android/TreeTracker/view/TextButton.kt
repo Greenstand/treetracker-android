@@ -7,7 +7,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
 import androidx.compose.material.AlertDialog
@@ -33,7 +32,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -65,9 +63,30 @@ fun BoxScope.ArrowButton(
         Image(
             modifier = Modifier
                 .size(height = 45.dp, width = 45.dp),
-            painter = if (isLeft) painterResource(id = R.drawable.arrow_left_green) else painterResource(id = R.drawable.arrow_right_green),
+            painter = getPainter(colors = colors, isLeft = isLeft),
             contentDescription = null,
         )
+    }
+}
+
+@Composable
+fun getPainter(colors: ButtonColors, isLeft: Boolean): Painter {
+    val painter: Painter
+    return when (colors) {
+        AppButtonColors.MessagePurple -> {
+            painter =
+                if (isLeft) painterResource(id = R.drawable.arrow_backward_pink) else painterResource(
+                    id = R.drawable.arrow_forward_pink
+                )
+            painter
+        }
+        else -> {
+            painter =
+                if (isLeft) painterResource(id = R.drawable.arrow_left_green) else painterResource(
+                    id = R.drawable.arrow_right_green
+                )
+            painter
+        }
     }
 }
 
