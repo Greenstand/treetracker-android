@@ -84,7 +84,7 @@ class SignupViewModel(
         _state.value = _state.value?.copy(
             email = email,
             phone = null,
-            isCredentialValid = Validation.isEmailValid(email)
+            isCredentialValid = email.contains('@')
         )
     }
 
