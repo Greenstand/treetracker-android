@@ -55,7 +55,7 @@ fun SelectableImageDetail(
                 width = 1.dp, brush = Brush.verticalGradient(
                     colors = listOf(
                         AppColors.Gray,
-                        AppColors.Green
+                        selectedColor
                     )
                 ),
                 shape = RoundedCornerShape(10.dp)

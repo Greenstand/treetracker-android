@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.NavRoute
@@ -32,6 +33,7 @@ fun UserSelect(
     navigationButtonColors: DepthButtonColors,
     isCreateUserEnabled: Boolean,
     isNotificationEnabled: Boolean,
+    selectedColor: Color = AppColors.Green,
     onNextRoute: (User) -> String,
 ) {
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
@@ -85,8 +87,8 @@ fun UserSelect(
                 UserButton(
                     user = user,
                     isSelected = state.selectedUser?.id == user.id,
-                    AppButtonColors.Default,
-                    AppColors.Green
+                    buttonColors = AppButtonColors.Default,
+                    selectedColor = selectedColor
                 ) { viewModel.selectUser(user) }
             }
         }

@@ -18,6 +18,9 @@ object AppColors {
     val Purple = Color(0XFFC614A7)
     val PurpleShadow = Color(0XFF7C0868)
 
+    val PurpleDisabled = Color(0XFF5E0753)
+    val PurpleShadowDisabled = Color(0XFF33032D)
+
     val Red = Color(0XFFEA2525)
     val RedShadow = Color(0XFFA20000)
 
@@ -56,8 +59,8 @@ object AppButtonColors {
     val MessagePurple = DepthButtonColors(
         color = AppColors.Purple,
         shadowColor = AppColors.PurpleShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
+        disabledColor = AppColors.PurpleDisabled,
+        disabledShadowColor = AppColors.PurpleShadowDisabled
     )
 
     val UploadOrange = DepthButtonColors(
