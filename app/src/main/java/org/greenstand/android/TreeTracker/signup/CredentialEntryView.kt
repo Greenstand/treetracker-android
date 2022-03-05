@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -184,6 +185,7 @@ fun ViewWebMapText(isVisible: Boolean, onClick: () -> Unit) {
 
 @Composable
 private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester, snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+    val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.email ?: "",
         padding = PaddingValues(16.dp),
@@ -196,6 +198,7 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
         ),
         keyboardActions = KeyboardActions(
             onGo = {
+                focusManager.clearFocus()
                 if (state.isCredentialValid) {
                     viewModel.submitInfo()
                 } else {
@@ -215,6 +218,7 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
 
 @Composable
 private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester,snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+    val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.phone ?: "",
         padding = PaddingValues(16.dp),
@@ -226,6 +230,7 @@ private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focus
         ),
         keyboardActions = KeyboardActions(
             onGo = {
+                focusManager.clearFocus()
                 if (state.isCredentialValid) {
                     viewModel.submitInfo()
                 } else {
