@@ -79,6 +79,7 @@ fun Camera(
                             object : ImageCapture.OnImageSavedCallback {
                                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                                     ImageUtils.resizeImage(file.absolutePath, isSelfieMode)
+                                    ImageUtils.orientImage(file.absolutePath)
                                     Timber.tag("CameraXApp")
                                         .d("Photo capture succeeded: ${file.absolutePath}")
                                     onImageCaptured(file)
