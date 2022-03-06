@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "session",
@@ -26,9 +27,9 @@ data class SessionEntity(
     @ColumnInfo(name = "destination_wallet")
     var destinationWallet: String,
     @ColumnInfo(name = "start_time")
-    var startTime: Long,
+    var startTime: Instant,
     @ColumnInfo(name = "end_time")
-    var endTime: Long? = null,
+    var endTime: Instant? = null,
     @ColumnInfo(name = "organization")
     var organization: String?,
     @ColumnInfo(name = "uploaded")

@@ -7,7 +7,7 @@ data class TracksRequest(
 
 data class LocationRequest(
     val accuracy: Float,
-    val capturedAt: Long,
+    val capturedAt: String,
     val latitude: Double,
     val longitude: Double,
 )

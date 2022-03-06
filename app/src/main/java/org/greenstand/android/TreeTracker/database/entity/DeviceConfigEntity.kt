@@ -2,8 +2,8 @@ package org.greenstand.android.TreeTracker.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Instant
 
 @Entity(tableName = "device_config")
 data class DeviceConfigEntity(
@@ -18,7 +18,7 @@ data class DeviceConfigEntity(
     @ColumnInfo(name = "sdk_version")
     val sdkVersion: Int,
     @ColumnInfo(name = "logged_at")
-    val loggedAt: Long,
+    val loggedAt: Instant,
     @ColumnInfo(name = "uploaded")
     val isUploaded: Boolean = false,
     @ColumnInfo(name = "bundle_id")

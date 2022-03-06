@@ -140,7 +140,7 @@ class PlanterUploader(
                     lat = user.latitude,
                     lon = user.longitude,
                     imageUrl = user.photoUrl!!,
-                    createdAt = user.createdAt,
+                    createdAt = user.createdAt.toString(),
                 )
             }
 
