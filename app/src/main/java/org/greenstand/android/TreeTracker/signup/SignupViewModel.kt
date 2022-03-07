@@ -169,7 +169,7 @@ class SignupViewModel(
 
     private fun extractIdentifier(state: SignUpState): String {
         return when(state.credential) {
-            is Credential.Email -> state.email
+            is Credential.Email -> state.email?.lowercase()
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
     }
