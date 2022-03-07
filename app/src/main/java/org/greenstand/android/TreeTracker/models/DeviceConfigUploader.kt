@@ -27,7 +27,7 @@ class DeviceConfigUploader(
                 appBuild = config.appBuild,
                 osVersion = config.osVersion,
                 sdkVersion = config.sdkVersion,
-                loggedAt = config.loggedAt,
+                loggedAt = config.loggedAt.toString(),
             )
         }
 

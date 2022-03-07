@@ -21,8 +21,6 @@ import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.Planter
@@ -34,6 +32,8 @@ import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
@@ -126,6 +126,7 @@ val appModule = module {
             get(),
             get(),
             get(),
+            get(),
         )
     }
 
@@ -135,7 +136,7 @@ val appModule = module {
         ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
     }
 
-    single { SessionTracker(get(), get(), get(), get()) }
+    single { SessionTracker(get(), get(), get(), get(), get()) }
 
     single { StepCounter(get(), get()) }
 

@@ -24,7 +24,7 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 146
+        versionCode 150
         versionName "2.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -151,14 +151,6 @@ android {
             buildConfigField 'Boolean', 'ORG_LINK', "true"
         }
 
-        justdiggit {
-            dimension "version"
-            applicationIdSuffix ".justdiggit"
-            buildConfigField "Boolean", 'TREE_HEIGHT_FEATURE_ENABLED', "true"
-            buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "false"
-            buildConfigField 'Boolean', 'TREE_DBH_FEATURE_ENABLED', "true"
-            buildConfigField 'Boolean', 'AUTOMATIC_SIGN_OUT_FEATURE_ENABLED', "false"
-        }
     }
 
     useLibrary 'org.apache.http.legacy'
@@ -230,6 +222,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.3.2'
 
     //Database
     implementation 'androidx.room:room-runtime:2.4.0-beta01'

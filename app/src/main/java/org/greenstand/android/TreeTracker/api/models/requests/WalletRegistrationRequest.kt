@@ -22,5 +22,5 @@ data class WalletRegistrationRequest(
     @SerializedName("lon")
     val lon: Double,
     @SerializedName("registered_at")
-    val createdAt: Long,
+    val createdAt: String,
 )

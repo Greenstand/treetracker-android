@@ -118,6 +118,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 .fillMaxSize()
                 .padding(top = 100.dp)
         ) {
+            val navigateToWebPage: () -> Unit = {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(Constants.TREE_TRACKER_URL)
+                startActivity(context, intent, null)
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -130,12 +135,6 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
             when (state.credential) {
                 is Credential.Email -> EmailTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
                 is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
-            }
-
-            val navigateToWebPage: () -> Unit = {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(Constants.TREE_TRACKER_URL)
-                startActivity(context, intent, null)
             }
 
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
@@ -175,7 +174,7 @@ fun ViewWebMapText(isVisible: Boolean, onClick: () -> Unit) {
         Text(
             text = stringResource(id = R.string.viewLiveWebMap),
             Modifier
-                .padding(top = 200.dp)
+                .padding(top = 10.dp)
                 .clickable(onClick = onClick),
             color = Color.White,
             style = TextStyle(textDecoration = TextDecoration.Underline),

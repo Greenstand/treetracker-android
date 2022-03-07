@@ -5,7 +5,6 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
@@ -30,7 +29,7 @@ class CreateLegacyTreeUseCase(
             longitude = params.tree.meanLongitude,
             latitude = params.tree.meanLatitude,
             accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
-            createAt = timeProvider.currentTime() / 1000, // legacy bulk pack uses seconds, not milliseconds
+            createAt = timeProvider.currentTime().epochSeconds, // legacy bulk pack uses seconds, not milliseconds
         )
         val attributeEntitites = params.tree.treeCaptureAttributes().map {
             TreeAttributeEntity(it.key, it.value, -1)

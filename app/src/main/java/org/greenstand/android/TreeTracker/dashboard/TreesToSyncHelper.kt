@@ -11,7 +11,7 @@ class TreesToSyncHelper(
 ) {
 
     suspend fun refreshTreeCountToSync() {
-        val treesToSync = dao.getNonUploadedTreeCaptureCount() + dao.getNonUploadedTreeCount()
+        val treesToSync = dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
         preferences.edit().putInt(TREES_TO_SYNC_KEY, treesToSync).commit()
     }
 

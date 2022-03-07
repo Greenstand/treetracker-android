@@ -16,7 +16,7 @@ class TreeCaptureRequest(
     @SerializedName("image_url")
     val imageUrl: String,
     @SerializedName("captured_at")
-    val createdAt: Long,
+    val createdAt: String,
     @SerializedName("abs_step_count")
     val stepCount: Long?,
     @SerializedName("delta_step_count")
