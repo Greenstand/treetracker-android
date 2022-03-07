@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -31,10 +32,6 @@ enum class Accuracy {
     NONE
 }
 
-
-
-
-
 data class ConvergenceStats(
     val mean: Double,
     val variance: Double,
@@ -52,3 +49,9 @@ data class LocationData(
     val convergenceStatus: ConvergenceStatus?,
     val capturedAt: Long
 )
+
+fun hasGPSDevice(context: Context): Boolean {
+    val mgr = context.getSystemService(ComponentActivity.LOCATION_SERVICE) as LocationManager
+    val providers = mgr.allProviders
+    return providers.contains(LocationManager.GPS_PROVIDER)
+}
