@@ -4,13 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
-import java.util.Locale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import java.util.*
 
 enum class Language(val locale: Locale) {
     ENGLISH(Locale("en")),
@@ -31,7 +31,7 @@ enum class Language(val locale: Locale) {
 class LanguageSwitcher(private val prefs: Preferences) {
 
     fun applyCurrentLanguage(activity: Activity) {
-        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en") ?: "")
+        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, getSystemLevelLanguage()) ?: "")
         setLanguage(language, activity.resources)
     }
 
@@ -61,12 +61,19 @@ class LanguageSwitcher(private val prefs: Preferences) {
         )
     }
 
+    private fun getSystemLevelLanguage(): String {
+        return when(Locale.getDefault().language) {
+            "sw" -> "sw"
+            else -> "en"
+        }
+    }
+
     fun currentLanguage(): Language {
-        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, "en") ?: "")
+        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, getSystemLevelLanguage()) ?: "")
     }
 
     fun observeCurrentLanguage(): Flow<Language> {
-        return prefs.observeString(LANGUAGE_PREF_KEY, "en")
+        return prefs.observeString(LANGUAGE_PREF_KEY, getSystemLevelLanguage())
             .mapNotNull { langString -> langString?.let { Language.fromString(it) } }
     }
 

@@ -400,6 +400,60 @@ object ImageUtils {
 
     }
 
+    fun orientImage(photoPath: String) {
+        /* Get the size of the image */
+        val bmOptions = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+        BitmapFactory.decodeFile(photoPath, bmOptions)
+
+        val exif: ExifInterface = try {
+            ExifInterface(photoPath)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return
+        }
+
+        val orientationString = exif.getAttribute(ExifInterface.TAG_ORIENTATION)
+        val orientation = if (orientationString != null) {
+            Integer.parseInt(orientationString)
+        } else {
+            ExifInterface.ORIENTATION_NORMAL
+        }
+        val rotationAngle = when(orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270
+            ExifInterface.ORIENTATION_TRANSVERSE -> 270
+            else -> 0
+        }
+
+        val matrix = Matrix().apply {
+            setRotate(
+                rotationAngle.toFloat(),
+                bmOptions.outWidth.toFloat() / 2,
+                bmOptions.outHeight.toFloat() / 2)
+        }
+
+        val rotatedBitmap = Bitmap.createBitmap(
+            BitmapFactory.decodeFile(photoPath),
+            0,
+            0,
+            bmOptions.outWidth,
+            bmOptions.outHeight,
+            matrix,
+            true)
+
+        val compressionQuality = 70
+        val byteArrayBitmapStream = ByteArrayOutputStream()
+        rotatedBitmap.compress(
+            Bitmap.CompressFormat.JPEG, compressionQuality,
+            byteArrayBitmapStream
+        )
+        val fileOutputStream = FileOutputStream(photoPath)
+        byteArrayBitmapStream.writeTo(fileOutputStream)
+    }
+
     fun flip(src: Bitmap): Bitmap? {
         // create new matrix for transformation
         val matrix = Matrix()

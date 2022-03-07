@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "tree",
@@ -34,7 +35,7 @@ data class TreeEntity(
     @ColumnInfo(name = "uploaded", index = true)
     var uploaded: Boolean = false,
     @ColumnInfo(name = "created_at")
-    var createdAt: Long,
+    var createdAt: Instant,
     @ColumnInfo(name = "bundle_id", defaultValue = "NULL")
     var bundleId: String? = null,
     @ColumnInfo(name = "extra_attributes", defaultValue = "NULL")

@@ -106,7 +106,7 @@ class CreateFakeTreesUseCase(
             val time = timeProvider.currentTime()
 
             val entity = PlanterInfoEntity(
-                identifier = identifier + time,
+                identifier = identifier,
                 firstName = firstName,
                 lastName = lastName,
                 organization = organization,
@@ -114,7 +114,7 @@ class CreateFakeTreesUseCase(
                 email = email,
                 longitude = location?.longitude ?: 0.0,
                 latitude = location?.latitude ?: 0.0,
-                createdAt = time,
+                createdAt = time.toEpochMilliseconds(),
                 uploaded = false,
                 recordUuid = UUID.randomUUID().toString(),
             )
@@ -135,7 +135,7 @@ class CreateFakeTreesUseCase(
             localPhotoPath = ImageUtils.createTestImageFile(context).absolutePath,
             longitude = location?.longitude ?: 0.0,
             latitude = location?.latitude ?: 0.0,
-            createdAt = time,
+            createdAt = time.toEpochMilliseconds(),
             photoUrl = null
         )
 

@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.models
 
+
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -26,6 +27,7 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import timber.log.Timber
 
+
 enum class Accuracy {
     GOOD,
     BAD,
@@ -47,7 +49,7 @@ data class LocationData(
     val accuracy: Float,
     val treeUuid: String?,
     val convergenceStatus: ConvergenceStatus?,
-    val capturedAt: Long
+    val capturedAt: String
 )
 
 fun hasGPSDevice(context: Context): Boolean {

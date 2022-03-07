@@ -16,6 +16,7 @@ import org.greenstand.android.TreeTracker.models.ConvergenceStatus
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 import java.util.*
 
@@ -26,6 +27,7 @@ class LocationDataCapturer(
     private val configuration: Configuration,
     private val gson: Gson,
     private val sessionTracker: SessionTracker,
+    private val timeProvider: TimeProvider,
 ) {
     private var locationsDeque: Deque<Location> = LinkedList()
     var generatedTreeUuid: UUID? = null
@@ -96,7 +98,7 @@ class LocationDataCapturer(
                             accuracy,
                             generatedTreeUuid?.toString(),
                             convergenceStatus,
-                            System.currentTimeMillis()
+                            timeProvider.currentTime().toString(),
                         )
                     val jsonValue = gson.toJson(locationData)
                     Timber.d("Inserting new location data $jsonValue")
