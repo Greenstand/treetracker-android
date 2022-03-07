@@ -82,7 +82,7 @@ class SignupViewModel(
 
     fun updateEmail(email: String) {
         _state.value = _state.value?.copy(
-            email = email,
+            email = email.lowercase(),
             phone = null,
             isCredentialValid = email.contains('@')
         )
@@ -169,7 +169,7 @@ class SignupViewModel(
 
     private fun extractIdentifier(state: SignUpState): String {
         return when(state.credential) {
-            is Credential.Email -> state.email?.lowercase()
+            is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
     }
