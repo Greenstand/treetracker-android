@@ -424,6 +424,7 @@ object ImageUtils {
             ExifInterface.ORIENTATION_ROTATE_90 -> 90
             ExifInterface.ORIENTATION_ROTATE_180 -> 180
             ExifInterface.ORIENTATION_ROTATE_270 -> 270
+            ExifInterface.ORIENTATION_TRANSVERSE -> 270
             else -> 0
         }
 
