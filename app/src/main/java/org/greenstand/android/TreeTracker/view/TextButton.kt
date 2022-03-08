@@ -11,6 +11,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Text
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -236,6 +240,42 @@ fun BoxScope.LanguageButton() {
             style = CustomTheme.typography.regular
         )
     }
+}
+
+@Composable
+fun CustomSnackbar(
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = { },
+    backGroundColor: Color = AppColors.Green,
+) {
+    SnackbarHost(
+        hostState = snackbarHostState,
+        snackbar = { data ->
+            Snackbar(
+                backgroundColor = backGroundColor,
+                modifier = modifier.padding(16.dp),
+                content = {
+                    Text(
+                        text = data.message,
+                        style = CustomTheme.typography.regular,
+                        color = CustomTheme.textColors.darkText
+                    )
+                },
+                action = {
+                    data.actionLabel?.let { actionLabel ->
+                        TextButton(onClick = onDismiss) {
+                            Text(
+                                text = actionLabel,
+                                style = CustomTheme.typography.regular,
+                                color = CustomTheme.textColors.darkText
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    )
 }
 
 @Preview(widthDp = 100, heightDp = 100)

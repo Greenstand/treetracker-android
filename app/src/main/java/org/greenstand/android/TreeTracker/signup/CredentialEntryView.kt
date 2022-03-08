@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.signup
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
@@ -14,14 +15,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +37,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -40,21 +46,23 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
+import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.CustomDialog
+import org.greenstand.android.TreeTracker.view.CustomSnackbar
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.UserButton
-
-
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
     val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         topBar = {
@@ -73,9 +81,28 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.isCredentialValid
                     ) {
-                        viewModel.submitInfo()
+                        if (state.isCredentialValid) {
+                            viewModel.submitInfo()
+                        } else {
+                            when (state.credential) {
+                                is Credential.Email -> {
+                                    scope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = context.getString(R.string.email_validation_error)
+                                        )
+                                    }
+                                }
+                                is Credential.Phone -> {
+                                    scope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = context.getString(R.string.phone_validation_error)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
             )
@@ -106,11 +133,13 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
             }
 
             when (state.credential) {
-                is Credential.Email -> EmailTextField(state, viewModel, focusRequester)
-                is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester)
+                is Credential.Email -> EmailTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
+                is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
             }
 
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
+
+            CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
         }
     }
 }
@@ -154,7 +183,8 @@ fun ViewWebMapText(isVisible: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
+private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester, snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+    val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.email ?: "",
         padding = PaddingValues(16.dp),
@@ -167,8 +197,15 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                if(state.isCredentialValid) {
+                focusManager.clearFocus()
+                if (state.isCredentialValid) {
                     viewModel.submitInfo()
+                } else {
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = context.getString(R.string.email_validation_error)
+                        )
+                    }
                 }
             }
         ),
@@ -179,7 +216,8 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
 }
 
 @Composable
-private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester) {
+private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester,snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+    val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.phone ?: "",
         padding = PaddingValues(16.dp),
@@ -191,8 +229,15 @@ private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focus
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                if(state.isCredentialValid) {
+                focusManager.clearFocus()
+                if (state.isCredentialValid) {
                     viewModel.submitInfo()
+                } else {
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = context.getString(R.string.phone_validation_error)
+                        )
+                    }
                 }
             }
         ),
