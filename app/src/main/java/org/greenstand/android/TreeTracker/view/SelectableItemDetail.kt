@@ -124,7 +124,7 @@ fun UserButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.white_leaf),
+                painter = painterResource(id = R.drawable.white_leaf_1),
                 contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

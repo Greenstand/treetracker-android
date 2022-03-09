@@ -96,7 +96,7 @@ fun DashboardScreen(
                 modifier = Modifier.weight(.3f),
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
+                    painter = painterResource(id = R.drawable.yellow_leafs_placeholder_1),
                     contentDescription = "",
                     modifier = Modifier
                         .align(CenterVertically)

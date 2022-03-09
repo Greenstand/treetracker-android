@@ -4,18 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -46,7 +38,6 @@ import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
-import org.greenstand.android.TreeTracker.view.SelfieTutorial
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
 import org.greenstand.android.TreeTracker.view.UserImageButton
 import org.greenstand.android.TreeTracker.view.showLoadingSpinner
@@ -185,7 +176,7 @@ fun TreeCaptureScreen(
                         shape = DepthSurfaceShape.Circle
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
+                            painter = painterResource(id = R.drawable.yellow_leafs_placeholder_1),
                             contentDescription = null,
                             modifier = Modifier
                                 .align(Alignment.Center)
