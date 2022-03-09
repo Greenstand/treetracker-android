@@ -7,14 +7,22 @@ interface Message {
     val composedAt: String
 }
 
-data class TextMessage(
+data class DirectMessage(
+    override val id: String,
+    override val from: String,
+    override val to: String,
+    override val composedAt: String,
+    val parentMessageId: String?,
+    val body: String,
+) : Message
+
+data class AnnouncementMessage(
     override val id: String,
     override val from: String,
     override val to: String,
     override val composedAt: String,
     val subject: String,
-    val body: String,
-    val parentMessageId: String?,
+    val body: String?,
 ) : Message
 
 data class SurveyMessage(
@@ -23,7 +31,15 @@ data class SurveyMessage(
     override val to: String,
     override val composedAt: String,
     val questions: List<Question>,
-    val answers: List<String>,
+) : Message
+
+data class SurveyResponseMessage(
+    override val id: String,
+    override val from: String,
+    override val to: String,
+    override val composedAt: String,
+    val questions: List<Question>,
+    val responses: List<String>,
 ) : Message
 
 data class Question(

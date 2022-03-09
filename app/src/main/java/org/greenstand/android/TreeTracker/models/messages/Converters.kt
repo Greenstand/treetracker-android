@@ -1,34 +1,53 @@
 package org.greenstand.android.TreeTracker.models.messages
 
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QuestionResponse
+import timber.log.Timber
 
 fun QuestionResponse.toQuestion(): Question {
     return Question(
-        prompt = prompt ?: "NULL PROMPT",
-        choices = choices ?: emptyList()
+        prompt = prompt,
+        choices = choices
     )
 }
 
 fun MessageResponse.toMessage(): Message {
-    return when {
-        survey.questions.isNotEmpty() && survey.questions.first().choices.isNullOrEmpty() ->
+    return when(type) {
+        MessageType.MESSAGE ->
+            DirectMessage(
+                id = id,
+                from = from,
+                to = to,
+                composedAt = composedAt,
+                parentMessageId = parentMessageId,
+                body = checkNotNull(body) { Timber.e("Body cannot be null for DirectMessage.") },
+            )
+        MessageType.ANNOUNCE ->
+            AnnouncementMessage(
+                id = id,
+                from = from,
+                to = to,
+                composedAt = composedAt,
+                subject = checkNotNull(subject) { Timber.e("Subject cannot be null for AnnouncementMessage.") },
+                body = body,
+            )
+        MessageType.SURVEY ->
             return SurveyMessage(
                 id = id,
                 from = from,
                 to = to,
                 composedAt = composedAt,
-                questions = survey.questions.map { it.toQuestion() },
-                answers = survey.answers.filterNotNull()
+                questions = survey!!.questions.map { it.toQuestion() },
             )
-        else -> TextMessage(
-            id = id,
-            from = from,
-            to = to,
-            composedAt = composedAt,
-            subject = subject,
-            body = body,
-            parentMessageId = parentMessageId,
-        )
+        MessageType.SURVEY_RESPONSE ->
+            return SurveyResponseMessage(
+                id = id,
+                from = from,
+                to = to,
+                composedAt = composedAt,
+                questions = survey!!.questions.map { it.toQuestion() },
+                responses = surveyResponse!!,
+            )
     }
 }

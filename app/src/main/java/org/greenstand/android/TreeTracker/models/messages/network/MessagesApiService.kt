@@ -7,6 +7,6 @@ import retrofit2.http.Query
 interface MessagesApiService {
 
     @GET("messaging/message")
-    suspend fun getMessages(@Query("author_handle") wallet: String): MessagesResponse
+    suspend fun getMessages(@Query("handle") wallet: String): MessagesResponse
 
 }
