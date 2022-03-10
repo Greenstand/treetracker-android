@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.messages
 
 import androidx.compose.runtime.Composable
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.userselect.UserSelect
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -13,7 +14,7 @@ fun MessagesUserSelectScreen() {
         isNotificationEnabled = true,
         selectedColor = AppColors.Purple,
         onNextRoute = { user ->
-            TODO()
+            NavRoute.IndividualMessageList.create(user.id)
         }
     )
 }

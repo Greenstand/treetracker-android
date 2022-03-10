@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.models
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -14,6 +15,7 @@ import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
+import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
@@ -117,6 +119,21 @@ sealed class NavRoute {
             SelfieScreen()
         }
         override val route: String = "selfie"
+    }
+
+    object IndividualMessageList : NavRoute() {
+        @ExperimentalFoundationApi
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            IndividualMessageListScreen(getPlanterInfoId(it))
+        }
+        override val route: String = "message-list/{planterInfoId}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+
+        fun create(planterInfoId: Long) = "message-list/$planterInfoId"
     }
 
     object ImageReview : NavRoute() {
