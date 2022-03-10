@@ -30,3 +30,10 @@ data class Question(
     val prompt: String,
     val choices: List<String>,
 )
+
+data class GeneralMessageItem(
+    val id: String,
+    val details: String,
+    val MessageType: String,
+    //Message Type determines the icon and text that would be shown for that type of Individual Message Item
+    )
