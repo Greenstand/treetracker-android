@@ -47,6 +47,7 @@ fun IndividualMessageListScreen(
         viewModel.loadPlanter(planterInfoId)
     }
 
+
     Scaffold(
         topBar = {
             ActionBar(
