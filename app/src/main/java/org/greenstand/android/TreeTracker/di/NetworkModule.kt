@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 
 val networkModule = module {
 
-    single { RetrofitBuilder().create() }
+    single { RetrofitBuilder(get()).create() }
 
     single { get<Retrofit>().create(MessagesApiService::class.java) }
 

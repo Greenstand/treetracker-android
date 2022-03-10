@@ -35,6 +35,8 @@ import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -144,7 +146,12 @@ val appModule = module {
 
     single { Configuration(get(), get()) }
 
-    single { GsonBuilder().serializeNulls().create() }
+    single {
+        GsonBuilder()
+            .registerTypeAdapter(MessageType::class.java, MessageTypeDeserializer())
+            .serializeNulls()
+            .create()
+    }
 
     single { TreeTrackerViewModelFactory() }
 
