@@ -30,6 +30,7 @@ data class SurveyMessage(
     override val from: String,
     override val to: String,
     override val composedAt: String,
+    val title: String,
     val questions: List<Question>,
 ) : Message
 

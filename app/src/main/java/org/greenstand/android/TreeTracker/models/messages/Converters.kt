@@ -5,6 +5,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Mess
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QuestionResponse
 import timber.log.Timber
 
+
 fun QuestionResponse.toQuestion(): Question {
     return Question(
         prompt = prompt,
@@ -38,7 +39,8 @@ fun MessageResponse.toMessage(): Message {
                 from = from,
                 to = to,
                 composedAt = composedAt,
-                questions = survey!!.questions.map { it.toQuestion() },
+                title = survey!!.title,
+                questions = survey.questions.map { it.toQuestion() },
             )
         MessageType.SURVEY_RESPONSE ->
             return SurveyResponseMessage(
