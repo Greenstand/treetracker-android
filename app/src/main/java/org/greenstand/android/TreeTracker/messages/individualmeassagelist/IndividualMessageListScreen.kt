@@ -47,7 +47,6 @@ fun IndividualMessageListScreen(
         viewModel.loadPlanter(planterInfoId)
     }
 
-
     Scaffold(
         topBar = {
             ActionBar(
@@ -96,10 +95,10 @@ fun IndividualMessageListScreen(
             modifier = Modifier.padding(it), // Padding for bottom bar.
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {
-            items(5) {
+            items(state.messages) { message ->
                 IndividualMessageButton(
                     isSelected = true,
-                    painter = painterResource(id = R.drawable.message_icon),
+                    message = message,
                     isNotificationEnabled = true,
                     selectedColor = AppColors.Purple
                 ) {  }

@@ -24,10 +24,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
+import org.greenstand.android.TreeTracker.models.messages.DirectMessage
+import org.greenstand.android.TreeTracker.models.messages.Message
+import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 
@@ -36,6 +43,7 @@ fun SelectableImageDetail(
     photoPath: String? = null,
     isSelected: Boolean,
     painter: Painter? = null,
+    messageTypeText: String? = null,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
     onClick: () -> Unit,
@@ -79,6 +87,7 @@ fun SelectableImageDetail(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .aspectRatio(1.0f)
+                        .padding(bottom = 20.dp)
                         .clip(RoundedCornerShape(10.dp)),
                 )
             }
@@ -87,6 +96,15 @@ fun SelectableImageDetail(
                     modifier = Modifier.background(selectedColor),
                     painter = it,
                     contentDescription = null
+                )
+            }
+            messageTypeText?.let {
+                Text(
+                    text = it.uppercase(),
+                    color = CustomTheme.textColors.darkText,
+                    style = CustomTheme.typography.medium,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center
                 )
             }
             Column(
@@ -159,19 +177,22 @@ fun IndividualMessageButton(
     isSelected: Boolean,
     selectedColor: Color,
     isNotificationEnabled: Boolean,
-    painter: Painter? = null,
+    message: Message,
     onClick: () -> Unit
 ) {
+  val painter = if (message is SurveyMessage) painterResource(id = R.drawable.quiz_icon) else painterResource(id = R.drawable.individual_message_icon)
+    val messageTypeText = if (message is SurveyMessage) stringResource(R.string.quiz) else stringResource(R.string.message)
     SelectableImageDetail(
         painter = painter,
         isSelected = isSelected,
+        messageTypeText = messageTypeText,
         buttonColors = AppButtonColors.MessagePurple,
         selectedColor = selectedColor,
         onClick = onClick
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Hello Message",
+                text = getDescription(message = message),
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.small,
                 fontWeight = FontWeight.SemiBold,
@@ -187,6 +208,16 @@ fun IndividualMessageButton(
                     contentDescription = null
                 )
             }
+        }
+    }
+}
+fun getDescription(message: Message): String{
+    return when (message){
+        is SurveyMessage -> {
+            message.questions.count().toString()
+        }
+        else -> {
+           message.from
         }
     }
 }
