@@ -82,7 +82,7 @@ class SignupViewModel(
 
     fun updateEmail(email: String) {
         _state.value = _state.value?.copy(
-            email = email,
+            email = email.lowercase(),
             phone = null,
             isCredentialValid = email.contains('@')
         )
