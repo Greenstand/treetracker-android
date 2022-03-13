@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.models
 
 import com.google.gson.Gson
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
@@ -73,41 +74,52 @@ class TreeUploader(
 
     private suspend fun uploadLegacyTreeImages(trees: List<TreeCaptureEntity>) {
         log("Uploading tree images...")
-        trees
-            .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
-            .forEach { tree ->
-                val imageUrl = uploadImageUseCase.execute(
-                    UploadImageParams(
-                        imagePath = tree.localPhotoPath!!,
-                        lat = tree.latitude,
-                        long = tree.longitude
-                    )
-                ) ?: throw IllegalStateException("No imageUrl")
+        coroutineScope {
+            trees
+                .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
+                .map { tree ->
+                    async {
+                        val imageUrl = uploadImageUseCase.execute(
+                            UploadImageParams(
+                                imagePath = tree.localPhotoPath!!,
+                                lat = tree.latitude,
+                                long = tree.longitude
+                            )
+                        ) ?: throw IllegalStateException("No imageUrl")
 
-                // Update local tree data with image Url
-                tree.photoUrl = imageUrl
-                dao.updateTreeCapture(tree)
-            }
+                        // Update local tree data with image Url
+                        tree.photoUrl = imageUrl
+                        dao.updateTreeCapture(tree)
+                    }
+                }
+                .forEach { it.await()}
+        }
         log("Tree Image Upload Completed")
     }
 
     private suspend fun uploadTreeImages(trees: List<TreeEntity>) {
         log("Uploading tree images...")
-        trees
-            .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
-            .forEach { tree ->
-                val imageUrl = uploadImageUseCase.execute(
-                    UploadImageParams(
-                        imagePath = tree.photoPath!!,
-                        lat = tree.latitude,
-                        long = tree.longitude
-                    )
-                ) ?: throw IllegalStateException("No imageUrl")
+        coroutineScope {
+            trees
+                .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
+                .map { tree ->
+                    async {
+                        val imageUrl = uploadImageUseCase.execute(
+                            UploadImageParams(
+                                imagePath = tree.photoPath!!,
+                                lat = tree.latitude,
+                                long = tree.longitude
+                            )
+                        ) ?: throw IllegalStateException("No imageUrl")
 
-                // Update local tree data with image Url
-                tree.photoUrl = imageUrl
-                dao.updateTree(tree)
-            }
+                        // Update local tree data with image Url
+                        tree.photoUrl = imageUrl
+                        dao.updateTree(tree)
+                    }
+                }
+                .forEach { it.await() }
+        }
+
         log("Tree Image Upload Completed")
     }
 
