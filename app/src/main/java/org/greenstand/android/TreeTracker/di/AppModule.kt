@@ -22,7 +22,6 @@ import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.MessageSync
 import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.Planter
@@ -36,6 +35,7 @@ import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.messages.MessageUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
@@ -116,7 +116,9 @@ val appModule = module {
 
     single { androidContext().resources }
 
-    single { MessagesRepo(get(), get(), get(), get()) }
+    single { MessagesRepo(get(), get(), get(), get(), get()) }
+
+    factory { MessageUploader(get(), get(), get()) }
 
     single { LocationUpdateManager(get(), get(), get()) }
 
@@ -166,8 +168,6 @@ val appModule = module {
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
     factory { SessionUploader(get(), get(), get()) }
-
-    factory { MessageSync(get()) }
 
     factory { DeviceConfigUploader(get(), get(), get()) }
 

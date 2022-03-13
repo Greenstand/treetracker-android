@@ -1,48 +1,53 @@
-package org.greenstand.android.TreeTracker.models.messages
+package org.greenstand.android.TreeTracker.models.messages.database
 
+import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
+import org.greenstand.android.TreeTracker.models.messages.DirectMessage
+import org.greenstand.android.TreeTracker.models.messages.Message
+import org.greenstand.android.TreeTracker.models.messages.Question
+import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
+import org.greenstand.android.TreeTracker.models.messages.SurveyResponseMessage
 import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
 import org.greenstand.android.TreeTracker.models.messages.database.entities.QuestionEntity
 import org.greenstand.android.TreeTracker.models.messages.database.entities.SurveyEntity
-import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
+import org.greenstand.android.TreeTracker.models.messages.network.requests.MessageRequest
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 
 object DatabaseConverters {
 
-    fun createMessageResponseFromEntities(
+    fun createMessageRequestFromEntities(
         messageEntity: MessageEntity,
-        surveyEntity: SurveyEntity? = null,
-        questionEntities: List<QuestionEntity>? = null): MessageResponse? {
+        surveyEntity: SurveyEntity? = null): MessageRequest {
         return when(messageEntity.type) {
             MessageType.MESSAGE ->
-                MessageResponse(
+                MessageRequest(
                     id = messageEntity.id,
-                    type = messageEntity.type,
-                    from = messageEntity.from,
-                    to = messageEntity.to,
-                    subject = messageEntity.subject,
+                    type = "message",
+                    authorHandle = messageEntity.from,
+                    recipientHandle = messageEntity.to,
                     body = messageEntity.body,
                     composedAt = messageEntity.composedAt,
                     parentMessageId = messageEntity.parentMessageId,
-                    videoLink = messageEntity.videoLink,
                     surveyResponse = null,
-                    survey = null,
+                    surveyId = null,
                 )
             MessageType.SURVEY_RESPONSE ->
-                MessageResponse(
+                MessageRequest(
                     id = messageEntity.id,
-                    type = messageEntity.type,
-                    from = messageEntity.from,
-                    to = messageEntity.to,
-                    subject = messageEntity.subject,
+                    type = "survey_response",
+                    authorHandle = messageEntity.from,
+                    recipientHandle = messageEntity.to,
                     body = messageEntity.body,
                     composedAt = messageEntity.composedAt,
                     parentMessageId = messageEntity.parentMessageId,
-                    videoLink = messageEntity.videoLink,
-                    surveyResponse = null,
-                    survey = null,
+                    surveyResponse = messageEntity.surveyResponse,
+                    surveyId = surveyEntity!!.id,
                 )
             MessageType.ANNOUNCE,
-            MessageType.SURVEY -> null
+            MessageType.SURVEY ->
+                throw IllegalStateException(
+                    "Invalid message type ${messageEntity.type} is being created for upload"
+                )
+
         }
     }
 

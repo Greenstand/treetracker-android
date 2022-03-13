@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import com.google.gson.annotations.SerializedName
+import org.greenstand.android.TreeTracker.models.messages.network.requests.MessageRequest
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class UploadBundle
@@ -30,6 +31,8 @@ class UploadBundle
         val sessions: List<SessionRequest>? = null,
         @SerializedName("tracks")
         val tracks: List<TracksRequest>? = null,
+        @SerializedName("messages")
+        val messages: List<MessageRequest>? = null,
 ) {
 
     companion object {
@@ -51,6 +54,7 @@ class UploadBundle
             sessions: List<SessionRequest>? = null,
             tracks: List<TracksRequest>? = null,
             deviceConfigs: List<DeviceConfigRequest>? = null,
+            messages: List<MessageRequest>? = null,
         ): UploadBundle {
             return UploadBundle(
                 version = "2",
@@ -59,9 +63,8 @@ class UploadBundle
                 sessions = sessions,
                 tracks = tracks,
                 deviceConfig = deviceConfigs,
+                messages = messages,
             )
         }
     }
-
-
 }
