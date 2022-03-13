@@ -117,7 +117,7 @@ fun TreeCaptureReview() {
             verticalAlignment = CenterVertically
         ) {
             Text(
-                text = "Click on the button to add note.",
+                text = stringResource(R.string.tree_capture_review_text),
                 color = CustomTheme.textColors.primaryText,
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
