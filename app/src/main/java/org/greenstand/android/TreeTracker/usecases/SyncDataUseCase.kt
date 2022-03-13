@@ -1,13 +1,18 @@
 package org.greenstand.android.TreeTracker.usecases
 
-import kotlinx.coroutines.*
-import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.MessageSync
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import timber.log.Timber
+import kotlin.coroutines.coroutineContext
 
 class SyncDataUseCase(
     private val treeUploader: TreeUploader,
@@ -16,6 +21,7 @@ class SyncDataUseCase(
     private val planterUploader: PlanterUploader,
     private val sessionUploader: SessionUploader,
     private val deviceConfigUploader: DeviceConfigUploader,
+    private val messageSync: MessageSync,
 ) : UseCase<Unit, Boolean>() {
 
     private val TAG = "SyncDataUseCase"
@@ -23,6 +29,16 @@ class SyncDataUseCase(
     override suspend fun execute(params: Unit): Boolean {
         try {
             withContext(Dispatchers.IO) {
+
+                if (FeatureFlags.DEBUG_ENABLED) {
+                    executeIfContextActive("Message Fetch") {
+                        messageSync.fetchMessages()
+                    }
+
+                    executeIfContextActive("Message Upload") {
+                        messageSync.uploadMessages()
+                    }
+                }
 
                 executeIfContextActive("Device Config Upload") {
                     deviceConfigUploader.upload()

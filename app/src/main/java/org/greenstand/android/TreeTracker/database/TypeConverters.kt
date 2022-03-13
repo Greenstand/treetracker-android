@@ -2,8 +2,11 @@ package org.greenstand.android.TreeTracker.database
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant
+import java.lang.reflect.Type
+
 
 object Converters {
 
@@ -26,4 +29,15 @@ object Converters {
 
     @TypeConverter
     fun stringToInstance(s: String?): Instant? = s?.toInstant()
+
+    @TypeConverter
+    fun stringToArray(value: String?): List<String?>? {
+        val listType: Type = object : TypeToken<List<String?>?>() {}.type
+        return gson.fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun arrayToString(list: List<String?>?): String? {
+        return gson.toJson(list)
+    }
 }
