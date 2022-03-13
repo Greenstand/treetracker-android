@@ -7,6 +7,11 @@ import retrofit2.http.Query
 interface MessagesApiService {
 
     @GET("messaging/message")
-    suspend fun getMessages(@Query("author_handle") wallet: String): MessagesResponse
+    suspend fun getMessages(
+        @Query("handle") wallet: String,
+        @Query("since") lastSyncTime: String,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int = 10,
+    ): MessagesResponse
 
 }

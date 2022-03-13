@@ -21,6 +21,7 @@ import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.MessageSync
 import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.Planter
@@ -35,6 +36,8 @@ import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -110,7 +113,7 @@ val appModule = module {
 
     single { androidContext().resources }
 
-    single { MessagesRepo(get()) }
+    single { MessagesRepo(get(), get(), get(), get()) }
 
     single { LocationUpdateManager(get(), get(), get()) }
 
@@ -144,7 +147,12 @@ val appModule = module {
 
     single { Configuration(get(), get()) }
 
-    single { GsonBuilder().serializeNulls().create() }
+    single {
+        GsonBuilder()
+            .registerTypeAdapter(MessageType::class.java, MessageTypeDeserializer())
+            .serializeNulls()
+            .create()
+    }
 
     single { TreeTrackerViewModelFactory() }
 
@@ -155,6 +163,8 @@ val appModule = module {
     factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
     factory { SessionUploader(get(), get(), get()) }
+
+    factory { MessageSync(get()) }
 
     factory { DeviceConfigUploader(get(), get(), get()) }
 
@@ -178,5 +188,5 @@ val appModule = module {
 
     factory { TreeUploader(get(), get(), get(), get(), get()) }
 
-    factory { SyncDataUseCase(get(), get(), get(), get(), get(), get()) }
+    factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
 }
