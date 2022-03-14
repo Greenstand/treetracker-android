@@ -35,6 +35,7 @@ object AppColors {
     val MessageReceivedBackground = Color(0XFF303131)
 
     val MediumGray = Color(0xFF9E9E9E)
+    val DeepGray = Color(0xFF333333)
 }
 
 object AppButtonColors {
