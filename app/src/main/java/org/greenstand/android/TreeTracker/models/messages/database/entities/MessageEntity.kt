@@ -34,4 +34,6 @@ data class MessageEntity(
     val shouldUpload: Boolean,
     @ColumnInfo(name = "bundle_id")
     val bundleId: String?,
+    @ColumnInfo(name = "is_read")
+    val isRead: Boolean,
 )

@@ -82,7 +82,7 @@ val appModule = module {
 
     viewModel { WalletSelectViewModel(get()) }
 
-    viewModel { IndividualMessageListViewModel(get()) }
+    viewModel { IndividualMessageListViewModel(get(), get(), get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 

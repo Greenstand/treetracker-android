@@ -5,6 +5,7 @@ interface Message {
     val from: String
     val to: String
     val composedAt: String
+    val isRead: Boolean
 }
 
 data class DirectMessage(
@@ -12,6 +13,7 @@ data class DirectMessage(
     override val from: String,
     override val to: String,
     override val composedAt: String,
+    override val isRead: Boolean,
     val parentMessageId: String?,
     val body: String,
 ) : Message
@@ -21,6 +23,7 @@ data class AnnouncementMessage(
     override val from: String,
     override val to: String,
     override val composedAt: String,
+    override val isRead: Boolean,
     val subject: String,
     val body: String?,
 ) : Message
@@ -30,6 +33,7 @@ data class SurveyMessage(
     override val from: String,
     override val to: String,
     override val composedAt: String,
+    override val isRead: Boolean,
     val title: String,
     val questions: List<Question>,
 ) : Message
@@ -39,6 +43,7 @@ data class SurveyResponseMessage(
     override val from: String,
     override val to: String,
     override val composedAt: String,
+    override val isRead: Boolean,
     val questions: List<Question>,
     val responses: List<String>,
 ) : Message
@@ -47,10 +52,3 @@ data class Question(
     val prompt: String,
     val choices: List<String>,
 )
-
-data class GeneralMessageItem(
-    val id: String,
-    val details: String,
-    val MessageType: String,
-    //Message Type determines the icon and text that would be shown for that type of Individual Message Item
-    )

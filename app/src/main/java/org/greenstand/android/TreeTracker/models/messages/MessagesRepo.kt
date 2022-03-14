@@ -44,6 +44,7 @@ class MessagesRepo(
                 surveyResponse = null,
                 shouldUpload = true,
                 bundleId = null,
+                isRead = true
             )
         )
     }
@@ -106,6 +107,9 @@ class MessagesRepo(
             limit = query.limit,
         )
         query = result.query
+
+        if (query.total == 0) return
+
         result.messages.forEach { saveMessageResponse(wallet, it) }
         while (query.total >= query.limit + query.offset) {
             query = result.query.copy(offset = result.query.offset + result.query.limit)
@@ -124,6 +128,8 @@ class MessagesRepo(
     }
 
     private suspend fun saveMessageResponse(wallet: String, message: MessageResponse) {
+        if (message.type == MessageType.SURVEY_RESPONSE) return
+
         val messageEntity = with(message) {
             MessageEntity(
                 id = id,
@@ -139,12 +145,10 @@ class MessagesRepo(
                 surveyResponse = null,
                 shouldUpload = false,
                 bundleId = null,
+                isRead = false,
             )
         }
         messagesDao.insertMessage(messageEntity)
-        if (message.survey == null) {
-            Timber.tag("JONATHAN").d("Saved message")
-        }
 
         // If there is no survey, don't continue on
         message.survey ?: return
