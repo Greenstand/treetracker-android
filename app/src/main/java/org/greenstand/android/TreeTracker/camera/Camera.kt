@@ -48,7 +48,7 @@ fun Camera(
 
                     val imageCapture = if (isSelfieMode) {
                         ImageCapture.Builder()
-                            .setTargetResolution(screenSize)
+                            .setTargetResolution(Size(1000, 1000))
                             .build()
                     } else {
                         ImageCapture.Builder()
