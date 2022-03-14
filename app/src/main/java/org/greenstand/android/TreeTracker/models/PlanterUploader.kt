@@ -2,6 +2,8 @@ package org.greenstand.android.TreeTracker.models
 
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
@@ -37,39 +39,49 @@ class PlanterUploader(
     }
 
     private suspend fun uploadLegacyPlanterImages() {
-        dao.getPlanterCheckInsToUpload()
-            .filter { it.photoUrl == null && it.localPhotoPath != null }
-            .forEach { planterCheckIn ->
-                val imageUrl = uploadImageUseCase.execute(
-                    UploadImageParams(
-                        imagePath = planterCheckIn.localPhotoPath!!,
-                        lat = planterCheckIn.latitude,
-                        long = planterCheckIn.longitude
-                    )
-                )
-                imageUrl?.let {
-                    planterCheckIn.photoUrl = imageUrl
-                    dao.updatePlanterCheckIn(planterCheckIn)
+        coroutineScope {
+            dao.getPlanterCheckInsToUpload()
+                .filter { it.photoUrl == null && it.localPhotoPath != null }
+                .map {  planterCheckIn ->
+                    async {
+                        val imageUrl = uploadImageUseCase.execute(
+                            UploadImageParams(
+                                imagePath = planterCheckIn.localPhotoPath!!,
+                                lat = planterCheckIn.latitude,
+                                long = planterCheckIn.longitude
+                            )
+                        )
+                        imageUrl?.let {
+                            planterCheckIn.photoUrl = imageUrl
+                            dao.updatePlanterCheckIn(planterCheckIn)
+                        }
+                    }
                 }
-            }
+                .forEach { it.await() }
+        }
     }
 
     private suspend fun uploadUserImages() {
-        dao.getAllUsersToUpload()
-            .filter { it.photoUrl == null }
-            .forEach { user ->
-                val imageUrl = uploadImageUseCase.execute(
-                    UploadImageParams(
-                        imagePath = user.photoPath,
-                        lat = user.latitude,
-                        long = user.longitude
-                    )
-                )
-                imageUrl?.let {
-                    user.photoUrl = imageUrl
-                    dao.updateUser(user)
+        coroutineScope {
+            dao.getAllUsersToUpload()
+                .filter { it.photoUrl == null }
+                .map { user ->
+                    async {
+                        val imageUrl = uploadImageUseCase.execute(
+                            UploadImageParams(
+                                imagePath = user.photoPath,
+                                lat = user.latitude,
+                                long = user.longitude
+                            )
+                        )
+                        imageUrl?.let {
+                            user.photoUrl = imageUrl
+                            dao.updateUser(user)
+                        }
+                    }
                 }
-            }
+                .forEach { it.await() }
+        }
     }
 
     private suspend fun uploadPlanterInfo() {
