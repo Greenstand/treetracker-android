@@ -23,6 +23,7 @@ fun MessageResponse.toMessage(): Message {
                 composedAt = composedAt,
                 parentMessageId = parentMessageId,
                 body = checkNotNull(body) { Timber.e("Body cannot be null for DirectMessage.") },
+                isRead = false,
             )
         MessageType.ANNOUNCE ->
             AnnouncementMessage(
@@ -32,6 +33,7 @@ fun MessageResponse.toMessage(): Message {
                 composedAt = composedAt,
                 subject = checkNotNull(subject) { Timber.e("Subject cannot be null for AnnouncementMessage.") },
                 body = body,
+                isRead = false,
             )
         MessageType.SURVEY ->
             return SurveyMessage(
@@ -41,6 +43,7 @@ fun MessageResponse.toMessage(): Message {
                 composedAt = composedAt,
                 title = survey!!.title,
                 questions = survey.questions.map { it.toQuestion() },
+                isRead = false,
             )
         MessageType.SURVEY_RESPONSE ->
             return SurveyResponseMessage(
@@ -50,6 +53,7 @@ fun MessageResponse.toMessage(): Message {
                 composedAt = composedAt,
                 questions = survey!!.questions.map { it.toQuestion() },
                 responses = surveyResponse!!,
+                isRead = false,
             )
     }
 }

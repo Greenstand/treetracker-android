@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.view
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -24,17 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
-import org.greenstand.android.TreeTracker.models.messages.DirectMessage
-import org.greenstand.android.TreeTracker.models.messages.Message
-import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 
@@ -43,7 +35,6 @@ fun SelectableImageDetail(
     photoPath: String? = null,
     isSelected: Boolean,
     painter: Painter? = null,
-    messageTypeText: String? = null,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
     onClick: () -> Unit,
@@ -96,15 +87,6 @@ fun SelectableImageDetail(
                     modifier = Modifier.background(selectedColor),
                     painter = it,
                     contentDescription = null
-                )
-            }
-            messageTypeText?.let {
-                Text(
-                    text = it.uppercase(),
-                    color = CustomTheme.textColors.darkText,
-                    style = CustomTheme.typography.medium,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center
                 )
             }
             Column(
@@ -168,56 +150,6 @@ fun UserButton(
                 style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.SemiBold,
             )
-        }
-    }
-}
-
-@Composable
-fun IndividualMessageButton(
-    isSelected: Boolean,
-    selectedColor: Color,
-    isNotificationEnabled: Boolean,
-    message: Message,
-    onClick: () -> Unit
-) {
-  val painter = if (message is SurveyMessage) painterResource(id = R.drawable.quiz_icon) else painterResource(id = R.drawable.individual_message_icon)
-    val messageTypeText = if (message is SurveyMessage) stringResource(R.string.quiz) else stringResource(R.string.message)
-    SelectableImageDetail(
-        painter = painter,
-        isSelected = isSelected,
-        messageTypeText = messageTypeText,
-        buttonColors = AppButtonColors.MessagePurple,
-        selectedColor = selectedColor,
-        onClick = onClick
-    ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = getDescription(message = message),
-                color = CustomTheme.textColors.lightText,
-                style = CustomTheme.typography.small,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (isNotificationEnabled) {
-                Image(
-                    modifier = Modifier
-                        .size(33.dp)
-                        .align(Alignment.TopEnd),
-                    painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = null
-                )
-            }
-        }
-    }
-}
-fun getDescription(message: Message): String{
-    return when (message){
-        is SurveyMessage -> {
-            message.questions.count().toString()
-        }
-        else -> {
-           message.from
         }
     }
 }

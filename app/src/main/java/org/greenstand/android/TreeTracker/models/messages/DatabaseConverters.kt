@@ -60,6 +60,7 @@ object DatabaseConverters {
                     composedAt = messageEntity.composedAt,
                     parentMessageId = messageEntity.parentMessageId,
                     body = messageEntity.body ?: "",
+                    isRead = messageEntity.isRead,
                 )
             MessageType.ANNOUNCE ->
                 AnnouncementMessage(
@@ -69,6 +70,7 @@ object DatabaseConverters {
                     composedAt = messageEntity.composedAt,
                     subject = messageEntity.subject ?: "",
                     body = messageEntity.body ?: "",
+                    isRead = messageEntity.isRead,
                 )
             MessageType.SURVEY ->
                 SurveyMessage(
@@ -77,6 +79,7 @@ object DatabaseConverters {
                     to = messageEntity.from,
                     composedAt = messageEntity.composedAt,
                     title = surveyEntity!!.title,
+                    isRead = messageEntity.isRead,
                     questions = questionEntities?.map {
                         Question(
                             prompt = it.prompt,
@@ -91,6 +94,7 @@ object DatabaseConverters {
                     to = messageEntity.from,
                     composedAt = messageEntity.composedAt,
                     responses = messageEntity.surveyResponse ?: emptyList(),
+                    isRead = messageEntity.isRead,
                     questions = questionEntities?.map {
                         Question(
                             prompt = it.prompt,
