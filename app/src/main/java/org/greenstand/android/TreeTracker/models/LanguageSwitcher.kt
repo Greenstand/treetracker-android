@@ -69,11 +69,11 @@ class LanguageSwitcher(private val prefs: Preferences) {
     }
 
     fun currentLanguage(): Language {
-        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, getSystemLevelLanguage()) ?: "")
+        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
     }
 
     fun observeCurrentLanguage(): Flow<Language> {
-        return prefs.observeString(LANGUAGE_PREF_KEY, getSystemLevelLanguage())
+        return prefs.observeString(LANGUAGE_PREF_KEY)
             .mapNotNull { langString -> langString?.let { Language.fromString(it) } }
     }
 
