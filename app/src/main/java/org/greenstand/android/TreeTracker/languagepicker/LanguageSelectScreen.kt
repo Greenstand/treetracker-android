@@ -47,13 +47,18 @@ fun LanguageSelectScreen(
         bottomBar = {
             ActionBar(
                 rightAction = {
-                    ArrowButton(isLeft = false) {
+                    ArrowButton(
+                        isLeft = false,
+                        isEnabled = currentLanguage != null
+                    ) {
                         if (isFromTopBar) {
                             navController.popBackStack()
                         } else {
                             navController.navigate(NavRoute.SignupFlow.route)
                         }
                         viewModel.refreshAppLanguage(activity)
+
+
                     }
                 }
             )

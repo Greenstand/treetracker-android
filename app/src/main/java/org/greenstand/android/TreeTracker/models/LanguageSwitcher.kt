@@ -18,11 +18,11 @@ enum class Language(val locale: Locale) {
 
     companion object {
 
-        fun fromString(lang: String): Language {
-            return when (lang.toLowerCase()) {
+        fun fromString(lang: String): Language? {
+            return when (lang.lowercase()) {
                 "en" -> ENGLISH
                 "sw" -> SWAHILI
-                else -> ENGLISH
+                else -> null
             }
         }
     }
@@ -31,17 +31,21 @@ enum class Language(val locale: Locale) {
 class LanguageSwitcher(private val prefs: Preferences) {
 
     fun applyCurrentLanguage(activity: Activity) {
-        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY, getSystemLevelLanguage()) ?: "")
-        setLanguage(language, activity.resources)
+        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
+        language?.also{ language ->
+            setLanguage(language, activity.resources)
+        }
     }
 
     fun switch(activity: Activity) {
         val res = activity.resources
-        val newLanguage = when (currentLanguage()) {
-            Language.ENGLISH -> Language.SWAHILI
-            Language.SWAHILI -> Language.ENGLISH
+        currentLanguage()?.also{ language ->
+            val newLanguage = when (language) {
+                Language.ENGLISH -> Language.SWAHILI
+                Language.SWAHILI -> Language.ENGLISH
+            }
+            setLanguage(newLanguage, res)
         }
-        setLanguage(newLanguage, res)
 
         activity.finish()
         activity.startActivity(Intent(activity, TreeTrackerActivity::class.java))
@@ -68,8 +72,9 @@ class LanguageSwitcher(private val prefs: Preferences) {
         }
     }
 
-    fun currentLanguage(): Language {
-        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
+    fun currentLanguage(): Language? {
+        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
+        return language
     }
 
     fun observeCurrentLanguage(): Flow<Language> {
