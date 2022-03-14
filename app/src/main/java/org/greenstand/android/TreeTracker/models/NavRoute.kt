@@ -14,6 +14,7 @@ import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
+import org.greenstand.android.TreeTracker.messages.ChatScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
@@ -202,6 +203,12 @@ sealed class NavRoute {
             MessagesUserSelectScreen()
         }
         override val route: String = "messages-user-select"
+    }
+    object Chat : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            ChatScreen()
+        }
+        override val route: String = "chat"
     }
 }
 
