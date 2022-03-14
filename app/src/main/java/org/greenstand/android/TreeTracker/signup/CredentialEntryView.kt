@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -194,6 +195,7 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
             keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Go,
             autoCorrect = false,
+            capitalization = KeyboardCapitalization.None
         ),
         keyboardActions = KeyboardActions(
             onGo = {

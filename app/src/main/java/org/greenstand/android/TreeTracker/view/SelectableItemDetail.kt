@@ -1,7 +1,9 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -9,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,8 +32,9 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun SelectableImageDetail(
-    photoPath: String,
+    photoPath: String? = null,
     isSelected: Boolean,
+    painter: Painter? = null,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
     onClick: () -> Unit,
@@ -55,7 +58,7 @@ fun SelectableImageDetail(
                 width = 1.dp, brush = Brush.verticalGradient(
                     colors = listOf(
                         AppColors.Gray,
-                        AppColors.Green
+                        selectedColor
                     )
                 ),
                 shape = RoundedCornerShape(10.dp)
@@ -67,15 +70,25 @@ fun SelectableImageDetail(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
-            LocalImage(
-                imagePath = photoPath,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .aspectRatio(1.0f)
-                    .clip(RoundedCornerShape(10.dp)),
-            )
+            photoPath?.let {
+                LocalImage(
+                    imagePath = it,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .aspectRatio(1.0f)
+                        .padding(bottom = 20.dp)
+                        .clip(RoundedCornerShape(10.dp)),
+                )
+            }
+            painter?.let {
+                Image(
+                    modifier = Modifier.background(selectedColor),
+                    painter = it,
+                    contentDescription = null
+                )
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -97,11 +110,11 @@ fun UserButton(
     onClick: () -> Unit
 ) {
     SelectableImageDetail(
-        user.photoPath,
-        isSelected,
-        buttonColors,
-        selectedColor,
-        onClick
+        photoPath = user.photoPath,
+        isSelected = isSelected,
+        buttonColors = buttonColors,
+        selectedColor = selectedColor,
+        onClick = onClick
     ) {
         Text(
             text = "${user.firstName} ${user.lastName}",
@@ -110,7 +123,7 @@ fun UserButton(
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
-            )
+        )
         Text(
             text = user.wallet,
             color = CustomTheme.textColors.lightText,
@@ -118,7 +131,7 @@ fun UserButton(
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
-            )
+        )
         Row(
             modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -136,7 +149,7 @@ fun UserButton(
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.SemiBold,
-                )
+            )
         }
     }
 }

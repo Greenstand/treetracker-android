@@ -16,11 +16,13 @@ import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
+import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.MessageSync
 import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.Planter
@@ -80,6 +82,8 @@ val appModule = module {
 
     viewModel { WalletSelectViewModel(get()) }
 
+    viewModel { IndividualMessageListViewModel(get(), get(), get()) }
+
     viewModel { TreeImageReviewViewModel(get(), get()) }
 
     viewModel { PermissionViewModel(get()) }
@@ -112,7 +116,7 @@ val appModule = module {
 
     single { androidContext().resources }
 
-    single { MessagesRepo(get()) }
+    single { MessagesRepo(get(), get(), get(), get()) }
 
     single { LocationUpdateManager(get(), get(), get()) }
 
@@ -163,6 +167,8 @@ val appModule = module {
 
     factory { SessionUploader(get(), get(), get()) }
 
+    factory { MessageSync(get()) }
+
     factory { DeviceConfigUploader(get(), get(), get()) }
 
     factory { PreferencesMigrator(get(), get()) }
@@ -185,5 +191,5 @@ val appModule = module {
 
     factory { TreeUploader(get(), get(), get(), get(), get()) }
 
-    factory { SyncDataUseCase(get(), get(), get(), get(), get(), get()) }
+    factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
 }

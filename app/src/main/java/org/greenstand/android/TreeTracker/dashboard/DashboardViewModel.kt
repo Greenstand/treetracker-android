@@ -21,6 +21,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
@@ -123,10 +124,14 @@ class DashboardViewModel(
     fun sync() {
         viewModelScope.launch {
             if (_isSyncing == null || _isSyncing == false) {
-                val treesToSync = treesToSyncHelper.getTreeCountToSync()
-                when (treesToSync) {
-                    0 -> showSnackBar?.invoke(R.string.nothing_to_sync)
-                    else -> startDataSynchronization()
+                if (!FeatureFlags.DEBUG_ENABLED) {
+                    val treesToSync = treesToSyncHelper.getTreeCountToSync()
+                    when (treesToSync) {
+                        0 -> showSnackBar?.invoke(R.string.nothing_to_sync)
+                        else -> startDataSynchronization()
+                    }
+                } else {
+                    startDataSynchronization()
                 }
                 _state.value?.let { (total, synced, waiting) ->
                     analytics.syncButtonTapped(total, synced, waiting)
