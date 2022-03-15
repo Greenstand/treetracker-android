@@ -65,13 +65,6 @@ class LanguageSwitcher(private val prefs: Preferences) {
         )
     }
 
-    private fun getSystemLevelLanguage(): String {
-        return when(Locale.getDefault().language) {
-            "sw" -> "sw"
-            else -> "en"
-        }
-    }
-
     fun currentLanguage(): Language? {
         val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
         return language
