@@ -77,7 +77,7 @@ fun ChatScreen(
         topBar = {
             ActionBar(
                 leftAction = {
-                   DepthButton(onClick = { /*TODO*/ }, modifier =Modifier
+                   DepthButton(onClick = { /*TODO*/ }, modifier = Modifier
                        .width(100.dp)
                        .height(100.dp)
                        .padding(
@@ -88,7 +88,11 @@ fun ChatScreen(
                        )
                        .aspectRatio(1.0f)
                        .clip(RoundedCornerShape(10.dp))) {
-                       Box(modifier = Modifier.padding(bottom = 12.dp,end = 1.dp).fillMaxSize().clip(RoundedCornerShape(10.dp)).background(color = AppColors.MediumGray),contentAlignment = Alignment.Center){
+                       Box(modifier = Modifier
+                           .padding(bottom = 12.dp, end = 1.dp)
+                           .fillMaxSize()
+                           .clip(RoundedCornerShape(10.dp))
+                           .background(color = AppColors.MediumGray),contentAlignment = Alignment.Center){
                        Text(
                            text = stringResource(id = R.string.admin_placeholder).uppercase(),
                            color = CustomTheme.textColors.lightText,
@@ -139,9 +143,14 @@ fun ChatScreen(
                     modifier = Modifier.weight(1f),
                     scrollState = scrollState
                 )
-            Box(modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp ,bottom = 80.dp).fillMaxWidth().wrapContentHeight()){
+            Box(modifier = Modifier
+                .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)
+                .fillMaxWidth()
+                .wrapContentHeight()){
                 TextField(
-                    modifier =Modifier.fillMaxWidth().padding(5.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
                     value = state.draftText,
                     onValueChange = { text -> viewModel.updateDraftText(text) },
                     keyboardOptions = KeyboardOptions(
@@ -178,7 +187,7 @@ const val ConversationTestTag = "ConversationTestTag"
 
 @Composable
 fun Messages(
-    messages: Flow<List<DirectMessage>>?,
+    messages: List<DirectMessage>,
     scrollState: LazyListState,
     modifier: Modifier = Modifier
 ) {
@@ -196,26 +205,24 @@ fun Messages(
                 .testTag(ConversationTestTag)
                 .fillMaxSize()
         ) {
-            messages?.map { message ->
-                for (index in message.indices) {
-                    val prevAuthor = message.getOrNull(index - 1)?.from
-                    val nextAuthor = message.getOrNull(index + 1)?.from
-                    val content = message[index]
-                    val isFirstMessageByAuthor = prevAuthor != content.from
-                    val isLastMessageByAuthor = nextAuthor != content.from
-                    item {
-                        Message(
-                            msg = content,
-                            isAdmin = content.from == authorAdmin,
-                            isFirstMessageByAuthor = isFirstMessageByAuthor,
-                            isLastMessageByAuthor = isLastMessageByAuthor
-                        )
-                    }
-                }
 
+            for (index in messages.indices) {
+                val prevAuthor = messages.getOrNull(index - 1)?.from
+                val nextAuthor = messages.getOrNull(index + 1)?.from
+                val content = messages[index]
+                val isFirstMessageByAuthor = prevAuthor != content.from
+                val isLastMessageByAuthor = nextAuthor != content.from
+                item {
+                    Message(
+                        msg = content,
+                        isAdmin = content.from == authorAdmin,
+                        isFirstMessageByAuthor = isFirstMessageByAuthor,
+                        isLastMessageByAuthor = isLastMessageByAuthor
+                    )
+                }
             }
         }
-        }
+    }
 }
 
 @Composable

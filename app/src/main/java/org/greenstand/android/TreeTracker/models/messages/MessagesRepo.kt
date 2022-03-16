@@ -87,7 +87,7 @@ class MessagesRepo(
                     .map { convertMessageEntityToMessage(it) }
                     .filterIsInstance<DirectMessage>()
                     .filter { (it.from == wallet || it.from == otherChatIdentifier) && (it.to == otherChatIdentifier || it.to == wallet) }
-                    .sortedBy { it.composedAt }
+                    .sortedByDescending { it.composedAt }
             }
     }
 
