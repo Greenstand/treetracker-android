@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,11 +25,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,29 +46,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
-import org.greenstand.android.TreeTracker.models.messages.Message
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.UserImageButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-
+    userId: Long,
+    otherChatIdentifier: String,
+    viewModel: ChatViewModel = viewModel(factory = ChatViewModelFactory(userId,otherChatIdentifier))
 ) {
-    val uiState: ConversationUiState = exampleUiState
     val scrollState = rememberLazyListState()
     val scrollBehavior = remember { TopAppBarDefaults.pinnedScrollBehavior() }
-    val scope = rememberCoroutineScope()
+    val state by viewModel.state.observeAsState(ChatState())
+
 
     Scaffold(
         topBar = {
@@ -103,13 +105,14 @@ fun ChatScreen(
                     )
                 },
                 rightAction = {
-                        Image(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(100.dp),
-                            painter = painterResource(id = R.drawable.person_red),
-                            contentDescription = null,
+                    state.currentUser?.photoPath?.let {
+                        UserImageButton(
+                            onClick = {
+
+                            },
+                            imagePath = it
                         )
+                    }
                 }
             )
         },
@@ -131,25 +134,34 @@ fun ChatScreen(
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
             ) {
-            var text by rememberSaveable { mutableStateOf("Click to write a message") }
                 Messages(
-                    messages = uiState.messages,
+                    messages = state.messages,
                     modifier = Modifier.weight(1f),
                     scrollState = scrollState
                 )
             Box(modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp ,bottom = 80.dp).fillMaxWidth().wrapContentHeight()){
                 TextField(
                     modifier =Modifier.fillMaxWidth().padding(5.dp),
-                    value = text,
-                    onValueChange = { text = it },
+                    value = state.draftText,
+                    onValueChange = { text -> viewModel.updateDraftText(text) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Go,
+                        autoCorrect = false,
+                    ),
+                    placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.click_to_write_message),
+                            color = Color.White
+                        )
+                    },
                     keyboardActions = KeyboardActions(
                     onGo = {
-
+                        viewModel.sendMessage()
                     }
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     textColor = AppColors.LightGray,
-//                    focusedIndicatorColor = Color.Transparent,
                     backgroundColor = AppColors.DeepGray,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
@@ -166,7 +178,7 @@ const val ConversationTestTag = "ConversationTestTag"
 
 @Composable
 fun Messages(
-    messages: List<DirectMessage>,
+    messages: Flow<List<DirectMessage>>?,
     scrollState: LazyListState,
     modifier: Modifier = Modifier
 ) {
@@ -184,21 +196,23 @@ fun Messages(
                 .testTag(ConversationTestTag)
                 .fillMaxSize()
         ) {
-            for (index in messages.indices) {
-                val prevAuthor = messages.getOrNull(index - 1)?.from
-                val nextAuthor = messages.getOrNull(index + 1)?.from
-                val content = messages[index]
-                val isFirstMessageByAuthor = prevAuthor != content.from
-                val isLastMessageByAuthor = nextAuthor != content.from
-
-                item {
-                    Message(
-                        msg = content,
-                        isAdmin = content.from == authorAdmin,
-                        isFirstMessageByAuthor = isFirstMessageByAuthor,
-                        isLastMessageByAuthor = isLastMessageByAuthor
-                    )
+            messages?.map { message ->
+                for (index in message.indices) {
+                    val prevAuthor = message.getOrNull(index - 1)?.from
+                    val nextAuthor = message.getOrNull(index + 1)?.from
+                    val content = message[index]
+                    val isFirstMessageByAuthor = prevAuthor != content.from
+                    val isLastMessageByAuthor = nextAuthor != content.from
+                    item {
+                        Message(
+                            msg = content,
+                            isAdmin = content.from == authorAdmin,
+                            isFirstMessageByAuthor = isFirstMessageByAuthor,
+                            isLastMessageByAuthor = isLastMessageByAuthor
+                        )
+                    }
                 }
+
             }
         }
         }
@@ -251,11 +265,7 @@ fun ChatItemBubble(
     message: DirectMessage,
     isAdmin: Boolean,
     ) {
-    val backgroundBubbleColor = if (isAdmin) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant
-    }
+
     val modifier: Modifier = if(isAdmin) Modifier
         .padding(start = 10.dp, end = 60.dp)
         .background(color = AppColors.MessageReceivedBackground, shape = RoundedCornerShape(6.dp)) else Modifier
@@ -272,13 +282,5 @@ fun ChatItemBubble(
                 fontWeight = FontWeight.Bold,
                 style = CustomTheme.typography.regular,
             )
-    }
-}
-
-@Preview
-@Composable
-fun ConversationPreview() {
-    CustomTheme {
-        ChatScreen()
     }
 }

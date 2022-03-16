@@ -16,6 +16,7 @@ import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
+import org.greenstand.android.TreeTracker.messages.ChatViewModel
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
@@ -83,6 +84,8 @@ val appModule = module {
     viewModel { WalletSelectViewModel(get()) }
 
     viewModel { IndividualMessageListViewModel(get(), get(), get()) }
+
+    viewModel {ChatViewModel(get(), get(), get(), get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 

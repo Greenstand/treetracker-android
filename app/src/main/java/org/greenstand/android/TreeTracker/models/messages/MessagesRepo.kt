@@ -80,14 +80,13 @@ class MessagesRepo(
 
     fun getDirectMessages(
         wallet: String,
-        from: String,
-        to: String): Flow<List<DirectMessage>> {
+        otherChatIdentifier: String): Flow<List<DirectMessage>> {
         return messagesDao.getDirectMessagesForWallet(wallet)
             .map { messages ->
                 messages
                     .map { convertMessageEntityToMessage(it) }
                     .filterIsInstance<DirectMessage>()
-                    .filter { (it.from == from || it.from == to) && (it.to == to || it.to == from) }
+                    .filter { (it.from == wallet || it.from == otherChatIdentifier) && (it.to == otherChatIdentifier || it.to == wallet) }
                     .sortedBy { it.composedAt }
             }
     }
