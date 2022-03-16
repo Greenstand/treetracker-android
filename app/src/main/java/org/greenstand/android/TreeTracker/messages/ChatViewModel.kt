@@ -1,142 +1,76 @@
 package org.greenstand.android.TreeTracker.messages
 
 
-import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
+import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.user.User
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import java.util.*
 
 
-class ConversationUiState(
-    val channelName: String,
-    val channelMembers: Int,
-    initialMessages: List<DirectMessage>
-) {
-    private val _messages: MutableList<DirectMessage> =
-        mutableStateListOf(*initialMessages.toTypedArray())
-    val messages: List<DirectMessage> = _messages
+data class ChatState(
+    val messages: Flow<List<DirectMessage>>? = null,
+    val draftText: String = "",
+    val currentUser: User? = null,
+)
 
-    fun addMessage(msg: DirectMessage) {
-        _messages.add(0, msg) // Add to the beginning of the list
+class ChatViewModel(
+    private val userId: Long,
+    private val otherChatIdentifier: String,
+    private val users: Users,
+    private val messagesRepo: MessagesRepo,
+) : ViewModel() {
+
+    private val _state = MutableLiveData<ChatState>()
+    val state: LiveData<ChatState> = _state
+
+    init {
+        viewModelScope.launch {
+            val currentUser = users.getUser(userId)
+            val messages = messagesRepo.getDirectMessages(currentUser!!.wallet, otherChatIdentifier)
+            _state.value = ChatState(
+                currentUser = currentUser,
+                messages = messages,
+            )
+        }
+    }
+
+    fun updateDraftText(text: String) {
+        _state.value = _state.value!!.copy(
+            draftText = text
+        )
+    }
+
+    fun sendMessage() {
+        viewModelScope.launch {
+            messagesRepo.saveMessage(
+                _state.value!!.currentUser!!.wallet,
+                otherChatIdentifier,
+                _state.value!!.draftText
+            )
+            _state.value = _state.value!!.copy(
+                draftText = ""
+            )
+        }
     }
 }
 
-private val initialMessages = listOf(
-    DirectMessage(
-        "ID",
-        "Author",
-        "Receiver",
-        "8:07 PM",
-        false,
-        "parent ID",
-        "Hi, I am Taofeek from Greenstand",
-        ),DirectMessage(
-        "ID",
-        "Teekay",
-        "Receiver",
-        "8:12 PM",
-        false,
-        "parent ID",
-        "Nice to meet you",
-        ),DirectMessage(
-        "ID",
-        "Author 2",
-        "Receiver",
-        "8:27 PM",
-        true,
-        "parent ID",
-        "\n" +
-                "tree captures. We provide tree-planting initiatives with the ability to be\n" +
-                "transparent with their donors and clearly communicate their impacts. In\n" +
-                "addition to its environmental benefits, the Treetracker platform can help\n" +
-                "planting initiatives compensate their planters on the ground. The\n" +
-                "Treetracker does more than incentivize environmental action; it allows tree\n" +
-                "growers to earn a living while protecting their local ecosystems",
-        ),DirectMessage(
-        "ID",
-        "admin",
-        "Receiver",
-        "8:34 PM",
-        false,
-        "parent ID",
-        "Message Content",
-        ),DirectMessage(
-        "ID",
-        "admin",
-        "Receiver",
-        "8:34 PM",
-        true,
-        "parent ID",
-        "Hi",
-        ),DirectMessage(
-        "ID",
-        "adn",
-        "Receiver",
-        "8:34 PM",
-        false,
-        "parent ID",
-        "Hello",
-        ),
-DirectMessage(
-        "ID",
-        "Author",
-        "Receiver",
-        "8:07 PM",
-        false,
-        "parent ID",
-        "Hi, I am Taofeek from Greenstand",
-        ),DirectMessage(
-        "ID",
-        "Teekay",
-        "Receiver",
-        "8:12 PM",
-        false,
-        "parent ID",
-        "Nice to meet you",
-        ),DirectMessage(
-        "ID",
-        "Author 2",
-        "Receiver",
-        "8:27 PM",
-        true,
-        "parent ID",
-        "\n" +
-                "tree captures. We provide tree-planting initiatives with the ability to be\n" +
-                "transparent with their donors and clearly communicate their impacts. In\n" +
-                "addition to its environmental benefits, the Treetracker platform can help\n" +
-                "planting initiatives compensate their planters on the ground. The\n" +
-                "Treetracker does more than incentivize environmental action; it allows tree\n" +
-                "growers to earn a living while protecting their local ecosystems",
-        ),DirectMessage(
-        "ID",
-        "admin",
-        "Receiver",
-        "8:34 PM",
-        false,
-        "parent ID",
-        "Message Content",
-        ),DirectMessage(
-        "ID",
-        "admin",
-        "Receiver",
-        "8:34 PM",
-        true,
-        "parent ID",
-        "Hi",
-        ),DirectMessage(
-        "ID",
-        "adn",
-        "Receiver",
-        "8:34 PM",
-        false,
-        "parent ID",
-        "Hello",
-        ),
+class ChatViewModelFactory(private val userId: Long, private val otherChatIdentifier: String) :
+    ViewModelProvider.Factory, KoinComponent {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return ChatViewModel(userId, otherChatIdentifier, get(), get()) as T
+    }
+}
 
-)
-
-val exampleUiState = ConversationUiState(
-    initialMessages = initialMessages,
-    channelName = "#composers",
-    channelMembers = 42
-)
 
 

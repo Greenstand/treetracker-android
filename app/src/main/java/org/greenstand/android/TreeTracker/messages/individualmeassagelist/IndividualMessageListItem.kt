@@ -22,6 +22,7 @@ import org.greenstand.android.TreeTracker.view.SelectableImageDetail
 fun IndividualMessageItem(
     isSelected: Boolean,
     isNotificationEnabled: Boolean,
+    messageTypeText: String,
     text: String,
     icon: Int,
     onClick: () -> Unit
@@ -31,6 +32,7 @@ fun IndividualMessageItem(
         isSelected = isSelected,
         buttonColors = AppButtonColors.MessagePurple,
         selectedColor = AppColors.Purple,
+        messageTypeText = messageTypeText,
         onClick = onClick
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
