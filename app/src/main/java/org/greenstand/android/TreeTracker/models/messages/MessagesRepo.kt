@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
 import org.greenstand.android.TreeTracker.models.messages.database.entities.QuestionEntity
@@ -26,6 +27,7 @@ class MessagesRepo(
     private val users: Users,
     private val timeProvider: TimeProvider,
     private val messagesDao: MessagesDAO,
+    private val messageUploader: MessageUploader,
 ) {
 
     suspend fun saveMessage(wallet: String, to: String, body: String) {
@@ -45,6 +47,28 @@ class MessagesRepo(
                 shouldUpload = true,
                 bundleId = null,
                 isRead = true
+            )
+        )
+    }
+
+    // WIP
+    suspend fun saveSurveyAnswers(wallet: String, to: String, surveyResponse: List<String>) {
+        messagesDao.insertMessage(
+            MessageEntity(
+                id = UUID.randomUUID().toString(),
+                wallet = wallet,
+                type = MessageType.SURVEY_RESPONSE,
+                from = wallet,
+                to = to,
+                subject = null,
+                body = null,
+                composedAt = timeProvider.currentTime().toString(),
+                parentMessageId = null,
+                videoLink = null,
+                surveyResponse = surveyResponse,
+                shouldUpload = true,
+                bundleId = null,
+                isRead = true,
             )
         )
     }
@@ -75,8 +99,7 @@ class MessagesRepo(
     /**
      * When uploading trees, messages will be synced locally by this method
      */
-    suspend fun fetchMessages() {
-//        for(wallet in listOf("handle2", "mobile1", "mobile2", "handle3")) {
+    suspend fun syncMessages() {
         for(wallet in users.getUserList().map { it.wallet }) {
             try {
                 getMessagesForWallet(wallet)
@@ -90,6 +113,7 @@ class MessagesRepo(
                 }
             }
         }
+        messageUploader.uploadMessages()
     }
 
     private suspend fun getMessagesForWallet(wallet: String) {
@@ -121,10 +145,6 @@ class MessagesRepo(
             )
             result.messages.forEach { saveMessageResponse(wallet, it) }
         }
-    }
-
-    suspend fun getMessagesToUpload(): List<MessageResponse> {
-        TODO()
     }
 
     private suspend fun saveMessageResponse(wallet: String, message: MessageResponse) {

@@ -7,10 +7,10 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.MessageSync
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.TreeUploader
+import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
@@ -21,7 +21,7 @@ class SyncDataUseCase(
     private val planterUploader: PlanterUploader,
     private val sessionUploader: SessionUploader,
     private val deviceConfigUploader: DeviceConfigUploader,
-    private val messageSync: MessageSync,
+    private val messagesRepo: MessagesRepo,
 ) : UseCase<Unit, Boolean>() {
 
     private val TAG = "SyncDataUseCase"
@@ -31,12 +31,8 @@ class SyncDataUseCase(
             withContext(Dispatchers.IO) {
 
                 if (FeatureFlags.DEBUG_ENABLED) {
-                    executeIfContextActive("Message Fetch") {
-                        messageSync.fetchMessages()
-                    }
-
-                    executeIfContextActive("Message Upload") {
-                        messageSync.uploadMessages()
+                    executeIfContextActive("Message Sync") {
+                        messagesRepo.syncMessages()
                     }
                 }
 

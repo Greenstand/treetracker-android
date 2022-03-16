@@ -37,6 +37,12 @@ interface MessagesDAO {
     @Query("SELECT * FROM messages WHERE should_upload = 1")
     suspend fun getMessagesToUpload(): List<MessageEntity>
 
+    @Query("SELECT id FROM messages WHERE should_upload = 1")
+    suspend fun getMessageIdsToUpload(): List<String>
+
+    @Query("SELECT * FROM messages WHERE id IN (:ids)")
+    suspend fun getMessagesByIds(ids: List<String>): List<MessageEntity>
+
     @Query("UPDATE messages SET should_upload = 0 WHERE id IN (:ids)")
     suspend fun markMessagesAsUploaded(ids: List<String>)
 
