@@ -34,8 +34,10 @@ data class SurveyMessage(
     override val to: String,
     override val composedAt: String,
     override val isRead: Boolean,
+    val surveyId: String,
     val title: String,
     val questions: List<Question>,
+    val isComplete: Boolean,
 ) : Message
 
 data class SurveyResponseMessage(
@@ -44,6 +46,7 @@ data class SurveyResponseMessage(
     override val to: String,
     override val composedAt: String,
     override val isRead: Boolean,
+    val surveyId: String,
     val questions: List<Question>,
     val responses: List<String>,
 ) : Message

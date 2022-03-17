@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "20e24ba799271ddcbd58465f0e05b612",
+    "identityHash": "557e6ea3a1961b19ca34fbb8b49b2636",
     "entities": [
       {
         "tableName": "messages",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `wallet` TEXT NOT NULL, `type` TEXT NOT NULL, `from` TEXT NOT NULL, `to` TEXT NOT NULL, `subject` TEXT, `body` TEXT, `composed_at` TEXT NOT NULL, `parent_message_id` TEXT, `video_link` TEXT, `survey_response` TEXT, `should_upload` INTEGER NOT NULL, `bundle_id` TEXT, `is_read` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `wallet` TEXT NOT NULL, `type` TEXT NOT NULL, `from` TEXT NOT NULL, `to` TEXT NOT NULL, `subject` TEXT, `body` TEXT, `composed_at` TEXT NOT NULL, `parent_message_id` TEXT, `video_link` TEXT, `survey_response` TEXT, `should_upload` INTEGER NOT NULL, `bundle_id` TEXT, `is_read` INTEGER NOT NULL, `survey_id` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -91,38 +91,12 @@
             "columnName": "is_read",
             "affinity": "INTEGER",
             "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "surveys",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `message_id` TEXT NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`message_id`) REFERENCES `messages`(`id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "TEXT",
-            "notNull": true
           },
           {
-            "fieldPath": "messageId",
-            "columnName": "message_id",
+            "fieldPath": "surveyId",
+            "columnName": "survey_id",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "title",
-            "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -133,28 +107,48 @@
         },
         "indices": [
           {
-            "name": "index_surveys_message_id",
+            "name": "index_messages_survey_id",
             "unique": false,
             "columnNames": [
-              "message_id"
+              "survey_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_surveys_message_id` ON `${TABLE_NAME}` (`message_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_messages_survey_id` ON `${TABLE_NAME}` (`survey_id`)"
           }
         ],
-        "foreignKeys": [
+        "foreignKeys": []
+      },
+      {
+        "tableName": "surveys",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `is_complete` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
           {
-            "table": "messages",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "message_id"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isComplete",
+            "columnName": "is_complete",
+            "affinity": "INTEGER",
+            "notNull": true
           }
-        ]
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       },
       {
         "tableName": "questions",
@@ -220,7 +214,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '20e24ba799271ddcbd58465f0e05b612')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '557e6ea3a1961b19ca34fbb8b49b2636')"
     ]
   }
 }

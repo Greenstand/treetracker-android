@@ -16,7 +16,10 @@ interface MessagesDAO {
      * Messages
      */
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Query("DELETE FROM messages WHERE id = :id")
+    suspend fun deleteMessage(id: String)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertMessage(messageEntity: MessageEntity): Long
 
     @Query("SELECT * FROM messages WHERE id = :id")
@@ -27,6 +30,9 @@ interface MessagesDAO {
 
     @Query("SELECT * FROM messages WHERE wallet = :wallet")
     suspend fun getMessagesForWallet(wallet: String): List<MessageEntity>
+
+    @Query("SELECT * FROM messages WHERE wallet = :wallet")
+    fun getMessagesForWalletFlow(wallet: String): Flow<List<MessageEntity>>
 
     @Query("SELECT * FROM messages WHERE wallet = :wallet AND type = 'MESSAGE'")
     fun getDirectMessagesForWallet(wallet: String): Flow<List<MessageEntity>>
@@ -50,17 +56,26 @@ interface MessagesDAO {
      * Surveys
      */
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Query("DELETE FROM surveys WHERE id = :id")
+    suspend fun deleteSurvey(id: String)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertSurvey(surveyEntity: SurveyEntity): Long
 
-    @Query("SELECT * FROM surveys WHERE message_id = :messageId")
-    suspend fun getSurveyForMessage(messageId: String): SurveyEntity?
+    @Query("SELECT * FROM surveys WHERE id = :id")
+    suspend fun getSurvey(id: String?): SurveyEntity?
+
+    @Query("UPDATE surveys SET is_complete = 1 WHERE id = :id")
+    suspend fun markSurveyComplete(id: String?)
 
     /**
      * Questions
      */
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Query("DELETE FROM questions WHERE _id IN (:ids)")
+    suspend fun deleteQuestions(ids: List<Long>)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertQuestion(questionEntity: QuestionEntity): Long
 
     @Query("SELECT * FROM questions WHERE survey_id = :surveyId")

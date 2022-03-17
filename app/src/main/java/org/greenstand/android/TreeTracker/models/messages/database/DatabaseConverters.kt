@@ -14,9 +14,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Mess
 
 object DatabaseConverters {
 
-    fun createMessageRequestFromEntities(
-        messageEntity: MessageEntity,
-        surveyEntity: SurveyEntity? = null): MessageRequest {
+    fun createMessageRequestFromEntities(messageEntity: MessageEntity): MessageRequest {
         return when(messageEntity.type) {
             MessageType.MESSAGE ->
                 MessageRequest(
@@ -40,7 +38,7 @@ object DatabaseConverters {
                     composedAt = messageEntity.composedAt,
                     parentMessageId = messageEntity.parentMessageId,
                     surveyResponse = messageEntity.surveyResponse,
-                    surveyId = surveyEntity!!.id,
+                    surveyId = messageEntity.surveyId,
                 )
             MessageType.ANNOUNCE,
             MessageType.SURVEY ->
@@ -61,7 +59,7 @@ object DatabaseConverters {
                 DirectMessage(
                     id = messageEntity.id,
                     from = messageEntity.from,
-                    to = messageEntity.from,
+                    to = messageEntity.to,
                     composedAt = messageEntity.composedAt,
                     parentMessageId = messageEntity.parentMessageId,
                     body = messageEntity.body ?: "",
@@ -71,7 +69,7 @@ object DatabaseConverters {
                 AnnouncementMessage(
                     id = messageEntity.id,
                     from = messageEntity.from,
-                    to = messageEntity.from,
+                    to = messageEntity.to,
                     composedAt = messageEntity.composedAt,
                     subject = messageEntity.subject ?: "",
                     body = messageEntity.body ?: "",
@@ -81,10 +79,12 @@ object DatabaseConverters {
                 SurveyMessage(
                     id = messageEntity.id,
                     from = messageEntity.from,
-                    to = messageEntity.from,
+                    to = messageEntity.to,
                     composedAt = messageEntity.composedAt,
                     title = surveyEntity!!.title,
                     isRead = messageEntity.isRead,
+                    surveyId = surveyEntity.id,
+                    isComplete = surveyEntity.isComplete,
                     questions = questionEntities?.map {
                         Question(
                             prompt = it.prompt,
@@ -96,10 +96,11 @@ object DatabaseConverters {
                 SurveyResponseMessage(
                     id = messageEntity.id,
                     from = messageEntity.from,
-                    to = messageEntity.from,
+                    to = messageEntity.to,
                     composedAt = messageEntity.composedAt,
                     responses = messageEntity.surveyResponse ?: emptyList(),
                     isRead = messageEntity.isRead,
+                    surveyId = surveyEntity!!.id,
                     questions = questionEntities?.map {
                         Question(
                             prompt = it.prompt,
