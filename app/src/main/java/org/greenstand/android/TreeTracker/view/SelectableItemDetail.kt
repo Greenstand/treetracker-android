@@ -37,11 +37,10 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 fun SelectableImageDetail(
     photoPath: String? = null,
     isSelected: Boolean,
-    painter: Painter? = null,
-    messageTypeText: String? = null,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
     onClick: () -> Unit,
+    header: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val columnModifier = Modifier
@@ -86,30 +85,7 @@ fun SelectableImageDetail(
                         .clip(RoundedCornerShape(10.dp)),
                 )
             }
-            Box(
-                modifier = Modifier
-                    .background(selectedColor)
-                    .wrapContentHeight(),
-                contentAlignment = Alignment.Center
-            ) {
-                painter?.let {
-                    Image(
-                        painter = it,
-                        contentDescription = null,
-                        contentScale = ContentScale.Inside
-                    )
-                }
-                messageTypeText?.let {
-                    Text(
-                        text = it.uppercase(),
-                        color = CustomTheme.textColors.darkText,
-                        fontWeight = FontWeight.Bold,
-                        style = CustomTheme.typography.regular,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 110.dp)
-                    )
-                }
-            }
+            header?.let { it() }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

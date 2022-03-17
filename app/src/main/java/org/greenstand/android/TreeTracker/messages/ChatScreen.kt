@@ -77,30 +77,7 @@ fun ChatScreen(
         topBar = {
             ActionBar(
                 leftAction = {
-                   DepthButton(onClick = { /*TODO*/ }, modifier = Modifier
-                       .width(100.dp)
-                       .height(100.dp)
-                       .padding(
-                           start = 15.dp,
-                           top = 10.dp,
-                           end = 10.dp,
-                           bottom = 10.dp
-                       )
-                       .aspectRatio(1.0f)
-                       .clip(RoundedCornerShape(10.dp))) {
-                       Box(modifier = Modifier
-                           .padding(bottom = 12.dp, end = 1.dp)
-                           .fillMaxSize()
-                           .clip(RoundedCornerShape(10.dp))
-                           .background(color = AppColors.MediumGray),contentAlignment = Alignment.Center){
-                       Text(
-                           text = stringResource(id = R.string.admin_placeholder).uppercase(),
-                           color = CustomTheme.textColors.lightText,
-                           fontWeight = FontWeight.Bold,
-                           style = CustomTheme.typography.regular,
-                       )
-                       }
-                   }
+                   OtherChatButton()
                 },
                 centerAction = {
                     Image(
@@ -139,9 +116,10 @@ fun ChatScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
             ) {
                 Messages(
-                    messages = state.messages,
+                    state = state,
                     modifier = Modifier.weight(1f),
-                    scrollState = scrollState
+                    scrollState = scrollState,
+                    viewModel = viewModel
                 )
             Box(modifier = Modifier
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)
@@ -187,13 +165,13 @@ const val ConversationTestTag = "ConversationTestTag"
 
 @Composable
 fun Messages(
-    messages: List<DirectMessage>,
+    state: ChatState,
     scrollState: LazyListState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ChatViewModel
 ) {
-    val scope = rememberCoroutineScope()
+    val messages = state.messages
     Box(modifier = modifier) {
-        val authorAdmin = "admin"
         LazyColumn(
             reverseLayout = true,
             state = scrollState,
@@ -207,17 +185,12 @@ fun Messages(
         ) {
 
             for (index in messages.indices) {
-                val prevAuthor = messages.getOrNull(index - 1)?.from
-                val nextAuthor = messages.getOrNull(index + 1)?.from
-                val content = messages[index]
-                val isFirstMessageByAuthor = prevAuthor != content.from
-                val isLastMessageByAuthor = nextAuthor != content.from
                 item {
                     Message(
-                        msg = content,
-                        isAdmin = content.from == authorAdmin,
-                        isFirstMessageByAuthor = isFirstMessageByAuthor,
-                        isLastMessageByAuthor = isLastMessageByAuthor
+                        msg = messages[index],
+                        isAdmin = viewModel.checkIsAdmin(index),
+                        isFirstMessageByAuthor = viewModel.checkChatAuthor(index,true),
+                        isLastMessageByAuthor = viewModel.checkChatAuthor(index,true)
                     )
                 }
             }
@@ -238,7 +211,6 @@ fun Message(
             msg = msg,
             isAdmin = isAdmin,
             isFirstMessageByAuthor = isFirstMessageByAuthor,
-            isLastMessageByAuthor = isLastMessageByAuthor,
             modifier = Modifier
                 .padding(end = 16.dp)
                 .weight(1f)
@@ -251,7 +223,6 @@ fun TextMessage(
     msg: DirectMessage,
     isAdmin: Boolean,
     isFirstMessageByAuthor: Boolean,
-    isLastMessageByAuthor: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -265,7 +236,6 @@ fun TextMessage(
         }
     }
 }
-
 
 @Composable
 fun ChatItemBubble(
@@ -289,5 +259,33 @@ fun ChatItemBubble(
                 fontWeight = FontWeight.Bold,
                 style = CustomTheme.typography.regular,
             )
+    }
+}
+
+@Composable
+fun OtherChatButton(){
+    DepthButton(onClick = { /*TODO*/ }, modifier = Modifier
+        .width(100.dp)
+        .height(100.dp)
+        .padding(
+            start = 15.dp,
+            top = 10.dp,
+            end = 10.dp,
+            bottom = 10.dp
+        )
+        .aspectRatio(1.0f)
+        .clip(RoundedCornerShape(10.dp))) {
+        Box(modifier = Modifier
+            .padding(bottom = 12.dp, end = 1.dp)
+            .fillMaxSize()
+            .clip(RoundedCornerShape(10.dp))
+            .background(color = AppColors.MediumGray),contentAlignment = Alignment.Center){
+            Text(
+                text = stringResource(id = R.string.admin_placeholder).uppercase(),
+                color = CustomTheme.textColors.lightText,
+                fontWeight = FontWeight.Bold,
+                style = CustomTheme.typography.regular,
+            )
+        }
     }
 }

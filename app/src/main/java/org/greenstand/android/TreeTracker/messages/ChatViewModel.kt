@@ -52,6 +52,20 @@ class ChatViewModel(
         )
     }
 
+    fun checkChatAuthor(index :Int,isFirstMessage: Boolean ):Boolean{
+        val messages = _state.value!!.messages
+        val prevAuthor = messages.getOrNull(index - 1)?.from
+        val nextAuthor = messages.getOrNull(index + 1)?.from
+        val content = messages[index]
+        val isFirstMessageByAuthor = prevAuthor != content.from
+        val isLastMessageByAuthor = nextAuthor != content.from
+        return if(isFirstMessage) isFirstMessageByAuthor else isLastMessageByAuthor
+    }
+
+    fun checkIsAdmin(index :Int): Boolean{
+        return _state.value!!.messages[index].from == otherChatIdentifier
+    }
+
     fun sendMessage() {
         viewModelScope.launch {
             messagesRepo.saveMessage(

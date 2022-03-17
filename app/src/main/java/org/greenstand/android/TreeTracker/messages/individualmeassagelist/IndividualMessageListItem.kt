@@ -1,15 +1,21 @@
 package org.greenstand.android.TreeTracker.messages.individualmeassagelist
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
@@ -28,11 +34,10 @@ fun IndividualMessageItem(
     onClick: () -> Unit
 ) {
     SelectableImageDetail(
-        painter = painterResource(id = icon),
         isSelected = isSelected,
         buttonColors = AppButtonColors.MessagePurple,
         selectedColor = AppColors.Purple,
-        messageTypeText = messageTypeText,
+        header = { header(painter = painterResource(id = icon), messageTypeText = messageTypeText) },
         onClick = onClick
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -55,4 +60,29 @@ fun IndividualMessageItem(
             }
         }
     }
+}
+@Composable
+fun header(painter: Painter,
+           messageTypeText: String,){
+    Box(
+        modifier = Modifier
+            .background(AppColors.Purple)
+            .wrapContentHeight(),
+        contentAlignment = Alignment.Center
+    ) {
+            Image(
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Inside
+            )
+            Text(
+                text = messageTypeText.uppercase(),
+                color = CustomTheme.textColors.darkText,
+                fontWeight = FontWeight.Bold,
+                style = CustomTheme.typography.regular,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 110.dp)
+            )
+    }
+
 }
