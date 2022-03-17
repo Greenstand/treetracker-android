@@ -52,6 +52,9 @@ interface MessagesDAO {
     @Query("UPDATE messages SET should_upload = 0 WHERE id IN (:ids)")
     suspend fun markMessagesAsUploaded(ids: List<String>)
 
+    @Query("UPDATE messages SET is_read = 1 WHERE id IN (:id)")
+    suspend fun markMessageAsRead(id: List<String>)
+
     /**
      * Surveys
      */
