@@ -29,9 +29,7 @@ class MessageUploader(
     private suspend fun uploadMessageBundle(messageIdsToUpload: List<String>) {
         val messageEntitiesToUpload = messagesDAO.getMessagesByIds(messageIdsToUpload)
         val messageRequests = messageEntitiesToUpload.map { messageEntity ->
-            messagesDAO.getSurveyForMessage(messageEntity.id)?.let { surveyEntity ->
-                DatabaseConverters.createMessageRequestFromEntities(messageEntity, surveyEntity)
-            } ?: DatabaseConverters.createMessageRequestFromEntities(messageEntity, null)
+            DatabaseConverters.createMessageRequestFromEntities(messageEntity)
         }
 
         val jsonBundle = gson.toJson(

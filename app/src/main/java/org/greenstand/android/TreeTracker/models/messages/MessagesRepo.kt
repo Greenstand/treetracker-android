@@ -1,9 +1,7 @@
 package org.greenstand.android.TreeTracker.models.messages
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
@@ -46,20 +44,22 @@ class MessagesRepo(
                 surveyResponse = null,
                 shouldUpload = true,
                 bundleId = null,
-                isRead = true
+                isRead = true,
+                surveyId = null,
             )
         )
     }
 
-    // WIP
-    suspend fun saveSurveyAnswers(wallet: String, to: String, surveyResponse: List<String>) {
+    suspend fun saveSurveyAnswers(messageId: String, surveyResponse: List<String>) {
+        val surveyMessage = messagesDao.getMessage(messageId)!!
+        // make messages point to surveys to have survey and response point to same survey
         messagesDao.insertMessage(
             MessageEntity(
                 id = UUID.randomUUID().toString(),
-                wallet = wallet,
+                wallet = surveyMessage.to,
                 type = MessageType.SURVEY_RESPONSE,
-                from = wallet,
-                to = to,
+                from = surveyMessage.to,
+                to = surveyMessage.from,
                 subject = null,
                 body = null,
                 composedAt = timeProvider.currentTime().toString(),
@@ -69,13 +69,15 @@ class MessagesRepo(
                 shouldUpload = true,
                 bundleId = null,
                 isRead = true,
+                surveyId = surveyMessage.surveyId,
             )
         )
+        messagesDao.markSurveyComplete(surveyMessage.surveyId)
     }
 
-    suspend fun getMessages(wallet: String): List<Message> = withContext(Dispatchers.IO) {
-        return@withContext messagesDao.getMessagesForWallet(wallet)
-            .map { convertMessageEntityToMessage(it) }
+    fun getMessageFlow(wallet: String): Flow<List<Message>> {
+        return messagesDao.getMessagesForWalletFlow(wallet)
+            .map { messages -> messages.map { convertMessageEntityToMessage(it) } }
     }
 
     fun getDirectMessages(
@@ -165,6 +167,7 @@ class MessagesRepo(
                 shouldUpload = false,
                 bundleId = null,
                 isRead = false,
+                surveyId = survey?.id,
             )
         }
         messagesDao.insertMessage(messageEntity)
@@ -175,8 +178,8 @@ class MessagesRepo(
         val surveyEntity = with(message.survey) {
             SurveyEntity(
                 id = id,
-                messageId = messageEntity.id,
                 title = title,
+                isComplete = false,
             )
         }
         messagesDao.insertSurvey(surveyEntity)
@@ -189,11 +192,10 @@ class MessagesRepo(
             )
             messagesDao.insertQuestion(questionEntity)
         }
-        Timber.tag("JONATHAN").d("Saved survey")
     }
 
     private suspend fun convertMessageEntityToMessage(messageEntity: MessageEntity): Message {
-        return messagesDao.getSurveyForMessage(messageEntity.id)?.let { surveyEntity ->
+        return messagesDao.getSurvey(messageEntity.surveyId)?.let { surveyEntity ->
             val questionEntities = messagesDao.getQuestionsForSurvey(surveyEntity.id)
             DatabaseConverters.createMessageFromEntities(messageEntity, surveyEntity, questionEntities)
         } ?: DatabaseConverters.createMessageFromEntities(messageEntity, null, null)

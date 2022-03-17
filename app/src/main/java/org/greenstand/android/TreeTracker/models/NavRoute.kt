@@ -17,6 +17,7 @@ import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.messages.ChatScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
+import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
@@ -135,6 +136,25 @@ sealed class NavRoute {
         }
 
         fun create(planterInfoId: Long) = "message-list/$planterInfoId"
+    }
+
+    object Survey : NavRoute() {
+
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            SurveyScreen(messageId(it))
+        }
+
+        override val route: String = "survey/{messageId}"
+
+        override val arguments = listOf(navArgument("messageId") { type = NavType.StringType })
+
+        fun messageId(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("messageId").fromSafeNavUrl()
+        }
+
+        fun create(messageId: String): String {
+            return "survey/${messageId.toSafeNavUrl()}"
+        }
     }
 
     object ImageReview : NavRoute() {

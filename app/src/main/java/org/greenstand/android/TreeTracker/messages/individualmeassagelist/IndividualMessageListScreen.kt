@@ -96,7 +96,7 @@ fun IndividualMessageListScreen(
                             icon = R.drawable.quiz_icon,
                             messageTypeText = stringResource(R.string.quiz)
                         ) {
-
+                            navController.navigate(NavRoute.Survey.create(message.id))
                         }
                     is AnnouncementMessage ->
                         IndividualMessageItem(
