@@ -79,7 +79,7 @@ val appModule = module {
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 
-    viewModel { SplashScreenViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { SplashScreenViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { WalletSelectViewModel(get()) }
 
