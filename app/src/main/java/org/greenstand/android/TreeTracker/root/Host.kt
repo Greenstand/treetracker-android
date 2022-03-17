@@ -32,6 +32,7 @@ fun Host() {
                 NavRoute.TreeCapture,
                 NavRoute.MessagesUserSelect,
                 NavRoute.IndividualMessageList,
+                NavRoute.Chat,
             ).forEach { addNavRoute(it) }
         }
     }

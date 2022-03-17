@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -23,7 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
@@ -34,10 +37,10 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 fun SelectableImageDetail(
     photoPath: String? = null,
     isSelected: Boolean,
-    painter: Painter? = null,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
     onClick: () -> Unit,
+    header: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val columnModifier = Modifier
@@ -82,13 +85,7 @@ fun SelectableImageDetail(
                         .clip(RoundedCornerShape(10.dp)),
                 )
             }
-            painter?.let {
-                Image(
-                    modifier = Modifier.background(selectedColor),
-                    painter = it,
-                    contentDescription = null
-                )
-            }
+            header?.let { it() }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

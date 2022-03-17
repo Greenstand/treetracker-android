@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
@@ -83,8 +84,9 @@ fun IndividualMessageListScreen(
                             isNotificationEnabled = !message.isRead,
                             text = message.from,
                             icon = R.drawable.individual_message_icon,
+                            messageTypeText = stringResource(R.string.message)
                         ) {
-
+                            navController.navigate(NavRoute.Chat.create(userId, message.from))
                         }
                     is SurveyMessage ->
                         IndividualMessageItem(
@@ -92,6 +94,7 @@ fun IndividualMessageListScreen(
                             isNotificationEnabled = !message.isRead,
                             text = message.questions.count().toString(),
                             icon = R.drawable.quiz_icon,
+                            messageTypeText = stringResource(R.string.quiz)
                         ) {
 
                         }
@@ -99,8 +102,9 @@ fun IndividualMessageListScreen(
                         IndividualMessageItem(
                             isSelected = false,
                             isNotificationEnabled = !message.isRead,
-                            text = stringResource(R.string.message),
-                            icon = R.drawable.message_icon,
+                            text = stringResource(R.string.announcement),
+                            icon = R.drawable.individual_message_icon,
+                            messageTypeText = stringResource(R.string.message)
                         ) {
 
                         }

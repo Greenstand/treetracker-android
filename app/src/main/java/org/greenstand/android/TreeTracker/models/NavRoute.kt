@@ -14,6 +14,7 @@ import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
+import org.greenstand.android.TreeTracker.messages.ChatScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
@@ -202,6 +203,23 @@ sealed class NavRoute {
             MessagesUserSelectScreen()
         }
         override val route: String = "messages-user-select"
+    }
+    object Chat : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            ChatScreen(getPlanterInfoId(it), getOtherChatIdentifier(it))
+        }
+        override val route: String = "chat/{planterInfoId}/{otherChatIdentifier}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType },navArgument("otherChatIdentifier") { type = NavType.StringType })
+
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+        private fun getOtherChatIdentifier(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("otherChatIdentifier") ?: ""
+        }
+
+        fun create(planterInfoId: Long,otherChatIdentifier: String) = "chat/$planterInfoId/$otherChatIdentifier"
     }
 }
 
