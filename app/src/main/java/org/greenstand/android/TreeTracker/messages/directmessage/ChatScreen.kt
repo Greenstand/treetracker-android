@@ -161,8 +161,6 @@ fun ChatScreen(
 }
 }
 
-const val ConversationTestTag = "ConversationTestTag"
-
 @Composable
 fun Messages(
     state: ChatState,
@@ -180,7 +178,6 @@ fun Messages(
             // below the status bar + app bar
             // TODO: Get height from somewhere
             modifier = Modifier
-                .testTag(ConversationTestTag)
                 .fillMaxSize()
         ) {
 
@@ -190,7 +187,7 @@ fun Messages(
                         msg = messages[index],
                         isAdmin = viewModel.checkIsAdmin(index),
                         isFirstMessageByAuthor = viewModel.checkChatAuthor(index,true),
-                        isLastMessageByAuthor = viewModel.checkChatAuthor(index,true)
+                        isLastMessageByAuthor = viewModel.checkChatAuthor(index,false)
                     )
                 }
             }

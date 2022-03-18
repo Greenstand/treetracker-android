@@ -26,6 +26,7 @@ data class AnnouncementMessage(
     override val isRead: Boolean,
     val subject: String,
     val body: String?,
+    val videoLink: String?,
 ) : Message
 
 data class SurveyMessage(

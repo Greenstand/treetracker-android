@@ -106,7 +106,7 @@ fun IndividualMessageListScreen(
                             icon = R.drawable.individual_message_icon,
                             messageTypeText = stringResource(R.string.message)
                         ) {
-
+                            navController.navigate(NavRoute.Announcement.create(userId, message.from))
                         }
                 }
             }
