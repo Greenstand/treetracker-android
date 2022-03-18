@@ -28,6 +28,14 @@ class MessagesRepo(
     private val messageUploader: MessageUploader,
 ) {
 
+    suspend fun markMessageAsRead(messageId: String) {
+        messagesDao.markMessageAsRead(listOf(messageId))
+    }
+
+    suspend fun markMessagesAsRead(messageIds: List<String>) {
+        messagesDao.markMessageAsRead(messageIds)
+    }
+
     suspend fun saveMessage(wallet: String, to: String, body: String) {
         messagesDao.insertMessage(
             MessageEntity(

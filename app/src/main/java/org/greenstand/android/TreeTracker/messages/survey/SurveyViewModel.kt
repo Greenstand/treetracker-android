@@ -41,6 +41,7 @@ class SurveyViewModel(
                 userImagePath = user!!.photoPath,
                 currentQuestion = survey.questions[currentQuestionIndex]
             )
+            messagesRepo.markMessageAsRead(messageId)
         }
     }
 

@@ -36,13 +36,14 @@ class ChatViewModel(
     init {
         viewModelScope.launch {
             val currentUser = users.getUser(userId)
-            val messages =
-                messagesRepo.getDirectMessages(currentUser!!.wallet, otherChatIdentifier).collect {
-                    _state.value = ChatState(
-                        currentUser = currentUser,
-                        messages = it,
-                    )
-                }
+            messagesRepo.getDirectMessages(currentUser!!.wallet, otherChatIdentifier).collect { messages ->
+                _state.value = ChatState(
+                    currentUser = currentUser,
+                    messages = messages,
+                )
+                val unreadMessages = messages.filterNot { it.isRead }.map { it.id }
+                messagesRepo.markMessagesAsRead(unreadMessages)
+            }
         }
     }
 
