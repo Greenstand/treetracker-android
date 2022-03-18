@@ -24,7 +24,7 @@ data class AnnouncementState(
     val currentUser: User? = null,
     val isInternetAvailable: Boolean = false,
     val showNoInternetDialog: Boolean = false,
-    )
+)
 
 class AnnouncementViewModel(
     private val userId: Long,
@@ -39,29 +39,35 @@ class AnnouncementViewModel(
     init {
         viewModelScope.launch {
             val currentUser = users.getUser(userId)
-            val messages =
-                messagesRepo.getAnnouncementMessages(currentUser!!.wallet, otherChatIdentifier).collect {
-                    _state.value =AnnouncementState(
+            messagesRepo.getAnnouncementMessages(currentUser!!.wallet, otherChatIdentifier)
+                .collect { messages ->
+                    _state.value = AnnouncementState(
                         currentUser = currentUser,
-                        messages = it,
+                        messages = messages,
                     )
+                    val unreadMessages = messages.filterNot { it.isRead }.map { it.id }
+                    messagesRepo.markMessagesAsRead(unreadMessages)
                 }
+
             val result = checkForInternetUseCase.execute(Unit)
-            _state.value = _state.value?.copy(isInternetAvailable = result,)
+            _state.value = _state.value?.copy(isInternetAvailable = result)
 
         }
     }
 
     fun updateNoInternetDialogState(state: Boolean) {
-        _state.value = _state.value?.copy(showNoInternetDialog = state,)
+        _state.value = _state.value?.copy(showNoInternetDialog = state)
     }
 
 }
 
-class AnnouncementViewModelFactory(private val userId: Long, private val otherChatIdentifier: String) :
+class AnnouncementViewModelFactory(
+    private val userId: Long,
+    private val otherChatIdentifier: String
+) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return AnnouncementViewModel(userId, otherChatIdentifier, get(), get(),get()) as T
+        return AnnouncementViewModel(userId, otherChatIdentifier, get(), get(), get()) as T
     }
 }
