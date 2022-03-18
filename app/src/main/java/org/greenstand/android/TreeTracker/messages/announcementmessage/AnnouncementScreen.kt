@@ -26,13 +26,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,7 +56,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.LocalImage
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun AnnouncementScreen(
     userId: Long,
@@ -72,7 +69,6 @@ fun AnnouncementScreen(
     )
 ) {
     val scrollState = rememberLazyListState()
-    val scrollBehavior = remember { TopAppBarDefaults.pinnedScrollBehavior() }
     val state by viewModel.state.observeAsState(AnnouncementState())
     val navController = LocalNavHostController.current
 
@@ -142,7 +138,6 @@ fun AnnouncementScreen(
             Modifier
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
             Messages(
                 state = state,
