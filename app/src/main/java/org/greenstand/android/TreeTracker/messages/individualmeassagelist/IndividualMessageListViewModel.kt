@@ -51,8 +51,8 @@ class IndividualMessageListViewModel(
         // get list of senders to pick out one message per chat
         val externalChatMessages = messages
             .filterIsInstance<DirectMessage>()
-            .sortedBy { it.composedAt }
             .filter { it.from != currentUser.wallet }
+            .sortedByDescending { it.composedAt }
             .groupBy { it.from }
 
         // Get all types of messages to show
@@ -65,7 +65,7 @@ class IndividualMessageListViewModel(
 
         // Merge messages together and sort by newest
         val messagesToShow = (chatsToShow + surveysToShow + announcementsToShow)
-            .sortedBy { it.composedAt }
+            .sortedByDescending { it.composedAt }
 
         _state.value = IndividualMessageListState(
             currentUser = currentUser,
