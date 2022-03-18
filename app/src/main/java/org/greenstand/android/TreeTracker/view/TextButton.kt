@@ -7,12 +7,12 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.Text
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -324,13 +324,14 @@ fun DepthButtonPreview() {
 }
 
 @Composable
-fun UserImageButton(
+fun BoxScope.UserImageButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     imagePath: String,
 ) {
     DepthButton(
         modifier = modifier
+            .align(Alignment.Center)
             .width(100.dp)
             .height(100.dp)
             .padding(
