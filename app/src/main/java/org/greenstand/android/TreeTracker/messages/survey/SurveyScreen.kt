@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.messages.survey
 
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.UserImageButton
+import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
 
 @Composable
 fun SurveyScreen(
@@ -104,11 +105,11 @@ fun SurveyScreen(
 }
 
 @Composable
-fun UserImage(imagePath: String?) {
+fun BoxScope.UserImage(imagePath: String?) {
     imagePath?.let {
-        UserImageButton(
-            onClick = { },
-            imagePath = imagePath
+        RoundedLocalImageContainer(
+            imagePath = it,
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }

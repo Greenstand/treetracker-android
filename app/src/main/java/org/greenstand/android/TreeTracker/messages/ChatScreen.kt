@@ -4,16 +4,15 @@ package org.greenstand.android.TreeTracker.messages
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -22,46 +21,37 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
+import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.UserImageButton
+import org.greenstand.android.TreeTracker.view.RoundedImageContainer
+import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
 
-@OptIn(ExperimentalMaterial3Api::class)
+private const val ConversationTestTag = "ConversationTestTag"
+
 @Composable
 fun ChatScreen(
     userId: Long,
@@ -69,29 +59,27 @@ fun ChatScreen(
     viewModel: ChatViewModel = viewModel(factory = ChatViewModelFactory(userId,otherChatIdentifier))
 ) {
     val scrollState = rememberLazyListState()
-    val scrollBehavior = remember { TopAppBarDefaults.pinnedScrollBehavior() }
     val state by viewModel.state.observeAsState(ChatState())
-
+    val navController: NavHostController = LocalNavHostController.current
 
     Scaffold(
         topBar = {
             ActionBar(
                 leftAction = {
-                   OtherChatButton()
+                   OtherChatIcon()
                 },
                 centerAction = {
                     Image(
+                        modifier = Modifier.align(Alignment.Center),
                         painter = painterResource(id = R.drawable.chat_icon),
                         contentDescription = null,
                     )
                 },
                 rightAction = {
                     state.currentUser?.photoPath?.let {
-                        UserImageButton(
-                            onClick = {
-
-                            },
-                            imagePath = it
+                        RoundedLocalImageContainer(
+                            imagePath = it,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 }
@@ -104,6 +92,7 @@ fun ChatScreen(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
                         onClick = {
+                            navController.popBackStack()
                         }
                     )
                 }
@@ -111,9 +100,7 @@ fun ChatScreen(
         }
     ) {
         Column(
-            Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
+            modifier = Modifier.fillMaxSize()
             ) {
                 Messages(
                     state = state,
@@ -157,11 +144,25 @@ fun ChatScreen(
                     maxLines = 2
                 )
             }
+        }
     }
 }
-}
 
-const val ConversationTestTag = "ConversationTestTag"
+@Composable
+fun BoxScope.OtherChatIcon() {
+    RoundedImageContainer(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .background(color = AppColors.MediumGray)
+    ) {
+        Text(
+            text = stringResource(id = R.string.admin_placeholder).uppercase(),
+            color = CustomTheme.textColors.lightText,
+            fontWeight = FontWeight.Bold,
+            style = CustomTheme.typography.regular,
+        )
+    }
+}
 
 @Composable
 fun Messages(
@@ -176,23 +177,17 @@ fun Messages(
             reverseLayout = true,
             state = scrollState,
             contentPadding = PaddingValues(top = 10.dp),
-            // Add content padding so that the content can be scrolled (y-axis)
-            // below the status bar + app bar
-            // TODO: Get height from somewhere
             modifier = Modifier
                 .testTag(ConversationTestTag)
                 .fillMaxSize()
         ) {
-
-            for (index in messages.indices) {
-                item {
-                    Message(
-                        msg = messages[index],
-                        isAdmin = viewModel.checkIsAdmin(index),
-                        isFirstMessageByAuthor = viewModel.checkChatAuthor(index,true),
-                        isLastMessageByAuthor = viewModel.checkChatAuthor(index,true)
-                    )
-                }
+            items(messages.size) { index ->
+                Message(
+                    msg = messages[index],
+                    isAdmin = viewModel.checkIsAdmin(index),
+                    isFirstMessageByAuthor = viewModel.checkChatAuthor(index,true),
+                    isLastMessageByAuthor = viewModel.checkChatAuthor(index,true)
+                )
             }
         }
     }
@@ -205,34 +200,20 @@ fun Message(
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean
 ) {
-    val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
+    val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(bottom = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
-        TextMessage(
-            msg = msg,
-            isAdmin = isAdmin,
-            isFirstMessageByAuthor = isFirstMessageByAuthor,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .weight(1f)
-        )
-    }
-}
-
-@Composable
-fun TextMessage(
-    msg: DirectMessage,
-    isAdmin: Boolean,
-    isFirstMessageByAuthor: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier) {
-        ChatItemBubble(msg, isAdmin)
-        if (isFirstMessageByAuthor) {
-            // Last bubble before next author
-            Spacer(modifier = Modifier.height(8.dp))
-        } else {
-            // Between bubbles
-            Spacer(modifier = Modifier.height(4.dp))
+        Column(modifier = Modifier
+            .padding(end = 16.dp)
+            .weight(1f)
+        ) {
+            ChatItemBubble(msg, isAdmin)
+            if (isFirstMessageByAuthor) {
+                // Last bubble before next author
+                Spacer(modifier = Modifier.height(8.dp))
+            } else {
+                // Between bubbles
+                Spacer(modifier = Modifier.height(4.dp))
+            }
         }
     }
 }
@@ -241,51 +222,39 @@ fun TextMessage(
 fun ChatItemBubble(
     message: DirectMessage,
     isAdmin: Boolean,
-    ) {
+) {
+    val modifier: Modifier = if (isAdmin) {
+        Modifier
+            .padding(start = 10.dp, end = 60.dp)
+            .background(
+                color = AppColors.MessageReceivedBackground,
+                shape = RoundedCornerShape(6.dp)
+            )
+    } else {
+        Modifier
+            .padding(start = 60.dp, end = 10.dp)
+            .background(
+                color = AppColors.MessageAuthorBackground,
+                shape = RoundedCornerShape(6.dp)
+            )
+    }
 
-    val modifier: Modifier = if(isAdmin) Modifier
-        .padding(start = 10.dp, end = 60.dp)
-        .background(color = AppColors.MessageReceivedBackground, shape = RoundedCornerShape(6.dp)) else Modifier
-        .padding(start = 60.dp, end = 10.dp)
-        .background(color = AppColors.MessageAuthorBackground, shape = RoundedCornerShape(6.dp))
-    val horizontalAlignment = if (isAdmin) Alignment.Start else Alignment.End
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(8.dp),horizontalAlignment = horizontalAlignment) {
+    val horizontalAlignment = if (isAdmin) {
+        Alignment.Start
+    } else {
+        Alignment.End
+    }
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(8.dp),
+        horizontalAlignment = horizontalAlignment) {
             Text(
                 text = message.body,
                 color = CustomTheme.textColors.lightText,
                 fontWeight = FontWeight.Bold,
                 style = CustomTheme.typography.regular,
             )
-    }
-}
-
-@Composable
-fun OtherChatButton(){
-    DepthButton(onClick = { /*TODO*/ }, modifier = Modifier
-        .width(100.dp)
-        .height(100.dp)
-        .padding(
-            start = 15.dp,
-            top = 10.dp,
-            end = 10.dp,
-            bottom = 10.dp
-        )
-        .aspectRatio(1.0f)
-        .clip(RoundedCornerShape(10.dp))) {
-        Box(modifier = Modifier
-            .padding(bottom = 12.dp, end = 1.dp)
-            .fillMaxSize()
-            .clip(RoundedCornerShape(10.dp))
-            .background(color = AppColors.MediumGray),contentAlignment = Alignment.Center){
-            Text(
-                text = stringResource(id = R.string.admin_placeholder).uppercase(),
-                color = CustomTheme.textColors.lightText,
-                fontWeight = FontWeight.Bold,
-                style = CustomTheme.typography.regular,
-            )
-        }
     }
 }

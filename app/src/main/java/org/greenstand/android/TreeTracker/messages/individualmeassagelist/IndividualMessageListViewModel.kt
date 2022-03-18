@@ -20,6 +20,7 @@ import java.util.*
 
 data class IndividualMessageListState(
     val messages: List<Message> = Collections.emptyList(),
+    val selectedMessage: Message? = null,
     val currentUser: User? = null,
 )
 
@@ -38,6 +39,12 @@ class IndividualMessageListViewModel(
             messagesRepo.getMessageFlow(currentUser!!.wallet)
                 .collect { updateMessages(it, currentUser) }
         }
+    }
+
+    fun selectMessage(message: Message) {
+        _state.value = _state.value?.copy(
+            selectedMessage = message,
+        )
     }
 
     private fun updateMessages(messages: List<Message>, currentUser: User) {
