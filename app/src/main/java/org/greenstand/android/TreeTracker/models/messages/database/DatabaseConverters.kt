@@ -85,7 +85,7 @@ object DatabaseConverters {
                     title = surveyEntity!!.title,
                     isRead = messageEntity.isRead,
                     surveyId = surveyEntity.id,
-                    isComplete = surveyEntity.isComplete,
+                    isComplete = messageEntity.isSurveyComplete ?: false,
                     questions = questionEntities?.map {
                         Question(
                             prompt = it.prompt,

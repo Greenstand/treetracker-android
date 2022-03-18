@@ -58,6 +58,9 @@ interface MessagesDAO {
     @Query("UPDATE messages SET is_read = 1 WHERE id IN (:id)")
     suspend fun markMessageAsRead(id: List<String>)
 
+    @Query("UPDATE messages SET is_survey_complete = 1 WHERE id = :id")
+    suspend fun markSurveyMessageComplete(id: String?)
+
     /**
      * Surveys
      */
@@ -70,9 +73,6 @@ interface MessagesDAO {
 
     @Query("SELECT * FROM surveys WHERE id = :id")
     suspend fun getSurvey(id: String?): SurveyEntity?
-
-    @Query("UPDATE surveys SET is_complete = 1 WHERE id = :id")
-    suspend fun markSurveyComplete(id: String?)
 
     /**
      * Questions

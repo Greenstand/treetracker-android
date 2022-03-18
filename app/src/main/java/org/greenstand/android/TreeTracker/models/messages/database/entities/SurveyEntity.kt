@@ -11,6 +11,4 @@ class SurveyEntity(
     val id: String,
     @ColumnInfo(name = "title")
     val title: String,
-    @ColumnInfo(name = "is_complete")
-    val isComplete: Boolean,
 )

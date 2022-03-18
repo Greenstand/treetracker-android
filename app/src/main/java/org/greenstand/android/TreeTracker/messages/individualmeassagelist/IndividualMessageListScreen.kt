@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,6 +25,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.UserImageButton
+import timber.log.Timber
 
 @ExperimentalFoundationApi
 @Composable
@@ -54,9 +56,15 @@ fun IndividualMessageListScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = false,
+                        isEnabled = state.selectedMessage != null,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = { }
+                        onClick = {
+                            when(val msg = state.selectedMessage) {
+                               is DirectMessage -> navController.navigate(NavRoute.Chat.create(userId, msg.from))
+                               is SurveyMessage -> navController.navigate(NavRoute.Survey.create(msg.id))
+                               is AnnouncementMessage -> Timber.e("Screen not implemented")
+                            }
+                        }
                     )
                 },
                 leftAction = {
@@ -77,37 +85,42 @@ fun IndividualMessageListScreen(
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {
             items(state.messages) { message ->
-                when(message) {
-                    is DirectMessage ->
-                        IndividualMessageItem(
-                            isSelected = false,
-                            isNotificationEnabled = !message.isRead,
-                            text = message.from,
-                            icon = R.drawable.individual_message_icon,
-                            messageTypeText = stringResource(R.string.message)
-                        ) {
-                            navController.navigate(NavRoute.Chat.create(userId, message.from))
-                        }
-                    is SurveyMessage ->
-                        IndividualMessageItem(
-                            isSelected = false,
-                            isNotificationEnabled = !message.isRead,
-                            text = message.questions.count().toString(),
-                            icon = R.drawable.quiz_icon,
-                            messageTypeText = stringResource(R.string.quiz)
-                        ) {
-                            navController.navigate(NavRoute.Survey.create(message.id))
-                        }
-                    is AnnouncementMessage ->
-                        IndividualMessageItem(
-                            isSelected = false,
-                            isNotificationEnabled = !message.isRead,
-                            text = stringResource(R.string.announcement),
-                            icon = R.drawable.individual_message_icon,
-                            messageTypeText = stringResource(R.string.message)
-                        ) {
-                            navController.navigate(NavRoute.Announcement.create(userId, message.from))
-                        }
+
+                val isSelected = state.selectedMessage == message
+                key(message.id) {
+                    when (message) {
+                        is DirectMessage ->
+                            IndividualMessageItem(
+                                isSelected = isSelected,
+                                isNotificationEnabled = !message.isRead,
+                                text = message.from,
+                                icon = R.drawable.individual_message_icon,
+                                messageTypeText = stringResource(R.string.message)
+                            ) {
+                                viewModel.selectMessage(message)
+                            }
+                        is SurveyMessage ->
+                            IndividualMessageItem(
+                                isSelected = isSelected,
+                                isNotificationEnabled = !message.isRead,
+                                text = message.questions.count().toString(),
+                                icon = R.drawable.quiz_icon,
+                                messageTypeText = stringResource(R.string.quiz)
+                            ) {
+                                viewModel.selectMessage(message)
+                            }
+                        is AnnouncementMessage ->
+                            IndividualMessageItem(
+                                isSelected = isSelected,
+                                isNotificationEnabled = !message.isRead,
+                                text = stringResource(R.string.announcement),
+                                icon = R.drawable.individual_message_icon,
+                                messageTypeText = stringResource(R.string.message)
+                            ) {
+                                viewModel.selectMessage(message)
+                            }
+                        else -> throw IllegalStateException("Unsupported type: $message")
+                    }
                 }
             }
         }
