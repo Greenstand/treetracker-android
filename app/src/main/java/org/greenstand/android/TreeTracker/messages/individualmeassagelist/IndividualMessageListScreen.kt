@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -85,37 +86,40 @@ fun IndividualMessageListScreen(
         ) {
             items(state.messages) { message ->
                 val isSelected = state.selectedMessage == message
-                when(message) {
-                    is DirectMessage ->
-                        IndividualMessageItem(
-                            isSelected = isSelected,
-                            isNotificationEnabled = !message.isRead,
-                            text = message.from,
-                            icon = R.drawable.individual_message_icon,
-                            messageTypeText = stringResource(R.string.message)
-                        ) {
-                            viewModel.selectMessage(message)
-                        }
-                    is SurveyMessage ->
-                        IndividualMessageItem(
-                            isSelected = isSelected,
-                            isNotificationEnabled = !message.isRead,
-                            text = message.questions.count().toString(),
-                            icon = R.drawable.quiz_icon,
-                            messageTypeText = stringResource(R.string.quiz)
-                        ) {
-                            viewModel.selectMessage(message)
-                        }
-                    is AnnouncementMessage ->
-                        IndividualMessageItem(
-                            isSelected = isSelected,
-                            isNotificationEnabled = !message.isRead,
-                            text = stringResource(R.string.announcement),
-                            icon = R.drawable.individual_message_icon,
-                            messageTypeText = stringResource(R.string.message)
-                        ) {
-                            viewModel.selectMessage(message)
-                        }
+                key(message.id) {
+                    when (message) {
+                        is DirectMessage ->
+                            IndividualMessageItem(
+                                isSelected = isSelected,
+                                isNotificationEnabled = !message.isRead,
+                                text = message.from,
+                                icon = R.drawable.individual_message_icon,
+                                messageTypeText = stringResource(R.string.message)
+                            ) {
+                                viewModel.selectMessage(message)
+                            }
+                        is SurveyMessage ->
+                            IndividualMessageItem(
+                                isSelected = isSelected,
+                                isNotificationEnabled = !message.isRead,
+                                text = message.questions.count().toString(),
+                                icon = R.drawable.quiz_icon,
+                                messageTypeText = stringResource(R.string.quiz)
+                            ) {
+                                viewModel.selectMessage(message)
+                            }
+                        is AnnouncementMessage ->
+                            IndividualMessageItem(
+                                isSelected = isSelected,
+                                isNotificationEnabled = !message.isRead,
+                                text = stringResource(R.string.announcement),
+                                icon = R.drawable.individual_message_icon,
+                                messageTypeText = stringResource(R.string.message)
+                            ) {
+                                viewModel.selectMessage(message)
+                            }
+                        else -> throw IllegalStateException("Unsupported type: $message")
+                    }
                 }
             }
         }

@@ -28,7 +28,9 @@ class SplashScreenViewModel(
         deviceConfigUpdater.saveLatestConfig()
 
         if (checkForInternetUseCase.execute(Unit)) {
-            messagesRepo.syncMessages()
+            withContext(Dispatchers.IO) {
+                messagesRepo.syncMessages()
+            }
         }
 
         // If session was not ended properly (user/system killed app)...
