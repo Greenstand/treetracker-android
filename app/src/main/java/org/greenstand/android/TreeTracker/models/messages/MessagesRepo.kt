@@ -54,6 +54,7 @@ class MessagesRepo(
                 bundleId = null,
                 isRead = true,
                 surveyId = null,
+                isSurveyComplete = null,
             )
         )
     }
@@ -78,9 +79,10 @@ class MessagesRepo(
                 bundleId = null,
                 isRead = true,
                 surveyId = surveyMessage.surveyId,
+                isSurveyComplete = true,
             )
         )
-        messagesDao.markSurveyComplete(surveyMessage.surveyId)
+        messagesDao.markSurveyMessageComplete(surveyMessage.id)
     }
 
     fun getMessageFlow(wallet: String): Flow<List<Message>> {
@@ -129,7 +131,7 @@ class MessagesRepo(
         val lastSyncTime = getLastSyncTime(wallet)
         var query = QueryResponse(
             handle = wallet,
-            limit = 5,
+            limit = 100,
             offset = 0,
             total = -1,
         )
@@ -176,6 +178,7 @@ class MessagesRepo(
                 bundleId = null,
                 isRead = false,
                 surveyId = survey?.id,
+                isSurveyComplete = survey?.let { false },
             )
         }
         messagesDao.insertMessage(messageEntity)
@@ -183,11 +186,15 @@ class MessagesRepo(
         // If there is no survey, don't continue on
         message.survey ?: return
 
+        // If survey exists, we'll reuse it
+        if (messagesDao.getSurvey(message.survey.id) != null) {
+            return
+        }
+
         val surveyEntity = with(message.survey) {
             SurveyEntity(
                 id = id,
                 title = title,
-                isComplete = false,
             )
         }
         messagesDao.insertSurvey(surveyEntity)

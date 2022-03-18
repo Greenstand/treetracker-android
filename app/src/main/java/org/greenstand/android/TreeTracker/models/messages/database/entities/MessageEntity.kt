@@ -38,4 +38,6 @@ data class MessageEntity(
     val isRead: Boolean,
     @ColumnInfo(name = "survey_id", index = true)
     val surveyId: String?,
+    @ColumnInfo(name = "is_survey_complete")
+    val isSurveyComplete: Boolean?,
 )
