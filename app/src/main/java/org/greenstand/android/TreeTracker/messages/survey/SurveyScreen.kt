@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -62,7 +61,7 @@ fun SurveyScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.selectedAnswer.isNotBlank(),
+                        isEnabled = state.selectedAnswerIndex != null,
                         colors = AppButtonColors.MessagePurple,
                     ) {
                         scope.launch {
@@ -87,14 +86,14 @@ fun SurveyScreen(
             ) {
                 state.currentQuestion?.choices?.let { choices ->
                     items(
-                        items = choices,
+                        count = choices.size,
                         key = { it }
-                    ) { choice ->
+                    ) { index ->
                         AnswerItem(
-                            answerText = choice,
-                            isSelected = state.selectedAnswer == choice,
+                            answerText = choices[index],
+                            isSelected = state.selectedAnswerIndex == index,
                             onClick = {
-                                viewModel.selectAnswer(choice)
+                                viewModel.selectAnswer(index)
                             }
                         )
                     }
