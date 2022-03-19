@@ -102,9 +102,9 @@ fun IndividualMessageListScreen(
                             IndividualMessageItem(
                                 isSelected = isSelected,
                                 isNotificationEnabled = !message.isRead,
-                                text = message.questions.count().toString(),
+                                text = message.title,
                                 icon = R.drawable.quiz_icon,
-                                messageTypeText = stringResource(R.string.quiz)
+                                messageTypeText = stringResource(R.string.survey)
                             ) {
                                 viewModel.selectMessage(message)
                             }
@@ -112,9 +112,10 @@ fun IndividualMessageListScreen(
                             IndividualMessageItem(
                                 isSelected = isSelected,
                                 isNotificationEnabled = !message.isRead,
-                                text = stringResource(R.string.announcement),
-                                icon = R.drawable.individual_message_icon,
-                                messageTypeText = stringResource(R.string.message)
+                                text = message.subject,
+                                icon = R.drawable.announcement_icon,
+                                messageTypeText = stringResource(R.string.announcement),
+                                iconPadding = PaddingValues(bottom = 30.dp)
                             ) {
                                 viewModel.selectMessage(message)
                             }

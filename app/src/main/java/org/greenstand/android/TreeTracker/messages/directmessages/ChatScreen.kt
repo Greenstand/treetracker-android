@@ -56,7 +56,12 @@ private const val ConversationTestTag = "ConversationTestTag"
 fun ChatScreen(
     userId: Long,
     otherChatIdentifier: String,
-    viewModel: ChatViewModel = viewModel(factory = ChatViewModelFactory(userId,otherChatIdentifier))
+    viewModel: ChatViewModel = viewModel(
+        factory = ChatViewModelFactory(
+            userId,
+            otherChatIdentifier
+        )
+    )
 ) {
     val scrollState = rememberLazyListState()
     val state by viewModel.state.observeAsState(ChatState())
@@ -66,7 +71,7 @@ fun ChatScreen(
         topBar = {
             ActionBar(
                 leftAction = {
-                   OtherChatIcon()
+                    OtherChatIcon()
                 },
                 centerAction = {
                     Image(
@@ -101,17 +106,19 @@ fun ChatScreen(
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
+        ) {
+            Messages(
+                state = state,
+                modifier = Modifier.weight(1f),
+                scrollState = scrollState,
+                viewModel = viewModel
+            )
+            Box(
+                modifier = Modifier
+                    .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
-                Messages(
-                    state = state,
-                    modifier = Modifier.weight(1f),
-                    scrollState = scrollState,
-                    viewModel = viewModel
-                )
-            Box(modifier = Modifier
-                .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)
-                .fillMaxWidth()
-                .wrapContentHeight()){
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -130,17 +137,17 @@ fun ChatScreen(
                         )
                     },
                     keyboardActions = KeyboardActions(
-                    onGo = {
-                        viewModel.sendMessage()
-                    }
-                ),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = AppColors.LightGray,
-                    backgroundColor = AppColors.DeepGray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                ),
+                        onGo = {
+                            viewModel.sendMessage()
+                        }
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = AppColors.LightGray,
+                        backgroundColor = AppColors.DeepGray,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
                     maxLines = 2
                 )
             }
@@ -185,8 +192,8 @@ fun Messages(
                 Message(
                     msg = messages[index],
                     isAdmin = viewModel.checkIsAdmin(index),
-                    isFirstMessageByAuthor = viewModel.checkChatAuthor(index,true),
-                    isLastMessageByAuthor = viewModel.checkChatAuthor(index,true)
+                    isFirstMessageByAuthor = viewModel.checkChatAuthor(index, true),
+                    isLastMessageByAuthor = viewModel.checkChatAuthor(index, true)
                 )
             }
         }
@@ -200,11 +207,13 @@ fun Message(
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean
 ) {
-    val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(bottom = 8.dp) else Modifier
+    val spaceBetweenAuthors =
+        if (isLastMessageByAuthor) Modifier.padding(bottom = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
-        Column(modifier = Modifier
-            .padding(end = 16.dp)
-            .weight(1f)
+        Column(
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .weight(1f)
         ) {
             ChatItemBubble(msg, isAdmin)
             if (isFirstMessageByAuthor) {
@@ -249,12 +258,13 @@ fun ChatItemBubble(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(8.dp),
-        horizontalAlignment = horizontalAlignment) {
-            Text(
-                text = message.body,
-                color = CustomTheme.textColors.lightText,
-                fontWeight = FontWeight.Bold,
-                style = CustomTheme.typography.regular,
-            )
+        horizontalAlignment = horizontalAlignment
+    ) {
+        Text(
+            text = message.body,
+            color = CustomTheme.textColors.lightText,
+            fontWeight = FontWeight.Bold,
+            style = CustomTheme.typography.regular,
+        )
     }
 }

@@ -217,7 +217,7 @@ fun DashboardScreen(
                     onClick = {
                         navController.navigate(NavRoute.MessagesUserSelect.route)
                     },
-                    image = painterResource(id = R.drawable.message_icon)
+                    image = painterResource(id = R.drawable.announcement_icon)
                 )
             }
 
