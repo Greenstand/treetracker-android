@@ -88,7 +88,7 @@ val appModule = module {
 
     viewModel { ChatViewModel(get(), get(), get(), get()) }
 
-    viewModel { AnnouncementViewModel(get(), get(), get(), get()) }
+    viewModel { AnnouncementViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { TreeImageReviewViewModel(get(), get()) }
 

@@ -64,10 +64,12 @@ import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
 fun AnnouncementScreen(
     userId: Long,
     otherChatIdentifier: String,
+    messageId: String,
     viewModel: AnnouncementViewModel = viewModel(
         factory = AnnouncementViewModelFactory(
             userId,
-            otherChatIdentifier
+            otherChatIdentifier,
+            messageId
         )
     )
 ) {

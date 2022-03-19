@@ -105,7 +105,8 @@ class MessagesRepo(
 
     fun getAnnouncementMessages(
         wallet: String,
-        otherChatIdentifier: String
+        otherChatIdentifier: String,
+        messageId: String
     ): Flow<List<AnnouncementMessage>> {
         return messagesDao.getAnnouncementMessagesForWallet(wallet)
             .map { messages ->
@@ -113,6 +114,7 @@ class MessagesRepo(
                     .map { convertMessageEntityToMessage(it) }
                     .filterIsInstance<AnnouncementMessage>()
                     .filter { (it.from == wallet || it.from == otherChatIdentifier) && (it.to == otherChatIdentifier || it.to == wallet) }
+                    .filter { it.id == messageId }
                     .sortedByDescending { it.composedAt }
             }
     }

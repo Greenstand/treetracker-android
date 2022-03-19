@@ -31,6 +31,7 @@ data class AnnouncementState(
 class AnnouncementViewModel(
     private val userId: Long,
     private val otherChatIdentifier: String,
+    private val messageId: String,
     private val users: Users,
     private val messagesRepo: MessagesRepo,
 ) : ViewModel() {
@@ -42,7 +43,7 @@ class AnnouncementViewModel(
     init {
         viewModelScope.launch {
             val currentUser = users.getUser(userId)
-            messagesRepo.getAnnouncementMessages(currentUser!!.wallet, otherChatIdentifier)
+            messagesRepo.getAnnouncementMessages(currentUser!!.wallet, otherChatIdentifier, messageId)
                 .collect { messages ->
                     _state.value = AnnouncementState(
                         currentUser = currentUser,
@@ -85,11 +86,12 @@ class AnnouncementViewModel(
 
 class AnnouncementViewModelFactory(
     private val userId: Long,
-    private val otherChatIdentifier: String
+    private val otherChatIdentifier: String,
+    private val messageId: String
 ) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return AnnouncementViewModel(userId, otherChatIdentifier, get(), get()) as T
+        return AnnouncementViewModel(userId, otherChatIdentifier, messageId, get(), get()) as T
     }
 }
