@@ -112,100 +112,50 @@ fun DashboardScreen(
                 )
             }
 
-            // Upload indicator and button for 2.0 debug.
-            if (FeatureFlags.DEBUG_ENABLED) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    // Upload indicator.
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .fillMaxHeight()
-                            .weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        DashboardUploadProgressBar(
-                            progress = (state.treesRemainingToSync)
-                                .toFloat() / (state.totalTreesToSync),
-                            modifier = Modifier.weight(1f),
-                        )
-                        Text(
-                            text = (state.treesRemainingToSync).toString(),
-                            modifier = Modifier.weight(1f),
-                            color = CustomTheme.textColors.lightText,
-                            style = CustomTheme.typography.medium,
-                        )
-                    }
-                    Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
-                    DashBoardButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .weight(1f),
-                        text = stringResource(R.string.upload),
-                        colors = AppButtonColors.UploadOrange,
-                        onClick = {
-                            viewModel.sync()
-                        },
-                        shape = DepthSurfaceShape.Circle,
-                        image = painterResource(id = R.drawable.upload_icon)
-                    )
-                }
-            }
-            // Upload indicator and button for 2.0 release version.
-            if (!FeatureFlags.DEBUG_ENABLED) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                // Upload indicator.
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(2f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                        .fillMaxWidth(0.5f)
+                        .fillMaxHeight()
+                        .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    // Upload indicator.
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(top = 40.dp)
-                            .fillMaxWidth(0.5f)
-                            .wrapContentHeight()
-                            .aspectRatio(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        DashboardUploadProgressBar(
-                            progress = (state.treesRemainingToSync)
-                                .toFloat() / (state.totalTreesToSync),
-                            modifier = Modifier.weight(1f),
-                        )
-                        Text(
-                            text = (state.treesRemainingToSync).toString(),
-                            modifier = Modifier.weight(1f),
-                            color = CustomTheme.textColors.lightText,
-                            style = CustomTheme.typography.medium,
-                        )
-                    }
-                    DashBoardButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(bottom = 30.dp, top = 5.dp)
-                            .fillMaxWidth(0.5f)
-                            .aspectRatio(1f),
-                        text = stringResource(R.string.upload),
-                        colors = AppButtonColors.UploadOrange,
-                        onClick = {
-                            viewModel.sync()
-                        },
-                        shape = DepthSurfaceShape.Circle,
-                        image = painterResource(id = R.drawable.upload_icon)
+                    DashboardUploadProgressBar(
+                        progress = (state.treesRemainingToSync)
+                            .toFloat() / (state.totalTreesToSync),
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        text = (state.treesRemainingToSync).toString(),
+                        modifier = Modifier.weight(1f),
+                        color = CustomTheme.textColors.lightText,
+                        style = CustomTheme.typography.medium,
                     )
                 }
+                Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
+                DashBoardButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .weight(1f),
+                    text = stringResource(R.string.upload),
+                    colors = AppButtonColors.UploadOrange,
+                    onClick = {
+                        viewModel.sync()
+                    },
+                    shape = DepthSurfaceShape.Circle,
+                    image = painterResource(id = R.drawable.upload_icon)
+                )
             }
+
             if (FeatureFlags.MESSAGES_ENABLED) {
                 DashBoardButton(
                     text = stringResource(R.string.messages),
