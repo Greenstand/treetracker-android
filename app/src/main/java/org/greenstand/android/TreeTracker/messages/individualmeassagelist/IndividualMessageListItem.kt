@@ -3,10 +3,12 @@ package org.greenstand.android.TreeTracker.messages.individualmeassagelist
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,17 +33,30 @@ fun IndividualMessageItem(
     messageTypeText: String,
     text: String,
     icon: Int,
+    iconPadding: PaddingValues? = null,
     onClick: () -> Unit
 ) {
     SelectableImageDetail(
         isSelected = isSelected,
         buttonColors = AppButtonColors.MessagePurple,
         selectedColor = AppColors.Purple,
-        header = { header(painter = painterResource(id = icon), messageTypeText = messageTypeText) },
+        header = {
+            Header(
+                painter = painterResource(id = icon),
+                messageTypeText = messageTypeText,
+                iconPadding = iconPadding,
+            )
+        },
         onClick = onClick
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
+                modifier = Modifier.weight(3f),
                 text = text,
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.small,
@@ -53,7 +68,7 @@ fun IndividualMessageItem(
                 Image(
                     modifier = Modifier
                         .size(33.dp)
-                        .align(Alignment.TopEnd),
+                        .weight(1f),
                     painter = painterResource(id = R.drawable.notification_icon),
                     contentDescription = null
                 )
@@ -61,28 +76,34 @@ fun IndividualMessageItem(
         }
     }
 }
+
 @Composable
-fun header(painter: Painter,
-           messageTypeText: String,){
+fun Header(
+    painter: Painter,
+    messageTypeText: String,
+    iconPadding: PaddingValues?,
+) {
     Box(
         modifier = Modifier
-            .background(AppColors.Purple)
-            .wrapContentHeight(),
+            .fillMaxWidth()
+            .height(160.dp)
+            .background(AppColors.Purple),
         contentAlignment = Alignment.Center
     ) {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Inside
-            )
-            Text(
-                text = messageTypeText.uppercase(),
-                color = CustomTheme.textColors.darkText,
-                fontWeight = FontWeight.Bold,
-                style = CustomTheme.typography.regular,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 110.dp)
-            )
+        Image(
+            modifier = iconPadding?.let { Modifier.padding(iconPadding) } ?: Modifier,
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Inside
+        )
+        Text(
+            text = messageTypeText.uppercase(),
+            color = CustomTheme.textColors.darkText,
+            fontWeight = FontWeight.Bold,
+            style = CustomTheme.typography.regular,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 110.dp)
+        )
     }
 
 }
