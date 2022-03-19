@@ -45,7 +45,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.messages.OtherChatIcon
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -55,6 +57,7 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.LocalImage
+import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
 
 
 @Composable
@@ -68,34 +71,14 @@ fun AnnouncementScreen(
         )
     )
 ) {
-    val scrollState = rememberLazyListState()
     val state by viewModel.state.observeAsState(AnnouncementState())
     val navController = LocalNavHostController.current
-
 
     Scaffold(
         topBar = {
             ActionBar(
                 leftAction = {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .aspectRatio(1f)
-                            .fillMaxSize()
-                            .padding(
-                                top = 10.dp,
-                                bottom = 10.dp
-                            )
-                            .background(color = AppColors.MediumGray, shape = CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.admin_placeholder).uppercase(),
-                            color = CustomTheme.textColors.lightText,
-                            fontWeight = FontWeight.Bold,
-                            style = CustomTheme.typography.regular,
-                        )
-                    }
+                    OtherChatIcon()
                 },
                 centerAction = {
                     Image(
@@ -105,16 +88,10 @@ fun AnnouncementScreen(
                     )
                 },
                 rightAction = {
-                    state.currentUser?.photoPath?.let { imagePath ->
-                        LocalImage(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(bottom = 5.dp, top = 5.dp)
-                                .aspectRatio(1.0f)
-                                .size(100.dp)
-                                .clip(CircleShape),
-                            imagePath = imagePath,
-                            contentScale = ContentScale.Crop
+                    state.currentUser?.photoPath?.let {
+                        RoundedLocalImageContainer(
+                            imagePath = it,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 }
@@ -127,62 +104,39 @@ fun AnnouncementScreen(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
                         onClick = {
-                            navController.popBackStack()
+                            if (!viewModel.goToPrevAnnouncement()) {
+                                navController.popBackStack()
+                            }
                         }
                     )
+                },
+                rightAction = {
+                    ArrowButton(
+                        isLeft = false,
+                        colors = AppButtonColors.MessagePurple,
+                    ) {
+                        if (!viewModel.goToNextAnnouncement()) {
+                            navController.popBackStack()
+                        }
+                    }
                 }
             )
-        }
-    ) {
+        },
+
+        ) {
         Column(
             Modifier
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)
                 .fillMaxSize()
         ) {
-            Messages(
-                state = state,
-                modifier = Modifier.weight(1f),
-                scrollState = scrollState,
-                viewModel = viewModel
-            )
-            if (state.showNoInternetDialog) {
-                NoInternetDialog(viewModel = viewModel)
-            }
+            ChatItemBubble(state = state)
         }
     }
 }
 
 @Composable
-fun Messages(
+private fun ChatItemBubble(
     state: AnnouncementState,
-    scrollState: LazyListState,
-    modifier: Modifier = Modifier,
-    viewModel: AnnouncementViewModel
-) {
-    Box(modifier = modifier) {
-        LazyColumn(
-            reverseLayout = true,
-            state = scrollState,
-            contentPadding = PaddingValues(top = 10.dp),
-            // Add content padding so that the content can be scrolled (y-axis)
-            // below the status bar + app bar
-            // TODO: Get height from somewhere
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            items(state.messages) { message ->
-                ChatItemBubble(message = message, state = state, viewModel = viewModel)
-                Spacer(modifier = Modifier.height(6.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun ChatItemBubble(
-    message: AnnouncementMessage,
-    state: AnnouncementState,
-    viewModel: AnnouncementViewModel
 ) {
     val context = LocalContext.current
 
@@ -197,7 +151,7 @@ fun ChatItemBubble(
             .wrapContentHeight()
             .padding(8.dp), horizontalAlignment = Alignment.Start
     ) {
-        message.body?.let {
+        state.currentBody?.let {
             Text(
                 text = it,
                 color = CustomTheme.textColors.lightText,
@@ -206,17 +160,13 @@ fun ChatItemBubble(
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        message.videoLink?.let {
+        state.currentUrl?.let {
             Text(
                 text = it,
                 Modifier
                     .padding(top = 10.dp)
                     .clickable(onClick = {
-                        if (state.isInternetAvailable) {
-                            openUrlLink(context = context, url = message.videoLink)
-                        } else {
-                            viewModel.updateNoInternetDialogState(true)
-                        }
+                        openUrlLink(context = context, url = it)
                     }),
                 color = AppColors.Green,
                 style = TextStyle(textDecoration = TextDecoration.Underline),
@@ -225,20 +175,8 @@ fun ChatItemBubble(
     }
 }
 
-fun openUrlLink(context: Context, url: String) {
+private fun openUrlLink(context: Context, url: String) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(url)
     ContextCompat.startActivity(context, intent, null)
-}
-
-@Composable
-fun NoInternetDialog(viewModel: AnnouncementViewModel) {
-    CustomDialog(
-        dialogIcon = painterResource(id = R.drawable.error_outline),
-        title = stringResource(R.string.no_internet_header),
-        textContent = stringResource(R.string.no_internet_content),
-        onPositiveClick = {
-            viewModel.updateNoInternetDialogState(false)
-        }
-    )
 }
