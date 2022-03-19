@@ -62,7 +62,7 @@ fun IndividualMessageListScreen(
                             when(val msg = state.selectedMessage) {
                                is DirectMessage -> navController.navigate(NavRoute.Chat.create(userId, msg.from))
                                is SurveyMessage -> navController.navigate(NavRoute.Survey.create(msg.id))
-                               is AnnouncementMessage -> navController.navigate(NavRoute.Announcement.create(userId, msg.from))
+                               is AnnouncementMessage -> navController.navigate(NavRoute.Announcement.create( msg.id))
                             }
                         }
                     )

@@ -246,22 +246,20 @@ sealed class NavRoute {
 
     object Announcement : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            AnnouncementScreen(getPlanterInfoId(it), getOtherChatIdentifier(it))
-        }
-        override val route: String = "announcement/{planterInfoId}/{otherChatIdentifier}"
-        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType },
-            navArgument("otherChatIdentifier") { type = NavType.StringType })
-
-        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
-            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+            AnnouncementScreen(messageId(it))
         }
 
-        private fun getOtherChatIdentifier(backStackEntry: NavBackStackEntry): String {
-            return backStackEntry.arguments?.getString("otherChatIdentifier") ?: ""
+        override val route: String = "announcement/{messageId}"
+
+        override val arguments = listOf(navArgument("messageId") { type = NavType.StringType })
+
+        fun messageId(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("messageId").fromSafeNavUrl()
         }
 
-        fun create(planterInfoId: Long, otherChatIdentifier: String) =
-            "announcement/$planterInfoId/$otherChatIdentifier"
+        fun create(messageId: String): String {
+            return "announcement/${messageId.toSafeNavUrl()}"
+        }
     }
 }
 

@@ -7,8 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.messages.survey.SurveyScreenState
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
@@ -22,74 +26,40 @@ import java.util.*
 
 
 data class AnnouncementState(
-    val messages: List<AnnouncementMessage> = Collections.emptyList(),
-    val currentUser: User? = null,
     val currentBody: String? = null,
     val currentUrl: String? = null,
+    val currentTitle: String? = null,
 )
 
 class AnnouncementViewModel(
-    private val userId: Long,
-    private val otherChatIdentifier: String,
-    private val users: Users,
+    private val messageId: String,
     private val messagesRepo: MessagesRepo,
 ) : ViewModel() {
-    private val _state = MutableLiveData<AnnouncementState>()
-    val state: LiveData<AnnouncementState> = _state
-    private lateinit var announcement: List<AnnouncementMessage>
-    private var currentAnnouncementIndex: Int = 0
+    private var _state: MutableStateFlow<AnnouncementState> = MutableStateFlow(AnnouncementState())
+    val state: StateFlow<AnnouncementState> = _state.asStateFlow()
+
+    private lateinit var announcement: AnnouncementMessage
 
     init {
         viewModelScope.launch {
-            val currentUser = users.getUser(userId)
-            messagesRepo.getAnnouncementMessages(currentUser!!.wallet, otherChatIdentifier)
-                .collect { messages ->
-                    _state.value = AnnouncementState(
-                        currentUser = currentUser,
-                        messages = messages,
-                        currentBody = messages[currentAnnouncementIndex].body,
-                        currentUrl = messages[currentAnnouncementIndex].videoLink
-                    )
-                    announcement = messages
-                    val unreadMessages = messages.filterNot { it.isRead }.map { it.id }
-                    messagesRepo.markMessagesAsRead(unreadMessages)
-                }
+            announcement = messagesRepo.getAnnouncementMessages(messageId)
+            _state.value = _state.value.copy(
+                currentTitle = announcement.subject,
+                currentBody = announcement.body,
+                currentUrl = announcement.videoLink
+            )
+            messagesRepo.markMessageAsRead(messageId)
         }
     }
-
-    fun goToNextAnnouncement(): Boolean {
-        if (currentAnnouncementIndex == _state.value?.messages!!.size - 1) {
-            return false
-        }
-        currentAnnouncementIndex++
-        _state.value = _state.value!!.copy(
-            currentBody = announcement[currentAnnouncementIndex].body,
-            currentUrl = announcement[currentAnnouncementIndex].videoLink
-        )
-        return true
-    }
-
-    fun goToPrevAnnouncement(): Boolean {
-        if (currentAnnouncementIndex == 0) {
-            return false
-        }
-        currentAnnouncementIndex--
-        _state.value = _state.value?.copy(
-            currentBody = announcement[currentAnnouncementIndex].body,
-            currentUrl = announcement[currentAnnouncementIndex].videoLink
-        )
-        return true
-    }
-
 }
 
+
 class AnnouncementViewModelFactory(
-    private val userId: Long,
-    private val otherChatIdentifier: String
+    private val messageId: String,
 ) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return AnnouncementViewModel(userId, otherChatIdentifier, get(), get()) as T
+        return AnnouncementViewModel(messageId, get()) as T
     }
 }

@@ -28,9 +28,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -41,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -62,39 +65,20 @@ import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
 
 @Composable
 fun AnnouncementScreen(
-    userId: Long,
-    otherChatIdentifier: String,
+    messageId: String,
     viewModel: AnnouncementViewModel = viewModel(
-        factory = AnnouncementViewModelFactory(
-            userId,
-            otherChatIdentifier
-        )
+        factory = AnnouncementViewModelFactory(messageId)
     )
 ) {
-    val state by viewModel.state.observeAsState(AnnouncementState())
+    val state by viewModel.state.collectAsState(AnnouncementState())
     val navController = LocalNavHostController.current
 
     Scaffold(
         topBar = {
             ActionBar(
-                leftAction = {
+                centerAction = {
                     OtherChatIcon()
                 },
-                centerAction = {
-                    Image(
-                        painter = painterResource(id = R.drawable.chat_icon),
-                        contentDescription = null,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                },
-                rightAction = {
-                    state.currentUser?.photoPath?.let {
-                        RoundedLocalImageContainer(
-                            imagePath = it,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                }
             )
         },
         bottomBar = {
@@ -104,22 +88,10 @@ fun AnnouncementScreen(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
                         onClick = {
-                            if (!viewModel.goToPrevAnnouncement()) {
-                                navController.popBackStack()
-                            }
+                            navController.popBackStack()
                         }
                     )
                 },
-                rightAction = {
-                    ArrowButton(
-                        isLeft = false,
-                        colors = AppButtonColors.MessagePurple,
-                    ) {
-                        if (!viewModel.goToNextAnnouncement()) {
-                            navController.popBackStack()
-                        }
-                    }
-                }
             )
         },
 
@@ -129,44 +101,56 @@ fun AnnouncementScreen(
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)
                 .fillMaxSize()
         ) {
-            ChatItemBubble(state = state)
+            Announcement(state = state)
         }
     }
 }
 
 @Composable
-private fun ChatItemBubble(
+private fun Announcement(
     state: AnnouncementState,
 ) {
     val context = LocalContext.current
 
     Column(
         modifier = Modifier
-            .padding(start = 10.dp, end = 60.dp)
+            .padding(start = 10.dp, end = 10.dp)
             .background(
                 color = AppColors.MessageReceivedBackground,
                 shape = RoundedCornerShape(6.dp)
             )
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(8.dp), horizontalAlignment = Alignment.Start
+            .padding(8.dp),
+        horizontalAlignment = Alignment.Start
     ) {
-        state.currentBody?.let {
+        state.currentTitle?.let { title ->
             Text(
-                text = it,
+                text = title,
+                color = CustomTheme.textColors.lightText,
+                fontWeight = FontWeight.Bold,
+                style = CustomTheme.typography.large,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(CenterHorizontally)
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        state.currentBody?.let { body ->
+            Text(
+                text = body,
                 color = CustomTheme.textColors.lightText,
                 fontWeight = FontWeight.Bold,
                 style = CustomTheme.typography.regular,
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        state.currentUrl?.let {
+        state.currentUrl?.let { url ->
             Text(
-                text = it,
+                text = url,
                 Modifier
                     .padding(top = 10.dp)
                     .clickable(onClick = {
-                        openUrlLink(context = context, url = it)
+                        openUrlLink(context = context, url = url)
                     }),
                 color = AppColors.Green,
                 style = TextStyle(textDecoration = TextDecoration.Underline),
