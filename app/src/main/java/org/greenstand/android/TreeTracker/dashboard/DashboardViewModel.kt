@@ -40,16 +40,12 @@ class DashboardViewModel(
     locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
-    init {
-        locationDataCapturer.stopGpsUpdates()
-    }
-
     private val _state = MutableLiveData<DashboardState>()
     val state: LiveData<DashboardState> = _state
 
     var showSnackBar: ((Int) -> Unit)? = null
 
-    private var _isSyncing: Boolean? by Delegates.observable(null) { _, _, startedSyncing ->
+    private var _isSyncing: Boolean? by Delegates.observable(false) { _, _, startedSyncing ->
         startedSyncing ?: return@observable
         if (startedSyncing) {
             updateTimerJob = viewModelScope.launch {
@@ -59,7 +55,7 @@ class DashboardViewModel(
                 }
             }
         } else {
-            updateData()
+            updateData()    // this block gets executed at first due to init value as false
             updateTimerJob?.cancel()
             updateTimerJob = null
         }
@@ -70,46 +66,30 @@ class DashboardViewModel(
     private val syncObserver = Observer<List<WorkInfo>> { infoList ->
         when(infoList.map { it.state }.elementAtOrNull(0)) {
             State.BLOCKED -> {
-                if (_isSyncing != null) {
-                    showSnackBar?.invoke(R.string.sync_blocked)
-                }
-
+                showSnackBar?.invoke(R.string.sync_blocked)
                 _isSyncing = false
             }
             SUCCEEDED -> {
-                if (_isSyncing != null) {
+                if (_isSyncing != false) {
                     showSnackBar?.invoke(R.string.sync_successful)
                 }
 
                 _isSyncing = false
             }
             State.CANCELLED -> {
-
-                if (_isSyncing != null) {
-                    showSnackBar?.invoke(R.string.sync_stopped)
-                }
-
+                showSnackBar?.invoke(R.string.sync_stopped)
                 _isSyncing = false
             }
             State.FAILED -> {
-                if (_isSyncing != null) {
-                    showSnackBar?.invoke(R.string.sync_failed)
-                }
-
+                showSnackBar?.invoke(R.string.sync_failed)
                 _isSyncing = false
             }
             State.RUNNING -> {
-                if (_isSyncing != null) {
-                    showSnackBar?.invoke(R.string.sync_started)
-                }
-
+                showSnackBar?.invoke(R.string.sync_started)
                 _isSyncing = true
             }
             State.ENQUEUED -> {
-                if (_isSyncing != null) {
-                    showSnackBar?.invoke(R.string.sync_preparing)
-                }
-
+                showSnackBar?.invoke(R.string.sync_preparing)
                 _isSyncing = true
             }
         }
@@ -117,13 +97,14 @@ class DashboardViewModel(
 
     init {
         updateData()
+        locationDataCapturer.stopGpsUpdates()
         workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
             .observeForever(syncObserver)
     }
 
     fun sync() {
         viewModelScope.launch {
-            if (_isSyncing == null || _isSyncing == false) {
+            if (_isSyncing == false) {
                 if (!FeatureFlags.DEBUG_ENABLED) {
                     val treesToSync = treesToSyncHelper.getTreeCountToSync()
                     when (treesToSync) {
