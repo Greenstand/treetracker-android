@@ -17,7 +17,7 @@ import org.koin.core.component.get
 data class SurveyScreenState(
     val userImagePath: String? = null,
     val currentQuestion: Question? = null,
-    val selectedAnswer: String = "",
+    val selectedAnswerIndex: Int? = null,
 )
 
 class SurveyViewModel(
@@ -31,7 +31,7 @@ class SurveyViewModel(
 
     private lateinit var survey: SurveyMessage
     private var currentQuestionIndex: Int = 0
-    private val answers: Array<String> = Array(3) { "" }
+    private val answers: Array<Int?> = Array(3) { null }
 
     init {
         viewModelScope.launch {
@@ -45,10 +45,10 @@ class SurveyViewModel(
         }
     }
 
-    fun selectAnswer(answer: String) {
-        answers[currentQuestionIndex] = answer
+    fun selectAnswer(answerIndex: Int) {
+        answers[currentQuestionIndex] = answerIndex
         _state.value = _state.value.copy(
-            selectedAnswer = answers[currentQuestionIndex],
+            selectedAnswerIndex = answers[currentQuestionIndex],
         )
     }
 
@@ -58,12 +58,15 @@ class SurveyViewModel(
      */
     suspend fun goToNextQuestion(): Boolean {
         if (currentQuestionIndex == survey.questions.size - 1) {
-            messagesRepo.saveSurveyAnswers(messageId, answers.toList())
+            val answerStrings = survey.questions.mapIndexed { index, question ->
+                answers[index]?.let { question.choices[it] }
+            }.requireNoNulls()
+            messagesRepo.saveSurveyAnswers(messageId, answerStrings)
             return false
         }
         currentQuestionIndex++
         _state.value = _state.value.copy(
-            selectedAnswer = answers[currentQuestionIndex],
+            selectedAnswerIndex = answers[currentQuestionIndex],
             currentQuestion = survey.questions[currentQuestionIndex]
         )
         return true
@@ -79,7 +82,7 @@ class SurveyViewModel(
         }
         currentQuestionIndex--
         _state.value = _state.value.copy(
-            selectedAnswer = answers[currentQuestionIndex],
+            selectedAnswerIndex = answers[currentQuestionIndex],
             currentQuestion = survey.questions[currentQuestionIndex]
         )
         return true
