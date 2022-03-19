@@ -62,7 +62,7 @@ fun IndividualMessageListScreen(
                             when(val msg = state.selectedMessage) {
                                is DirectMessage -> navController.navigate(NavRoute.Chat.create(userId, msg.from))
                                is SurveyMessage -> navController.navigate(NavRoute.Survey.create(msg.id))
-                               is AnnouncementMessage -> Timber.e("Screen not implemented")
+                               is AnnouncementMessage -> navController.navigate(NavRoute.Announcement.create( msg.id))
                             }
                         }
                     )
@@ -85,6 +85,7 @@ fun IndividualMessageListScreen(
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {
             items(state.messages) { message ->
+
                 val isSelected = state.selectedMessage == message
                 key(message.id) {
                     when (message) {

@@ -74,6 +74,7 @@ object DatabaseConverters {
                     subject = messageEntity.subject ?: "",
                     body = messageEntity.body ?: "",
                     isRead = messageEntity.isRead,
+                    videoLink = messageEntity.videoLink,
                 )
             MessageType.SURVEY ->
                 SurveyMessage(

@@ -103,6 +103,10 @@ class MessagesRepo(
             }
     }
 
+    suspend fun getAnnouncementMessages(id: String): AnnouncementMessage {
+        return convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as AnnouncementMessage
+    }
+
     suspend fun getSurveyMessage(id: String): SurveyMessage {
         return convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as SurveyMessage
     }

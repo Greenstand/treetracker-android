@@ -37,6 +37,9 @@ interface MessagesDAO {
     @Query("SELECT * FROM messages WHERE wallet = :wallet AND type = 'MESSAGE'")
     fun getDirectMessagesForWallet(wallet: String): Flow<List<MessageEntity>>
 
+    @Query("SELECT * FROM messages WHERE wallet = :wallet AND type = 'ANNOUNCE'")
+    fun getAnnouncementMessagesForWallet(wallet: String): Flow<List<MessageEntity>>
+
     @Query("UPDATE messages SET bundle_id = :bundleId WHERE id IN (:ids)")
     suspend fun updateMessageBundleIds(ids: List<String>, bundleId: String)
 

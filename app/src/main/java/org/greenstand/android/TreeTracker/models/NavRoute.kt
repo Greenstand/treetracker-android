@@ -16,6 +16,7 @@ import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
 import org.greenstand.android.TreeTracker.messages.ChatScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
+import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementScreen
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
 import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
@@ -224,6 +225,7 @@ sealed class NavRoute {
         }
         override val route: String = "messages-user-select"
     }
+
     object Chat : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             ChatScreen(getPlanterInfoId(it), getOtherChatIdentifier(it))
@@ -240,6 +242,24 @@ sealed class NavRoute {
         }
 
         fun create(planterInfoId: Long,otherChatIdentifier: String) = "chat/$planterInfoId/$otherChatIdentifier"
+    }
+
+    object Announcement : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            AnnouncementScreen(messageId(it))
+        }
+
+        override val route: String = "announcement/{messageId}"
+
+        override val arguments = listOf(navArgument("messageId") { type = NavType.StringType })
+
+        fun messageId(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("messageId").fromSafeNavUrl()
+        }
+
+        fun create(messageId: String): String {
+            return "announcement/${messageId.toSafeNavUrl()}"
+        }
     }
 }
 
