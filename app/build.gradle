@@ -34,8 +34,8 @@ android {
         buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_IMAGES', '"treetracker-production-images"'
         buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-production-batch-uploads"'
         buildConfigField 'String', 'API_GATEWAY', "https://dev-k8s.treetracker.org"
-        buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${treetracker_client_id}\""
-        buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${treetracker_client_secret}\""
+        buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${prod_treetracker_client_id}\""
+        buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${prod_treetracker_client_secret}\""
         buildConfigField 'Boolean', 'TREE_HEIGHT_FEATURE_ENABLED', "false"
         buildConfigField 'Boolean', 'TREE_NOTE_FEATURE_ENABLED', "true"
         buildConfigField 'Boolean', 'TREE_DBH_FEATURE_ENABLED', "false"
@@ -90,6 +90,8 @@ android {
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
             buildConfigField 'String', 'API_GATEWAY', '"https://prod-k8s.treetracker.org"'
+            buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${prod_treetracker_client_id}\""
+            buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${prod_treetracker_client_secret}\""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -105,6 +107,8 @@ android {
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
             resValue "string", "app_name", "Tree Tracker Prerelease"
             buildConfigField 'String', 'API_GATEWAY', '"https://prod-k8s.treetracker.org"'
+            buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${prod_treetracker_client_id}\""
+            buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${prod_treetracker_client_secret}\""
         }
 
         debug {
@@ -116,6 +120,8 @@ android {
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
             buildConfigField 'String', 'API_GATEWAY', '"https://dev-k8s.treetracker.org"'
+            buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${test_treetracker_client_id}\""
+            buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${test_treetracker_client_secret}\""
         }
 
         beta {
@@ -127,6 +133,8 @@ android {
             buildConfigField 'Boolean', 'USE_AWS_S3', "true"
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
             buildConfigField 'String', 'API_GATEWAY', '"https://test-k8s.treetracker.org"'
+            buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${test_treetracker_client_id}\""
+            buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${test_treetracker_client_secret}\""
             signingConfig signingConfigs.debug
             debuggable true
         }
@@ -140,6 +148,8 @@ android {
             buildConfigField 'String', 'OBJECT_STORAGE_BUCKET_BATCH_UPLOADS', '"treetracker-dev-batch-uploads"'
             buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "true"
             buildConfigField 'String', 'API_GATEWAY', '"https://dev-k8s.treetracker.org"'
+            buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${dev_treetracker_client_id}\""
+            buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${dev_treetracker_client_secret}\""
 
         }
     }
