@@ -30,10 +30,8 @@ class SyncDataUseCase(
         try {
             withContext(Dispatchers.IO) {
 
-                if (FeatureFlags.MESSAGES_ENABLED) {
-                    executeIfContextActive("Message Sync") {
-                        messagesRepo.syncMessages()
-                    }
+                executeIfContextActive("Message Sync") {
+                    messagesRepo.syncMessages()
                 }
 
                 executeIfContextActive("Device Config Upload") {
