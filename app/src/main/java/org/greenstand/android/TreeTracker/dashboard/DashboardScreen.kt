@@ -156,20 +156,18 @@ fun DashboardScreen(
                 )
             }
 
-            if (FeatureFlags.MESSAGES_ENABLED) {
-                DashBoardButton(
-                    text = stringResource(R.string.messages),
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                        .fillMaxSize(),
-                    colors = AppButtonColors.MessagePurple,
-                    onClick = {
-                        navController.navigate(NavRoute.MessagesUserSelect.route)
-                    },
-                    image = painterResource(id = R.drawable.announcement_icon)
-                )
-            }
+            DashBoardButton(
+                text = stringResource(R.string.messages),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .fillMaxSize(),
+                colors = AppButtonColors.MessagePurple,
+                onClick = {
+                    navController.navigate(NavRoute.MessagesUserSelect.route)
+                },
+                image = painterResource(id = R.drawable.announcement_icon)
+            )
 
             DashBoardButton(
                 text = stringResource(R.string.track),
