@@ -1,31 +1,21 @@
 package org.greenstand.android.TreeTracker.messages.announcementmessage
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.messages.survey.SurveyScreenState
-import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
-import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
-import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
-import org.greenstand.android.TreeTracker.models.user.User
-import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import java.util.*
 
 
 data class AnnouncementState(
+    val from: String = "",
     val currentBody: String? = null,
     val currentUrl: String? = null,
     val currentTitle: String? = null,
@@ -44,6 +34,7 @@ class AnnouncementViewModel(
         viewModelScope.launch {
             announcement = messagesRepo.getAnnouncementMessages(messageId)
             _state.value = _state.value.copy(
+                from = announcement.from,
                 currentTitle = announcement.subject,
                 currentBody = announcement.body,
                 currentUrl = announcement.videoLink

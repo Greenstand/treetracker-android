@@ -18,6 +18,7 @@ import java.util.*
 
 
 data class ChatState(
+    val from: String = "",
     val messages: List<DirectMessage> = Collections.emptyList(),
     val draftText: String = "",
     val currentUser: User? = null,
@@ -38,6 +39,7 @@ class ChatViewModel(
             val currentUser = users.getUser(userId)
             messagesRepo.getDirectMessages(currentUser!!.wallet, otherChatIdentifier).collect { messages ->
                 _state.value = ChatState(
+                    from = otherChatIdentifier,
                     currentUser = currentUser,
                     messages = messages,
                 )
@@ -63,7 +65,7 @@ class ChatViewModel(
         return if(isFirstMessage) isFirstMessageByAuthor else isLastMessageByAuthor
     }
 
-    fun checkIsAdmin(index :Int): Boolean{
+    fun checkIsOtherUser(index :Int): Boolean{
         return _state.value!!.messages[index].from == otherChatIdentifier
     }
 

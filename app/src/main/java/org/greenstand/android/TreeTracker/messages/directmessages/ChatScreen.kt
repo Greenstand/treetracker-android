@@ -71,7 +71,7 @@ fun ChatScreen(
         topBar = {
             ActionBar(
                 leftAction = {
-                    OtherChatIcon()
+                    OtherChatIcon(state.from)
                 },
                 centerAction = {
                     Image(
@@ -156,14 +156,14 @@ fun ChatScreen(
 }
 
 @Composable
-fun BoxScope.OtherChatIcon() {
+fun BoxScope.OtherChatIcon(text: String) {
     RoundedImageContainer(
         modifier = Modifier
             .align(Alignment.Center)
             .background(color = AppColors.MediumGray)
     ) {
         Text(
-            text = stringResource(id = R.string.admin_placeholder).uppercase(),
+            text = text.uppercase(),
             color = CustomTheme.textColors.lightText,
             fontWeight = FontWeight.Bold,
             style = CustomTheme.typography.regular,
@@ -191,7 +191,7 @@ fun Messages(
             items(messages.size) { index ->
                 Message(
                     msg = messages[index],
-                    isAdmin = viewModel.checkIsAdmin(index),
+                    isOtherUser = viewModel.checkIsOtherUser(index),
                     isFirstMessageByAuthor = viewModel.checkChatAuthor(index, true),
                     isLastMessageByAuthor = viewModel.checkChatAuthor(index, true)
                 )
@@ -203,7 +203,7 @@ fun Messages(
 @Composable
 fun Message(
     msg: DirectMessage,
-    isAdmin: Boolean,
+    isOtherUser: Boolean,
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean
 ) {
@@ -215,7 +215,7 @@ fun Message(
                 .padding(end = 16.dp)
                 .weight(1f)
         ) {
-            ChatItemBubble(msg, isAdmin)
+            ChatItemBubble(msg, isOtherUser)
             if (isFirstMessageByAuthor) {
                 // Last bubble before next author
                 Spacer(modifier = Modifier.height(8.dp))
@@ -230,9 +230,9 @@ fun Message(
 @Composable
 fun ChatItemBubble(
     message: DirectMessage,
-    isAdmin: Boolean,
+    isOtherUser: Boolean,
 ) {
-    val modifier: Modifier = if (isAdmin) {
+    val modifier: Modifier = if (isOtherUser) {
         Modifier
             .padding(start = 10.dp, end = 60.dp)
             .background(
@@ -248,7 +248,7 @@ fun ChatItemBubble(
             )
     }
 
-    val horizontalAlignment = if (isAdmin) {
+    val horizontalAlignment = if (isOtherUser) {
         Alignment.Start
     } else {
         Alignment.End
