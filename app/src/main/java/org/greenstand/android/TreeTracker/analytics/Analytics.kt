@@ -9,18 +9,14 @@ import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.MARKER_CLICKE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.NOTE_ADDED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.STOP_BUTTON_CLICKED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.SYNC_BUTTON_CLICKED
-import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.TREE_COLOR_ADDED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.TREE_PLANTED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_CHECK_IN
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_DETAILS
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_EMAIL_PHONE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_INFO_CREATED
-import org.greenstand.android.TreeTracker.data.TreeColor
-import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class Analytics(
-    private val user: Planter,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val deviceUtils: DeviceUtils
 ) {
@@ -34,7 +30,6 @@ class Analytics(
         with(firebaseAnalytics) {
             setUserProperty("device_id", deviceUtils.deviceId)
             setUserProperty("device_language", deviceUtils.language)
-            setUserProperty("flavor", BuildConfig.FLAVOR)
             setUserProperty("app_version", BuildConfig.VERSION_NAME)
             setUserProperty("app_build", BuildConfig.VERSION_CODE.toString())
             setUserProperty("manufacturer", Build.MANUFACTURER)
@@ -50,10 +45,7 @@ class Analytics(
 
     fun updateUserData() {
         with(firebaseAnalytics) {
-            setUserId(user.planterCheckinId.toString())
-            setUserProperty("first_name", user.firstName)
-            setUserProperty("last_name", user.lastName)
-            setUserProperty("organization", user.organization)
+
         }
     }
 
@@ -74,9 +66,6 @@ class Analytics(
 
     fun userInfoCreated(phone: String, email: String) {
         val bundle = Bundle().apply {
-            putString("first_name", user.firstName)
-            putString("last_name", user.lastName)
-            putString("organization", user.organization)
             putString("email", email)
             putString("phone", phone)
         }
@@ -89,13 +78,6 @@ class Analytics(
 
     fun userEnteredEmailPhone() {
         firebaseAnalytics.logEvent(USER_ENTERED_EMAIL_PHONE, Bundle())
-    }
-
-    fun treeHeightMeasured(treeColor: TreeColor) {
-        val bundle = Bundle().apply {
-            putString("tree_color", treeColor.value)
-        }
-        firebaseAnalytics.logEvent(TREE_COLOR_ADDED, bundle)
     }
 
     fun treeNoteAdded(noteLength: Int) {

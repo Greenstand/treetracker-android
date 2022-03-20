@@ -26,7 +26,6 @@ import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.Organizations
 import org.greenstand.android.TreeTracker.models.OrganizationsFake
-import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.SessionUploader
@@ -44,7 +43,6 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Mess
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -58,7 +56,6 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
-import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -66,7 +63,6 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    viewModel { NewTreeViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { ConfigViewModel(get(), get()) }
 
@@ -80,7 +76,7 @@ val appModule = module {
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 
-    viewModel { SplashScreenViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { SplashScreenViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { WalletSelectViewModel(get()) }
 
@@ -108,9 +104,7 @@ val appModule = module {
 
     single { FirebaseAnalytics.getInstance(get()) }
 
-    single { Planter(get()) }
-
-    single { Analytics(get(), get(), get()) }
+    single { Analytics(get(), get()) }
 
     single { DeviceUtils }
 
@@ -140,7 +134,6 @@ val appModule = module {
             get(),
             get(),
             get(),
-            get(),
         )
     }
 
@@ -150,7 +143,7 @@ val appModule = module {
         ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
     }
 
-    single { SessionTracker(get(), get(), get(), get(), get()) }
+    single { SessionTracker(get(), get(), get(), get()) }
 
     single { StepCounter(get(), get()) }
 
@@ -171,13 +164,11 @@ val appModule = module {
 
     factory { TreesToSyncHelper(get(), get()) }
 
-    factory { PlanterUploader(get(), get(), get(), get(), get()) }
+    factory { PlanterUploader(get(), get(), get(), get()) }
 
     factory { SessionUploader(get(), get(), get()) }
 
     factory { DeviceConfigUploader(get(), get(), get()) }
-
-    factory { PreferencesMigrator(get(), get()) }
 
     factory { LanguageSwitcher(get()) }
 

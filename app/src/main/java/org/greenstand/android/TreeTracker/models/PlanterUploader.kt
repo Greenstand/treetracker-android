@@ -25,7 +25,6 @@ class PlanterUploader(
     private val uploadImageUseCase: UploadImageUseCase,
     private val gson: Gson,
     private val objectStorageClient: ObjectStorageClient,
-    private val user: Planter
 ) {
 
     suspend fun upload() {
@@ -173,8 +172,7 @@ class PlanterUploader(
         // Delete all local image files for registrations except for the currently logged in users photo...
         val loggedOutPlanterCheckIns = dao.getPlanterCheckInsToUpload()
             .filter {
-                it.id != user.planterCheckinId &&
-                        it.localPhotoPath != null && it.photoUrl != null
+                it.localPhotoPath != null && it.photoUrl != null
             }
             .sortedBy { it.createdAt }
 
