@@ -56,6 +56,7 @@ import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.viewmodels.NewTreeViewModel
@@ -93,6 +94,8 @@ val appModule = module {
     viewModel { TreeImageReviewViewModel(get(), get()) }
 
     viewModel { PermissionViewModel(get()) }
+
+    single { GpsUtils(get()) }
 
     single { Users(get(), get(), get(), get()) }
 
