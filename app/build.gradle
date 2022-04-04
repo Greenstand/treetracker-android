@@ -154,20 +154,6 @@ android {
         }
     }
 
-    flavorDimensions "version"
-    productFlavors {
-        greenstand {
-            dimension "version"
-        }
-
-        organization {
-            dimension "version"
-            applicationIdSuffix ".organization"
-            buildConfigField 'Boolean', 'ORG_LINK', "true"
-        }
-
-    }
-
     useLibrary 'org.apache.http.legacy'
 
     packagingOptions {

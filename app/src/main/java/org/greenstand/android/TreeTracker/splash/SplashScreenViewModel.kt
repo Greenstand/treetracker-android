@@ -9,11 +9,9 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
-import org.greenstand.android.TreeTracker.preferences.PreferencesMigrator
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 
 class SplashScreenViewModel(
-    private val preferencesMigrator: PreferencesMigrator,
     private val users: Users,
     private val treesToSyncHelper: TreesToSyncHelper,
     private val sessionTracker: SessionTracker,
@@ -24,7 +22,6 @@ class SplashScreenViewModel(
 ) : ViewModel() {
 
     suspend fun bootstrap() {
-        preferencesMigrator.migrateIfNeeded()
         deviceConfigUpdater.saveLatestConfig()
 
         if (checkForInternetUseCase.execute(Unit)) {

@@ -14,14 +14,12 @@ import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.ConvergenceStatus
 import org.greenstand.android.TreeTracker.models.LocationData
-import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 import java.util.*
 
 class LocationDataCapturer(
-    private val userManager: Planter,
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO,
     private val configuration: Configuration,
@@ -92,7 +90,7 @@ class LocationDataCapturer(
                 MainScope().launch(Dispatchers.IO) {
                     val locationData =
                         LocationData(
-                            userManager.planterCheckinId,
+                            currentSessionId,
                             latitude,
                             longitude,
                             accuracy,
