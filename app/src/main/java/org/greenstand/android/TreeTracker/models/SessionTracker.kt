@@ -5,7 +5,6 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
-import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -13,7 +12,6 @@ import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import java.util.*
 
 class SessionTracker(
-    private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val treesToSyncHelper: TreesToSyncHelper,
     private val preferences: Preferences,
