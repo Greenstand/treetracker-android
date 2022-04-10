@@ -36,6 +36,8 @@ class LocationDataCapturer(
         private set
     private var convergenceStatus: ConvergenceStatus? = null
     private var areLocationUpdatesOn: Boolean = false
+    var percentageConvergence: Float? = null
+        private set
 
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
@@ -73,6 +75,13 @@ class LocationDataCapturer(
                     val longStdDev = currentConvergence?.longitudinalStandardDeviation()
                     val latStdDev = currentConvergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
+//                        val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(),locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
+//                        percentageConvergence = min(1f,minimumConvergenceRatio)
+//                        Timber.d(
+//                            "Percentage convergence " +
+//                                    "[${percentageConvergence}]. \n "
+//                        )
+
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
                             latStdDev < locationDataConfig.latStdDevThreshold
                         ) {

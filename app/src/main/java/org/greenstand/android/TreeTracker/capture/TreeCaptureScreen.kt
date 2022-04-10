@@ -38,6 +38,7 @@ import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.PermissionRequest
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -144,6 +145,7 @@ fun TreeCaptureScreen(
                 }
             )
         }
+
         Camera(
             isSelfieMode = false,
             cameraControl = cameraControl,
@@ -196,6 +198,14 @@ fun TreeCaptureScreen(
                 }
             }
         )
-        showLoadingSpinner(state.isGettingLocation || state.isCreatingFakeTrees)
+        state.convergencePercentage?.let {
+            Text(
+                text = it.toString(),
+                color = CustomTheme.textColors.primaryText,
+                style = CustomTheme.typography.regular,
+                modifier = Modifier.padding(bottom = 5.dp)
+            )
+        }
+        //showLoadingSpinner(state.isGettingLocation || state.isCreatingFakeTrees)
     }
 }
