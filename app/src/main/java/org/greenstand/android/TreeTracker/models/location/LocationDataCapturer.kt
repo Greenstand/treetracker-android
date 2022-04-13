@@ -18,6 +18,7 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 import java.util.*
+import kotlin.math.min
 
 class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
@@ -36,8 +37,7 @@ class LocationDataCapturer(
         private set
     private var convergenceStatus: ConvergenceStatus? = null
     private var areLocationUpdatesOn: Boolean = false
-    var percentageConvergence: Float? = null
-        private set
+    var percentageConvergence : Float = 0f
 
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
@@ -75,12 +75,12 @@ class LocationDataCapturer(
                     val longStdDev = currentConvergence?.longitudinalStandardDeviation()
                     val latStdDev = currentConvergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
-//                        val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(),locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
-//                        percentageConvergence = min(1f,minimumConvergenceRatio)
-//                        Timber.d(
-//                            "Percentage convergence " +
-//                                    "[${percentageConvergence}]. \n "
-//                        )
+                        val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(),locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
+                        percentageConvergence = min(1f,minimumConvergenceRatio)
+                        Timber.d(
+                            "Percentage convergence " +
+                                    "[${percentageConvergence}]. \n "
+                        )
 
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
                             latStdDev < locationDataConfig.latStdDevThreshold

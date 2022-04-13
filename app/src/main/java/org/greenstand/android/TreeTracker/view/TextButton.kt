@@ -133,7 +133,8 @@ fun ApprovalButton(
          * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
          */
 fun CustomDialog(
-    dialogIcon: Painter = painterResource(id = R.drawable.greenstand_logo),
+    dialogIcon: Painter? = painterResource(id = R.drawable.greenstand_logo),
+    backgroundModifier: Modifier = Modifier,
     title: String = "",
     textContent: String? = null,
     content: @Composable() (() -> Unit)? = null,
@@ -152,12 +153,14 @@ fun CustomDialog(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = dialogIcon,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(width = 16.dp, height = 16.dp)
-                )
+                dialogIcon?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(width = 16.dp, height = 16.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = title,
@@ -167,7 +170,7 @@ fun CustomDialog(
                 )
             }
         },
-        modifier = Modifier
+        modifier = backgroundModifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(2.dp)
