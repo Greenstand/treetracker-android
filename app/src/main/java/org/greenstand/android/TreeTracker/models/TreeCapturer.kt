@@ -34,10 +34,6 @@ class TreeCapturer(
         }
     }
 
-    fun getConvergencePercentage(): Float{
-        return locationDataCapturer.percentageConvergence ?: 0f
-    }
-
     suspend fun setImage(imageFile: File) {
         val tree = Tree(
             treeUuid = newTreeUuid!!,

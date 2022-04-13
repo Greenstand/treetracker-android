@@ -23,7 +23,7 @@ data class TreeCaptureState(
     val isCreatingFakeTrees: Boolean = false,
     val isLocationAvailable: Boolean? = null,
     val showCaptureTutorial: Boolean? = null,
-    val convergencePercentage: Float? = null
+    val convergencePercentage: Float = 0.0f,
 )
 
 class TreeCaptureViewModel(
@@ -45,8 +45,7 @@ class TreeCaptureViewModel(
     }
 
     suspend fun captureLocation() {
-        _state.value = _state.value?.copy(isGettingLocation = true)
-//        _state.value = _state.value?.copy(convergencePercentage = treeCapturer.getConvergencePercentage())
+        _state.value = _state.value?.copy(isGettingLocation = true, convergencePercentage = locationDataCapturer.percentageConvergence)
         _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation(), isGettingLocation = false)
     }
 

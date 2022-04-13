@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,8 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -47,10 +51,8 @@ import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
-import org.greenstand.android.TreeTracker.view.SelfieTutorial
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
 import org.greenstand.android.TreeTracker.view.UserImageButton
-import org.greenstand.android.TreeTracker.view.showLoadingSpinner
 
 @ExperimentalPermissionsApi
 @Composable
@@ -198,14 +200,28 @@ fun TreeCaptureScreen(
                 }
             }
         )
-        state.convergencePercentage?.let {
-            Text(
-                text = it.toString(),
-                color = CustomTheme.textColors.primaryText,
-                style = CustomTheme.typography.regular,
-                modifier = Modifier.padding(bottom = 5.dp)
-            )
-        }
-        //showLoadingSpinner(state.isGettingLocation || state.isCreatingFakeTrees)
+        CaptureCustomLoading(isLoading = state.isGettingLocation || state.isCreatingFakeTrees, progress = state.convergencePercentage )
+    }
+}
+
+@Composable
+fun CaptureCustomLoading(isLoading: Boolean, progress: Float) {
+    if (isLoading) {
+        CustomDialog(
+            dialogIcon = null,
+            backgroundModifier = Modifier
+                .alpha(0.8f)
+                .padding(2.dp),
+            title = stringResource(R.string.tracking_progress_header),
+            textContent = stringResource(R.string.tracking_progress_message),
+            content = {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(height = 80.dp, width = 80.dp),
+                    color = AppColors.Green,
+                    progress = progress
+                )
+            }
+        )
     }
 }
