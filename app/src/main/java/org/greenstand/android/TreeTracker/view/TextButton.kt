@@ -33,8 +33,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -407,6 +409,7 @@ fun DepthButton(
 
     var isPressed by remember { mutableStateOf(false) }
     isSelected?.let { isPressed = isSelected }
+    val haptic = LocalHapticFeedback.current
 
     val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
 
@@ -424,6 +427,7 @@ fun DepthButton(
                     detectTapGestures(
                         onTap = {
                             onClick()
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         onPress = {
                             isPressed = true
