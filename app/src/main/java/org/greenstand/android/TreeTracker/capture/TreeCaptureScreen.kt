@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -53,6 +55,7 @@ import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
 import org.greenstand.android.TreeTracker.view.UserImageButton
+import org.greenstand.android.TreeTracker.view.showLoadingSpinner
 
 @ExperimentalPermissionsApi
 @Composable
@@ -210,17 +213,25 @@ fun CaptureCustomLoading(isLoading: Boolean, progress: Float) {
         CustomDialog(
             dialogIcon = null,
             backgroundModifier = Modifier
-                .alpha(0.8f)
+                .alpha(0.9f)
                 .padding(2.dp),
             title = stringResource(R.string.tracking_progress_header),
             textContent = stringResource(R.string.tracking_progress_message),
             content = {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(height = 80.dp, width = 80.dp),
-                    color = AppColors.Green,
-                    progress = progress
-                )
+                Column() {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(height = 80.dp, width = 80.dp)
+                            .padding(top = 10.dp, bottom = 10.dp),
+                        color = AppColors.Green,
+                    )
+                    Text(
+                        text = "${progress.times(100)} ${"%"}",
+                        color = CustomTheme.textColors.primaryText,
+                        style = CustomTheme.typography.medium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
         )
     }
