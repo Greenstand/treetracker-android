@@ -19,6 +19,7 @@ import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 import java.util.*
 import kotlin.math.min
+import kotlin.properties.Delegates
 
 class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
@@ -37,7 +38,13 @@ class LocationDataCapturer(
         private set
     private var convergenceStatus: ConvergenceStatus? = null
     private var areLocationUpdatesOn: Boolean = false
-    var percentageConvergence : Float = 0f
+    val percentageConvergenceObservers = mutableListOf<(Float) -> Unit>()
+    var newestPercentageConvergence: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+        //convergence percentage fluctuates so it is only updated when it increases
+        if (newValue > oldValue) {
+            percentageConvergenceObservers.forEach { it(newValue) }
+        }
+    }
 
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
@@ -76,11 +83,7 @@ class LocationDataCapturer(
                     val latStdDev = currentConvergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
                         val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(),locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
-                        percentageConvergence = min(1f,minimumConvergenceRatio)
-                        Timber.d(
-                            "Percentage convergence " +
-                                    "[${percentageConvergence}]. \n "
-                        )
+                        newestPercentageConvergence = min(1f,minimumConvergenceRatio)
 
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
                             latStdDev < locationDataConfig.latStdDevThreshold
