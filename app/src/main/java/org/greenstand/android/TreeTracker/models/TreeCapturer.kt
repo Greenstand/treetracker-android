@@ -5,7 +5,6 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import java.io.File
 import java.util.UUID
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
-import kotlin.math.min
 
 class TreeCapturer(
     private val locationDataCapturer: LocationDataCapturer,

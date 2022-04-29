@@ -220,7 +220,7 @@ fun CaptureCustomLoading(isLoading: Boolean, progress: Float) {
             title = stringResource(R.string.tracking_progress_header),
             textContent = stringResource(R.string.tracking_progress_message),
             content = {
-                Column() {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(
                         modifier = Modifier
                             .size(height = 80.dp, width = 80.dp)
@@ -229,7 +229,7 @@ fun CaptureCustomLoading(isLoading: Boolean, progress: Float) {
                     )
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
-                        text = "${progress.times(100)} ${"%"}",
+                        text = "${progress.times(100).toInt()} ${"%"}",
                         color = CustomTheme.textColors.primaryText,
                         style = CustomTheme.typography.medium,
                         fontWeight = FontWeight.Bold,
