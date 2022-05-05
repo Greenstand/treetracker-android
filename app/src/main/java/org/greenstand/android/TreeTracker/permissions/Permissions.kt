@@ -83,6 +83,7 @@ fun PermissionRequest(
             Manifest.permission.ACCESS_FINE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
+                        viewModel.checkIsLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
@@ -98,6 +99,7 @@ fun PermissionRequest(
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
+                        viewModel.checkIsLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
