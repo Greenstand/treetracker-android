@@ -16,6 +16,7 @@ import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import kotlin.properties.Delegates
 
 data class TreeCaptureState(
     val profilePicUrl: String,
@@ -23,6 +24,7 @@ data class TreeCaptureState(
     val isCreatingFakeTrees: Boolean = false,
     val isLocationAvailable: Boolean? = null,
     val showCaptureTutorial: Boolean? = null,
+    val convergencePercentage: Float = 0f,
 )
 
 class TreeCaptureViewModel(
@@ -44,7 +46,10 @@ class TreeCaptureViewModel(
     }
 
     suspend fun captureLocation() {
-        _state.value = _state.value?.copy(isGettingLocation = true)
+        _state.value = _state.value?.copy(isGettingLocation = true )
+        locationDataCapturer.percentageConvergenceObservers.add { newValue ->
+            _state.value = _state.value?.copy( convergencePercentage = newValue )
+        }
         _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation(), isGettingLocation = false)
     }
 
