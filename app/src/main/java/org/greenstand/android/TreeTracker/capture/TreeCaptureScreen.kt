@@ -223,7 +223,7 @@ fun CaptureCustomLoading(isLoading: Boolean, progress: Float) {
                     .wrapContentHeight()
                     .padding(20.dp)
                     .background(color = AppColors.Gray, shape = RoundedCornerShape(percent = 10))
-                    .alpha(0.8f)
+                    .alpha(0.7f)
                     .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
