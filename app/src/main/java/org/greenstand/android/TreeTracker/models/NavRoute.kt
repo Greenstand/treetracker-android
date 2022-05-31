@@ -125,7 +125,7 @@ sealed class NavRoute {
     }
 
     object IndividualMessageList : NavRoute() {
-        @ExperimentalFoundationApi
+        @OptIn(ExperimentalFoundationApi::class)
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             IndividualMessageListScreen(getPlanterInfoId(it))
         }
@@ -189,7 +189,7 @@ sealed class NavRoute {
     }
 
     object TreeCapture : NavRoute() {
-        @ExperimentalPermissionsApi
+        @OptIn(ExperimentalPermissionsApi::class)
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             TreeCaptureScreen(getProfilePicUrl(it))
         }
