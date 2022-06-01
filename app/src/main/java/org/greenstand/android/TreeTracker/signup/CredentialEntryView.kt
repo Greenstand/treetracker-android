@@ -57,6 +57,10 @@ import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.UserButton
+
+private lateinit var scaffoldState: SignUpState
+private lateinit var actionBarViewModel: SignupViewModel
+
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
@@ -82,29 +86,10 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                    ) {
-                        if (state.isCredentialValid) {
-                            viewModel.submitInfo()
-                        } else {
-                            when (state.credential) {
-                                is Credential.Email -> {
-                                    scope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = context.getString(R.string.email_validation_error)
-                                        )
-                                    }
-                                }
-                                is Credential.Phone -> {
-                                    scope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = context.getString(R.string.phone_validation_error)
-                                        )
-                                    }
-                                }
-                            }
+                        onClick = {
+                            validationByActionBar(snackBarHostState, scope, context)
                         }
-
-                    }
+                    )
                 }
             )
         }
@@ -137,10 +122,36 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 is Credential.Email -> EmailTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
                 is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
             }
+            scaffoldState = state
+            actionBarViewModel = viewModel
 
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
 
             CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
+        }
+    }
+}
+
+fun validationByActionBar( snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+    val state: SignUpState = scaffoldState
+    if (state.isCredentialValid) {
+        actionBarViewModel.submitInfo()
+    } else {
+        when (state.credential) {
+            is Credential.Email -> {
+                scope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.email_validation_error)
+                    )
+                }
+            }
+            is Credential.Phone -> {
+                scope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.phone_validation_error)
+                    )
+                }
+            }
         }
     }
 }
