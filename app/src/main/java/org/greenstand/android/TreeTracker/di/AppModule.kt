@@ -68,7 +68,7 @@ val appModule = module {
 
     viewModel { LanguagePickerViewModel(get(), get()) }
 
-    viewModel { DashboardViewModel(get(), get(), get(), get(), get()) }
+    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { OrgPickerViewModel(get()) }
 

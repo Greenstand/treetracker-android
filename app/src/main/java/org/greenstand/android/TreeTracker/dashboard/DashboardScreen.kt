@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -166,7 +167,8 @@ fun DashboardScreen(
                 onClick = {
                     navController.navigate(NavRoute.MessagesUserSelect.route)
                 },
-                image = painterResource(id = R.drawable.announcement_icon)
+                image = painterResource(id = R.drawable.announcement_icon),
+                showUnreadNotification = state.showUnreadMessageNotification
             )
 
             DashBoardButton(
@@ -241,6 +243,7 @@ fun DashBoardButton(
     colors: ButtonColors,
     shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
     image: Painter,
+    showUnreadNotification: Boolean = false,
 ) {
     DepthButton(
         modifier = modifier,
@@ -261,9 +264,22 @@ fun DashBoardButton(
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.darkText,
             modifier = Modifier
+                .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp),
+            textAlign = TextAlign.Center
         )
+        if (showUnreadNotification){
+            Image(
+                modifier = Modifier
+                    .padding(bottom = 12.dp, end = 8.dp)
+                    .size(33.dp)
+                    .align(Alignment.BottomEnd)
+                ,
+                painter = painterResource(id = R.drawable.notification_icon),
+                contentDescription = null,
+            )
+        }
     }
 }
 

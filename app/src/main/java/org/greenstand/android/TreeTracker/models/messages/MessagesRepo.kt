@@ -111,6 +111,10 @@ class MessagesRepo(
         return convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as SurveyMessage
     }
 
+    suspend fun checkForUnreadMessages(): Boolean{
+        return messagesDao.getTotalUnreadMessagesCount() >= 1
+    }
+
     /**
      * When uploading trees, messages will be synced locally by this method
      */

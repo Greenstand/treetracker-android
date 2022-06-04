@@ -58,6 +58,9 @@ interface MessagesDAO {
     @Query("UPDATE messages SET is_read = 1 WHERE id IN (:id)")
     suspend fun markMessageAsRead(id: List<String>)
 
+    @Query("SELECT COUNT(*) FROM messages WHERE is_read = 0")
+    suspend fun getTotalUnreadMessagesCount(): Int
+
     @Query("UPDATE messages SET is_survey_complete = 1 WHERE id = :id")
     suspend fun markSurveyMessageComplete(id: String?)
 
