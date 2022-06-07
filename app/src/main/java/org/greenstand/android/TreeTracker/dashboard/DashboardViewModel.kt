@@ -24,6 +24,7 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -41,6 +42,7 @@ class DashboardViewModel(
     private val treesToSyncHelper: TreesToSyncHelper,
     locationDataCapturer: LocationDataCapturer,
     private val messagesRepo: MessagesRepo,
+    private val checkForInternetUseCase: CheckForInternetUseCase,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<DashboardState>()
@@ -103,6 +105,16 @@ class DashboardViewModel(
         locationDataCapturer.stopGpsUpdates()
         workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
             .observeForever(syncObserver)
+    }
+
+    fun syncMessages(){
+        viewModelScope.launch {
+            if (checkForInternetUseCase.execute(Unit)) {
+                withContext(Dispatchers.IO) {
+                    messagesRepo.syncMessages()
+                }
+            }
+        }
     }
 
     fun sync() {

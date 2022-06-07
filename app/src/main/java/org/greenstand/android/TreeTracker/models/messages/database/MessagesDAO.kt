@@ -61,6 +61,9 @@ interface MessagesDAO {
     @Query("SELECT COUNT(*) FROM messages WHERE is_read = 0")
     suspend fun getTotalUnreadMessagesCount(): Int
 
+    @Query("SELECT COUNT(*) FROM messages WHERE wallet = (:wallet) AND is_read = 0")
+    suspend fun getTotalUnreadMessagesPerUserCount(wallet: String): Int
+
     @Query("UPDATE messages SET is_survey_complete = 1 WHERE id = :id")
     suspend fun markSurveyMessageComplete(id: String?)
 

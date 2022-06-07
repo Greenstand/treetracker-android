@@ -36,6 +36,14 @@ class Users(
         return createUser(dao.getUserByWallet(wallet))
     }
 
+    suspend fun getUserEntityWithWallet(wallet: String): UserEntity? {
+        return dao.getUserByWallet(wallet)
+    }
+
+    suspend fun updateUser(user: UserEntity){
+        dao.updateUser(user)
+    }
+
     suspend fun getPowerUser(): User? {
         val userEntity = dao.getPowerUser() ?: return null
         return createUser(userEntity)
@@ -69,6 +77,7 @@ class Users(
                 powerUser = isPowerUser,
                 photoPath = photoPath,
                 photoUrl = null,
+                unreadMessagesAvailable = false,
             )
 
             dao.insertUser(entity).also {
@@ -98,6 +107,7 @@ class Users(
             lastName = userEntity.lastName,
             photoPath = userEntity.photoPath,
             isPowerUser = userEntity.powerUser,
+            unreadMessagesAvailable = userEntity.unreadMessagesAvailable,
             numberOfTrees = treeCount
         )
     }

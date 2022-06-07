@@ -104,7 +104,8 @@ fun UserButton(
     isSelected: Boolean,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isNotificationEnabled: Boolean = false,
 ) {
     SelectableImageDetail(
         photoPath = user.photoPath,
@@ -142,11 +143,20 @@ fun UserButton(
             )
             Text(
                 text = user.numberOfTrees.toString(), // TODO: Fetch user's token count.
-                modifier = Modifier.padding(start = 4.dp),
+                modifier = Modifier.weight(3f).padding(start = 4.dp),
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.SemiBold,
             )
+            if (isNotificationEnabled) {
+                Image(
+                    modifier = Modifier
+                        .size(33.dp)
+                        .weight(1f),
+                    painter = painterResource(id = R.drawable.notification_icon),
+                    contentDescription = null
+                )
+            }
         }
     }
 }

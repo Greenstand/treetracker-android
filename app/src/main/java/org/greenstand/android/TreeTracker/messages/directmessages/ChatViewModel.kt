@@ -45,6 +45,7 @@ class ChatViewModel(
                 )
                 val unreadMessages = messages.filterNot { it.isRead }.map { it.id }
                 messagesRepo.markMessagesAsRead(unreadMessages)
+                messagesRepo.syncMessages()
             }
         }
     }

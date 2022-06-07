@@ -36,6 +36,9 @@ data class UserEntity(
     @ColumnInfo(name =
     "power_user", defaultValue = "0")
     var powerUser: Boolean,
+    @ColumnInfo(name =
+    "unread_messages_available", defaultValue = "0")
+    var unreadMessagesAvailable: Boolean,
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")

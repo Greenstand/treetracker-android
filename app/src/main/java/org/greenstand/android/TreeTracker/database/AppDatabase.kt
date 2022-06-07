@@ -18,7 +18,7 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEn
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
 
 @Database(
-    version = 8,
+    version = 9,
     exportSchema = true,
     entities = [
         PlanterCheckInEntity::class,
@@ -33,7 +33,7 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEnti
         DeviceConfigEntity::class,
     ],
     autoMigrations = [
-        AutoMigration(from = 7, to = 8)
+        AutoMigration(from = 8, to = 9)
     ],
 )
 @TypeConverters(Converters::class)
@@ -58,6 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
                             MIGRATION_4_5,
                             MIGRATION_5_6,
                             MIGRATION_6_7,
+                            MIGRATION_8_9
                         )
                         .build()
                 }

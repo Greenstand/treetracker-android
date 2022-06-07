@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.models.messages
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
+import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
@@ -115,6 +116,10 @@ class MessagesRepo(
         return messagesDao.getTotalUnreadMessagesCount() >= 1
     }
 
+    suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean{
+        return messagesDao.getTotalUnreadMessagesPerUserCount(wallet) >= 1
+    }
+
     /**
      * When uploading trees, messages will be synced locally by this method
      */
@@ -130,6 +135,11 @@ class MessagesRepo(
                     Timber.e(e)
                     throw e
                 }
+            }
+            val user: UserEntity? =  users.getUserEntityWithWallet(wallet)
+            user?.unreadMessagesAvailable = checkForUnreadMessagesPerUser(wallet)
+            if (user != null) {
+                users.updateUser(user)
             }
         }
         messageUploader.uploadMessages()
