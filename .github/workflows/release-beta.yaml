@@ -23,8 +23,6 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '11'
-        cache: 'gradle'
-    - run: ./gradlew build --no-daemon
     - name: Set up keys
       run: 'echo s3_test_identity_pool_id=$S3_TEST_IDENTITY_POOL_ID > treetracker.keys.properties' 
       shell: bash
@@ -47,6 +45,7 @@ jobs:
     - name: Run fastlane
       run: |
         bundle exec fastlane firebase_beta
+        bundle exec fastlane update_plugins
       env:
         FIREBASE_TOKEN: ${{secrets.FIREBASE_TOKEN}}
         SLACK_URL: ${{secrets.SLACK_URL}}
