@@ -8,6 +8,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
+import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import java.util.*
@@ -17,6 +18,7 @@ class Users(
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics,
     private val timeProvider: TimeProvider,
+    private val messagesDao: MessagesDAO,
 ) {
 
     fun users(): Flow<List<User>> {
@@ -36,8 +38,8 @@ class Users(
         return createUser(dao.getUserByWallet(wallet))
     }
 
-    suspend fun getUserEntityWithWallet(wallet: String): UserEntity? {
-        return dao.getUserByWallet(wallet)
+    suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean{
+        return messagesDao.getUnreadMessageCountForWallet(wallet) >= 1
     }
 
     suspend fun updateUser(user: UserEntity){
@@ -77,7 +79,6 @@ class Users(
                 powerUser = isPowerUser,
                 photoPath = photoPath,
                 photoUrl = null,
-                unreadMessagesAvailable = false,
             )
 
             dao.insertUser(entity).also {
@@ -107,7 +108,7 @@ class Users(
             lastName = userEntity.lastName,
             photoPath = userEntity.photoPath,
             isPowerUser = userEntity.powerUser,
-            unreadMessagesAvailable = userEntity.unreadMessagesAvailable,
+            unreadMessagesAvailable = checkForUnreadMessagesPerUser(userEntity.wallet),
             numberOfTrees = treeCount
         )
     }

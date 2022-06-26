@@ -42,7 +42,6 @@ class SurveyViewModel(
                 currentQuestion = survey.questions[currentQuestionIndex]
             )
             messagesRepo.markMessageAsRead(messageId)
-            messagesRepo.syncMessages()
         }
     }
 

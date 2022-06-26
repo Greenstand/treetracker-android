@@ -90,7 +90,7 @@ val appModule = module {
 
     viewModel { PermissionViewModel(get()) }
 
-    single { Users(get(), get(), get(), get()) }
+    single { Users(get(), get(), get(), get(), get()) }
 
     single { TreeCapturer(get(), get(), get(), get(), get()) }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "bc01fb489d517d6e801674a2b26926b7",
+    "identityHash": "289bc674a1bffab53e4053923906dc10",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -532,7 +532,7 @@
       },
       {
         "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `wallet` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `phone` TEXT, `email` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` TEXT NOT NULL, `bundle_id` TEXT, `photo_path` TEXT NOT NULL, `photo_url` TEXT DEFAULT NULL, `power_user` INTEGER NOT NULL DEFAULT 0, `unread_messages_available` INTEGER NOT NULL DEFAULT 0, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `wallet` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `phone` TEXT, `email` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` TEXT NOT NULL, `bundle_id` TEXT, `photo_path` TEXT NOT NULL, `photo_url` TEXT DEFAULT NULL, `power_user` INTEGER NOT NULL DEFAULT 0, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -616,13 +616,6 @@
           {
             "fieldPath": "powerUser",
             "columnName": "power_user",
-            "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
-          },
-          {
-            "fieldPath": "unreadMessagesAvailable",
-            "columnName": "unread_messages_available",
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
@@ -928,7 +921,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bc01fb489d517d6e801674a2b26926b7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '289bc674a1bffab53e4053923906dc10')"
     ]
   }
 }

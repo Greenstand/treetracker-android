@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.models.messages
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
-import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
@@ -14,6 +13,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.MessagesApiSer
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QueryResponse
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 import java.util.*
@@ -113,11 +113,11 @@ class MessagesRepo(
     }
 
     suspend fun checkForUnreadMessages(): Boolean{
-        return messagesDao.getTotalUnreadMessagesCount() >= 1
+        return messagesDao.getUnreadMessagesCount() >= 1
     }
 
     suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean{
-        return messagesDao.getTotalUnreadMessagesPerUserCount(wallet) >= 1
+        return messagesDao.getUnreadMessageCountForWallet(wallet) >= 1
     }
 
     /**
@@ -135,11 +135,6 @@ class MessagesRepo(
                     Timber.e(e)
                     throw e
                 }
-            }
-            val user: UserEntity? =  users.getUserEntityWithWallet(wallet)
-            user?.unreadMessagesAvailable = checkForUnreadMessagesPerUser(wallet)
-            if (user != null) {
-                users.updateUser(user)
             }
         }
         messageUploader.uploadMessages()

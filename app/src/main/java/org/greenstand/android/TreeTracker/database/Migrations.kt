@@ -46,15 +46,6 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
     }
 }
 
-val MIGRATION_8_9 = object : Migration(8, 9) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        val sql = """ALTER TABLE `user`
-            | ADD COLUMN `unread_messages_available` INTEGER NOT NULL DEFAULT 0
-            | """.trimMargin()
-        database.execSQL(sql)
-    }
-}
-
 val MIGRATION_3_4 = object : Migration(3, 4) {
 
     override fun migrate(database: SupportSQLiteDatabase) {

@@ -40,7 +40,6 @@ class AnnouncementViewModel(
                 currentUrl = announcement.videoLink
             )
             messagesRepo.markMessageAsRead(messageId)
-            messagesRepo.syncMessages()
         }
     }
 }
