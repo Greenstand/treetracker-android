@@ -281,7 +281,7 @@ fun CustomSnackbar(
                     Text(
                         text = data.message,
                         style = CustomTheme.typography.regular,
-                        color = CustomTheme.textColors.darkText
+                        color = CustomTheme.textColors.lightText
                     )
                 },
                 action = {
