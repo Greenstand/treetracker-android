@@ -116,9 +116,6 @@ class MessagesRepo(
         return messagesDao.getUnreadMessagesCount() >= 1
     }
 
-    suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean{
-        return messagesDao.getUnreadMessageCountForWallet(wallet) >= 1
-    }
 
     /**
      * When uploading trees, messages will be synced locally by this method
