@@ -28,10 +28,10 @@ jobs:
       shell: bash
       env:
         S3_TEST_IDENTITY_POOL_ID: ${{secrets.S3_TEST_IDENTITY_POOL_ID}}
-    - name: Set up Ruby 2.7.0
+    - name: Set up Ruby 2.7.6
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.7.0
+        ruby-version: 2.7.6
     - name: Install bundle
       run: |
         gem install bundler
