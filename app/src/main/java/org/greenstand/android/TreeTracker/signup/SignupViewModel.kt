@@ -26,6 +26,7 @@ data class SignUpState(
     val autofocusTextEnabled: Boolean = false,
     val isInternetAvailable: Boolean = false,
     val showSelfieTutorial: Boolean? = null,
+    val showPrivacyDialog: Boolean? = true,
 )
 
 sealed class Credential {
@@ -172,5 +173,11 @@ class SignupViewModel(
             is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
+    }
+
+    fun closePrivacyPolicyDialog() {
+        _state.value = _state.value?.copy(
+            showPrivacyDialog = false,
+        )
     }
 }
