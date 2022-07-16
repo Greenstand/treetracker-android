@@ -19,6 +19,7 @@ platform :android do
 
 
   before_all do |lane, options|
+    bundle update fastlane
     ensure_git_status_clean(show_uncommitted_changes: true)
   end
 
@@ -56,6 +57,7 @@ platform :android do
         groups: "Greenstand",
         release_notes: "A new release!",
         firebase_cli_token: ENV["FIREBASE_TOKEN"]
+        android_artifact_type: "APK"
 
       )
 
