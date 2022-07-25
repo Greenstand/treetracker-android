@@ -10,6 +10,7 @@ import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
+import org.greenstand.android.TreeTracker.theme.title.TopBarViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
@@ -32,6 +33,7 @@ class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), Koin
             modelClass.isAssignableFrom(TreeImageReviewViewModel::class.java) -> get<TreeImageReviewViewModel>() as T
             modelClass.isAssignableFrom(PermissionViewModel::class.java) -> get<PermissionViewModel>() as T
             modelClass.isAssignableFrom(IndividualMessageListViewModel::class.java) -> get<IndividualMessageListViewModel>() as T
+            modelClass.isAssignableFrom(TopBarViewModel::class.java) -> get<TopBarViewModel>() as T
             else -> throw RuntimeException("Unable to create instance of ${modelClass.simpleName}. Did you forget to update the TreeTrackerViewModelFactory?")
         }
     }

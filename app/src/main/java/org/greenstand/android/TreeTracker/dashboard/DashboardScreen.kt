@@ -50,13 +50,13 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.theme.title.TopBarTitle
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @OptIn(ExperimentalComposeApi::class)
 @Composable
@@ -188,7 +188,25 @@ fun DashboardScreen(
 @Composable
 fun DashboardTopBar(navController: NavController) {
     ActionBar(
-
+        leftAction = {
+            DepthButton(
+                colors = AppButtonColors.ProgressGreen,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(width = 100.dp, 60.dp),
+                onClick = {
+                    //TODO Navigate to Select Screen
+                }
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(R.string.org),
+                    fontWeight = FontWeight.Bold,
+                    color = CustomTheme.textColors.darkText,
+                    style = CustomTheme.typography.regular
+                )
+            }
+        },
         centerAction = { TopBarTitle() },
         rightAction = { LanguageButton() }
     )

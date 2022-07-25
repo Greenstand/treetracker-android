@@ -44,6 +44,7 @@ import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
+import org.greenstand.android.TreeTracker.theme.title.TopBarViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateLegacyTreeUseCase
@@ -71,6 +72,8 @@ val appModule = module {
     viewModel { DashboardViewModel(get(), get(), get(), get(), get()) }
 
     viewModel { OrgPickerViewModel(get()) }
+
+    viewModel { TopBarViewModel() }
 
     viewModel { UserSelectViewModel(get(), get()) }
 

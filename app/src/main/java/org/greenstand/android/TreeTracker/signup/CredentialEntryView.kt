@@ -55,6 +55,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.theme.title.TopBarTitle
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -67,7 +68,6 @@ import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.CustomSnackbar
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.UserButton
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {

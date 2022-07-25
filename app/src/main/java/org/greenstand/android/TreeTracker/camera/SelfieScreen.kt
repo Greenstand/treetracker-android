@@ -25,6 +25,7 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.signup.SignUpState
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
+import org.greenstand.android.TreeTracker.theme.title.TopBarTitle
 import org.greenstand.android.TreeTracker.view.*
 import org.koin.androidx.compose.getViewModel
 

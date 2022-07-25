@@ -26,11 +26,11 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.theme.title.TopBarTitle
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
 fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
