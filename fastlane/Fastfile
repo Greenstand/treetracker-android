@@ -11,7 +11,7 @@
 #
 
 # Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
+update_fastlane
 
 default_platform(:android)
 
@@ -19,7 +19,6 @@ platform :android do
 
 
   before_all do |lane, options|
-    update_fastlane
     ensure_git_status_clean(show_uncommitted_changes: true)
   end
 
