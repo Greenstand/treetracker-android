@@ -18,8 +18,6 @@ class TreeHeightSelectionViewModel(
     val state: LiveData<TreeHeightSelectionState> = _state
 
     fun selectColor(colors: ButtonColors) {
-        _state.value = _state.value?.copy(
-            selectedColour = colors
-        )
+        _state.value = TreeHeightSelectionState(selectedColour = colors)
     }
 }

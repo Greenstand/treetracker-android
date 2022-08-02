@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.treeheight
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -71,20 +72,21 @@ fun TreeHeightSelection(
         }
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp)
         ) {
             items(state.colours) { color ->
                 DepthButton(
                     colors = color,
                     isSelected = color == state.selectedColour,
-                    onClick = { },
+                    onClick = { viewModel.selectColor(color) },
                     modifier = if (color == state.selectedColour) Modifier.size(
                         width = 350.dp,
                         height = 85.dp
                     ) else Modifier.size(width = 200.dp, height = 62.dp)
-                ) {
-                    viewModel.selectColor(color)
-                }
+                ) {}
             }
         }
     }
