@@ -23,6 +23,7 @@ import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelection
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
@@ -60,6 +61,13 @@ sealed class NavRoute {
             DashboardScreen()
         }
         override val route: String = "dashboard"
+    }
+
+    object TreeHeightSelection : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            TreeHeightSelection()
+        }
+        override val route: String = "tree-height-selection"
     }
 
     object UserSelect : NavRoute() {
