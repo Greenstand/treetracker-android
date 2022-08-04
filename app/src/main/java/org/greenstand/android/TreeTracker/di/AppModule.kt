@@ -39,9 +39,6 @@ import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
-import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -60,16 +57,12 @@ import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
-import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
 
-    viewModel { AddWalletViewModel() }
-
-    viewModel { AddOrgViewModel(get(), get(), get(), get()) }
 
     viewModel { ConfigViewModel(get(), get()) }
 
@@ -199,9 +192,4 @@ val appModule = module {
     factory { TreeUploader(get(), get(), get(), get(), get()) }
 
     factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
-
-    scope<CaptureSetupScope> {
-        scoped { CaptureSetupData() }
-    }
-
 }

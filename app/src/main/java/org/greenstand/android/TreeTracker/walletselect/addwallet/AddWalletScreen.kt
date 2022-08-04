@@ -25,14 +25,14 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 
 @Composable
 fun AddWalletScreen(
-    viewModel: AddWalletViewModel = viewModel(factory = LocalViewModelFactory.current)
+    userId: Long,
+    viewModel: AddWalletViewModel = viewModel(factory = AddWalletViewModelFactory(userId))
 ) {
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
@@ -52,7 +52,7 @@ fun AddWalletScreen(
                         isEnabled = state.walletName.isNotBlank()
                     ) {
                         scope.launch {
-                            navController.navigate(NavRoute.AddOrg.create())
+                            navController.navigate(NavRoute.AddOrg.create(userId, state.walletName))
                         }
                     }
                 }
@@ -79,7 +79,7 @@ fun AddWalletScreen(
                 keyboardActions = KeyboardActions(
                     onGo = {
                         scope.launch {
-                            navController.navigate(NavRoute.AddOrg.create())
+                            navController.navigate(NavRoute.AddOrg.create(userId, state.walletName))
                         }
                     }
                 )

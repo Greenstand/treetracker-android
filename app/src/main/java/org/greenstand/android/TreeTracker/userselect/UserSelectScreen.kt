@@ -11,7 +11,7 @@ fun UserSelectScreen() {
         isCreateUserEnabled = true,
         isNotificationEnabled = true,
         onNextRoute = { user ->
-            NavRoute.WalletSelect.create()
+            NavRoute.WalletSelect.create(user.id)
         }
     )
 }
