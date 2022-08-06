@@ -15,6 +15,7 @@ class TreeTrackerActivity : ComponentActivity() {
     private val languageSwitcher: LanguageSwitcher by inject()
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
 
+    //hello this is the first change i have made
 
     @OptIn(ExperimentalComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
