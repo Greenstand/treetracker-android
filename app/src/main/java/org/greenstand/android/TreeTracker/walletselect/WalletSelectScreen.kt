@@ -1,8 +1,11 @@
 package org.greenstand.android.TreeTracker.walletselect
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -131,33 +134,35 @@ fun WalletSelectScreen(
 @Composable
 fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
 
-    LazyRow(
-        contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp),
+    Row(
+        // contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        item {
-            val image: Painter = painterResource(id = R.drawable.active_offer)
-            val arrowImage: Painter = if (isSelected) painterResource(id = R.drawable.active_arrow) else painterResource(id = R.drawable.inactive_arrow)
-            val modifier = if (!isSelected) Modifier.alpha(0.4f) else Modifier
+        val image: Painter = painterResource(id = R.drawable.active_offer)
+        val arrowImage: Painter =
+            if (isSelected) painterResource(id = R.drawable.active_arrow) else painterResource(id = R.drawable.inactive_arrow)
+        val modifier = if (!isSelected) Modifier.alpha(0.4f) else Modifier
 
-            Image(
-                painter = image,
-                contentDescription = "",
-                modifier = modifier
-                    .height(140.dp)
-                    .width(120.dp)
-            )
-            Image(
-                painter = arrowImage,
-                contentDescription = "",
-                modifier = Modifier
-                    .height(40.dp)
-                    .width(65.dp)
-                    .padding(
-                        end = 20.dp,
-                        start = 10.dp
-                    )
-            )
+        Image(
+            painter = image,
+            contentDescription = "",
+            modifier = modifier
+                .weight(2f)
+                .height(140.dp)
+        )
+        Image(
+            painter = arrowImage,
+            contentDescription = "",
+            modifier = Modifier
+                .weight(1f)
+                .height(40.dp)
+                .padding(
+                    end = 20.dp,
+                    start = 10.dp
+                )
+        )
+        Box(modifier = Modifier.weight(2.6f)) {
             UserButton(
                 user = user,
                 isSelected = isSelected,

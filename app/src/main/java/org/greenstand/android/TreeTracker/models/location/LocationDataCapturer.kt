@@ -14,18 +14,20 @@ import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.ConvergenceStatus
 import org.greenstand.android.TreeTracker.models.LocationData
-import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 import java.util.*
+import kotlin.math.min
+import kotlin.properties.Delegates
 
 class LocationDataCapturer(
-    private val userManager: Planter,
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO,
     private val configuration: Configuration,
     private val gson: Gson,
     private val sessionTracker: SessionTracker,
+    private val timeProvider: TimeProvider,
 ) {
     private var locationsDeque: Deque<Location> = LinkedList()
     var generatedTreeUuid: UUID? = null
@@ -35,6 +37,14 @@ class LocationDataCapturer(
     var currentConvergence: Convergence? = null
         private set
     private var convergenceStatus: ConvergenceStatus? = null
+    private var areLocationUpdatesOn: Boolean = false
+    val percentageConvergenceObservers = mutableListOf<(Float) -> Unit>()
+    var newestPercentageConvergence: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+        //convergence percentage fluctuates so it is only updated when it increases
+        if (newValue > oldValue) {
+            percentageConvergenceObservers.forEach { it(newValue) }
+        }
+    }
 
     private val locationObserver: Observer<Location?> = Observer { location ->
         location?.apply {
@@ -72,6 +82,9 @@ class LocationDataCapturer(
                     val longStdDev = currentConvergence?.longitudinalStandardDeviation()
                     val latStdDev = currentConvergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
+                        val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(),locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
+                        newestPercentageConvergence = min(1f,minimumConvergenceRatio)
+
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
                             latStdDev < locationDataConfig.latStdDevThreshold
                         ) {
@@ -84,25 +97,28 @@ class LocationDataCapturer(
                 }
             }
 
-            MainScope().launch(Dispatchers.IO) {
-                val locationData =
-                    LocationData(
-                        userManager.planterCheckinId,
-                        latitude,
-                        longitude,
-                        accuracy,
-                        generatedTreeUuid?.toString(),
-                        convergenceStatus,
-                        System.currentTimeMillis()
-                    )
-                val jsonValue = gson.toJson(locationData)
-                Timber.d("Inserting new location data $jsonValue")
-                treeTrackerDAO.insertLocationData(
-                    LocationEntity(
-                        locationDataJson = jsonValue,
-                        sessionId = sessionTracker.currentSessionId,
-                    )
-                )
+            sessionTracker.currentSessionId?.let { currentSessionId ->
+
+                MainScope().launch(Dispatchers.IO) {
+                    val locationData =
+                        LocationData(
+                            currentSessionId,
+                            latitude,
+                            longitude,
+                            accuracy,
+                            generatedTreeUuid?.toString(),
+                            convergenceStatus,
+                            timeProvider.currentTime().toString(),
+                        )
+                    val jsonValue = gson.toJson(locationData)
+                    Timber.d("Inserting new location data $jsonValue")
+                        treeTrackerDAO.insertLocationData(
+                            LocationEntity(
+                                locationDataJson = jsonValue,
+                                sessionId = currentSessionId,
+                            )
+                        )
+                }
             }
         }
     }
@@ -112,13 +128,21 @@ class LocationDataCapturer(
     }
 
     fun startGpsUpdates() {
+        if (areLocationUpdatesOn) {
+            return
+        }
         locationUpdateManager.startLocationUpdates()
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
+        areLocationUpdatesOn = true
     }
 
     fun stopGpsUpdates() {
+        if (!areLocationUpdatesOn) {
+            return
+        }
         locationUpdateManager.locationUpdateLiveData.removeObserver(locationObserver)
         locationUpdateManager.stopLocationUpdates()
+        areLocationUpdatesOn = false
     }
 
     /**

@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Instant
 
 @Entity(tableName = "user")
 data class UserEntity(
@@ -25,7 +26,7 @@ data class UserEntity(
     @ColumnInfo(name = "uploaded", index = true)
     var uploaded: Boolean = false,
     @ColumnInfo(name = "created_at")
-    var createdAt: Long,
+    var createdAt: Instant,
     @ColumnInfo(name = "bundle_id")
     var bundleId: String? = null,
     @ColumnInfo(name = "photo_path")

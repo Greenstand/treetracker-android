@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.models
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -13,11 +14,16 @@ import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
+import org.greenstand.android.TreeTracker.messages.ChatScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
+import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementScreen
+import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
+import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelection
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
@@ -55,6 +61,13 @@ sealed class NavRoute {
             DashboardScreen()
         }
         override val route: String = "dashboard"
+    }
+
+    object TreeHeightSelection : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            TreeHeightSelection()
+        }
+        override val route: String = "tree-height-selection"
     }
 
     object UserSelect : NavRoute() {
@@ -119,6 +132,40 @@ sealed class NavRoute {
         override val route: String = "selfie"
     }
 
+    object IndividualMessageList : NavRoute() {
+        @OptIn(ExperimentalFoundationApi::class)
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            IndividualMessageListScreen(getPlanterInfoId(it))
+        }
+        override val route: String = "message-list/{planterInfoId}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+
+        fun create(planterInfoId: Long) = "message-list/$planterInfoId"
+    }
+
+    object Survey : NavRoute() {
+
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            SurveyScreen(messageId(it))
+        }
+
+        override val route: String = "survey/{messageId}"
+
+        override val arguments = listOf(navArgument("messageId") { type = NavType.StringType })
+
+        fun messageId(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("messageId").fromSafeNavUrl()
+        }
+
+        fun create(messageId: String): String {
+            return "survey/${messageId.toSafeNavUrl()}"
+        }
+    }
+
     object ImageReview : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             ImageReviewScreen(photoPath(it))
@@ -150,7 +197,7 @@ sealed class NavRoute {
     }
 
     object TreeCapture : NavRoute() {
-        @ExperimentalPermissionsApi
+        @OptIn(ExperimentalPermissionsApi::class)
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             TreeCaptureScreen(getProfilePicUrl(it))
         }
@@ -185,6 +232,42 @@ sealed class NavRoute {
             MessagesUserSelectScreen()
         }
         override val route: String = "messages-user-select"
+    }
+
+    object Chat : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            ChatScreen(getPlanterInfoId(it), getOtherChatIdentifier(it))
+        }
+        override val route: String = "chat/{planterInfoId}/{otherChatIdentifier}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType },navArgument("otherChatIdentifier") { type = NavType.StringType })
+
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+        private fun getOtherChatIdentifier(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("otherChatIdentifier") ?: ""
+        }
+
+        fun create(planterInfoId: Long,otherChatIdentifier: String) = "chat/$planterInfoId/$otherChatIdentifier"
+    }
+
+    object Announcement : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            AnnouncementScreen(messageId(it))
+        }
+
+        override val route: String = "announcement/{messageId}"
+
+        override val arguments = listOf(navArgument("messageId") { type = NavType.StringType })
+
+        fun messageId(backStackEntry: NavBackStackEntry): String {
+            return backStackEntry.arguments?.getString("messageId").fromSafeNavUrl()
+        }
+
+        fun create(messageId: String): String {
+            return "announcement/${messageId.toSafeNavUrl()}"
+        }
     }
 }
 

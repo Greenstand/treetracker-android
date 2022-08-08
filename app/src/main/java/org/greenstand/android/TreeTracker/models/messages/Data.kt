@@ -5,16 +5,28 @@ interface Message {
     val from: String
     val to: String
     val composedAt: String
+    val isRead: Boolean
 }
 
-data class TextMessage(
+data class DirectMessage(
     override val id: String,
     override val from: String,
     override val to: String,
     override val composedAt: String,
-    val subject: String,
-    val body: String,
+    override val isRead: Boolean,
     val parentMessageId: String?,
+    val body: String,
+) : Message
+
+data class AnnouncementMessage(
+    override val id: String,
+    override val from: String,
+    override val to: String,
+    override val composedAt: String,
+    override val isRead: Boolean,
+    val subject: String,
+    val body: String?,
+    val videoLink: String?,
 ) : Message
 
 data class SurveyMessage(
@@ -22,8 +34,22 @@ data class SurveyMessage(
     override val from: String,
     override val to: String,
     override val composedAt: String,
+    override val isRead: Boolean,
+    val surveyId: String,
+    val title: String,
     val questions: List<Question>,
-    val answers: List<String>,
+    val isComplete: Boolean,
+) : Message
+
+data class SurveyResponseMessage(
+    override val id: String,
+    override val from: String,
+    override val to: String,
+    override val composedAt: String,
+    override val isRead: Boolean,
+    val surveyId: String,
+    val questions: List<Question>,
+    val responses: List<String>,
 ) : Message
 
 data class Question(

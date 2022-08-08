@@ -16,19 +16,20 @@ import org.greenstand.android.TreeTracker.utilities.Validation
 
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
-    val name: String? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
     val email: String? = null,
     val phone: String? = null,
     val photoPath: String? = null,
     val isCredentialView: Boolean = true,
-    val isEmailValid: Boolean = false,
-    val isPhoneValid: Boolean = false,
+    val isCredentialValid: Boolean = false,
     val existingUser: User? = null,
     val canGoToNextScreen: Boolean = false,
-    val credential: Credential = Credential.Email(),
+    val credential: Credential = Credential.Phone(),
     val autofocusTextEnabled: Boolean = false,
     val isInternetAvailable: Boolean = false,
     val showSelfieTutorial: Boolean? = null,
+    val showPrivacyDialog: Boolean? = true,
 )
 
 sealed class Credential {
@@ -75,21 +76,27 @@ class SignupViewModel(
         }
     }
 
-    fun updateName(name: String) {
-        _state.value = _state.value?.copy(name = name)
+    fun updateFirstName(firstName: String?) {
+        _state.value = _state.value?.copy(firstName = firstName)
+    }
+
+    fun updateLastName(lastName: String?) {
+        _state.value = _state.value?.copy(lastName = lastName)
     }
 
     fun updateEmail(email: String) {
         _state.value = _state.value?.copy(
-            email = email,
-            isEmailValid = Validation.isEmailValid(email)
+            email = email.lowercase(),
+            phone = null,
+            isCredentialValid = email.contains('@')
         )
     }
 
     fun updatePhone(phone: String) {
         _state.value = _state.value?.copy(
             phone = phone,
-            isPhoneValid = Validation.isValidPhoneNumber(phone)
+            email = null,
+            isCredentialValid = Validation.isValidPhoneNumber(phone)
         )
     }
 
@@ -140,7 +147,8 @@ class SignupViewModel(
     fun goToCredentialEntry() {
         _state.value = _state.value?.copy(
             isCredentialView = true,
-            name = null,
+            firstName = null,
+            lastName = null,
             canGoToNextScreen = true,
         )
     }
@@ -149,8 +157,8 @@ class SignupViewModel(
         if (photoPath != null) {
             val userId = with(_state.value ?: return null) {
                 users.createUser(
-                    firstName = extractName(name, true),
-                    lastName = extractName(name, false),
+                    firstName = firstName!!,
+                    lastName = lastName!!,
                     phone = phone,
                     email = email,
                     wallet = extractIdentifier(this),
@@ -163,26 +171,17 @@ class SignupViewModel(
         return null
     }
 
-    private fun extractName(name: String?, isFirstName: Boolean): String {
-        name ?: return ""
-
-        val names = name.split(" ")
-        if (names.size == 1) {
-            return if (isFirstName) name else ""
-        }
-
-        return if (isFirstName) {
-            names[0]
-        } else {
-            names[1]
-        }
-    }
-
     private fun extractIdentifier(state: SignUpState): String {
         return when(state.credential) {
             is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
+    }
+
+    fun closePrivacyPolicyDialog() {
+        _state.value = _state.value?.copy(
+            showPrivacyDialog = false,
+        )
     }
 }
 

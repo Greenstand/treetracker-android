@@ -15,6 +15,11 @@ class DeviceConfigUploader(
 
     suspend fun upload() {
         val deviceConfigsToUpload = dao.getDeviceConfigsToUpload()
+
+        if(deviceConfigsToUpload.isEmpty()) {
+            return
+        }
+
         val deviceConfigRequests = deviceConfigsToUpload.map { config ->
             DeviceConfigRequest(
                 id = config.uuid,
@@ -22,13 +27,15 @@ class DeviceConfigUploader(
                 appBuild = config.appBuild,
                 osVersion = config.osVersion,
                 sdkVersion = config.sdkVersion,
-                loggedAt = config.loggedAt,
+                loggedAt = config.loggedAt.toString(),
             )
         }
 
-        val jsonBundle = gson.toJson(UploadBundle.createV2(
-            deviceConfigs = deviceConfigRequests
-        ))
+        val jsonBundle = gson.toJson(
+            UploadBundle.createV2(
+                deviceConfigs = deviceConfigRequests
+            )
+        )
         val bundleId = jsonBundle.md5() + "_deviceConfigs"
         val deviceConfigIds = deviceConfigsToUpload.map { it.id }
 

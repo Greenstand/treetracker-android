@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 class TreeCaptureRequest(
     @SerializedName("session_id")
     val sessionId: String,
-    @SerializedName("capture_id")
+    @SerializedName("id")
     val treeId: String,
     @SerializedName("lat")
     val lat: Double,
@@ -15,8 +15,8 @@ class TreeCaptureRequest(
     val note: String?,
     @SerializedName("image_url")
     val imageUrl: String,
-    @SerializedName("created_at")
-    val createdAt: Long,
+    @SerializedName("captured_at")
+    val createdAt: String,
     @SerializedName("abs_step_count")
     val stepCount: Long?,
     @SerializedName("delta_step_count")
@@ -24,5 +24,5 @@ class TreeCaptureRequest(
     @SerializedName("rotation_matrix")
     val rotationMatrix: String?,
     @SerializedName("extra_attributes")
-    val extraAttributes: String,
+    val extraAttributes: String?,
 )

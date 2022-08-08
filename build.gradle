@@ -1,7 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+task assembleGreenstandBeta{}
 
 buildscript {
-    ext.kotlin_version = '1.5.10'
+    ext.kotlin_version = '1.6.10'
     repositories {
         google()
         jcenter()
@@ -33,16 +34,21 @@ allprojects {
     }
 
     ext {
-        compose_version = "1.0.0"
+        compose_version = "1.1.1"
         koin_version= "3.2.0-beta-1"
         androidSupportVersion = '1.0.0'
         retrofit2Version = '2.6.0'
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"
+        prod_treetracker_client_id = "configure in treetracker.keys.properties"
+        prod_treetracker_client_secret = "configure in treetracker.keys.properties"
         s3_test_identity_pool_id = "configure in treetracker.keys.properties"
+        test_treetracker_client_id = "configure in treetracker.keys.properties"
+        test_treetracker_client_secret = "configure in treetracker.keys.properties"
         s3_dev_identity_pool_id = "configure in treetracker.keys.properties"
+        dev_treetracker_client_id = "configure in treetracker.keys.properties"
+        dev_treetracker_client_secret = "configure in treetracker.keys.properties"
         treetracker_client_id = "configure in treetracker.keys.properties"
         treetracker_client_secret = "configure in treetracker.keys.properties"
-        maps_api_key = "configure in treetracker.keys.properties"
     }
 }
 

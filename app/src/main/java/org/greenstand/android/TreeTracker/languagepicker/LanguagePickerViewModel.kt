@@ -17,7 +17,7 @@ class LanguagePickerViewModel(
 ) : ViewModel() {
 
     private val _currentLanguage = MutableLiveData(languageSwitcher.currentLanguage())
-    val currentLanguage: LiveData<Language> = _currentLanguage
+    val currentLanguage: LiveData<Language?> = _currentLanguage
 
     init {
         languageSwitcher.observeCurrentLanguage()

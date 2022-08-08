@@ -1,45 +1,39 @@
 package org.greenstand.android.TreeTracker.models
 
-import android.os.Build
-import androidx.room.ColumnInfo
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
-import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
+import java.util.*
 
 class SessionTracker(
-    private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val treesToSyncHelper: TreesToSyncHelper,
     private val preferences: Preferences,
+    private val timeProvider: TimeProvider,
 ) {
 
     private var _currentSessionId: Long? = null
-    val currentSessionId: Long
-        get() = _currentSessionId ?: throw IllegalStateException("Session ID cannot be null when accessed")
+    val currentSessionId: Long?
+        get() = _currentSessionId //?: throw IllegalStateException("Session ID cannot be null when accessed")
 
     suspend fun startSession(userId: Long, destinationWallet: String, organization: String) {
         endSession()
 
         withContext(Dispatchers.IO) {
-            val location = locationUpdateManager.currentLocation
-            val time = location?.time ?: System.currentTimeMillis()
-
             val userEntity = dao.getUserById(userId) ?: throw IllegalStateException("Could not find user of id $userId")
 
             val sessionEntity = SessionEntity(
                 uuid = UUID.randomUUID().toString(),
+                originUserId = userEntity.uuid,
                 originWallet = userEntity.wallet,
                 destinationWallet = destinationWallet,
-                startTime = time,
+                startTime = timeProvider.currentTime(),
                 isUploaded = false,
                 organization = organization,
                 deviceConfigId = dao.getLatestDeviceConfig()!!.id,
@@ -54,7 +48,7 @@ class SessionTracker(
     suspend fun endSession() {
         _currentSessionId?.let { id ->
             val session = dao.getSessionById(id)
-            session.endTime = System.currentTimeMillis()
+            session.endTime = timeProvider.currentTime()
             dao.updateSession(session)
 
             _currentSessionId = null

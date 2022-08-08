@@ -8,6 +8,7 @@ import java.util.Collections.emptyList
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.user.User
 
 data class UserSelectState(
@@ -15,12 +16,16 @@ data class UserSelectState(
     val selectedUser: User? = null,
 )
 
-class UserSelectViewModel(users: Users) : ViewModel() {
+class UserSelectViewModel(
+    users: Users,
+    locationDataCapturer: LocationDataCapturer,
+) : ViewModel() {
 
     private val _state = MutableLiveData<UserSelectState>()
     val state: LiveData<UserSelectState> = _state
 
     init {
+        locationDataCapturer.startGpsUpdates()
         users.users()
             .onEach { userList ->
                 _state.value = UserSelectState(users = userList)

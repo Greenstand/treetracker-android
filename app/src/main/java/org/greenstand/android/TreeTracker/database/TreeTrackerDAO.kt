@@ -120,6 +120,9 @@ interface TreeTrackerDAO {
     suspend fun getUploadedTreeCaptureCount(): Int
 
     @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url not null")
+    suspend fun getUploadedLegacyTreeImageCount(): Int
+
+    @Query("SELECT COUNT(*) FROM tree WHERE photo_url not null")
     suspend fun getUploadedTreeImageCount(): Int
 
     @Query("SELECT COUNT(*) FROM tree WHERE uploaded = 1")
@@ -127,7 +130,7 @@ interface TreeTrackerDAO {
 
     @Transaction
     @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url is null")
-    suspend fun getNonUploadedTreeCaptureImageCount(): Int
+    suspend fun getNonUploadedLegacyTreeCaptureImageCount(): Int
 
     @Query("SELECT COUNT(*) FROM tree WHERE photo_url is null")
     suspend fun getNonUploadedTreeImageCount(): Int

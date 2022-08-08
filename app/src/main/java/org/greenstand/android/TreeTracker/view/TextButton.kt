@@ -7,10 +7,13 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.Text
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -33,7 +36,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -46,25 +48,6 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-
-@Composable
-fun TextButton(
-    modifier: Modifier = Modifier,
-    stringRes: Int,
-    enabled: Boolean = true,
-    onClick: () -> Unit,
-) {
-    // TODO customize button visuals
-    Button(
-        onClick = onClick,
-        modifier = modifier.size(height = 46.dp, width = 120.dp),
-        enabled = enabled,
-    ) {
-        Text(
-            text = stringResource(id = stringRes)
-        )
-    }
-}
 
 @Composable
 fun BoxScope.ArrowButton(
@@ -84,9 +67,30 @@ fun BoxScope.ArrowButton(
         Image(
             modifier = Modifier
                 .size(height = 45.dp, width = 45.dp),
-            painter = if (isLeft) painterResource(id = R.drawable.arrow_left_green) else painterResource(id = R.drawable.arrow_right_green),
+            painter = getPainter(colors = colors, isLeft = isLeft),
             contentDescription = null,
         )
+    }
+}
+
+@Composable
+fun getPainter(colors: ButtonColors, isLeft: Boolean): Painter {
+    val painter: Painter
+    return when (colors) {
+        AppButtonColors.MessagePurple -> {
+            painter =
+                if (isLeft) painterResource(id = R.drawable.arrow_backward_pink) else painterResource(
+                    id = R.drawable.arrow_forward_pink
+                )
+            painter
+        }
+        else -> {
+            painter =
+                if (isLeft) painterResource(id = R.drawable.arrow_left_green) else painterResource(
+                    id = R.drawable.arrow_right_green
+                )
+            painter
+        }
     }
 }
 
@@ -128,7 +132,8 @@ fun ApprovalButton(
          * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
          */
 fun CustomDialog(
-    dialogIcon: Painter = painterResource(id = R.drawable.greenstand_logo),
+    dialogIcon: Painter? = painterResource(id = R.drawable.greenstand_logo),
+    backgroundModifier: Modifier = Modifier,
     title: String = "",
     textContent: String? = null,
     content: @Composable() (() -> Unit)? = null,
@@ -147,12 +152,14 @@ fun CustomDialog(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = dialogIcon,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(width = 16.dp, height = 16.dp)
-                )
+                dialogIcon?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(width = 16.dp, height = 16.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = title,
@@ -162,7 +169,7 @@ fun CustomDialog(
                 )
             }
         },
-        modifier = Modifier
+        modifier = backgroundModifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(2.dp)
@@ -239,6 +246,7 @@ fun BoxScope.LanguageButton() {
         languageViewModel.currentLanguage.observeAsState(Language).value.toString()
 
     DepthButton(
+        colors = AppButtonColors.ProgressGreen,
         modifier = Modifier
             .align(Alignment.Center)
             .size(width = 100.dp, 60.dp),
@@ -250,10 +258,46 @@ fun BoxScope.LanguageButton() {
             modifier = Modifier.align(Alignment.Center),
             text = language,
             fontWeight = FontWeight.Bold,
-            color = CustomTheme.textColors.primaryText,
+            color = CustomTheme.textColors.darkText,
             style = CustomTheme.typography.regular
         )
     }
+}
+
+@Composable
+fun CustomSnackbar(
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = { },
+    backGroundColor: Color = AppColors.Green,
+) {
+    SnackbarHost(
+        hostState = snackbarHostState,
+        snackbar = { data ->
+            Snackbar(
+                backgroundColor = backGroundColor,
+                modifier = modifier.padding(16.dp),
+                content = {
+                    Text(
+                        text = data.message,
+                        style = CustomTheme.typography.regular,
+                        color = CustomTheme.textColors.darkText
+                    )
+                },
+                action = {
+                    data.actionLabel?.let { actionLabel ->
+                        TextButton(onClick = onDismiss) {
+                            Text(
+                                text = actionLabel,
+                                style = CustomTheme.typography.regular,
+                                color = CustomTheme.textColors.darkText
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    )
 }
 
 @Preview(widthDp = 100, heightDp = 100)
@@ -283,13 +327,14 @@ fun DepthButtonPreview() {
 }
 
 @Composable
-fun UserImageButton(
+fun BoxScope.UserImageButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     imagePath: String,
 ) {
     DepthButton(
         modifier = modifier
+            .align(Alignment.Center)
             .width(100.dp)
             .height(100.dp)
             .padding(
@@ -351,7 +396,7 @@ fun DepthButton(
     content: @Composable (BoxScope.() -> Unit),
 ) {
     val contentColor by colors.contentColor(isEnabled)
-
+    val onClickState = rememberUpdatedState(onClick)
     var isPressed by remember { mutableStateOf(false) }
     isSelected?.let { isPressed = isSelected }
 
@@ -370,7 +415,7 @@ fun DepthButton(
                     if (!isEnabled) return@pointerInput
                     detectTapGestures(
                         onTap = {
-                            onClick()
+                            onClickState.value.invoke()
                         },
                         onPress = {
                             isPressed = true

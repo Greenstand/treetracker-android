@@ -17,7 +17,6 @@ class SyncService : JobIntentService() {
         sendBroadcastMessage("")
     }
 
-    @ExperimentalCoroutinesApi
     override fun onStopCurrentWork(): Boolean {
         jobScope.cancel()
         return false

@@ -1,5 +1,10 @@
 package org.greenstand.android.TreeTracker.camera
 
+
+import android.app.Activity
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.impl.utils.Exif
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
