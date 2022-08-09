@@ -451,7 +451,7 @@ fun DepthButton(
     content: @Composable (BoxScope.() -> Unit),
 ) {
     val contentColor by colors.contentColor(isEnabled)
-
+    val onClickState = rememberUpdatedState(onClick)
     var isPressed by remember { mutableStateOf(false) }
     isSelected?.let { isPressed = isSelected }
 
@@ -470,7 +470,7 @@ fun DepthButton(
                     if (!isEnabled) return@pointerInput
                     detectTapGestures(
                         onTap = {
-                            onClick()
+                            onClickState.value.invoke()
                         },
                         onPress = {
                             isPressed = true
