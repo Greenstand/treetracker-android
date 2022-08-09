@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.Message
@@ -26,7 +26,7 @@ data class IndividualMessageListState(
 
 class IndividualMessageListViewModel(
     private val userId: Long,
-    private val users: Users,
+    private val userRepo: UserRepo,
     private val messagesRepo: MessagesRepo,
 ) : ViewModel() {
 
@@ -35,7 +35,7 @@ class IndividualMessageListViewModel(
 
     init {
         viewModelScope.launch {
-            val currentUser = users.getUser(userId)
+            val currentUser = userRepo.getUser(userId)
             messagesRepo.getMessageFlow(currentUser!!.wallet)
                 .collect { updateMessages(it, currentUser) }
         }

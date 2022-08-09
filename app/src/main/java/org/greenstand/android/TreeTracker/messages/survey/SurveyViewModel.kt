@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.Question
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
@@ -23,7 +23,7 @@ data class SurveyScreenState(
 class SurveyViewModel(
     private val messageId: String,
     private val messagesRepo: MessagesRepo,
-    private val users: Users,
+    private val userRepo: UserRepo,
 ) : ViewModel() {
 
     private var _state: MutableStateFlow<SurveyScreenState> = MutableStateFlow( SurveyScreenState())
@@ -36,7 +36,7 @@ class SurveyViewModel(
     init {
         viewModelScope.launch {
             survey = messagesRepo.getSurveyMessage(messageId)
-            val user = users.getUserWithWallet(survey.to)
+            val user = userRepo.getUserWithWallet(survey.to)
             _state.value = _state.value.copy(
                 userImagePath = user!!.photoPath,
                 currentQuestion = survey.questions[currentQuestionIndex]
