@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.ExperimentalComposeApi
@@ -27,5 +28,8 @@ class TreeTrackerActivity : ComponentActivity() {
                 Root(viewModelFactory)
             }
         }
+
+        val uri: String? = intent.data?.getQueryParameter("p")
+        Log.d("JONATHAN", "DEEPLINK: $uri")
     }
 }
