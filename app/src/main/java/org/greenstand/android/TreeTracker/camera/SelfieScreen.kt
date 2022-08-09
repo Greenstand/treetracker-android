@@ -47,16 +47,13 @@ fun SelfieScreen() {
         bottomBar = {
             ActionBar(
                 rightAction = {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .aspectRatio(1.0f)
-                            .clickable {
-                                viewModel.updateSelfieTutorialDialog(true)
-                            },
-                        painter = painterResource(id = R.drawable.info_icon),
-                        contentDescription = null,
-                    )
+                    infoButton(
+                        onClick = {
+                            viewModel.updateSelfieTutorialDialog(true)
+                        },
+                        isEnabled = true)
+
+
                 }
             )
         }
