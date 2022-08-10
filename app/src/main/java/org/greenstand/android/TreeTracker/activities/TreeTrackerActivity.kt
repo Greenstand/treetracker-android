@@ -10,11 +10,11 @@ import org.greenstand.android.TreeTracker.root.Root
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.koin.android.ext.android.inject
 
+
 class TreeTrackerActivity : ComponentActivity() {
 
     private val languageSwitcher: LanguageSwitcher by inject()
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
-
 
     @OptIn(ExperimentalComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {

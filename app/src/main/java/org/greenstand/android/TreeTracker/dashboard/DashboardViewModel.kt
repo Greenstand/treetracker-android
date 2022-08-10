@@ -23,6 +23,7 @@ import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -30,6 +31,7 @@ data class DashboardState(
     val treesSynced: Int = 0,
     val treesRemainingToSync: Int = 0,
     val totalTreesToSync: Int = 0,
+    val isOrgButtonEnabled: Boolean = false,
 )
 
 class DashboardViewModel(
@@ -37,6 +39,7 @@ class DashboardViewModel(
     private val workManager: WorkManager,
     private val analytics: Analytics,
     private val treesToSyncHelper: TreesToSyncHelper,
+    private val orgRepo: OrgRepo,
     locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
@@ -140,6 +143,7 @@ class DashboardViewModel(
                     totalTreesToSync = totalTreesToSync,
                     treesRemainingToSync = notSyncedTreeCount,
                     treesSynced = syncedTreeCount,
+                    isOrgButtonEnabled = orgRepo.getOrgs().size > 1
                 )
             }
         }

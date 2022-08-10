@@ -12,7 +12,7 @@ import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import java.util.*
 
-class Users(
+class UserRepo(
     private val locationUpdateManager: LocationUpdateManager,
     private val dao: TreeTrackerDAO,
     private val analytics: Analytics,

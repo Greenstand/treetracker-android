@@ -3,7 +3,7 @@ package org.greenstand.android.TreeTracker.models.messages
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
@@ -22,7 +22,7 @@ import java.util.*
  */
 class MessagesRepo(
     private val apiService: MessagesApiService,
-    private val users: Users,
+    private val userRepo: UserRepo,
     private val timeProvider: TimeProvider,
     private val messagesDao: MessagesDAO,
     private val messageUploader: MessageUploader,
@@ -115,7 +115,7 @@ class MessagesRepo(
      * When uploading trees, messages will be synced locally by this method
      */
     suspend fun syncMessages() {
-        for(wallet in users.getUserList().map { it.wallet }) {
+        for(wallet in userRepo.getUserList().map { it.wallet }) {
             try {
                 getMessagesForWallet(wallet)
             } catch (e: Exception) {

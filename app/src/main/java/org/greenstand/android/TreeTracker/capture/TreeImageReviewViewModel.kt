@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.TreeCapturer
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 
 data class TreeImageReviewState(
     val note: String = "",
@@ -16,7 +16,7 @@ data class TreeImageReviewState(
 )
 class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
-    private val users: Users,
+    private val userRepo: UserRepo,
 ) : ViewModel() {
     private val _state = MutableLiveData(TreeImageReviewState())
     val state: LiveData<TreeImageReviewState> = _state
@@ -46,7 +46,7 @@ class TreeImageReviewViewModel(
         }
     }
 
-    suspend fun isFirstTrack(): Boolean = users.getPowerUser()!!.numberOfTrees < 1
+    suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
 
     fun setDialogState(state: Boolean){
         _state.value = _state.value?.copy(isDialogOpen = state)
