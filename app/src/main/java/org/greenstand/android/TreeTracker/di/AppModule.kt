@@ -24,8 +24,6 @@ import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.models.Organizations
-import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.SessionUploader
@@ -33,17 +31,17 @@ import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessageUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelectionViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -69,7 +67,7 @@ val appModule = module {
 
     viewModel { LanguagePickerViewModel(get(), get()) }
 
-    viewModel { DashboardViewModel(get(), get(), get(), get(), get()) }
+    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get()) }
 
     viewModel { OrgPickerViewModel(get()) }
 
@@ -78,8 +76,6 @@ val appModule = module {
     viewModel { TreeHeightSelectionViewModel() }
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
-
-    viewModel { SplashScreenViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { WalletSelectViewModel(get()) }
 
@@ -93,13 +89,13 @@ val appModule = module {
 
     viewModel { PermissionViewModel(get()) }
 
-    single { Users(get(), get(), get(), get()) }
+    single { UserRepo(get(), get(), get(), get()) }
 
     single { TreeCapturer(get(), get(), get(), get(), get()) }
 
     single { DeviceConfigUpdater(get(), get()) }
 
-    single<Organizations> { OrganizationsFake() }
+    single { OrgRepo(get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -158,6 +154,7 @@ val appModule = module {
         GsonBuilder()
             .registerTypeAdapter(MessageType::class.java, MessageTypeDeserializer())
             .serializeNulls()
+            .setPrettyPrinting()
             .create()
     }
 

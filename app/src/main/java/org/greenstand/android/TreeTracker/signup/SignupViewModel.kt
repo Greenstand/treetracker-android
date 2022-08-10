@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
@@ -59,7 +59,7 @@ sealed class Credential {
 }
 
 class SignupViewModel(
-    private val users: Users,
+    private val userRepo: UserRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase
 ) : ViewModel() {
 
@@ -108,9 +108,9 @@ class SignupViewModel(
         val credential = _state.value?.let { extractIdentifier(it) }!!
 
         viewModelScope.launch {
-            if (users.doesUserExists(credential)) {
+            if (userRepo.doesUserExists(credential)) {
                 _state.value = _state.value?.copy(
-                    existingUser = users.getUserWithWallet(credential),
+                    existingUser = userRepo.getUserWithWallet(credential),
                 )
             } else {
                 goToNameEntry()
@@ -128,7 +128,7 @@ class SignupViewModel(
         _state.value = _state.value?.copy(showSelfieTutorial = state)
     }
 
-    suspend fun isInitialSetupRequired(): Boolean = users.getPowerUser() == null
+    suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
 
     fun enableAutofocus() {
         _state.value = _state.value?.copy(autofocusTextEnabled = true)
@@ -153,17 +153,17 @@ class SignupViewModel(
     suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
             val userId = with(_state.value ?: return null) {
-                users.createUser(
+                userRepo.createUser(
                     firstName = firstName!!,
                     lastName = lastName!!,
                     phone = phone,
                     email = email,
                     wallet = extractIdentifier(this),
                     photoPath = photoPath,
-                    isPowerUser = users.getPowerUser() == null,
+                    isPowerUser = userRepo.getPowerUser() == null,
                 )
             }
-            return users.getUser(userId)
+            return userRepo.getUser(userId)
         }
         return null
     }
