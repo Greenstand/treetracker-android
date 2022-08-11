@@ -28,7 +28,7 @@ class UserSelectViewModel(
         locationDataCapturer.startGpsUpdates()
         userRepo.users()
             .onEach { userList ->
-                _state.value = UserSelectState(users = userList)
+                _state.value = UserSelectState(users = userList)asdas
             }
             .launchIn(viewModelScope)
     }
