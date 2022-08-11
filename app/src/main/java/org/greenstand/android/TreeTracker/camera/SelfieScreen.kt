@@ -47,7 +47,7 @@ fun SelfieScreen() {
         bottomBar = {
             ActionBar(
                 rightAction = {
-                    infoButton(
+                    InfoButton(
                         onClick = {
                             viewModel.updateSelfieTutorialDialog(true)
                         },

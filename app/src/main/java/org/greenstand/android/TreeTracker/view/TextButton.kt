@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -31,13 +30,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -125,7 +122,7 @@ fun ApprovalButton(
 }
 
 @Composable
-fun infoButton(modifier: Modifier = Modifier, isEnabled: Boolean,
+fun InfoButton(modifier: Modifier = Modifier, isEnabled: Boolean,
                onClick: () -> Unit,shape: DepthSurfaceShape = DepthSurfaceShape.Circle) {
     DepthButton(
 
@@ -135,46 +132,13 @@ fun infoButton(modifier: Modifier = Modifier, isEnabled: Boolean,
         onClick = onClick,
         shape = DepthSurfaceShape.Circle,
         depth = 10f
-    ) {
-        infoButtonCircle(
-            modifier = Modifier
-                .size(60.dp),
-            color = AppColors.LightGray,
-            shadowColor = AppColors.GrayShadow,
-        )
+    )
+    {
+        Image(painter = painterResource(id = R.drawable.info_icon), modifier = Modifier
+            .size(80.dp),contentDescription =null )
     }
+
 }
-
-@Composable
-fun infoButtonCircle(
-    modifier: Modifier,
-    color: Color,
-    shadowColor: Color,
-) {
-    Canvas(
-        modifier = modifier.background( shape = CircleShape ,color = color)
-
-    ) {
-
-        drawCircle(
-            color = shadowColor,
-            radius = 14f,
-            center = Offset(
-                x = size.width / 2,
-                y = size.height / 4
-            ),
-        )
-        val canvasSize = size
-        val canvasWidth = size.width
-        val canvasHeight = size.height
-        drawRect(
-            color = shadowColor,
-            topLeft = Offset(x = canvasWidth / 2.5F, y = canvasHeight / 2.5F),
-            size =  Size(width = 10.dp.toPx(), height = 20.dp.toPx())
-        )
-    }
-}
-
 
 @Composable
         /**
@@ -451,7 +415,7 @@ fun DepthButton(
     content: @Composable (BoxScope.() -> Unit),
 ) {
     val contentColor by colors.contentColor(isEnabled)
-
+    val onClickState = rememberUpdatedState(onClick)
     var isPressed by remember { mutableStateOf(false) }
     isSelected?.let { isPressed = isSelected }
 
@@ -470,7 +434,7 @@ fun DepthButton(
                     if (!isEnabled) return@pointerInput
                     detectTapGestures(
                         onTap = {
-                            onClick()
+                            onClickState.value.invoke()
                         },
                         onPress = {
                             isPressed = true
