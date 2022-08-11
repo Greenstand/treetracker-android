@@ -2,9 +2,9 @@ package org.greenstand.android.TreeTracker.models
 
 import org.greenstand.android.TreeTracker.models.location.Convergence
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
-import java.io.File
-import java.util.UUID
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
+import java.io.File
+import java.util.*
 
 class TreeCapturer(
     private val locationDataCapturer: LocationDataCapturer,
@@ -33,7 +33,7 @@ class TreeCapturer(
         }
     }
 
-    suspend fun setImage(imageFile: File) {
+    fun setImage(imageFile: File) {
         val tree = Tree(
             treeUuid = newTreeUuid!!,
             sessionId = sessionTracker.currentSessionId!!,
