@@ -8,13 +8,17 @@ import androidx.lifecycle.ViewModel
 data class PermissionItemsState(
     val isLocationEnabled: Boolean? = null
 )
-class PermissionViewModel (
-    private val locationManager: LocationManager) : ViewModel(){
+class PermissionViewModel(
+    private val locationManager: LocationManager
+) : ViewModel() {
 
-    private val _state = MutableLiveData(PermissionItemsState(isLocationEnabled = isLocationEnabled()))
+    private val _state =
+        MutableLiveData(PermissionItemsState())
     val state: LiveData<PermissionItemsState> = _state
 
-    private fun isLocationEnabled(): Boolean {
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    fun isLocationEnabled(){
+        _state.value = _state.value?.copy(
+            isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        )
     }
 }
