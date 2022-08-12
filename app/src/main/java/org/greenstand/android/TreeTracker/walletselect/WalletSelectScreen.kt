@@ -2,19 +2,15 @@ package org.greenstand.android.TreeTracker.walletselect
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,15 +38,10 @@ import org.greenstand.android.TreeTracker.view.UserImageButton
 
 @Composable
 fun WalletSelectScreen(
-    planterInfoId: Long,
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
 
     val state by viewModel.state.observeAsState(initial = WalletSelectState())
-
-    LaunchedEffect(true) {
-        viewModel.loadPlanter(planterInfoId)
-    }
 
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
@@ -81,10 +72,8 @@ fun WalletSelectScreen(
                         isEnabled = state.selectedUser != null
                     ) {
                         scope.launch {
-                            state.currentUser?.let { user ->
-                                navController.navigate(NavRoute.AddOrg.create(
-                                    state.currentUser!!.id,
-                                    state.selectedUser!!.wallet))
+                            state.currentUser?.let {
+                                navController.navigate(NavRoute.AddOrg.create())
                             }
                         }
                     }
@@ -92,7 +81,7 @@ fun WalletSelectScreen(
                 centerAction = {
                     OrangeAddButton(
                         modifier = Modifier.align(Alignment.Center),
-                        onClick = { navController.navigate(NavRoute.AddWallet.create(state.currentUser!!.id)) },
+                        onClick = { navController.navigate(NavRoute.AddWallet.create()) },
                     )
                 },
                 leftAction = {
@@ -135,7 +124,6 @@ fun WalletSelectScreen(
 fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
 
     Row(
-        // contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp),
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -38,7 +38,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -135,7 +134,8 @@ fun ApprovalButton(
          * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
          */
 fun CustomDialog(
-    dialogIcon: Painter = painterResource(id = R.drawable.greenstand_logo),
+    dialogIcon: Painter? = painterResource(id = R.drawable.greenstand_logo),
+    backgroundModifier: Modifier = Modifier,
     title: String = "",
     textContent: String? = null,
     content: @Composable() (() -> Unit)? = null,
@@ -154,12 +154,14 @@ fun CustomDialog(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = dialogIcon,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(width = 16.dp, height = 16.dp)
-                )
+                dialogIcon?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(width = 16.dp, height = 16.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = title,
@@ -169,7 +171,7 @@ fun CustomDialog(
                 )
             }
         },
-        modifier = Modifier
+        modifier = backgroundModifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(2.dp)
@@ -372,16 +374,6 @@ fun DepthButtonCirclePreview() {
 }
 
 @Composable
-fun NoGPSDeviceDialog(onPositiveClick: () -> Unit){
-    CustomDialog(
-        dialogIcon = painterResource(id = R.drawable.error_outline),
-        title = stringResource(R.string.no_gps_device_header),
-        textContent = stringResource(R.string.no_gps_device_content),
-        onPositiveClick = onPositiveClick
-    )
-}
-
-@Composable
         /**
          * Button with toggle down animation. Now enables wrap content functionality.
          * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
@@ -406,7 +398,7 @@ fun DepthButton(
     content: @Composable (BoxScope.() -> Unit),
 ) {
     val contentColor by colors.contentColor(isEnabled)
-
+    val onClickState = rememberUpdatedState(onClick)
     var isPressed by remember { mutableStateOf(false) }
     isSelected?.let { isPressed = isSelected }
     val haptic = LocalHapticFeedback.current
@@ -426,7 +418,7 @@ fun DepthButton(
                     if (!isEnabled) return@pointerInput
                     detectTapGestures(
                         onTap = {
-                            onClick()
+                            onClickState.value.invoke()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         onPress = {

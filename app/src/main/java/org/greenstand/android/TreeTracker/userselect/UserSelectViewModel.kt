@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import java.util.Collections.emptyList
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
+import java.util.Collections.emptyList
 
 data class UserSelectState(
     val users: List<User> = emptyList(),
@@ -17,7 +18,7 @@ data class UserSelectState(
 )
 
 class UserSelectViewModel(
-    users: Users,
+    userRepo: UserRepo,
     locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
@@ -25,8 +26,9 @@ class UserSelectViewModel(
     val state: LiveData<UserSelectState> = _state
 
     init {
+        CaptureSetupScopeManager.open()
         locationDataCapturer.startGpsUpdates()
-        users.users()
+        userRepo.users()
             .onEach { userList ->
                 _state.value = UserSelectState(users = userList)
             }
@@ -34,6 +36,7 @@ class UserSelectViewModel(
     }
 
     fun selectUser(user: User) {
+        CaptureSetupScopeManager.getData().user = user
         _state.value = _state.value?.copy(
             selectedUser = user
         )

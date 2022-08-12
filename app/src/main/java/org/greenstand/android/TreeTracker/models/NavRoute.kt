@@ -7,6 +7,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
@@ -23,6 +24,7 @@ import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelection
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
@@ -36,9 +38,11 @@ sealed class NavRoute {
 
     object Splash : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            SplashScreen()
+            SplashScreen(it.arguments?.getString("orgJson"))
         }
-        override val route: String = "splash"
+        override val route: String = "splash?params={orgJson}"
+
+        override val deepLinks: List<NavDeepLink> = listOf(navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" })
     }
 
     object SignupFlow : NavRoute() {
@@ -62,6 +66,13 @@ sealed class NavRoute {
         override val route: String = "dashboard"
     }
 
+    object TreeHeightSelection : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            TreeHeightSelection()
+        }
+        override val route: String = "tree-height-selection"
+    }
+
     object UserSelect : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             UserSelectScreen()
@@ -71,50 +82,30 @@ sealed class NavRoute {
 
     object WalletSelect : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            WalletSelectScreen(getPlanterInfoId(it))
+            WalletSelectScreen()
         }
-        override val route: String = "wallet-select/{planterInfoId}"
-        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+        override val route: String = "wallet-select"
 
-        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
-            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
-        }
-
-        fun create(planterInfoId: Long) = "wallet-select/$planterInfoId"
+        fun create() = route
     }
 
     object AddWallet : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            AddWalletScreen(getPlanterInfoId(it))
+            AddWalletScreen()
         }
         override val route: String = "add-wallet/{planterInfoId}"
-        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
 
-        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
-            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
-        }
 
-        fun create(planterInfoId: Long) = "add-wallet/$planterInfoId"
+        fun create() = route
     }
 
     object AddOrg : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            AddOrgScreen(getPlanterInfoId(it), getDestinationWallet(it))
+            AddOrgScreen()
         }
-        override val route: String = "add-org/{planterInfoId}/{destinationWallet}"
-        override val arguments = listOf(
-            navArgument("planterInfoId") { type = NavType.LongType },
-            navArgument("destinationWallet") { type = NavType.StringType })
+        override val route: String = "add-org"
 
-        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
-            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
-        }
-
-        private fun getDestinationWallet(backStackEntry: NavBackStackEntry): String {
-            return backStackEntry.arguments?.getString("destinationWallet") ?: ""
-        }
-
-        fun create(planterInfoId: Long, destinationWallet: String) = "add-org/$planterInfoId/$destinationWallet"
+        fun create() = route
     }
 
     object Selfie : NavRoute() {
@@ -125,7 +116,7 @@ sealed class NavRoute {
     }
 
     object IndividualMessageList : NavRoute() {
-        @ExperimentalFoundationApi
+        @OptIn(ExperimentalFoundationApi::class)
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             IndividualMessageListScreen(getPlanterInfoId(it))
         }
@@ -189,7 +180,7 @@ sealed class NavRoute {
     }
 
     object TreeCapture : NavRoute() {
-        @ExperimentalPermissionsApi
+        @OptIn(ExperimentalPermissionsApi::class)
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             TreeCaptureScreen(getProfilePicUrl(it))
         }

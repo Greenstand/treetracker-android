@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import java.io.File
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import java.io.File
 
 data class TreeCaptureState(
     val profilePicUrl: String,
@@ -23,11 +23,12 @@ data class TreeCaptureState(
     val isCreatingFakeTrees: Boolean = false,
     val isLocationAvailable: Boolean? = null,
     val showCaptureTutorial: Boolean? = null,
+    val convergencePercentage: Float = 0f,
 )
 
 class TreeCaptureViewModel(
     profilePicUrl: String,
-    private val users: Users,
+    private val userRepo: UserRepo,
     private val treeCapturer: TreeCapturer,
     private val sessionTracker: SessionTracker,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
@@ -44,7 +45,10 @@ class TreeCaptureViewModel(
     }
 
     suspend fun captureLocation() {
-        _state.value = _state.value?.copy(isGettingLocation = true)
+        _state.value = _state.value?.copy(isGettingLocation = true )
+        locationDataCapturer.percentageConvergenceObservers.add { newValue ->
+            _state.value = _state.value?.copy( convergencePercentage = newValue )
+        }
         _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation(), isGettingLocation = false)
     }
 
@@ -67,7 +71,7 @@ class TreeCaptureViewModel(
         sessionTracker.endSession()
     }
 
-    suspend fun isFirstTrack(): Boolean = users.getPowerUser()!!.numberOfTrees < 1
+    suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
 
     suspend fun createFakeTrees() {
         _state.value = _state.value?.copy(isCreatingFakeTrees = true)

@@ -15,18 +15,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.models.Org
+import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
 fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -34,16 +35,24 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(OrgPickerState())
 
-    val lifecycle = LocalLifecycleOwner.current
-    LaunchedEffect(lifecycle) {
-        viewModel.uiEvents.observe(lifecycle) {
-            when (it) {
-                OrgPickerUIEvents.Exit -> navController.popBackStack()
-            }
-        }
-    }
-
-    Scaffold {
+    Scaffold(
+        topBar = {
+            ActionBar(
+                centerAction = { TopBarTitle() }
+            )
+        },
+        bottomBar = {
+            ActionBar(
+                rightAction = {
+                    ArrowButton(
+                        isLeft = false,
+                    ) {
+                        navController.popBackStack()
+                    }
+                }
+            )
+        },
+    ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,7 +60,7 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
         ) {
             item {
                 Text(
-                    text = "Org Picker",
+                    text = "Org Selection",
                 )
                 Spacer(modifier = Modifier.height(100.dp))
             }
