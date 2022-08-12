@@ -82,50 +82,30 @@ sealed class NavRoute {
 
     object WalletSelect : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            WalletSelectScreen(getPlanterInfoId(it))
+            WalletSelectScreen()
         }
-        override val route: String = "wallet-select/{planterInfoId}"
-        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+        override val route: String = "wallet-select"
 
-        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
-            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
-        }
-
-        fun create(planterInfoId: Long) = "wallet-select/$planterInfoId"
+        fun create() = route
     }
 
     object AddWallet : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            AddWalletScreen(getPlanterInfoId(it))
+            AddWalletScreen()
         }
         override val route: String = "add-wallet/{planterInfoId}"
-        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
 
-        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
-            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
-        }
 
-        fun create(planterInfoId: Long) = "add-wallet/$planterInfoId"
+        fun create() = route
     }
 
     object AddOrg : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            AddOrgScreen(getPlanterInfoId(it), getDestinationWallet(it))
+            AddOrgScreen()
         }
-        override val route: String = "add-org/{planterInfoId}/{destinationWallet}"
-        override val arguments = listOf(
-            navArgument("planterInfoId") { type = NavType.LongType },
-            navArgument("destinationWallet") { type = NavType.StringType })
+        override val route: String = "add-org"
 
-        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
-            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
-        }
-
-        private fun getDestinationWallet(backStackEntry: NavBackStackEntry): String {
-            return backStackEntry.arguments?.getString("destinationWallet") ?: ""
-        }
-
-        fun create(planterInfoId: Long, destinationWallet: String) = "add-org/$planterInfoId/$destinationWallet"
+        fun create() = route
     }
 
     object Selfie : NavRoute() {

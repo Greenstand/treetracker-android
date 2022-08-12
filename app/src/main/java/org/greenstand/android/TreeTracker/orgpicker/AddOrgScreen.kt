@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -36,11 +37,7 @@ import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.DepthButton
 
 @Composable
-fun AddOrgScreen(
-    userId: Long,
-    destinationWallet: String,
-    viewModel: AddOrgViewModel = viewModel(factory = AddOrgViewModelFactory(userId, destinationWallet))
-) {
+fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
     val state by viewModel.state.observeAsState(AddOrgState())
