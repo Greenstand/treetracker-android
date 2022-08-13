@@ -72,7 +72,8 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
         LazyVerticalGrid(
             cells = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.Center
         ) {
             items(state.orgs) { org ->
                 OrgItem(
