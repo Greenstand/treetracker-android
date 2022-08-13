@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
@@ -17,6 +18,7 @@ class SessionTracker(
     private val treesToSyncHelper: TreesToSyncHelper,
     private val preferences: Preferences,
     private val timeProvider: TimeProvider,
+    private val orgRepo: OrgRepo,
 ) {
 
     private var _currentSessionId: Long? = null
@@ -25,7 +27,6 @@ class SessionTracker(
 
     suspend fun startSession() {
         val captureSetupData = CaptureSetupScopeManager.getData()
-        CaptureSetupScopeManager.close()
         endSession()
 
         withContext(Dispatchers.IO) {
@@ -35,11 +36,12 @@ class SessionTracker(
                 uuid = UUID.randomUUID().toString(),
                 originUserId = userEntity.uuid,
                 originWallet = userEntity.wallet,
-                destinationWallet = captureSetupData.destinationWallet!!,
+                destinationWallet = captureSetupData.destinationWallet ?: orgRepo.currentOrg().walletId,
                 startTime = timeProvider.currentTime(),
                 isUploaded = false,
                 organization = captureSetupData.organizationName,
                 deviceConfigId = dao.getLatestDeviceConfig()!!.id,
+                note = captureSetupData.sessionNote,
             )
 
             _currentSessionId = dao.insertSession(sessionEntity)

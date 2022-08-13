@@ -1,17 +1,22 @@
 package org.greenstand.android.TreeTracker.models.organization
 
+import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import timber.log.Timber
 
-// TEST DEEPLINK: app://mobile.treetracker.org/org?params={"id":"123abc","version": "1","name": "kasiki hai","walletId": "123abc","isTokenXferChoiceEnabled": false,"isSessionNoteEnabled": true}
+// TEST DEEPLINK: app://mobile.treetracker.org/org?params={"id":"109288091","version":"1","name":"Kasiki Hai","walletId":"klasdlk1-a0a23lmnzcln9o3","isTokenXferChoiceEnabled":false,"isSessionNoteEnabled": true,"captureSetupFlow":[{"route":"user-select"},{"route":"session-note"}]}
 
 class OrgRepo(
     private val dao: TreeTrackerDAO,
     private val prefs: Preferences,
+    private val gson: Gson,
 ) {
 
     private var currentOrg: Org? = null
@@ -23,12 +28,17 @@ class OrgRepo(
                 version = 1,
                 name = "Greenstand",
                 walletId = "",
-                isTokenTransferChoiceEnabled = true,
-                isSessionNoteEnabled = false,
+                captureSetupFlowJson = gson.toJson(listOf(
+                    Destination(NavRoute.UserSelect.route),
+                    Destination(NavRoute.WalletSelect.route),
+                    Destination(NavRoute.AddOrg.route),
+                )),
             )
         )
         val currentOrgId = prefs.getString(CURRENT_ORG_ID_KEY, "-1")
         currentOrg = dao.getOrg(currentOrgId)?.toOrg()
+        Timber.tag("OrgRepo").d("Org set to: ${currentOrg!!.name}")
+        Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
     suspend fun getOrgs(): List<Org> {
@@ -38,6 +48,8 @@ class OrgRepo(
     suspend fun setOrg(orgId: String) {
         prefs.edit().putString(CURRENT_ORG_ID_KEY, orgId).commit()
         currentOrg = dao.getOrg(orgId)?.toOrg()
+        Timber.tag("OrgRepo").d("Org set to: ${currentOrg!!.name}")
+        Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
     fun currentOrg(): Org = currentOrg!!
@@ -49,20 +61,21 @@ class OrgRepo(
             version = orgJsonObj.get(OrgJsonKeys.V1.VERSION).asInt,
             name = orgJsonObj.get(OrgJsonKeys.V1.NAME).asString,
             walletId = orgJsonObj.get(OrgJsonKeys.V1.WALLET_ID).asString,
-            isTokenTransferChoiceEnabled = orgJsonObj.get(OrgJsonKeys.V1.IS_TOKEN_XFER_CHOICE_ENABLED).asBoolean,
-            isSessionNoteEnabled = orgJsonObj.get(OrgJsonKeys.V1.IS_SESSION_NOTE_ENABLED).asBoolean,
+            captureSetupFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_SETUP_FLOW).asJsonArray.toString(),
         )
         dao.insertOrg(orgEntity)
+        setOrg(orgEntity.id)
     }
 
     private fun OrganizationEntity.toOrg(): Org {
+        val typeToken = object : TypeToken<List<Destination>>(){}.type
+        val destinations = gson.fromJson<List<Destination>>(captureSetupFlowJson, typeToken)
         return Org(
             id = id,
             name = name,
             walletId = walletId,
             logoPath = "",
-            isTokenTransferChoiceEnabled = isTokenTransferChoiceEnabled,
-            isSessionNoteEnabled = isSessionNoteEnabled,
+            captureSetupFlow = destinations,
         )
     }
 

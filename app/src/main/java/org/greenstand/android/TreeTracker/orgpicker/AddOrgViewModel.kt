@@ -5,9 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.SessionTracker
-import org.greenstand.android.TreeTracker.models.StepCounter
-import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
@@ -21,9 +18,6 @@ data class AddOrgState(
 )
 
 class AddOrgViewModel(
-    private val stepCounter: StepCounter,
-    private val sessionTracker: SessionTracker,
-    private val locationDataCapturer: LocationDataCapturer,
     private val preferences: Preferences,
 ) : ViewModel() {
 
@@ -52,14 +46,11 @@ class AddOrgViewModel(
         )
     }
 
-    suspend fun startSession() {
+    fun setDefaultOrg() {
         if (!_state.value?.orgName.isNullOrBlank()) {
             preferences.edit().putString(PREV_ORG_KEY, _state.value?.orgName).apply()
         }
-        stepCounter.enable()
         CaptureSetupScopeManager.getData().organizationName = _state.value?.orgName
-        sessionTracker.startSession()
-        locationDataCapturer.startGpsUpdates()
     }
 
     companion object {

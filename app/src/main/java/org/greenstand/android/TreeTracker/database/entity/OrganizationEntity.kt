@@ -15,8 +15,6 @@ class OrganizationEntity(
     var name: String,
     @ColumnInfo(name = "wallet_id")
     var walletId: String,
-    @ColumnInfo(name = "is_token_transfer_choice_enabled")
-    val isTokenTransferChoiceEnabled: Boolean,
-    @ColumnInfo(name = "is_session_note_enabled")
-    val isSessionNoteEnabled: Boolean,
+    @ColumnInfo(name = "capture_setup_flow_json")
+    val captureSetupFlowJson: String,
 )
