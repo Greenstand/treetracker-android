@@ -122,20 +122,23 @@ fun ApprovalButton(
 }
 
 @Composable
-fun InfoButton(modifier: Modifier = Modifier, isEnabled: Boolean,
-               onClick: () -> Unit,shape: DepthSurfaceShape = DepthSurfaceShape.Circle) {
-    DepthButton(
+fun InfoButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit, shape: DepthSurfaceShape = DepthSurfaceShape.Circle
 
-        modifier = modifier.size(70.dp),
-        isEnabled = isEnabled,
-        colors = AppButtonColors.Default,
+) {
+    DepthButton(
+        modifier = modifier.size(60.dp),
+        colors = AppButtonColors.WhiteLight,
         onClick = onClick,
         shape = DepthSurfaceShape.Circle,
-        depth = 10f
+        depth = 6f
     )
     {
-        Image(painter = painterResource(id = R.drawable.info_icon), modifier = Modifier
-            .size(80.dp),contentDescription =null )
+        Image(
+            painter = painterResource(id = R.drawable.info_icon), modifier = Modifier
+                .size(80.dp), contentDescription = null
+        )
     }
 
 }
@@ -594,6 +597,7 @@ fun DepthSurfaceCircle(
         )
     }
 }
+
 @Composable
 fun OrangeAddButton(
     modifier: Modifier,

@@ -50,8 +50,8 @@ fun SelfieScreen() {
                     InfoButton(
                         onClick = {
                             viewModel.updateSelfieTutorialDialog(true)
-                        },
-                        isEnabled = true)
+                        }
+                    )
 
 
                 }
