@@ -38,6 +38,8 @@ data class SessionEntity(
     var bundleId: String? = null,
     @ColumnInfo(name = "device_config_id")
     var deviceConfigId: Long? = null,
+    @ColumnInfo(name = "note")
+    var note: String? = null,
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")

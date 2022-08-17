@@ -39,9 +39,14 @@ import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
+import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.sessionnote.SessionNoteViewModel
 import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelectionViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -56,12 +61,18 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
+import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
 
+    viewModel { SessionNoteViewModel() }
+
+    viewModel { AddWalletViewModel() }
+
+    viewModel { AddOrgViewModel(get()) }
 
     viewModel { ConfigViewModel(get(), get()) }
 
@@ -95,7 +106,7 @@ val appModule = module {
 
     single { DeviceConfigUpdater(get(), get()) }
 
-    single { OrgRepo(get(), get()) }
+    single { OrgRepo(get(), get(), get()) }
 
     single { WorkManager.getInstance(get()) }
 
@@ -142,7 +153,7 @@ val appModule = module {
         ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
     }
 
-    single { SessionTracker(get(), get(), get(), get()) }
+    single { SessionTracker(get(), get(), get(), get(), get()) }
 
     single { StepCounter(get(), get()) }
 
@@ -154,7 +165,6 @@ val appModule = module {
         GsonBuilder()
             .registerTypeAdapter(MessageType::class.java, MessageTypeDeserializer())
             .serializeNulls()
-            .setPrettyPrinting()
             .create()
     }
 
@@ -189,4 +199,10 @@ val appModule = module {
     factory { TreeUploader(get(), get(), get(), get(), get()) }
 
     factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
+
+    scope<CaptureSetupScope> {
+        scoped { CaptureSetupData() }
+        scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
+    }
+
 }

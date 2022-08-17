@@ -18,7 +18,7 @@ import timber.log.Timber
 import java.util.*
 
 /**
- * For test data, use 'handle3' as a wallet
+ * For test data, use 'handle2@test', 'handle3@test', or 'handle4@test' as a wallet (email)
  */
 class MessagesRepo(
     private val apiService: MessagesApiService,

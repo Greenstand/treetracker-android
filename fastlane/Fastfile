@@ -11,7 +11,7 @@
 #
 
 # Uncomment the line if you want fastlane to automatically update itself
-update_fastlane
+# update_fastlane
 
 default_platform(:android)
 
@@ -35,7 +35,7 @@ platform :android do
 
     git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
-    push_to_git_remote()
+    push_to_git_remote
 
   end
 
@@ -48,15 +48,14 @@ platform :android do
 
     push_to_git_remote
 
-    gradle(task: "clean assembleGreenstandBeta")
+    gradle(task: "clean assembleRelease")
 
     firebase_app_distribution(
-        app: "1:422699885542:android:aab16ef8fc4e5968a0ec27",
+        app: "1:422699885542:android:dc800825e887261ea0ec27",
         testers: "zaven@greenstand.com, jay@greenstand.com",
         groups: "Greenstand",
         release_notes: "A new release!",
         firebase_cli_token: ENV["FIREBASE_TOKEN"],
-        android_artifact_type: "APK"
 
       )
 
@@ -85,7 +84,7 @@ platform :android do
 
  #   add_git_tag()
 
-    gradle(task: "clean assembleGreenstandRelease")
+    gradle(task: "clean assembleRelease")
     upload_to_play_store
 
   end
