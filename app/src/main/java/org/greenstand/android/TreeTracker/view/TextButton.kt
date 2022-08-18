@@ -122,6 +122,28 @@ fun ApprovalButton(
 }
 
 @Composable
+fun InfoButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit, shape: DepthSurfaceShape = DepthSurfaceShape.Circle
+
+) {
+    DepthButton(
+        modifier = modifier.size(60.dp),
+        colors = AppButtonColors.WhiteLight,
+        onClick = onClick,
+        shape = DepthSurfaceShape.Circle,
+        depth = 6f
+    )
+    {
+        Image(
+            painter = painterResource(id = R.drawable.info_icon), modifier = Modifier
+                .size(80.dp), contentDescription = null
+        )
+    }
+
+}
+
+@Composable
         /**
          * @param dialogIcon Icon to be displayed in the dialog.
          * @param title The Dialog's title text.
@@ -575,6 +597,7 @@ fun DepthSurfaceCircle(
         )
     }
 }
+
 @Composable
 fun OrangeAddButton(
     modifier: Modifier,
