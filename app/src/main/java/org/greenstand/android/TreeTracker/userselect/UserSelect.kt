@@ -34,7 +34,7 @@ fun UserSelect(
     isCreateUserEnabled: Boolean,
     isNotificationEnabled: Boolean,
     selectedColor: Color = AppColors.Green,
-    onNextRoute: (User) -> String,
+    onNavigateForward: (User) -> Unit,
 ) {
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
     val navController = LocalNavHostController.current
@@ -58,7 +58,7 @@ fun UserSelect(
                         colors = navigationButtonColors,
                         onClick = {
                             state.selectedUser?.let {
-                                navController.navigate(onNextRoute(it))
+                                onNavigateForward(it)
                             }
                         }
                     )

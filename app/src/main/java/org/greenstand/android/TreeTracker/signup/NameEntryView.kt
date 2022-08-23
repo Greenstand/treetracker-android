@@ -51,10 +51,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 } else {
                     // In tracking setup flow, clear login stack and go to wallet selection flow
                     CaptureSetupScopeManager.getData().user = user
-                    navController.navigate(NavRoute.WalletSelect.create()) {
-                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
+                    CaptureSetupScopeManager.nav.navFromNewUserCreation(navController)
                 }
             }
         }
