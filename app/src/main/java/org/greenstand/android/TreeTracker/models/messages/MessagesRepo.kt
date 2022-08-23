@@ -224,4 +224,9 @@ class MessagesRepo(
         return messagesDao.getLatestSyncTimeForWallet(wallet)
             ?: Instant.fromEpochMilliseconds(0).toString()
     }
+
+    suspend fun checkForUnreadMessages(): Boolean{
+        return messagesDao.getUnreadMessagesCount() >= 1
+    }
+
 }

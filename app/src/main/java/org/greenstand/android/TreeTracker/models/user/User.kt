@@ -8,4 +8,5 @@ data class User(
     val lastName: String?,
     val photoPath: String,
     val isPowerUser: Boolean,
+    var unreadMessagesAvailable: Boolean,
 )

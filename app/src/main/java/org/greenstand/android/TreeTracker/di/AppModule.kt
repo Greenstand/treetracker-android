@@ -78,7 +78,7 @@ val appModule = module {
 
     viewModel { LanguagePickerViewModel(get(), get()) }
 
-    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { OrgPickerViewModel(get()) }
 
@@ -100,7 +100,7 @@ val appModule = module {
 
     viewModel { PermissionViewModel(get()) }
 
-    single { UserRepo(get(), get(), get(), get()) }
+    single { UserRepo(get(), get(), get(), get(), get()) }
 
     single { TreeCapturer(get(), get(), get(), get(), get()) }
 
