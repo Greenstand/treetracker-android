@@ -23,7 +23,9 @@ import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -32,6 +34,7 @@ data class DashboardState(
     val treesRemainingToSync: Int = 0,
     val totalTreesToSync: Int = 0,
     val isOrgButtonEnabled: Boolean = false,
+    val showUnreadMessageNotification: Boolean = false,
 )
 
 class DashboardViewModel(
@@ -40,6 +43,8 @@ class DashboardViewModel(
     private val analytics: Analytics,
     private val treesToSyncHelper: TreesToSyncHelper,
     private val orgRepo: OrgRepo,
+    private val messagesRepo: MessagesRepo,
+    private val checkForInternetUseCase: CheckForInternetUseCase,
     locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
@@ -105,6 +110,16 @@ class DashboardViewModel(
             .observeForever(syncObserver)
     }
 
+    fun syncMessages(){
+        viewModelScope.launch {
+            if (checkForInternetUseCase.execute(Unit)) {
+                withContext(Dispatchers.IO) {
+                    messagesRepo.syncMessages()
+                }
+            }
+        }
+    }
+
     fun sync() {
         viewModelScope.launch {
             if (_isSyncing == false) {
@@ -143,7 +158,8 @@ class DashboardViewModel(
                     totalTreesToSync = totalTreesToSync,
                     treesRemainingToSync = notSyncedTreeCount,
                     treesSynced = syncedTreeCount,
-                    isOrgButtonEnabled = orgRepo.getOrgs().size > 1
+                    isOrgButtonEnabled = orgRepo.getOrgs().size > 1,
+                    showUnreadMessageNotification = messagesRepo.checkForUnreadMessages(),
                 )
             }
         }
