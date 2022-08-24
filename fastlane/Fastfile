@@ -48,7 +48,7 @@ platform :android do
 
     push_to_git_remote
 
-    gradle(task: "clean assembleGreenstandBeta")
+    gradle(task: "clean assembleRelease")
 
     firebase_app_distribution(
         app: "1:422699885542:android:aab16ef8fc4e5968a0ec27",
