@@ -130,7 +130,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 80.dp)
+                .padding(top = 70.dp)
         ) {
             val navigateToWebPage: () -> Unit = {
                 val intent = Intent(Intent.ACTION_VIEW)
@@ -204,7 +204,7 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
     val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.email ?: "",
-        padding = PaddingValues(16.dp),
+        padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
         onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
         placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
         keyboardOptions = KeyboardOptions(
@@ -238,7 +238,7 @@ private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focus
     val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.phone ?: "",
-        padding = PaddingValues(16.dp),
+        padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
         onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
         placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
         keyboardOptions = KeyboardOptions(

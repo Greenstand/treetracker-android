@@ -300,7 +300,7 @@ fun CustomSnackbar(
         snackbar = { data ->
             Snackbar(
                 backgroundColor = backGroundColor,
-                modifier = modifier.padding(16.dp),
+                modifier = modifier.padding(start = 16.dp, end = 16.dp),
                 content = {
                     Text(
                         text = data.message,
