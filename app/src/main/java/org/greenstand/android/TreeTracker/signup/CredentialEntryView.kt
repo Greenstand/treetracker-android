@@ -130,7 +130,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 100.dp)
+                .padding(top = 80.dp)
         ) {
             val navigateToWebPage: () -> Unit = {
                 val intent = Intent(Intent.ACTION_VIEW)
@@ -151,9 +151,9 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
             }
 
-            ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
-
             CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
+
+            ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
         }
         if (state.showPrivacyDialog == true) {
             PrivacyPolicyDialog(viewModel = viewModel)
