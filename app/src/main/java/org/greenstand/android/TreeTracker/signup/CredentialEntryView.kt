@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -127,10 +128,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 70.dp)
+                .fillMaxWidth()
+                .fillMaxHeight(0.6f)
+                .verticalScroll(rememberScrollState())
         ) {
             val navigateToWebPage: () -> Unit = {
                 val intent = Intent(Intent.ACTION_VIEW)
@@ -138,8 +140,12 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 startActivity(context, intent, null)
             }
 
+            CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
+
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
                 PhoneCredentialButton(state, viewModel)
@@ -150,8 +156,6 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 is Credential.Email -> EmailTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
                 is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
             }
-
-            CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
 
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
         }
