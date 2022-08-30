@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
@@ -32,7 +33,7 @@ class IndividualMessageListViewModel(
 
     private val _state = MutableLiveData<IndividualMessageListState>()
     val state: LiveData<IndividualMessageListState> = _state
-
+    var showSnackBar: ((Int) -> Unit)? = null
     init {
         viewModelScope.launch {
             val currentUser = userRepo.getUser(userId)
@@ -61,6 +62,13 @@ class IndividualMessageListViewModel(
         val surveysToShow = messages
             .filterIsInstance<SurveyMessage>()
             .filterNot { it.isComplete }
+        var survey = messages.filterIsInstance<SurveyMessage>().filter {
+            it.isComplete && it.isRead
+        }
+        if (survey.isNotEmpty()) {
+            showSnackBar?.invoke(R.string.survey_completed)
+            // Log.i("Hey", showSnackBar.toString())
+        }
         val announcementsToShow = messages.filterIsInstance<AnnouncementMessage>()
 
         // Merge messages together and sort by newest
