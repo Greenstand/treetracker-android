@@ -58,6 +58,7 @@ import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
@@ -117,6 +118,8 @@ val appModule = module {
     single { Analytics(get(), get()) }
 
     single { DeviceUtils }
+
+    single { GpsUtils(get()) }
 
     single { SyncNotificationManager(get()) }
 
