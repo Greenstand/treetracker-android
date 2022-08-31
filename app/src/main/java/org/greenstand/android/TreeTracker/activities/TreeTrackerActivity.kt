@@ -26,11 +26,12 @@ class TreeTrackerActivity : ComponentActivity() {
         languageSwitcher.applyCurrentLanguage(this)
 
         setContent {
-            Root(viewModelFactory)
-            if (gpsUtils.hasGPSDevice()) {
-                Root(viewModelFactory)
-            } else {
-                NoGPSDeviceDialog(onPositiveClick = { finishAndRemoveTask() })
+            CustomTheme {
+                if (gpsUtils.hasGPSDevice()) {
+                    Root(viewModelFactory)
+                } else {
+                    NoGPSDeviceDialog(onPositiveClick = { finishAndRemoveTask() })
+                }
             }
         }
     }
