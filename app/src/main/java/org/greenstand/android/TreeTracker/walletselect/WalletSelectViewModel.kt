@@ -8,7 +8,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.user.User
 
 data class WalletSelectState(
@@ -18,7 +21,7 @@ data class WalletSelectState(
 )
 
 class WalletSelectViewModel(
-    private val userRepo: UserRepo,
+    private val users: Users,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<WalletSelectState>()
@@ -26,8 +29,8 @@ class WalletSelectViewModel(
 
     fun loadPlanter(planterInfoId: Long) {
         viewModelScope.launch {
-            val currentUser = userRepo.getUser(planterInfoId)
-            userRepo.users()
+            val currentUser = users.getUser(planterInfoId)
+            users.users()
                 .map { users -> users.filter { it.id != currentUser?.id } }
                 .onEach { users ->
                     _state.value = WalletSelectState(
@@ -41,7 +44,7 @@ class WalletSelectViewModel(
     fun selectPlanter(planterInfoId: Long) {
         viewModelScope.launch {
             _state.value = _state.value?.copy(
-                selectedUser = userRepo.getUserList().find { planterInfoId == it.id }
+                selectedUser = users.getUserList().find { planterInfoId == it.id }
             )
         }
     }

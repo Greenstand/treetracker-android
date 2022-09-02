@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -17,7 +20,7 @@ data class AddWalletState(
 
 class AddWalletViewModel(
     private val userId: Long,
-    private val userRepo: UserRepo,
+    private val users: Users,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<AddWalletState>()
@@ -26,7 +29,7 @@ class AddWalletViewModel(
     init {
         viewModelScope.launch {
             _state.value = AddWalletState(
-                userImagePath = userRepo.getUser(userId)!!.photoPath
+                userImagePath = users.getUser(userId)!!.photoPath
             )
         }
     }

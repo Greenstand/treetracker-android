@@ -7,7 +7,6 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
@@ -38,11 +37,9 @@ sealed class NavRoute {
 
     object Splash : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            SplashScreen(it.arguments?.getString("orgJson"))
+            SplashScreen()
         }
-        override val route: String = "splash?params={orgJson}"
-
-        override val deepLinks: List<NavDeepLink> = listOf(navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" })
+        override val route: String = "splash"
     }
 
     object SignupFlow : NavRoute() {

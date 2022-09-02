@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.user.User
@@ -27,7 +27,7 @@ data class ChatState(
 class ChatViewModel(
     private val userId: Long,
     private val otherChatIdentifier: String,
-    private val userRepo: UserRepo,
+    private val users: Users,
     private val messagesRepo: MessagesRepo,
 ) : ViewModel() {
 
@@ -36,7 +36,7 @@ class ChatViewModel(
 
     init {
         viewModelScope.launch {
-            val currentUser = userRepo.getUser(userId)
+            val currentUser = users.getUser(userId)
             messagesRepo.getDirectMessages(currentUser!!.wallet, otherChatIdentifier).collect { messages ->
                 _state.value = ChatState(
                     from = otherChatIdentifier,
