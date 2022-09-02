@@ -30,7 +30,6 @@ fun Host() {
                 NavRoute.TreeImageReview,
                 NavRoute.Selfie,
                 NavRoute.TreeCapture,
-                NavRoute.TreeHeightSelection,
                 NavRoute.Survey,
                 NavRoute.MessagesUserSelect,
                 NavRoute.IndividualMessageList,
