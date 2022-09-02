@@ -54,6 +54,7 @@ import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
@@ -68,7 +69,7 @@ val appModule = module {
 
     viewModel { LanguagePickerViewModel(get(), get()) }
 
-    viewModel { DashboardViewModel(get(), get(), get(), get(), get()) }
+    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { OrgPickerViewModel(get()) }
 
@@ -90,7 +91,7 @@ val appModule = module {
 
     viewModel { PermissionViewModel(get()) }
 
-    single { Users(get(), get(), get(), get()) }
+    single { Users(get(), get(), get(), get(), get()) }
 
     single { TreeCapturer(get(), get(), get(), get(), get()) }
 
@@ -119,6 +120,8 @@ val appModule = module {
     single { MessagesRepo(get(), get(), get(), get(), get()) }
 
     factory { MessageUploader(get(), get(), get()) }
+
+    single { GpsUtils(get()) }
 
     single { LocationUpdateManager(get(), get(), get()) }
 

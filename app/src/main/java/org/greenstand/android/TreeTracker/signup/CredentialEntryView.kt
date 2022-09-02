@@ -313,7 +313,7 @@ fun ExistingUserDialog(
                     buttonColors = AppButtonColors.Default,
                     selectedColor = Green,
                     onClick = {
-                        navController.navigate(NavRoute.WalletSelect.create()) {
+                        navController.navigate(NavRoute.WalletSelect.create(user.id)) {
                             popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
                             launchSingleTop = true
                         }
