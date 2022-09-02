@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "080861560a3c486096502913ac8a1a78",
+    "identityHash": "671c177774dd9d88154e8e5d7f80d52c",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -430,7 +430,7 @@
       },
       {
         "tableName": "session",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_user_id` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` TEXT NOT NULL, `end_time` TEXT, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `note` TEXT, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`device_config_id`) REFERENCES `device_config`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_user_id` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` TEXT NOT NULL, `end_time` TEXT, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`device_config_id`) REFERENCES `device_config`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -490,12 +490,6 @@
             "fieldPath": "deviceConfigId",
             "columnName": "device_config_id",
             "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "note",
-            "columnName": "note",
-            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -925,7 +919,7 @@
       },
       {
         "tableName": "organization",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT NOT NULL, `wallet_id` TEXT NOT NULL, `capture_setup_flow_json` TEXT NOT NULL, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT NOT NULL, `wallet_id` TEXT NOT NULL, `is_token_transfer_choice_enabled` INTEGER NOT NULL, `is_session_note_enabled` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -952,9 +946,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "captureSetupFlowJson",
-            "columnName": "capture_setup_flow_json",
-            "affinity": "TEXT",
+            "fieldPath": "isTokenTransferChoiceEnabled",
+            "columnName": "is_token_transfer_choice_enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSessionNoteEnabled",
+            "columnName": "is_session_note_enabled",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -971,7 +971,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '080861560a3c486096502913ac8a1a78')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '671c177774dd9d88154e8e5d7f80d52c')"
     ]
   }
 }

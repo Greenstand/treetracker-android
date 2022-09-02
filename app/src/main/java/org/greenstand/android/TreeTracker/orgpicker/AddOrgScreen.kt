@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,8 +25,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -37,6 +39,7 @@ import org.greenstand.android.TreeTracker.view.DepthButton
 @Composable
 fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     val navController = LocalNavHostController.current
+    val scope = rememberCoroutineScope()
     val state by viewModel.state.observeAsState(AddOrgState())
 
     Scaffold(
@@ -44,15 +47,17 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
             ActionBar(
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        CaptureSetupScopeManager.nav.navBackward(navController)
+                        navController.popBackStack()
                     }
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
                     ) {
-                        viewModel.setDefaultOrg()
-                        CaptureSetupScopeManager.nav.navForward(navController)
+                        scope.launch {
+                            viewModel.startSession()
+                            navController.navigate(NavRoute.TreeCapture.create(state.userImagePath))
+                        }
                     }
                 }
             )
@@ -75,8 +80,10 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        viewModel.setDefaultOrg()
-                        CaptureSetupScopeManager.nav.navForward(navController)
+                        scope.launch {
+                            viewModel.startSession()
+                            navController.navigate(NavRoute.TreeCapture.create(state.userImagePath))
+                        }
                     }
                 )
             )

@@ -24,7 +24,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -54,7 +53,10 @@ fun WalletSelectScreen(
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
                             onClick = {
-                                CaptureSetupScopeManager.nav.navToUserSelect(navController)
+                                navController.navigate(NavRoute.UserSelect.route) {
+                                    popUpTo(NavRoute.Dashboard.route)
+                                    launchSingleTop = true
+                                }
                             },
                             imagePath = it
                         )
@@ -71,7 +73,7 @@ fun WalletSelectScreen(
                     ) {
                         scope.launch {
                             state.currentUser?.let {
-                                CaptureSetupScopeManager.nav.navForward(navController)
+                                navController.navigate(NavRoute.AddOrg.create())
                             }
                         }
                     }
@@ -84,7 +86,7 @@ fun WalletSelectScreen(
                 },
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        CaptureSetupScopeManager.nav.navBackward(navController)
+                        navController.popBackStack()
                     }
                 }
             )
@@ -105,7 +107,7 @@ fun WalletSelectScreen(
                     WalletItem(currentUser, state.selectedUser == currentUser) {
                         viewModel.selectPlanter(it)
                     }
-                }
+                    }
             }
             state.alternateUsers.let { alternateUsers ->
                 items(alternateUsers) { user ->

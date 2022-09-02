@@ -22,7 +22,6 @@ import org.greenstand.android.TreeTracker.messages.individualmeassagelist.Indivi
 import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
-import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelection
@@ -94,17 +93,8 @@ sealed class NavRoute {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
             AddWalletScreen()
         }
-        override val route: String = "add-wallet"
+        override val route: String = "add-wallet/{planterInfoId}"
 
-
-        fun create() = route
-    }
-
-    object SessionNote : NavRoute() {
-        override val content: @Composable (NavBackStackEntry) -> Unit = {
-            SessionNoteScreen()
-        }
-        override val route: String = "session-note"
 
         fun create() = route
     }

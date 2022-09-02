@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -43,7 +43,7 @@ fun AddWalletScreen(
             ActionBar(
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        CaptureSetupScopeManager.nav.navBackward(navController)
+                        navController.popBackStack()
                     }
                 },
                 rightAction = {
@@ -52,7 +52,7 @@ fun AddWalletScreen(
                         isEnabled = state.walletName.isNotBlank()
                     ) {
                         scope.launch {
-                            CaptureSetupScopeManager.nav.navForward(navController)
+                            navController.navigate(NavRoute.AddOrg.create())
                         }
                     }
                 }
@@ -79,7 +79,7 @@ fun AddWalletScreen(
                 keyboardActions = KeyboardActions(
                     onGo = {
                         scope.launch {
-                            CaptureSetupScopeManager.nav.navForward(navController)
+                            navController.navigate(NavRoute.AddOrg.create())
                         }
                     }
                 )

@@ -35,8 +35,7 @@ fun Host() {
                 NavRoute.MessagesUserSelect,
                 NavRoute.IndividualMessageList,
                 NavRoute.Chat,
-                NavRoute.Announcement,
-                NavRoute.SessionNote,
+                NavRoute.Announcement
             ).forEach { addNavRoute(it) }
         }
     }
