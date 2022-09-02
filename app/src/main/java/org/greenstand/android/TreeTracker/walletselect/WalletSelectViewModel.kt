@@ -30,10 +30,7 @@ class WalletSelectViewModel(
             userRepo.users()
                 .map { users -> users.filter { it.id != currentUser?.id } }
                 .onEach { users ->
-                    _state.value = _state.value?.copy(
-                        currentUser = currentUser,
-                        alternateUsers = users
-                    ) ?: WalletSelectState(
+                    _state.value = WalletSelectState(
                         currentUser = currentUser,
                         alternateUsers = users
                     )}
