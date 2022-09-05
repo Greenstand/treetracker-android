@@ -7,8 +7,6 @@ class SplashScreenPreviewProvider : PreviewParameterProvider<SplashScreenViewMod
 
     override val values: Sequence<SplashScreenViewModel> = sequenceOf(
         SplashScreenViewModel(
-            null,
-            getKoin().get(),
             getKoin().get(),
             getKoin().get(),
             getKoin().get(),

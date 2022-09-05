@@ -22,13 +22,13 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import timber.log.Timber
 
 @Composable
 fun SplashScreen(
-    orgJsonString: String?,
-    viewModel: SplashScreenViewModel = viewModel(factory = SplashScreenViewModelFactory(orgJsonString)),
-    navController: NavHostController = LocalNavHostController.current,
+    viewModel: SplashScreenViewModel = viewModel(factory = LocalViewModelFactory.current),
+    navController: NavHostController = LocalNavHostController.current
 ) {
     val scope = rememberCoroutineScope()
 
@@ -98,7 +98,6 @@ fun SplashScreenPreview(
     @PreviewParameter(SplashScreenPreviewProvider::class) viewModel: SplashScreenViewModel
 ) {
     SplashScreen(
-        null,
         viewModel = viewModel,
         navController = rememberNavController()
     )

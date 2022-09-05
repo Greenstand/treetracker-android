@@ -6,16 +6,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import java.io.File
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
-import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import java.io.File
+import kotlin.properties.Delegates
 
 data class TreeCaptureState(
     val profilePicUrl: String,
@@ -28,7 +29,7 @@ data class TreeCaptureState(
 
 class TreeCaptureViewModel(
     profilePicUrl: String,
-    private val userRepo: UserRepo,
+    private val users: Users,
     private val treeCapturer: TreeCapturer,
     private val sessionTracker: SessionTracker,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
@@ -71,7 +72,7 @@ class TreeCaptureViewModel(
         sessionTracker.endSession()
     }
 
-    suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
+    suspend fun isFirstTrack(): Boolean = users.getPowerUser()!!.numberOfTrees < 1
 
     suspend fun createFakeTrees() {
         _state.value = _state.value?.copy(isCreatingFakeTrees = true)

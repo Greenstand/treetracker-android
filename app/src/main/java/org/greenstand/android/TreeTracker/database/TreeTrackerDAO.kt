@@ -10,7 +10,6 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
-import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
@@ -277,16 +276,5 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM device_config ORDER BY logged_at DESC LIMIT 1")
     suspend fun getLatestDeviceConfig(): DeviceConfigEntity?
 
-    /**
-     * ORG LINK QUERIES
-     */
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrg(orgEntity: OrganizationEntity): Long
-
-    @Query("SELECT * FROM organization WHERE _id = :id")
-    suspend fun getOrg(id: String?): OrganizationEntity?
-
-    @Query("SELECT * FROM organization")
-    suspend fun getAllOrgs(): List<OrganizationEntity>
 }
