@@ -5,8 +5,6 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
-import org.greenstand.android.TreeTracker.models.organization.OrgRepo
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -18,30 +16,27 @@ class SessionTracker(
     private val treesToSyncHelper: TreesToSyncHelper,
     private val preferences: Preferences,
     private val timeProvider: TimeProvider,
-    private val orgRepo: OrgRepo,
 ) {
 
     private var _currentSessionId: Long? = null
     val currentSessionId: Long?
         get() = _currentSessionId //?: throw IllegalStateException("Session ID cannot be null when accessed")
 
-    suspend fun startSession() {
-        val captureSetupData = CaptureSetupScopeManager.getData()
+    suspend fun startSession(userId: Long, destinationWallet: String, organization: String) {
         endSession()
 
         withContext(Dispatchers.IO) {
-            val userEntity = dao.getUserById(captureSetupData.user!!.id) ?: throw IllegalStateException("Could not find user of id ${captureSetupData.user!!.id}")
+            val userEntity = dao.getUserById(userId) ?: throw IllegalStateException("Could not find user of id $userId")
 
             val sessionEntity = SessionEntity(
                 uuid = UUID.randomUUID().toString(),
                 originUserId = userEntity.uuid,
                 originWallet = userEntity.wallet,
-                destinationWallet = captureSetupData.destinationWallet ?: orgRepo.currentOrg().walletId,
+                destinationWallet = destinationWallet,
                 startTime = timeProvider.currentTime(),
                 isUploaded = false,
-                organization = captureSetupData.organizationName,
+                organization = organization,
                 deviceConfigId = dao.getLatestDeviceConfig()!!.id,
-                note = captureSetupData.sessionNote,
             )
 
             _currentSessionId = dao.insertSession(sessionEntity)

@@ -30,13 +30,11 @@ fun Host() {
                 NavRoute.TreeImageReview,
                 NavRoute.Selfie,
                 NavRoute.TreeCapture,
-                NavRoute.TreeHeightSelection,
                 NavRoute.Survey,
                 NavRoute.MessagesUserSelect,
                 NavRoute.IndividualMessageList,
                 NavRoute.Chat,
-                NavRoute.Announcement,
-                NavRoute.SessionNote,
+                NavRoute.Announcement
             ).forEach { addNavRoute(it) }
         }
     }

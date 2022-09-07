@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -51,9 +50,11 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                         launchSingleTop = true
                     }
                 } else {
-                    // In tracking setup flow, clear login stack and go to wallet selection flow
-                    CaptureSetupScopeManager.getData().user = user
-                    CaptureSetupScopeManager.nav.navFromNewUserCreation(navController)
+                    // In tracking flow, clear login stack and go to wallet selection flow
+                    navController.navigate(NavRoute.WalletSelect.create(user.id)) {
+                        popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
         }

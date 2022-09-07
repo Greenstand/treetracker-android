@@ -24,6 +24,8 @@ import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.models.Organizations
+import org.greenstand.android.TreeTracker.models.OrganizationsFake
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.SessionUploader
@@ -31,23 +33,17 @@ import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
-import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.Users
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessageUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
-import org.greenstand.android.TreeTracker.models.organization.OrgRepo
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
-import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
-import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import org.greenstand.android.TreeTracker.sessionnote.SessionNoteViewModel
-import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelectionViewModel
+import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateLegacyTreeUseCase
@@ -62,32 +58,26 @@ import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
-import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
 
-    viewModel { SessionNoteViewModel() }
-
-    viewModel { AddWalletViewModel() }
-
-    viewModel { AddOrgViewModel(get()) }
 
     viewModel { ConfigViewModel(get(), get()) }
 
     viewModel { LanguagePickerViewModel(get(), get()) }
 
-    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { OrgPickerViewModel(get()) }
 
     viewModel { UserSelectViewModel(get(), get()) }
 
-    viewModel { TreeHeightSelectionViewModel() }
-
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
+
+    viewModel { SplashScreenViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { WalletSelectViewModel(get()) }
 
@@ -101,13 +91,13 @@ val appModule = module {
 
     viewModel { PermissionViewModel(get()) }
 
-    single { UserRepo(get(), get(), get(), get(), get()) }
+    single { Users(get(), get(), get(), get(), get()) }
 
     single { TreeCapturer(get(), get(), get(), get(), get()) }
 
     single { DeviceConfigUpdater(get(), get()) }
 
-    single { OrgRepo(get(), get(), get()) }
+    single<Organizations> { OrganizationsFake() }
 
     single { WorkManager.getInstance(get()) }
 
@@ -118,8 +108,6 @@ val appModule = module {
     single { Analytics(get(), get()) }
 
     single { DeviceUtils }
-
-    single { GpsUtils(get()) }
 
     single { SyncNotificationManager(get()) }
 
@@ -132,6 +120,8 @@ val appModule = module {
     single { MessagesRepo(get(), get(), get(), get(), get()) }
 
     factory { MessageUploader(get(), get(), get()) }
+
+    single { GpsUtils(get()) }
 
     single { LocationUpdateManager(get(), get(), get()) }
 
@@ -156,7 +146,7 @@ val appModule = module {
         ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
     }
 
-    single { SessionTracker(get(), get(), get(), get(), get()) }
+    single { SessionTracker(get(), get(), get(), get()) }
 
     single { StepCounter(get(), get()) }
 
@@ -202,10 +192,4 @@ val appModule = module {
     factory { TreeUploader(get(), get(), get(), get(), get()) }
 
     factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
-
-    scope<CaptureSetupScope> {
-        scoped { CaptureSetupData() }
-        scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
-    }
-
 }

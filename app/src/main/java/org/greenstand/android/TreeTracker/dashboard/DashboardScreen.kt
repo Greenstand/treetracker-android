@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
@@ -45,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -80,7 +82,7 @@ fun DashboardScreen(
 
     Scaffold(
         topBar = {
-            DashboardTopBar(state, navController)
+            DashboardTopBar(navController)
         },
         scaffoldState = scaffoldState,
     ) {
@@ -187,30 +189,9 @@ fun DashboardScreen(
 }
 
 @Composable
-fun DashboardTopBar(state: DashboardState, navController: NavController) {
+fun DashboardTopBar(navController: NavController) {
     ActionBar(
-        leftAction = {
-            if (!state.isOrgButtonEnabled) {
-                return@ActionBar
-            }
-            DepthButton(
-                colors = AppButtonColors.ProgressGreen,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(width = 100.dp, 60.dp),
-                onClick = {
-                    navController.navigate(NavRoute.Org.route)
-                }
-            ) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "Organization",
-                    fontWeight = FontWeight.Bold,
-                    color = CustomTheme.textColors.darkText,
-                    style = CustomTheme.typography.regular
-                )
-            }
-        },
+
         centerAction = { TopBarTitle() },
         rightAction = { LanguageButton() }
     )
