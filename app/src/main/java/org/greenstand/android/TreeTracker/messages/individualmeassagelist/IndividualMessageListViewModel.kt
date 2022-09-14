@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.messages.individualmeassagelist
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
@@ -23,24 +24,29 @@ data class IndividualMessageListState(
     val messages: List<Message> = Collections.emptyList(),
     val selectedMessage: Message? = null,
     val currentUser: User? = null,
-)
+
+    )
 
 class IndividualMessageListViewModel(
     private val userId: Long,
     private val userRepo: UserRepo,
     private val messagesRepo: MessagesRepo,
 ) : ViewModel() {
-
     private val _state = MutableLiveData<IndividualMessageListState>()
     val state: LiveData<IndividualMessageListState> = _state
-    var showSnackBar: ((Int) -> Unit)? = null
+    var survey_complete1: String=""
+    var currentUser: User? = null
+
     init {
         viewModelScope.launch {
-            val currentUser = userRepo.getUser(userId)
+            currentUser = userRepo.getUser(userId)
             messagesRepo.getMessageFlow(currentUser!!.wallet)
-                .collect { updateMessages(it, currentUser) }
+                .collect { updateMessages(it, currentUser!!) }
+
         }
+
     }
+
 
     fun selectMessage(message: Message) {
         _state.value = _state.value?.copy(
@@ -62,13 +68,11 @@ class IndividualMessageListViewModel(
         val surveysToShow = messages
             .filterIsInstance<SurveyMessage>()
             .filterNot { it.isComplete }
-        var survey = messages.filterIsInstance<SurveyMessage>().filter {
-            it.isComplete && it.isRead
-        }
-        if (survey.isNotEmpty()) {
-            showSnackBar?.invoke(R.string.survey_completed)
-            // Log.i("Hey", showSnackBar.toString())
-        }
+
+
+        // Log.i("Heiiii", survey_complete.toString())
+
+
         val announcementsToShow = messages.filterIsInstance<AnnouncementMessage>()
 
         // Merge messages together and sort by newest
@@ -79,13 +83,30 @@ class IndividualMessageListViewModel(
             currentUser = currentUser,
             messages = messagesToShow,
         )
+        survey_complete1 = messages
+            .filterIsInstance<SurveyMessage>().filter {
+            it.isComplete && it.isRead
+        }.toString()
+
+       // Log.i("surveysToShow",survey_complete1 .toString())
     }
+
+    fun surveyCompleted(): String? {
+        if (survey_complete1.isNotEmpty()) {
+           Log.i("Hey",survey_complete1)
+            return survey_complete1
+             }
+        return null
+    }
+
+
 }
 
-class IndividualMessageListViewModelFactory(private val userId: Long)
-    : ViewModelProvider.Factory, KoinComponent {
+class IndividualMessageListViewModelFactory(private val userId: Long) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return IndividualMessageListViewModel(userId, get(), get()) as T
     }
 }
+
