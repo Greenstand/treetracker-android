@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.models.messages
 
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
@@ -13,6 +14,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.MessagesApiSer
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QueryResponse
+import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 import java.util.*
@@ -114,12 +116,12 @@ class MessagesRepo(
     /**
      * When uploading trees, messages will be synced locally by this method
      */
-    suspend fun syncMessages() {
-        for(wallet in userRepo.getUserList().map { it.wallet }) {
+    suspend fun syncMessages() = withContext(Dispatchers.IO) {
+        for (wallet in userRepo.getUserList().map { it.wallet }) {
             try {
-                getMessagesForWallet(wallet)
+                fetchMessagesForWallet(wallet)
             } catch (e: Exception) {
-                if (e.localizedMessage == "HTTP 404 Not Found") {
+                if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
                     // 404 indicates the user has never had messages before
                     continue
                 } else {
@@ -128,10 +130,11 @@ class MessagesRepo(
                 }
             }
         }
+
         messageUploader.uploadMessages()
     }
 
-    private suspend fun getMessagesForWallet(wallet: String) {
+    private suspend fun fetchMessagesForWallet(wallet: String) = withContext(Dispatchers.IO) {
         val lastSyncTime = getLastSyncTime(wallet)
         var query = QueryResponse(
             handle = wallet,
@@ -146,10 +149,20 @@ class MessagesRepo(
             limit = query.limit,
         )
         query = result.query
+        if (query.total == 0) return@withContext
 
-        if (query.total == 0) return
+        val saveMessageResponseJobs = mutableListOf<Job>()
 
-        result.messages.forEach { saveMessageResponse(wallet, it) }
+        result.messages.forEach {
+            // launch all jobs in parallel and add these to a list.
+            saveMessageResponseJobs.add(launch {
+                saveMessageResponse(wallet, it.copy())
+            })
+        }
+
+        // wait for all the jobs to complete
+        saveMessageResponseJobs.joinAll()
+
         while (query.total >= query.limit + query.offset) {
             query = result.query.copy(offset = result.query.offset + result.query.limit)
             result = apiService.getMessages(
@@ -158,12 +171,21 @@ class MessagesRepo(
                 offset = query.offset,
                 limit = query.limit,
             )
-            result.messages.forEach { saveMessageResponse(wallet, it) }
+
+            saveMessageResponseJobs.clear()
+
+            result.messages.forEach {
+                saveMessageResponseJobs.add(launch {
+                    saveMessageResponse(wallet, it)
+                })
+            }
+
+            saveMessageResponseJobs.joinAll()
         }
     }
 
-    private suspend fun saveMessageResponse(wallet: String, message: MessageResponse) {
-        if (message.type == MessageType.SURVEY_RESPONSE) return
+    private suspend fun saveMessageResponse(wallet: String, message: MessageResponse): Unit = withContext(Dispatchers.IO) {
+        if (message.type == MessageType.SURVEY_RESPONSE) return@withContext
 
         val messageEntity = with(message) {
             MessageEntity(
@@ -188,11 +210,11 @@ class MessagesRepo(
         messagesDao.insertMessage(messageEntity)
 
         // If there is no survey, don't continue on
-        message.survey ?: return
+        message.survey ?: return@withContext
 
         // If survey exists, we'll reuse it
         if (messagesDao.getSurvey(message.survey.id) != null) {
-            return
+            return@withContext
         }
 
         val surveyEntity = with(message.survey) {
