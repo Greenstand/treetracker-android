@@ -1,5 +1,7 @@
 package org.greenstand.android.TreeTracker.messages.individualmeassagelist
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -7,14 +9,15 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
@@ -25,16 +28,23 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.UserImageButton
-import timber.log.Timber
 
 @ExperimentalFoundationApi
 @Composable
 fun IndividualMessageListScreen(
     userId: Long,
-    viewModel: IndividualMessageListViewModel = viewModel(factory = IndividualMessageListViewModelFactory(userId))
+    viewModel: IndividualMessageListViewModel = viewModel(
+        factory = IndividualMessageListViewModelFactory(
+            userId
+        )
+    )
 ) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(IndividualMessageListState())
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+
 
     Scaffold(
         topBar = {
@@ -59,10 +69,24 @@ fun IndividualMessageListScreen(
                         isEnabled = state.selectedMessage != null,
                         colors = AppButtonColors.MessagePurple,
                         onClick = {
-                            when(val msg = state.selectedMessage) {
-                               is DirectMessage -> navController.navigate(NavRoute.Chat.create(userId, msg.from))
-                               is SurveyMessage -> navController.navigate(NavRoute.Survey.create(msg.id))
-                               is AnnouncementMessage -> navController.navigate(NavRoute.Announcement.create( msg.id))
+                            when (val msg = state.selectedMessage) {
+
+                                is DirectMessage -> navController.navigate(
+                                    NavRoute.Chat.create(
+                                        userId,
+                                        msg.from
+                                    )
+                                )
+                                is SurveyMessage -> navController.navigate(
+                                    NavRoute.Survey.create(
+                                        msg.id
+                                    )
+                                )
+                                is AnnouncementMessage -> navController.navigate(
+                                    NavRoute.Announcement.create(
+                                        msg.id
+                                    )
+                                )
                             }
                         }
                     )
@@ -84,9 +108,10 @@ fun IndividualMessageListScreen(
             modifier = Modifier.padding(it), // Padding for bottom bar.
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {
-            items(state.messages) { message ->
+            items(state.messages) {
 
-                val isSelected = state.selectedMessage == message
+                    message ->
+            val isSelected = state.selectedMessage == message
                 key(message.id) {
                     when (message) {
                         is DirectMessage ->
@@ -123,7 +148,23 @@ fun IndividualMessageListScreen(
                         else -> throw IllegalStateException("Unsupported type: $message")
                     }
                 }
+
+
             }
+           var sun = viewModel.surveyCompleted()
+          //  Log.i("SUN", sun.toString())
+            if (sun!=null)
+            {
+            //    Toast.makeText(context,"Survey Complete",Toast.LENGTH_LONG).show()
+                scope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.survey_completed)
+                    )
+                }
+            }
+
+
         }
     }
 }
+
