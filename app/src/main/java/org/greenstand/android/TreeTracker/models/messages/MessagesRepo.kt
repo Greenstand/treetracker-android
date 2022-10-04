@@ -119,14 +119,17 @@ class MessagesRepo(
     suspend fun syncMessages() = withContext(Dispatchers.IO) {
         for (wallet in userRepo.getUserList().map { it.wallet }) {
             try {
+                ensureActive()
                 fetchMessagesForWallet(wallet)
+            } catch (e: CancellationException) {
+              // rethrow cancellation exception
+              throw e
             } catch (e: Exception) {
                 if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
                     // 404 indicates the user has never had messages before
                     continue
                 } else {
                     Timber.e(e)
-                    throw e
                 }
             }
         }
@@ -154,6 +157,7 @@ class MessagesRepo(
         val saveMessageResponseJobs = mutableListOf<Job>()
 
         result.messages.forEach {
+            ensureActive()
             // launch all jobs in parallel and add these to a list.
             saveMessageResponseJobs.add(launch {
                 saveMessageResponse(wallet, it.copy())
@@ -164,6 +168,7 @@ class MessagesRepo(
         saveMessageResponseJobs.joinAll()
 
         while (query.total >= query.limit + query.offset) {
+            ensureActive()
             query = result.query.copy(offset = result.query.offset + result.query.limit)
             result = apiService.getMessages(
                 wallet = wallet,
@@ -175,6 +180,7 @@ class MessagesRepo(
             saveMessageResponseJobs.clear()
 
             result.messages.forEach {
+                ensureActive()
                 saveMessageResponseJobs.add(launch {
                     saveMessageResponse(wallet, it)
                 })
