@@ -86,7 +86,10 @@ class MessagesRepoTest {
     private val lastTimeMessageSynced = "123456789"
 
     @Test
-    fun syncMessagesTest() = mainCoroutineRule.runBlockingTest {
+    fun `sync messages method fetches messages from api and saves them in database for every page and wallet correctly`()
+        = mainCoroutineRule.runBlockingTest {
+
+        // mock
         coEvery {
             userRepo.getUserList()
         } returns userList
@@ -104,13 +107,10 @@ class MessagesRepoTest {
         } returns lastTimeMessageSynced
 
         for (i in userList.indices) {
-
-            var offset = 0
             val limit = 100
             val total = (i + 1) * 100 + 5
 
-            // mock every api response that would occur while fetching messages for every page.
-            do {
+            iterateForEveryPage(0, limit, total) { offset ->
                 coEvery {
                     apiService.getMessages(
                         wallet = i.toString(),
@@ -123,20 +123,18 @@ class MessagesRepoTest {
                     LinksResponse(null, null),
                     QueryResponse(total, i.toString(), limit, offset)
                 )
-
-                // prepare for next iteration
-                offset += limit
-            } while (offset <= total)
+            }
         }
 
+        // perform
         messagesRepo.syncMessages()
 
+        // assert
         for (i in userList.indices) {
-            var offset = 0
             val limit = 100
             val total = (i + 1) * 100 + 5
 
-            do {
+            iterateForEveryPage(0, limit, total) { offset ->
                 coVerify(exactly = 1) {
                     apiService.getMessages(
                         wallet = i.toString(),
@@ -151,12 +149,25 @@ class MessagesRepoTest {
                         )
                     }
                 }
-
-                // prepare for next iteration
-                offset += limit
-            } while (offset <= total)
+            }
         }
     }
+
+    private fun iterateForEveryPage(
+        initialOffset: Int = 0,
+        limit: Int = 100,
+        total: Int,
+        action: (offset: Int) -> Unit
+    ) {
+        var offset = initialOffset
+
+        do {
+            action.invoke(offset)
+            // prepare for next iteration
+            offset += limit
+        } while (offset <= total)
+    }
+
 
     private fun getMessageResponseList(
         limit: Int,
@@ -180,7 +191,10 @@ class MessagesRepoTest {
         }
     }
 
-    private fun getMessageEntityFromResponse(messageResponse: MessageResponse, wallet: String): MessageEntity {
+    private fun getMessageEntityFromResponse(
+        messageResponse: MessageResponse,
+        wallet: String
+    ): MessageEntity {
         return MessageEntity(
             id = messageResponse.id,
             wallet = wallet,
