@@ -16,6 +16,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Mess
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QueryResponse
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
+import org.greenstand.android.TreeTracker.utils.runInParallel
 import timber.log.Timber
 import java.util.*
 
@@ -154,18 +155,9 @@ class MessagesRepo(
         query = result.query
         if (query.total == 0) return@withContext
 
-        val saveMessageResponseJobs = mutableListOf<Job>()
-
-        result.messages.forEach {
-            ensureActive()
-            // launch all jobs in parallel and add these to a list.
-            saveMessageResponseJobs.add(launch {
-                saveMessageResponse(wallet, it.copy())
-            })
+        result.messages.runInParallel {
+            saveMessageResponse(wallet, it.copy())
         }
-
-        // wait for all the jobs to complete
-        saveMessageResponseJobs.joinAll()
 
         while (query.total >= query.limit + query.offset) {
             ensureActive()
@@ -177,16 +169,9 @@ class MessagesRepo(
                 limit = query.limit,
             )
 
-            saveMessageResponseJobs.clear()
-
-            result.messages.forEach {
-                ensureActive()
-                saveMessageResponseJobs.add(launch {
-                    saveMessageResponse(wallet, it)
-                })
+            result.messages.runInParallel {
+                saveMessageResponse(wallet, it)
             }
-
-            saveMessageResponseJobs.joinAll()
         }
     }
 
