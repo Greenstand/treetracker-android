@@ -503,7 +503,7 @@ fun DepthSurface(
 ) {
     val offsetAnimation: Float by animateFloatAsState(
         targetValue = if (isPressed) 1f else 0f,
-        animationSpec = tween(durationMillis = 100)
+        animationSpec = tween(durationMillis = 80)
     )
 
     when (shape) {
@@ -536,32 +536,29 @@ fun DepthSurfaceRectangle(
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
 
-        val innerSizeDelta = 4
+        val innerSizeDelta = 0
         val gutter = innerSizeDelta / 2f
 
         val outerSize = size
         val innerSize = Size(
             width = outerSize.width - innerSizeDelta,
-            height = outerSize.height - depth
+            height = outerSize.height
         )
-        val cornerRadius = CornerRadius(x = 30f, y = 30f)
-
+        val cornerRadius = CornerRadius(x = 15f, y = 15f)
         val tempOffset = (offset * depth) - gutter
-        val innerHeightOffset = if (tempOffset < gutter) {
-            gutter
-        } else {
-            tempOffset
+
+        if (offset != 1f) {
+            drawRoundRect(
+                color = shadowColor,
+                cornerRadius = cornerRadius,
+                topLeft = Offset(x = 0f, y = depth),
+                size = outerSize
+            )
         }
-        drawRoundRect(
-            color = shadowColor,
-            cornerRadius = cornerRadius,
-            topLeft = Offset(x = 0f, y = 0f),
-            size = outerSize
-        )
         drawRoundRect(
             color = color,
             cornerRadius = cornerRadius,
-            topLeft = Offset(x = gutter, y = innerHeightOffset),
+            topLeft = Offset(x = 0f, y = tempOffset),
             size = innerSize
         )
     }
