@@ -13,6 +13,7 @@ import org.greenstand.android.TreeTracker.models.messages.database.entities.Surv
 import org.greenstand.android.TreeTracker.models.messages.network.MessagesApiService
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessagesResponse
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QueryResponse
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
@@ -140,39 +141,54 @@ class MessagesRepo(
 
     private suspend fun fetchMessagesForWallet(wallet: String) = withContext(Dispatchers.IO) {
         val lastSyncTime = getLastSyncTime(wallet)
-        var query = QueryResponse(
+        val query = QueryResponse(
             handle = wallet,
             limit = 100,
             offset = 0,
             total = -1,
         )
-        var result = apiService.getMessages(
+
+        val result = fetchMessagesFromServerAndSaveInDb(query.offset, query.limit, wallet, lastSyncTime)
+        if (result.query.total == 0) return@withContext
+
+        var offset = query.offset
+        val limit = query.limit
+        val total = query.total
+
+        val asyncExecutions = mutableListOf<Deferred<Any>>()
+
+        while (total >= limit + offset) {
+            ensureActive()
+            offset += limit
+
+            asyncExecutions += async {
+                fetchMessagesFromServerAndSaveInDb(offset, limit, wallet, lastSyncTime)
+            }
+        }
+
+        asyncExecutions.awaitAll()
+    }
+
+    private suspend fun fetchMessagesFromServerAndSaveInDb(
+        offset: Int,
+        limit: Int,
+        wallet: String,
+        lastSyncTime: String
+    ): MessagesResponse = withContext(Dispatchers.IO) {
+        val result = apiService.getMessages(
             wallet = wallet,
             lastSyncTime = lastSyncTime,
-            offset = query.offset,
-            limit = query.limit,
+            offset = offset,
+            limit = limit,
         )
-        query = result.query
-        if (query.total == 0) return@withContext
+
+        if (result.query.total == 0) return@withContext result
 
         result.messages.runInParallel {
             saveMessageResponse(wallet, it.copy())
         }
 
-        while (query.total >= query.limit + query.offset) {
-            ensureActive()
-            query = result.query.copy(offset = result.query.offset + result.query.limit)
-            result = apiService.getMessages(
-                wallet = wallet,
-                lastSyncTime = lastSyncTime,
-                offset = query.offset,
-                limit = query.limit,
-            )
-
-            result.messages.runInParallel {
-                saveMessageResponse(wallet, it)
-            }
-        }
+        return@withContext result
     }
 
     private suspend fun saveMessageResponse(wallet: String, message: MessageResponse): Unit = withContext(Dispatchers.IO) {
