@@ -24,6 +24,7 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.NoMessages
 import org.greenstand.android.TreeTracker.view.UserImageButton
 import timber.log.Timber
 
@@ -124,6 +125,9 @@ fun IndividualMessageListScreen(
                     }
                 }
             }
+        }
+        if (state.messages.isEmpty()) {
+            NoMessages()
         }
     }
 }
