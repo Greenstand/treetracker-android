@@ -12,8 +12,15 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 data class TreeImageReviewState(
     val note: String = "",
     val isDialogOpen: Boolean = false,
-    val showReviewTutorial: Boolean? = null
+    val showReviewTutorial: Boolean? = null,
+    val selectedPhaseItem: IconSpinnerItem? = null
 )
+
+data class IconSpinnerItem(
+    val text: String,
+    val icon: Int?
+)
+
 class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
     private val userRepo: UserRepo,
@@ -50,5 +57,9 @@ class TreeImageReviewViewModel(
 
     fun setDialogState(state: Boolean){
         _state.value = _state.value?.copy(isDialogOpen = state)
+    }
+
+    fun updateCapturePhase(phase: IconSpinnerItem?){
+        _state.value = _state.value?.copy(selectedPhaseItem = phase)
     }
 }
