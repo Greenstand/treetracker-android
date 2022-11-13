@@ -80,53 +80,54 @@ fun IndividualMessageListScreen(
             )
         }
     ) {
-        LazyVerticalGrid(
-            cells = GridCells.Fixed(2),
-            modifier = Modifier.padding(it), // Padding for bottom bar.
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
-        ) {
-            items(state.messages) { message ->
+        if (state.messages.isNotEmpty()) {
+            LazyVerticalGrid(
+                cells = GridCells.Fixed(2),
+                modifier = Modifier.padding(it), // Padding for bottom bar.
+                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
+            ) {
+                items(state.messages) { message ->
 
-                val isSelected = state.selectedMessage == message
-                key(message.id) {
-                    when (message) {
-                        is DirectMessage ->
-                            IndividualMessageItem(
-                                isSelected = isSelected,
-                                isNotificationEnabled = !message.isRead,
-                                text = message.from,
-                                icon = R.drawable.individual_message_icon,
-                                messageTypeText = stringResource(R.string.message)
-                            ) {
-                                viewModel.selectMessage(message)
-                            }
-                        is SurveyMessage ->
-                            IndividualMessageItem(
-                                isSelected = isSelected,
-                                isNotificationEnabled = !message.isRead,
-                                text = message.title,
-                                icon = R.drawable.quiz_icon,
-                                messageTypeText = stringResource(R.string.survey)
-                            ) {
-                                viewModel.selectMessage(message)
-                            }
-                        is AnnouncementMessage ->
-                            IndividualMessageItem(
-                                isSelected = isSelected,
-                                isNotificationEnabled = !message.isRead,
-                                text = message.subject,
-                                icon = R.drawable.announcement_icon,
-                                messageTypeText = stringResource(R.string.announcement),
-                                iconPadding = PaddingValues(bottom = 30.dp)
-                            ) {
-                                viewModel.selectMessage(message)
-                            }
-                        else -> throw IllegalStateException("Unsupported type: $message")
+                    val isSelected = state.selectedMessage == message
+                    key(message.id) {
+                        when (message) {
+                            is DirectMessage ->
+                                IndividualMessageItem(
+                                    isSelected = isSelected,
+                                    isNotificationEnabled = !message.isRead,
+                                    text = message.from,
+                                    icon = R.drawable.individual_message_icon,
+                                    messageTypeText = stringResource(R.string.message)
+                                ) {
+                                    viewModel.selectMessage(message)
+                                }
+                            is SurveyMessage ->
+                                IndividualMessageItem(
+                                    isSelected = isSelected,
+                                    isNotificationEnabled = !message.isRead,
+                                    text = message.title,
+                                    icon = R.drawable.quiz_icon,
+                                    messageTypeText = stringResource(R.string.survey)
+                                ) {
+                                    viewModel.selectMessage(message)
+                                }
+                            is AnnouncementMessage ->
+                                IndividualMessageItem(
+                                    isSelected = isSelected,
+                                    isNotificationEnabled = !message.isRead,
+                                    text = message.subject,
+                                    icon = R.drawable.announcement_icon,
+                                    messageTypeText = stringResource(R.string.announcement),
+                                    iconPadding = PaddingValues(bottom = 30.dp)
+                                ) {
+                                    viewModel.selectMessage(message)
+                                }
+                            else -> throw IllegalStateException("Unsupported type: $message")
+                        }
                     }
                 }
             }
-        }
-        if (state.messages.isEmpty()) {
+        } else {
             NoMessages()
         }
     }
