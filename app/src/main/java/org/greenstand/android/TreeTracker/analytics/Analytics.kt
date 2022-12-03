@@ -23,7 +23,6 @@ class Analytics(
 
     init {
         setupStaticDeviceProperties()
-        updateUserData()
     }
 
     private fun setupStaticDeviceProperties() {
@@ -40,12 +39,6 @@ class Analytics(
             setUserProperty("serial", Build.SERIAL)
             setUserProperty("android_release", Build.VERSION.RELEASE)
             setUserProperty("sdk_version", Build.VERSION.SDK_INT.toString())
-        }
-    }
-
-    fun updateUserData() {
-        with(firebaseAnalytics) {
-
         }
     }
 

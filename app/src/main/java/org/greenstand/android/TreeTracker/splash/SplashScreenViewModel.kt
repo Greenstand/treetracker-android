@@ -34,9 +34,7 @@ class SplashScreenViewModel(
         orgJsonString?.let { orgRepo.addOrgFromJsonString(it) }
 
         if (checkForInternetUseCase.execute(Unit)) {
-            withContext(Dispatchers.IO) {
-                messagesRepo.syncMessages()
-            }
+            messagesRepo.syncMessages()
         }
 
         // If session was not ended properly (user/system killed app)...

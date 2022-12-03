@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.models.messages
 
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
@@ -12,8 +13,11 @@ import org.greenstand.android.TreeTracker.models.messages.database.entities.Surv
 import org.greenstand.android.TreeTracker.models.messages.network.MessagesApiService
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessagesResponse
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QueryResponse
+import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
+import org.greenstand.android.TreeTracker.utils.runInParallel
 import timber.log.Timber
 import java.util.*
 
@@ -114,56 +118,84 @@ class MessagesRepo(
     /**
      * When uploading trees, messages will be synced locally by this method
      */
-    suspend fun syncMessages() {
-        for(wallet in userRepo.getUserList().map { it.wallet }) {
+    suspend fun syncMessages() = withContext(Dispatchers.IO) {
+        for (wallet in userRepo.getUserList().map { it.wallet }) {
             try {
-                getMessagesForWallet(wallet)
+                ensureActive()
+                fetchMessagesForWallet(wallet)
+            } catch (e: CancellationException) {
+              // rethrow cancellation exception
+              throw e
             } catch (e: Exception) {
-                if (e.localizedMessage == "HTTP 404 Not Found") {
+                if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
                     // 404 indicates the user has never had messages before
                     continue
                 } else {
                     Timber.e(e)
-                    throw e
                 }
             }
         }
+
         messageUploader.uploadMessages()
     }
 
-    private suspend fun getMessagesForWallet(wallet: String) {
+    private suspend fun fetchMessagesForWallet(wallet: String) = withContext(Dispatchers.IO) {
         val lastSyncTime = getLastSyncTime(wallet)
-        var query = QueryResponse(
+        val query = QueryResponse(
             handle = wallet,
             limit = 100,
             offset = 0,
             total = -1,
         )
-        var result = apiService.getMessages(
-            wallet = wallet,
-            lastSyncTime = lastSyncTime,
-            offset = query.offset,
-            limit = query.limit,
-        )
-        query = result.query
 
-        if (query.total == 0) return
+        val result = fetchMessagesFromServerAndSaveInDb(query.offset, query.limit, wallet, lastSyncTime)
+        if (result.query.total == 0) return@withContext
 
-        result.messages.forEach { saveMessageResponse(wallet, it) }
-        while (query.total >= query.limit + query.offset) {
-            query = result.query.copy(offset = result.query.offset + result.query.limit)
-            result = apiService.getMessages(
-                wallet = wallet,
-                lastSyncTime = lastSyncTime,
-                offset = query.offset,
-                limit = query.limit,
-            )
-            result.messages.forEach { saveMessageResponse(wallet, it) }
+        var offset = result.query.offset
+        val limit = result.query.limit
+        val total = result.query.total
+
+        val asyncExecutions = mutableListOf<Deferred<Any>>()
+
+        while (total >= limit + offset) {
+            ensureActive()
+            offset += limit
+
+            // store this offset value in-case it gets changed in the next iteration.
+            val _offset = offset
+
+            asyncExecutions += async {
+                fetchMessagesFromServerAndSaveInDb(_offset, limit, wallet, lastSyncTime) // pass _offset instead of offset.
+            }
         }
+
+        asyncExecutions.awaitAll()
     }
 
-    private suspend fun saveMessageResponse(wallet: String, message: MessageResponse) {
-        if (message.type == MessageType.SURVEY_RESPONSE) return
+    private suspend fun fetchMessagesFromServerAndSaveInDb(
+        offset: Int,
+        limit: Int,
+        wallet: String,
+        lastSyncTime: String
+    ): MessagesResponse = withContext(Dispatchers.IO) {
+        val result = apiService.getMessages(
+            wallet = wallet,
+            lastSyncTime = lastSyncTime,
+            offset = offset,
+            limit = limit,
+        )
+
+        if (result.query.total == 0) return@withContext result
+
+        result.messages.runInParallel {
+            saveMessageResponse(wallet, it.copy())
+        }
+
+        return@withContext result
+    }
+
+    private suspend fun saveMessageResponse(wallet: String, message: MessageResponse): Unit = withContext(Dispatchers.IO) {
+        if (message.type == MessageType.SURVEY_RESPONSE) return@withContext
 
         val messageEntity = with(message) {
             MessageEntity(
@@ -188,11 +220,11 @@ class MessagesRepo(
         messagesDao.insertMessage(messageEntity)
 
         // If there is no survey, don't continue on
-        message.survey ?: return
+        message.survey ?: return@withContext
 
         // If survey exists, we'll reuse it
         if (messagesDao.getSurvey(message.survey.id) != null) {
-            return
+            return@withContext
         }
 
         val surveyEntity = with(message.survey) {

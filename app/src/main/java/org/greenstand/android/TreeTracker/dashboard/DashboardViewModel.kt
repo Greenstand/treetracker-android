@@ -113,9 +113,7 @@ class DashboardViewModel(
     fun syncMessages(){
         viewModelScope.launch {
             if (checkForInternetUseCase.execute(Unit)) {
-                withContext(Dispatchers.IO) {
-                    messagesRepo.syncMessages()
-                }
+                messagesRepo.syncMessages()
             }
         }
     }
