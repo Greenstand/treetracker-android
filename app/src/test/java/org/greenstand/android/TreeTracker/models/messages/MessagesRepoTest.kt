@@ -6,10 +6,8 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.*
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
@@ -35,7 +33,6 @@ class MessagesRepoTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var testDispatcher: TestCoroutineDispatcher
-
     private lateinit var apiService: MessagesApiService
     private lateinit var userRepo: UserRepo
     private lateinit var timeProvider: TimeProvider
@@ -87,7 +84,7 @@ class MessagesRepoTest {
 
     @Test
     fun `sync messages method fetches messages from api and saves them in database for every page and wallet correctly`()
-        = mainCoroutineRule.runBlockingTest {
+        = runBlocking {
 
         // mock
         coEvery {

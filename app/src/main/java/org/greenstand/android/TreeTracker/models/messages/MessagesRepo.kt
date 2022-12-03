@@ -151,9 +151,9 @@ class MessagesRepo(
         val result = fetchMessagesFromServerAndSaveInDb(query.offset, query.limit, wallet, lastSyncTime)
         if (result.query.total == 0) return@withContext
 
-        var offset = query.offset
-        val limit = query.limit
-        val total = query.total
+        var offset = result.query.offset
+        val limit = result.query.limit
+        val total = result.query.total
 
         val asyncExecutions = mutableListOf<Deferred<Any>>()
 
@@ -161,8 +161,11 @@ class MessagesRepo(
             ensureActive()
             offset += limit
 
+            // store this offset value in-case it gets changed in the next iteration.
+            val _offset = offset
+
             asyncExecutions += async {
-                fetchMessagesFromServerAndSaveInDb(offset, limit, wallet, lastSyncTime)
+                fetchMessagesFromServerAndSaveInDb(_offset, limit, wallet, lastSyncTime) // pass _offset instead of offset.
             }
         }
 
