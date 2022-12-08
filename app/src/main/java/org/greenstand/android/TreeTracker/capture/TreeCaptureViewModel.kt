@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -53,9 +54,7 @@ class TreeCaptureViewModel(
     }
 
     fun onImageCaptured(imageFile: File) {
-        viewModelScope.launch {
-            treeCapturer.setImage(imageFile)
-        }
+        treeCapturer.setImage(imageFile)
     }
 
     fun updateBadGpsDialogState(state: Boolean?){
@@ -86,6 +85,7 @@ class TreeCaptureViewModelFactory(private val profilePicUrl: String)
     : ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        CaptureFlowScopeManager.open()
         return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(),get()) as T
     }
 }

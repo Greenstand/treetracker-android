@@ -7,6 +7,7 @@ data class Org(
     val walletId: String,
     val logoPath: String,
     val captureSetupFlow: List<Destination>,
+    val captureFlow: List<Destination>,
 )
 
 

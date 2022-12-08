@@ -42,8 +42,8 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.camera.Camera
 import org.greenstand.android.TreeTracker.camera.CameraControl
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.PermissionRequest
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -72,11 +72,7 @@ fun TreeCaptureScreen(
 
     BackHandler(enabled = true) {
         scope.launch {
-            viewModel.endSession()
-            navController.navigate(NavRoute.Dashboard.route) {
-                popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                launchSingleTop = true
-            }
+            CaptureFlowScopeManager.nav.goToDashboard(navController)
         }
     }
 
@@ -89,11 +85,7 @@ fun TreeCaptureScreen(
                         isLeft = true,
                         onClick = {
                             scope.launch {
-                                viewModel.endSession()
-                                navController.navigate(NavRoute.Dashboard.route) {
-                                    popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                                    launchSingleTop = true
-                                }
+                                CaptureFlowScopeManager.nav.goToDashboard(navController)
                             }
                         },
                     )
@@ -136,10 +128,7 @@ fun TreeCaptureScreen(
                     viewModel.updateBadGpsDialogState(null)
                 },
                 onNegativeClick = {
-                    navController.navigate(NavRoute.Dashboard.route) {
-                        popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
+                    CaptureFlowScopeManager.nav.goToDashboard(navController)
                 }
             )
         }
@@ -157,7 +146,7 @@ fun TreeCaptureScreen(
             onImageCaptured = {
                 viewModel.onImageCaptured(it)
                 if (state.isLocationAvailable == true) {
-                    navController.navigate(NavRoute.TreeImageReview.create(it.path))
+                    CaptureFlowScopeManager.nav.navForward(navController)
                 }
             }
         )
@@ -166,11 +155,7 @@ fun TreeCaptureScreen(
                 UserImageButton(
                     onClick = {
                         scope.launch {
-                            viewModel.endSession()
-                            navController.navigate(NavRoute.UserSelect.route) {
-                                popUpTo(NavRoute.Dashboard.route)
-                                launchSingleTop = true
-                            }
+                            CaptureFlowScopeManager.nav.goToUserSelect(navController)
                         }
                     },
                     imagePath = state.profilePicUrl

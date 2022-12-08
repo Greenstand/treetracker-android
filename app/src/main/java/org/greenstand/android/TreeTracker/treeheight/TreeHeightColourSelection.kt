@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -30,7 +31,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButton
 
 @Composable
-fun TreeHeightSelection(
+fun TreeHeightScreen(
 ) {
     val viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current)
     val navController = LocalNavHostController.current
@@ -63,7 +64,7 @@ fun TreeHeightSelection(
                         colors = AppButtonColors.ProgressGreen,
                         onClick = {
                             state.selectedColour?.let {
-                                //TODO add navigation destination
+                                CaptureFlowScopeManager.nav.navForward(navController)
                             }
                         }
                     )

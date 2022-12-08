@@ -25,7 +25,7 @@ import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
-import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelection
+import org.greenstand.android.TreeTracker.treeheight.TreeHeightScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
@@ -67,9 +67,9 @@ sealed class NavRoute {
         override val route: String = "dashboard"
     }
 
-    object TreeHeightSelection : NavRoute() {
+    object TreeHeightScreen : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            TreeHeightSelection()
+            TreeHeightScreen()
         }
         override val route: String = "tree-height-selection"
     }
@@ -206,7 +206,7 @@ sealed class NavRoute {
 
     object TreeImageReview : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            TreeImageReviewScreen(photoPath(it))
+            TreeImageReviewScreen()
         }
         override val route: String = "tree-image-review/{photoPath}"
         override val arguments = listOf(navArgument("photoPath") { type = NavType.StringType })

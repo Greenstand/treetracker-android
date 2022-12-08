@@ -32,6 +32,9 @@ import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowData
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScope
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessageUploader
@@ -41,6 +44,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Mess
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
@@ -65,6 +69,7 @@ import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.component.get
 import org.koin.dsl.module
 
 val appModule = module {
@@ -85,7 +90,7 @@ val appModule = module {
 
     viewModel { UserSelectViewModel(get(), get()) }
 
-    viewModel { TreeHeightSelectionViewModel() }
+    viewModel { TreeHeightSelectionViewModel(get()) }
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 
@@ -103,7 +108,7 @@ val appModule = module {
 
     single { UserRepo(get(), get(), get(), get(), get()) }
 
-    single { TreeCapturer(get(), get(), get(), get(), get()) }
+    factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
     single { DeviceConfigUpdater(get(), get()) }
 
@@ -206,6 +211,12 @@ val appModule = module {
     scope<CaptureSetupScope> {
         scoped { CaptureSetupData() }
         scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
+    }
+
+    scope<CaptureFlowScope> {
+        scoped { CaptureFlowData() }
+        scoped { CaptureFlowNavigationController(get(), get(), get(), get()) }
+        scoped { TreeCapturer(get(), get(), get(), get(), get()) }
     }
 
 }

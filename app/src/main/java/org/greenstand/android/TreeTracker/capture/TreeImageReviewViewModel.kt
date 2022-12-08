@@ -10,6 +10,7 @@ import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 
 data class TreeImageReviewState(
+    val treeImagePath: String? = null,
     val note: String = "",
     val isDialogOpen: Boolean = false,
     val showReviewTutorial: Boolean? = null
@@ -23,7 +24,10 @@ class TreeImageReviewViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            _state.value = _state.value?.copy(showReviewTutorial = isFirstTrack() )
+            _state.value = _state.value?.copy(
+                showReviewTutorial = isFirstTrack(),
+                treeImagePath = treeCapturer.currentTree!!.photoPath,
+            )
         }
     }
 

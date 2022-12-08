@@ -33,6 +33,12 @@ class OrgRepo(
                     Destination(NavRoute.WalletSelect.route),
                     Destination(NavRoute.AddOrg.route),
                 )),
+                captureFlowJson = gson.toJson(listOf(
+                    Destination(NavRoute.TreeCapture.route),
+                    Destination(NavRoute.TreeImageReview.route),
+                    // For Kasiki Hai
+//                    Destination(NavRoute.TreeHeightScreen.route),
+                )),
             )
         )
         val currentOrgId = prefs.getString(CURRENT_ORG_ID_KEY, "-1")
@@ -62,6 +68,7 @@ class OrgRepo(
             name = orgJsonObj.get(OrgJsonKeys.V1.NAME).asString,
             walletId = orgJsonObj.get(OrgJsonKeys.V1.WALLET_ID).asString,
             captureSetupFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_SETUP_FLOW).asJsonArray.toString(),
+            captureFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_FLOW).asJsonArray.toString(),
         )
         dao.insertOrg(orgEntity)
         setOrg(orgEntity.id)
@@ -69,13 +76,15 @@ class OrgRepo(
 
     private fun OrganizationEntity.toOrg(): Org {
         val typeToken = object : TypeToken<List<Destination>>(){}.type
-        val destinations = gson.fromJson<List<Destination>>(captureSetupFlowJson, typeToken)
+        val captureSetupDestinations = gson.fromJson<List<Destination>>(captureSetupFlowJson, typeToken)
+        val captureDestinations = gson.fromJson<List<Destination>>(captureFlowJson, typeToken)
         return Org(
             id = id,
             name = name,
             walletId = walletId,
             logoPath = "",
-            captureSetupFlow = destinations,
+            captureSetupFlow = captureSetupDestinations,
+            captureFlow = captureDestinations
         )
     }
 
