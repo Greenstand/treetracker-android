@@ -36,6 +36,8 @@ class OrgRepo(
                 captureFlowJson = gson.toJson(listOf(
                     Destination(NavRoute.TreeCapture.route),
                     Destination(NavRoute.TreeImageReview.route),
+                    // For Kasiki Hai
+//                    Destination(NavRoute.TreeHeightScreen.route),
                 )),
             )
         )

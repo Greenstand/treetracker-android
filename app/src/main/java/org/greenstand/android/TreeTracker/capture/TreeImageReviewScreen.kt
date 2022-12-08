@@ -70,7 +70,6 @@ fun TreeImageReviewScreen(
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = {
-//                        navController.popBackStack()
                         CaptureFlowScopeManager.nav.navBackward(navController)
                     },
                     approval = false
@@ -81,7 +80,6 @@ fun TreeImageReviewScreen(
                         scope.launch {
                             viewModel.approveImage()
                             CaptureFlowScopeManager.nav.navForward(navController)
-//                            navController.popBackStack()
                         }
                     },
                     approval = true

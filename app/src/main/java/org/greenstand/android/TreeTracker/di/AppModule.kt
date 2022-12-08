@@ -90,7 +90,7 @@ val appModule = module {
 
     viewModel { UserSelectViewModel(get(), get()) }
 
-    viewModel { TreeHeightSelectionViewModel() }
+    viewModel { TreeHeightSelectionViewModel(get()) }
 
     viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
 

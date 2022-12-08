@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.models
 import org.greenstand.android.TreeTracker.models.location.Convergence
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
-import timber.log.Timber
 import java.io.File
 import java.util.*
 
@@ -36,7 +35,6 @@ class TreeCapturer(
     }
 
     fun setImage(imageFile: File) {
-        Timber.tag("JONATHAN").d("SET IMAGE")
         val tree = Tree(
             treeUuid = newTreeUuid!!,
             sessionId = sessionTracker.currentSessionId!!,
@@ -53,9 +51,12 @@ class TreeCapturer(
             )
         }
         currentTree = tree
-        Timber.tag("JONATHAN").d("CURRENT TREE = $currentTree")
 
         stepCounter.snapshotAbsoluteStepCountOnTreeCapture()
+    }
+
+    fun addAttribute(key: String, value: String) {
+        currentTree?.addTreeAttribute(key, value)
     }
 
     fun setNote(note: String) {

@@ -147,7 +147,6 @@ fun TreeCaptureScreen(
                 viewModel.onImageCaptured(it)
                 if (state.isLocationAvailable == true) {
                     CaptureFlowScopeManager.nav.navForward(navController)
-
                 }
             }
         )
