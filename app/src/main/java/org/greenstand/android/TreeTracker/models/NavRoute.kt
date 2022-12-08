@@ -206,7 +206,7 @@ sealed class NavRoute {
 
     object TreeImageReview : NavRoute() {
         override val content: @Composable (NavBackStackEntry) -> Unit = {
-            TreeImageReviewScreen(photoPath(it))
+            TreeImageReviewScreen()
         }
         override val route: String = "tree-image-review/{photoPath}"
         override val arguments = listOf(navArgument("photoPath") { type = NavType.StringType })

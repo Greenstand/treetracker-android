@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "080861560a3c486096502913ac8a1a78",
+    "identityHash": "81c83c33d884d8e56a2d801f98bc0cd8",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -925,7 +925,7 @@
       },
       {
         "tableName": "organization",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT NOT NULL, `wallet_id` TEXT NOT NULL, `capture_setup_flow_json` TEXT NOT NULL, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT NOT NULL, `wallet_id` TEXT NOT NULL, `capture_setup_flow_json` TEXT NOT NULL, `capture_flow_json` TEXT NOT NULL, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -956,6 +956,12 @@
             "columnName": "capture_setup_flow_json",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "captureFlowJson",
+            "columnName": "capture_flow_json",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -971,7 +977,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '080861560a3c486096502913ac8a1a78')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '81c83c33d884d8e56a2d801f98bc0cd8')"
     ]
   }
 }

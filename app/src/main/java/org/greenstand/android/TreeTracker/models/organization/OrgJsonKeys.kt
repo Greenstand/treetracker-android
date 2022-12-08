@@ -8,6 +8,7 @@ object OrgJsonKeys {
         const val NAME = "name"
         const val WALLET_ID = "walletId"
         const val CAPTURE_SETUP_FLOW = "captureSetupFlow"
+        const val CAPTURE_FLOW = "captureFlow"
     }
 
 }

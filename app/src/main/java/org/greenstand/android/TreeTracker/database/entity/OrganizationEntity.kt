@@ -17,4 +17,6 @@ class OrganizationEntity(
     var walletId: String,
     @ColumnInfo(name = "capture_setup_flow_json")
     val captureSetupFlowJson: String,
+    @ColumnInfo(name = "capture_flow_json")
+    val captureFlowJson: String,
 )

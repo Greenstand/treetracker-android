@@ -3,10 +3,18 @@ package org.greenstand.android.TreeTracker.capture
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -16,13 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.ApprovalButton
+import org.greenstand.android.TreeTracker.view.CustomDialog
+import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.LocalImage
+import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 
 @Composable
 fun TreeImageReviewScreen(
-    photoPath: String,
     viewModel: TreeImageReviewViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
 
@@ -57,7 +70,8 @@ fun TreeImageReviewScreen(
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = {
-                        navController.popBackStack()
+//                        navController.popBackStack()
+                        CaptureFlowScopeManager.nav.navBackward(navController)
                     },
                     approval = false
                 )
@@ -66,7 +80,8 @@ fun TreeImageReviewScreen(
                     onClick = {
                         scope.launch {
                             viewModel.approveImage()
-                            navController.popBackStack()
+                            CaptureFlowScopeManager.nav.navForward(navController)
+//                            navController.popBackStack()
                         }
                     },
                     approval = true
@@ -95,7 +110,7 @@ fun TreeImageReviewScreen(
         }
         LocalImage(
             modifier = Modifier.fillMaxSize(),
-            imagePath = photoPath,
+            imagePath = state.treeImagePath ?: "",
             contentDescription = null,
             contentScale = ContentScale.Fit
         )
