@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonColors
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -52,7 +54,7 @@ fun BoxScope.ArrowButton(
     isLeft: Boolean,
     onClick: () -> Unit,
 ) {
-    DepthButton(
+    TreeTrackerButton(
         isEnabled = isEnabled,
         colors = colors,
         modifier = Modifier
@@ -104,7 +106,7 @@ fun ApprovalButton(
     val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
     val image =
         if (approval) painterResource(id = R.drawable.thumbs_up_green) else painterResource(id = R.drawable.thumbs_down_red)
-    DepthButton(
+    TreeTrackerButton(
         colors = color,
         modifier = modifier
             .size(height = 60.dp, width = 60.dp),
@@ -120,14 +122,14 @@ fun ApprovalButton(
 @Composable
 fun InfoButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit, shape: DepthSurfaceShape = DepthSurfaceShape.Circle
+    onClick: () -> Unit, shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Circle
 
 ) {
-    DepthButton(
+    TreeTrackerButton(
         modifier = modifier.size(60.dp),
         colors = AppButtonColors.WhiteLight,
         onClick = onClick,
-        shape = DepthSurfaceShape.Circle,
+        shape = TreeTrackerButtonShape.Circle,
         depth = 6f
     )
     {
@@ -147,7 +149,7 @@ fun BoxScope.LanguageButton() {
     val language: String =
         languageViewModel.currentLanguage.observeAsState(Language).value.toString()
 
-    DepthButton(
+    TreeTrackerButton(
         colors = AppButtonColors.ProgressGreen,
         modifier = Modifier
             .align(Alignment.Center)
@@ -157,7 +159,6 @@ fun BoxScope.LanguageButton() {
         }
     ) {
         Text(
-            modifier = Modifier.align(Alignment.Center),
             text = language,
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.darkText,
@@ -172,7 +173,7 @@ fun BoxScope.UserImageButton(
     onClick: () -> Unit,
     imagePath: String,
 ) {
-    DepthButton(
+    TreeTrackerButton(
         modifier = modifier
             .align(Alignment.Center)
             .width(100.dp)
@@ -199,7 +200,102 @@ fun BoxScope.UserImageButton(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun TreeTrackerButton(
+    modifier: Modifier = Modifier.wrapContentSize(),
+    isEnabled: Boolean = true,
+    isSelected: Boolean? = null,
+    depth: Float = 8f,
+    colors: ButtonColors = AppButtonColors.Default,
+    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Rectangle,
+    contentAlignment: Alignment = Alignment.Center,
+    onClick: () -> Unit,
+    content: @Composable (BoxScope.() -> Unit),
+) {
 
+    val haptic = LocalHapticFeedback.current
+    val onClickState = rememberUpdatedState(onClick)
+    var isPressed by remember { mutableStateOf(false) }
+    isSelected?.let { isPressed = isSelected }
+    val verticalOffset: Float by animateFloatAsState(
+        targetValue = if (isPressed) depth else 0f,
+        animationSpec = tween(durationMillis = 100)
+    )
+
+    // Parent box handles clicking and sends size constraints to children
+    BoxWithConstraints(
+        modifier = modifier
+            .apply {
+                if (shape == TreeTrackerButtonShape.Circle) {
+                    aspectRatio(1f)
+                }
+            }
+            .pointerInput(isEnabled) {
+                if (!isEnabled) return@pointerInput
+                detectTapGestures(
+                    onTap = {
+                        onClickState.value.invoke()
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    },
+                    onPress = {
+                        isPressed = true
+                        tryAwaitRelease()
+                        if (isSelected == null) {
+                            isPressed = false
+                        }
+                    }
+                )
+            }
+    ) {
+        val contentColor by colors.contentColor(isEnabled)
+        val shadowColor by colors.backgroundColor(isEnabled)
+
+        var width = maxWidth
+        var clipShape = MaterialTheme.shapes.small
+        var circleStartOffset = 0.dp
+        if (shape == TreeTrackerButtonShape.Circle) {
+            clipShape = CircleShape
+            width = maxWidth - depth.dp
+            circleStartOffset = depth.dp
+        }
+
+        // Box 1 stays still and is aligned to the bottom
+        Box(
+            modifier = Modifier
+                .padding(
+                    top = depth.dp,
+                    start = circleStartOffset
+                )
+                .height(maxHeight - depth.dp)
+                .width(width)
+                .clip(clipShape)
+                .background(color = shadowColor)
+                .align(Alignment.BottomCenter)
+        )
+        // Box 2 gets pushed down by an animated top padding value which
+        // eventually aligns it directly above box 1
+        Box(
+            contentAlignment = contentAlignment,
+            modifier = Modifier
+                .padding(
+                    top = verticalOffset.dp,
+                    start = circleStartOffset
+                )
+                .height(maxHeight - depth.dp)
+                .width(width)
+                .clip(clipShape)
+                .background(color = contentColor)
+                .border(
+                    width = 1.dp,
+                    color = shadowColor,
+                    shape = clipShape,
+                )
+        ) {
+            content()
+        }
+    }
+}
 
 /**
  * Button with toggle down animation. Now enables wrap content functionality.
@@ -222,7 +318,7 @@ fun DepthButton(
     isSelected: Boolean? = null,
     depth: Float = 20f,
     colors: ButtonColors = AppButtonColors.Default,
-    shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
+    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Rectangle,
     content: @Composable (BoxScope.() -> Unit),
 ) {
     val contentColor by colors.contentColor(isEnabled)
@@ -265,11 +361,11 @@ fun DepthButton(
                 .align(contentAlignment)
                 .offset {
                     when (shape) {
-                        DepthSurfaceShape.Rectangle -> IntOffset(
+                        TreeTrackerButtonShape.Rectangle -> IntOffset(
                             0,
                             (depth * offsetAnimation).toInt()
                         )
-                        DepthSurfaceShape.Circle -> IntOffset(
+                        TreeTrackerButtonShape.Circle -> IntOffset(
                             0,
                             (depth * offsetAnimation - depth).toInt()
                         )
@@ -282,7 +378,7 @@ fun DepthButton(
     }
 }
 
-enum class DepthSurfaceShape {
+enum class TreeTrackerButtonShape {
     Rectangle,
     Circle
 }
@@ -294,7 +390,7 @@ fun DepthSurface(
     color: Color,
     shadowColor: Color,
     depth: Float = 20f,
-    shape: DepthSurfaceShape,
+    shape: TreeTrackerButtonShape,
 ) {
     val offsetAnimation: Float by animateFloatAsState(
         targetValue = if (isPressed) 1f else 0f,
@@ -302,7 +398,7 @@ fun DepthSurface(
     )
 
     when (shape) {
-        DepthSurfaceShape.Rectangle ->
+        TreeTrackerButtonShape.Rectangle ->
             DepthSurfaceRectangle(
                 modifier = modifier,
                 color = color,
@@ -310,7 +406,7 @@ fun DepthSurface(
                 offset = offsetAnimation,
                 depth = depth,
             )
-        DepthSurfaceShape.Circle ->
+        TreeTrackerButtonShape.Circle ->
             DepthSurfaceCircle(
                 modifier = modifier,
                 color = color,
@@ -413,9 +509,9 @@ fun OrangeAddButton(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {
-    DepthButton(
+    TreeTrackerButton(
         onClick = onClick,
-        shape = DepthSurfaceShape.Circle,
+        shape = TreeTrackerButtonShape.Circle,
         colors = AppButtonColors.UploadOrange,
         modifier = modifier
             .size(70.dp)
@@ -436,12 +532,12 @@ fun CaptureButton(
     onClick: () -> Unit,
     isEnabled: Boolean
 ) {
-    DepthButton(
+    TreeTrackerButton(
         modifier = modifier.size(70.dp),
         isEnabled = isEnabled,
         colors = AppButtonColors.ProgressGreen,
         onClick = onClick,
-        shape = DepthSurfaceShape.Circle,
+        shape = TreeTrackerButtonShape.Circle,
         depth = 10f
     ) {
         ImageCaptureCircle(
@@ -526,6 +622,42 @@ class DepthButtonColors(
     }
 }
 
+@Preview("TreeTrackerButton")
+@Composable
+fun TreeTrackerButtonPreview() {
+    TreeTrackerTheme {
+        Column(
+            modifier = Modifier
+                .background(AppColors.Gray)
+                .height(300.dp)
+                .width(200.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            TreeTrackerButton(
+                modifier = Modifier
+                    .height(100.dp)
+                    .wrapContentWidth(),
+                isEnabled = true,
+                onClick = {}
+            ) {
+                Text("Button 1", Modifier.align(Alignment.Center))
+            }
+            Spacer(Modifier.height(10.dp))
+            TreeTrackerButton(
+                modifier = Modifier
+                    .height(100.dp)
+                    .width(100.dp),
+                isEnabled = true,
+                shape = TreeTrackerButtonShape.Circle,
+                onClick = {}
+            ) {
+                Text("Button 1", Modifier.align(Alignment.Center))
+            }
+        }
+    }
+}
+
 @Preview(widthDp = 100, heightDp = 100)
 @Composable
 fun DepthButtonTogglePreview() {
@@ -556,7 +688,7 @@ fun DepthButtonPreview() {
 @Composable
 fun DepthButtonCirclePreview() {
     DepthButton(
-        shape = DepthSurfaceShape.Circle,
+        shape = TreeTrackerButtonShape.Circle,
         onClick = {
         }
     ) {

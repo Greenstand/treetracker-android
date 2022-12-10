@@ -32,7 +32,7 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
-import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
 fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -81,7 +81,7 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
                 )
             )
             state.previousOrgName?.let { prevOrgName ->
-                DepthButton(
+                TreeTrackerButton(
                     onClick = { viewModel.applyOrgAutofill() },
                     modifier = Modifier
                         .padding(16.dp)

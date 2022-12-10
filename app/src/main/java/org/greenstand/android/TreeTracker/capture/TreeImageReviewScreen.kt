@@ -29,9 +29,9 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ApprovalButton
-import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
@@ -47,7 +47,7 @@ fun TreeImageReviewScreen(
         topBar = {
             ActionBar(
                 centerAction = {
-                    DepthButton(
+                    TreeTrackerButton(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .size(width = 100.dp, 60.dp),

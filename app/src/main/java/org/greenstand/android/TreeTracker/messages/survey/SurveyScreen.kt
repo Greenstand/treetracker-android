@@ -26,8 +26,8 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
 fun SurveyScreen(
@@ -130,7 +130,7 @@ fun AnswerItem(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    DepthButton(
+    TreeTrackerButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(68.dp),

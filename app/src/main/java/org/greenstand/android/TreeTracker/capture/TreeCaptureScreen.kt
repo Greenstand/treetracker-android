@@ -52,8 +52,8 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
+import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 import org.greenstand.android.TreeTracker.view.UserImageButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
@@ -174,7 +174,7 @@ fun TreeCaptureScreen(
                             }
                         },
                         colors = AppButtonColors.ProgressGreen,
-                        shape = DepthSurfaceShape.Circle
+                        shape = TreeTrackerButtonShape.Circle
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
