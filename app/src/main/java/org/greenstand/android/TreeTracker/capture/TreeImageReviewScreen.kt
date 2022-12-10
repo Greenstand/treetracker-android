@@ -1,8 +1,6 @@
 package org.greenstand.android.TreeTracker.capture
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +27,7 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ApprovalButton
+import org.greenstand.android.TreeTracker.view.InfoButton
 import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
@@ -84,14 +83,10 @@ fun TreeImageReviewScreen(
                     },
                     approval = true
                 )
-                Image(
+                InfoButton(
                     modifier = Modifier
-                        .size(60.dp)
-                        .clickable {
-                            viewModel.updateReviewTutorialDialog(true)
-                        },
-                    painter = painterResource(id = R.drawable.info_icon),
-                    contentDescription = null,
+                        .size(60.dp),
+                    onClick = { viewModel.updateReviewTutorialDialog(true) }
                 )
             }
         }
