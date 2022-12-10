@@ -2,9 +2,24 @@ package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonColors
@@ -23,10 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -36,7 +51,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
@@ -203,13 +217,14 @@ fun BoxScope.UserImageButton(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TreeTrackerButton(
-    modifier: Modifier = Modifier.wrapContentSize(),
+    modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     isSelected: Boolean? = null,
     depth: Float = 8f,
     colors: ButtonColors = AppButtonColors.Default,
     shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Rectangle,
     contentAlignment: Alignment = Alignment.Center,
+    borderBrushOverride: Brush? = null,
     onClick: () -> Unit,
     content: @Composable (BoxScope.() -> Unit),
 ) {
@@ -288,90 +303,9 @@ fun TreeTrackerButton(
                 .background(color = contentColor)
                 .border(
                     width = 1.dp,
-                    color = shadowColor,
+                    brush = borderBrushOverride ?: SolidColor(shadowColor),
                     shape = clipShape,
                 )
-        ) {
-            content()
-        }
-    }
-}
-
-/**
- * Button with toggle down animation. Now enables wrap content functionality.
- * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
- *
- * @param onClick The callback function for click event.
- * @param modifier The modifier to be applied to the layout.
- * @param contentAlignment The alignment of content inside the button.
- * @param isEnabled Set button enabled state.
- * @param isSelected Set button selected state (if selected, will toggle down).
- * @param colors The colors of the button. See [AppButtonColors], can be customized.
- * @param content The child content of the button.
- */
-@Composable
-fun DepthButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    contentAlignment: Alignment = Alignment.Center,
-    isEnabled: Boolean = true,
-    isSelected: Boolean? = null,
-    depth: Float = 20f,
-    colors: ButtonColors = AppButtonColors.Default,
-    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Rectangle,
-    content: @Composable (BoxScope.() -> Unit),
-) {
-    val contentColor by colors.contentColor(isEnabled)
-    val onClickState = rememberUpdatedState(onClick)
-    var isPressed by remember { mutableStateOf(false) }
-    isSelected?.let { isPressed = isSelected }
-    val haptic = LocalHapticFeedback.current
-
-    val offsetAnimation: Float by animateFloatAsState(targetValue = if (isPressed) 1f else 0f)
-
-    Box(modifier = modifier) {
-        DepthSurface(
-            color = contentColor,
-            shadowColor = colors.backgroundColor(isEnabled).value,
-            isPressed = isPressed,
-            depth = depth,
-            shape = shape,
-            modifier = Modifier
-                .matchParentSize() // Match the 'content' size, this enables wrap_content.
-                .pointerInput(isEnabled) {
-                    if (!isEnabled) return@pointerInput
-                    detectTapGestures(
-                        onTap = {
-                            onClickState.value.invoke()
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        },
-                        onPress = {
-                            isPressed = true
-                            tryAwaitRelease()
-                            if (isSelected == null) {
-                                isPressed = false
-                            }
-                        }
-                    )
-                }
-        )
-
-        Box(
-            modifier = Modifier
-                .align(contentAlignment)
-                .offset {
-                    when (shape) {
-                        TreeTrackerButtonShape.Rectangle -> IntOffset(
-                            0,
-                            (depth * offsetAnimation).toInt()
-                        )
-                        TreeTrackerButtonShape.Circle -> IntOffset(
-                            0,
-                            (depth * offsetAnimation - depth).toInt()
-                        )
-                    }
-
-                }
         ) {
             content()
         }
@@ -381,127 +315,6 @@ fun DepthButton(
 enum class TreeTrackerButtonShape {
     Rectangle,
     Circle
-}
-
-@Composable
-fun DepthSurface(
-    modifier: Modifier,
-    isPressed: Boolean,
-    color: Color,
-    shadowColor: Color,
-    depth: Float = 20f,
-    shape: TreeTrackerButtonShape,
-) {
-    val offsetAnimation: Float by animateFloatAsState(
-        targetValue = if (isPressed) 1f else 0f,
-        animationSpec = tween(durationMillis = 100)
-    )
-
-    when (shape) {
-        TreeTrackerButtonShape.Rectangle ->
-            DepthSurfaceRectangle(
-                modifier = modifier,
-                color = color,
-                shadowColor = shadowColor,
-                offset = offsetAnimation,
-                depth = depth,
-            )
-        TreeTrackerButtonShape.Circle ->
-            DepthSurfaceCircle(
-                modifier = modifier,
-                color = color,
-                shadowColor = shadowColor,
-                offset = offsetAnimation,
-                depth = depth,
-            )
-    }
-}
-
-@Composable
-fun DepthSurfaceRectangle(
-    modifier: Modifier,
-    color: Color,
-    shadowColor: Color,
-    offset: Float,
-    depth: Float = 20f,
-) {
-    Canvas(modifier = modifier.fillMaxSize()) {
-
-        val innerSizeDelta = 4
-        val gutter = innerSizeDelta / 2f
-
-        val outerSize = size
-        val innerSize = Size(
-            width = outerSize.width - innerSizeDelta,
-            height = outerSize.height - depth
-        )
-        val cornerRadius = CornerRadius(x = 30f, y = 30f)
-
-        val tempOffset = (offset * depth) - gutter
-        val innerHeightOffset = if (tempOffset < gutter) {
-            gutter
-        } else {
-            tempOffset
-        }
-        drawRoundRect(
-            color = shadowColor,
-            cornerRadius = cornerRadius,
-            topLeft = Offset(x = 0f, y = 0f),
-            size = outerSize
-        )
-        drawRoundRect(
-            color = color,
-            cornerRadius = cornerRadius,
-            topLeft = Offset(x = gutter, y = innerHeightOffset),
-            size = innerSize
-        )
-    }
-}
-
-@Composable
-fun DepthSurfaceCircle(
-    modifier: Modifier,
-    color: Color,
-    shadowColor: Color,
-    offset: Float,
-    depth: Float,
-) {
-    Canvas(modifier = modifier.fillMaxSize()) {
-        val gutter = 2
-        val outerSize = Size(size.width - depth, size.height - depth)
-
-        // Bottom stretched circle
-        drawArc(
-            color = shadowColor,
-            startAngle = 180f,
-            sweepAngle = 180f,
-            useCenter = true,
-            topLeft = Offset(x = depth / 2, y = 0f),
-            size = outerSize
-        )
-        drawRect(
-            color = shadowColor,
-            topLeft = Offset(x = depth / 2, y = outerSize.height / 2),
-            size = Size(outerSize.width, depth),
-        )
-        drawArc(
-            color = shadowColor,
-            startAngle = 0f,
-            sweepAngle = 180f,
-            useCenter = true,
-            topLeft = Offset(x = depth / 2, y = depth),
-            size = outerSize
-        )
-        // top circle
-        drawCircle(
-            color = color,
-            radius = outerSize.height / 2 - gutter,
-            center = Offset(
-                x = size.width / 2,
-                y = size.height / 2 + (offset * depth) - (depth / 2)
-            ),
-        )
-    }
 }
 
 @Composable
@@ -655,43 +468,5 @@ fun TreeTrackerButtonPreview() {
                 Text("Button 1", Modifier.align(Alignment.Center))
             }
         }
-    }
-}
-
-@Preview(widthDp = 100, heightDp = 100)
-@Composable
-fun DepthButtonTogglePreview() {
-    var isSelected by remember { mutableStateOf(false) }
-
-    DepthButton(
-        onClick = {
-            isSelected = !isSelected
-        },
-        isSelected = isSelected
-    ) {
-        Text("Toggle", Modifier.align(Alignment.Center))
-    }
-}
-
-@Preview(widthDp = 100, heightDp = 100)
-@Composable
-fun DepthButtonPreview() {
-    DepthButton(
-        onClick = {
-        }
-    ) {
-        Text("Button", Modifier.align(Alignment.Center))
-    }
-}
-
-@Preview(widthDp = 100, heightDp = 100)
-@Composable
-fun DepthButtonCirclePreview() {
-    DepthButton(
-        shape = TreeTrackerButtonShape.Circle,
-        onClick = {
-        }
-    ) {
-        Text("Button", Modifier.align(Alignment.Center))
     }
 }

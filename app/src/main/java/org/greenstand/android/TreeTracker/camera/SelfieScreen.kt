@@ -1,31 +1,27 @@
 package org.greenstand.android.TreeTracker.camera
 
-import android.content.res.Resources
-import android.graphics.Color
-import android.util.DisplayMetrics
-import android.util.Size
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.signup.SignUpState
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.CaptureButton
+import org.greenstand.android.TreeTracker.view.InfoButton
+import org.greenstand.android.TreeTracker.view.SelfieTutorial
+import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -48,12 +44,11 @@ fun SelfieScreen() {
             ActionBar(
                 rightAction = {
                     InfoButton(
+                        modifier = Modifier.align(Alignment.Center),
                         onClick = {
                             viewModel.updateSelfieTutorialDialog(true)
                         }
                     )
-
-
                 }
             )
         }
