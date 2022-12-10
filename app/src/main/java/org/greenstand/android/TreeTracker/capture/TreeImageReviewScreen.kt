@@ -29,10 +29,10 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ApprovalButton
-import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
 fun TreeImageReviewScreen(

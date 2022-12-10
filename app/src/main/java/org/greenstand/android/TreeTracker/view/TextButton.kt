@@ -7,14 +7,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonColors
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
@@ -38,7 +32,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -77,7 +70,7 @@ fun BoxScope.ArrowButton(
 }
 
 @Composable
-fun getPainter(colors: ButtonColors, isLeft: Boolean): Painter {
+private fun getPainter(colors: ButtonColors, isLeft: Boolean): Painter {
     val painter: Painter
     return when (colors) {
         AppButtonColors.MessagePurple -> {
@@ -97,12 +90,12 @@ fun getPainter(colors: ButtonColors, isLeft: Boolean): Painter {
     }
 }
 
+/**
+ * @param onClick The callback function for click event.
+ * @param modifier The modifier to be applied to the layout.
+ * @param approval Set the type of button to display(if approval is true, shows green thumps up button )
+ */
 @Composable
-        /**
-         * @param onClick The callback function for click event.
-         * @param modifier The modifier to be applied to the layout.
-         * @param approval Set the type of button to display(if approval is true, shows green thumps up button )
-         */
 fun ApprovalButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -147,122 +140,6 @@ fun InfoButton(
 }
 
 @Composable
-        /**
-         * @param dialogIcon Icon to be displayed in the dialog.
-         * @param title The Dialog's title text.
-         * @param textContent The text content of the dialog. Can be left empty if it is an input dialog
-         * @param content Composable's content. Allows you display other composable in the dialog as content
-         * @param onPositiveClick The callback action for clicking the positive approval button.
-         * @param onNegativeClick The callback action for clicking the negative approval button.
-         * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
-         */
-fun CustomDialog(
-    dialogIcon: Painter? = painterResource(id = R.drawable.greenstand_logo),
-    backgroundModifier: Modifier = Modifier,
-    title: String = "",
-    textContent: String? = null,
-    content: @Composable() (() -> Unit)? = null,
-    onPositiveClick: (() -> Unit)? = null,
-    onNegativeClick: (() -> Unit)? = null,
-    textInputValue: String = "",
-    onTextInputValueChange: ((String) -> Unit)? = null,
-) {
-    AlertDialog(
-        onDismissRequest = { },
-        title = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                dialogIcon?.let {
-                    Image(
-                        painter = it,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(width = 16.dp, height = 16.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    text = title,
-                    color = CustomTheme.textColors.primaryText,
-                    style = CustomTheme.typography.medium,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-        },
-        modifier = backgroundModifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(2.dp)
-            .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
-            .clip(RoundedCornerShape(percent = 10)),
-        backgroundColor = AppColors.Gray,
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                textContent?.let {
-                    Text(
-                        text = it,
-                        color = CustomTheme.textColors.primaryText,
-                        style = CustomTheme.typography.regular,
-                        modifier = Modifier.padding(bottom = 5.dp)
-                    )
-                }
-                onTextInputValueChange?.let {
-                    TextField(
-                        value = textInputValue,
-                        modifier = Modifier.wrapContentHeight(),
-                        onValueChange = onTextInputValueChange
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    content?.let { it() }
-                }
-            }
-        },
-        buttons = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                onNegativeClick?.let {
-                    ApprovalButton(
-                        modifier = Modifier
-                            .padding(end = 24.dp)
-                            .size(40.dp),
-                        onClick = it,
-                        approval = false
-                    )
-                }
-
-                onPositiveClick?.let {
-                    ApprovalButton(
-                        modifier = Modifier
-                            .size(40.dp),
-                        onClick = it,
-                        approval = true
-                    )
-                }
-            }
-        },
-    )
-}
-
-@Composable
 fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
     val languageViewModel: LanguagePickerViewModel =
@@ -286,78 +163,6 @@ fun BoxScope.LanguageButton() {
             color = CustomTheme.textColors.darkText,
             style = CustomTheme.typography.regular
         )
-    }
-}
-
-@Composable
-fun NoGPSDeviceDialog(onPositiveClick: () -> Unit){
-    CustomDialog(
-        dialogIcon = painterResource(id = R.drawable.error_outline),
-        title = stringResource(R.string.no_gps_device_header),
-        textContent = stringResource(R.string.no_gps_device_content),
-        onPositiveClick = onPositiveClick
-    )
-}
-
-@Composable
-fun CustomSnackbar(
-    snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    onDismiss: () -> Unit = { },
-    backGroundColor: Color = AppColors.Green,
-) {
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = { data ->
-            Snackbar(
-                backgroundColor = backGroundColor,
-                modifier = modifier.padding(start = 16.dp, end = 16.dp),
-                content = {
-                    Text(
-                        text = data.message,
-                        style = CustomTheme.typography.regular,
-                        color = CustomTheme.textColors.darkText
-                    )
-                },
-                action = {
-                    data.actionLabel?.let { actionLabel ->
-                        TextButton(onClick = onDismiss) {
-                            Text(
-                                text = actionLabel,
-                                style = CustomTheme.typography.regular,
-                                color = CustomTheme.textColors.darkText
-                            )
-                        }
-                    }
-                }
-            )
-        }
-    )
-}
-
-@Preview(widthDp = 100, heightDp = 100)
-@Composable
-fun DepthButtonTogglePreview() {
-    var isSelected by remember { mutableStateOf(false) }
-
-    DepthButton(
-        onClick = {
-            isSelected = !isSelected
-        },
-        isSelected = isSelected
-    ) {
-        Text("Toggle", Modifier.align(Alignment.Center))
-    }
-}
-
-@Preview(widthDp = 100, heightDp = 100)
-@Composable
-fun DepthButtonPreview() {
-    DepthButton(
-        onClick = {
-        }
-    ) {
-        Text("Button", Modifier.align(Alignment.Center))
     }
 }
 
@@ -394,31 +199,21 @@ fun BoxScope.UserImageButton(
     }
 }
 
-@Preview(widthDp = 100, heightDp = 100)
-@Composable
-fun DepthButtonCirclePreview() {
-    DepthButton(
-        shape = DepthSurfaceShape.Circle,
-        onClick = {
-        }
-    ) {
-        Text("Button", Modifier.align(Alignment.Center))
-    }
-}
 
+
+/**
+ * Button with toggle down animation. Now enables wrap content functionality.
+ * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
+ *
+ * @param onClick The callback function for click event.
+ * @param modifier The modifier to be applied to the layout.
+ * @param contentAlignment The alignment of content inside the button.
+ * @param isEnabled Set button enabled state.
+ * @param isSelected Set button selected state (if selected, will toggle down).
+ * @param colors The colors of the button. See [AppButtonColors], can be customized.
+ * @param content The child content of the button.
+ */
 @Composable
-        /**
-         * Button with toggle down animation. Now enables wrap content functionality.
-         * For sample usage see [org.greenstand.android.TreeTracker.userselect.UserButton].
-         *
-         * @param onClick The callback function for click event.
-         * @param modifier The modifier to be applied to the layout.
-         * @param contentAlignment The alignment of content inside the button.
-         * @param isEnabled Set button enabled state.
-         * @param isSelected Set button selected state (if selected, will toggle down).
-         * @param colors The colors of the button. See [AppButtonColors], can be customized.
-         * @param content The child content of the button.
-         */
 fun DepthButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -728,5 +523,43 @@ class DepthButtonColors(
         result = 31 * result + disabledShadowColor.hashCode()
         result = 31 * result + disabledColor.hashCode()
         return result
+    }
+}
+
+@Preview(widthDp = 100, heightDp = 100)
+@Composable
+fun DepthButtonTogglePreview() {
+    var isSelected by remember { mutableStateOf(false) }
+
+    DepthButton(
+        onClick = {
+            isSelected = !isSelected
+        },
+        isSelected = isSelected
+    ) {
+        Text("Toggle", Modifier.align(Alignment.Center))
+    }
+}
+
+@Preview(widthDp = 100, heightDp = 100)
+@Composable
+fun DepthButtonPreview() {
+    DepthButton(
+        onClick = {
+        }
+    ) {
+        Text("Button", Modifier.align(Alignment.Center))
+    }
+}
+
+@Preview(widthDp = 100, heightDp = 100)
+@Composable
+fun DepthButtonCirclePreview() {
+    DepthButton(
+        shape = DepthSurfaceShape.Circle,
+        onClick = {
+        }
+    ) {
+        Text("Button", Modifier.align(Alignment.Center))
     }
 }
