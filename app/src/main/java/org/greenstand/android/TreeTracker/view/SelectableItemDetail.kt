@@ -1,14 +1,12 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,14 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
@@ -43,33 +38,27 @@ fun SelectableImageDetail(
     header: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    val columnModifier = Modifier
-        .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
-        .fillMaxWidth()
-        .wrapContentHeight()
-    val userButtonModifier = Modifier
-        .padding(8.dp)
-        .width(156.dp)
-        .clip(RoundedCornerShape(10.dp))
-        .wrapContentHeight()
-
-    DepthButton(
+    TreeTrackerButton(
+        modifier = Modifier
+            .padding(8.dp)
+            .height(270.dp)
+            .width(156.dp)
+            .wrapContentHeight(),
+        colors = buttonColors,
         onClick = onClick,
         isSelected = isSelected,
-        modifier = if (isSelected) userButtonModifier
-            .border(
-                width = 1.dp, brush = Brush.verticalGradient(
-                    colors = listOf(
-                        AppColors.Gray,
-                        selectedColor
-                    )
-                ),
-                shape = RoundedCornerShape(10.dp)
-            ) else userButtonModifier,
+        borderBrushOverride = verticalGradient(
+            colors = listOf(
+                AppColors.Gray,
+                selectedColor
+            )
+        ).takeIf { isSelected },
         contentAlignment = Alignment.TopCenter,
     ) {
         Column(
-            modifier = if (isSelected) columnModifier.padding(start = 1.dp, end = 1.dp) else columnModifier.padding(1.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {

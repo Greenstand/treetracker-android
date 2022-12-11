@@ -54,10 +54,10 @@ object AppButtonColors {
     )
 
     val WhiteLight = DepthButtonColors(
-        color = Color.Black,
-        shadowColor = AppColors.GrayShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
+        color = Color.White,
+        shadowColor = AppColors.MediumGray,
+        disabledColor = AppColors.MediumGray,
+        disabledShadowColor = AppColors.Gray
     )
 
     val ProgressGreen = DepthButtonColors(

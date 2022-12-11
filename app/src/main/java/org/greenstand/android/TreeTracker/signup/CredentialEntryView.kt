@@ -64,12 +64,13 @@ import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
-import org.greenstand.android.TreeTracker.view.CustomDialog
 import org.greenstand.android.TreeTracker.view.CustomSnackbar
-import org.greenstand.android.TreeTracker.view.DepthButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.UserButton
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+
 @Composable
 fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
     val navController = LocalNavHostController.current
@@ -276,7 +277,7 @@ fun <T : Credential> CredentialButton(
     placeholderTextRes: Int,
     onClick: () -> Unit,
 ) {
-    DepthButton(
+    TreeTrackerButton(
         modifier = Modifier
             .padding(end = 12.dp)
             .size(120.dp, 50.dp),

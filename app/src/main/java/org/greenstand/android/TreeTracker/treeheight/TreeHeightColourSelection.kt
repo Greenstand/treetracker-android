@@ -28,7 +28,7 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.DepthButton
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
 fun TreeHeightScreen(
@@ -79,7 +79,7 @@ fun TreeHeightScreen(
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp)
         ) {
             items(state.colours) { color ->
-                DepthButton(
+                TreeTrackerButton(
                     colors = color,
                     isSelected = color == state.selectedColour,
                     onClick = { viewModel.selectColor(color) },

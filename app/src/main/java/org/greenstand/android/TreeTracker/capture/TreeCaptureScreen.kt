@@ -4,13 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,11 +48,12 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.CaptureButton
-import org.greenstand.android.TreeTracker.view.CustomDialog
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
+import org.greenstand.android.TreeTracker.view.InfoButton
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 import org.greenstand.android.TreeTracker.view.UserImageButton
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @ExperimentalPermissionsApi
 @Composable
@@ -105,15 +103,11 @@ fun TreeCaptureScreen(
                     )
                 },
                 rightAction = {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .aspectRatio(1.0f)
-                            .clickable {
-                                viewModel.updateCaptureTutorialDialog(true)
-                            },
-                        painter = painterResource(id = R.drawable.info_icon),
-                        contentDescription = null,
+                    InfoButton(
+                        modifier = Modifier.align(Alignment.Center),
+                        onClick = {
+                            viewModel.updateCaptureTutorialDialog(true)
+                        }
                     )
                 }
             )
@@ -163,7 +157,7 @@ fun TreeCaptureScreen(
             },
             rightAction = {
                 if (FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
-                    DepthButton(
+                    TreeTrackerButton(
                         modifier = Modifier
                             .size(height = 70.dp, width = 70.dp)
                             .align(Alignment.Center),
@@ -174,7 +168,7 @@ fun TreeCaptureScreen(
                             }
                         },
                         colors = AppButtonColors.ProgressGreen,
-                        shape = DepthSurfaceShape.Circle
+                        shape = TreeTrackerButtonShape.Circle
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.yellow_leafs_placeholder),

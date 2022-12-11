@@ -52,10 +52,10 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 
 @OptIn(ExperimentalComposeApi::class)
 @Composable
@@ -150,7 +150,7 @@ fun DashboardScreen(
                     onClick = {
                         viewModel.sync()
                     },
-                    shape = DepthSurfaceShape.Circle,
+                    shape = TreeTrackerButtonShape.Circle,
                     image = painterResource(id = R.drawable.upload_icon)
                 )
             }
@@ -193,7 +193,7 @@ fun DashboardTopBar(state: DashboardState, navController: NavController) {
             if (!state.isOrgButtonEnabled) {
                 return@ActionBar
             }
-            DepthButton(
+            TreeTrackerButton(
                 colors = AppButtonColors.ProgressGreen,
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -261,11 +261,11 @@ fun DashBoardButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     colors: ButtonColors,
-    shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
+    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Rectangle,
     image: Painter,
     showUnreadNotification: Boolean = false,
 ) {
-    DepthButton(
+    TreeTrackerButton(
         modifier = modifier,
         colors = colors,
         onClick = onClick,
