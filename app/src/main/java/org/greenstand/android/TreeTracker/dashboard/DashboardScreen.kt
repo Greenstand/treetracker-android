@@ -47,6 +47,7 @@ import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utils.PreviewDependencies
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -56,7 +57,6 @@ import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 
-@OptIn(ExperimentalComposeApi::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
@@ -301,12 +301,30 @@ fun DashBoardButton(
                 modifier = Modifier
                     .padding(bottom = 12.dp, end = 8.dp)
                     .size(33.dp)
-                    .align(Alignment.BottomEnd)
-                ,
+                    .align(Alignment.BottomEnd),
                 painter = painterResource(id = R.drawable.notification_icon),
                 contentDescription = null,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun DashboardPreview() {
+    PreviewDependencies {
+        Dashboard(
+            state = DashboardState(
+                treesRemainingToSync = 51,
+                treesSynced = 146,
+                totalTreesToSync = 200,
+                isOrgButtonEnabled = true,
+                showUnreadMessageNotification = true,
+            ),
+            snackBar = null,
+            onSync = { },
+            onSyncMessages = { },
+        )
     }
 }
 
