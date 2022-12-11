@@ -15,14 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -43,7 +42,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -52,6 +50,7 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.ConsumableSnackBar
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
@@ -62,20 +61,30 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
+    val state by viewModel.state.observeAsState(DashboardState())
+    val snackBar by viewModel.snackBar.observeAsState()
+    Dashboard(
+        state = state,
+        snackBar = snackBar,
+        onSync = { viewModel.sync() },
+        onSyncMessages = { viewModel.syncMessages() },
+    )
+}
+
+@OptIn(ExperimentalComposeApi::class)
+@Composable
+fun Dashboard(
+    state: DashboardState,
+    snackBar: ConsumableSnackBar?,
+    onSync: () -> Unit,
+    onSyncMessages: () -> Unit,
+) {
     val context = LocalContext.current
     val navController = LocalNavHostController.current
-    val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
-    val state by viewModel.state.observeAsState(DashboardState())
 
-    viewModel.showSnackBar = { stringRes ->
-        scope.launch {
-            scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = context.getString(stringRes),
-                duration = SnackbarDuration.Short
-            )
-        }
+    LaunchedEffect(snackBar) {
+        snackBar?.show(context, scaffoldState)
     }
 
     Scaffold(
@@ -147,9 +156,7 @@ fun DashboardScreen(
                         .weight(1f),
                     text = stringResource(R.string.upload),
                     colors = AppButtonColors.UploadOrange,
-                    onClick = {
-                        viewModel.sync()
-                    },
+                    onClick = onSync,
                     shape = TreeTrackerButtonShape.Circle,
                     image = painterResource(id = R.drawable.upload_icon)
                 )
@@ -163,7 +170,7 @@ fun DashboardScreen(
                     .fillMaxSize(),
                 colors = AppButtonColors.MessagePurple,
                 onClick = {
-                    viewModel.syncMessages()
+                    onSyncMessages()
                     navController.navigate(NavRoute.MessagesUserSelect.route)
                 },
                 image = painterResource(id = R.drawable.announcement_icon),

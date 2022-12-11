@@ -26,6 +26,7 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
+import org.greenstand.android.TreeTracker.view.ConsumableSnackBar
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -51,7 +52,8 @@ class DashboardViewModel(
     private val _state = MutableLiveData<DashboardState>()
     val state: LiveData<DashboardState> = _state
 
-    var showSnackBar: ((Int) -> Unit)? = null
+    private val _snackBar = MutableLiveData<ConsumableSnackBar>()
+    val snackBar: LiveData<ConsumableSnackBar> = _snackBar
 
     private var _isSyncing: Boolean? by Delegates.observable(false) { _, _, startedSyncing ->
         startedSyncing ?: return@observable
@@ -71,33 +73,36 @@ class DashboardViewModel(
 
     private var updateTimerJob: Job? = null
 
+    private fun triggerSnackBar(stringRes: Int) {
+        _snackBar.value = ConsumableSnackBar(stringRes)
+    }
+
     private val syncObserver = Observer<List<WorkInfo>> { infoList ->
         when(infoList.map { it.state }.elementAtOrNull(0)) {
             State.BLOCKED -> {
-                showSnackBar?.invoke(R.string.sync_blocked)
+                triggerSnackBar(R.string.sync_blocked)
                 _isSyncing = false
             }
             SUCCEEDED -> {
                 if (_isSyncing != false) {
-                    showSnackBar?.invoke(R.string.sync_successful)
+                    triggerSnackBar(R.string.sync_successful)
                 }
-
                 _isSyncing = false
             }
             State.CANCELLED -> {
-                showSnackBar?.invoke(R.string.sync_stopped)
+                triggerSnackBar(R.string.sync_stopped)
                 _isSyncing = false
             }
             State.FAILED -> {
-                showSnackBar?.invoke(R.string.sync_failed)
+                triggerSnackBar(R.string.sync_failed)
                 _isSyncing = false
             }
             State.RUNNING -> {
-                showSnackBar?.invoke(R.string.sync_started)
+                triggerSnackBar(R.string.sync_started)
                 _isSyncing = true
             }
             State.ENQUEUED -> {
-                showSnackBar?.invoke(R.string.sync_preparing)
+                triggerSnackBar(R.string.sync_preparing)
                 _isSyncing = true
             }
         }
@@ -124,7 +129,7 @@ class DashboardViewModel(
                 if (!FeatureFlags.DEBUG_ENABLED) {
                     val treesToSync = treesToSyncHelper.getTreeCountToSync()
                     when (treesToSync) {
-                        0 -> showSnackBar?.invoke(R.string.nothing_to_sync)
+                        0 -> triggerSnackBar(R.string.nothing_to_sync)
                         else -> startDataSynchronization()
                     }
                 } else {
