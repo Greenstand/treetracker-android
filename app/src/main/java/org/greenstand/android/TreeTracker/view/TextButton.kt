@@ -48,6 +48,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -158,10 +159,15 @@ fun InfoButton(
 @Composable
 fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
-    val languageViewModel: LanguagePickerViewModel =
+    // Avoid creating a viewmodel if we're in Preview Mode.
+    // Viewmodels are large, we do not want to load them in the preview
+    val languageViewModel: LanguagePickerViewModel? = if (!LocalInspectionMode.current) {
         viewModel(factory = LocalViewModelFactory.current)
+    } else {
+        null
+    }
     val language: String =
-        languageViewModel.currentLanguage.observeAsState(Language).value.toString()
+        languageViewModel?.currentLanguage?.observeAsState(Language)?.value.toString()
 
     TreeTrackerButton(
         colors = AppButtonColors.ProgressGreen,
