@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.datetime.Instant
 
 data class SessionRequest(
     @SerializedName("id")
@@ -15,4 +16,6 @@ data class SessionRequest(
     val organization: String,
     @SerializedName("device_configuration_id")
     val deviceConfigId: String,
+    @SerializedName("start_time")
+    val startTime: Instant,
 )
