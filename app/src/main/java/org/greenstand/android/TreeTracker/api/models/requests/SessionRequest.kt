@@ -17,5 +17,5 @@ data class SessionRequest(
     @SerializedName("device_configuration_id")
     val deviceConfigId: String,
     @SerializedName("start_time")
-    val startTime: Instant,
+    val startTime: Long,
 )
