@@ -24,7 +24,8 @@ class SessionUploader(
                 targetWallet = session.destinationWallet,
                 organization = session.organization ?: "",
                 deviceConfigId = dao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid,
-                startTime = session.startTime.toString().toLong()            )
+                startTime = session.startTime.toEpochMilliseconds()
+            )
         }
 
         val jsonBundle = gson.toJson(UploadBundle.createV2(
