@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.utils
 
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.signup.Credential
 import org.greenstand.android.TreeTracker.signup.SignUpState
@@ -35,21 +36,4 @@ val fakeUsers = listOf(
         photoPath = "some random text",
         unreadMessagesAvailable = false
     )
-
-)
-
-val fakeSignUpState = SignUpState(
-    firstName = "Caleb",
-    lastName = "Mzazi",
-    email = "langat.caleb95@gmail.com",
-    phone = "0713212213",
-    photoPath = "some string",
-    isCredentialValid = true,
-    isCredentialView = true,
-    existingUser = fakeUsers.first(),
-    canGoToNextScreen = false,
-    autofocusTextEnabled = false,
-    isInternetAvailable = false,
-    showPrivacyDialog = false,
-    showSelfieTutorial = true,
 )

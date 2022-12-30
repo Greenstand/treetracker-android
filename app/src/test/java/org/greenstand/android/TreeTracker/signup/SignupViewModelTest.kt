@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.signup
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth
+import com.google.firebase.crashlytics.internal.model.CrashlyticsReport.Session.User
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -41,6 +42,8 @@ class SignupViewModelTest {
     fun setupViewModel(){
         signupViewModel = SignupViewModel(userRepo, checkForInternetUseCase)
     }
+    // First Name
+
     @Test
     fun `update first name, returns valid first name`() = runBlocking{
         signupViewModel.updateFirstName("Caleb")
@@ -54,6 +57,8 @@ class SignupViewModelTest {
         signupViewModel.updateFirstName("")
         Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().firstName).isEmpty()
     }
+
+    // Last Name
 
     @Test
     fun `update last name, returns valid last name`() = runBlocking{
@@ -69,10 +74,15 @@ class SignupViewModelTest {
         Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().lastName).isEmpty()
     }
 
+    // Email
+
     @Test
     fun `update email contains valid credentials, returns success`() = runBlocking{
         signupViewModel.updateEmail("somerandom@gmsail.com")
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().phone).isNull()
         Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().email).containsMatch("@")
+
+
     }
 
     @Test
@@ -81,18 +91,66 @@ class SignupViewModelTest {
         Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().email).doesNotContainMatch("@")
     }
 
-//    @Test
-//    fun `update phone contains valid credentials, returns success`() = runBlocking{
-//        val result = signupViewModel.updatePhone("01111111111")
-//        val validation  = Validation.isValidPhoneNumber("01111111")
-//        assert
-//    }
+    // Phone
 
-//    @Test
-//    fun `update credential type,returns success`() = runBlocking{
-//        signupViewModel.updateCredentialType()
-//        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().email).contains(fakeSignUpState.credential.text)
-//    }
+    @Test
+    fun `update phone contains valid credentials, returns success`() = runBlocking{
+        signupViewModel.updatePhone("071321998893")
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().isCredentialValid).isTrue()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().email).isNull()
+
+    }
+
+    @Test
+    fun `update phone contains invalid credentials, returns Error`() = runBlocking{
+        signupViewModel.updatePhone("random1919")
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().isCredentialValid).isFalse()
+    }
+
+    // Selfie Tutorial Dialogs
+    @Test
+    fun `update selfie tutorial dialog state = false, returns false`() = runBlocking{
+        signupViewModel.updateSelfieTutorialDialog(false)
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().showSelfieTutorial).isFalse()
+    }
+
+    @Test
+    fun `update selfie tutorial dialog state = true, returns true`() = runBlocking{
+        signupViewModel.updateSelfieTutorialDialog(true)
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().showSelfieTutorial).isTrue()
+    }
+
+    // Go to Credentials Entry
+    @Test
+    fun `Go to credentials Entry, returns true`() = runBlocking{
+        signupViewModel.goToCredentialEntry()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().isCredentialView).isTrue()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().firstName).isNull()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().lastName).isNull()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().canGoToNextScreen).isTrue()
+    }
+
+    // Enables Autofocus
+    @Test
+    fun `enable autofocus, returns true`() = runBlocking{
+        signupViewModel.enableAutofocus()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().autofocusTextEnabled).isTrue()
+    }
+
+    // Close privacy policy dialog
+    @Test
+    fun `close privacy policy dialog, returns true`() = runBlocking{
+        signupViewModel.closePrivacyPolicyDialog()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().showPrivacyDialog).isFalse()
+    }
+
+    // Close Existing User Dialog
+    @Test
+    fun `close existing user dialog, returns true`() = runBlocking{
+        signupViewModel.closeExistingUserDialog()
+        Truth.assertThat(signupViewModel.state.getOrAwaitValueTest().existingUser).isNull()
+    }
+
 }
 
 
