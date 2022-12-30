@@ -2,27 +2,18 @@ package org.greenstand.android.TreeTracker.signup
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth
-import com.google.firebase.crashlytics.internal.model.CrashlyticsReport.Session.User
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
-import org.greenstand.android.TreeTracker.utilities.Validation
-import org.greenstand.android.TreeTracker.utils.fakeSignUpState
 import org.greenstand.android.TreeTracker.utils.fakeUsers
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.any
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
-import kotlin.math.sign
+
 
 @ExperimentalCoroutinesApi
 class SignupViewModelTest {
