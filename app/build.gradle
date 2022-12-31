@@ -10,7 +10,7 @@ def loadExtraProperties(String fileName) {
     def props = new Properties()
     props.load(new FileInputStream(fileName))
     props.each { key, val ->
-       project.setProperty(key, val)
+        project.setProperty(key, val)
     }
 }
 
@@ -261,34 +261,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.1'
     implementation 'com.google.firebase:firebase-iid:21.0.1'
 
-    // Testing
-
-    androidTestImplementation "junit:junit:4.13.2"
-    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
-    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
-    androidTestImplementation "com.google.truth:truth:1.1.3"
-    androidTestImplementation 'androidx.test:core-ktx:1.4.0'
-    androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.9.1"
-    testImplementation 'org.mockito:mockito-android:3.10.0'
-    testImplementation "org.mockito:mockito-inline:3.11.2"
-    testImplementation "org.mockito.kotlin:mockito-kotlin:3.2.0"
-    testImplementation "io.mockk:mockk:1.12.7"
-    testImplementation 'org.mockito:mockito-core:3.11.2'
-    androidTestImplementation 'org.mockito:mockito-android:3.10.0'
-    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.42'
-    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.38.1'
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation "androidx.test:runner:1.4.0"
-    testImplementation "com.google.truth:truth:1.1.3"
-    testImplementation 'androidx.test:core-ktx:1.4.0'
-    testImplementation "org.robolectric:robolectric:4.5.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
+    testImplementation "io.mockk:mockk:1.10.0"
+    testImplementation "junit:junit:4.13.1"
+    testImplementation "androidx.room:room-testing:2.2.6"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    androidTestImplementation "com.android.support.test:runner:1.0.2"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
 }
 
 configurations.all {
