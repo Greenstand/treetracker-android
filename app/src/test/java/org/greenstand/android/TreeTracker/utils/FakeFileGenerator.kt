@@ -1,9 +1,6 @@
 package org.greenstand.android.TreeTracker.utils
 
-import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
-import org.greenstand.android.TreeTracker.signup.Credential
-import org.greenstand.android.TreeTracker.signup.SignUpState
 
 val fakeUsers = listOf(
     User(
@@ -36,4 +33,15 @@ val fakeUsers = listOf(
         photoPath = "some random text",
         unreadMessagesAvailable = false
     )
+)
+
+val emptyUser = User(
+    id = 122,
+    wallet = "some random text",
+    numberOfTrees = 4,
+    firstName = "",
+    lastName = "",
+    isPowerUser = true,
+    photoPath = "some random text",
+    unreadMessagesAvailable = false
 )
