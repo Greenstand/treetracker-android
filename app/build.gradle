@@ -10,7 +10,7 @@ def loadExtraProperties(String fileName) {
     def props = new Properties()
     props.load(new FileInputStream(fileName))
     props.each { key, val ->
-       project.setProperty(key, val)
+        project.setProperty(key, val)
     }
 }
 
