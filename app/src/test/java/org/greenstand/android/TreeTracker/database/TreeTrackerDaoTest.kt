@@ -8,11 +8,18 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import org.greenstand.android.TreeTracker.utils.fakePlanterInfo
+import org.junit.After
+import org.junit.Assert
+import org.junit.Test
+import java.io.IOException
 
 
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [30])
+@Config(manifest = Config.NONE)
 class TreeTrackerDaoTest {
 
     private lateinit var treeTrackerDAO: TreeTrackerDAO
@@ -25,5 +32,18 @@ class TreeTrackerDaoTest {
             context, AppDatabase::class.java
         ).build()
         treeTrackerDAO = database.treeTrackerDao()
+    }
+
+    @Test
+    fun `insert planterInfo to App Database`() = runBlocking {
+        treeTrackerDAO.insertPlanterInfo(fakePlanterInfo)
+        val planterInfo = treeTrackerDAO.getAllPlanterInfo().first().first()
+        Assert.assertEquals(planterInfo, fakePlanterInfo)
+    }
+
+    @After
+    @Throws(IOException::class)
+    fun tearDown(){
+        database.close()
     }
 }
