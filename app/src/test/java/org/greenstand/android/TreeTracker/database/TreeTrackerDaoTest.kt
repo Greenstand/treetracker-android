@@ -8,11 +8,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import androidx.test.core.app.ApplicationProvider
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.greenstand.android.TreeTracker.utils.emptyPlanterInfo
-import org.greenstand.android.TreeTracker.utils.fakePlanterInfo
+import org.greenstand.android.TreeTracker.utils.*
 import org.junit.After
 import org.junit.Assert
 import org.junit.Test
@@ -40,15 +38,39 @@ class TreeTrackerDaoTest {
     fun `insert planterInfo to App Database`() = runBlocking {
         treeTrackerDAO.insertPlanterInfo(fakePlanterInfo)
         val planterInfo = treeTrackerDAO.getAllPlanterInfo().first().first()
-        Assert.assertEquals(planterInfo, fakePlanterInfo)
+        Assert.assertEquals(fakePlanterInfo, planterInfo)
+        Assert.assertNotNull(planterInfo)
     }
 
     @Test
-    fun `delete planterInfo in App Database`() = runBlocking {
-        treeTrackerDAO.insertPlanterInfo(fakePlanterInfo)
-        treeTrackerDAO.deletePlanterInfo(fakePlanterInfo)
-        val planterInfo = treeTrackerDAO.getAllPlanterInfo()
-        Assert.assertNull(planterInfo)
+    fun `insert userInfo to App Database`() = runBlocking {
+        treeTrackerDAO.insertUser(fakeUser)
+        val userInfo = treeTrackerDAO.getAllUsers().first().first()
+        Assert.assertEquals(fakeUser, userInfo)
+        Assert.assertNotNull(userInfo)
+    }
+
+    @Test
+    fun `insert org to App Database, returns valid org when querying id and name`() = runBlocking {
+        treeTrackerDAO.insertOrg(fakeOrg.first())
+        val organization = treeTrackerDAO.getOrg("new")
+        Assert.assertEquals(organization?.id, fakeOrg.first().id)
+        Assert.assertEquals(fakeOrg.first().name, organization?.name)
+    }
+
+    @Test
+    fun `saving org to App Database, returns non null data`() = runBlocking {
+        treeTrackerDAO.insertOrg(fakeOrg.first())
+        val organization = treeTrackerDAO.getOrg("new")
+        Assert.assertNotNull(organization)
+    }
+
+    @Test
+    fun `insert Planter CheckIn to App Database, returns valid org when querying id and name`() = runBlocking {
+        treeTrackerDAO.insertPlanterCheckIn(fakePlanterCheckInEntity)
+        val planterCheckIn = treeTrackerDAO.getAllPlanterCheckInsForPlanterInfoId(1)
+        Assert.assertNotNull(planterCheckIn)
+        Assert.assertEquals(fakePlanterCheckInEntity.id, planterCheckIn.first().id)
     }
 
     @After
