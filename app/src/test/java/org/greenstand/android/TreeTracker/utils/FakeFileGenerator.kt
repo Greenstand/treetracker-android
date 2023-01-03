@@ -61,3 +61,5 @@ val fakePlanterInfo = PlanterInfoEntity(
     bundleId = null,
     recordUuid = "random"
 )
+
+val emptyPlanterInfo = emptyList<PlanterInfoEntity>()

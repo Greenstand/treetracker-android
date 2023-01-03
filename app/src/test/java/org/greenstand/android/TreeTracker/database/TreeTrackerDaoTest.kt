@@ -8,8 +8,10 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.greenstand.android.TreeTracker.utils.emptyPlanterInfo
 import org.greenstand.android.TreeTracker.utils.fakePlanterInfo
 import org.junit.After
 import org.junit.Assert
@@ -39,6 +41,14 @@ class TreeTrackerDaoTest {
         treeTrackerDAO.insertPlanterInfo(fakePlanterInfo)
         val planterInfo = treeTrackerDAO.getAllPlanterInfo().first().first()
         Assert.assertEquals(planterInfo, fakePlanterInfo)
+    }
+
+    @Test
+    fun `delete planterInfo in App Database`() = runBlocking {
+        treeTrackerDAO.insertPlanterInfo(fakePlanterInfo)
+        treeTrackerDAO.deletePlanterInfo(fakePlanterInfo)
+        val planterInfo = treeTrackerDAO.getAllPlanterInfo()
+        Assert.assertNull(planterInfo)
     }
 
     @After
