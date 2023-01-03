@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.utils
 
+import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.user.User
 
 val fakeUsers = listOf(
@@ -44,4 +45,19 @@ val emptyUser = User(
     isPowerUser = true,
     photoPath = "some random text",
     unreadMessagesAvailable = false
+)
+
+val fakePlanterInfo = PlanterInfoEntity(
+    identifier = "random",
+    firstName = "Caleb",
+    lastName = "Langat",
+    organization = "Greenstand",
+    phone = "+2548171311",
+    email = null,
+    latitude = 12.11,
+    longitude = 15.13,
+    uploaded = false,
+    createdAt = 13131,
+    bundleId = null,
+    recordUuid = "random"
 )
