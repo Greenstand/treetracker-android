@@ -12,7 +12,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.TreeTrackerDaoTest
 import org.greenstand.android.TreeTracker.models.Configuration
 import org.greenstand.android.TreeTracker.models.LocationDataConfig
 import org.greenstand.android.TreeTracker.models.SessionTracker
@@ -42,7 +42,7 @@ class LocationDataCapturerTest {
     private lateinit var preferences: Preferences
 
     @MockK(relaxed = true)
-    private lateinit var treeTrackerDAO: TreeTrackerDAO
+    private lateinit var treeTrackerDAO: TreeTrackerDaoTest
 
     @MockK(relaxed = true)
     private lateinit var sessionTracker: SessionTracker
