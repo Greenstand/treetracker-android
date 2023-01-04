@@ -35,6 +35,7 @@ class TreeTrackerDaoTest {
     }
 
     @Test
+    @Throws(Exception::class)
     fun `insert planterInfo to App Database`() = runBlocking {
         treeTrackerDAO.insertPlanterInfo(fakePlanterInfo)
         val planterInfo = treeTrackerDAO.getAllPlanterInfo().first().first()
@@ -43,6 +44,7 @@ class TreeTrackerDaoTest {
     }
 
     @Test
+    @Throws(Exception::class)
     fun `insert userInfo to App Database`() = runBlocking {
         treeTrackerDAO.insertUser(fakeUser)
         val userInfo = treeTrackerDAO.getAllUsers().first().first()
@@ -59,19 +61,24 @@ class TreeTrackerDaoTest {
     }
 
     @Test
+    @Throws(Exception::class)
     fun `saving org to App Database, returns non null data`() = runBlocking {
         treeTrackerDAO.insertOrg(fakeOrg.first())
         val organization = treeTrackerDAO.getOrg("new")
         Assert.assertNotNull(organization)
     }
 
+
     @Test
-    fun `insert Planter CheckIn to App Database, returns valid org when querying id and name`() = runBlocking {
-        treeTrackerDAO.insertPlanterCheckIn(fakePlanterCheckInEntity)
-        val planterCheckIn = treeTrackerDAO.getAllPlanterCheckInsForPlanterInfoId(1)
-        Assert.assertNotNull(planterCheckIn)
-        Assert.assertEquals(fakePlanterCheckInEntity.id, planterCheckIn.first().id)
+    @Throws(Exception::class)
+    fun `insert fake Device Config to App Database, returns non_null and same UUID`() = runBlocking {
+        treeTrackerDAO.insertDeviceConfig(fakeDeviceConfig)
+        val deviceConfig = treeTrackerDAO.getLatestDeviceConfig()
+        Assert.assertNotNull(deviceConfig)
+        Assert.assertEquals(fakeDeviceConfig.uuid, deviceConfig?.uuid)
     }
+
+
 
     @After
     @Throws(IOException::class)

@@ -1,11 +1,13 @@
 package org.greenstand.android.TreeTracker.utils
 
 import kotlinx.datetime.Instant
+import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.user.User
 
 val fakeUsers = listOf(
@@ -138,3 +140,28 @@ val fakeOrg = listOf(
         captureSetupFlowJson = "first another random"
     )
 )
+
+val fakeTreeCapture = TreeCaptureEntity(
+    uuid = "uuid",
+    planterCheckInId = 1991,
+    localPhotoPath = null,
+    photoUrl = null,
+    noteContent = "note",
+    latitude = 12.11,
+    longitude = 13.11,
+    accuracy = 1.11,
+    uploaded = false,
+    createAt = 11221,
+    bundleId = null
+)
+val fakeDeviceConfig = DeviceConfigEntity(
+    uuid = "uui",
+    appBuild = 1,
+    appVersion = "version",
+    osVersion = "os version",
+    sdkVersion = 32,
+    loggedAt = Instant.DISTANT_FUTURE,
+    isUploaded = false,
+    bundleId = "bundle"
+)
+
