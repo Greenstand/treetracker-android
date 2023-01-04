@@ -1,13 +1,9 @@
 package org.greenstand.android.TreeTracker.utils
 
 import kotlinx.datetime.Instant
-import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
-import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeEntity
-import org.greenstand.android.TreeTracker.database.entity.UserEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.entity.*
+import org.greenstand.android.TreeTracker.database.legacy.entity.*
+import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.user.User
 
 val fakeUsers = listOf(
@@ -165,3 +161,31 @@ val fakeDeviceConfig = DeviceConfigEntity(
     bundleId = "bundle"
 )
 
+val fakeLocation = LocationEntity(
+    locationDataJson = "location",
+    sessionId = 1212
+)
+
+val fakeSession = SessionEntity(
+    uuid = "uuid",
+    originUserId = "user",
+    originWallet = "Wallet",
+    destinationWallet = "destination",
+    startTime = Instant.DISTANT_FUTURE,
+    endTime = null,
+    organization = "Org",
+    isUploaded = true,
+    bundleId = "bundleId",
+    deviceConfigId = 11212,
+    note = "random"
+)
+
+val fakeLocationData = LocationDataEntity(
+    locationDataJson = "random String"
+)
+
+val fakeTreeAttribute = TreeAttributeEntity(
+    key = "random key",
+    value = "random value",
+    treeCaptureId = 1212
+)
