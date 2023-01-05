@@ -7,8 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
-import org.greenstand.android.TreeTracker.utils.emptyUser
-import org.greenstand.android.TreeTracker.utils.fakeUsers
+import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Assert.*
 import org.junit.Before
@@ -38,23 +37,23 @@ class SignupViewModelTest {
     @Test
     fun `update first name, returns valid first name`() = runBlocking{
         signupViewModel.updateFirstName("Caleb")
-        assertEquals(signupViewModel.state.getOrAwaitValueTest().firstName, fakeUsers.first().firstName)
+        assertEquals(signupViewModel.state.getOrAwaitValueTest().firstName, FakeFileGenerator.fakeUsers.first().firstName)
     }
     @Test
     fun `Blank first name, returns Empty input `() = runBlocking{
         signupViewModel.updateFirstName("")
-        assertEquals(signupViewModel.state.getOrAwaitValueTest().firstName, emptyUser.firstName)
+        assertEquals(signupViewModel.state.getOrAwaitValueTest().firstName, FakeFileGenerator.emptyUser.firstName)
     }
     // Last Name
     @Test
     fun `update last name, returns valid last name`() = runBlocking{
         signupViewModel.updateLastName("Kaleb")
-        assertEquals(signupViewModel.state.getOrAwaitValueTest().lastName, fakeUsers.first().lastName)
+        assertEquals(signupViewModel.state.getOrAwaitValueTest().lastName, FakeFileGenerator.fakeUsers.first().lastName)
     }
     @Test
     fun `Blank last name, returns Empty input `() = runBlocking{
         signupViewModel.updateLastName("")
-        assertEquals(signupViewModel.state.getOrAwaitValueTest().lastName, emptyUser.lastName)
+        assertEquals(signupViewModel.state.getOrAwaitValueTest().lastName, FakeFileGenerator.emptyUser.lastName)
     }
     // Email
     @Test
