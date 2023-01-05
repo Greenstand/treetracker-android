@@ -45,7 +45,7 @@ class TreeImageReviewViewModel(
 
     fun addNote(){
         viewModelScope.launch {
-            treeCapturer.setNote(_state.value!!.note)
+            _state.value?.note?.let { treeCapturer.setNote(it) }
             _state.value = _state.value?.copy(isDialogOpen = false)
         }
     }
