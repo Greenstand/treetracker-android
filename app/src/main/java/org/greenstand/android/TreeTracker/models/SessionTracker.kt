@@ -2,6 +2,7 @@ package org.greenstand.android.TreeTracker.models
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
@@ -19,11 +20,12 @@ class SessionTracker(
     private val preferences: Preferences,
     private val timeProvider: TimeProvider,
     private val orgRepo: OrgRepo,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
 
     private var _currentSessionId: Long? = null
     val currentSessionId: Long?
-        get() = _currentSessionId //?: throw IllegalStateException("Session ID cannot be null when accessed")
+        get() = _currentSessionId
 
     suspend fun startSession() {
         val captureSetupData = CaptureSetupScopeManager.getData()
@@ -47,6 +49,13 @@ class SessionTracker(
             _currentSessionId = dao.insertSession(sessionEntity)
 
             preferences.edit().putLong(SESSION_ID_KEY, _currentSessionId ?: -1).commit()
+            exceptionDataCollector.apply {
+                set(ExceptionDataCollector.ORG_NAME, sessionEntity.organization)
+                set(ExceptionDataCollector.DESTINATION_WALLET, sessionEntity.destinationWallet)
+                set(ExceptionDataCollector.USER_WALLET, sessionEntity.originWallet)
+                set(ExceptionDataCollector.SESSION_NOTE, sessionEntity.note)
+                set(ExceptionDataCollector.IS_IN_SESSION, true)
+            }
         }
     }
 
@@ -63,6 +72,11 @@ class SessionTracker(
                 preferences.edit().putLong(SESSION_ID_KEY, -1).commit()
             }
         }
+
+        exceptionDataCollector.clear(ExceptionDataCollector.ORG_NAME)
+        exceptionDataCollector.clear(ExceptionDataCollector.DESTINATION_WALLET)
+        exceptionDataCollector.clear(ExceptionDataCollector.SESSION_NOTE)
+        exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, false)
     }
 
     fun wasSessionInterrupted(): Boolean {

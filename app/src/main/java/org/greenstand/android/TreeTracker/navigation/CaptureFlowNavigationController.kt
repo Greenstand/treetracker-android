@@ -1,8 +1,10 @@
 package org.greenstand.android.TreeTracker.navigation
 
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
@@ -69,7 +71,9 @@ class CaptureFlowNavigationController(
         GlobalScope.launch {
             sessionTracker.endSession()
             stepCounter.disable()
-            locationDataCapturer.stopGpsUpdates()
+            withContext(Dispatchers.Main) {
+                locationDataCapturer.stopGpsUpdates()
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
 import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
 import org.greenstand.android.TreeTracker.di.networkModule
@@ -39,6 +40,8 @@ class TreeTrackerApplication : Application() {
                     "use the command 'adb forward tcp:8080 tcp:8080' from terminal")
             Timber.tag("DebugDB").d("For more information visit: " +
                     "https://github.com/amitshekhariitbhu/Android-Debug-Database")
+        } else {
+            Timber.plant(ExceptionLogger())
         }
     }
 

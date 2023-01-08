@@ -12,6 +12,7 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -20,12 +21,16 @@ class TreeSyncWorker(
     context: Context,
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters), KoinComponent {
+
+    private val exceptionDataCollector: ExceptionDataCollector by inject()
     private val syncDataBundleUseCase: SyncDataUseCase by inject()
     private val syncNotificationManager: SyncNotificationManager by inject()
 
     override suspend fun doWork(): Result {
         setForeground(syncNotificationManager.createForegroundInfo(applicationContext, id))
+        exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
         val result = syncDataBundleUseCase.execute(Unit)
+        exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
         return if (result) Result.success() else Result.failure()
     }
 

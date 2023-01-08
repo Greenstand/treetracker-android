@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
 import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
@@ -29,9 +30,17 @@ import org.greenstand.android.TreeTracker.treeheight.TreeHeightScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-sealed class NavRoute {
+sealed class NavRoute : KoinComponent {
 
+    private val exceptionDataCollector: ExceptionDataCollector by inject()
+
+    val contentProvider: @Composable (NavBackStackEntry) -> Unit = {
+        exceptionDataCollector.setScreen(route)
+        content(it)
+    }
     abstract val content: @Composable (NavBackStackEntry) -> Unit
     abstract val route: String
     open val arguments: List<NamedNavArgument> = emptyList()
