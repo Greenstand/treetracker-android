@@ -1,7 +1,7 @@
 package org.greenstand.android.TreeTracker.walletselect
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.launchIn
@@ -20,8 +20,9 @@ data class WalletSelectState(
 
 class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
 
-    private val _state = MutableLiveData<WalletSelectState>()
-    val state: LiveData<WalletSelectState> = _state
+    private val _state = mutableStateOf(WalletSelectState())
+    val state: State<WalletSelectState> = _state
+
 
     init {
         viewModelScope.launch {
