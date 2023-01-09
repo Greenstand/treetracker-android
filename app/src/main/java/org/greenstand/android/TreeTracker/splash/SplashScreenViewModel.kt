@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.SessionTracker
@@ -25,6 +26,7 @@ class SplashScreenViewModel(
     private val messagesRepo: MessagesRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase,
     private val orgRepo: OrgRepo,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) : ViewModel() {
 
     suspend fun bootstrap() {
@@ -35,6 +37,10 @@ class SplashScreenViewModel(
 
         if (checkForInternetUseCase.execute(Unit)) {
             messagesRepo.syncMessages()
+        }
+
+        userRepo.getPowerUser()?.let {
+            exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, it.wallet)
         }
 
         // If session was not ended properly (user/system killed app)...
@@ -58,6 +64,6 @@ class SplashScreenViewModelFactory(private val orgJsonString: String?) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return SplashScreenViewModel(orgJsonString, get(), get(), get(), get(), get(), get(), get(), get()) as T
+        return SplashScreenViewModel(orgJsonString, get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
     }
 }

@@ -1,6 +1,7 @@
 package org.greenstand.android.TreeTracker.models.location
 
 import android.location.Location
+import androidx.annotation.MainThread
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -136,6 +137,7 @@ class LocationDataCapturer(
         areLocationUpdatesOn = true
     }
 
+    @MainThread
     fun stopGpsUpdates() {
         if (!areLocationUpdatesOn) {
             return

@@ -44,7 +44,7 @@ fun Host() {
 
 fun NavGraphBuilder.addNavRoute(navRoute: NavRoute) {
     addDestination(
-        ComposeNavigator.Destination(provider[ComposeNavigator::class], navRoute.content).apply {
+        ComposeNavigator.Destination(provider[ComposeNavigator::class], navRoute.contentProvider).apply {
             this.route = navRoute.route
             navRoute.arguments.forEach { (argumentName, argument) ->
                 addArgument(argumentName, argument)
