@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
@@ -19,6 +20,7 @@ class UserRepo(
     private val analytics: Analytics,
     private val timeProvider: TimeProvider,
     private val messagesDao: MessagesDAO,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
 
     fun users(): Flow<List<User>> {
@@ -76,6 +78,10 @@ class UserRepo(
                 photoPath = photoPath,
                 photoUrl = null,
             )
+
+            if (isPowerUser) {
+                exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, wallet)
+            }
 
             dao.insertUser(entity).also {
                 analytics.userInfoCreated(
