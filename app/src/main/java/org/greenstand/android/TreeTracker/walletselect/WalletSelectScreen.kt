@@ -43,7 +43,7 @@ fun WalletSelectScreen(
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
 
-    val state = viewModel.state.collectAsState(initial = WalletSelectState())
+    val state by viewModel.state.collectAsState(initial = WalletSelectState())
 
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
@@ -52,7 +52,7 @@ fun WalletSelectScreen(
         topBar = {
             ActionBar(
                 leftAction = {
-                    state.value.currentUser?.photoPath?.let {
+                    state.currentUser?.photoPath?.let {
                         UserImageButton(
                             onClick = {
                                 CaptureSetupScopeManager.nav.navToUserSelect(navController)
@@ -68,10 +68,10 @@ fun WalletSelectScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.value.selectedUser != null
+                        isEnabled = state.selectedUser != null
                     ) {
                         scope.launch {
-                            state.value.currentUser?.let {
+                            state.currentUser?.let {
                                 CaptureSetupScopeManager.nav.navForward(navController)
                             }
                         }
@@ -101,16 +101,16 @@ fun WalletSelectScreen(
                     bottom = 90.dp
                 )
         ) {
-            state.value.currentUser?.let { currentUser ->
+            state.currentUser?.let { currentUser ->
                 item {
-                    WalletItem(currentUser, state.value.selectedUser == currentUser) {
+                    WalletItem(currentUser, state.selectedUser == currentUser) {
                         viewModel.selectPlanter(it)
                     }
                 }
             }
-            state.value.alternateUsers.let { alternateUsers ->
+            state.alternateUsers.let { alternateUsers ->
                 items(alternateUsers) { user ->
-                    WalletItem(user, state.value.selectedUser == user) {
+                    WalletItem(user, state.selectedUser == user) {
                         viewModel.selectPlanter(it)
                     }
                 }
