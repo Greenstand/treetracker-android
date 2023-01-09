@@ -1,19 +1,18 @@
 package org.greenstand.android.TreeTracker.treeheight
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.compose.material.ButtonColors
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.TreeCapturer
+import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class TreeHeightSelectionViewModelTest {
@@ -33,8 +32,38 @@ class TreeHeightSelectionViewModelTest {
     }
 
     @Test
-    fun `select color`()= runBlocking {
+    fun `selected color is progress green, assert correct color`()= runBlocking {
         treeHeightSelectionViewModel.selectColor(AppButtonColors.ProgressGreen)
         val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        Assert.assertEquals(result, FakeFileGenerator.fakeProgressGreen)
+    }
+
+    @Test
+    fun `selected color is sky blue, assert correct color`()= runBlocking {
+        treeHeightSelectionViewModel.selectColor(AppButtonColors.SkyBlue)
+        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        Assert.assertEquals(result, FakeFileGenerator.fakeSkyBlue)
+    }
+
+    @Test
+    fun `selected color is upload orange, assert correct color`()= runBlocking {
+        treeHeightSelectionViewModel.selectColor(AppButtonColors.UploadOrange)
+        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        Assert.assertEquals(result, FakeFileGenerator.fakeUploadOrange)
+    }
+
+
+    @Test
+    fun `selected color is yellow, assert correct color`()= runBlocking {
+        treeHeightSelectionViewModel.selectColor(AppButtonColors.Yellow)
+        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        Assert.assertEquals(result, FakeFileGenerator.fakeYellow)
+    }
+
+    @Test
+    fun `selected color is message purple, assert correct color`()= runBlocking {
+        treeHeightSelectionViewModel.selectColor(AppButtonColors.MessagePurple)
+        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        Assert.assertEquals(result, FakeFileGenerator.fakeMessagePurple)
     }
 }
