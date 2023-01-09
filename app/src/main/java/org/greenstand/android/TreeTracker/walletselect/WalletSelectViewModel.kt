@@ -28,7 +28,7 @@ class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
             userRepo.users()
                 .map { users -> users.filter { it.id != currentUser?.id } }
                 .onEach { users ->
-                    _state.value = _state.value?.copy(
+                    _state.value = _state.value.copy(
                         currentUser = currentUser,
                         alternateUsers = users
                     )
@@ -41,7 +41,7 @@ class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
         viewModelScope.launch {
             val selectedUser = userRepo.getUserList().find { planterInfoId == it.id }
             CaptureSetupScopeManager.getData().destinationWallet = selectedUser?.wallet
-            _state.value = _state.value?.copy(
+            _state.value = _state.value.copy(
                 selectedUser = selectedUser
             )
         }
