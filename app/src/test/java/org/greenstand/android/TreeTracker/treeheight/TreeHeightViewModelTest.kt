@@ -35,21 +35,21 @@ class TreeHeightViewModelTest {
     fun `selected color is progress green, assert correct color`()= runBlocking {
         treeHeightSelectionViewModel.selectColor(AppButtonColors.ProgressGreen)
         val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, FakeFileGenerator.fakeProgressGreen)
+        Assert.assertEquals(result, AppButtonColors.ProgressGreen)
     }
 
     @Test
     fun `selected color is sky blue, assert correct color`()= runBlocking {
         treeHeightSelectionViewModel.selectColor(AppButtonColors.SkyBlue)
         val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, FakeFileGenerator.fakeSkyBlue)
+        Assert.assertEquals(result, AppButtonColors.SkyBlue)
     }
 
     @Test
     fun `selected color is upload orange, assert correct color`()= runBlocking {
         treeHeightSelectionViewModel.selectColor(AppButtonColors.UploadOrange)
         val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, FakeFileGenerator.fakeUploadOrange)
+        Assert.assertEquals(result,AppButtonColors.UploadOrange)
     }
 
 
@@ -57,13 +57,13 @@ class TreeHeightViewModelTest {
     fun `selected color is yellow, assert correct color`()= runBlocking {
         treeHeightSelectionViewModel.selectColor(AppButtonColors.Yellow)
         val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, FakeFileGenerator.fakeYellow)
+        Assert.assertEquals(result, AppButtonColors.Yellow)
     }
 
     @Test
     fun `selected color is message purple, assert correct color`()= runBlocking {
         treeHeightSelectionViewModel.selectColor(AppButtonColors.MessagePurple)
         val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, FakeFileGenerator.fakeMessagePurple)
+        Assert.assertEquals(result, AppButtonColors.MessagePurple)
     }
 }
