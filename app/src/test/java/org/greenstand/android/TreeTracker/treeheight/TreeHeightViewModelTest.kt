@@ -5,6 +5,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
@@ -32,38 +33,58 @@ class TreeHeightViewModelTest {
     }
 
     @Test
-    fun `selected color is progress green, assert correct color`()= runBlocking {
-        treeHeightSelectionViewModel.selectColor(AppButtonColors.ProgressGreen)
-        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, AppButtonColors.ProgressGreen)
+    fun `selected color is progress green, asserts correct color added `()= runBlocking {
+        val color = AppButtonColors.ProgressGreen
+        treeHeightSelectionViewModel.selectColor(color)
+        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, color.toString())
+        val selectedColorResult = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        val setsColorAttribute = treeHeightSelectionViewModel.state.getOrAwaitValueTest().colours.first()
+        Assert.assertEquals(selectedColorResult, AppButtonColors.ProgressGreen)
+        Assert.assertEquals(setsColorAttribute, AppButtonColors.ProgressGreen)
     }
 
     @Test
-    fun `selected color is sky blue, assert correct color`()= runBlocking {
-        treeHeightSelectionViewModel.selectColor(AppButtonColors.SkyBlue)
-        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, AppButtonColors.SkyBlue)
+    fun `selected color is sky blue, assert correct color added`()= runBlocking {
+        val color = AppButtonColors.SkyBlue
+        treeHeightSelectionViewModel.selectColor(color)
+        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, color.toString())
+        val selectedColorResult = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        val setsColorAttribute = treeHeightSelectionViewModel.state.getOrAwaitValueTest().colours[3]
+        Assert.assertEquals(selectedColorResult, AppButtonColors.SkyBlue)
+        Assert.assertEquals(setsColorAttribute, AppButtonColors.SkyBlue)
     }
 
     @Test
-    fun `selected color is upload orange, assert correct color`()= runBlocking {
-        treeHeightSelectionViewModel.selectColor(AppButtonColors.UploadOrange)
-        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result,AppButtonColors.UploadOrange)
+    fun `selected color is upload orange, assert correct color added`()= runBlocking {
+        val color = AppButtonColors.UploadOrange
+        treeHeightSelectionViewModel.selectColor(color)
+        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, color.toString())
+        val selectedColorResult = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        val setsColorAttribute = treeHeightSelectionViewModel.state.getOrAwaitValueTest().colours[4]
+        Assert.assertEquals(selectedColorResult, AppButtonColors.UploadOrange)
+        Assert.assertEquals(setsColorAttribute, AppButtonColors.UploadOrange)
     }
 
 
     @Test
-    fun `selected color is yellow, assert correct color`()= runBlocking {
-        treeHeightSelectionViewModel.selectColor(AppButtonColors.Yellow)
-        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, AppButtonColors.Yellow)
+    fun `selected color is yellow, assert correct color added`()= runBlocking {
+        val color = AppButtonColors.Yellow
+        treeHeightSelectionViewModel.selectColor(color)
+        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, color.toString())
+        val selectedColorResult = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        val setsColorAttribute = treeHeightSelectionViewModel.state.getOrAwaitValueTest().colours[2]
+        Assert.assertEquals(selectedColorResult, AppButtonColors.Yellow)
+        Assert.assertEquals(setsColorAttribute, AppButtonColors.Yellow)
     }
 
     @Test
-    fun `selected color is message purple, assert correct color`()= runBlocking {
-        treeHeightSelectionViewModel.selectColor(AppButtonColors.MessagePurple)
-        val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        Assert.assertEquals(result, AppButtonColors.MessagePurple)
+    fun `selected color is message purple, assert correct color added`()= runBlocking {
+        val color = AppButtonColors.MessagePurple
+        treeHeightSelectionViewModel.selectColor(color)
+        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, color.toString())
+        val selectedColorResult = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
+        val setsColorAttribute = treeHeightSelectionViewModel.state.getOrAwaitValueTest().colours[1]
+        Assert.assertEquals(selectedColorResult, AppButtonColors.MessagePurple)
+        Assert.assertEquals(setsColorAttribute, AppButtonColors.MessagePurple)
     }
 }
