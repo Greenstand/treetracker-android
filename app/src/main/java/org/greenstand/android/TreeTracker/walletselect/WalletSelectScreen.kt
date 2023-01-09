@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,7 +43,7 @@ fun WalletSelectScreen(
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
 
-    val state = viewModel.state.value
+    val state = viewModel.state.collectAsState(initial = WalletSelectState())
 
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
@@ -51,7 +52,7 @@ fun WalletSelectScreen(
         topBar = {
             ActionBar(
                 leftAction = {
-                    state.currentUser?.photoPath?.let {
+                    state.value.currentUser?.photoPath?.let {
                         UserImageButton(
                             onClick = {
                                 CaptureSetupScopeManager.nav.navToUserSelect(navController)
@@ -67,10 +68,10 @@ fun WalletSelectScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.selectedUser != null
+                        isEnabled = state.value.selectedUser != null
                     ) {
                         scope.launch {
-                            state.currentUser?.let {
+                            state.value.currentUser?.let {
                                 CaptureSetupScopeManager.nav.navForward(navController)
                             }
                         }
@@ -100,16 +101,16 @@ fun WalletSelectScreen(
                     bottom = 90.dp
                 )
         ) {
-            state.currentUser?.let { currentUser ->
+            state.value.currentUser?.let { currentUser ->
                 item {
-                    WalletItem(currentUser, state.selectedUser == currentUser) {
+                    WalletItem(currentUser, state.value.selectedUser == currentUser) {
                         viewModel.selectPlanter(it)
                     }
                 }
             }
-            state.alternateUsers.let { alternateUsers ->
+            state.value.alternateUsers.let { alternateUsers ->
                 items(alternateUsers) { user ->
-                    WalletItem(user, state.selectedUser == user) {
+                    WalletItem(user, state.value.selectedUser == user) {
                         viewModel.selectPlanter(it)
                     }
                 }

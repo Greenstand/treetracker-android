@@ -4,9 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
@@ -20,8 +18,8 @@ data class WalletSelectState(
 
 class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
 
-    private val _state = mutableStateOf(WalletSelectState())
-    val state: State<WalletSelectState> = _state
+    private val _state = MutableStateFlow(WalletSelectState())
+    val state: Flow<WalletSelectState> = _state
 
 
     init {
