@@ -42,7 +42,7 @@ fun WalletSelectScreen(
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
 
-    val state by viewModel.state.observeAsState(initial = WalletSelectState())
+    val state = viewModel.state.value
 
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
