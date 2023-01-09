@@ -1,16 +1,13 @@
 package org.greenstand.android.TreeTracker.utils
 
-import androidx.compose.ui.graphics.Color
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.legacy.entity.*
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.user.User
-import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.DepthButtonColors
 
 object FakeFileGenerator {
-    
+
     val fakeUsers = listOf(
         User(
             id = 122,
@@ -193,38 +190,5 @@ object FakeFileGenerator {
         key = "random key",
         value = "random value",
         treeCaptureId = 1212
-    )
-
-    val fakeProgressGreen = DepthButtonColors(
-        color = AppColors.Green,
-        shadowColor = AppColors.GreenShadow,
-        disabledColor = AppColors.GreenDisabled,
-        disabledShadowColor = AppColors.GreenShadowDisabled
-    )
-
-    val fakeMessagePurple = DepthButtonColors(
-        color = AppColors.Purple,
-        shadowColor = AppColors.PurpleShadow,
-        disabledColor = AppColors.PurpleDisabled,
-        disabledShadowColor = AppColors.PurpleShadowDisabled
-    )
-
-    val fakeUploadOrange = DepthButtonColors(
-        color = AppColors.Orange,
-        shadowColor = AppColors.OrangeShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
-    )
-    val fakeYellow = DepthButtonColors(
-        color = AppColors.Yellow,
-        shadowColor = AppColors.YellowShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
-    )
-    val fakeSkyBlue = DepthButtonColors(
-        color = AppColors.SkyBlue,
-        shadowColor = AppColors.SkyBlueShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
     )
 }
