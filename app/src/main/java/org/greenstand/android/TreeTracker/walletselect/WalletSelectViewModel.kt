@@ -33,10 +33,8 @@ class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
                     _state.value = _state.value?.copy(
                         currentUser = currentUser,
                         alternateUsers = users
-                    ) ?: WalletSelectState(
-                        currentUser = currentUser,
-                        alternateUsers = users
-                    )}
+                    )
+                }
                 .launchIn(this)
         }
     }
