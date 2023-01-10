@@ -36,9 +36,9 @@ class TreeHeightViewModelTest {
     fun `selected color is progress green, asserts correct color added `()= runBlocking {
         val color = AppButtonColors.ProgressGreen
         treeHeightSelectionViewModel.selectColor(color)
-        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, color.toString())
         val result = treeHeightSelectionViewModel.state.getOrAwaitValueTest().selectedColour
-        verify { treeHeightSelectionViewModel.selectColor(color) }
+        verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, color.toString()) }
+        confirmVerified(treeCapturer)
         Assert.assertEquals(result, AppButtonColors.ProgressGreen)
     }
 }
