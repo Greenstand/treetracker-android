@@ -167,6 +167,9 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/io.netty.versions.properties'
         exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+
 
     }
 }
@@ -270,6 +273,13 @@ dependencies {
     androidTestImplementation "com.android.support.test:runner:1.0.2"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
     testImplementation "org.robolectric:robolectric:4.8.1"
+
+    // dependency for Compose UI test
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
+
+
 
 }
 

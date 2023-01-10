@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
@@ -34,6 +35,7 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+@Preview(showBackground = true)
 fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
 
     val navController = LocalNavHostController.current
