@@ -8,8 +8,11 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
@@ -106,7 +109,7 @@ val appModule = module {
 
     viewModel { PermissionViewModel(get()) }
 
-    single { UserRepo(get(), get(), get(), get(), get()) }
+    single { UserRepo(get(), get(), get(), get(), get(), get()) }
 
     factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
@@ -161,7 +164,7 @@ val appModule = module {
         ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
     }
 
-    single { SessionTracker(get(), get(), get(), get(), get()) }
+    single { SessionTracker(get(), get(), get(), get(), get(), get()) }
 
     single { StepCounter(get(), get()) }
 
@@ -177,6 +180,8 @@ val appModule = module {
     }
 
     single { TreeTrackerViewModelFactory() }
+
+    single { ExceptionDataCollector(get()) }
 
     factory { TimeProvider(get()) }
 
@@ -208,8 +213,10 @@ val appModule = module {
 
     factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
 
+    factory { Firebase.crashlytics }
+
     scope<CaptureSetupScope> {
-        scoped { CaptureSetupData() }
+        scoped { CaptureSetupData(get()) }
         scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
     }
 
