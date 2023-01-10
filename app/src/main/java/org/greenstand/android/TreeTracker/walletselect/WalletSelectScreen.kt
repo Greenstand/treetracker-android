@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,7 +43,7 @@ fun WalletSelectScreen(
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
 
-    val state by viewModel.state.observeAsState(initial = WalletSelectState())
+    val state by viewModel.state.collectAsState(initial = WalletSelectState())
 
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
