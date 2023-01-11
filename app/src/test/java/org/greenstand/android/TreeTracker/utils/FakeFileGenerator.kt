@@ -7,7 +7,7 @@ import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.user.User
 
 object FakeFileGenerator {
-    
+
     val fakeUsers = listOf(
         User(
             id = 122,
