@@ -1,8 +1,11 @@
 package org.greenstand.android.TreeTracker.capture
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -13,7 +16,7 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
-import org.greenstand.android.TreeTracker.utils.emptyUser
+import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Before
 import org.junit.Rule
@@ -52,7 +55,7 @@ class TreeCaptureViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        coEvery { userRepo.getPowerUser() } returns emptyUser
+        coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
 
         treeCaptureViewModel = TreeCaptureViewModel(
             profilePicUrl = profilePicUrl,
@@ -65,7 +68,7 @@ class TreeCaptureViewModelTest {
     }
 
     @Test
-    fun isFirstTrack() = runBlocking {
+    fun `WHEN numberOfTrees greater than 0 THEN firstTrack is false `() = runBlocking {
         coEvery { userRepo.getPowerUser() } returns User(
             id = 5,
             wallet = "",
@@ -82,29 +85,49 @@ class TreeCaptureViewModelTest {
     }
 
     @Test
-    fun captureLocation() = runBlocking {
-        coEvery { treeCapturer.pinLocation() } returns true
+    fun `WHEN numberOfTrees less than 1 THEN firstTrack is true `() = runBlocking {
+        coEvery { userRepo.getPowerUser() } returns User(
+            id = 5,
+            wallet = "",
+            numberOfTrees = 0,
+            firstName = "",
+            lastName = "",
+            photoPath = "",
+            isPowerUser = false,
+            unreadMessagesAvailable = false
+        )
 
-        treeCaptureViewModel.captureLocation()
-
-        assertTrue(treeCaptureViewModel.state.getOrAwaitValueTest().isLocationAvailable ?: false)
-        assertFalse(treeCaptureViewModel.state.getOrAwaitValueTest().isGettingLocation)
+        val result = treeCaptureViewModel.isFirstTrack()
+        assertTrue(result)
     }
 
     @Test
-    fun updateBadGpsDialogState() = runBlocking {
+    fun `WHEN location coordinate is available THEN isLocationAvailable state true AND isGettingLocation state always false `() =
+        runBlocking {
+            coEvery { treeCapturer.pinLocation() } returns true
+
+            treeCaptureViewModel.captureLocation()
+
+            assertTrue(
+                treeCaptureViewModel.state.getOrAwaitValueTest().isLocationAvailable ?: false
+            )
+            assertFalse(treeCaptureViewModel.state.getOrAwaitValueTest().isGettingLocation)
+        }
+
+    @Test
+    fun `WHEN updateBadGpsDialogState true THEN isLocationAvailable state true`() = runBlocking {
         treeCaptureViewModel.updateBadGpsDialogState(true)
         assertTrue(treeCaptureViewModel.state.getOrAwaitValueTest().isLocationAvailable ?: false)
     }
 
     @Test
-    fun updateCaptureTutorialDialog() = runBlocking {
+    fun `WHEN updateCaptureTutorialDialog true THEN showCaptureTutorial state true`() = runBlocking {
         treeCaptureViewModel.updateCaptureTutorialDialog(true)
         assertTrue(treeCaptureViewModel.state.getOrAwaitValueTest().showCaptureTutorial ?: false)
     }
 
     @Test
-    fun endSession() = runBlocking {
+    fun `WHEN end session THEN stopGpsUpdates and endSession functions were called one time`() = runBlocking {
         treeCaptureViewModel.endSession()
 
         verify(exactly = 1) { locationDataCapturer.stopGpsUpdates() }
@@ -112,13 +135,12 @@ class TreeCaptureViewModelTest {
     }
 
     @Test
-    fun createFakeTrees() = runBlocking {
+    fun `WHEN create fake trees THEN createFakeTreesUseCase is called 1 time AND isCreatingFakeTrees state always false`() = runBlocking {
         treeCaptureViewModel.createFakeTrees()
 
         coVerify(exactly = 1) { createFakeTreesUseCase.execute(CreateFakeTreesParams(50)) }
         assertFalse(treeCaptureViewModel.state.getOrAwaitValueTest().isCreatingFakeTrees)
     }
-
 
 
 }
