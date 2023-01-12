@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +36,6 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-@Preview(showBackground = true)
 fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
 
     val navController = LocalNavHostController.current
@@ -98,7 +98,7 @@ fun OrgItem(org: Org, isSelected: Boolean, onClick: () -> Unit) {
         isSelected = isSelected,
         modifier = Modifier
             .padding(16.dp)
-            .size(height = 80.dp, width = 156.dp)
+            .size(height = 80.dp, width = 156.dp).testTag("TreeTrackerButton")
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
