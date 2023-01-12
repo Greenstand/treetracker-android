@@ -4,6 +4,8 @@ import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.legacy.entity.*
 import org.greenstand.android.TreeTracker.models.LocationData
+import org.greenstand.android.TreeTracker.models.organization.Destination
+import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.user.User
 
 object FakeFileGenerator {
@@ -190,5 +192,31 @@ object FakeFileGenerator {
         key = "random key",
         value = "random value",
         treeCaptureId = 1212
+    )
+
+    val fakeOrganization = Org(
+        id = "id",
+        name = "GreenStand",
+        walletId = "wallet",
+        logoPath = "logo",
+        captureFlow = listOf(
+            Destination(
+                route = "first Destination",
+                features = null
+            ),
+            Destination(
+                route = "second Destination",
+                features = null)
+        ),
+        captureSetupFlow =
+        listOf(
+            Destination(
+                route = "first Destination",
+                features = null
+            ),
+            Destination(
+                route = "second Destination",
+                features = null)
+        )
     )
 }
