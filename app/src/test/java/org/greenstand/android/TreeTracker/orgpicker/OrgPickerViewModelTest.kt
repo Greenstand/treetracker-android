@@ -33,16 +33,19 @@ class OrgPickerViewModelTest {
     @Test
     @Throws(Exception::class)
     fun `set fake organization, returns success with correct data`()= runBlockingTest {
-        val currentOrg = FakeFileGenerator.fakeOrganization
+        val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
+        val orgList = FakeFileGenerator.fakeOrganizationList
         //Given
         coEvery { orgRepo.currentOrg() } returns  currentOrg
+        coEvery { orgRepo.getOrgs() } returns orgList
 
         // When
-        orgPickerViewModel.setOrg(FakeFileGenerator.fakeOrganization)
+        orgPickerViewModel.setOrg(FakeFileGenerator.fakeOrganizationList.first())
 
-        //Assert LiveData has correct data
+        //Assert LiveData has correct data and verify Org gets the correct set
         val result = orgPickerViewModel.state.getOrAwaitValueTest().currentOrg
-        Assert.assertEquals(result, FakeFileGenerator.fakeOrganization)
+        coVerify { orgRepo.getOrgs() }
+        Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
     }
 
 }
