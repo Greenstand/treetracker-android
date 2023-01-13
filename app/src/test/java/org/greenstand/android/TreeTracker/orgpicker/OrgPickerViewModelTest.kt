@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.orgpicker
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
@@ -30,21 +31,28 @@ class OrgPickerViewModelTest {
         orgPickerViewModel = OrgPickerViewModel(orgRepo)
     }
 
+
     @Test
     @Throws(Exception::class)
-    fun `set fake organization, returns success with correct data`()= runBlockingTest {
-        val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
+    fun `verify Org Repo gets correct Org Set`() = runBlockingTest{
         val orgList = FakeFileGenerator.fakeOrganizationList
+        coEvery { orgRepo.getOrgs() } returns orgList
+
+        coVerify { orgRepo.getOrgs() }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `set fake organization, returns success with valid Org`()= runBlocking {
+        val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
         //Given
         coEvery { orgRepo.currentOrg() } returns  currentOrg
-        coEvery { orgRepo.getOrgs() } returns orgList
 
         // When
         orgPickerViewModel.setOrg(FakeFileGenerator.fakeOrganizationList.first())
 
-        //Assert LiveData has correct data and verify Org gets the correct set
+        //Assert LiveData has correct data
         val result = orgPickerViewModel.state.getOrAwaitValueTest().currentOrg
-        coVerify { orgRepo.getOrgs() }
         Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
     }
 
