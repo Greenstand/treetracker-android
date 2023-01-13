@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.userselect.UserSelectState
 
 data class SessionNoteState(
     val note: String = "",
@@ -14,8 +17,8 @@ data class SessionNoteState(
 
 class SessionNoteViewModel : ViewModel() {
 
-    private val _state = MutableLiveData<SessionNoteState>()
-    val state: LiveData<SessionNoteState> = _state
+    private val _state = MutableStateFlow(SessionNoteState())
+    val state: Flow<SessionNoteState> = _state
 
     init {
         viewModelScope.launch {

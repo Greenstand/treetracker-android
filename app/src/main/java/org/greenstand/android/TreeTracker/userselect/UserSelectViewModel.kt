@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.greenstand.android.TreeTracker.models.UserRepo
@@ -22,8 +24,8 @@ class UserSelectViewModel(
     locationDataCapturer: LocationDataCapturer,
 ) : ViewModel() {
 
-    private val _state = MutableLiveData<UserSelectState>()
-    val state: LiveData<UserSelectState> = _state
+    private val _state = MutableStateFlow(UserSelectState())
+    val state: Flow<UserSelectState> = _state
 
     init {
         CaptureSetupScopeManager.open()
@@ -37,7 +39,7 @@ class UserSelectViewModel(
 
     fun selectUser(user: User) {
         CaptureSetupScopeManager.getData().user = user
-        _state.value = _state.value?.copy(
+        _state.value = _state.value.copy(
             selectedUser = user
         )
     }
