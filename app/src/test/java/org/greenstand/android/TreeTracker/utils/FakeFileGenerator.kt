@@ -194,29 +194,56 @@ object FakeFileGenerator {
         treeCaptureId = 1212
     )
 
-    val fakeOrganization = Org(
-        id = "id",
-        name = "GreenStand",
-        walletId = "wallet",
-        logoPath = "logo",
-        captureFlow = listOf(
-            Destination(
-                route = "first Destination",
-                features = null
+    val fakeOrganizationList = listOf(
+        Org(
+            id = "id",
+            name = "GreenStand",
+            walletId = "wallet",
+            logoPath = "logo",
+            captureFlow = listOf(
+                Destination(
+                    route = "first Destination",
+                    features = null
+                ),
+                Destination(
+                    route = "second Destination",
+                    features = null)
             ),
-            Destination(
-                route = "second Destination",
-                features = null)
+            captureSetupFlow =
+            listOf(
+                Destination(
+                    route = "first Destination",
+                    features = null
+                ),
+                Destination(
+                    route = "second Destination",
+                    features = null)
+            )
         ),
-        captureSetupFlow =
-        listOf(
-            Destination(
-                route = "first Destination",
-                features = null
+        Org(
+            id = "newId",
+            name = "random",
+            walletId = "SecondWallet",
+            logoPath = "newLogo",
+            captureFlow = listOf(
+                Destination(
+                    route = "new Destination",
+                    features = null
+                ),
+                Destination(
+                    route = "Destination",
+                    features = null)
             ),
-            Destination(
-                route = "second Destination",
-                features = null)
+            captureSetupFlow =
+            listOf(
+                Destination(
+                    route = "another Destination",
+                    features = null
+                ),
+                Destination(
+                    route = "random Destination",
+                    features = null)
+            )
         )
     )
 }
