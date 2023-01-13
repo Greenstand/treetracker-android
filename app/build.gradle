@@ -1,10 +1,12 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'kotlin-kapt'
-apply plugin: "androidx.navigation.safeargs"
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id "androidx.navigation.safeargs"
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
 
 def loadExtraProperties(String fileName) {
     def props = new Properties()
@@ -279,5 +281,3 @@ configurations.all {
         force 'com.google.code.gson:gson:2.8.5'
     }
 }
-
-apply plugin: 'com.google.gms.google-services'
