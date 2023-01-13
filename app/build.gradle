@@ -4,7 +4,6 @@ plugins {
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
     id "androidx.navigation.safeargs"
-    id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
 
@@ -281,3 +280,5 @@ configurations.all {
         force 'com.google.code.gson:gson:2.8.5'
     }
 }
+
+apply plugin: 'com.google.gms.google-services'
