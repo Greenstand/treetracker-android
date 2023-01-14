@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -38,7 +39,7 @@ fun UserSelect(
 ) {
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(UserSelectState())
+    val state by viewModel.state.collectAsState(UserSelectState())
 
     Scaffold(
         bottomBar = {
