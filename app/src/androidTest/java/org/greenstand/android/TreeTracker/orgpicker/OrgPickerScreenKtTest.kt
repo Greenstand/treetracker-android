@@ -31,7 +31,7 @@ class OrgPickerScreenKtTest {
 
     //Test is working
     @Test
-    fun OrgItemTest() {
+    fun OrgItemNameEqualsInputName() {
 
         var isClicked:Boolean = false
 
@@ -70,7 +70,7 @@ class OrgPickerScreenKtTest {
     //Test working
 
     @Test
-    fun OrgItemTestisClickable() {
+    fun OrgisClickable() {
 
         var clicked= false
 
@@ -112,7 +112,7 @@ class OrgPickerScreenKtTest {
       rule.setContent {
           OrgPickerScreen()
       }
-        rule.onNode(hasText("SELECT ORGANIZATION")).assertExists()
+        rule.onNode(hasText("SELECT ORGANIZATION")).assertIsDisplayed()
     }
 
 
