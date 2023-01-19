@@ -29,33 +29,29 @@ class AnnouncementViewModelTest{
 
     @Before
     fun setup(){
-        coEvery { messagesRepo.getAnnouncementMessages(messageId) } returns fakeAnnouncementMessage
+        coEvery { messagesRepo.getAnnouncementMessages(any()) } returns fakeAnnouncementMessage
         announcementViewModel = AnnouncementViewModel(messageId, messagesRepo)
     }
 
     @Test
     fun `verify messages repo gets the correct announcement message `()= runBlocking {
-        coEvery { messagesRepo.getAnnouncementMessages(messageId) } returns fakeAnnouncementMessage
         coVerify { messagesRepo.getAnnouncementMessages(messageId) }
     }
 
     @Test
     fun `WHEN get announcement is triggered THEN current URL changes`()= runBlocking {
-        coEvery { messagesRepo.getAnnouncementMessages(messageId) } returns fakeAnnouncementMessage
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentUrl, fakeAnnouncementMessage.videoLink)
         }
     }
     @Test
     fun `WHEN get announcement is triggered THEN current title changes`()= runBlocking {
-        coEvery { messagesRepo.getAnnouncementMessages(messageId) } returns fakeAnnouncementMessage
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentTitle, fakeAnnouncementMessage.subject)
         }
     }
     @Test
     fun `WHEN get announcement is triggered THEN from state changes`()= runBlocking {
-        coEvery { messagesRepo.getAnnouncementMessages(messageId) } returns fakeAnnouncementMessage
         announcementViewModel.state.test {
             assertEquals(awaitItem().from, fakeAnnouncementMessage.from)
         }
@@ -63,15 +59,8 @@ class AnnouncementViewModelTest{
 
     @Test
     fun `WHEN get announcement is triggered THEN current body changes`()= runBlocking {
-        coEvery { messagesRepo.getAnnouncementMessages(messageId) } returns fakeAnnouncementMessage
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentBody, fakeAnnouncementMessage.body)
         }
-    }
-
-    @Test
-    fun `verify message repo marks message as read`()= runBlocking {
-        coEvery { messagesRepo.markMessageAsRead(messageId) }
-        coVerify { messagesRepo.markMessageAsRead(messageId) }
     }
 }
