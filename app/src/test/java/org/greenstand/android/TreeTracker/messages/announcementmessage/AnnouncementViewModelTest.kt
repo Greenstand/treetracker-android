@@ -63,4 +63,9 @@ class AnnouncementViewModelTest{
             assertEquals(awaitItem().currentBody, fakeAnnouncementMessage.body)
         }
     }
+
+    @Test
+    fun `verify message repo marks message as read`()= runBlocking {
+        coVerify { messagesRepo.markMessageAsRead(messageId) }
+    }
 }
