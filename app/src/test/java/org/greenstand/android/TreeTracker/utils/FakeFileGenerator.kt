@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.legacy.entity.*
 import org.greenstand.android.TreeTracker.models.LocationData
+import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.organization.Destination
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.user.User
@@ -245,5 +246,15 @@ object FakeFileGenerator {
                     features = null)
             )
         )
+    )
+    val fakeAnnouncementMessage = AnnouncementMessage(
+        id = "id",
+        from = "from",
+        to ="to",
+        composedAt = "composedAt",
+        isRead = true,
+        subject = "subject",
+        body = null,
+        videoLink = "videoLink"
     )
 }
