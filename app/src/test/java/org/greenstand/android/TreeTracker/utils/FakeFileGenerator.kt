@@ -3,7 +3,6 @@ package org.greenstand.android.TreeTracker.utils
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.legacy.entity.*
-import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.Question
@@ -11,7 +10,6 @@ import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.models.organization.Destination
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.user.User
-import org.robolectric.util.reflector.Direct
 
 object FakeFileGenerator {
 
