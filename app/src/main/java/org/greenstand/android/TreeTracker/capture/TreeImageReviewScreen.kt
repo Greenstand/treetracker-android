@@ -77,7 +77,6 @@ fun TreeImageReviewScreen(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = {
                         scope.launch {
-                            viewModel.approveImage()
                             CaptureFlowScopeManager.nav.navForward(navController)
                         }
                     },
