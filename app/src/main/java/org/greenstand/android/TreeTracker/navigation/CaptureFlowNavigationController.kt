@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.organization.Destination
@@ -18,6 +19,7 @@ class CaptureFlowNavigationController(
     private val stepCounter: StepCounter,
     private val sessionTracker: SessionTracker,
     private val locationDataCapturer: LocationDataCapturer,
+    private val treeCapturer: TreeCapturer,
 ) {
     private var navPath = emptyList<Destination>()
     private var currentNavPathIndex = 0
@@ -32,6 +34,9 @@ class CaptureFlowNavigationController(
         // If navigating from last screen, pop to the first
         if(currentNavPathIndex >= navPath.size) {
             currentNavPathIndex = 0
+            GlobalScope.launch {
+                treeCapturer.saveTree()
+            }
             navController.popBackStack(NavRoute.TreeCapture.route, false)
             return
         }
