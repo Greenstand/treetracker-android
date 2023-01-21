@@ -23,7 +23,8 @@ data class TreeHeightSelectionState(
 class TreeHeightSelectionViewModel(
     private val treeCapturer: TreeCapturer,
 ) : ViewModel() {
-    private val _state = MutableLiveData<TreeHeightSelectionState>()
+
+    private val _state = MutableLiveData(TreeHeightSelectionState())
     val state: LiveData<TreeHeightSelectionState> = _state
 
     fun selectColor(color: ButtonColors) {
