@@ -5,9 +5,13 @@ import org.greenstand.android.TreeTracker.database.entity.*
 import org.greenstand.android.TreeTracker.database.legacy.entity.*
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
+import org.greenstand.android.TreeTracker.models.messages.DirectMessage
+import org.greenstand.android.TreeTracker.models.messages.Question
+import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.models.organization.Destination
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.user.User
+import org.robolectric.util.reflector.Direct
 
 object FakeFileGenerator {
 
@@ -257,4 +261,29 @@ object FakeFileGenerator {
         body = null,
         videoLink = "videoLink"
     )
+    val fakeDirectMessage = DirectMessage(
+        id = "identity",
+        from = "from",
+        to = "to",
+        composedAt = "compose",
+        isRead = false,
+        parentMessageId = "newId",
+        body = "body"
+    )
+    val fakeSurveyMessage = SurveyMessage(
+        id = "identity",
+        from = "from",
+        to = "to",
+        composedAt = "compose",
+        isRead = false,
+        surveyId = "surveyId",
+        title = "",
+        questions = listOf(Question(
+            prompt = "prompt",
+            choices = listOf("choice1, choice2")
+        )),
+        isComplete = true
+    )
+    val messages = listOf(fakeAnnouncementMessage, fakeDirectMessage, fakeSurveyMessage)
+
 }
