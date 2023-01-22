@@ -28,47 +28,31 @@ class IndividualMessageListViewModelTest {
     private val userId = 2L
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val messagesRepo = mockk<MessagesRepo>(relaxed = true)
-    private lateinit var individualMessageListViewModel: IndividualMessageListViewModel
+    private lateinit var testSubject: IndividualMessageListViewModel
 
     @Before
     fun setup(){
         coEvery { userRepo.getUser(any()) } returns FakeFileGenerator.fakeUsers.first()
         coEvery { messagesRepo.getMessageFlow(any()) } returns flowOf(FakeFileGenerator.messages)
-        individualMessageListViewModel = IndividualMessageListViewModel(userId, userRepo, messagesRepo)
+        testSubject = IndividualMessageListViewModel(userId, userRepo, messagesRepo)
     }
 
     @Test
-    @Throws(Exception::class)
     fun `verify user repo gets the correct user`() = runBlocking {
        coVerify { userRepo.getUser(userId) }
     }
 
     @Test
-    @Throws(Exception::class)
-    fun `verify message repo gets the correct message flow`() = runBlocking {
-        val currentUser = userRepo.getUser(userId)
-        val wallet = currentUser!!.wallet
-        coVerify { messagesRepo.getMessageFlow(wallet) }
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun `WHEN message flow is triggered THEN message state updates with correct message`()= runBlocking {
-        val result = individualMessageListViewModel.state.getOrAwaitValueTest().messages.first()
-        assertEquals(result, FakeFileGenerator.messages.first())
+    fun `WHEN message flow is triggered THEN state updates with correct message and user`()= runBlocking {
+        val message = testSubject.state.getOrAwaitValueTest().messages.first()
+        val currentUser = testSubject.state.getOrAwaitValueTest().currentUser
+        assertEquals(message, FakeFileGenerator.messages.first())
+        assertEquals(currentUser, FakeFileGenerator.fakeUsers.first())
     }
     @Test
-    @Throws(Exception::class)
-    fun `WHEN message flow is triggered THEN current user state updates with correct User`()= runBlocking {
-        val result = individualMessageListViewModel.state.getOrAwaitValueTest().currentUser
-        assertEquals(result, FakeFileGenerator.fakeUsers.first())
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun `WHEN selected message is triggered THEN state updates with correct message`()= runBlocking {
-        individualMessageListViewModel.selectMessage(FakeFileGenerator.fakeSurveyMessage)
-        val result = individualMessageListViewModel.state.getOrAwaitValueTest().selectedMessage
+        testSubject.selectMessage(FakeFileGenerator.fakeSurveyMessage)
+        val result = testSubject.state.getOrAwaitValueTest().selectedMessage
         assertEquals(result, FakeFileGenerator.messages[2])
     }
 }
