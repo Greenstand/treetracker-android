@@ -13,7 +13,9 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
+import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,5 +56,14 @@ class IndividualMessageListViewModelTest {
         testSubject.selectMessage(FakeFileGenerator.fakeSurveyMessage)
         val result = testSubject.state.getOrAwaitValueTest().selectedMessage
         assertEquals(result, FakeFileGenerator.messages[2])
+    }
+
+    @Test
+    fun `WHEN selected message is null, Assert Null, THEN when we select message, returns correct data`()= runBlocking {
+        val message = FakeFileGenerator.fakeDirectMessage
+        assertNull(testSubject.state.getOrAwaitValueTest().selectedMessage)
+        testSubject.selectMessage(message)
+        val result = testSubject.state.getOrAwaitValueTest().selectedMessage
+        assertEquals(result, FakeFileGenerator.messages[1])
     }
 }
