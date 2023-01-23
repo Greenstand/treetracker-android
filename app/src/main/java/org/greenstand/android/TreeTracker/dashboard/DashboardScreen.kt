@@ -41,7 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -63,11 +62,18 @@ fun DashboardScreen(
 ) {
     val state by viewModel.state.observeAsState(DashboardState())
     val snackBar by viewModel.snackBar.observeAsState()
+    val navController = LocalNavHostController.current
+
     Dashboard(
         state = state,
         snackBar = snackBar,
-        onSync = { viewModel.sync() },
-        onSyncMessages = { viewModel.syncMessages() },
+        onSyncClicked = { viewModel.sync() },
+        onOrgClicked = { navController.navigate(NavRoute.Org.route) },
+        onCaptureClicked = { navController.navigate(NavRoute.UserSelect.route) },
+        onMessagesClicked = {
+            viewModel.syncMessages()
+            navController.navigate(NavRoute.MessagesUserSelect.route)
+        },
     )
 }
 
@@ -75,12 +81,13 @@ fun DashboardScreen(
 @Composable
 fun Dashboard(
     state: DashboardState,
-    snackBar: ConsumableSnackBar?,
-    onSync: () -> Unit,
-    onSyncMessages: () -> Unit,
+    snackBar: ConsumableSnackBar? = null,
+    onSyncClicked: () -> Unit = { },
+    onOrgClicked: () -> Unit = { },
+    onCaptureClicked: () -> Unit = { },
+    onMessagesClicked: () -> Unit = { },
 ) {
     val context = LocalContext.current
-    val navController = LocalNavHostController.current
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(snackBar) {
@@ -89,7 +96,7 @@ fun Dashboard(
 
     Scaffold(
         topBar = {
-            DashboardTopBar(state, navController)
+            DashboardTopBar(state, onOrgClicked)
         },
         scaffoldState = scaffoldState,
     ) {
@@ -156,7 +163,7 @@ fun Dashboard(
                         .weight(1f),
                     text = stringResource(R.string.upload),
                     colors = AppButtonColors.UploadOrange,
-                    onClick = onSync,
+                    onClick = onSyncClicked,
                     shape = TreeTrackerButtonShape.Circle,
                     image = painterResource(id = R.drawable.upload_icon)
                 )
@@ -169,10 +176,7 @@ fun Dashboard(
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .fillMaxSize(),
                 colors = AppButtonColors.MessagePurple,
-                onClick = {
-                    onSyncMessages()
-                    navController.navigate(NavRoute.MessagesUserSelect.route)
-                },
+                onClick = onMessagesClicked,
                 image = painterResource(id = R.drawable.announcement_icon),
                 showUnreadNotification = state.showUnreadMessageNotification
             )
@@ -184,9 +188,7 @@ fun Dashboard(
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .fillMaxSize(),
                 colors = AppButtonColors.ProgressGreen,
-                onClick = {
-                    navController.navigate(NavRoute.UserSelect.route)
-                },
+                onClick = onCaptureClicked,
                 image = painterResource(id = R.drawable.track_icon)
             )
         }
@@ -194,7 +196,7 @@ fun Dashboard(
 }
 
 @Composable
-fun DashboardTopBar(state: DashboardState, navController: NavController) {
+fun DashboardTopBar(state: DashboardState, onOrgClicked: () -> Unit) {
     ActionBar(
         leftAction = {
             if (!state.isOrgButtonEnabled) {
@@ -205,9 +207,7 @@ fun DashboardTopBar(state: DashboardState, navController: NavController) {
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(width = 100.dp, 60.dp),
-                onClick = {
-                    navController.navigate(NavRoute.Org.route)
-                }
+                onClick = onOrgClicked,
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
@@ -321,9 +321,6 @@ fun DashboardPreview() {
                 isOrgButtonEnabled = true,
                 showUnreadMessageNotification = true,
             ),
-            snackBar = null,
-            onSync = { },
-            onSyncMessages = { },
         )
     }
 }

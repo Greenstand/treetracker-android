@@ -60,10 +60,10 @@ fun TreeHeightScreen(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.selectedColour != null,
+                        isEnabled = state.selectedColor != null,
                         colors = AppButtonColors.ProgressGreen,
                         onClick = {
-                            state.selectedColour?.let {
+                            state.selectedColor?.let {
                                 CaptureFlowScopeManager.nav.navForward(navController)
                             }
                         }
@@ -78,12 +78,12 @@ fun TreeHeightScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp)
         ) {
-            items(state.colours) { color ->
+            items(state.colors) { color ->
                 TreeTrackerButton(
                     colors = color,
-                    isSelected = color == state.selectedColour,
+                    isSelected = color == state.selectedColor,
                     onClick = { viewModel.selectColor(color) },
-                    modifier = if (color == state.selectedColour) Modifier.size(
+                    modifier = if (color == state.selectedColor) Modifier.size(
                         width = 350.dp,
                         height = 85.dp
                     ) else Modifier.size(width = 200.dp, height = 62.dp)

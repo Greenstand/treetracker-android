@@ -10,19 +10,27 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 
 
 data class TreeHeightSelectionState(
-    val colours: List<ButtonColors> = listOf(AppButtonColors.ProgressGreen,AppButtonColors.MessagePurple,AppButtonColors.Yellow,AppButtonColors.SkyBlue,AppButtonColors.UploadOrange),
-    val selectedColour: ButtonColors? = null,
+    val colors: List<ButtonColors> = listOf(
+        AppButtonColors.ProgressGreen,
+        AppButtonColors.MessagePurple,
+        AppButtonColors.Yellow,
+        AppButtonColors.SkyBlue,
+        AppButtonColors.UploadOrange
+    ),
+    val selectedColor: ButtonColors? = null,
 )
 
 class TreeHeightSelectionViewModel(
     private val treeCapturer: TreeCapturer,
 ) : ViewModel() {
-    private val _state = MutableLiveData<TreeHeightSelectionState>()
+
+    private val _state = MutableLiveData(TreeHeightSelectionState())
     val state: LiveData<TreeHeightSelectionState> = _state
 
-    fun selectColor(colors: ButtonColors) {
+    fun selectColor(color: ButtonColors) {
         // TODO add proper color values
-        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, colors.toString())
-        _state.value = TreeHeightSelectionState(selectedColour = colors)
+        val colorIndex = _state.value?.colors?.indexOf(color) ?: -1
+        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, colorIndex.toString())
+        _state.value = TreeHeightSelectionState(selectedColor = color)
     }
 }

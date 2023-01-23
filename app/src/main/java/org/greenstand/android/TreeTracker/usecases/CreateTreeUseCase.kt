@@ -5,7 +5,6 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
-import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
