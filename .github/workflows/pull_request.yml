@@ -29,3 +29,12 @@ jobs:
         run: bash ./gradlew :app:assembleDebug
       - name: Delete dummy property file
         run: rm treetracker.keys.properties
+
+      - name: Lint
+        run: bash ./gradlew ktlintCheck
+
+      - name: Submit lint report
+        uses: actions/upload-artifact@v2
+        with:
+          name: greenstand_lint_report.html
+          path: app/build/reports/lint-results-debug.html
