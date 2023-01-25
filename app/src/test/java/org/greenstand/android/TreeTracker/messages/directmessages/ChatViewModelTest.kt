@@ -3,12 +3,14 @@ package org.greenstand.android.TreeTracker.messages.directmessages
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.messages.ChatViewModel
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class ChatViewModelTest {
@@ -27,5 +29,9 @@ class ChatViewModelTest {
     @Before
     fun setup() {
         testSubject = ChatViewModel(userId, otherChatIdentifier, userRepo, messagesRepo)
+    }
+    @Test
+    fun `check chatTest`()= runBlocking {
+
     }
 }
