@@ -51,13 +51,13 @@ class TreeImageReviewViewModelTest {
     @Test
     fun `updateNote review tutorial dialog, returns false`() = runBlockingTest {
         treeImageReviewViewModel.updateReviewTutorialDialog(false)
-        assert(!treeImageReviewViewModel.state.getOrAwaitValueTest().showReviewTutorial!!) { "${treeImageReviewViewModel.state.getOrAwaitValueTest().showReviewTutorial}" }
+        assert(treeImageReviewViewModel.state.getOrAwaitValueTest().showReviewTutorial == false) { "${treeImageReviewViewModel.state.getOrAwaitValueTest().showReviewTutorial}" }
     }
 
     @Test
     fun `addNote setsNote And ClosesDialog, returns false`() = runBlockingTest {
         treeImageReviewViewModel.addNote()
-        assert(!treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen) { "${treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen}" }
+        assert(treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen == false) { "${treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen}" }
     }
 
     @Test
@@ -69,7 +69,7 @@ class TreeImageReviewViewModelTest {
     @Test
     fun `set Dialog state, check if dialog is closed, returns false`() = runBlockingTest {
         treeImageReviewViewModel.setDialogState(false)
-        assert(!treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen) { "${treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen}" }
+        assert(treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen == false) { "${treeImageReviewViewModel.state.getOrAwaitValueTest().isDialogOpen}" }
     }
 
 }
