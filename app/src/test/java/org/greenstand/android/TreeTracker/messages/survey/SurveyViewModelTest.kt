@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -12,8 +13,10 @@ import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.messages.Question
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -50,15 +53,31 @@ class SurveyViewModelTest {
     fun `WHEN selected answer THEN selected answer index updates with correct value`()= runBlocking {
         testSubject.selectAnswer(1)
         testSubject.state.test {
-            Assert.assertEquals(awaitItem().selectedAnswerIndex, 1)
+            assertEquals(awaitItem().selectedAnswerIndex, 1)
         }
     }
     @Test
-    fun `WHEN you go to next question , states update`()= runBlocking {
+    fun `WHEN you go to next question ,THEN current question updates to next question`()= runBlocking {
+        val result = testSubject.goToNextQuestion()
+        Assert.assertTrue(result)
+        testSubject.state.test {
+            assertEquals(awaitItem().currentQuestion, FakeFileGenerator.fakeSurveyMessage.questions[1])
+        }
+    }
+
+    @Test
+    fun `WHEN you go to prev question ,THEN current question updates to previous question`()= runBlocking {
         testSubject.goToNextQuestion()
         testSubject.goToPrevQuestion()
         testSubject.state.test {
-            Assert.assertEquals(awaitItem().currentQuestion, FakeFileGenerator.fakeSurveyMessage.questions)
+            assertEquals(awaitItem().currentQuestion, FakeFileGenerator.fakeSurveyMessage.questions[0])
         }
+    }
+    @Test
+    fun `WHEN current question is already first, go to previous question returns false`()= runBlocking {
+        val questions = listOf(Question(prompt = "random", choices = listOf("one", "two")))
+        coEvery { messagesRepo.getSurveyMessage(any())} returns FakeFileGenerator.fakeSurveyMessage.copy(questions = questions)
+        val result = testSubject.goToPrevQuestion()
+        Assert.assertFalse(result)
     }
 }
