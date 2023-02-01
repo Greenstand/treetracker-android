@@ -283,5 +283,33 @@ object FakeFileGenerator {
         isComplete = true
     )
     val messages = listOf(fakeAnnouncementMessage, fakeDirectMessage, fakeSurveyMessage)
-
+    val fakeDirectMessageList = listOf(
+        DirectMessage(
+            id = "new",
+            from = "Carla",
+            to = "Caleb",
+            composedAt = "compose_random",
+            isRead = true,
+            parentMessageId = "parentMessageId",
+            body = "random body"
+        ),
+        DirectMessage(
+            id = "helloId",
+            from = "Carla",
+            to = "john",
+            composedAt = "random",
+            isRead = false,
+            parentMessageId = "messageID",
+            body = "description"
+        ),
+        DirectMessage(
+            id = "helloId",
+            from = "Mary",
+            to = "Ezra",
+            composedAt = "random",
+            isRead = false,
+            parentMessageId = "messageID",
+            body = "description"
+        )
+    )
 }
