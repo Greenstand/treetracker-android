@@ -279,7 +279,10 @@ object FakeFileGenerator {
         questions = listOf(Question(
             prompt = "prompt",
             choices = listOf("choice1, choice2")
-        )),
+        ), Question(
+                prompt = "new prompt",
+                choices = listOf("yellow, black")
+            )),
         isComplete = true
     )
     val messages = listOf(fakeAnnouncementMessage, fakeDirectMessage, fakeSurveyMessage)
