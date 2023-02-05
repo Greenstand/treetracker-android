@@ -12,7 +12,7 @@ import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +38,7 @@ class LanguagePickerViewModelTest {
     @Test
     fun `Current language returns current language from the language switcher`()= runBlocking {
         val result = testSubject.currentLanguage.getOrAwaitValueTest()
-        Assert.assertEquals(result, Language.ENGLISH)
+        assertEquals(result, Language.ENGLISH)
     }
 
     @Test
