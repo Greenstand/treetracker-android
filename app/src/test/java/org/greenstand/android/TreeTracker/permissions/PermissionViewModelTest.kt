@@ -8,7 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
-import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,6 +36,6 @@ class PermissionViewModelTest {
         coEvery { locationManager.isProviderEnabled(provider)} returns true
         testSubject.isLocationEnabled()
         val result = testSubject.state.getOrAwaitValueTest().isLocationEnabled!!
-        Assert.assertTrue(result)
+        assertTrue(result)
     }
 }
