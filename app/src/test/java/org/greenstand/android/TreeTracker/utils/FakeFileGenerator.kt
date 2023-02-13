@@ -279,9 +279,40 @@ object FakeFileGenerator {
         questions = listOf(Question(
             prompt = "prompt",
             choices = listOf("choice1, choice2")
-        )),
+        ), Question(
+                prompt = "new prompt",
+                choices = listOf("yellow, black")
+            )),
         isComplete = true
     )
     val messages = listOf(fakeAnnouncementMessage, fakeDirectMessage, fakeSurveyMessage)
-
+    val fakeDirectMessageList = listOf(
+        DirectMessage(
+            id = "new",
+            from = "Carla",
+            to = "Caleb",
+            composedAt = "compose_random",
+            isRead = true,
+            parentMessageId = "parentMessageId",
+            body = "random body"
+        ),
+        DirectMessage(
+            id = "helloId",
+            from = "Carla",
+            to = "john",
+            composedAt = "random",
+            isRead = false,
+            parentMessageId = "messageID",
+            body = "description"
+        ),
+        DirectMessage(
+            id = "helloId",
+            from = "Mary",
+            to = "Ezra",
+            composedAt = "random",
+            isRead = false,
+            parentMessageId = "messageID",
+            body = "description"
+        )
+    )
 }
