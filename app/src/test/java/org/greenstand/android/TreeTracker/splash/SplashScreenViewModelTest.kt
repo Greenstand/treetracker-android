@@ -79,7 +79,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `all functions are executed when condition is true`() = runBlocking {
+    fun `WHEN every condition in a function is true THEN entire body of the function is executed`() = runBlocking {
         val user = FakeFileGenerator.emptyUser
         orgJsonString = "json string"
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
@@ -117,7 +117,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `return true when User is null`() = runBlocking{
+    fun `WHEN User object is null THEN isInitialSetupRequired is true`() = runBlocking{
         coEvery { userRepo.getPowerUser() } returns null
 
         val result =  splashScreenViewModel.isInitialSetupRequired()
@@ -126,7 +126,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `return false when User is not null`() = runBlocking{
+    fun `WHEN User object is not  null THEN isInitialSetupRequired is false`() = runBlocking{
         val user = FakeFileGenerator.emptyUser
         coEvery { userRepo.getPowerUser() } returns user
 
@@ -136,7 +136,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `startGpsUpdates is executed 1 time`() = runBlocking {
+    fun `WHEN function startGPSUpdatesForSignup() is called THEN function startGpsUpdates() is executed 1 time`() = runBlocking {
         splashScreenViewModel.startGPSUpdatesForSignup()
         verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
     }
