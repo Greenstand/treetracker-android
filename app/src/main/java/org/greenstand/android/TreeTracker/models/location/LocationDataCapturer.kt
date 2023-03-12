@@ -47,8 +47,8 @@ class LocationDataCapturer(
         }
     }
 
-    private val locationObserver: Observer<Location?> = Observer { location ->
-        location?.apply {
+    private val locationObserver: Observer<Location?> = Observer { l ->
+        l?.let { location ->
             val locationDataConfig = configuration.locationDataConfig
             val convergenceDataSize = locationDataConfig.convergenceDataSize
             if (isInTreeCaptureMode()) {
@@ -104,9 +104,9 @@ class LocationDataCapturer(
                     val locationData =
                         LocationData(
                             currentSessionId,
-                            latitude,
-                            longitude,
-                            accuracy,
+                            location.latitude,
+                            location.longitude,
+                            location.accuracy,
                             generatedTreeUuid?.toString(),
                             convergenceStatus,
                             timeProvider.currentTime().toString(),

@@ -93,10 +93,6 @@ class LocationUpdateManager(
         }
     }
 
-    fun isLocationEnabled(): Boolean {
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-    }
-
     private fun hasLocationPermissions(): Boolean {
         val fineLocationPermission = ContextCompat.checkSelfPermission(
             context,
