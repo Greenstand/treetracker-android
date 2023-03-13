@@ -78,6 +78,7 @@ class CaptureFlowNavigationController(
             stepCounter.disable()
             withContext(Dispatchers.Main) {
                 locationDataCapturer.stopGpsUpdates()
+                locationDataCapturer.turnOffTreeCaptureMode()
             }
         }
     }

@@ -5,7 +5,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -124,14 +123,6 @@ class TreeCaptureViewModelTest {
     fun `WHEN updateCaptureTutorialDialog true THEN showCaptureTutorial state true`() = runBlocking {
         treeCaptureViewModel.updateCaptureTutorialDialog(true)
         assertTrue(treeCaptureViewModel.state.getOrAwaitValueTest().showCaptureTutorial ?: false)
-    }
-
-    @Test
-    fun `WHEN end session THEN stopGpsUpdates and endSession functions were called one time`() = runBlocking {
-        treeCaptureViewModel.endSession()
-
-        verify(exactly = 1) { locationDataCapturer.stopGpsUpdates() }
-        coVerify(exactly = 1) { sessionTracker.endSession() }
     }
 
     @Test

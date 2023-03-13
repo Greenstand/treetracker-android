@@ -39,7 +39,7 @@ class TreeImageReviewViewModel(
         _state.value = _state.value?.copy(showReviewTutorial = state)
     }
 
-    fun addNote(){
+    fun addNote() {
         viewModelScope.launch {
             treeCapturer.setNote(_state.value!!.note)
             _state.value = _state.value?.copy(isDialogOpen = false)
@@ -48,7 +48,7 @@ class TreeImageReviewViewModel(
 
     suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
 
-    fun setDialogState(state: Boolean){
+    fun setDialogState(state: Boolean) {
         _state.value = _state.value?.copy(isDialogOpen = state)
     }
 }
