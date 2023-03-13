@@ -26,10 +26,8 @@ class TreeCapturer(
         newTreeUuid = locationDataCapturer.generatedTreeUuid
         return if (locationDataCapturer.isLocationCoordinateAvailable()) {
             convergence = locationDataCapturer.convergence()
-            locationDataCapturer.turnOffTreeCaptureMode()
             true
         } else {
-            locationDataCapturer.turnOffTreeCaptureMode()
             false
         }
     }

@@ -65,11 +65,6 @@ class TreeCaptureViewModel(
         _state.value = _state.value?.copy(showCaptureTutorial = state)
     }
 
-    suspend fun endSession() {
-        locationDataCapturer.stopGpsUpdates()
-        sessionTracker.endSession()
-    }
-
     suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
 
     suspend fun createFakeTrees() {
