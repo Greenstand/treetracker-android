@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.messages.survey
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,6 +37,7 @@ fun SurveyScreen(
     viewModel: SurveyViewModel = viewModel(factory = SurveyViewModelFactory(messageId))
 ) {
     val navController = LocalNavHostController.current
+    val context = LocalContext.current
     val state by viewModel.state.collectAsState(SurveyScreenState())
     val scope = rememberCoroutineScope()
 
@@ -63,13 +66,19 @@ fun SurveyScreen(
                         isLeft = false,
                         isEnabled = state.selectedAnswerIndex != null,
                         colors = AppButtonColors.MessagePurple,
-                    ) {
-                        scope.launch {
-                            if (!viewModel.goToNextQuestion()) {
-                                navController.popBackStack()
+                        onClick = {
+                            scope.launch {
+                                if (!viewModel.goToNextQuestion()) {
+                                    Toast.makeText(
+                                        context,
+                                        "Survey Completed",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    navController.popBackStack()
+                                }
                             }
                         }
-                    }
+                    )
                 }
             )
         }
