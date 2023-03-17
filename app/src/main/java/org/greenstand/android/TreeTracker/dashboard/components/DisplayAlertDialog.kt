@@ -12,8 +12,7 @@ fun DisplayAlertDialog(
     title: String,
     message: String,
     dialogOpened: Boolean,
-    onDialogClosed: () -> Unit,
-    onYesClicked: () -> Unit,
+    onOkayClicked: () -> Unit,
 ) {
     if (dialogOpened) {
         AlertDialog(
@@ -27,21 +26,23 @@ fun DisplayAlertDialog(
             text = {
                 Text(
                     text = message,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
                 )
             },
             confirmButton = {
                 Button(
                     onClick = {
-                        onYesClicked()
-                        onDialogClosed()
+                        onOkayClicked()
                     })
                 {
-                    Text(text = "Okay")
+                    Text(
+                        text = "Okay",
+                        fontSize = 16.sp,
+                    )
                 }
             },
-            onDismissRequest = onDialogClosed
+            onDismissRequest = onOkayClicked
         )
     }
 }

@@ -17,10 +17,7 @@ import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -42,6 +39,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.dashboard.components.DisplayAlertDialog
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -63,13 +61,30 @@ fun DashboardScreen(
     val state by viewModel.state.observeAsState(DashboardState())
     val snackBar by viewModel.snackBar.observeAsState()
     val navController = LocalNavHostController.current
+    var dialogOpened by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
+    if (showDialog){
+        DisplayAlertDialog(
+            title = "Upload Trees Soon",
+            message ="You have over 2000 trees, please upload as soon as you can.",
+            dialogOpened = !dialogOpened ,
+            onOkayClicked = {
+                dialogOpened = false
+                navController.navigate(NavRoute.UserSelect.route)
+            }
+        )
+    }
     Dashboard(
         state = state,
         snackBar = snackBar,
         onSyncClicked = { viewModel.sync() },
         onOrgClicked = { navController.navigate(NavRoute.Org.route) },
-        onCaptureClicked = { navController.navigate(NavRoute.UserSelect.route) },
+        onCaptureClicked = {
+            if (state.totalTreesToSync >=2000){
+                showDialog = true
+            }else navController.navigate(NavRoute.UserSelect.route)
+            },
         onMessagesClicked = {
             viewModel.syncMessages()
             navController.navigate(NavRoute.MessagesUserSelect.route)
