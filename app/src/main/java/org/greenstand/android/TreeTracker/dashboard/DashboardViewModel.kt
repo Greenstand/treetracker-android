@@ -170,7 +170,6 @@ class DashboardViewModel(
         }
     }
 
-
     private fun startDataSynchronization() {
         val request = OneTimeWorkRequestBuilder<TreeSyncWorker>()
             .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.SECONDS)
