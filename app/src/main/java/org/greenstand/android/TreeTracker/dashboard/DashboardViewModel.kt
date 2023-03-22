@@ -36,6 +36,7 @@ data class DashboardState(
     val totalTreesToSync: Int = 0,
     val isOrgButtonEnabled: Boolean = false,
     val showUnreadMessageNotification: Boolean = false,
+    val totalTreesToSyncThreshold:Boolean = false
 )
 
 class DashboardViewModel(
@@ -163,10 +164,12 @@ class DashboardViewModel(
                     treesSynced = syncedTreeCount,
                     isOrgButtonEnabled = orgRepo.getOrgs().size > 1,
                     showUnreadMessageNotification = messagesRepo.checkForUnreadMessages(),
+                    totalTreesToSyncThreshold = totalTreesToSync >= 2000
                 )
             }
         }
     }
+
 
     private fun startDataSynchronization() {
         val request = OneTimeWorkRequestBuilder<TreeSyncWorker>()

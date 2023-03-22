@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.dashboard.components.DisplayAlertDialog
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -53,6 +52,7 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
 fun DashboardScreen(
@@ -65,11 +65,10 @@ fun DashboardScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog){
-        DisplayAlertDialog(
-            title = "Upload Trees Soon",
-            message ="You have over 2000 trees, please upload as soon as you can.",
-            dialogOpened = !dialogOpened ,
-            onOkayClicked = {
+        CustomDialog(
+            title = stringResource(R.string.upload_trees_soon_title),
+            textContent = stringResource(R.string.upload_trees_text_content),
+            onPositiveClick = {
                 dialogOpened = false
                 navController.navigate(NavRoute.UserSelect.route)
             }
@@ -81,10 +80,10 @@ fun DashboardScreen(
         onSyncClicked = { viewModel.sync() },
         onOrgClicked = { navController.navigate(NavRoute.Org.route) },
         onCaptureClicked = {
-            if (state.totalTreesToSync >=2000){
+            if (state.totalTreesToSyncThreshold){
                 showDialog = true
             }else navController.navigate(NavRoute.UserSelect.route)
-            },
+        },
         onMessagesClicked = {
             viewModel.syncMessages()
             navController.navigate(NavRoute.MessagesUserSelect.route)
