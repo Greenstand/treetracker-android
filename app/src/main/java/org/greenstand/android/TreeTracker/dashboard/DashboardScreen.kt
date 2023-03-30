@@ -61,7 +61,6 @@ fun DashboardScreen(
     val state by viewModel.state.observeAsState(DashboardState())
     val snackBar by viewModel.snackBar.observeAsState()
     val navController = LocalNavHostController.current
-    var dialogOpened by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog){
@@ -69,7 +68,6 @@ fun DashboardScreen(
             title = stringResource(R.string.upload_trees_soon_title),
             textContent = stringResource(R.string.upload_trees_text_content),
             onPositiveClick = {
-                dialogOpened = false
                 navController.navigate(NavRoute.UserSelect.route)
             }
         )
@@ -80,7 +78,7 @@ fun DashboardScreen(
         onSyncClicked = { viewModel.sync() },
         onOrgClicked = { navController.navigate(NavRoute.Org.route) },
         onCaptureClicked = {
-            if (state.totalTreesToSyncThreshold){
+            if (state.showTreeSyncReminderDialog){
                 showDialog = true
             }else navController.navigate(NavRoute.UserSelect.route)
         },
