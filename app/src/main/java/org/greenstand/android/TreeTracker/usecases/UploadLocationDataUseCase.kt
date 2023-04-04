@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.api.models.requests.LocationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.TracksRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -31,11 +30,11 @@ class UploadLocationDataUseCase(
                     .map { (sessionId, entities) ->
                         val locationRequests = entities.map { gson.fromJson(it.locationDataJson, LocationData::class.java) }
                         .map {
-                            LocationRequest(
-                                accuracy = it.accuracy,
-                                latitude = it.latitude,
-                                longitude = it.longitude,
-                                capturedAt = it.capturedAt,
+                            listOf(
+                                it.latitude,
+                                it.longitude,
+                                it.accuracy,
+                                it.capturedAt,
                             )
                         }
                         return@map sessionId to locationRequests
