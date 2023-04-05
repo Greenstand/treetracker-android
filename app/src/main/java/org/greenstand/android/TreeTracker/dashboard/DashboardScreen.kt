@@ -17,10 +17,7 @@ import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -55,6 +52,7 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
 fun DashboardScreen(
@@ -63,13 +61,27 @@ fun DashboardScreen(
     val state by viewModel.state.observeAsState(DashboardState())
     val snackBar by viewModel.snackBar.observeAsState()
     val navController = LocalNavHostController.current
+    var showDialog by remember { mutableStateOf(false) }
 
+    if (showDialog){
+        CustomDialog(
+            title = stringResource(R.string.upload_trees_soon_title),
+            textContent = stringResource(R.string.upload_trees_text_content),
+            onPositiveClick = {
+                navController.navigate(NavRoute.UserSelect.route)
+            }
+        )
+    }
     Dashboard(
         state = state,
         snackBar = snackBar,
         onSyncClicked = { viewModel.sync() },
         onOrgClicked = { navController.navigate(NavRoute.Org.route) },
-        onCaptureClicked = { navController.navigate(NavRoute.UserSelect.route) },
+        onCaptureClicked = {
+            if (state.showTreeSyncReminderDialog){
+                showDialog = true
+            }else navController.navigate(NavRoute.UserSelect.route)
+        },
         onMessagesClicked = {
             viewModel.syncMessages()
             navController.navigate(NavRoute.MessagesUserSelect.route)
