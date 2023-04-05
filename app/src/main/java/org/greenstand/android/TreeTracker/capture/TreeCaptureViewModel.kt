@@ -69,6 +69,7 @@ class TreeCaptureViewModel(
 
     suspend fun endSession() {
         locationDataCapturer.stopGpsUpdates()
+        locationDataCapturer.turnOffTreeCaptureMode()
         sessionTracker.endSession()
     }
 

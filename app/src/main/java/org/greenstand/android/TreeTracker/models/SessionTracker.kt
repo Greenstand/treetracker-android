@@ -56,6 +56,7 @@ class SessionTracker(
             withContext(Dispatchers.IO) {
                 treesToSyncHelper.refreshTreeCountToSync()
                 preferences.edit().putLong(SESSION_ID_KEY, -1).commit()
+
             }
         }
     }
