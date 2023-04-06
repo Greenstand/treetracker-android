@@ -6,7 +6,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
-import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.TreeUploader
@@ -62,7 +61,7 @@ class SyncDataUseCase(
 
             }
         } catch(e: Exception) {
-            Timber.e("Error occured during syncing data. ${e.localizedMessage}")
+            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
             return false
         }
         return true
