@@ -1,5 +1,6 @@
 package org.greenstand.android.TreeTracker.messages.survey
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,16 +12,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -37,7 +38,10 @@ fun SurveyScreen(
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState(SurveyScreenState())
     val scope = rememberCoroutineScope()
-
+    var showToast by remember { mutableStateOf(false) }
+    if (showToast){
+        ShowToastMessage(stringResId = R.string.survey_completed)
+    }
     Scaffold(
         topBar = {
             ActionBar(
@@ -63,13 +67,15 @@ fun SurveyScreen(
                         isLeft = false,
                         isEnabled = state.selectedAnswerIndex != null,
                         colors = AppButtonColors.MessagePurple,
-                    ) {
-                        scope.launch {
-                            if (!viewModel.goToNextQuestion()) {
-                                navController.popBackStack()
+                        onClick = {
+                            scope.launch {
+                                if (!viewModel.goToNextQuestion()) {
+                                    showToast = true
+                                    navController.popBackStack()
+                                }
                             }
                         }
-                    }
+                    )
                 }
             )
         }
@@ -150,4 +156,10 @@ fun AnswerItem(
             )
         }
     }
+}
+@Composable
+fun ShowToastMessage(stringResId: Int) {
+    val context = LocalContext.current
+    val message = stringResource(id = stringResId)
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
