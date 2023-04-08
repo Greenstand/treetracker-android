@@ -56,10 +56,15 @@ class UploadLocationDataUseCase(
                     "${dataBundle.md5()}_tracks"
                 )
 
-                dao.updateLocationDataUploadStatus(locationEntities.map { it.id }, true)
+                locationEntities
+                    .map { it.id }
+                    .chunked(60)
+                    .onEach { ids ->
+                        dao.updateLocationDataUploadStatus(ids, true)
+                    }
                 dao.purgeUploadedLocations()
 
-                Timber.d("Completed uploading ${locationEntities.size} V2 GPS locations")
+                Timber.tag("Location Upload").d("Completed uploading ${locationEntities.size} V2 GPS locations")
             }
         } catch (ace: AmazonClientException) {
             Timber.e(

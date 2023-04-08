@@ -14,7 +14,6 @@ import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.LocationDataEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
@@ -219,9 +218,6 @@ interface TreeTrackerDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLocationData(locationEntity: LocationEntity): Long
-
-    @Query("SELECT * FROM location_data WHERE uploaded = 0")
-    suspend fun getTreeLocationData(): List<LocationDataEntity>
 
     @Query("SELECT * FROM location WHERE uploaded = 0")
     suspend fun getLocationData(): List<LocationEntity>
