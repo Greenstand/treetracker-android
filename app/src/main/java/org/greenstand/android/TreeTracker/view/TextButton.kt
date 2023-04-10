@@ -274,7 +274,7 @@ fun BoxScope.LanguageButton() {
         colors = AppButtonColors.ProgressGreen,
         modifier = Modifier
             .align(Alignment.Center)
-            .size(width = 100.dp, 60.dp),
+            .size(width = 120.dp, 60.dp),
         onClick = {
             navController.navigate(NavRoute.Language.create())
         }
@@ -525,6 +525,7 @@ fun DepthSurface(
             )
     }
 }
+
 
 @Composable
 fun DepthSurfaceRectangle(

@@ -14,7 +14,8 @@ import java.util.*
 
 enum class Language(val locale: Locale) {
     ENGLISH(Locale("en")),
-    SWAHILI(Locale("sw"));
+    SWAHILI(Locale("sw")),
+    PORTUGUESE(Locale("pt"));
 
     companion object {
 
@@ -22,6 +23,7 @@ enum class Language(val locale: Locale) {
             return when (lang.lowercase()) {
                 "en" -> ENGLISH
                 "sw" -> SWAHILI
+                "pt" -> PORTUGUESE
                 else -> null
             }
         }
@@ -37,19 +39,6 @@ class LanguageSwitcher(private val prefs: Preferences) {
         }
     }
 
-    fun switch(activity: Activity) {
-        val res = activity.resources
-        currentLanguage()?.also{ language ->
-            val newLanguage = when (language) {
-                Language.ENGLISH -> Language.SWAHILI
-                Language.SWAHILI -> Language.ENGLISH
-            }
-            setLanguage(newLanguage, res)
-        }
-
-        activity.finish()
-        activity.startActivity(Intent(activity, TreeTrackerActivity::class.java))
-    }
 
     fun setLanguage(language: Language, res: Resources) {
         prefs.edit().putString(LANGUAGE_PREF_KEY, language.locale.toLanguageTag()).commit()
