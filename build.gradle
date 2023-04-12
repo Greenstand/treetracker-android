@@ -15,6 +15,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
         classpath 'org.jlleitschuh.gradle:ktlint-gradle:9.2.1'
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.18.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -53,6 +54,17 @@ allprojects {
 
 subprojects {
     apply from: "../scripts/ktlint.gradle"
+    apply plugin : "com.diffplug.spotless"
+    spotless {
+        kotlin {
+            target("**/*.kt")
+            targetExclude("${project.rootDir}/build-logic/**/*.kt")
+            licenseHeaderFile(
+                    rootProject.file("${project.rootDir}/spotless/copyright.kt"),
+                    "^(package|object|import|interface)"
+            )
+        }
+    }
 }
 
 task clean(type: Delete) {
