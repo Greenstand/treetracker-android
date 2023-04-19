@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.models.organization
 
-
 data class Org(
     val id: String,
     val name: String,
@@ -24,7 +23,6 @@ data class Org(
     val captureSetupFlow: List<Destination>,
     val captureFlow: List<Destination>,
 )
-
 
 data class Destination(
     val route: String,

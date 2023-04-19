@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.messages.announcementmessage
 
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -53,7 +52,6 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 
-
 @Composable
 fun AnnouncementScreen(
     messageId: String,
@@ -86,7 +84,7 @@ fun AnnouncementScreen(
             )
         },
 
-        ) {
+    ) {
         Column(
             Modifier
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 80.dp)

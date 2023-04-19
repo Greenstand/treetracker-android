@@ -44,7 +44,7 @@ object TextStyles {
 
 @Composable
 fun BoxScope.TopBarTitle() {
-   Image(
+    Image(
         painter = painterResource(id = R.drawable.greenstand_logo),
         contentDescription = "Treetracker icon",
         modifier = Modifier

@@ -45,26 +45,26 @@ class LanguagePickerViewModelTest {
     private lateinit var testSubject: LanguagePickerViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         coEvery { languageSwitcher.currentLanguage() } returns Language.ENGLISH
         testSubject = LanguagePickerViewModel(languageSwitcher, resources)
     }
 
     @Test
-    fun `Current language returns current language from the language switcher`()= runBlocking {
+    fun `Current language returns current language from the language switcher`() = runBlocking {
         val result = testSubject.currentLanguage.getOrAwaitValueTest()
         assertEquals(result, Language.ENGLISH)
     }
 
     @Test
-    fun `Verify set language calls the set language from the Language Switcher `()= runBlocking{
+    fun `Verify set language calls the set language from the Language Switcher `() = runBlocking {
         val language = Language.ENGLISH
         testSubject.setLanguage(language)
         coVerify { languageSwitcher.setLanguage(language, resources) }
     }
 
     @Test
-    fun `Verify refresh app language calls apply current language from language switcher`()= runBlocking {
+    fun `Verify refresh app language calls apply current language from language switcher`() = runBlocking {
         val activity = mockk<Activity>(relaxed = true)
         testSubject.refreshAppLanguage(activity)
         coVerify { languageSwitcher.applyCurrentLanguage(activity) }

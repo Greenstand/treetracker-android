@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.messages.announcementmessage
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -27,7 +26,6 @@ import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-
 
 data class AnnouncementState(
     val from: String = "",
@@ -58,7 +56,6 @@ class AnnouncementViewModel(
         }
     }
 }
-
 
 class AnnouncementViewModelFactory(
     private val messageId: String,

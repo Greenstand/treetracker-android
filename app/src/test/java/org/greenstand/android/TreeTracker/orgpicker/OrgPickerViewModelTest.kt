@@ -42,14 +42,13 @@ class OrgPickerViewModelTest {
     private lateinit var orgPickerViewModel: OrgPickerViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         orgPickerViewModel = OrgPickerViewModel(orgRepo)
     }
 
-
     @Test
     @Throws(Exception::class)
-    fun `verify Org Repo gets correct Org Set`() = runBlockingTest{
+    fun `verify Org Repo gets correct Org Set`() = runBlockingTest {
         val orgList = FakeFileGenerator.fakeOrganizationList
         coEvery { orgRepo.getOrgs() } returns orgList
 
@@ -58,17 +57,16 @@ class OrgPickerViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun `set fake organization, returns success with valid Org`()= runBlocking {
+    fun `set fake organization, returns success with valid Org`() = runBlocking {
         val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
-        //Given
-        coEvery { orgRepo.currentOrg() } returns  currentOrg
+        // Given
+        coEvery { orgRepo.currentOrg() } returns currentOrg
 
         // When
         orgPickerViewModel.setOrg(FakeFileGenerator.fakeOrganizationList.first())
 
-        //Assert LiveData has correct data
+        // Assert LiveData has correct data
         val result = orgPickerViewModel.state.getOrAwaitValueTest().currentOrg
         Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
     }
-
 }

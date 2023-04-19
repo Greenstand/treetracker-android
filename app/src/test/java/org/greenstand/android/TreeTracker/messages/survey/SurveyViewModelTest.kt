@@ -20,12 +20,9 @@ import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.Question
@@ -49,8 +46,8 @@ class SurveyViewModelTest {
     private lateinit var testSubject: SurveyViewModel
 
     @Before
-    fun setup(){
-        coEvery { messagesRepo.getSurveyMessage(any())} returns FakeFileGenerator.fakeSurveyMessage
+    fun setup() {
+        coEvery { messagesRepo.getSurveyMessage(any()) } returns FakeFileGenerator.fakeSurveyMessage
         coEvery { userRepo.getUserWithWallet(any()) } returns FakeFileGenerator.fakeUsers.first()
         testSubject = SurveyViewModel(messageId, messagesRepo, userRepo)
     }
@@ -65,14 +62,14 @@ class SurveyViewModelTest {
     }
 
     @Test
-    fun `WHEN selected answer THEN selected answer index updates with correct value`()= runBlocking {
+    fun `WHEN selected answer THEN selected answer index updates with correct value`() = runBlocking {
         testSubject.selectAnswer(1)
         testSubject.state.test {
             assertEquals(awaitItem().selectedAnswerIndex, 1)
         }
     }
     @Test
-    fun `WHEN you go to next question ,THEN current question updates to next question`()= runBlocking {
+    fun `WHEN you go to next question ,THEN current question updates to next question`() = runBlocking {
         val result = testSubject.goToNextQuestion()
         Assert.assertTrue(result)
         testSubject.state.test {
@@ -81,7 +78,7 @@ class SurveyViewModelTest {
     }
 
     @Test
-    fun `WHEN you go to prev question ,THEN current question updates to previous question`()= runBlocking {
+    fun `WHEN you go to prev question ,THEN current question updates to previous question`() = runBlocking {
         testSubject.goToNextQuestion()
         testSubject.goToPrevQuestion()
         testSubject.state.test {
@@ -89,9 +86,9 @@ class SurveyViewModelTest {
         }
     }
     @Test
-    fun `WHEN current question is already first, go to previous question returns false`()= runBlocking {
+    fun `WHEN current question is already first, go to previous question returns false`() = runBlocking {
         val questions = listOf(Question(prompt = "random", choices = listOf("one", "two")))
-        coEvery { messagesRepo.getSurveyMessage(any())} returns FakeFileGenerator.fakeSurveyMessage.copy(questions = questions)
+        coEvery { messagesRepo.getSurveyMessage(any()) } returns FakeFileGenerator.fakeSurveyMessage.copy(questions = questions)
         val result = testSubject.goToPrevQuestion()
         Assert.assertFalse(result)
     }

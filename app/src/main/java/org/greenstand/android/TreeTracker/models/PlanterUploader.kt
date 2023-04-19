@@ -56,7 +56,7 @@ class PlanterUploader(
         coroutineScope {
             dao.getPlanterCheckInsToUpload()
                 .filter { it.photoUrl == null && it.localPhotoPath != null }
-                .map {  planterCheckIn ->
+                .map { planterCheckIn ->
                     async {
                         val imageUrl = uploadImageUseCase.execute(
                             UploadImageParams(
@@ -104,7 +104,7 @@ class PlanterUploader(
         Timber.tag(TAG)
             .d("Uploading Planter Info for ${planterInfoToUpload.size} planters")
 
-        if(planterInfoToUpload.isEmpty()) {
+        if (planterInfoToUpload.isEmpty()) {
             return
         }
         val registrationRequests = planterInfoToUpload
@@ -150,7 +150,7 @@ class PlanterUploader(
         Timber.tag(TAG)
             .d("Uploading ${usersToUpload.size} users")
 
-        if(usersToUpload.isEmpty()) {
+        if (usersToUpload.isEmpty()) {
             return
         }
 
@@ -193,11 +193,11 @@ class PlanterUploader(
 
         loggedOutPlanterCheckIns.mapNotNull { it.localPhotoPath }
             .forEach { localPhotoPath ->
-            val photoFile = File(localPhotoPath)
-            if (photoFile.exists()) {
-                photoFile.delete()
+                val photoFile = File(localPhotoPath)
+                if (photoFile.exists()) {
+                    photoFile.delete()
+                }
             }
-        }
 
         dao.removePlanterCheckInLocalImagePaths(loggedOutPlanterCheckIns.map { it.id })
     }

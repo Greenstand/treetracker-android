@@ -20,41 +20,42 @@ import org.greenstand.android.TreeTracker.models.messages.network.requests.Messa
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class UploadBundle
-    constructor(
-        @SerializedName("pack_format_version")
-        val version: String,
-      
-        @SerializedName("device_id")
-        val deviceId: String = DeviceUtils.deviceId,
+constructor(
+    @SerializedName("pack_format_version")
+    val version: String,
 
-        // V1
-        @SerializedName("trees")
-        val trees: List<NewTreeRequest>? = null,
-        @SerializedName("registrations")
-        val registrations: List<RegistrationRequest>? = null,
-        @SerializedName("devices")
-        val devices: List<DeviceRequest>? = null,
+    @SerializedName("device_id")
+    val deviceId: String = DeviceUtils.deviceId,
 
-        // V2
-        @SerializedName("wallet_registrations")
-        val walletRegistrations: List<WalletRegistrationRequest>? = null,
-        @SerializedName("captures")
-        val treeCaptures: List<TreeCaptureRequest>? = null,
-        @SerializedName("device_configurations")
-        val deviceConfig: List<DeviceConfigRequest>? = null,
-        @SerializedName("sessions")
-        val sessions: List<SessionRequest>? = null,
-        @SerializedName("tracks")
-        val tracks: List<TracksRequest>? = null,
-        @SerializedName("messages")
-        val messages: List<MessageRequest>? = null,
+    // V1
+    @SerializedName("trees")
+    val trees: List<NewTreeRequest>? = null,
+    @SerializedName("registrations")
+    val registrations: List<RegistrationRequest>? = null,
+    @SerializedName("devices")
+    val devices: List<DeviceRequest>? = null,
+
+    // V2
+    @SerializedName("wallet_registrations")
+    val walletRegistrations: List<WalletRegistrationRequest>? = null,
+    @SerializedName("captures")
+    val treeCaptures: List<TreeCaptureRequest>? = null,
+    @SerializedName("device_configurations")
+    val deviceConfig: List<DeviceConfigRequest>? = null,
+    @SerializedName("sessions")
+    val sessions: List<SessionRequest>? = null,
+    @SerializedName("tracks")
+    val tracks: List<TracksRequest>? = null,
+    @SerializedName("messages")
+    val messages: List<MessageRequest>? = null,
 ) {
 
     companion object {
 
         fun createV1(
             newTreeRequests: List<NewTreeRequest>? = null,
-            registrations: List<RegistrationRequest>? = null): UploadBundle {
+            registrations: List<RegistrationRequest>? = null
+        ): UploadBundle {
             return UploadBundle(
                 version = "1",
                 trees = newTreeRequests,

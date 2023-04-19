@@ -169,8 +169,8 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
             }
 
             when (state.credential) {
-                is Credential.Email -> EmailTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
-                is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState,scope,context)
+                is Credential.Email -> EmailTextField(state, viewModel, focusRequester, snackBarHostState, scope, context)
+                is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState, scope, context)
             }
 
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
@@ -254,7 +254,7 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
 }
 
 @Composable
-private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester,snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester, snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
     val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.phone ?: "",

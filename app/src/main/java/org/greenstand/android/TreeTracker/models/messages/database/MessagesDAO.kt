@@ -107,5 +107,4 @@ interface MessagesDAO {
 
     @Query("SELECT * FROM questions WHERE survey_id = :surveyId")
     suspend fun getQuestionsForSurvey(surveyId: String): List<QuestionEntity>
-
 }

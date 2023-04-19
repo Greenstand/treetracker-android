@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 
-
 @Composable
 fun SelfieTutorial(onCompleteClick: (() -> Unit)) {
     val selfieIllustration: Painter = painterResource(id = R.drawable.selfie_illustration)
@@ -59,7 +58,6 @@ fun SelfieTutorial(onCompleteClick: (() -> Unit)) {
         },
         onCompleteClick = onCompleteClick
     )
-
 }
 
 @Composable
@@ -68,13 +66,12 @@ fun TreeCaptureTutorial(onCompleteClick: (() -> Unit)) {
     TutorialDialog(
         content = {
             ImageCapturing(
-                image =treeCapturingIllustration,
+                image = treeCapturingIllustration,
                 text = stringResource(R.string.tracking_instruction)
             )
         },
         onCompleteClick = onCompleteClick
     )
-
 }
 
 @Composable
@@ -82,11 +79,10 @@ fun TreeCaptureReviewTutorial(onCompleteClick: (() -> Unit)) {
     val treeCapturingIllustration: Painter = painterResource(id = R.drawable.tree_capturing_illustration)
     TutorialDialog(
         content = {
-          TreeCaptureReview()
+            TreeCaptureReview()
         },
         onCompleteClick = onCompleteClick
     )
-
 }
 
 @Composable
@@ -169,7 +165,6 @@ fun TreeCaptureReview() {
                     contentDescription = null
                 )
             }
-
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -200,7 +195,6 @@ fun TreeCaptureReview() {
                     contentDescription = null
                 )
             }
-
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -232,7 +226,6 @@ fun TreeCaptureReview() {
                 )
             }
         }
-
     }
 }
 

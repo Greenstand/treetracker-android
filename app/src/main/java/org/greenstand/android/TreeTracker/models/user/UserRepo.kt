@@ -55,7 +55,7 @@ class UserRepo(
         return createUser(dao.getUserByWallet(wallet))
     }
 
-    suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean{
+    suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean {
         return messagesDao.getUnreadMessageCountForWallet(wallet) >= 1
     }
 
@@ -107,7 +107,7 @@ class UserRepo(
         }
     }
 
-    suspend fun doesUserExists(identifier: String): Boolean{
+    suspend fun doesUserExists(identifier: String): Boolean {
         return getUserWithWallet(identifier) != null
     }
 

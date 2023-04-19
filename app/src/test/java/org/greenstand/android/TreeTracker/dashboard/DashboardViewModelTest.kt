@@ -42,7 +42,7 @@ import org.robolectric.annotation.Config
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class DashboardViewModelTest{
+class DashboardViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -54,7 +54,7 @@ class DashboardViewModelTest{
     @MockK(relaxed = true)
     private lateinit var workManager: WorkManager
     @MockK(relaxed = true)
-    private lateinit var analytics:Analytics
+    private lateinit var analytics: Analytics
     @MockK(relaxed = true)
     private lateinit var treesToSyncHelper: TreesToSyncHelper
     @MockK(relaxed = true)
@@ -65,10 +65,10 @@ class DashboardViewModelTest{
     private lateinit var checkForInternetUseCase: CheckForInternetUseCase
     @MockK(relaxed = true)
     private lateinit var locationDataCapturer: LocationDataCapturer
-    private lateinit var testSubject:DashboardViewModel
+    private lateinit var testSubject: DashboardViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         MockKAnnotations.init(this)
         coEvery { analytics.syncButtonTapped(any(), any(), any()) } just Runs
         coEvery { dao.getUploadedLegacyTreeImageCount() } returns 3
@@ -82,7 +82,7 @@ class DashboardViewModelTest{
         coEvery { messagesRepo.checkForUnreadMessages() } returns false
         every { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>()) } returns mockk()
         testSubject = DashboardViewModel(
-            dao =  dao,
+            dao = dao,
             workManager = workManager,
             analytics = analytics,
             treesToSyncHelper = treesToSyncHelper,
@@ -93,30 +93,29 @@ class DashboardViewModelTest{
         )
     }
     @Test
-    fun `syncMessages should call syncMessages on messagesRepo if there is internet connection`()= runBlocking {
-            coEvery { checkForInternetUseCase.execute(Unit) } returns true
-            coEvery { messagesRepo.syncMessages() } just Runs
-            testSubject.syncMessages()
-            coVerify { messagesRepo.syncMessages() }
+    fun `syncMessages should call syncMessages on messagesRepo if there is internet connection`() = runBlocking {
+        coEvery { checkForInternetUseCase.execute(Unit) } returns true
+        coEvery { messagesRepo.syncMessages() } just Runs
+        testSubject.syncMessages()
+        coVerify { messagesRepo.syncMessages() }
     }
     @Test
-    fun `syncMessages should not call syncMessages on messagesRepo if there is no internet connection`()= runBlocking {
+    fun `syncMessages should not call syncMessages on messagesRepo if there is no internet connection`() = runBlocking {
         coEvery { checkForInternetUseCase.execute(Unit) } returns false
         testSubject.syncMessages()
         coVerify(exactly = 0) { messagesRepo.syncMessages() }
     }
     @Test
-    fun  `updateData should update the state with correct values querying totalTreesToSync`()= runBlocking {
+    fun `updateData should update the state with correct values querying totalTreesToSync`() = runBlocking {
         val treesToSyncResult = testSubject.state.getOrAwaitValueTest().totalTreesToSync
         assertEquals(treesToSyncResult, 6)
     }
 
     @Test
-    fun  `sync should start sync if not syncing and there are trees to sync`()= runBlocking {
+    fun `sync should start sync if not syncing and there are trees to sync`() = runBlocking {
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
         testSubject.sync()
-        coVerify(exactly = 1) { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>())}
+        coVerify(exactly = 1) { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>()) }
         coVerify { analytics.syncButtonTapped(8, 6, 6) }
-
     }
 }

@@ -47,7 +47,7 @@ class CaptureFlowNavigationController(
         currentNavPathIndex++
 
         // If navigating from last screen, pop to the first
-        if(currentNavPathIndex >= navPath.size) {
+        if (currentNavPathIndex >= navPath.size) {
             currentNavPathIndex = 0
             GlobalScope.launch {
                 treeCapturer.saveTree()
@@ -97,5 +97,4 @@ class CaptureFlowNavigationController(
             }
         }
     }
-
 }

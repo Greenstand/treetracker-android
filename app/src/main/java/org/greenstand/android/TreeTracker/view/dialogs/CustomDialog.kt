@@ -45,15 +45,15 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 
 @Composable
-        /**
-         * @param dialogIcon Icon to be displayed in the dialog.
-         * @param title The Dialog's title text.
-         * @param textContent The text content of the dialog. Can be left empty if it is an input dialog
-         * @param content Composable's content. Allows you display other composable in the dialog as content
-         * @param onPositiveClick The callback action for clicking the positive approval button.
-         * @param onNegativeClick The callback action for clicking the negative approval button.
-         * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
-         */
+/**
+ * @param dialogIcon Icon to be displayed in the dialog.
+ * @param title The Dialog's title text.
+ * @param textContent The text content of the dialog. Can be left empty if it is an input dialog
+ * @param content Composable's content. Allows you display other composable in the dialog as content
+ * @param onPositiveClick The callback action for clicking the positive approval button.
+ * @param onNegativeClick The callback action for clicking the negative approval button.
+ * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
+ */
 fun CustomDialog(
     dialogIcon: Painter? = painterResource(id = R.drawable.greenstand_logo),
     backgroundModifier: Modifier = Modifier,

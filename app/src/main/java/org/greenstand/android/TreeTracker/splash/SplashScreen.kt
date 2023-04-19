@@ -90,7 +90,7 @@ fun SplashScreen(
 
 private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean {
     return result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
-            result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
 }
 
 private fun navigateToLanguageScreen(navController: NavHostController) {

@@ -22,7 +22,7 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class DeviceConfigRequest(
     @SerializedName("id")
-    val id: String, //uuid
+    val id: String, // uuid
     @SerializedName("device_identifier")
     val deviceIdentifier: String = DeviceUtils.deviceId,
     @SerializedName("app_version")

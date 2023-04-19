@@ -72,8 +72,6 @@ fun LanguageSelectScreen(
                             navController.navigate(NavRoute.SignupFlow.route)
                         }
                         viewModel.refreshAppLanguage(activity)
-
-
                     }
                 }
             )

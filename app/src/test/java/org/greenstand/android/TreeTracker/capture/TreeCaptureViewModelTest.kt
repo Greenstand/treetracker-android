@@ -147,6 +147,4 @@ class TreeCaptureViewModelTest {
         coVerify(exactly = 1) { createFakeTreesUseCase.execute(CreateFakeTreesParams(50)) }
         assertFalse(treeCaptureViewModel.state.getOrAwaitValueTest().isCreatingFakeTrees)
     }
-
-
 }

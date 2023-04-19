@@ -151,7 +151,7 @@ fun LocationRationaleDialog(navController: NavHostController, perm: PermissionSt
 @Composable
 fun enableLocation() {
     val activity: Context = LocalContext.current as Activity
-    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
     startActivity(activity, intent, null)
 }
 

@@ -120,5 +120,4 @@ fun Header(
             modifier = Modifier.padding(top = 110.dp)
         )
     }
-
 }

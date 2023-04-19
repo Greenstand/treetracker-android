@@ -107,7 +107,7 @@ class TreeUploader(
                         dao.updateTreeCapture(tree)
                     }
                 }
-                .forEach { it.await()}
+                .forEach { it.await() }
         }
         log("Tree Image Upload Completed")
     }

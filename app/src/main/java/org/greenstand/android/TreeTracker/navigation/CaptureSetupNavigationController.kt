@@ -49,9 +49,9 @@ class CaptureSetupNavigationController(
                 locationDataCapturer.startGpsUpdates()
             }
 
-                val userPhotoPath = CaptureSetupScopeManager.getData().user!!.photoPath
-                navController.navigate(NavRoute.TreeCapture.create(userPhotoPath))
-                CaptureSetupScopeManager.close()
+            val userPhotoPath = CaptureSetupScopeManager.getData().user!!.photoPath
+            navController.navigate(NavRoute.TreeCapture.create(userPhotoPath))
+            CaptureSetupScopeManager.close()
         } else {
             currentNavPathIndex++
             navController.navigate(navPath[currentNavPathIndex].route)
@@ -78,5 +78,4 @@ class CaptureSetupNavigationController(
             launchSingleTop = true
         }
     }
-
 }

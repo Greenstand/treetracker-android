@@ -53,7 +53,8 @@ class StepCounter(
     fun enable() {
         Timber.d("StepCounter: enable - register listener")
         sensorManager.registerListener(
-            stepCountEventListener, stepCounter, SensorManager.SENSOR_DELAY_FASTEST)
+            stepCountEventListener, stepCounter, SensorManager.SENSOR_DELAY_FASTEST
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -83,6 +84,6 @@ class StepCounter(
         private val BASE_KEY = PrefKeys.SESSION + PrefKey("steps")
         private val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
         private val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
-                PrefKey("abs-step-count-on-tree-capture")
+            PrefKey("abs-step-count-on-tree-capture")
     }
 }

@@ -27,7 +27,6 @@ import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.view.NoGPSDeviceDialog
 import org.koin.android.ext.android.inject
 
-
 class TreeTrackerActivity : ComponentActivity() {
 
     private val languageSwitcher: LanguageSwitcher by inject()

@@ -68,12 +68,10 @@ fun Camera(
                     } else {
                         ImageCapture.Builder()
                             .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                            //.setTargetResolution(Size(800, 800))
+                            // .setTargetResolution(Size(800, 800))
                             .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                             .build()
                     }
-
-
 
                     cameraControl.captureListener = {
 
@@ -105,7 +103,8 @@ fun Camera(
                                         .e("Photo capture failed: ${exception.localizedMessage}")
                                     exception.printStackTrace()
                                 }
-                            })
+                            }
+                        )
                     }
 
                     val cameraSelector = CameraSelector.Builder()
@@ -115,10 +114,9 @@ fun Camera(
                         )
                         .build()
 
-
                     cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
-                        lifecycleOwner, cameraSelector,  imageCapture, preview
+                        lifecycleOwner, cameraSelector, imageCapture, preview
                     )
 
                     preview.setSurfaceProvider(previewView.surfaceProvider)

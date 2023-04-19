@@ -82,13 +82,16 @@ class ConvergenceTest {
 
         assertEquals(
             "longitude mean computation", LONGITUDINAL_MEAN,
-            convergence.longitudeConvergence!!.mean, 0.0)
+            convergence.longitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "longitude variance computation", LONGITUDINAL_VARIANCE,
-            convergence.longitudeConvergence!!.variance, 0.0)
+            convergence.longitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "longitude std dev computation", LONGITUDINAL_STD_DEV,
-            convergence.longitudeConvergence!!.standardDeviation, 0.0)
+            convergence.longitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 
     @Test
@@ -98,13 +101,16 @@ class ConvergenceTest {
 
         assertEquals(
             "latitude mean computation", LATITUDINAL_MEAN,
-            convergence.latitudeConvergence!!.mean, 0.0)
+            convergence.latitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "latitude variance computation", LATITUDINAL_VARIANCE,
-            convergence.latitudeConvergence!!.variance, 0.0)
+            convergence.latitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "latitude std dev computation", LATITUDINAL_STD_DEV,
-            convergence.latitudeConvergence!!.standardDeviation, 0.0)
+            convergence.latitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 
     @Test
@@ -119,13 +125,16 @@ class ConvergenceTest {
 
         assertEquals(
             "Longitude Mean - sliding window", SLIDING_LONGITUDINAL_MEAN,
-            convergence.longitudeConvergence!!.mean, 0.0)
+            convergence.longitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "Longitude Variance - sliding window", SLIDING_LONGITUDINAL_VARIANCE,
-            convergence.longitudeConvergence!!.variance, 0.0)
+            convergence.longitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "Longitude std dev - sliding window", SLIDING_LONGITUDINAL_STD_DEV,
-            convergence.longitudeConvergence!!.standardDeviation, 0.0)
+            convergence.longitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 
     @Test
@@ -139,12 +148,15 @@ class ConvergenceTest {
 
         assertEquals(
             "Latitude Mean - sliding window", SLIDING_LATITUDE_MEAN,
-            convergence.latitudeConvergence!!.mean, 0.0)
+            convergence.latitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "Latitude Variance - sliding window", SLIDING_LATITUDE_VARIANCE,
-            convergence.latitudeConvergence!!.variance, 0.0)
+            convergence.latitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "Latitude std dev - sliding window", SLIDING_LATITUDE_STD_DEV,
-            convergence.latitudeConvergence!!.standardDeviation, 0.0)
+            convergence.latitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 }

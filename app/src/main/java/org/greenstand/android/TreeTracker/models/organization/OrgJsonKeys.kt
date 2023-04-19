@@ -25,5 +25,4 @@ object OrgJsonKeys {
         const val CAPTURE_SETUP_FLOW = "captureSetupFlow"
         const val CAPTURE_FLOW = "captureFlow"
     }
-
 }

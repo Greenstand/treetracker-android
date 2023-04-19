@@ -30,7 +30,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Mess
 object DatabaseConverters {
 
     fun createMessageRequestFromEntities(messageEntity: MessageEntity): MessageRequest {
-        return when(messageEntity.type) {
+        return when (messageEntity.type) {
             MessageType.MESSAGE ->
                 MessageRequest(
                     id = messageEntity.id,
@@ -60,16 +60,16 @@ object DatabaseConverters {
                 throw IllegalStateException(
                     "Invalid message type ${messageEntity.type} is being created for upload"
                 )
-
         }
     }
 
     fun createMessageFromEntities(
         messageEntity: MessageEntity,
         surveyEntity: SurveyEntity? = null,
-        questionEntities: List<QuestionEntity>? = null): Message {
+        questionEntities: List<QuestionEntity>? = null
+    ): Message {
 
-        return when(messageEntity.type) {
+        return when (messageEntity.type) {
             MessageType.MESSAGE ->
                 DirectMessage(
                     id = messageEntity.id,

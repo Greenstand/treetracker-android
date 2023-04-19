@@ -17,7 +17,6 @@ package org.greenstand.android.TreeTracker.models
 
 import com.google.gson.Gson
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.api.models.requests.DeviceConfigRequest
 import org.greenstand.android.TreeTracker.api.models.requests.SessionRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -43,9 +42,11 @@ class SessionUploader(
             )
         }
 
-        val jsonBundle = gson.toJson(UploadBundle.createV2(
-            sessions = sessionRequests,
-        ))
+        val jsonBundle = gson.toJson(
+            UploadBundle.createV2(
+                sessions = sessionRequests,
+            )
+        )
         val bundleId = jsonBundle.md5() + "_sessions"
         val sessionIds = sessionsToUpload.map { it.id }
 

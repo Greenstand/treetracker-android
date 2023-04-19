@@ -25,5 +25,4 @@ class TimeProvider(private val locationUpdateManager: LocationUpdateManager) {
         val locationTime = location?.time?.let { Instant.fromEpochMilliseconds(it) }
         return locationTime ?: Instant.fromEpochMilliseconds(System.currentTimeMillis())
     }
-
 }

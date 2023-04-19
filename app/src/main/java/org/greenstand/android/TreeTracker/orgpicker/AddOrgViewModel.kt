@@ -25,7 +25,6 @@ import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 
-
 data class AddOrgState(
     val orgName: String = "",
     val previousOrgName: String? = null,

@@ -112,7 +112,6 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
                     )
                 }
             }
-
         }
     }
 }

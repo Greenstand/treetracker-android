@@ -23,7 +23,6 @@ import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 
-
 data class TreeHeightSelectionState(
     val colors: List<ButtonColors> = listOf(
         AppButtonColors.ProgressGreen,

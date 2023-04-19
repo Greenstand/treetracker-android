@@ -47,14 +47,14 @@ class LanguageSwitcher(private val prefs: Preferences) {
 
     fun applyCurrentLanguage(activity: Activity) {
         val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
-        language?.also{ language ->
+        language?.also { language ->
             setLanguage(language, activity.resources)
         }
     }
 
     fun switch(activity: Activity) {
         val res = activity.resources
-        currentLanguage()?.also{ language ->
+        currentLanguage()?.also { language ->
             val newLanguage = when (language) {
                 Language.ENGLISH -> Language.SWAHILI
                 Language.SWAHILI -> Language.ENGLISH

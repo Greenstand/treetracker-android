@@ -111,7 +111,8 @@ class MessagesRepo(
 
     fun getDirectMessages(
         wallet: String,
-        otherChatIdentifier: String): Flow<List<DirectMessage>> {
+        otherChatIdentifier: String
+    ): Flow<List<DirectMessage>> {
         return messagesDao.getDirectMessagesForWallet(wallet)
             .map { messages ->
                 messages
@@ -139,8 +140,8 @@ class MessagesRepo(
                 ensureActive()
                 fetchMessagesForWallet(wallet)
             } catch (e: CancellationException) {
-              // rethrow cancellation exception
-              throw e
+                // rethrow cancellation exception
+                throw e
             } catch (e: Exception) {
                 if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
                     // 404 indicates the user has never had messages before
@@ -272,8 +273,7 @@ class MessagesRepo(
             ?: Instant.fromEpochMilliseconds(0).toString()
     }
 
-    suspend fun checkForUnreadMessages(): Boolean{
+    suspend fun checkForUnreadMessages(): Boolean {
         return messagesDao.getUnreadMessagesCount() >= 1
     }
-
 }

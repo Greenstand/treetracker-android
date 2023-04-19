@@ -78,7 +78,7 @@ fun DashboardScreen(
     val navController = LocalNavHostController.current
     var showDialog by remember { mutableStateOf(false) }
 
-    if (showDialog){
+    if (showDialog) {
         CustomDialog(
             title = stringResource(R.string.upload_trees_soon_title),
             textContent = stringResource(R.string.upload_trees_text_content),
@@ -93,9 +93,9 @@ fun DashboardScreen(
         onSyncClicked = { viewModel.sync() },
         onOrgClicked = { navController.navigate(NavRoute.Org.route) },
         onCaptureClicked = {
-            if (state.showTreeSyncReminderDialog){
+            if (state.showTreeSyncReminderDialog) {
                 showDialog = true
-            }else navController.navigate(NavRoute.UserSelect.route)
+            } else navController.navigate(NavRoute.UserSelect.route)
         },
         onMessagesClicked = {
             viewModel.syncMessages()
@@ -283,8 +283,8 @@ fun DashboardUploadProgressBar(
             style = stroke
         )
 
-        drawProgress(AppColors.MediumGray, 180f)  // Background progress.
-        drawProgress(AppColors.Orange, progress * 180f)  // Foreground progress.
+        drawProgress(AppColors.MediumGray, 180f) // Background progress.
+        drawProgress(AppColors.Orange, progress * 180f) // Foreground progress.
     }
 }
 
@@ -323,7 +323,7 @@ fun DashBoardButton(
                 .padding(bottom = 20.dp),
             textAlign = TextAlign.Center,
         )
-        if (showUnreadNotification){
+        if (showUnreadNotification) {
             Image(
                 modifier = Modifier
                     .padding(bottom = 12.dp, end = 8.dp)

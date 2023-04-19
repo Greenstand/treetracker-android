@@ -98,72 +98,72 @@ class MessagesRepoTest {
     private val lastTimeMessageSynced = "123456789"
 
     @Test
-    fun `sync messages method fetches messages from api and saves them in database for every page and wallet correctly`()
-        = runBlocking {
+    fun `sync messages method fetches messages from api and saves them in database for every page and wallet correctly`() =
+        runBlocking {
 
-        // mock
-        coEvery {
-            userRepo.getUserList()
-        } returns userList
+            // mock
+            coEvery {
+                userRepo.getUserList()
+            } returns userList
 
-        coEvery {
-            messagesDAO.insertMessage(any())
-        } returns 0L
+            coEvery {
+                messagesDAO.insertMessage(any())
+            } returns 0L
 
-        coEvery {
-            messageUploader.uploadMessages()
-        } returns Unit
+            coEvery {
+                messageUploader.uploadMessages()
+            } returns Unit
 
-        coEvery {
-            messagesDAO.getLatestSyncTimeForWallet(any())
-        } returns lastTimeMessageSynced
+            coEvery {
+                messagesDAO.getLatestSyncTimeForWallet(any())
+            } returns lastTimeMessageSynced
 
-        for (i in userList.indices) {
-            val limit = 100
-            val total = (i + 1) * 100 + 5
+            for (i in userList.indices) {
+                val limit = 100
+                val total = (i + 1) * 100 + 5
 
-            iterateForEveryPage(0, limit, total) { offset ->
-                coEvery {
-                    apiService.getMessages(
-                        wallet = i.toString(),
-                        lastSyncTime = lastTimeMessageSynced,
-                        offset = offset,
-                        limit = limit,
-                    )
-                } returns MessagesResponse(
-                    getMessageResponseList(limit, offset, i),
-                    LinksResponse(null, null),
-                    QueryResponse(total, i.toString(), limit, offset)
-                )
-            }
-        }
-
-        // perform
-        messagesRepo.syncMessages()
-
-        // assert
-        for (i in userList.indices) {
-            val limit = 100
-            val total = (i + 1) * 100 + 5
-
-            iterateForEveryPage(0, limit, total) { offset ->
-                coVerify(exactly = 1) {
-                    apiService.getMessages(
-                        wallet = i.toString(),
-                        lastSyncTime = lastTimeMessageSynced,
-                        offset = offset,
-                        limit = limit,
-                    )
-
-                    getMessageResponseList(limit, offset, i).forEach {
-                        messagesDAO.insertMessage(
-                            getMessageEntityFromResponse(it, i.toString())
+                iterateForEveryPage(0, limit, total) { offset ->
+                    coEvery {
+                        apiService.getMessages(
+                            wallet = i.toString(),
+                            lastSyncTime = lastTimeMessageSynced,
+                            offset = offset,
+                            limit = limit,
                         )
+                    } returns MessagesResponse(
+                        getMessageResponseList(limit, offset, i),
+                        LinksResponse(null, null),
+                        QueryResponse(total, i.toString(), limit, offset)
+                    )
+                }
+            }
+
+            // perform
+            messagesRepo.syncMessages()
+
+            // assert
+            for (i in userList.indices) {
+                val limit = 100
+                val total = (i + 1) * 100 + 5
+
+                iterateForEveryPage(0, limit, total) { offset ->
+                    coVerify(exactly = 1) {
+                        apiService.getMessages(
+                            wallet = i.toString(),
+                            lastSyncTime = lastTimeMessageSynced,
+                            offset = offset,
+                            limit = limit,
+                        )
+
+                        getMessageResponseList(limit, offset, i).forEach {
+                            messagesDAO.insertMessage(
+                                getMessageEntityFromResponse(it, i.toString())
+                            )
+                        }
                     }
                 }
             }
         }
-    }
 
     private fun iterateForEveryPage(
         initialOffset: Int = 0,
@@ -179,7 +179,6 @@ class MessagesRepoTest {
             offset += limit
         } while (offset <= total)
     }
-
 
     private fun getMessageResponseList(
         limit: Int,

@@ -50,7 +50,8 @@ class MessageUploader(
         val jsonBundle = gson.toJson(
             UploadBundle.createV2(
                 messages = messageRequests,
-            ))
+            )
+        )
         val bundleId = jsonBundle.md5() + "_messages"
         val messageIds = messageEntitiesToUpload.map { it.id }
 

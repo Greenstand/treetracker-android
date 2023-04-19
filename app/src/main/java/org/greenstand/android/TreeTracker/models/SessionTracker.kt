@@ -95,8 +95,8 @@ class SessionTracker(
     }
 
     fun wasSessionInterrupted(): Boolean {
-        return _currentSessionId == null
-                && preferences.getLong(SESSION_ID_KEY) != -1L
+        return _currentSessionId == null &&
+            preferences.getLong(SESSION_ID_KEY) != -1L
     }
 
     companion object {

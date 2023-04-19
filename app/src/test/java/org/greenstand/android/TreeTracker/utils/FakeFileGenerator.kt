@@ -225,7 +225,8 @@ object FakeFileGenerator {
                 ),
                 Destination(
                     route = "second Destination",
-                    features = null)
+                    features = null
+                )
             ),
             captureSetupFlow =
             listOf(
@@ -235,7 +236,8 @@ object FakeFileGenerator {
                 ),
                 Destination(
                     route = "second Destination",
-                    features = null)
+                    features = null
+                )
             )
         ),
         Org(
@@ -250,7 +252,8 @@ object FakeFileGenerator {
                 ),
                 Destination(
                     route = "Destination",
-                    features = null)
+                    features = null
+                )
             ),
             captureSetupFlow =
             listOf(
@@ -260,14 +263,15 @@ object FakeFileGenerator {
                 ),
                 Destination(
                     route = "random Destination",
-                    features = null)
+                    features = null
+                )
             )
         )
     )
     val fakeAnnouncementMessage = AnnouncementMessage(
         id = "id",
         from = "from",
-        to ="to",
+        to = "to",
         composedAt = "composedAt",
         isRead = true,
         subject = "subject",
@@ -291,13 +295,16 @@ object FakeFileGenerator {
         isRead = false,
         surveyId = "surveyId",
         title = "",
-        questions = listOf(Question(
-            prompt = "prompt",
-            choices = listOf("choice1, choice2")
-        ), Question(
+        questions = listOf(
+            Question(
+                prompt = "prompt",
+                choices = listOf("choice1, choice2")
+            ),
+            Question(
                 prompt = "new prompt",
                 choices = listOf("yellow, black")
-            )),
+            )
+        ),
         isComplete = true
     )
     val messages = listOf(fakeAnnouncementMessage, fakeDirectMessage, fakeSurveyMessage)

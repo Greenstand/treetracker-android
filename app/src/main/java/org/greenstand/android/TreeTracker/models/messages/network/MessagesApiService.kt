@@ -31,5 +31,4 @@ interface MessagesApiService {
         @Query("offset") offset: Int,
         @Query("limit") limit: Int = 10,
     ): MessagesResponse
-
 }

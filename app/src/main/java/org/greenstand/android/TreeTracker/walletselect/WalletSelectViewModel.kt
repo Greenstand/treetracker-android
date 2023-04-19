@@ -15,8 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.walletselect
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
@@ -35,7 +33,6 @@ class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
 
     private val _state = MutableStateFlow(WalletSelectState())
     val state: Flow<WalletSelectState> = _state
-
 
     init {
         viewModelScope.launch {

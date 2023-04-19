@@ -31,7 +31,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.IOException
 
-
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -41,7 +40,7 @@ class TreeTrackerDaoTest {
     private lateinit var database: AppDatabase
 
     @Before
-    fun createDb(){
+    fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         database = Room.inMemoryDatabaseBuilder(
             context, AppDatabase::class.java
@@ -94,7 +93,7 @@ class TreeTrackerDaoTest {
     fun `saving org to App Database, returns valid data querying name`() = runBlocking {
         treeTrackerDAO.insertOrg(FakeFileGenerator.fakeOrg.first())
         val organization = treeTrackerDAO.getOrg("new")
-        assertEquals("GreenStand",organization?.name)
+        assertEquals("GreenStand", organization?.name)
     }
 
     @Test
@@ -118,14 +117,16 @@ class TreeTrackerDaoTest {
     @Throws(Exception::class)
     fun `updated device config bundle ID, assert fake bundleId not same as updated bundleID,`() = runBlocking {
         treeTrackerDAO.insertDeviceConfig(FakeFileGenerator.fakeDeviceConfig)
-        val deviceConfig = treeTrackerDAO.updateDeviceConfigBundleIds(ids = listOf(15, 16),
-            bundleId = "newRandomString")
+        val deviceConfig = treeTrackerDAO.updateDeviceConfigBundleIds(
+            ids = listOf(15, 16),
+            bundleId = "newRandomString"
+        )
         assertNotEquals(FakeFileGenerator.fakeDeviceConfig.bundleId, deviceConfig)
     }
 
     @Test
     @Throws(Exception::class)
-    fun `insert Session, returns valid querying UUID `() = runBlocking{
+    fun `insert Session, returns valid querying UUID `() = runBlocking {
         val deviceConfigId = treeTrackerDAO.insertDeviceConfig(FakeFileGenerator.fakeDeviceConfig)
         FakeFileGenerator.fakeDeviceConfig.id = deviceConfigId
         assertEquals(deviceConfigId, FakeFileGenerator.fakeDeviceConfig.id)
@@ -138,7 +139,7 @@ class TreeTrackerDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun `insert Tree Entity, returns valid data, querying bundle Id`() = runBlocking{
+    fun `insert Tree Entity, returns valid data, querying bundle Id`() = runBlocking {
         val deviceConfigId = treeTrackerDAO.insertDeviceConfig(FakeFileGenerator.fakeDeviceConfig)
         FakeFileGenerator.fakeDeviceConfig.id = deviceConfigId
 
@@ -155,7 +156,7 @@ class TreeTrackerDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun `update Tree Entity, assert fake tree not same as updated `() = runBlocking{
+    fun `update Tree Entity, assert fake tree not same as updated `() = runBlocking {
         val deviceConfigId = treeTrackerDAO.insertDeviceConfig(FakeFileGenerator.fakeDeviceConfig)
         FakeFileGenerator.fakeDeviceConfig.id = deviceConfigId
 
@@ -172,7 +173,7 @@ class TreeTrackerDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun `insert Planter CheckIn Entity, returns valid data, querying local photo path `() = runBlocking{
+    fun `insert Planter CheckIn Entity, returns valid data, querying local photo path `() = runBlocking {
         val planterInfoId = treeTrackerDAO.insertPlanterInfo(FakeFileGenerator.fakePlanterInfo)
         FakeFileGenerator.fakePlanterInfo.id = planterInfoId
         val newPlanterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId)
@@ -183,7 +184,7 @@ class TreeTrackerDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun `update Planter CheckIn Entity, assert fake planter checkIn not same as updated`() = runBlocking{
+    fun `update Planter CheckIn Entity, assert fake planter checkIn not same as updated`() = runBlocking {
         val planterInfoId = treeTrackerDAO.insertPlanterInfo(FakeFileGenerator.fakePlanterInfo)
         FakeFileGenerator.fakePlanterInfo.id = planterInfoId
         val newPlanterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId)
@@ -194,7 +195,7 @@ class TreeTrackerDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun `delete Planter CheckIn Entity, assert null`() = runBlocking{
+    fun `delete Planter CheckIn Entity, assert null`() = runBlocking {
         val planterInfoId = treeTrackerDAO.insertPlanterInfo(FakeFileGenerator.fakePlanterInfo)
         FakeFileGenerator.fakePlanterInfo.id = planterInfoId
         val newPlanterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId)
@@ -205,7 +206,7 @@ class TreeTrackerDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun `insert Location Entity, returns valid with non null data `() = runBlocking{
+    fun `insert Location Entity, returns valid with non null data `() = runBlocking {
         val deviceConfigId = treeTrackerDAO.insertDeviceConfig(FakeFileGenerator.fakeDeviceConfig)
         FakeFileGenerator.fakeDeviceConfig.id = deviceConfigId
 
@@ -217,12 +218,12 @@ class TreeTrackerDaoTest {
         val newLocation = FakeFileGenerator.fakeLocation.copy(sessionId = newSessionId)
         treeTrackerDAO.insertLocationData(newLocation)
         val getLocationEntity = treeTrackerDAO.getLocationData()
-        assertEquals("location",getLocationEntity.first().locationDataJson)
+        assertEquals("location", getLocationEntity.first().locationDataJson)
     }
 
     @Test
     @Throws(Exception::class)
-    fun `insert Tree Capture Entity, returns valid data querying UUID`() = runBlocking{
+    fun `insert Tree Capture Entity, returns valid data querying UUID`() = runBlocking {
         val planterInfoId = treeTrackerDAO.insertPlanterInfo(FakeFileGenerator.fakePlanterInfo)
         FakeFileGenerator.fakePlanterInfo.id = planterInfoId
         val newPlanterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId)
@@ -231,12 +232,12 @@ class TreeTrackerDaoTest {
         val newTreeCapture = FakeFileGenerator.fakeTreeCapture.copy(planterCheckInId = planterCheckId)
         val id = treeTrackerDAO.insertTreeCapture(newTreeCapture)
         val getTreeCapture = treeTrackerDAO.getTreeCaptureById(id)
-        assertEquals("uuid",getTreeCapture.uuid)
+        assertEquals("uuid", getTreeCapture.uuid)
     }
 
     @Test
     @Throws(Exception::class)
-    fun `update Tree Capture Entity, assert fake tree capture not same as updated `() = runBlocking{
+    fun `update Tree Capture Entity, assert fake tree capture not same as updated `() = runBlocking {
         val planterInfoId = treeTrackerDAO.insertPlanterInfo(FakeFileGenerator.fakePlanterInfo)
         FakeFileGenerator.fakePlanterInfo.id = planterInfoId
         val newPlanterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId)
@@ -250,7 +251,7 @@ class TreeTrackerDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun `insert Tree Attribute Entity, returns valid with data `() = runBlocking{
+    fun `insert Tree Attribute Entity, returns valid with data `() = runBlocking {
         val planterInfoId = treeTrackerDAO.insertPlanterInfo(FakeFileGenerator.fakePlanterInfo)
         FakeFileGenerator.fakePlanterInfo.id = planterInfoId
         val newPlanterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId)
@@ -265,8 +266,8 @@ class TreeTrackerDaoTest {
         assertEquals(1, size)
     }
     @After
-        @Throws(IOException::class)
-        fun tearDown(){
-            database.close()
-        }
+    @Throws(IOException::class)
+    fun tearDown() {
+        database.close()
     }
+}
