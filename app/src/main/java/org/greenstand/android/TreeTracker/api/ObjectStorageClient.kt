@@ -36,6 +36,7 @@ import java.util.Date
 import java.util.UUID
 import org.greenstand.android.TreeTracker.BuildConfig
 
+@Suppress("ImplicitDefaultLocale")
 class ObjectStorageClient private constructor(applicationContext: Context) {
 
     private var s3Client: AmazonS3? = null
