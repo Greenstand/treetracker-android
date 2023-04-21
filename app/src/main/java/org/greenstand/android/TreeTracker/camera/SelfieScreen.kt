@@ -46,7 +46,6 @@ fun SelfieScreen() {
     val viewModel = getViewModel<SignupViewModel>()
     val state by viewModel.state.observeAsState(SignUpState())
 
-
     Scaffold(
         topBar = {
             ActionBar(

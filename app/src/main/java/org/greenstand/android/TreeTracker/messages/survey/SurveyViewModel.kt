@@ -41,7 +41,7 @@ class SurveyViewModel(
     private val userRepo: UserRepo,
 ) : ViewModel() {
 
-    private var _state: MutableStateFlow<SurveyScreenState> = MutableStateFlow( SurveyScreenState())
+    private var _state: MutableStateFlow<SurveyScreenState> = MutableStateFlow(SurveyScreenState())
     val state: StateFlow<SurveyScreenState> = _state.asStateFlow()
 
     private lateinit var survey: SurveyMessage
@@ -102,11 +102,10 @@ class SurveyViewModel(
         )
         return true
     }
-
 }
 
-class SurveyViewModelFactory(private val messageId: String)
-    : ViewModelProvider.Factory, KoinComponent {
+class SurveyViewModelFactory(private val messageId: String) :
+    ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return SurveyViewModel(messageId, get(), get()) as T

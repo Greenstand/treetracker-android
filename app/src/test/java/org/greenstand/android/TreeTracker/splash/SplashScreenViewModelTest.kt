@@ -45,7 +45,7 @@ class SplashScreenViewModelTest {
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private var orgJsonString : String? = null
+    private var orgJsonString: String? = null
 
     @MockK(relaxed = true)
     private lateinit var userRepo: UserRepo
@@ -108,7 +108,7 @@ class SplashScreenViewModelTest {
         coVerify(exactly = 1) { orgRepo.init() }
         coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some string") }
         coVerify(exactly = 1) { messagesRepo.syncMessages() }
-        coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET,user.wallet) }
+        coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
         coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
     }
 
@@ -127,25 +127,25 @@ class SplashScreenViewModelTest {
         coVerify(exactly = 1) { orgRepo.init() }
         coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some stirng") }
         coVerify(exactly = 0) { messagesRepo.syncMessages() }
-        coVerify(exactly = 0) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET,user.wallet) }
+        coVerify(exactly = 0) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
         coVerify(exactly = 0) { treesToSyncHelper.refreshTreeCountToSync() }
     }
 
     @Test
-    fun `WHEN User object is null THEN isInitialSetupRequired is true`() = runBlocking{
+    fun `WHEN User object is null THEN isInitialSetupRequired is true`() = runBlocking {
         coEvery { userRepo.getPowerUser() } returns null
 
-        val result =  splashScreenViewModel.isInitialSetupRequired()
+        val result = splashScreenViewModel.isInitialSetupRequired()
 
         assertTrue(result)
     }
 
     @Test
-    fun `WHEN User object is not  null THEN isInitialSetupRequired is false`() = runBlocking{
+    fun `WHEN User object is not  null THEN isInitialSetupRequired is false`() = runBlocking {
         val user = FakeFileGenerator.emptyUser
         coEvery { userRepo.getPowerUser() } returns user
 
-        val result =  splashScreenViewModel.isInitialSetupRequired()
+        val result = splashScreenViewModel.isInitialSetupRequired()
 
         assertFalse(result)
     }
@@ -155,5 +155,4 @@ class SplashScreenViewModelTest {
         splashScreenViewModel.startGPSUpdatesForSignup()
         verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
     }
-
 }

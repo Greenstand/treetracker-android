@@ -31,7 +31,7 @@ class PermissionViewModel(
         MutableLiveData(PermissionItemsState())
     val state: LiveData<PermissionItemsState> = _state
 
-    fun isLocationEnabled(){
+    fun isLocationEnabled() {
         _state.value = _state.value?.copy(
             isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         )

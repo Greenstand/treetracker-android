@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.capture
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize

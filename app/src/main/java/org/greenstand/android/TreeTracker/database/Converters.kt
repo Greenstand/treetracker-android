@@ -22,7 +22,6 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant
 import java.lang.reflect.Type
 
-
 object Converters {
 
     val gson = Gson()

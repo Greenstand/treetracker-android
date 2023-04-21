@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.models.setupflow
 
-
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.koin.core.component.KoinScopeComponent
 import org.koin.core.component.createScope

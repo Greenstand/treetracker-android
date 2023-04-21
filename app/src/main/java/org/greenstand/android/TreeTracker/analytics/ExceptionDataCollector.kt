@@ -72,5 +72,4 @@ class ExceptionDataCollector(
         private const val LAST_ROUTE = "last_route"
         private const val ROUTE = "route"
     }
-
 }

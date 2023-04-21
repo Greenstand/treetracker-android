@@ -105,9 +105,8 @@ fun TreeCaptureScreen(
                 },
                 centerAction = {
                     CaptureButton(
-                        modifier =  Modifier
-                            .align(Alignment.Center)
-                        ,
+                        modifier = Modifier
+                            .align(Alignment.Center),
                         onClick = {
                             scope.launch {
                                 viewModel.captureLocation()
@@ -197,7 +196,7 @@ fun TreeCaptureScreen(
                 }
             }
         )
-        CaptureCustomLoading(isLoading = state.isGettingLocation || state.isCreatingFakeTrees, progress = state.convergencePercentage )
+        CaptureCustomLoading(isLoading = state.isGettingLocation || state.isCreatingFakeTrees, progress = state.convergencePercentage)
     }
 }
 
@@ -207,7 +206,8 @@ fun CaptureCustomLoading(isLoading: Boolean, progress: Float) {
         Box(
             modifier = Modifier
                 .padding(bottom = 90.dp)
-                .fillMaxSize(), contentAlignment = Alignment.BottomCenter
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
         ) {
 
             Column(

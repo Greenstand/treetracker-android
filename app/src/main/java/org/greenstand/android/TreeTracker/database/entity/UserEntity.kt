@@ -48,8 +48,11 @@ data class UserEntity(
     var photoPath: String,
     @ColumnInfo(name = "photo_url", defaultValue = "NULL")
     var photoUrl: String?,
-    @ColumnInfo(name =
-    "power_user", defaultValue = "0")
+    @ColumnInfo(
+        name =
+        "power_user",
+        defaultValue = "0"
+    )
     var powerUser: Boolean,
 ) {
     @PrimaryKey(autoGenerate = true)

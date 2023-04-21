@@ -152,7 +152,8 @@ fun ApprovalButton(
 @Composable
 fun InfoButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit, shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Circle
+    onClick: () -> Unit,
+    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Circle
 
 ) {
     TreeTrackerButton(
@@ -161,14 +162,14 @@ fun InfoButton(
         onClick = onClick,
         shape = TreeTrackerButtonShape.Circle,
         depth = 6f
-    )
-    {
+    ) {
         Image(
-            painter = painterResource(id = R.drawable.info_icon), modifier = Modifier
-                .size(80.dp), contentDescription = null
+            painter = painterResource(id = R.drawable.info_icon),
+            modifier = Modifier
+                .size(80.dp),
+            contentDescription = null
         )
     }
-
 }
 
 @Composable

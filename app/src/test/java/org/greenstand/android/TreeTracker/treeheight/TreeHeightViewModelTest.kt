@@ -44,12 +44,12 @@ class TreeHeightViewModelTest {
     private lateinit var treeHeightSelectionViewModel: TreeHeightSelectionViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         treeHeightSelectionViewModel = TreeHeightSelectionViewModel(treeCapturer)
     }
 
     @Test
-    fun `selected color is progress green, asserts correct color added `()= runBlocking {
+    fun `selected color is progress green, asserts correct color added `() = runBlocking {
         val color = AppButtonColors.ProgressGreen
         treeHeightSelectionViewModel.selectColor(color)
 

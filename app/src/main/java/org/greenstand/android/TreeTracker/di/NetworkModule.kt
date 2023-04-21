@@ -25,5 +25,4 @@ val networkModule = module {
     single { RetrofitBuilder(get()).create() }
 
     single { get<Retrofit>().create(MessagesApiService::class.java) }
-
 }

@@ -81,7 +81,7 @@ fun DeterminateProgressBar(
             style = stroke
         )
 
-        drawProgress(AppColors.MediumGray, 360f)  // Background progress.
-        drawProgress(AppColors.Orange, progress * 360f)  // Foreground progress.
+        drawProgress(AppColors.MediumGray, 360f) // Background progress.
+        drawProgress(AppColors.Orange, progress * 360f) // Foreground progress.
     }
 }

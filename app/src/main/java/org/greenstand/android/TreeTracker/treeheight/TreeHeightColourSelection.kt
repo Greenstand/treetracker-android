@@ -46,8 +46,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
-fun TreeHeightScreen(
-) {
+fun TreeHeightScreen() {
     val viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current)
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(TreeHeightSelectionState())

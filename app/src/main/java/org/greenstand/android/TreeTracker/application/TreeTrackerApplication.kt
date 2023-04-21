@@ -51,10 +51,14 @@ class TreeTrackerApplication : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
 
-            Timber.tag("DebugDB").d("To forward DebugDB from emulator to browser " +
-                    "use the command 'adb forward tcp:8080 tcp:8080' from terminal")
-            Timber.tag("DebugDB").d("For more information visit: " +
-                    "https://github.com/amitshekhariitbhu/Android-Debug-Database")
+            Timber.tag("DebugDB").d(
+                "To forward DebugDB from emulator to browser " +
+                    "use the command 'adb forward tcp:8080 tcp:8080' from terminal"
+            )
+            Timber.tag("DebugDB").d(
+                "For more information visit: " +
+                    "https://github.com/amitshekhariitbhu/Android-Debug-Database"
+            )
         } else {
             Timber.plant(ExceptionLogger())
         }

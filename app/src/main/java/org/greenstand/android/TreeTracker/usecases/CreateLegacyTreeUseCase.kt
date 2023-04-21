@@ -51,6 +51,5 @@ class CreateLegacyTreeUseCase(
         }.toList()
         Timber.d("Inserting TreeCapture entity $entity")
         dao.insertTreeWithAttributes(entity, attributeEntitites)
-
     }
 }

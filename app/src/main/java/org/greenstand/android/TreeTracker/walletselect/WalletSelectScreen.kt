@@ -28,7 +28,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +50,6 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.OrangeAddButton
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.UserImageButton
-
 
 @Composable
 fun WalletSelectScreen(

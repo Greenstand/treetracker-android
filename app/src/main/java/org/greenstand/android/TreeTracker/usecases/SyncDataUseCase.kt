@@ -73,9 +73,8 @@ class SyncDataUseCase(
                 executeIfContextActive("Location Upload") {
                     uploadLocationDataUseCase.execute(Unit)
                 }
-
             }
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
             return false
         }

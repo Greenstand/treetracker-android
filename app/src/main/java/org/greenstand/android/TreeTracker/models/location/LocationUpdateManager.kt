@@ -118,8 +118,8 @@ class LocationUpdateManager(
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         )
         return (
-                fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
-                        coarseLocationPermission == PackageManager.PERMISSION_GRANTED
-                )
+            fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED
+            )
     }
 }

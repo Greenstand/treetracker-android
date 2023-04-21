@@ -56,7 +56,7 @@ class LocationDataCapturer(
     private var areLocationUpdatesOn: Boolean = false
     val percentageConvergenceObservers = mutableListOf<(Float) -> Unit>()
     var newestPercentageConvergence: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        //convergence percentage fluctuates so it is only updated when it increases
+        // convergence percentage fluctuates so it is only updated when it increases
         if (newValue > oldValue) {
             percentageConvergenceObservers.forEach { it(newValue) }
         }
@@ -84,22 +84,22 @@ class LocationDataCapturer(
                     }
                     Timber.d(
                         "Convergence: Longitude Mean: " +
-                                "[${currentConvergence?.longitudeConvergence?.mean}]. \n" +
-                                "Longitude standard deviation value: " +
-                                "[${currentConvergence?.longitudeConvergence?.standardDeviation}]"
+                            "[${currentConvergence?.longitudeConvergence?.mean}]. \n" +
+                            "Longitude standard deviation value: " +
+                            "[${currentConvergence?.longitudeConvergence?.standardDeviation}]"
                     )
                     Timber.d(
                         "Convergence: Latitude Mean: " +
-                                "[${currentConvergence?.latitudeConvergence?.mean}]. \n " +
-                                "Latitude standard deviation value: " +
-                                "[${currentConvergence?.latitudeConvergence?.standardDeviation}]"
+                            "[${currentConvergence?.latitudeConvergence?.mean}]. \n " +
+                            "Latitude standard deviation value: " +
+                            "[${currentConvergence?.latitudeConvergence?.standardDeviation}]"
                     )
 
                     val longStdDev = currentConvergence?.longitudinalStandardDeviation()
                     val latStdDev = currentConvergence?.latitudinalStandardDeviation()
                     if (longStdDev != null && latStdDev != null) {
-                        val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(),locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
-                        newestPercentageConvergence = min(1f,minimumConvergenceRatio)
+                        val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(), locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
+                        newestPercentageConvergence = min(1f, minimumConvergenceRatio)
 
                         if (longStdDev < locationDataConfig.lonStdDevThreshold &&
                             latStdDev < locationDataConfig.latStdDevThreshold
@@ -128,12 +128,12 @@ class LocationDataCapturer(
                         )
                     val jsonValue = gson.toJson(locationData)
                     Timber.d("Inserting new location data $jsonValue")
-                        treeTrackerDAO.insertLocationData(
-                            LocationEntity(
-                                locationDataJson = jsonValue,
-                                sessionId = currentSessionId,
-                            )
+                    treeTrackerDAO.insertLocationData(
+                        LocationEntity(
+                            locationDataJson = jsonValue,
+                            sessionId = currentSessionId,
                         )
+                    )
                 }
             }
         }

@@ -28,7 +28,6 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -48,7 +47,7 @@ class IndividualMessageListViewModelTest {
     private lateinit var testSubject: IndividualMessageListViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         coEvery { userRepo.getUser(any()) } returns FakeFileGenerator.fakeUsers.first()
         coEvery { messagesRepo.getMessageFlow(any()) } returns flowOf(FakeFileGenerator.messages)
         testSubject = IndividualMessageListViewModel(userId, userRepo, messagesRepo)
@@ -56,25 +55,25 @@ class IndividualMessageListViewModelTest {
 
     @Test
     fun `verify user repo gets the correct user`() = runBlocking {
-       coVerify { userRepo.getUser(userId) }
+        coVerify { userRepo.getUser(userId) }
     }
 
     @Test
-    fun `WHEN message flow is triggered THEN state updates with correct message and user`()= runBlocking {
+    fun `WHEN message flow is triggered THEN state updates with correct message and user`() = runBlocking {
         val message = testSubject.state.getOrAwaitValueTest().messages.first()
         val currentUser = testSubject.state.getOrAwaitValueTest().currentUser
         assertEquals(message, FakeFileGenerator.messages.first())
         assertEquals(currentUser, FakeFileGenerator.fakeUsers.first())
     }
     @Test
-    fun `WHEN selected message is triggered THEN state updates with correct message`()= runBlocking {
+    fun `WHEN selected message is triggered THEN state updates with correct message`() = runBlocking {
         testSubject.selectMessage(FakeFileGenerator.fakeSurveyMessage)
         val result = testSubject.state.getOrAwaitValueTest().selectedMessage
         assertEquals(result, FakeFileGenerator.messages[2])
     }
 
     @Test
-    fun `WHEN selected message is null, Assert Null, THEN when we select message, returns correct data`()= runBlocking {
+    fun `WHEN selected message is null, Assert Null, THEN when we select message, returns correct data`() = runBlocking {
         val message = FakeFileGenerator.fakeDirectMessage
         assertNull(testSubject.state.getOrAwaitValueTest().selectedMessage)
         testSubject.selectMessage(message)

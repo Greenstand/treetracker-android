@@ -35,5 +35,4 @@ class TreesToSyncHelper(
     companion object {
         val TREES_TO_SYNC_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("tree-count-to-sync")
     }
-
 }

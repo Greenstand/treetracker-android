@@ -43,17 +43,21 @@ class OrgRepo(
                 version = 1,
                 name = "Greenstand",
                 walletId = "",
-                captureSetupFlowJson = gson.toJson(listOf(
-                    Destination(NavRoute.UserSelect.route),
-                    Destination(NavRoute.WalletSelect.route),
-                    Destination(NavRoute.AddOrg.route),
-                )),
-                captureFlowJson = gson.toJson(listOf(
-                    Destination(NavRoute.TreeCapture.route),
-                    Destination(NavRoute.TreeImageReview.route),
-                    // For Kasiki Hai
+                captureSetupFlowJson = gson.toJson(
+                    listOf(
+                        Destination(NavRoute.UserSelect.route),
+                        Destination(NavRoute.WalletSelect.route),
+                        Destination(NavRoute.AddOrg.route),
+                    )
+                ),
+                captureFlowJson = gson.toJson(
+                    listOf(
+                        Destination(NavRoute.TreeCapture.route),
+                        Destination(NavRoute.TreeImageReview.route),
+                        // For Kasiki Hai
 //                    Destination(NavRoute.TreeHeightScreen.route),
-                )),
+                    )
+                ),
             )
         )
         val currentOrgId = prefs.getString(CURRENT_ORG_ID_KEY, "-1")
@@ -90,7 +94,7 @@ class OrgRepo(
     }
 
     private fun OrganizationEntity.toOrg(): Org {
-        val typeToken = object : TypeToken<List<Destination>>(){}.type
+        val typeToken = object : TypeToken<List<Destination>>() {}.type
         val captureSetupDestinations = gson.fromJson<List<Destination>>(captureSetupFlowJson, typeToken)
         val captureDestinations = gson.fromJson<List<Destination>>(captureFlowJson, typeToken)
         return Org(

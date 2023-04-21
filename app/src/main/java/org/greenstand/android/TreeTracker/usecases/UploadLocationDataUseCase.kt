@@ -44,14 +44,14 @@ class UploadLocationDataUseCase(
                 val sessionIdToLocationRequests = sessionIdToLocations
                     .map { (sessionId, entities) ->
                         val locationRequests = entities.map { gson.fromJson(it.locationDataJson, LocationData::class.java) }
-                        .map {
-                            listOf(
-                                it.latitude,
-                                it.longitude,
-                                it.accuracy,
-                                it.capturedAt,
-                            )
-                        }
+                            .map {
+                                listOf(
+                                    it.latitude,
+                                    it.longitude,
+                                    it.accuracy,
+                                    it.capturedAt,
+                                )
+                            }
                         return@map sessionId to locationRequests
                     }
 
@@ -63,9 +63,11 @@ class UploadLocationDataUseCase(
                     )
                 }
 
-                val dataBundle = gson.toJson(UploadBundle.createV2(
-                    tracks = trackRequests,
-                ))
+                val dataBundle = gson.toJson(
+                    UploadBundle.createV2(
+                        tracks = trackRequests,
+                    )
+                )
                 storageClient.uploadBundle(
                     dataBundle,
                     "${dataBundle.md5()}_tracks"

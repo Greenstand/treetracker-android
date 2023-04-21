@@ -28,9 +28,12 @@ class RetrofitBuilder(private val gson: Gson) {
         return Retrofit.Builder()
             .client(
                 OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor()
-                    .also { it.setLevel(HttpLoggingInterceptor.Level.BODY) })
-                .build())
+                    .addInterceptor(
+                        HttpLoggingInterceptor()
+                            .also { it.setLevel(HttpLoggingInterceptor.Level.BODY) }
+                    )
+                    .build()
+            )
             .baseUrl(BASE_ENDPOINT)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
@@ -39,5 +42,4 @@ class RetrofitBuilder(private val gson: Gson) {
     companion object {
         private const val BASE_ENDPOINT = BuildConfig.API_GATEWAY
     }
-
 }

@@ -120,7 +120,6 @@ sealed class NavRoute : KoinComponent {
         }
         override val route: String = "add-wallet"
 
-
         fun create() = route
     }
 
@@ -256,8 +255,7 @@ sealed class NavRoute : KoinComponent {
             ChatScreen(getPlanterInfoId(it), getOtherChatIdentifier(it))
         }
         override val route: String = "chat/{planterInfoId}/{otherChatIdentifier}"
-        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType },navArgument("otherChatIdentifier") { type = NavType.StringType })
-
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType }, navArgument("otherChatIdentifier") { type = NavType.StringType })
 
         private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
             return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
@@ -266,7 +264,7 @@ sealed class NavRoute : KoinComponent {
             return backStackEntry.arguments?.getString("otherChatIdentifier") ?: ""
         }
 
-        fun create(planterInfoId: Long,otherChatIdentifier: String) = "chat/$planterInfoId/$otherChatIdentifier"
+        fun create(planterInfoId: Long, otherChatIdentifier: String) = "chat/$planterInfoId/$otherChatIdentifier"
     }
 
     object Announcement : NavRoute() {

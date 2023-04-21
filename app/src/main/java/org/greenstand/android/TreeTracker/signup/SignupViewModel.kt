@@ -84,7 +84,7 @@ class SignupViewModel(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
-            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired() )
+            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired())
         }
     }
 
@@ -139,7 +139,7 @@ class SignupViewModel(
         )
     }
 
-    fun updateSelfieTutorialDialog(state: Boolean){
+    fun updateSelfieTutorialDialog(state: Boolean) {
         _state.value = _state.value?.copy(showSelfieTutorial = state)
     }
 
@@ -184,7 +184,7 @@ class SignupViewModel(
     }
 
     private fun extractIdentifier(state: SignUpState): String {
-        return when(state.credential) {
+        return when (state.credential) {
             is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"

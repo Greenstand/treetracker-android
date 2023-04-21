@@ -30,7 +30,6 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.addNavRoute
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
-
 class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
 
     companion object {
@@ -50,7 +49,6 @@ class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
         }
         return null
     }
-
 }
 
 class ImageCaptureActivity : AppCompatActivity() {

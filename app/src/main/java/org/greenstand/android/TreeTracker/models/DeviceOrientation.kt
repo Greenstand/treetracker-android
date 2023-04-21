@@ -37,7 +37,8 @@ class DeviceOrientation(
     fun enable() {
         Timber.d("DeviceOrientation - registering rotation vector sensor")
         sensorManager.registerListener(
-            orientationEventListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_FASTEST)
+            orientationEventListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_FASTEST
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -61,8 +62,10 @@ class DeviceOrientation(
         override fun onSensorChanged(event: SensorEvent?) {
             event?.let {
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, it.values)
-                Timber.d("DeviceOrientation - Rotation Matrix " +
-                        "[${rotationMatrix.joinToString(",")}]")
+                Timber.d(
+                    "DeviceOrientation - Rotation Matrix " +
+                        "[${rotationMatrix.joinToString(",")}]"
+                )
             }
         }
     }

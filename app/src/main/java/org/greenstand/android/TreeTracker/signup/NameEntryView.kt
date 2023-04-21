@@ -96,7 +96,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     ArrowButton(
                         isLeft = false,
                         isEnabled = !state.firstName.isNullOrBlank() &&
-                                !state.lastName.isNullOrBlank()
+                            !state.lastName.isNullOrBlank()
                     ) {
                         cameraLauncher.launch(true)
                     }
@@ -111,7 +111,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            ) {
+        ) {
             BorderedTextField(
                 value = state.firstName ?: "",
                 padding = PaddingValues(4.dp),
@@ -147,6 +147,5 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 )
             )
         }
-
     }
 }

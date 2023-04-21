@@ -51,7 +51,7 @@ data class DashboardState(
     val totalTreesToSync: Int = 0,
     val isOrgButtonEnabled: Boolean = false,
     val showUnreadMessageNotification: Boolean = false,
-    val showTreeSyncReminderDialog:Boolean = false
+    val showTreeSyncReminderDialog: Boolean = false
 )
 
 class DashboardViewModel(
@@ -75,13 +75,13 @@ class DashboardViewModel(
         startedSyncing ?: return@observable
         if (startedSyncing) {
             updateTimerJob = viewModelScope.launch {
-                while(true) {
+                while (true) {
                     delay(750)
                     updateData()
                 }
             }
         } else {
-            updateData()    // this block gets executed at first due to init value as false
+            updateData() // this block gets executed at first due to init value as false
             updateTimerJob?.cancel()
             updateTimerJob = null
         }
@@ -94,7 +94,7 @@ class DashboardViewModel(
     }
 
     private val syncObserver = Observer<List<WorkInfo>> { infoList ->
-        when(infoList.map { it.state }.elementAtOrNull(0)) {
+        when (infoList.map { it.state }.elementAtOrNull(0)) {
             State.BLOCKED -> {
                 triggerSnackBar(R.string.sync_blocked)
                 _isSyncing = false
@@ -131,7 +131,7 @@ class DashboardViewModel(
             .observeForever(syncObserver)
     }
 
-    fun syncMessages(){
+    fun syncMessages() {
         viewModelScope.launch {
             if (checkForInternetUseCase.execute(Unit)) {
                 messagesRepo.syncMessages()
@@ -196,5 +196,4 @@ class DashboardViewModel(
     override fun onCleared() {
         workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID).removeObserver(syncObserver)
     }
-
 }

@@ -31,7 +31,7 @@ class DeviceConfigUploader(
     suspend fun upload() {
         val deviceConfigsToUpload = dao.getDeviceConfigsToUpload()
 
-        if(deviceConfigsToUpload.isEmpty()) {
+        if (deviceConfigsToUpload.isEmpty()) {
             return
         }
 

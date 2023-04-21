@@ -21,10 +21,6 @@ enum class Accuracy {
     NONE
 }
 
-
-
-
-
 data class ConvergenceStats(
     val mean: Double,
     val variance: Double,

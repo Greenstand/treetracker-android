@@ -54,7 +54,7 @@ fun SurveyScreen(
     val state by viewModel.state.collectAsState(SurveyScreenState())
     val scope = rememberCoroutineScope()
     var showToast by remember { mutableStateOf(false) }
-    if (showToast){
+    if (showToast) {
         ShowToastMessage(stringResId = R.string.survey_completed)
     }
     Scaffold(

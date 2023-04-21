@@ -21,7 +21,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.util.Base64
-import androidx.camera.core.impl.utils.Exif
 import androidx.exifinterface.media.ExifInterface
 import com.amazonaws.util.IOUtils
 import java.io.ByteArrayOutputStream
@@ -374,7 +373,6 @@ object ImageUtils {
         val imageHeight = bmOptions.outHeight
         val imageWidth = bmOptions.outWidth
 
-
         val oldExif = ExifInterface(path)
         val exifOrientation = oldExif.getAttribute(ExifInterface.TAG_ORIENTATION)
 
@@ -408,11 +406,9 @@ object ImageUtils {
         val fileOutputStream = FileOutputStream(path)
         byteArrayBitmapStream.writeTo(fileOutputStream)
 
-
         val newExif = ExifInterface(path)
         newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
         newExif.saveAttributes()
-
     }
 
     fun orientImage(photoPath: String) {
@@ -435,7 +431,7 @@ object ImageUtils {
         } else {
             ExifInterface.ORIENTATION_NORMAL
         }
-        val rotationAngle = when(orientation) {
+        val rotationAngle = when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> 90
             ExifInterface.ORIENTATION_ROTATE_180 -> 180
             ExifInterface.ORIENTATION_ROTATE_270 -> 270
@@ -447,7 +443,8 @@ object ImageUtils {
             setRotate(
                 rotationAngle.toFloat(),
                 bmOptions.outWidth.toFloat() / 2,
-                bmOptions.outHeight.toFloat() / 2)
+                bmOptions.outHeight.toFloat() / 2
+            )
         }
 
         val rotatedBitmap = Bitmap.createBitmap(
@@ -457,7 +454,8 @@ object ImageUtils {
             bmOptions.outWidth,
             bmOptions.outHeight,
             matrix,
-            true)
+            true
+        )
 
         val compressionQuality = 70
         val byteArrayBitmapStream = ByteArrayOutputStream()

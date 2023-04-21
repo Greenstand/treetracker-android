@@ -240,5 +240,4 @@ val appModule = module {
         scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get()) }
         scoped { TreeCapturer(get(), get(), get(), get(), get()) }
     }
-
 }

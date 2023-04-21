@@ -31,7 +31,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class AnnouncementViewModelTest{
+class AnnouncementViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -43,44 +43,44 @@ class AnnouncementViewModelTest{
     private lateinit var announcementViewModel: AnnouncementViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         coEvery { messagesRepo.getAnnouncementMessages(any()) } returns fakeAnnouncementMessage
         announcementViewModel = AnnouncementViewModel(messageId, messagesRepo)
     }
 
     @Test
-    fun `verify messages repo gets the correct announcement message `()= runBlocking {
+    fun `verify messages repo gets the correct announcement message `() = runBlocking {
         coVerify { messagesRepo.getAnnouncementMessages(messageId) }
     }
 
     @Test
-    fun `WHEN get announcement is triggered THEN current URL changes`()= runBlocking {
+    fun `WHEN get announcement is triggered THEN current URL changes`() = runBlocking {
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentUrl, fakeAnnouncementMessage.videoLink)
         }
     }
     @Test
-    fun `WHEN get announcement is triggered THEN current title changes`()= runBlocking {
+    fun `WHEN get announcement is triggered THEN current title changes`() = runBlocking {
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentTitle, fakeAnnouncementMessage.subject)
         }
     }
     @Test
-    fun `WHEN get announcement is triggered THEN from state changes`()= runBlocking {
+    fun `WHEN get announcement is triggered THEN from state changes`() = runBlocking {
         announcementViewModel.state.test {
             assertEquals(awaitItem().from, fakeAnnouncementMessage.from)
         }
     }
 
     @Test
-    fun `WHEN get announcement is triggered THEN current body changes`()= runBlocking {
+    fun `WHEN get announcement is triggered THEN current body changes`() = runBlocking {
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentBody, fakeAnnouncementMessage.body)
         }
     }
 
     @Test
-    fun `verify message repo marks message as read`()= runBlocking {
+    fun `verify message repo marks message as read`() = runBlocking {
         coVerify { messagesRepo.markMessageAsRead(messageId) }
     }
 }

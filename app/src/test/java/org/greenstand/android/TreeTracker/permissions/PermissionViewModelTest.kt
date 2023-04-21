@@ -41,14 +41,14 @@ class PermissionViewModelTest {
     private lateinit var testSubject: PermissionViewModel
 
     @Before
-    fun setup(){
+    fun setup() {
         testSubject = PermissionViewModel(locationManager)
     }
 
     @Test
-    fun `verify isLocationEnabled sets the correct value in the permission Items state`()= runBlocking {
+    fun `verify isLocationEnabled sets the correct value in the permission Items state`() = runBlocking {
         val provider = LocationManager.GPS_PROVIDER
-        coEvery { locationManager.isProviderEnabled(provider)} returns true
+        coEvery { locationManager.isProviderEnabled(provider) } returns true
         testSubject.isLocationEnabled()
         val result = testSubject.state.getOrAwaitValueTest().isLocationEnabled!!
         assertTrue(result)

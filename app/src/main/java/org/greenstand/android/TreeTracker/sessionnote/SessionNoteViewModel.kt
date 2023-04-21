@@ -15,15 +15,12 @@
  */
 package org.greenstand.android.TreeTracker.sessionnote
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.userselect.UserSelectState
 
 data class SessionNoteState(
     val note: String = "",

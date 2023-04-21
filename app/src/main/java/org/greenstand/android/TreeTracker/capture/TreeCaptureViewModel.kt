@@ -56,14 +56,14 @@ class TreeCaptureViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            _state.value = _state.value?.copy(showCaptureTutorial = isFirstTrack() )
+            _state.value = _state.value?.copy(showCaptureTutorial = isFirstTrack())
         }
     }
 
     suspend fun captureLocation() {
-        _state.value = _state.value?.copy(isGettingLocation = true )
+        _state.value = _state.value?.copy(isGettingLocation = true)
         locationDataCapturer.percentageConvergenceObservers.add { newValue ->
-            _state.value = _state.value?.copy( convergencePercentage = newValue )
+            _state.value = _state.value?.copy(convergencePercentage = newValue)
         }
         _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation(), isGettingLocation = false)
     }
@@ -72,11 +72,11 @@ class TreeCaptureViewModel(
         treeCapturer.setImage(imageFile)
     }
 
-    fun updateBadGpsDialogState(state: Boolean?){
+    fun updateBadGpsDialogState(state: Boolean?) {
         _state.value = _state.value?.copy(isLocationAvailable = state)
     }
 
-    fun updateCaptureTutorialDialog(state: Boolean){
+    fun updateCaptureTutorialDialog(state: Boolean) {
         _state.value = _state.value?.copy(showCaptureTutorial = state)
     }
 
@@ -87,15 +87,13 @@ class TreeCaptureViewModel(
         createFakeTreesUseCase.execute(CreateFakeTreesParams(50))
         _state.value = _state.value?.copy(isCreatingFakeTrees = false)
     }
-
 }
 
-
-class TreeCaptureViewModelFactory(private val profilePicUrl: String)
-    : ViewModelProvider.Factory, KoinComponent {
+class TreeCaptureViewModelFactory(private val profilePicUrl: String) :
+    ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         CaptureFlowScopeManager.open()
-        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(),get()) as T
+        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get()) as T
     }
 }

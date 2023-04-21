@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.messages
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,7 +29,6 @@ import org.greenstand.android.TreeTracker.models.user.User
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import java.util.*
-
 
 data class ChatState(
     val from: String = "",
@@ -70,17 +68,17 @@ class ChatViewModel(
         )
     }
 
-    fun checkChatAuthor(index :Int,isFirstMessage: Boolean ):Boolean{
+    fun checkChatAuthor(index: Int, isFirstMessage: Boolean): Boolean {
         val messages = _state.value!!.messages
         val prevAuthor = messages.getOrNull(index - 1)?.from
         val nextAuthor = messages.getOrNull(index + 1)?.from
         val content = messages[index]
         val isFirstMessageByAuthor = prevAuthor != content.from
         val isLastMessageByAuthor = nextAuthor != content.from
-        return if(isFirstMessage) isFirstMessageByAuthor else isLastMessageByAuthor
+        return if (isFirstMessage) isFirstMessageByAuthor else isLastMessageByAuthor
     }
 
-    fun checkIsOtherUser(index :Int): Boolean{
+    fun checkIsOtherUser(index: Int): Boolean {
         return _state.value!!.messages[index].from == otherChatIdentifier
     }
 
@@ -105,6 +103,3 @@ class ChatViewModelFactory(private val userId: Long, private val otherChatIdenti
         return ChatViewModel(userId, otherChatIdentifier, get(), get()) as T
     }
 }
-
-
-
