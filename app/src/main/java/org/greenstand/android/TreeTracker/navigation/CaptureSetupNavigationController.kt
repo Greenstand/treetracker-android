@@ -16,8 +16,7 @@
 package org.greenstand.android.TreeTracker.navigation
 
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
@@ -43,7 +42,7 @@ class CaptureSetupNavigationController(
     fun navForward(navController: NavHostController) {
         // If we're done navigating inside the setup flow, go the the capture flow
         if (currentNavPathIndex == navPath.size - 1) {
-            GlobalScope.launch {
+            runBlocking {
                 stepCounter.enable()
                 sessionTracker.startSession()
                 locationDataCapturer.startGpsUpdates()

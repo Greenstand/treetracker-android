@@ -23,15 +23,16 @@ import android.graphics.Matrix
 import android.util.Base64
 import androidx.exifinterface.media.ExifInterface
 import com.amazonaws.util.IOUtils
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
-import timber.log.Timber
+import kotlin.math.round
 
 object ImageUtils {
 
@@ -376,10 +377,12 @@ object ImageUtils {
         val oldExif = ExifInterface(path)
         val exifOrientation = oldExif.getAttribute(ExifInterface.TAG_ORIENTATION)
 
+
+
         // Calculate your sampleSize based on the requiredWidth and
         // originalWidth
         // For e.g you want the width to stay consistent at 500dp
-        var requiredWidth = 1920
+        var requiredWidth = 1344
 
         var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
@@ -390,16 +393,16 @@ object ImageUtils {
 
         /* Decode the JPEG file into a Bitmap */
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
-        val matrix = Matrix()
 
-        val compressedBitmap = Bitmap.createBitmap(
-            bitmap, 0, 0,
-            bmOptions.outWidth, bmOptions.outHeight, matrix, true
-        )
+        val width = 1200f
+        val aspectRatio = imageWidth.toFloat() / imageHeight.toFloat()
+        val scaledHeight = round(width / aspectRatio)
+
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width.toInt(), scaledHeight.toInt(), false)
 
         val compressionQuality = 70
         val byteArrayBitmapStream = ByteArrayOutputStream()
-        compressedBitmap.compress(
+        resizedBitmap.compress(
             Bitmap.CompressFormat.JPEG, compressionQuality,
             byteArrayBitmapStream
         )

@@ -17,7 +17,11 @@ package org.greenstand.android.TreeTracker.camera
 
 import android.util.DisplayMetrics
 import android.util.Size
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,7 +72,7 @@ fun Camera(
                     } else {
                         ImageCapture.Builder()
                             .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                            // .setTargetResolution(Size(800, 800))
+                            // .setTargetResolution(Size(1000, 1000))
                             .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                             .build()
                     }

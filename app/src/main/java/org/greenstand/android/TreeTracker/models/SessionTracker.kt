@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
@@ -62,6 +63,7 @@ class SessionTracker(
             )
 
             _currentSessionId = dao.insertSession(sessionEntity)
+            Log.d("JONATHAN", "SESSION STARTED")
 
             preferences.edit().putLong(SESSION_ID_KEY, _currentSessionId ?: -1).commit()
             exceptionDataCollector.apply {
@@ -81,6 +83,7 @@ class SessionTracker(
             dao.updateSession(session)
 
             _currentSessionId = null
+            Log.d("JONATHAN", "SESSION ENDED")
 
             withContext(Dispatchers.IO) {
                 treesToSyncHelper.refreshTreeCountToSync()
