@@ -33,6 +33,7 @@ import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
+import org.greenstand.android.TreeTracker.devoptions.DevOptionsViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.messages.ChatViewModel
 import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementViewModel
@@ -106,7 +107,9 @@ val appModule = module {
 
     viewModel { OrgPickerViewModel(get()) }
 
-    viewModel { UserSelectViewModel(get(), get()) }
+    viewModel { UserSelectViewModel(get(), get(), get()) }
+
+    viewModel { DevOptionsViewModel(get()) }
 
     viewModel { TreeHeightSelectionViewModel(get()) }
 

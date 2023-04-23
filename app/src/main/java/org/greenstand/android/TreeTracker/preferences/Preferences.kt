@@ -35,10 +35,10 @@ class Preferences(
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
-    private var _planterInfoId: Long? = null
+    private var _userId: Long? = null
 
-    fun setPlanterInfoId(planterInfoId: Long?) {
-        _planterInfoId = planterInfoId
+    fun setUserId(userId: Long?) {
+        _userId = userId
     }
 
     fun getBoolean(prefKey: PrefKey, default: Boolean): Boolean {
@@ -73,7 +73,7 @@ class Preferences(
 
     private fun computePath(prefKey: PrefKey): String {
         return when (prefKey) {
-            is UserPrefKey -> prefKey.path + "/$_planterInfoId"
+            is UserPrefKey -> prefKey.path + "/$_userId"
             else -> prefKey.path
         }
     }
