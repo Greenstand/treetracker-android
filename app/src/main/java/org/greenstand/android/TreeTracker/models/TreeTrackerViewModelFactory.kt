@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
+import org.greenstand.android.TreeTracker.devoptions.DevOptionsViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
@@ -53,6 +54,7 @@ class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), Koin
             modelClass.isAssignableFrom(TreeHeightSelectionViewModel::class.java) -> get<TreeHeightSelectionViewModel>() as T
             modelClass.isAssignableFrom(AddOrgViewModel::class.java) -> get<AddOrgViewModel>() as T
             modelClass.isAssignableFrom(SessionNoteViewModel::class.java) -> get<SessionNoteViewModel>() as T
+            modelClass.isAssignableFrom(DevOptionsViewModel::class.java) -> get<DevOptionsViewModel>() as T
             else -> throw RuntimeException("Unable to create instance of ${modelClass.simpleName}. Did you forget to update the TreeTrackerViewModelFactory?")
         }
     }

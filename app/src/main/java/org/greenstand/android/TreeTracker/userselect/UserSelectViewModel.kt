@@ -25,6 +25,7 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import java.util.Collections.emptyList
 
 data class UserSelectState(
@@ -35,6 +36,7 @@ data class UserSelectState(
 class UserSelectViewModel(
     userRepo: UserRepo,
     locationDataCapturer: LocationDataCapturer,
+    private val prefs: Preferences,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UserSelectState())
@@ -51,6 +53,7 @@ class UserSelectViewModel(
     }
 
     fun selectUser(user: User) {
+        prefs.setUserId(user.id)
         CaptureSetupScopeManager.getData().user = user
         _state.value = _state.value.copy(
             selectedUser = user

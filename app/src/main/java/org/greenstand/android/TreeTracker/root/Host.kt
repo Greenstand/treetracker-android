@@ -52,6 +52,7 @@ fun Host() {
                 NavRoute.Chat,
                 NavRoute.Announcement,
                 NavRoute.SessionNote,
+                NavRoute.DevOptions,
             ).forEach { addNavRoute(it) }
         }
     }
