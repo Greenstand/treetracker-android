@@ -33,6 +33,7 @@ import org.greenstand.android.TreeTracker.background.SyncNotificationManager
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
+import org.greenstand.android.TreeTracker.devoptions.Configurator
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.messages.ChatViewModel
@@ -130,6 +131,8 @@ val appModule = module {
     single { UserRepo(get(), get(), get(), get(), get(), get()) }
 
     factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
+
+    single { Configurator(get()) }
 
     single { DeviceConfigUpdater(get(), get()) }
 

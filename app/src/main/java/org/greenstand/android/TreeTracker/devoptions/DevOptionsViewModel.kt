@@ -3,36 +3,43 @@ package org.greenstand.android.TreeTracker.devoptions
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utils.updateState
 
 data class DevOptionsState(
-    val params: List<Config> = DevConfig.configList,
+    val params: List<Config> = emptyList(),
 )
 
 class DevOptionsViewModel(
-    private val prefs: Preferences,
+    private val configurator: Configurator,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DevOptionsState())
     val state: Flow<DevOptionsState> = _state
 
     init {
-        val updatedParams = _state.value.params.map { param ->
-            param.copy(
-                defaultValue = prefs.getBoolean(param.key, param.defaultValue)
-            )
+        val updatedParams = ConfigKeys.configList.map { param ->
+            when(param) {
+                is BooleanConfig -> param.copy(
+                    defaultValue = configurator.getBoolean(param)
+                )
+                is IntConfig -> param.copy(
+                    defaultValue = configurator.getInt(param)
+                )
+            }
         }
         _state.updateState {
             copy(params = updatedParams)
         }
     }
 
-    fun updateParam(param: Config, newValue: Boolean) {
-        prefs.edit().putBoolean(param.key, newValue).commit()
+    fun updateParam(param: Config, newValue: Any) {
+        configurator.putValue(param, newValue)
         _state.updateState {
             val updatedParamList = params.updateListItem(param) {
-                copy(defaultValue = newValue)
+                when(this) {
+                    is BooleanConfig -> copy(defaultValue = newValue as Boolean)
+                    is IntConfig -> copy(defaultValue = newValue as Int)
+                }
             }
             copy(params = updatedParamList)
         }

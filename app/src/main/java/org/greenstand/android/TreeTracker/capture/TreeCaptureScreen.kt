@@ -81,6 +81,9 @@ fun TreeCaptureScreen(
     val cameraControl = remember { CameraControl() }
     val scope = rememberCoroutineScope()
 
+    cameraControl.isImageScalingEnabled = state.forceImageScaling
+    cameraControl.imageScaleHeight = state.imageScalingHeight
+
     PermissionRequest()
 
     BackHandler(enabled = true) {

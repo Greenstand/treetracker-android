@@ -22,6 +22,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
+import org.greenstand.android.TreeTracker.devoptions.Configurator
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
@@ -29,6 +31,7 @@ import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScop
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
+import org.greenstand.android.TreeTracker.utils.updateState
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import java.io.File
@@ -40,6 +43,8 @@ data class TreeCaptureState(
     val isLocationAvailable: Boolean? = null,
     val showCaptureTutorial: Boolean? = null,
     val convergencePercentage: Float = 0f,
+    val forceImageScaling: Boolean = false,
+    val imageScalingHeight: Int = 1920,
 )
 
 class TreeCaptureViewModel(
@@ -49,6 +54,7 @@ class TreeCaptureViewModel(
     private val sessionTracker: SessionTracker,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val locationDataCapturer: LocationDataCapturer,
+    private val configurator: Configurator,
 ) : ViewModel() {
 
     private val _state = MutableLiveData(TreeCaptureState(profilePicUrl))
@@ -56,15 +62,20 @@ class TreeCaptureViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            _state.value = _state.value?.copy(showCaptureTutorial = isFirstTrack())
+            _state.updateState {
+                val enabled = configurator.getBoolean(ConfigKeys.FORCE_IMAGE_SIZE)
+                val imageHeight = configurator.getInt(ConfigKeys.IMAGE_CAPTURE_HEIGHT)
+                copy(
+                    showCaptureTutorial = isFirstTrack(),
+                    forceImageScaling = enabled,
+                    imageScalingHeight = imageHeight,
+                )
+            }
         }
     }
 
     suspend fun captureLocation() {
         _state.value = _state.value?.copy(isGettingLocation = true)
-        locationDataCapturer.percentageConvergenceObservers.add { newValue ->
-            _state.value = _state.value?.copy(convergencePercentage = newValue)
-        }
         _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation(), isGettingLocation = false)
     }
 
@@ -94,6 +105,6 @@ class TreeCaptureViewModelFactory(private val profilePicUrl: String) :
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         CaptureFlowScopeManager.open()
-        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get()) as T
+        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get(), get()) as T
     }
 }

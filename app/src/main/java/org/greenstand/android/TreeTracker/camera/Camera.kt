@@ -17,7 +17,11 @@ package org.greenstand.android.TreeTracker.camera
 
 import android.util.DisplayMetrics
 import android.util.Size
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,7 +39,7 @@ fun Camera(
     isSelfieMode: Boolean = false,
     cameraControl: CameraControl,
     modifier: Modifier = Modifier.fillMaxSize(),
-    onImageCaptured: (File) -> Unit
+    onImageCaptured: (File) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -91,7 +95,11 @@ fun Camera(
                             ContextCompat.getMainExecutor(previewView.context),
                             object : ImageCapture.OnImageSavedCallback {
                                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                                    ImageUtils.resizeImage(file.absolutePath, isSelfieMode)
+                                    ImageUtils.resizeImage(
+                                        path = file.absolutePath,
+                                        forceScaling = cameraControl.isImageScalingEnabled,
+                                        targetHeight = cameraControl.imageScaleHeight,
+                                    )
                                     ImageUtils.orientImage(file.absolutePath)
                                     Timber.tag("CameraXApp")
                                         .d("Photo capture succeeded: ${file.absolutePath}")
@@ -129,6 +137,10 @@ fun Camera(
 class CameraControl {
 
     var captureListener: (() -> Unit)? = null
+
+    var isImageScalingEnabled: Boolean = false
+
+    var imageScaleHeight: Int = 1920
 
     fun captureImage() {
         captureListener?.invoke()
