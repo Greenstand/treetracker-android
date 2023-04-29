@@ -23,6 +23,7 @@ import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.devoptions.Configurator
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
@@ -64,6 +65,9 @@ class TreeCaptureViewModelTest {
     @MockK(relaxed = true)
     private lateinit var locationDataCapturer: LocationDataCapturer
 
+    @MockK(relaxed = true)
+    private lateinit var configurator: Configurator
+
     private lateinit var treeCaptureViewModel: TreeCaptureViewModel
 
     @Before
@@ -77,7 +81,8 @@ class TreeCaptureViewModelTest {
             treeCapturer = treeCapturer,
             sessionTracker = sessionTracker,
             createFakeTreesUseCase = createFakeTreesUseCase,
-            locationDataCapturer = locationDataCapturer
+            locationDataCapturer = locationDataCapturer,
+            configurator = configurator,
         )
     }
 

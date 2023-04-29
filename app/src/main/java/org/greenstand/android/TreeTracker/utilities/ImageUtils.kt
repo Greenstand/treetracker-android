@@ -23,15 +23,16 @@ import android.graphics.Matrix
 import android.util.Base64
 import androidx.exifinterface.media.ExifInterface
 import com.amazonaws.util.IOUtils
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
-import timber.log.Timber
+import kotlin.math.round
 
 object ImageUtils {
 
@@ -361,7 +362,11 @@ object ImageUtils {
         return sum / (rows * cols).toDouble()
     }
 
-    fun resizeImage(path: String, captureSelfie: Boolean) {
+    fun resizeImage(
+        path: String,
+        forceScaling: Boolean,
+        targetHeight: Int,
+    ) {
 
         /* There isn't enough memory to open up more than a couple camera photos */
         /* So pre-scale the target bitmap into which the file is decoded */
@@ -379,11 +384,13 @@ object ImageUtils {
         // Calculate your sampleSize based on the requiredWidth and
         // originalWidth
         // For e.g you want the width to stay consistent at 500dp
-        var requiredWidth = 1920
+        val requiredWidth = targetHeight
 
-        var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
+        val sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
-        bmOptions.inSampleSize = sampleSize
+        if (!forceScaling) {
+            bmOptions.inSampleSize = sampleSize
+        }
         bmOptions.inPurgeable = true
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
         bmOptions.inJustDecodeBounds = false
@@ -392,14 +399,21 @@ object ImageUtils {
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
         val matrix = Matrix()
 
-        val compressedBitmap = Bitmap.createBitmap(
-            bitmap, 0, 0,
-            bmOptions.outWidth, bmOptions.outHeight, matrix, true
-        )
+        val scaledImageBitmap = if (forceScaling) {
+            val width = requiredWidth.toFloat()
+            val aspectRatio = imageWidth.toFloat() / imageHeight.toFloat()
+            val scaledHeight = round(width / aspectRatio)
+            Bitmap.createScaledBitmap(bitmap, width.toInt(), scaledHeight.toInt(), false)
+        } else {
+            Bitmap.createBitmap(
+                bitmap, 0, 0,
+                bmOptions.outWidth, bmOptions.outHeight, matrix, true
+            )
+        }
 
         val compressionQuality = 70
         val byteArrayBitmapStream = ByteArrayOutputStream()
-        compressedBitmap.compress(
+        scaledImageBitmap.compress(
             Bitmap.CompressFormat.JPEG, compressionQuality,
             byteArrayBitmapStream
         )
