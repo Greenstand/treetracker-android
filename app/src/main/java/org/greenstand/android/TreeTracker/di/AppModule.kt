@@ -39,7 +39,7 @@ import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.messages.ChatViewModel
 import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementViewModel
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
-import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
@@ -84,7 +84,6 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import org.greenstand.android.TreeTracker.viewmodels.ConfigViewModel
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.android.ext.koin.androidContext
@@ -100,8 +99,6 @@ val appModule = module {
 
     viewModel { AddOrgViewModel(get()) }
 
-    viewModel { ConfigViewModel(get(), get()) }
-
     viewModel { LanguagePickerViewModel(get(), get()) }
 
     viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
@@ -110,7 +107,7 @@ val appModule = module {
 
     viewModel { UserSelectViewModel(get(), get(), get()) }
 
-    viewModel { DevOptionsViewModel(get()) }
+    viewModel { DevOptionsViewModel(get(), get()) }
 
     viewModel { TreeHeightSelectionViewModel(get()) }
 
@@ -191,7 +188,7 @@ val appModule = module {
 
     single { DeviceOrientation(get()) }
 
-    single { Configuration(get(), get()) }
+    single { ConvergenceConfiguration(get()) }
 
     single {
         GsonBuilder()
