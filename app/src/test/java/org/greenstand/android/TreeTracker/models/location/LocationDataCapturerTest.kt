@@ -28,7 +28,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.LocationDataConfig
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -49,7 +49,7 @@ class LocationDataCapturerTest {
     private lateinit var locationUpdateManager: LocationUpdateManager
 
     @MockK(relaxed = true)
-    private lateinit var configuration: Configuration
+    private lateinit var convergenceConfiguration: ConvergenceConfiguration
     @MockK(relaxed = true)
     private lateinit var timeProvider: TimeProvider
     @MockK(relaxed = true)
@@ -69,11 +69,11 @@ class LocationDataCapturerTest {
     fun setup() {
         MockKAnnotations.init(this)
         preferences = Preferences(sharedPreferences)
-        every { configuration.locationDataConfig } returns LocationDataConfig()
+        every { convergenceConfiguration.locationDataConfig } returns LocationDataConfig()
         locationDataCapturer = LocationDataCapturer(
             locationUpdateManager,
             treeTrackerDAO,
-            configuration,
+            convergenceConfiguration,
             GsonBuilder().serializeNulls().create(),
             sessionTracker,
             timeProvider,

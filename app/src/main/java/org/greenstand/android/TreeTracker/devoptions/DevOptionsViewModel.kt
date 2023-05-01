@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.devoptions
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.utils.updateState
 
 data class DevOptionsState(
@@ -11,6 +12,7 @@ data class DevOptionsState(
 
 class DevOptionsViewModel(
     private val configurator: Configurator,
+    private val convergenceConfiguration: ConvergenceConfiguration
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DevOptionsState())
@@ -24,6 +26,9 @@ class DevOptionsViewModel(
                 )
                 is IntConfig -> param.copy(
                     defaultValue = configurator.getInt(param)
+                )
+                is FloatConfig -> param.copy(
+                    defaultValue = configurator.getFloat(param)
                 )
             }
         }
@@ -39,10 +44,16 @@ class DevOptionsViewModel(
                 when(this) {
                     is BooleanConfig -> copy(defaultValue = newValue as Boolean)
                     is IntConfig -> copy(defaultValue = newValue as Int)
+                    is FloatConfig -> copy(defaultValue = newValue as Float)
                 }
             }
             copy(params = updatedParamList)
         }
+    }
+
+    override fun onCleared() {
+        convergenceConfiguration.refreshConfig()
+        super.onCleared()
     }
 }
 

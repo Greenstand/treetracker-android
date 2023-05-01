@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
-import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.ConvergenceStatus
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.SessionTracker
@@ -40,7 +40,7 @@ import kotlin.properties.Delegates
 class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO,
-    private val configuration: Configuration,
+    private val convergenceConfiguration: ConvergenceConfiguration,
     private val gson: Gson,
     private val sessionTracker: SessionTracker,
     private val timeProvider: TimeProvider,
@@ -64,7 +64,7 @@ class LocationDataCapturer(
 
     private val locationObserver: Observer<Location?> = Observer { l ->
         l?.let { location ->
-            val locationDataConfig = configuration.locationDataConfig
+            val locationDataConfig = convergenceConfiguration.locationDataConfig
             val convergenceDataSize = locationDataConfig.convergenceDataSize
             if (isInTreeCaptureMode()) {
                 val evictedLocation: Location? = if (locationsDeque.size >= convergenceDataSize)
@@ -176,7 +176,7 @@ class LocationDataCapturer(
 
     suspend fun converge() {
         try {
-            val locationDataConfig = configuration.locationDataConfig
+            val locationDataConfig = convergenceConfiguration.locationDataConfig
             withTimeout(locationDataConfig.convergenceTimeout) {
                 while (!isConvergenceWithinRange()) {
                     delay(locationDataConfig.minTimeBetweenUpdates)

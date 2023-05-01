@@ -88,6 +88,10 @@ private fun ParamListItem(
             config = config,
             onTextUpdated = { onClicked(it) }
         )
+        is FloatConfig -> FloatParamListItem(
+            config = config,
+            onTextUpdated = { onClicked(it) }
+        )
     }
 }
 @OptIn(ExperimentalMaterialApi::class)
@@ -108,6 +112,7 @@ private fun BooleanParamListItem(
     )
 }
 
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun IntParamListItem(
@@ -126,6 +131,34 @@ private fun IntParamListItem(
             onValueChange = {
                 text = it
                 text.toIntOrNull()?.let { value ->
+                    onTextUpdated(value)
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+            )
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun FloatParamListItem(
+    config: FloatConfig,
+    onTextUpdated: (Float) -> Unit,
+) {
+    var text: String by remember { mutableStateOf(config.defaultValue.toString()) }
+
+    Column {
+        ListItem(
+            modifier = Modifier.padding(16.dp),
+            text = { Text(text = config.name) },
+        )
+        TextField(
+            value = text,
+            onValueChange = {
+                text = it
+                text.toFloatOrNull()?.let { value ->
                     onTextUpdated(value)
                 }
             },

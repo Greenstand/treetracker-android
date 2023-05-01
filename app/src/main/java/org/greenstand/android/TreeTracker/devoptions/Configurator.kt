@@ -21,10 +21,19 @@ class Configurator constructor(
         prefs.edit().putInt(config.key, value).apply()
     }
 
+    fun getFloat(config: FloatConfig): Float {
+        return prefs.getFloat(config.key, config.defaultValue)
+    }
+
+    fun putFloat(config: FloatConfig, value: Float) {
+        prefs.edit().putFloat(config.key, value).apply()
+    }
+
     fun putValue(config: Config, value: Any) {
         when(value) {
             is Boolean -> putBoolean(config as BooleanConfig, value)
             is Int -> putInt(config as IntConfig, value)
+            is Float -> putFloat(config as FloatConfig, value)
         }
     }
 
@@ -32,6 +41,7 @@ class Configurator constructor(
         return when(config) {
             is BooleanConfig -> getBoolean(config)
             is IntConfig -> getInt(config)
+            is FloatConfig -> getFloat(config)
         }
     }
 }

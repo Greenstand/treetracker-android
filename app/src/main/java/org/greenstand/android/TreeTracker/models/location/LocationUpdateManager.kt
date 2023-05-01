@@ -23,13 +23,13 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import timber.log.Timber
 
 class LocationUpdateManager(
     private val locationManager: LocationManager,
     private val context: Context,
-    private val configuration: Configuration
+    private val convergenceConfiguration: ConvergenceConfiguration
 ) {
 
     private val locationUpdates = MutableLiveData<Location?>()
@@ -64,7 +64,7 @@ class LocationUpdateManager(
     fun startLocationUpdates(): Boolean {
         return if (hasLocationPermissions()) {
             if (!isUpdating) {
-                val locationDataConfig = configuration.locationDataConfig
+                val locationDataConfig = convergenceConfiguration.locationDataConfig
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     locationDataConfig.minTimeBetweenUpdates,
@@ -96,7 +96,7 @@ class LocationUpdateManager(
      *  updated values for min time between updates and min distance between updates.
      */
     fun refreshLocationUpdateRequest() {
-        val locationDataConfig = configuration.locationDataConfig
+        val locationDataConfig = convergenceConfiguration.locationDataConfig
         locationManager.removeUpdates(locationUpdateListener)
         if (hasLocationPermissions()) {
             locationManager.requestLocationUpdates(
