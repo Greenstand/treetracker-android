@@ -16,20 +16,19 @@
 package org.greenstand.android.TreeTracker.models
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
-import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import java.util.*
+import java.util.Locale
 
 enum class Language(val locale: Locale) {
     ENGLISH(Locale("en")),
-    SWAHILI(Locale("sw"));
+    SWAHILI(Locale("sw")),
+    PORTUGUESE(Locale("pt"));
 
     companion object {
 
@@ -37,6 +36,7 @@ enum class Language(val locale: Locale) {
             return when (lang.lowercase()) {
                 "en" -> ENGLISH
                 "sw" -> SWAHILI
+                "pt" -> PORTUGUESE
                 else -> null
             }
         }
@@ -50,20 +50,6 @@ class LanguageSwitcher(private val prefs: Preferences) {
         language?.also { language ->
             setLanguage(language, activity.resources)
         }
-    }
-
-    fun switch(activity: Activity) {
-        val res = activity.resources
-        currentLanguage()?.also { language ->
-            val newLanguage = when (language) {
-                Language.ENGLISH -> Language.SWAHILI
-                Language.SWAHILI -> Language.ENGLISH
-            }
-            setLanguage(newLanguage, res)
-        }
-
-        activity.finish()
-        activity.startActivity(Intent(activity, TreeTrackerActivity::class.java))
     }
 
     fun setLanguage(language: Language, res: Resources) {
@@ -81,8 +67,7 @@ class LanguageSwitcher(private val prefs: Preferences) {
     }
 
     fun currentLanguage(): Language? {
-        val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
-        return language
+        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
     }
 
     fun observeCurrentLanguage(): Flow<Language> {
