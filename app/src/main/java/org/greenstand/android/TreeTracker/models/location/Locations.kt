@@ -1,39 +1,25 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.models
-
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
-import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import com.google.gson.Gson
-import java.util.Deque
-import java.util.LinkedList
-import java.util.UUID
-import kotlin.math.pow
-import kotlin.math.sqrt
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.LocationEntity
-import timber.log.Timber
 
 enum class Accuracy {
     GOOD,
     BAD,
     NONE
 }
-
-
-
-
 
 data class ConvergenceStats(
     val mean: Double,
@@ -50,5 +36,5 @@ data class LocationData(
     val accuracy: Float,
     val treeUuid: String?,
     val convergenceStatus: ConvergenceStatus?,
-    val capturedAt: Long
+    val capturedAt: String
 )

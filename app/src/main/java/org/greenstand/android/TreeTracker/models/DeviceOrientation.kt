@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.models
 
 import android.hardware.Sensor
@@ -22,7 +37,8 @@ class DeviceOrientation(
     fun enable() {
         Timber.d("DeviceOrientation - registering rotation vector sensor")
         sensorManager.registerListener(
-            orientationEventListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_FASTEST)
+            orientationEventListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_FASTEST
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -46,8 +62,10 @@ class DeviceOrientation(
         override fun onSensorChanged(event: SensorEvent?) {
             event?.let {
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, it.values)
-                Timber.d("DeviceOrientation - Rotation Matrix " +
-                        "[${rotationMatrix.joinToString(",")}]")
+                Timber.d(
+                    "DeviceOrientation - Rotation Matrix " +
+                        "[${rotationMatrix.joinToString(",")}]"
+                )
             }
         }
     }

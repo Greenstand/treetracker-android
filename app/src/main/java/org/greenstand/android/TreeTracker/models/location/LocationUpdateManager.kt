@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.models.location
 
 import android.content.Context
@@ -8,13 +23,13 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import timber.log.Timber
 
 class LocationUpdateManager(
     private val locationManager: LocationManager,
     private val context: Context,
-    private val configuration: Configuration
+    private val convergenceConfiguration: ConvergenceConfiguration
 ) {
 
     private val locationUpdates = MutableLiveData<Location?>()
@@ -49,7 +64,7 @@ class LocationUpdateManager(
     fun startLocationUpdates(): Boolean {
         return if (hasLocationPermissions()) {
             if (!isUpdating) {
-                val locationDataConfig = configuration.locationDataConfig
+                val locationDataConfig = convergenceConfiguration.locationDataConfig
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     locationDataConfig.minTimeBetweenUpdates,
@@ -81,7 +96,7 @@ class LocationUpdateManager(
      *  updated values for min time between updates and min distance between updates.
      */
     fun refreshLocationUpdateRequest() {
-        val locationDataConfig = configuration.locationDataConfig
+        val locationDataConfig = convergenceConfiguration.locationDataConfig
         locationManager.removeUpdates(locationUpdateListener)
         if (hasLocationPermissions()) {
             locationManager.requestLocationUpdates(
@@ -91,10 +106,6 @@ class LocationUpdateManager(
                 locationUpdateListener
             )
         }
-    }
-
-    fun isLocationEnabled(): Boolean {
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     private fun hasLocationPermissions(): Boolean {
@@ -107,8 +118,8 @@ class LocationUpdateManager(
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         )
         return (
-                fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
-                        coarseLocationPermission == PackageManager.PERMISSION_GRANTED
-                )
+            fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED
+            )
     }
 }

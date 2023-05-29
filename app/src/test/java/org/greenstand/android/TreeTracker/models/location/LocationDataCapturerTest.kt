@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.models.location
 
 import android.content.SharedPreferences
@@ -13,11 +28,11 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.models.Configuration
+import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.LocationDataConfig
-import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -31,13 +46,12 @@ class LocationDataCapturerTest {
     private lateinit var locationDataCapturer: LocationDataCapturer
 
     @MockK(relaxed = true)
-    private lateinit var user: Planter
-
-    @MockK(relaxed = true)
     private lateinit var locationUpdateManager: LocationUpdateManager
 
     @MockK(relaxed = true)
-    private lateinit var configuration: Configuration
+    private lateinit var convergenceConfiguration: ConvergenceConfiguration
+    @MockK(relaxed = true)
+    private lateinit var timeProvider: TimeProvider
     @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var preferences: Preferences
@@ -55,14 +69,14 @@ class LocationDataCapturerTest {
     fun setup() {
         MockKAnnotations.init(this)
         preferences = Preferences(sharedPreferences)
-        every { configuration.locationDataConfig } returns LocationDataConfig()
+        every { convergenceConfiguration.locationDataConfig } returns LocationDataConfig()
         locationDataCapturer = LocationDataCapturer(
-            user,
             locationUpdateManager,
             treeTrackerDAO,
-            configuration,
+            convergenceConfiguration,
             GsonBuilder().serializeNulls().create(),
             sessionTracker,
+            timeProvider,
         )
     }
 

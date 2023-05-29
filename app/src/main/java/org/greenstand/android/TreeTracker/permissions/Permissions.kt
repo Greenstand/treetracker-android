@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.models
 
 import android.Manifest
@@ -5,27 +20,28 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.runtime.*
+import android.provider.Settings
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import android.provider.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.permissions.PermissionItemsState
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.view.CustomDialog
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @ExperimentalPermissionsApi
 @Composable
@@ -83,6 +99,7 @@ fun PermissionRequest(
             Manifest.permission.ACCESS_FINE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
+                        viewModel.isLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
@@ -98,6 +115,7 @@ fun PermissionRequest(
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
+                        viewModel.isLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
@@ -133,7 +151,7 @@ fun LocationRationaleDialog(navController: NavHostController, perm: PermissionSt
 @Composable
 fun enableLocation() {
     val activity: Context = LocalContext.current as Activity
-    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
     startActivity(activity, intent, null)
 }
 

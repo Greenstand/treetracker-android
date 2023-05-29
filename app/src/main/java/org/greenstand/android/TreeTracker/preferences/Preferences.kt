@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.preferences
 
 import android.content.SharedPreferences
@@ -20,10 +35,10 @@ class Preferences(
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
-    private var _planterInfoId: Long? = null
+    private var _userId: Long? = null
 
-    fun setPlanterInfoId(planterInfoId: Long?) {
-        _planterInfoId = planterInfoId
+    fun setUserId(userId: Long?) {
+        _userId = userId
     }
 
     fun getBoolean(prefKey: PrefKey, default: Boolean): Boolean {
@@ -58,7 +73,7 @@ class Preferences(
 
     private fun computePath(prefKey: PrefKey): String {
         return when (prefKey) {
-            is UserPrefKey -> prefKey.path + "/$_planterInfoId"
+            is UserPrefKey -> prefKey.path + "/$_userId"
             else -> prefKey.path
         }
     }

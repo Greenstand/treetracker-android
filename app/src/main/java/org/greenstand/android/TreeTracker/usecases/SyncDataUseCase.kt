@@ -1,15 +1,32 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.usecases
 
-import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.TreeUploader
+import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import timber.log.Timber
+import kotlin.coroutines.coroutineContext
 
 class SyncDataUseCase(
     private val treeUploader: TreeUploader,
@@ -17,34 +34,49 @@ class SyncDataUseCase(
     private val dao: TreeTrackerDAO,
     private val planterUploader: PlanterUploader,
     private val sessionUploader: SessionUploader,
+    private val deviceConfigUploader: DeviceConfigUploader,
+    private val messagesRepo: MessagesRepo,
 ) : UseCase<Unit, Boolean>() {
 
     private val TAG = "SyncDataUseCase"
 
     override suspend fun execute(params: Unit): Boolean {
-        withContext(Dispatchers.IO) {
+        try {
+            withContext(Dispatchers.IO) {
 
-            safeWork("User Upload") {
-                planterUploader.uploadPlanters()
+                executeIfContextActive("Message Sync") {
+                    messagesRepo.syncMessages()
+                }
+
+                executeIfContextActive("Device Config Upload") {
+                    deviceConfigUploader.upload()
+                }
+
+                executeIfContextActive("User Upload") {
+                    planterUploader.upload()
+                }
+
+                executeIfContextActive("Session Upload") {
+                    sessionUploader.upload()
+                }
+
+                treeUpload(
+                    onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
+                    onUpload = { treeUploader.uploadLegacyTrees(it) }
+                )
+
+                treeUpload(
+                    onGetTreeIds = { dao.getAllTreeIdsToUpload() },
+                    onUpload = { treeUploader.uploadTrees(it) }
+                )
+
+                executeIfContextActive("Location Upload") {
+                    uploadLocationDataUseCase.execute(Unit)
+                }
             }
-
-            safeWork("Session Upload") {
-                sessionUploader.upload()
-            }
-
-            treeUpload(
-                onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
-                onUpload = { treeUploader.uploadLegacyTrees(it) }
-            )
-
-            treeUpload(
-                onGetTreeIds = { dao.getAllTreeIdsToUpload() },
-                onUpload = { treeUploader.uploadTrees(it) }
-            )
-
-            safeWork("Location Upload") {
-                uploadLocationDataUseCase.execute(Unit)
-            }
+        } catch (e: Exception) {
+            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            return false
         }
         return true
     }
@@ -55,10 +87,10 @@ class SyncDataUseCase(
     ) {
         var treeIds = onGetTreeIds()
         while (treeIds.isNotEmpty() && coroutineContext.isActive) {
-            safeWork("Tree Upload") {
+            executeIfContextActive("Tree Upload") {
                 onUpload(treeIds)
             }
-            val remainingIds = dao.getAllTreeIdsToUpload()
+            val remainingIds = onGetTreeIds()
             if (!treeIds.containsAll(remainingIds)) {
                 treeIds = remainingIds
             } else {
@@ -71,7 +103,7 @@ class SyncDataUseCase(
         }
     }
 
-    private suspend fun safeWork(tag: String, action: suspend () -> Unit) {
+    private suspend fun executeIfContextActive(tag: String, action: suspend () -> Unit) {
         try {
             if (coroutineContext.isActive) {
                 action()
@@ -80,6 +112,7 @@ class SyncDataUseCase(
             }
         } catch (e: Exception) {
             Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            throw e
         }
     }
 }

@@ -35,7 +35,7 @@ platform :android do
 
     git_commit(path: "./app/build.gradle", message: "Version Bump to " + versionReleased.to_s)
 
-    push_to_git_remote()
+    push_to_git_remote
 
   end
 
@@ -48,14 +48,14 @@ platform :android do
 
     push_to_git_remote
 
-    gradle(task: "clean assembleGreenstandBeta")
+    gradle(task: "clean assembleBeta")
 
     firebase_app_distribution(
         app: "1:422699885542:android:aab16ef8fc4e5968a0ec27",
         testers: "zaven@greenstand.com, jay@greenstand.com",
         groups: "Greenstand",
         release_notes: "A new release!",
-        firebase_cli_token: ENV["FIREBASE_TOKEN"]
+        firebase_cli_token: ENV["FIREBASE_TOKEN"],
 
       )
 
@@ -84,7 +84,7 @@ platform :android do
 
  #   add_git_tag()
 
-    gradle(task: "clean assembleGreenstandRelease")
+    gradle(task: "clean assembleRelease")
     upload_to_play_store
 
   end

@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.5.10'
+    ext.kotlin_version = '1.6.10'
     repositories {
         google()
         jcenter()
@@ -14,7 +14,10 @@ buildscript {
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
-        classpath 'org.jlleitschuh.gradle:ktlint-gradle:9.2.1'
+        classpath 'org.jlleitschuh.gradle:ktlint-gradle:11.0.0'
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.18.0'
+        classpath 'io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.0-RC2'
+
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -22,7 +25,14 @@ buildscript {
 }
 
 allprojects {
-
+    apply plugin : "org.jlleitschuh.gradle.ktlint"
+    ktlint {
+        android.set(true)
+        verbose.set(true)
+        filter {
+            exclude { element -> element.file.path.contains("generated/") }
+        }
+    }
     repositories {
         google()
         jcenter()
@@ -33,19 +43,43 @@ allprojects {
     }
 
     ext {
-        compose_version = "1.0.0"
+        compose_version = "1.1.1"
+        koin_version= "3.2.0-beta-1"
         androidSupportVersion = '1.0.0'
         retrofit2Version = '2.6.0'
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"
+        prod_treetracker_client_id = "configure in treetracker.keys.properties"
+        prod_treetracker_client_secret = "configure in treetracker.keys.properties"
         s3_test_identity_pool_id = "configure in treetracker.keys.properties"
+        test_treetracker_client_id = "configure in treetracker.keys.properties"
+        test_treetracker_client_secret = "configure in treetracker.keys.properties"
         s3_dev_identity_pool_id = "configure in treetracker.keys.properties"
+        dev_treetracker_client_id = "configure in treetracker.keys.properties"
+        dev_treetracker_client_secret = "configure in treetracker.keys.properties"
         treetracker_client_id = "configure in treetracker.keys.properties"
         treetracker_client_secret = "configure in treetracker.keys.properties"
-        maps_api_key = "configure in treetracker.keys.properties"
     }
 }
 
-apply plugin: "org.jlleitschuh.gradle.ktlint"
+subprojects {
+    apply plugin : "io.gitlab.arturbosch.detekt"
+    detekt {
+        config = files("${project.rootDir}/detekt.yml")
+        parallel = true
+        buildUponDefaultConfig = true
+    }
+    apply plugin : "com.diffplug.spotless"
+    spotless {
+        kotlin {
+            target("**/*.kt")
+            targetExclude("${project.rootDir}/build-logic/**/*.kt")
+            licenseHeaderFile(
+                    rootProject.file("${project.rootDir}/spotless/copyright.kt"),
+                    "^(package|object|import|interface)"
+            )
+        }
+    }
+}
 
 task clean(type: Delete) {
     delete rootProject.buildDir

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.models
 
 import android.hardware.Sensor
@@ -38,7 +53,8 @@ class StepCounter(
     fun enable() {
         Timber.d("StepCounter: enable - register listener")
         sensorManager.registerListener(
-            stepCountEventListener, stepCounter, SensorManager.SENSOR_DELAY_FASTEST)
+            stepCountEventListener, stepCounter, SensorManager.SENSOR_DELAY_FASTEST
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -68,6 +84,6 @@ class StepCounter(
         private val BASE_KEY = PrefKeys.SESSION + PrefKey("steps")
         private val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
         private val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
-                PrefKey("abs-step-count-on-tree-capture")
+            PrefKey("abs-step-count-on-tree-capture")
     }
 }

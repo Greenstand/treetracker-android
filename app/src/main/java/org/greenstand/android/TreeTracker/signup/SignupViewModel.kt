@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.lifecycle.LiveData
@@ -6,25 +21,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.Users
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
-    val name: String? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
     val email: String? = null,
     val phone: String? = null,
     val photoPath: String? = null,
     val isCredentialView: Boolean = true,
-    val isEmailValid: Boolean = false,
-    val isPhoneValid: Boolean = false,
+    val isCredentialValid: Boolean = false,
     val existingUser: User? = null,
     val canGoToNextScreen: Boolean = false,
-    val credential: Credential = Credential.Email(),
+    val credential: Credential = Credential.Phone(),
     val autofocusTextEnabled: Boolean = false,
-    val isInternetAvailable: Boolean = false
+    val isInternetAvailable: Boolean = false,
+    val showSelfieTutorial: Boolean? = null,
+    val showPrivacyDialog: Boolean? = true,
 )
 
 sealed class Credential {
@@ -57,7 +74,7 @@ sealed class Credential {
 }
 
 class SignupViewModel(
-    private val users: Users,
+    private val userRepo: UserRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase
 ) : ViewModel() {
 
@@ -67,25 +84,31 @@ class SignupViewModel(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
-            _state.value = _state.value?.copy(isInternetAvailable = result)
+            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired())
         }
     }
 
-    fun updateName(name: String) {
-        _state.value = _state.value?.copy(name = name)
+    fun updateFirstName(firstName: String?) {
+        _state.value = _state.value?.copy(firstName = firstName)
+    }
+
+    fun updateLastName(lastName: String?) {
+        _state.value = _state.value?.copy(lastName = lastName)
     }
 
     fun updateEmail(email: String) {
         _state.value = _state.value?.copy(
-            email = email,
-            isEmailValid = Validation.isEmailValid(email)
+            email = email.lowercase(),
+            phone = null,
+            isCredentialValid = email.contains('@')
         )
     }
 
     fun updatePhone(phone: String) {
         _state.value = _state.value?.copy(
             phone = phone,
-            isPhoneValid = Validation.isValidPhoneNumber(phone)
+            email = null,
+            isCredentialValid = Validation.isValidPhoneNumber(phone)
         )
     }
 
@@ -100,9 +123,9 @@ class SignupViewModel(
         val credential = _state.value?.let { extractIdentifier(it) }!!
 
         viewModelScope.launch {
-            if (users.doesUserExists(credential)) {
+            if (userRepo.doesUserExists(credential)) {
                 _state.value = _state.value?.copy(
-                    existingUser = users.getUserWithWallet(credential),
+                    existingUser = userRepo.getUserWithWallet(credential),
                 )
             } else {
                 goToNameEntry()
@@ -115,6 +138,12 @@ class SignupViewModel(
             existingUser = null,
         )
     }
+
+    fun updateSelfieTutorialDialog(state: Boolean) {
+        _state.value = _state.value?.copy(showSelfieTutorial = state)
+    }
+
+    suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
 
     fun enableAutofocus() {
         _state.value = _state.value?.copy(autofocusTextEnabled = true)
@@ -130,7 +159,8 @@ class SignupViewModel(
     fun goToCredentialEntry() {
         _state.value = _state.value?.copy(
             isCredentialView = true,
-            name = null,
+            firstName = null,
+            lastName = null,
             canGoToNextScreen = true,
         )
     }
@@ -138,40 +168,31 @@ class SignupViewModel(
     suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
             val userId = with(_state.value ?: return null) {
-                users.createUser(
-                    firstName = extractName(name, true),
-                    lastName = extractName(name, false),
+                userRepo.createUser(
+                    firstName = firstName!!,
+                    lastName = lastName!!,
                     phone = phone,
                     email = email,
                     wallet = extractIdentifier(this),
                     photoPath = photoPath,
-                    isPowerUser = users.getPowerUser() == null,
+                    isPowerUser = userRepo.getPowerUser() == null,
                 )
             }
-            return users.getUser(userId)
+            return userRepo.getUser(userId)
         }
         return null
     }
 
-    private fun extractName(name: String?, isFirstName: Boolean): String {
-        name ?: return ""
-
-        val names = name.split(" ")
-        if (names.size == 1) {
-            return if (isFirstName) name else ""
-        }
-
-        return if (isFirstName) {
-            names[0]
-        } else {
-            names[1]
-        }
-    }
-
     private fun extractIdentifier(state: SignUpState): String {
-        return when(state.credential) {
+        return when (state.credential) {
             is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
+    }
+
+    fun closePrivacyPolicyDialog() {
+        _state.value = _state.value?.copy(
+            showPrivacyDialog = false,
+        )
     }
 }

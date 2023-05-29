@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.dashboard
 
 import androidx.compose.foundation.Canvas
@@ -12,18 +27,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -38,50 +48,82 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utils.PreviewDependencies
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.DepthButton
-import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
+import org.greenstand.android.TreeTracker.view.ConsumableSnackBar
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
+import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
-@OptIn(ExperimentalComposeApi::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val context = LocalContext.current
-    val navController = LocalNavHostController.current
-    val scope = rememberCoroutineScope()
-    val scaffoldState = rememberScaffoldState()
     val state by viewModel.state.observeAsState(DashboardState())
+    val snackBar by viewModel.snackBar.observeAsState()
+    val navController = LocalNavHostController.current
+    var showDialog by remember { mutableStateOf(false) }
 
-    viewModel.showSnackBar = { stringRes ->
-        scope.launch {
-            scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = context.getString(stringRes),
-                duration = SnackbarDuration.Short
-            )
-        }
+    if (showDialog) {
+        CustomDialog(
+            title = stringResource(R.string.upload_trees_soon_title),
+            textContent = stringResource(R.string.upload_trees_text_content),
+            onPositiveClick = {
+                navController.navigate(NavRoute.UserSelect.route)
+            }
+        )
+    }
+    Dashboard(
+        state = state,
+        snackBar = snackBar,
+        onSyncClicked = { viewModel.sync() },
+        onOrgClicked = { navController.navigate(NavRoute.Org.route) },
+        onCaptureClicked = {
+            if (state.showTreeSyncReminderDialog) {
+                showDialog = true
+            } else navController.navigate(NavRoute.UserSelect.route)
+        },
+        onMessagesClicked = {
+            viewModel.syncMessages()
+            navController.navigate(NavRoute.MessagesUserSelect.route)
+        },
+    )
+}
+
+@OptIn(ExperimentalComposeApi::class)
+@Composable
+fun Dashboard(
+    state: DashboardState,
+    snackBar: ConsumableSnackBar? = null,
+    onSyncClicked: () -> Unit = { },
+    onOrgClicked: () -> Unit = { },
+    onCaptureClicked: () -> Unit = { },
+    onMessagesClicked: () -> Unit = { },
+) {
+    val context = LocalContext.current
+    val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(snackBar) {
+        snackBar?.show(context, scaffoldState)
     }
 
     Scaffold(
         topBar = {
-            DashboardTopBar(navController)
+            DashboardTopBar(state, onOrgClicked)
         },
         scaffoldState = scaffoldState,
     ) {
@@ -112,114 +154,59 @@ fun DashboardScreen(
                 )
             }
 
-            // Upload indicator and button for 2.0 debug.
-            if (FeatureFlags.DEBUG_ENABLED) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    // Upload indicator.
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .fillMaxHeight()
-                            .weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        DashboardUploadProgressBar(
-                            progress = (state.treesRemainingToSync)
-                                .toFloat() / (state.totalTreesToSync),
-                            modifier = Modifier.weight(1f),
-                        )
-                        Text(
-                            text = (state.treesRemainingToSync).toString(),
-                            modifier = Modifier.weight(1f),
-                            color = CustomTheme.textColors.lightText,
-                            style = CustomTheme.typography.medium,
-                        )
-                    }
-                    Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
-                    DashBoardButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .weight(1f),
-                        text = stringResource(R.string.upload),
-                        colors = AppButtonColors.UploadOrange,
-                        onClick = {
-                            viewModel.sync()
-                        },
-                        shape = DepthSurfaceShape.Circle,
-                        image = painterResource(id = R.drawable.upload_icon)
-                    )
-                }
-            }
-            // Upload indicator and button for 2.0 release version.
-            if (!FeatureFlags.DEBUG_ENABLED) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                // Upload indicator.
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(2f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                        .fillMaxWidth(0.5f)
+                        .fillMaxHeight()
+                        .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    // Upload indicator.
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(top = 40.dp)
-                            .fillMaxWidth(0.5f)
-                            .wrapContentHeight()
-                            .aspectRatio(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        DashboardUploadProgressBar(
-                            progress = (state.treesRemainingToSync)
-                                .toFloat() / (state.totalTreesToSync),
-                            modifier = Modifier.weight(1f),
-                        )
-                        Text(
-                            text = (state.treesRemainingToSync).toString(),
-                            modifier = Modifier.weight(1f),
-                            color = CustomTheme.textColors.lightText,
-                            style = CustomTheme.typography.medium,
-                        )
-                    }
-                    DashBoardButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(bottom = 40.dp)
-                            .fillMaxHeight()
-                            .aspectRatio(1f),
-                        text = stringResource(R.string.upload),
-                        colors = AppButtonColors.UploadOrange,
-                        onClick = {
-                            viewModel.sync()
-                        },
-                        shape = DepthSurfaceShape.Circle,
-                        image = painterResource(id = R.drawable.upload_icon)
+                    DashboardUploadProgressBar(
+                        progress = (state.treesRemainingToSync)
+                            .toFloat() / (state.totalTreesToSync),
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        text = (state.treesRemainingToSync).toString(),
+                        modifier = Modifier.weight(1f),
+                        color = CustomTheme.textColors.lightText,
+                        style = CustomTheme.typography.medium,
                     )
                 }
-            }
-            if (FeatureFlags.MESSAGES_ENABLED) {
+                Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
                 DashBoardButton(
-                    text = stringResource(R.string.messages),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                        .fillMaxSize(),
-                    colors = AppButtonColors.MessagePurple,
-                    onClick = {
-                        navController.navigate(NavRoute.MessagesUserSelect.route)
-                    },
-                    image = painterResource(id = R.drawable.message_icon)
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .weight(1f),
+                    text = stringResource(R.string.upload),
+                    colors = AppButtonColors.UploadOrange,
+                    onClick = onSyncClicked,
+                    shape = TreeTrackerButtonShape.Circle,
+                    image = painterResource(id = R.drawable.upload_icon)
                 )
             }
+
+            DashBoardButton(
+                text = stringResource(R.string.messages),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .fillMaxSize(),
+                colors = AppButtonColors.MessagePurple,
+                onClick = onMessagesClicked,
+                image = painterResource(id = R.drawable.announcement_icon),
+                showUnreadNotification = state.showUnreadMessageNotification
+            )
 
             DashBoardButton(
                 text = stringResource(R.string.track),
@@ -228,9 +215,7 @@ fun DashboardScreen(
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .fillMaxSize(),
                 colors = AppButtonColors.ProgressGreen,
-                onClick = {
-                    navController.navigate(NavRoute.UserSelect.route)
-                },
+                onClick = onCaptureClicked,
                 image = painterResource(id = R.drawable.track_icon)
             )
         }
@@ -238,9 +223,28 @@ fun DashboardScreen(
 }
 
 @Composable
-fun DashboardTopBar(navController: NavController) {
+fun DashboardTopBar(state: DashboardState, onOrgClicked: () -> Unit) {
     ActionBar(
-
+        leftAction = {
+            if (!state.isOrgButtonEnabled) {
+                return@ActionBar
+            }
+            TreeTrackerButton(
+                colors = AppButtonColors.ProgressGreen,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(width = 100.dp, 60.dp),
+                onClick = onOrgClicked,
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "Organization",
+                    fontWeight = FontWeight.Bold,
+                    color = CustomTheme.textColors.darkText,
+                    style = CustomTheme.typography.regular
+                )
+            }
+        },
         centerAction = { TopBarTitle() },
         rightAction = { LanguageButton() }
     )
@@ -279,8 +283,8 @@ fun DashboardUploadProgressBar(
             style = stroke
         )
 
-        drawProgress(AppColors.MediumGray, 180f)  // Background progress.
-        drawProgress(AppColors.Orange, progress * 180f)  // Foreground progress.
+        drawProgress(AppColors.MediumGray, 180f) // Background progress.
+        drawProgress(AppColors.Orange, progress * 180f) // Foreground progress.
     }
 }
 
@@ -291,10 +295,11 @@ fun DashBoardButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     colors: ButtonColors,
-    shape: DepthSurfaceShape = DepthSurfaceShape.Rectangle,
+    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Rectangle,
     image: Painter,
+    showUnreadNotification: Boolean = false,
 ) {
-    DepthButton(
+    TreeTrackerButton(
         modifier = modifier,
         colors = colors,
         onClick = onClick,
@@ -313,8 +318,36 @@ fun DashBoardButton(
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.darkText,
             modifier = Modifier
+                .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp),
+            textAlign = TextAlign.Center,
+        )
+        if (showUnreadNotification) {
+            Image(
+                modifier = Modifier
+                    .padding(bottom = 12.dp, end = 8.dp)
+                    .size(33.dp)
+                    .align(Alignment.BottomEnd),
+                painter = painterResource(id = R.drawable.notification_icon),
+                contentDescription = null,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun DashboardPreview() {
+    PreviewDependencies {
+        Dashboard(
+            state = DashboardState(
+                treesRemainingToSync = 51,
+                treesSynced = 146,
+                totalTreesToSync = 200,
+                isOrgButtonEnabled = true,
+                showUnreadMessageNotification = true,
+            ),
         )
     }
 }

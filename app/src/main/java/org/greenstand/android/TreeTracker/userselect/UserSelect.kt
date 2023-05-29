@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.userselect
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -8,10 +23,11 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.NavRoute
@@ -32,11 +48,12 @@ fun UserSelect(
     navigationButtonColors: DepthButtonColors,
     isCreateUserEnabled: Boolean,
     isNotificationEnabled: Boolean,
-    onNextRoute: (User) -> String,
+    selectedColor: Color = AppColors.Green,
+    onNavigateForward: (User) -> Unit,
 ) {
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(UserSelectState())
+    val state by viewModel.state.collectAsState(UserSelectState())
 
     Scaffold(
         bottomBar = {
@@ -45,7 +62,7 @@ fun UserSelect(
                     if (isCreateUserEnabled) {
                         OrangeAddButton(
                             modifier = Modifier.align(Alignment.Center),
-                            onClick =  { navController.navigate(NavRoute.SignupFlow.route) }
+                            onClick = { navController.navigate(NavRoute.SignupFlow.route) }
                         )
                     }
                 },
@@ -56,7 +73,7 @@ fun UserSelect(
                         colors = navigationButtonColors,
                         onClick = {
                             state.selectedUser?.let {
-                                navController.navigate(onNextRoute(it))
+                                onNavigateForward(it)
                             }
                         }
                     )
@@ -85,9 +102,11 @@ fun UserSelect(
                 UserButton(
                     user = user,
                     isSelected = state.selectedUser?.id == user.id,
-                    AppButtonColors.Default,
-                    AppColors.Green
-                ) { viewModel.selectUser(user) }
+                    buttonColors = AppButtonColors.Default,
+                    selectedColor = selectedColor,
+                    onClick = { viewModel.selectUser(user) },
+                    isNotificationEnabled = isNotificationEnabled && user.unreadMessagesAvailable
+                )
             }
         }
     }

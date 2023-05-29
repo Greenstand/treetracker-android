@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.models.location
 
 import android.location.Location
@@ -67,13 +82,16 @@ class ConvergenceTest {
 
         assertEquals(
             "longitude mean computation", LONGITUDINAL_MEAN,
-            convergence.longitudeConvergence!!.mean, 0.0)
+            convergence.longitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "longitude variance computation", LONGITUDINAL_VARIANCE,
-            convergence.longitudeConvergence!!.variance, 0.0)
+            convergence.longitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "longitude std dev computation", LONGITUDINAL_STD_DEV,
-            convergence.longitudeConvergence!!.standardDeviation, 0.0)
+            convergence.longitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 
     @Test
@@ -83,13 +101,16 @@ class ConvergenceTest {
 
         assertEquals(
             "latitude mean computation", LATITUDINAL_MEAN,
-            convergence.latitudeConvergence!!.mean, 0.0)
+            convergence.latitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "latitude variance computation", LATITUDINAL_VARIANCE,
-            convergence.latitudeConvergence!!.variance, 0.0)
+            convergence.latitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "latitude std dev computation", LATITUDINAL_STD_DEV,
-            convergence.latitudeConvergence!!.standardDeviation, 0.0)
+            convergence.latitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 
     @Test
@@ -104,13 +125,16 @@ class ConvergenceTest {
 
         assertEquals(
             "Longitude Mean - sliding window", SLIDING_LONGITUDINAL_MEAN,
-            convergence.longitudeConvergence!!.mean, 0.0)
+            convergence.longitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "Longitude Variance - sliding window", SLIDING_LONGITUDINAL_VARIANCE,
-            convergence.longitudeConvergence!!.variance, 0.0)
+            convergence.longitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "Longitude std dev - sliding window", SLIDING_LONGITUDINAL_STD_DEV,
-            convergence.longitudeConvergence!!.standardDeviation, 0.0)
+            convergence.longitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 
     @Test
@@ -124,12 +148,15 @@ class ConvergenceTest {
 
         assertEquals(
             "Latitude Mean - sliding window", SLIDING_LATITUDE_MEAN,
-            convergence.latitudeConvergence!!.mean, 0.0)
+            convergence.latitudeConvergence!!.mean, 0.0
+        )
         assertEquals(
             "Latitude Variance - sliding window", SLIDING_LATITUDE_VARIANCE,
-            convergence.latitudeConvergence!!.variance, 0.0)
+            convergence.latitudeConvergence!!.variance, 0.0
+        )
         assertEquals(
             "Latitude std dev - sliding window", SLIDING_LATITUDE_STD_DEV,
-            convergence.latitudeConvergence!!.standardDeviation, 0.0)
+            convergence.latitudeConvergence!!.standardDeviation, 0.0
+        )
     }
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.walletselect.addwallet
 
 import androidx.compose.foundation.layout.Box
@@ -17,21 +32,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 
 @Composable
 fun AddWalletScreen(
-    userId: Long,
-    viewModel: AddWalletViewModel = viewModel(factory = AddWalletViewModelFactory(userId))
+    viewModel: AddWalletViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
@@ -42,7 +58,7 @@ fun AddWalletScreen(
             ActionBar(
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        navController.popBackStack()
+                        CaptureSetupScopeManager.nav.navBackward(navController)
                     }
                 },
                 rightAction = {
@@ -51,8 +67,7 @@ fun AddWalletScreen(
                         isEnabled = state.walletName.isNotBlank()
                     ) {
                         scope.launch {
-                            viewModel.startSession()
-                            navController.navigate(NavRoute.TreeCapture.create(state.userImagePath))
+                            CaptureSetupScopeManager.nav.navForward(navController)
                         }
                     }
                 }
@@ -74,12 +89,12 @@ fun AddWalletScreen(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Go,
                     autoCorrect = false,
+                    capitalization = KeyboardCapitalization.None
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
                         scope.launch {
-                            viewModel.startSession()
-                            navController.navigate(NavRoute.AddOrg.create(userId, state.walletName))
+                            CaptureSetupScopeManager.nav.navForward(navController)
                         }
                     }
                 )
@@ -87,4 +102,3 @@ fun AddWalletScreen(
         }
     }
 }
-

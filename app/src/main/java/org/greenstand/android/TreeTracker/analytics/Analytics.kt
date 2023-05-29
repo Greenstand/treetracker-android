@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.analytics
 
 import android.app.Activity
@@ -9,32 +24,26 @@ import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.MARKER_CLICKE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.NOTE_ADDED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.STOP_BUTTON_CLICKED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.SYNC_BUTTON_CLICKED
-import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.TREE_COLOR_ADDED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.TREE_PLANTED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_CHECK_IN
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_DETAILS
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_EMAIL_PHONE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_INFO_CREATED
-import org.greenstand.android.TreeTracker.data.TreeColor
-import org.greenstand.android.TreeTracker.models.Planter
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class Analytics(
-    private val user: Planter,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val deviceUtils: DeviceUtils
 ) {
 
     init {
         setupStaticDeviceProperties()
-        updateUserData()
     }
 
     private fun setupStaticDeviceProperties() {
         with(firebaseAnalytics) {
             setUserProperty("device_id", deviceUtils.deviceId)
             setUserProperty("device_language", deviceUtils.language)
-            setUserProperty("flavor", BuildConfig.FLAVOR)
             setUserProperty("app_version", BuildConfig.VERSION_NAME)
             setUserProperty("app_build", BuildConfig.VERSION_CODE.toString())
             setUserProperty("manufacturer", Build.MANUFACTURER)
@@ -45,15 +54,6 @@ class Analytics(
             setUserProperty("serial", Build.SERIAL)
             setUserProperty("android_release", Build.VERSION.RELEASE)
             setUserProperty("sdk_version", Build.VERSION.SDK_INT.toString())
-        }
-    }
-
-    fun updateUserData() {
-        with(firebaseAnalytics) {
-            setUserId(user.planterCheckinId.toString())
-            setUserProperty("first_name", user.firstName)
-            setUserProperty("last_name", user.lastName)
-            setUserProperty("organization", user.organization)
         }
     }
 
@@ -74,9 +74,6 @@ class Analytics(
 
     fun userInfoCreated(phone: String, email: String) {
         val bundle = Bundle().apply {
-            putString("first_name", user.firstName)
-            putString("last_name", user.lastName)
-            putString("organization", user.organization)
             putString("email", email)
             putString("phone", phone)
         }
@@ -89,13 +86,6 @@ class Analytics(
 
     fun userEnteredEmailPhone() {
         firebaseAnalytics.logEvent(USER_ENTERED_EMAIL_PHONE, Bundle())
-    }
-
-    fun treeHeightMeasured(treeColor: TreeColor) {
-        val bundle = Bundle().apply {
-            putString("tree_color", treeColor.value)
-        }
-        firebaseAnalytics.logEvent(TREE_COLOR_ADDED, bundle)
     }
 
     fun treeNoteAdded(noteLength: Int) {

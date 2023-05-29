@@ -6,7 +6,7 @@
     <string name="your_note">Taarifa za ziada</string>
     <string name="remove_photo">Ondoa picha</string>
     <string name="tree_height_save_error" translatable="false">Tafadhali jaribu tena</string> 
-    <string name="tree_height_title">Chagua mti</string>
+    <string name="tree_height_title">Chagua urefu wa mti</string>
     <string name="cancel">Sitisha</string> 
     <string name="save">Hifadhi</string> 
     <string name="mark_gps">Weka GPS</string> 
@@ -55,11 +55,11 @@
     <string name="organization_pre_fill" translatable="false">""</string>
     <string name="syncing" translatable="false">Inatuma na kupokea....</string> 
     <string name="uploading_trees" translatable="false">Inatuma miti</string>
-    <string name="admin_password" translatable="false">Nenosiri ya Admin</string> 
+    <string name="admin_password" translatable="false">Nenosiri la msimamizi</string> 
     <string name="config_parameters" translatable="false">Mipangilio</string> 
     <string name="location_data_config" translatable="false">Mipangilio ya taarifa za pahala</string> 
     <string name="min_time_btwn_updates" translatable="false">Muda kati ya update</string> 
-    <string name="min_distance_between_updates" translatable="false">Umbali kati ya update</string> 
+    <string name="min_distance_between_updates" translatable="false">Umbali kati ya sasisha</string> 
     <string name="convergence_timeout" translatable="false">Inashindwa kupata tarifa za pahala</string> 
     <string name="convergence_timeout_hint" translatable="false">Convergence Timeout in milliseconds</string>
     <string name="convergence_data_size" translatable="false">Ukubwa wa kifurushi cha taarifa</string> 
@@ -67,7 +67,7 @@
     <string name="lon_std_dev_threshold" translatable="false">Longitude Standard Dev Threshold</string> 
     <string name="lat_std_dev_threshold" translatable="false">Latitude Standard Dev Threshold</string>
     <string name="add_note_to_tree">Ongeza taarifa ya mti</string> 
-    <string name="note">TARIFA</string> 
+    <string name="note">TAARIFA</string> 
 
     <!--Strings for the permission management and rationale--> 
     <string name="accept_camera_permission_header">Kubali ruhusa kwa kamera </string> 
@@ -80,12 +80,94 @@
 <string name="open_settings">Fungua mpangilio</string> 
     <string name="user_exists_header">Mtumiaji yupo tayari</string> 
     <string name="user_exists_message">Fungua taarifa zako ili kuweza kuendelea na akaunti hii</string> 
-    <string name="poor_gps_message">GPS yako haina nguvu.\n Jaribu yafuatayo.\n 1. hakikisha kuwa hupo ndani ya jengo.\n 2. Fungua Mpangilio > Location > Sources Mode and tap High Accuracy.\n 3. GPS inakuwa na nguvu anga inapokuwa wazi. Usipoona anga, GPS haina nguvu ya kutosha.</string>
+    <string name="poor_gps_message">GPS yako haina nguvu.\n Jaribu yafuatayo.\n 1. hakikisha kuwa hupo ndani ya jengo.\n 2. Elekea kwenye mpangilio Kisha Eneo Kisha modi ya vyanzo halafu bonyeza usahihi wa juu.\n 3. GPS inakuwa na nguvu anga linapokuwa wazi. Usipoona anga, GPS haina nguvu ya kutosha.</string>
     <string name="poor_gps_header">Imeshindikana kufuatilia mti</string> 
     <string name="upload">TUMA MITI</string> 
     <string name="messages">UJUMBE</string> 
     <string name="track">FUATILIA</string> 
     <string name="viewLiveWebMap">Angalia ramani hai!</string> 
+    <string name="click_on">Bonyeza</string>
+    <string name="tracking_instruction">kupiga picha mti wako kwa ufuatiliaji.</string>
+    <string name="selfie_instruction">chukua pichanafsi ili kuendeleza usajili wako.</string>
+    <string name="recapture_tutorial">bonyeza kitufe ili kujaribu kukamata mti tena.</string>
+    <string name="capture_tutorial">bonyeza kitufe ili kuhifadhi mti.</string>
+    <string name="phone_validation_error">Number ya simu sio halali. Number ya simu ni lazima iwe na angalau tarakimu 7 na Sio zaidi ya 15.</string>
+    <string name="email_validation_error">Barua pepe sio halali. Barua pepe ni lazima iwe na alama hii @.</string>
+    <string name="survey">Chemsha-bongo</string>
+    <string name="message">Ujumbe</string>
+    <string name="policy_text_blob">
+        Hapa GreenStand tunaheshimu usiri wako na tutafanya lolote kadri ya uwezo wetu kuendelea kulinda usiri huo.
+        Tutaweka wazi maelezo ya faragha ya GreenStand kutokana na mazoezi ya kusanya data.
+        \n\n
+        <b>Jinsi tunavyoshughulikia data:</b>
+        \n\n
+        Malengo yetu makuu ni kutumia data kwa kutengeneza mazingira bora na kupeana mibadala ya uokoaji uchumi katika
+        maeneo pweke. Tunaamini kuwa Sayansi na miradi yenye kutegemea data yenye tunasanya (yenye si ya kibinafsi)
+        yapaswa kupatikana bure kwa umma. Isipokuwa vinginevyo bila kupewa kibali hatutatoa habari nyeti kama habari
+        kukuhusu kama vile njia zako za mawasiliano. Ukusanyaji wa data yetu ya msingi unazingatia utafiti wa kisayansi
+        na kuunda mfumo wa uwazi kukusanya data kuhusiana na mchakato wa kuishi wa miti pamoja na taarifa yoyote
+        kuhusiana na mavuno ya utaratibu wa bidhaa zinazohusiana na miti. Maelezo haya ya mpandaji yanajumuisha picha
+        zenye maeneo halisi na ambazo zinazorekodi wakati na data nyingine ya mtumiaji.
+        \n\n
+        Kwa kutumia huduma zetu unakubali kutupa ruhusa kutumia data yako inayohusiana na mazingira na kuifanya
+        ipatikane kwa umma kupitia kwa tovuti yetu. Jina la mtumiaji la kwanza au jina la shirika linaweza onyeshwa
+        pamoja na data za mti unaolingana. Kwa idhini yako kwanza data zingine za mtumizi zinaweza wekwa wazi. Lakini
+        kwa ombi, data zote za mtumizi zinaweza fichwa zisionakane na umma. Nambari za simu \na barua pepe zinaweza
+        tumika na GreenStand kupigia wapanzi, lakini haziwezi pewa watu wengine bila ruhusa.
+        \n\n
+        <b>Miradi inayohusiana/ Data za Kisayansi:</b>
+        \n\n
+        GreenStand inadhibitisha data za wazi za kisayansi na sera na inakusudia kuzifanya data zozote za kisayansi
+        ambazo zinaweza kuwa na adhari chanya kwa mazingira na maisha ya ustawi wa jamii kupatikana kwa uwazi. Kwa
+        kutumia habari tunazozipata kupitia kwa simu za rununu, tovuti ama mfumo wetu wa data, tunakusudia kutambua
+        shida, suluhisho na mwenendo wa mazingira/afya ya kijamii. Kwa kutumia huduma zetu na software unakubali kutupa
+        ruhusa kuonyesha, kwa umma, miradi inayohusiana na habari za kisayansi. Ikiwa habari zilizokusanywa ni nyeti
+        unaweza wasiliana nasi kwa <a href="mailto:Info@greenstand.org">Info@greenstand.org</a> ilituweze kuchukua hatua zinazofaa.
+        \n\n
+        1. Jinsi tunavyo kusanya habari:
+        \n
+        Kwa kutumia simu ya rununu:
+        \n
+        Picha:zinarekodi wakati, zenye maeneo halisi
+        \n
+        Mtumizi hujaza habari yake: jina, barua pepe, jina la shirika, nambari ya simu, maelezo ya shamba
+        \n
+        Mpangilio wa Programu kwa watumiaji
+        \n
+        Kujua shida ya app: Jinsi ya simu, sababu ya goma
+        \n\n
+        2. Kwa kutumia tovuti
+        \n
+        Tunakusanya data ya mtumiaji:
+        \n
+        Hakuna ujumbe ama maelezo kuhusiana na mtuamiaji ama mashirika hayatapeanwa bila idhini yao. Tunatumia data zote
+        zinazohusiana na mtumiaji (jina kamili,namba za simu. barua pepe)salama kwa kutumia kielelezo cha kisasa
+        (cryptography). Majina ya wakulima wa miti na maelezo kuwahusu haitashirikwa kamwe bila idhini yao.
+        \n\n
+        Maelezo kukuhusu:Kwenye programu yetu ya tracker ya miti, tunahitaji jina,barua pepe na kwa hiari nambari ya
+        simu na jina ya shirika. Data yote ya kibinafsi imehifadhiwa kwenye database salama.
+        \n\n
+        Watumiaji wa Programu za simu za rununu: programu zetu za simu ya mikono hukusanya maelezo ya kibinafsi;habari
+        za mtumiaji;jina, anwani ya barua pepe,jina la shirika na nambari ya simu.
+        \n\n
+        <b>Picha za mtumiaji:</b>
+        \n\n
+        Programu ya GreenStand ya kufuatilia mti hutumika kwenye mkusanyiko wa picha zilizo rekodi wakati na maeneo
+        halisi. Habari hizi huhifadhiwa katika database salama ambazo huonyeshwa katika mfumo wa treemap. Pia hutumia
+        habari hizi kuzalisha takwimu zinazohusiana na upandaji wa miti. Tunavutiwa tu na picha zinazohusiana na
+        miti,tafadhali usitume picha za aina nyingine. Kwa utumiaji bora wa mfumo huu,picha zote zilizochukuliwa
+        zitahusiana na data za mazingira na GreenStand haizingatii na kutafsiri picha zinazowekwa kwenye mtandao
+        kama”maelezo ya mtumiaji”. Kwa kutumia programu yetu ya simu ya rununu unakubali kutupa ruhusa kutumia picha
+        zako.
+        \n\n
+        <b>Mabadiliko ya sera:</b>
+        \n\n
+        Ni nia yetu ya kushikilia kanuni za sera hii,lakini tunaelewa kunawezakana kuwa na haja ya kubadili mara kwa
+        mara. Mabadiliko yoyote yatachapishwa kwa tovuti yetu haraka iwezekanavyo.
+    </string>
+    <string name="no_gps_device_header">Hakuna GPS kwenye kifaa hiki</string>
+    <string name="no_gps_device_content">Kifaa hiki hakina uwezo wa kuwa na GPS. Tafadhali tumia kifaa chenye GPS ili kuendelea.</string>
+    <string name="tree_capture_review_text">bonyeza kitufe ili kuongeza taarifa</string>
 </resources>
 
 

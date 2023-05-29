@@ -14,7 +14,7 @@ jobs:
     name: Release to firebase beta
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
         ref: master
@@ -24,10 +24,10 @@ jobs:
       shell: bash
       env:
         S3_TEST_IDENTITY_POOL_ID: ${{secrets.S3_TEST_IDENTITY_POOL_ID}}
-    - name: Set up Ruby 2.6
-      uses: actions/setup-ruby@v1
+    - name: Set up Ruby 2.7.6
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.6
+        ruby-version: 2.7.6
     - name: Install bundle
       run: |
         gem install bundler
@@ -39,6 +39,7 @@ jobs:
     - name: Run fastlane
       run: |
         bundle exec fastlane firebase_beta
+        bundle exec fastlane update_plugins
       env:
         FIREBASE_TOKEN: ${{secrets.FIREBASE_TOKEN}}
         SLACK_URL: ${{secrets.SLACK_URL}}

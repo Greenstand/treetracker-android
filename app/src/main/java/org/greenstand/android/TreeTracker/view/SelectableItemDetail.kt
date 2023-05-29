@@ -1,15 +1,30 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -17,7 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -30,52 +45,51 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun SelectableImageDetail(
-    photoPath: String,
+    photoPath: String? = null,
     isSelected: Boolean,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
     onClick: () -> Unit,
+    header: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    val columnModifier = Modifier
-        .padding(bottom = 12.dp) // Bottom side can be clipped by the button.
-        .fillMaxWidth()
-        .wrapContentHeight()
-    val userButtonModifier = Modifier
-        .padding(8.dp)
-        .width(156.dp)
-        .clip(RoundedCornerShape(10.dp))
-        .wrapContentHeight()
-
-    DepthButton(
+    TreeTrackerButton(
+        modifier = Modifier
+            .padding(8.dp)
+            .height(270.dp)
+            .width(156.dp)
+            .wrapContentHeight(),
+        colors = buttonColors,
         onClick = onClick,
         isSelected = isSelected,
-        modifier = if (isSelected) userButtonModifier
-            .border(
-                width = 1.dp, brush = Brush.verticalGradient(
-                    colors = listOf(
-                        AppColors.Gray,
-                        AppColors.Green
-                    )
-                ),
-                shape = RoundedCornerShape(10.dp)
-            ) else userButtonModifier,
+        borderBrushOverride = verticalGradient(
+            colors = listOf(
+                AppColors.Gray,
+                selectedColor
+            )
+        ).takeIf { isSelected },
         contentAlignment = Alignment.TopCenter,
     ) {
         Column(
-            modifier = if (isSelected) columnModifier.padding(start = 1.dp, end = 1.dp) else columnModifier.padding(1.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
-            LocalImage(
-                imagePath = photoPath,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .aspectRatio(1.0f)
-                    .clip(RoundedCornerShape(10.dp)),
-            )
+            photoPath?.let {
+                LocalImage(
+                    imagePath = it,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .aspectRatio(1.0f)
+                        .padding(bottom = 20.dp)
+                        .clip(RoundedCornerShape(10.dp)),
+                )
+            }
+            header?.let { it() }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,14 +108,15 @@ fun UserButton(
     isSelected: Boolean,
     buttonColors: DepthButtonColors,
     selectedColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isNotificationEnabled: Boolean = false,
 ) {
     SelectableImageDetail(
-        user.photoPath,
-        isSelected,
-        buttonColors,
-        selectedColor,
-        onClick
+        photoPath = user.photoPath,
+        isSelected = isSelected,
+        buttonColors = buttonColors,
+        selectedColor = selectedColor,
+        onClick = onClick
     ) {
         Text(
             text = "${user.firstName} ${user.lastName}",
@@ -110,7 +125,7 @@ fun UserButton(
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
-            )
+        )
         Text(
             text = user.wallet,
             color = CustomTheme.textColors.lightText,
@@ -118,7 +133,7 @@ fun UserButton(
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
-            )
+        )
         Row(
             modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -132,11 +147,20 @@ fun UserButton(
             )
             Text(
                 text = user.numberOfTrees.toString(), // TODO: Fetch user's token count.
-                modifier = Modifier.padding(start = 4.dp),
+                modifier = Modifier.weight(3f).padding(start = 4.dp),
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.medium,
                 fontWeight = FontWeight.SemiBold,
+            )
+            if (isNotificationEnabled) {
+                Image(
+                    modifier = Modifier
+                        .size(33.dp)
+                        .weight(1f),
+                    painter = painterResource(id = R.drawable.notification_icon),
+                    contentDescription = null
                 )
+            }
         }
     }
 }

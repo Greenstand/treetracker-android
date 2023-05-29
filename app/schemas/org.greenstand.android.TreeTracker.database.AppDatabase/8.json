@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "23d5e66afb3158086a80439d1257f3a2",
+    "identityHash": "289bc674a1bffab53e4053923906dc10",
     "entities": [
       {
         "tableName": "planter_check_in",
@@ -430,11 +430,17 @@
       },
       {
         "tableName": "session",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `origin_user_id` TEXT NOT NULL, `origin_wallet` TEXT NOT NULL, `destination_wallet` TEXT NOT NULL, `start_time` TEXT NOT NULL, `end_time` TEXT, `organization` TEXT, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `device_config_id` INTEGER, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`device_config_id`) REFERENCES `device_config`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
             "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "originUserId",
+            "columnName": "origin_user_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -453,13 +459,13 @@
           {
             "fieldPath": "startTime",
             "columnName": "start_time",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "endTime",
             "columnName": "end_time",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -510,11 +516,23 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_session_origin_wallet` ON `${TABLE_NAME}` (`origin_wallet`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "device_config",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "device_config_id"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `wallet` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `phone` TEXT, `email` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT, `photo_path` TEXT NOT NULL, `photo_url` TEXT DEFAULT NULL, `power_user` INTEGER NOT NULL DEFAULT 0, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `wallet` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `phone` TEXT, `email` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` TEXT NOT NULL, `bundle_id` TEXT, `photo_path` TEXT NOT NULL, `photo_url` TEXT DEFAULT NULL, `power_user` INTEGER NOT NULL DEFAULT 0, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -573,7 +591,7 @@
           {
             "fieldPath": "createdAt",
             "columnName": "created_at",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -714,7 +732,7 @@
       },
       {
         "tableName": "tree",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `session_id` INTEGER NOT NULL, `photo_path` TEXT, `photo_url` TEXT, `note` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `bundle_id` TEXT DEFAULT NULL, `extra_attributes` TEXT DEFAULT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`session_id`) REFERENCES `session`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `session_id` INTEGER NOT NULL, `photo_path` TEXT, `photo_url` TEXT, `note` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `uploaded` INTEGER NOT NULL, `created_at` TEXT NOT NULL, `bundle_id` TEXT DEFAULT NULL, `extra_attributes` TEXT DEFAULT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`session_id`) REFERENCES `session`(`_id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -767,7 +785,7 @@
           {
             "fieldPath": "createdAt",
             "columnName": "created_at",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -830,12 +848,80 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "device_config",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `app_version` TEXT NOT NULL, `app_build` INTEGER NOT NULL, `os_version` TEXT NOT NULL, `sdk_version` INTEGER NOT NULL, `logged_at` TEXT NOT NULL, `uploaded` INTEGER NOT NULL, `bundle_id` TEXT, `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appVersion",
+            "columnName": "app_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appBuild",
+            "columnName": "app_build",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "osVersion",
+            "columnName": "os_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sdkVersion",
+            "columnName": "sdk_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loggedAt",
+            "columnName": "logged_at",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUploaded",
+            "columnName": "uploaded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bundleId",
+            "columnName": "bundle_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '23d5e66afb3158086a80439d1257f3a2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '289bc674a1bffab53e4053923906dc10')"
     ]
   }
 }
