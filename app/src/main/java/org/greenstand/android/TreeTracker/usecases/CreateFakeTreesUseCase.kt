@@ -18,15 +18,15 @@ package org.greenstand.android.TreeTracker.usecases
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 data class CreateFakeTreesParams(val amount: Int)
 

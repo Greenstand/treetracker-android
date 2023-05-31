@@ -23,9 +23,9 @@ import kotlinx.coroutines.isActive
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.TreeCaptureRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.TreeEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.entity.TreeEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadImageParams

@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.database.legacy.views
+package org.greenstand.android.TreeTracker.database.messages.entities
 
-class TreeMapMarkerDbView(
-    val latitude: Double,
-    val longitude: Double,
-    val treeCaptureId: Long
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "surveys")
+class SurveyEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: String,
+    @ColumnInfo(name = "title")
+    val title: String,
 )

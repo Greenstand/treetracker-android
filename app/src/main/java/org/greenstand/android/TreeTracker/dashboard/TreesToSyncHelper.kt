@@ -15,7 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.dashboard
 
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences

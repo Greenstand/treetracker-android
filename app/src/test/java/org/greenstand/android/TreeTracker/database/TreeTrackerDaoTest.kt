@@ -21,6 +21,8 @@ import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.greenstand.android.TreeTracker.database.app.AppDatabase
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utils.*
 import org.junit.After
 import org.junit.Assert.*

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.database
+package org.greenstand.android.TreeTracker.database.app
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.PlanterInfoEntity
 
 val MIGRATION_6_7 = object : Migration(6, 7) {
 

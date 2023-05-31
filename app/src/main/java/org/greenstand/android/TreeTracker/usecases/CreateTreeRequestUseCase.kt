@@ -17,7 +17,7 @@ package org.greenstand.android.TreeTracker.usecases
 
 import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 data class CreateTreeRequestParams(

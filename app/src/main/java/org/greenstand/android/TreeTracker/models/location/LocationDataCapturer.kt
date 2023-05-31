@@ -25,15 +25,17 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.LocationEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.entity.LocationEntity
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.ConvergenceStatus
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
-import java.util.*
+import java.util.Deque
+import java.util.LinkedList
+import java.util.UUID
 import kotlin.math.min
 import kotlin.properties.Delegates
 

@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.models.messages.database
+package org.greenstand.android.TreeTracker.database.messages
 
+import org.greenstand.android.TreeTracker.database.messages.entities.MessageEntity
+import org.greenstand.android.TreeTracker.database.messages.entities.QuestionEntity
+import org.greenstand.android.TreeTracker.database.messages.entities.SurveyEntity
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.Message
 import org.greenstand.android.TreeTracker.models.messages.Question
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.models.messages.SurveyResponseMessage
-import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
-import org.greenstand.android.TreeTracker.models.messages.database.entities.QuestionEntity
-import org.greenstand.android.TreeTracker.models.messages.database.entities.SurveyEntity
 import org.greenstand.android.TreeTracker.models.messages.network.requests.MessageRequest
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 

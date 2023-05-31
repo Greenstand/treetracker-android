@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.models.messages.database
+package org.greenstand.android.TreeTracker.database.messages.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
-import org.greenstand.android.TreeTracker.models.messages.database.entities.QuestionEntity
-import org.greenstand.android.TreeTracker.models.messages.database.entities.SurveyEntity
+import org.greenstand.android.TreeTracker.database.messages.entities.MessageEntity
+import org.greenstand.android.TreeTracker.database.messages.entities.QuestionEntity
+import org.greenstand.android.TreeTracker.database.messages.entities.SurveyEntity
 
 @Dao
 interface MessagesDAO {

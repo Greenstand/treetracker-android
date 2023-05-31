@@ -19,7 +19,7 @@ import com.google.gson.Gson
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.DeviceConfigRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utilities.md5
 
 class DeviceConfigUploader(
