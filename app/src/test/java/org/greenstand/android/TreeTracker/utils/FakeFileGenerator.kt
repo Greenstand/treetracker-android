@@ -16,8 +16,17 @@
 package org.greenstand.android.TreeTracker.utils
 
 import kotlinx.datetime.Instant
-import org.greenstand.android.TreeTracker.database.entity.*
-import org.greenstand.android.TreeTracker.database.legacy.entity.*
+import org.greenstand.android.TreeTracker.database.app.entity.DeviceConfigEntity
+import org.greenstand.android.TreeTracker.database.app.entity.LocationEntity
+import org.greenstand.android.TreeTracker.database.app.entity.OrganizationEntity
+import org.greenstand.android.TreeTracker.database.app.entity.SessionEntity
+import org.greenstand.android.TreeTracker.database.app.entity.TreeEntity
+import org.greenstand.android.TreeTracker.database.app.entity.UserEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.Question

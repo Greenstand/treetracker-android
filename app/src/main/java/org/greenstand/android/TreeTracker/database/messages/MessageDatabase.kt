@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.models.messages.database
+package org.greenstand.android.TreeTracker.database.messages
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import org.greenstand.android.TreeTracker.database.Converters
-import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
-import org.greenstand.android.TreeTracker.models.messages.database.entities.QuestionEntity
-import org.greenstand.android.TreeTracker.models.messages.database.entities.SurveyEntity
+import org.greenstand.android.TreeTracker.database.app.Converters
+import org.greenstand.android.TreeTracker.database.messages.dao.MessagesDAO
+import org.greenstand.android.TreeTracker.database.messages.entities.MessageEntity
+import org.greenstand.android.TreeTracker.database.messages.entities.QuestionEntity
+import org.greenstand.android.TreeTracker.database.messages.entities.SurveyEntity
 
 @Database(
     version = 1,
@@ -41,21 +40,9 @@ abstract class MessageDatabase : RoomDatabase() {
 
     companion object {
 
-        private var INSTANCE: MessageDatabase? = null
+        const val DB_NAME = "treetracker.messages.db"
+        const val DB_NAME_ENCRYPT = "treetracker.messages-encrypt.db"
 
-        fun getInstance(context: Context): MessageDatabase {
-            if (INSTANCE == null) {
-                synchronized(MessageDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        MessageDatabase::class.java,
-                        DB_NAME
-                    ).build()
-                }
-            }
-            return INSTANCE!!
-        }
 
-        private const val DB_NAME = "treetracker.messages.db"
     }
 }

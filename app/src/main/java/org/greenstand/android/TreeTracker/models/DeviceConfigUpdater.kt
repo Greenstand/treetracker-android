@@ -17,10 +17,10 @@ package org.greenstand.android.TreeTracker.models
 
 import android.os.Build
 import org.greenstand.android.TreeTracker.BuildConfig
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 class DeviceConfigUpdater(
     private val dao: TreeTrackerDAO,

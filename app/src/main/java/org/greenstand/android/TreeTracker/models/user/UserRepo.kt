@@ -21,13 +21,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.UserEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.entity.UserEntity
+import org.greenstand.android.TreeTracker.database.messages.dao.MessagesDAO
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
-import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 class UserRepo(
     private val locationUpdateManager: LocationUpdateManager,

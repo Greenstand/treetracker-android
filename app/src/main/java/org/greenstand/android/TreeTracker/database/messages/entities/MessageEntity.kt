@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.models.messages.database.entities
+package org.greenstand.android.TreeTracker.database.messages.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

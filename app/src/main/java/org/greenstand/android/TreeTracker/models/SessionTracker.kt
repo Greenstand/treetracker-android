@@ -19,15 +19,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.SessionEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.entity.SessionEntity
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 class SessionTracker(
     private val dao: TreeTrackerDAO,

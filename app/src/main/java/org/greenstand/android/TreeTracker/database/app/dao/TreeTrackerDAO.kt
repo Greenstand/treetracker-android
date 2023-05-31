@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.database
+package org.greenstand.android.TreeTracker.database.app.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -23,17 +23,17 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
-import org.greenstand.android.TreeTracker.database.entity.LocationEntity
-import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
-import org.greenstand.android.TreeTracker.database.entity.SessionEntity
-import org.greenstand.android.TreeTracker.database.entity.TreeEntity
-import org.greenstand.android.TreeTracker.database.entity.UserEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
-import org.greenstand.android.TreeTracker.database.legacy.views.TreeMapMarkerDbView
+import org.greenstand.android.TreeTracker.database.app.entity.DeviceConfigEntity
+import org.greenstand.android.TreeTracker.database.app.entity.LocationEntity
+import org.greenstand.android.TreeTracker.database.app.entity.OrganizationEntity
+import org.greenstand.android.TreeTracker.database.app.entity.SessionEntity
+import org.greenstand.android.TreeTracker.database.app.entity.TreeEntity
+import org.greenstand.android.TreeTracker.database.app.entity.UserEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.views.TreeMapMarkerDbView
 
 @Dao
 interface TreeTrackerDAO {

@@ -18,8 +18,8 @@ package org.greenstand.android.TreeTracker.models.organization
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.entity.OrganizationEntity
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys

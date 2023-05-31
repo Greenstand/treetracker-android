@@ -17,9 +17,9 @@ package org.greenstand.android.TreeTracker.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
-import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
-import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.database.app.dao.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.app.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
