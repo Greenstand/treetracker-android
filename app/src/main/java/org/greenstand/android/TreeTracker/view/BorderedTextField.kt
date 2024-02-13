@@ -72,6 +72,7 @@ fun BorderedTextField(
                 textColor = Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 backgroundColor = MaterialTheme.colors.primary,
+                cursorColor = Color.White
             ),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions
