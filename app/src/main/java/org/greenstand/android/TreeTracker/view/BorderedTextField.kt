@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun BorderedTextField(
@@ -72,7 +73,7 @@ fun BorderedTextField(
                 textColor = Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 backgroundColor = MaterialTheme.colors.primary,
-                cursorColor = Color.White
+                cursorColor = CustomTheme.textColors.lightText
             ),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions
