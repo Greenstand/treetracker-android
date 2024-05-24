@@ -24,9 +24,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.*
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.database.messages.dao.MessagesDAO
+import org.greenstand.android.TreeTracker.database.messages.entities.MessageEntity
 import org.greenstand.android.TreeTracker.models.UserRepo
-import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
-import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
 import org.greenstand.android.TreeTracker.models.messages.network.MessagesApiService
 import org.greenstand.android.TreeTracker.models.messages.network.responses.*
 import org.greenstand.android.TreeTracker.models.user.User

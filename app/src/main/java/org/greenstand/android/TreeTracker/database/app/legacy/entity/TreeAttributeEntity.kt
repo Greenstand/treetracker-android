@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.models.messages.database.entities
+package org.greenstand.android.TreeTracker.database.app.legacy.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -21,25 +21,34 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "questions",
+    tableName = TreeAttributeEntity.TABLE,
     foreignKeys = [
         ForeignKey(
-            entity = SurveyEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["survey_id"],
+            entity = TreeCaptureEntity::class,
+            parentColumns = [TreeCaptureEntity.ID],
+            childColumns = [TreeAttributeEntity.TREE_CAPTURE_ID],
             onUpdate = ForeignKey.CASCADE
         )
     ]
 )
-class QuestionEntity(
-    @ColumnInfo(name = "survey_id", index = true)
-    val surveyId: String,
-    @ColumnInfo(name = "prompt")
-    val prompt: String,
-    @ColumnInfo(name = "choices")
-    val choices: List<String>,
+data class TreeAttributeEntity(
+    @ColumnInfo(name = KEY)
+    var key: String,
+    @ColumnInfo(name = VALUE)
+    var value: String,
+    @ColumnInfo(name = TREE_CAPTURE_ID, index = true)
+    var treeCaptureId: Long
 ) {
+
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "_id")
+    @ColumnInfo(name = ID)
     var id: Long = 0
+
+    companion object {
+        const val TABLE = "tree_attribute"
+        const val ID = "_id"
+        const val KEY = "key"
+        const val VALUE = "value"
+        const val TREE_CAPTURE_ID = "tree_capture_id"
+    }
 }

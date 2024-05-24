@@ -44,11 +44,11 @@ android {
         buildConfigField 'Boolean', 'BLUR_DETECTION_ENABLED', "false"
         buildConfigField 'Boolean', 'USE_AWS_S3', "false"
         buildConfigField 'Boolean', 'ORG_LINK', "false"
+        buildConfigField 'String', 'CRYPTO_KEY', "\"THE_BEST_APP_IN_THE_WORLD\""
 
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
     }
@@ -228,9 +228,13 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     //Database
-    implementation 'androidx.room:room-runtime:2.4.0-beta01'
-    implementation 'androidx.room:room-ktx:2.4.0-beta01'
-    kapt "androidx.room:room-compiler:2.4.0-beta01"
+    implementation 'androidx.room:room-runtime:2.4.0'
+    implementation 'androidx.room:room-ktx:2.4.0'
+    kapt "androidx.room:room-compiler:2.4.0"
+
+    // Sqlcipher
+    implementation "net.zetetic:android-database-sqlcipher:4.4.2"
+    implementation "androidx.sqlite:sqlite:2.1.0"
 
     devImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 

@@ -20,8 +20,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
-import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
-import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
+import org.greenstand.android.TreeTracker.database.messages.DatabaseConverters
+import org.greenstand.android.TreeTracker.database.messages.dao.MessagesDAO
 import org.greenstand.android.TreeTracker.utilities.md5
 import kotlin.time.ExperimentalTime
 
