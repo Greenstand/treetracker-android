@@ -28,7 +28,9 @@ class Preferences(
     private val prefUpdateFlow: MutableSharedFlow<String> = MutableSharedFlow(replay = 1)
     private val preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            prefUpdateFlow.tryEmit(key)
+            if (key != null) {
+                prefUpdateFlow.tryEmit(key)
+            }
         }
 
     init {

@@ -121,6 +121,8 @@ class DashboardViewModel(
                 triggerSnackBar(R.string.sync_preparing)
                 _isSyncing = true
             }
+
+            null -> {}
         }
     }
 
