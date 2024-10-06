@@ -78,7 +78,7 @@ class SplashScreenViewModel(
 class SplashScreenViewModelFactory(private val orgJsonString: String?) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SplashScreenViewModel(orgJsonString, get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
     }
 }

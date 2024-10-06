@@ -68,9 +68,9 @@ class TreeSyncWorker(
             notificationManager.createNotificationChannel(channel)
         }
 
-        val PENDING_INTENT_FLAG_MUTABLE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
+        val pendingFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
         val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-            .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), PENDING_INTENT_FLAG_MUTABLE))
+            .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), pendingFlag))
             .setSmallIcon(R.drawable.upload_icon)
             .setOngoing(true)
             .setAutoCancel(true)

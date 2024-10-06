@@ -99,7 +99,7 @@ class ChatViewModel(
 class ChatViewModelFactory(private val userId: Long, private val otherChatIdentifier: String) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ChatViewModel(userId, otherChatIdentifier, get(), get()) as T
     }
 }

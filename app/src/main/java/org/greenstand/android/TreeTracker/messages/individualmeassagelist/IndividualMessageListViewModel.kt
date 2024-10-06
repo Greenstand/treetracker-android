@@ -92,7 +92,7 @@ class IndividualMessageListViewModel(
 class IndividualMessageListViewModelFactory(private val userId: Long) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return IndividualMessageListViewModel(userId, get(), get()) as T
     }
 }

@@ -1,19 +1,22 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.9.24'
     repositories {
         google()
-        jcenter()
+//        jcenter()
+        mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://jitpack.io' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath 'com.google.gms:google-services:4.4.2'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.0"
+
         classpath 'org.jlleitschuh.gradle:ktlint-gradle:11.0.0'
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.18.0'
         classpath 'io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.0-RC2'
@@ -35,11 +38,13 @@ allprojects {
     }
     repositories {
         google()
-        jcenter()
+//        jcenter()
+        mavenCentral()
         maven {
             url "https://maven.google.com" // Google's Maven repository
         }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url 'https://jitpack.io' }
     }
 
     ext {
@@ -81,6 +86,6 @@ subprojects {
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
