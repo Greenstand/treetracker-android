@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.dashboard
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,9 +28,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
@@ -52,6 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
@@ -126,6 +131,23 @@ fun Dashboard(
             DashboardTopBar(state, onOrgClicked)
         },
         scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = it, modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.Top)) { snackBarData->
+                val backgroundColor = Color.Green
+
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Snackbar(
+                        contentColor = CustomTheme.textColors.darkText,
+                        backgroundColor = backgroundColor,
+                        modifier = Modifier.align(Alignment.TopStart)
+                    ) {
+                        Text(text = snackBarData.message, fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(vertical = 15.dp))
+                    }
+                }
+            }
+        }
     ) {
         Column(
             modifier = Modifier
