@@ -38,7 +38,7 @@ import org.koin.core.component.get
 @Suppress("UNCHECKED_CAST")
 class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), KoinComponent {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(UserSelectViewModel::class.java) -> get<UserSelectViewModel>() as T
             modelClass.isAssignableFrom(DashboardViewModel::class.java) -> get<DashboardViewModel>() as T

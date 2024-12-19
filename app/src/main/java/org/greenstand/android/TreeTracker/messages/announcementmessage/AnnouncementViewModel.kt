@@ -62,7 +62,7 @@ class AnnouncementViewModelFactory(
 ) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AnnouncementViewModel(messageId, get()) as T
     }
 }

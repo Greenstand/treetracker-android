@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.splash
 
 import android.Manifest
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -45,6 +46,20 @@ fun SplashScreen(
     viewModel: SplashScreenViewModel = viewModel(factory = SplashScreenViewModelFactory(orgJsonString)),
     navController: NavHostController = LocalNavHostController.current,
 ) {
+    val permissions = mutableListOf(
+//        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.CAMERA,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+
+
     val scope = rememberCoroutineScope()
 
     val permissionRequester = rememberLauncherForActivityResult(
@@ -68,16 +83,8 @@ fun SplashScreen(
             }
         }
     )
-
     LaunchedEffect(true) {
-        permissionRequester.launch(
-            arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        )
+        permissionRequester.launch(permissions.toTypedArray())
     }
 
     Image(
