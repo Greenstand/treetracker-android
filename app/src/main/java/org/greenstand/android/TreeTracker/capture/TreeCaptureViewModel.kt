@@ -103,7 +103,7 @@ class TreeCaptureViewModel(
 class TreeCaptureViewModelFactory(private val profilePicUrl: String) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         CaptureFlowScopeManager.open()
         return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get(), get()) as T
     }
