@@ -18,13 +18,11 @@ def loadExtraProperties(String fileName) {
 loadExtraProperties("treetracker.keys.properties")
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion '30.0.3'
-
+    compileSdkVersion 34
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 34
         versionCode 196
         versionName "2.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -56,29 +54,25 @@ android {
     buildFeatures {
         compose true
         viewBinding true
+
+        buildConfig = true
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11" //"1.8"
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion "1.5.14"
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11//VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_11
 
         coreLibraryDesugaringEnabled = true
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
 
     buildTypes {
         release {
@@ -170,11 +164,16 @@ android {
         exclude 'META-INF/INDEX.LIST'
 
     }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+    namespace 'org.greenstand.android.TreeTracker'
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11" //"1.8"
     }
 }
 
@@ -215,7 +214,7 @@ dependencies {
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.animation:animation:$compose_version"
     implementation "androidx.activity:activity-compose:1.3.0"
-    implementation "androidx.navigation:navigation-compose:2.4.1"
+    implementation "androidx.navigation:navigation-compose:2.5.0"
 
     //Permissions management library for Jetpack Compose
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
@@ -228,11 +227,11 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     //Database
-    implementation 'androidx.room:room-runtime:2.4.0-beta01'
-    implementation 'androidx.room:room-ktx:2.4.0-beta01'
-    kapt "androidx.room:room-compiler:2.4.0-beta01"
+    implementation 'androidx.room:room-runtime:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+    kapt "androidx.room:room-compiler:2.6.1"
 
-    devImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+    devImplementation 'com.github.amitshekhariitbhu.Android-Debug-Database:debug-db:v1.0.6'
 
     api "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
     implementation "com.squareup.retrofit2:retrofit:${retrofit2Version}"
@@ -263,7 +262,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-iid:21.0.1'
 
     testImplementation 'androidx.test:core-ktx:1.5.0'
-    testImplementation "io.mockk:mockk:1.10.0"
+    testImplementation "io.mockk:mockk:1.13.12"
     testImplementation "junit:junit:4.13.1"
     testImplementation "androidx.room:room-testing:2.2.6"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9"

@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.application
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
+import com.google.firebase.FirebaseApp
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
@@ -27,6 +28,7 @@ import org.greenstand.android.TreeTracker.di.roomModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 import timber.log.Timber
 
 class TreeTrackerApplication : Application() {
@@ -35,11 +37,13 @@ class TreeTrackerApplication : Application() {
         appContext = applicationContext
 
         super.onCreate()
+//        FirebaseApp.initializeApp(appContext)
 
         ObjectStorageClient.init(applicationContext)
 
         startKoin {
-            androidLogger()
+//            androidLogger()
+            androidLogger(Level.NONE)
             androidContext(applicationContext)
             modules(
                 appModule,

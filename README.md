@@ -7,7 +7,7 @@
 ### Next feature release
 
 Feature we are currently prioritizing
-https://github.com/Greenstand/treetracker-android/milestone/17
+https://github.com/orgs/Greenstand/projects/109/views/2
 
 &nbsp;
 &nbsp;
@@ -32,29 +32,8 @@ For development, select the build variant _dev_. This build variant is configure
 
 ## QC Deployment
 
-Note: QC deployment pipeline are about to be changed and moved to Github actions from Travis. The 
-following details will be updated once the change is made.
+Note: QC deployment pipeline are on Github Actions, proper documentation would be provided soon.
 
-This repo has been configured to be easily deployed to QC through Travis. The process, however, is still a manual.
-
-In order to get a new build to QC, take the following steps:
-
-1. Go to the [Project page in Travis](https://travis-ci.com/Greenstand/treetracker-android)
-2. Select _More Options > Trigger build_
-3. On the dialog, select the appropriate branch, and use either of these configurations:
-    * For an Android Beta build:
-```
-script:
-  - "fastlane android beta"
-```
-    * For an Android JustDigIt build:
-```
-script:
-  - "fastlane android justdiggit_beta"
-```	
-4. Run the build and then wait for it to complete. _Voilá._
-
-Running without a `script` custom parameter will result in a standard build to be run without any artifacts deployed.
 
 ### Fastlane
 
@@ -89,7 +68,7 @@ Once this is done, you can proceed by running one of the following tasks to run 
 
  See [Contributing in the Development-Overview README](https://github.com/Greenstand/Development-Overview/blob/master/README.md)
 
-Review the project board for current priorities [Android Project](https://github.com/orgs/Greenstand/projects/5)
+Review the project board for current priorities [Android Project](https://github.com/orgs/Greenstand/projects/109)
 
 Please review the [issue tracker](https://github.com/Greenstand/treetracker-android/issues) here on this github repository 
 
