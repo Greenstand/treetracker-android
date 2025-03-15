@@ -23,6 +23,24 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# Suppress warnings (from missing_rules.txt)
+-dontwarn kotlinx.serialization.**
+-dontwarn org.bouncycastle.jsse.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**
+
+# Keep Kotlin Serialization classes
+-keep class kotlinx.serialization.** { *; }
+
+# Keep SSL-related classes
+-keep class org.bouncycastle.jsse.** { *; }
+-keep class org.conscrypt.** { *; }
+-keep class org.openjsse.** { *; }
+
+# Keep Kotlin Serialization annotations
+-keepattributes *Annotation*
+
+
 -dontwarn com.squareup.okhttp3.internal.**
 -dontwarn com.squareup.okhttp3.**
 -dontwarn javax.annotation.**

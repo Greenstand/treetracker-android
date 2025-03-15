@@ -107,15 +107,15 @@ private fun getPainter(colors: ButtonColors, isLeft: Boolean): Painter {
     return when (colors) {
         AppButtonColors.MessagePurple -> {
             painter =
-                if (isLeft) painterResource(id = R.drawable.arrow_backward_pink) else painterResource(
-                    id = R.drawable.arrow_forward_pink
+                if (isLeft) painterResource(id = R.drawable.arrow_backward) else painterResource(
+                    id = R.drawable.arrow_forward
                 )
             painter
         }
         else -> {
             painter =
-                if (isLeft) painterResource(id = R.drawable.arrow_left_green) else painterResource(
-                    id = R.drawable.arrow_right_green
+                if (isLeft) painterResource(id = R.drawable.arrow_backward) else painterResource(
+                    id = R.drawable.arrow_forward
                 )
             painter
         }
@@ -135,7 +135,7 @@ fun ApprovalButton(
 ) {
     val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
     val image =
-        if (approval) painterResource(id = R.drawable.thumbs_up_green) else painterResource(id = R.drawable.thumbs_down_red)
+        if (approval) painterResource(id = R.drawable.check) else painterResource(id = R.drawable.close)
     TreeTrackerButton(
         colors = color,
         modifier = modifier
