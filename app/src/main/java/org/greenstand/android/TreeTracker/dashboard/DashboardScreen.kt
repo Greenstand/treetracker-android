@@ -137,7 +137,7 @@ fun Dashboard(
                 .wrapContentHeight(Alignment.Top)) { snackBarData->
                 val backgroundColor = Color.Green
 
-                Box(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
                     Snackbar(
                         contentColor = CustomTheme.textColors.darkText,
                         backgroundColor = backgroundColor,
