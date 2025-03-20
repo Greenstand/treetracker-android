@@ -53,7 +53,7 @@ class SessionTracker(
                 uuid = UUID.randomUUID().toString(),
                 originUserId = userEntity.uuid,
                 originWallet = userEntity.wallet,
-                destinationWallet = captureSetupData.destinationWallet ?: orgRepo.currentOrg().walletId,
+                destinationWallet = userEntity.wallet ?: orgRepo.currentOrg().walletId,
                 startTime = timeProvider.currentTime(),
                 isUploaded = false,
                 organization = captureSetupData.organizationName,

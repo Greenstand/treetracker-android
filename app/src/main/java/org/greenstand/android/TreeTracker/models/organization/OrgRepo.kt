@@ -46,7 +46,7 @@ class OrgRepo(
                 captureSetupFlowJson = gson.toJson(
                     listOf(
                         Destination(NavRoute.UserSelect.route),
-                        Destination(NavRoute.WalletSelect.route),
+//                        Destination(NavRoute.WalletSelect.route),
                         Destination(NavRoute.AddOrg.route),
                     )
                 ),

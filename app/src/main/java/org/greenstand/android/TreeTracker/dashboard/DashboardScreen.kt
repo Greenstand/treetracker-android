@@ -67,6 +67,7 @@ import org.greenstand.android.TreeTracker.utils.PreviewDependencies
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.ConsumableSnackBar
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
@@ -135,7 +136,7 @@ fun Dashboard(
             SnackbarHost(hostState = it, modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(Alignment.Top)) { snackBarData->
-                val backgroundColor = Color.Green
+                val backgroundColor = Green
 
                 Box(modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
                     Snackbar(
