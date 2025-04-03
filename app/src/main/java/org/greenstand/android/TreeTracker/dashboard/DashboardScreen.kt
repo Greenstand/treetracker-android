@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.dashboard
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -107,6 +108,9 @@ fun DashboardScreen(
             viewModel.syncMessages()
             navController.navigate(NavRoute.MessagesUserSelect.route)
         },
+        onSettingsClicked = {
+            navController.navigate(NavRoute.Settings.route)
+        }
     )
 }
 
@@ -119,6 +123,7 @@ fun Dashboard(
     onOrgClicked: () -> Unit = { },
     onCaptureClicked: () -> Unit = { },
     onMessagesClicked: () -> Unit = { },
+    onSettingsClicked: () -> Unit = { },
 ) {
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
@@ -129,7 +134,7 @@ fun Dashboard(
 
     Scaffold(
         topBar = {
-            DashboardTopBar(state, onOrgClicked)
+            DashboardTopBar(state, onSettingsClicked,onOrgClicked)
         },
         scaffoldState = scaffoldState,
         snackbarHost = {
@@ -246,10 +251,25 @@ fun Dashboard(
 }
 
 @Composable
-fun DashboardTopBar(state: DashboardState, onOrgClicked: () -> Unit) {
+fun DashboardTopBar(state: DashboardState,
+                    onSettingsClicked: () -> Unit = { }, onOrgClicked: () -> Unit) {
     ActionBar(
         leftAction = {
-            if (!state.isOrgButtonEnabled) {
+            Box(modifier = Modifier
+                .padding( 10.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.settings_filled),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clickable {
+                            onSettingsClicked()
+                        }
+                )
+            }
+//            Move Logic to settings screen for org feature
+           /* if (!state.isOrgButtonEnabled) {
                 return@ActionBar
             }
             TreeTrackerButton(
@@ -267,6 +287,7 @@ fun DashboardTopBar(state: DashboardState, onOrgClicked: () -> Unit) {
                     style = CustomTheme.typography.regular
                 )
             }
+            */
         },
         centerAction = { TopBarTitle() },
         rightAction = { LanguageButton() }

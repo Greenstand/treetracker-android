@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
+import org.greenstand.android.TreeTracker.settings.SettingsScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
 import org.greenstand.android.TreeTracker.treeheight.TreeHeightScreen
@@ -120,6 +121,15 @@ sealed class NavRoute : KoinComponent {
             AddWalletScreen()
         }
         override val route: String = "add-wallet"
+
+        fun create() = route
+    }
+
+    object Settings : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            SettingsScreen()
+        }
+        override val route: String = "settings"
 
         fun create() = route
     }
