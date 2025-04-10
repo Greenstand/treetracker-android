@@ -1,6 +1,6 @@
 ![Build Status](https://github.com/Greenstand/treetracker-android/workflows/Treetracker%20Android%20App%20CI/badge.svg?branch=master)
 
-# Treetracker Android
+# Treetracker Android for FCC
 
 ## Current Milestones and Issue Topics
 
