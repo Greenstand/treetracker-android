@@ -90,8 +90,10 @@ fun TreeImageReviewScreen(
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = {
-                        scope.launch {
-                            CaptureFlowScopeManager.nav.navForward(navController)
+                        viewModel.checkIfCanNavigateForward {
+                            scope.launch {
+                                CaptureFlowScopeManager.nav.navForward(navController)
+                            }
                         }
                     },
                     approval = true

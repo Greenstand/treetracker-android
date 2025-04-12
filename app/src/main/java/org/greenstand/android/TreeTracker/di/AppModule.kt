@@ -121,7 +121,7 @@ val appModule = module {
 
     viewModel { AnnouncementViewModel(get(), get()) }
 
-    viewModel { TreeImageReviewViewModel(get(), get()) }
+    viewModel { TreeImageReviewViewModel(get(), get(), get()) }
 
     viewModel { PermissionViewModel(get()) }
 

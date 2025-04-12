@@ -53,6 +53,8 @@ class OrgRepo(
                 captureFlowJson = gson.toJson(
                     listOf(
                         Destination(NavRoute.TreeCapture.route),
+                        // Uncomment this to test out forcing the note taking feature
+//                        Destination(NavRoute.TreeImageReview.route, listOf(FORCE_NOTE_FEATURE)),
                         Destination(NavRoute.TreeImageReview.route),
                         // For Kasiki Hai
 //                    Destination(NavRoute.TreeHeightScreen.route),

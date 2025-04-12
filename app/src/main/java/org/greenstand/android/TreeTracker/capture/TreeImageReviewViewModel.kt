@@ -21,8 +21,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.utils.updateState
 
 data class TreeImageReviewState(
     val treeImagePath: String? = null,
@@ -33,9 +36,15 @@ data class TreeImageReviewState(
 class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
     private val userRepo: UserRepo,
+    orgRepo: OrgRepo,
 ) : ViewModel() {
     private val _state = MutableLiveData(TreeImageReviewState())
     val state: LiveData<TreeImageReviewState> = _state
+
+    private val forceNote = orgRepo.currentOrg().captureFlow
+        .find { it.route == NavRoute.TreeImageReview.route }
+        ?.features
+        ?.find { it == FORCE_NOTE_FEATURE } != null
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
@@ -47,7 +56,19 @@ class TreeImageReviewViewModel(
     }
 
     fun updateNote(note: String) {
-        _state.value = _state.value?.copy(note = note)
+        _state.value = _state.value?.copy(
+            note = note,
+        )
+    }
+
+    fun checkIfCanNavigateForward(onNavigate: () -> Unit) {
+        if (forceNote && _state.value?.note?.isBlank() == true) {
+            _state.updateState {
+                copy(isDialogOpen = true)
+            }
+        } else {
+            onNavigate()
+        }
     }
 
     fun updateReviewTutorialDialog(state: Boolean) {
@@ -65,5 +86,9 @@ class TreeImageReviewViewModel(
 
     fun setDialogState(state: Boolean) {
         _state.value = _state.value?.copy(isDialogOpen = state)
+    }
+
+    companion object {
+        const val FORCE_NOTE_FEATURE = "forceNote"
     }
 }
