@@ -53,6 +53,8 @@ fun Host() {
                 NavRoute.Announcement,
                 NavRoute.SessionNote,
                 NavRoute.Settings,
+                NavRoute.Profile,
+                NavRoute.ProfileSelect,
                 NavRoute.DevOptions,
             ).forEach { addNavRoute(it) }
         }

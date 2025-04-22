@@ -39,6 +39,8 @@ import org.greenstand.android.TreeTracker.messages.individualmeassagelist.Indivi
 import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
+import org.greenstand.android.TreeTracker.profile.ProfileScreen
+import org.greenstand.android.TreeTracker.profile.ProfileSelectScreen
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
 import org.greenstand.android.TreeTracker.settings.SettingsScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
@@ -105,6 +107,29 @@ sealed class NavRoute : KoinComponent {
             UserSelectScreen()
         }
         override val route: String = "user-select"
+    }
+
+    object ProfileSelect : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            ProfileSelectScreen()
+        }
+        override val route: String = "profile-select"
+    }
+
+    object Profile : NavRoute() {
+
+        @OptIn(ExperimentalFoundationApi::class)
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            ProfileScreen(getPlanterInfoId(it))
+        }
+        override val route: String = "profile-screen/{planterInfoId}"
+        override val arguments = listOf(navArgument("planterInfoId") { type = NavType.LongType })
+
+        private fun getPlanterInfoId(backStackEntry: NavBackStackEntry): Long {
+            return backStackEntry.arguments?.getLong("planterInfoId") ?: -1
+        }
+
+        fun create(planterInfoId: Long) = "profile-screen/$planterInfoId"
     }
 
     object WalletSelect : NavRoute() {

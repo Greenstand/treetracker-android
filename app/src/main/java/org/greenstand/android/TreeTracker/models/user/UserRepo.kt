@@ -129,4 +129,18 @@ class UserRepo(
             unreadMessagesAvailable = checkForUnreadMessagesPerUser(userEntity.wallet),
         )
     }
+
+    suspend fun updateUser(user: User) {
+        val userEntity = dao.getUserById(user.id) ?: return
+        val updated = userEntity.copy(
+            firstName = user.firstName,
+            lastName = user.lastName ?: "",
+            phone = user.wallet,
+            email = user.wallet,
+            photoPath = user.photoPath,
+            uploaded = false
+        ).also { it.id = user.id }
+        dao.updateUser(updated)
+    }
+
 }

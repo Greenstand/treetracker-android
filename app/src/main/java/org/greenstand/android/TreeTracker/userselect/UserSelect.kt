@@ -48,6 +48,7 @@ fun UserSelect(
     navigationButtonColors: DepthButtonColors,
     isCreateUserEnabled: Boolean,
     isNotificationEnabled: Boolean,
+    isFromSettings: Boolean = false,
     selectedColor: Color = AppColors.Green,
     onNavigateForward: (User) -> Unit,
 ) {
@@ -83,9 +84,13 @@ fun UserSelect(
                         isLeft = true,
                         colors = navigationButtonColors,
                         onClick = {
-                            navController.navigate(NavRoute.Dashboard.route) {
-                                popUpTo(NavRoute.Dashboard.route) { inclusive = true }
-                                launchSingleTop = true
+                            if(!isFromSettings) {
+                                navController.navigate(NavRoute.Dashboard.route) {
+                                    popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            } else {
+                                navController.popBackStack()
                             }
                         }
                     )
