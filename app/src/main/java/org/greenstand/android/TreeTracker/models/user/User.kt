@@ -19,9 +19,9 @@ data class User(
     val id: Long,
     val wallet: String,
     val numberOfTrees: Int,
-    val firstName: String,
-    val lastName: String?,
-    val photoPath: String,
-    val isPowerUser: Boolean,
+    var firstName: String,
+    var lastName: String?,
+    var photoPath: String,
+    var isPowerUser: Boolean,
     var unreadMessagesAvailable: Boolean,
 )

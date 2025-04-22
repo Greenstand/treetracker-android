@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.signup.Credential
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -76,7 +77,9 @@ fun SettingsScreen() {
                 iconResId = R.drawable.account, // Replace with your profile icon
                 titleResId = R.string.profile_title,
                 descriptionResId = R.string.profile_description,
-                onClick = { /* Handle profile click */ }
+                onClick = {
+                    navController.navigate(NavRoute.ProfileSelect.route)
+                }
             )
             Divider(color = Color.White)
 

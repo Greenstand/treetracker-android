@@ -105,7 +105,7 @@ val appModule = module {
 
     viewModel { OrgPickerViewModel(get()) }
 
-    viewModel { UserSelectViewModel(get(), get(), get()) }
+    viewModel { UserSelectViewModel(null, get(), get(), get()) }
 
     viewModel { DevOptionsViewModel(get(), get()) }
 
