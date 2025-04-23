@@ -26,6 +26,7 @@ import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteViewModel
+import org.greenstand.android.TreeTracker.settings.SettingsViewModel
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.splash.SplashScreenViewModel
 import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelectionViewModel
@@ -55,6 +56,7 @@ class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), Koin
             modelClass.isAssignableFrom(AddOrgViewModel::class.java) -> get<AddOrgViewModel>() as T
             modelClass.isAssignableFrom(SessionNoteViewModel::class.java) -> get<SessionNoteViewModel>() as T
             modelClass.isAssignableFrom(DevOptionsViewModel::class.java) -> get<DevOptionsViewModel>() as T
+            modelClass.isAssignableFrom(SettingsViewModel::class.java) -> get<SettingsViewModel>() as T
             else -> throw RuntimeException("Unable to create instance of ${modelClass.simpleName}. Did you forget to update the TreeTrackerViewModelFactory?")
         }
     }

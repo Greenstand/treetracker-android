@@ -70,6 +70,7 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.settings.SettingsViewModel
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -81,6 +82,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.CustomSnackbar
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.UserButton
@@ -176,7 +178,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
         }
         if (state.showPrivacyDialog == true) {
-            PrivacyPolicyDialog(viewModel = viewModel)
+            PrivacyPolicyDialog(signupViewModel = viewModel)
         }
     }
 }
@@ -338,62 +340,6 @@ fun ExistingUserDialog(
             }
         }
     )
-}
-
-@Composable
-fun PrivacyPolicyDialog(
-    viewModel: SignupViewModel,
-) {
-    Column(
-        modifier = Modifier
-            .padding(start = 30.dp, end = 30.dp, top = 10.dp, bottom = 40.dp)
-            .fillMaxSize()
-            .padding(2.dp)
-            .border(1.dp, color = Green, shape = RoundedCornerShape(percent = 10))
-            .clip(RoundedCornerShape(percent = 10))
-            .background(color = AppColors.Gray)
-            .padding(10.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .weight(0.8f)
-                .fillMaxWidth()
-                .padding(bottom = 4.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.greenstand_logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(width = 20.dp, height = 20.dp)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(
-                text = stringResource(R.string.privacy_policy),
-                color = CustomTheme.textColors.primaryText,
-                style = CustomTheme.typography.large,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-        Text(
-            text = stringResource(id = R.string.policy_text_blob),
-            modifier = Modifier
-                .padding(bottom = 15.dp)
-                .weight(9f)
-                .verticalScroll(rememberScrollState())
-        )
-        ApprovalButton(
-            modifier = Modifier
-                .weight(0.8f)
-                .size(50.dp)
-                .align(CenterHorizontally),
-            onClick = {
-                viewModel.closePrivacyPolicyDialog()
-            },
-            approval = true
-        )
-    }
 }
 
 @Preview

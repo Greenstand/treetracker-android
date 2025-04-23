@@ -9,6 +9,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -23,16 +25,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.signup.Credential
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.userselect.UserSelectState
+import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
+import org.greenstand.android.TreeTracker.userselect.UserSelectViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
@@ -41,6 +49,10 @@ fun SettingsScreen() {
     val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val viewModel: SettingsViewModel = viewModel(factory = LocalViewModelFactory.current)
+
+    val state by viewModel.state.collectAsState(SettingsState())
+
 
     Scaffold(
         topBar = {
@@ -55,56 +67,66 @@ fun SettingsScreen() {
                     )
                 },
 
-            )
+                )
         },
         bottomBar = {
-                ActionBar(
-                    leftAction = {
-                        ArrowButton(isLeft = true) {
-                            navController.popBackStack()
-                        }
-                    },
+            ActionBar(
+                leftAction = {
+                    ArrowButton(isLeft = true) {
+                        navController.popBackStack()
+                    }
+                },
 
                 )
         }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 20.dp,end= 20.dp)
         ) {
-            SettingsItem(
-                iconResId = R.drawable.account, // Replace with your profile icon
-                titleResId = R.string.profile_title,
-                descriptionResId = R.string.profile_description,
-                onClick = {
-                    navController.navigate(NavRoute.ProfileSelect.route)
-                }
-            )
-            Divider(color = Color.White)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 20.dp, end = 20.dp)
+            ) {
+                SettingsItem(
+                    iconResId = R.drawable.account, // Replace with your profile icon
+                    titleResId = R.string.profile_title,
+                    descriptionResId = R.string.profile_description,
+                    onClick = {
+                        navController.navigate(NavRoute.ProfileSelect.route)
+                    }
+                )
+                Divider(color = Color.White)
 
-            SettingsItem(
-                iconResId = R.drawable.privacy_policy, // Replace with your privacy icon
-                titleResId = R.string.privacy_title,
-                descriptionResId = R.string.privacy_description,
-                onClick = { /* Handle privacy click */ }
-            )
-            Divider(color = Color.White)
+                SettingsItem(
+                    iconResId = R.drawable.privacy_policy, // Replace with your privacy icon
+                    titleResId = R.string.privacy_title,
+                    descriptionResId = R.string.privacy_description,
+                    onClick = {
+                        viewModel.setPrivacyDialogVisibility(true)
+                    }
+                )
+                Divider(color = Color.White)
 
-            SettingsItem(
-                iconResId = R.drawable.logout, // Replace with your logout icon
-                titleResId = R.string.logout_title,
-                descriptionResId = R.string.logout_description,
-                onClick = { /* Handle logout click */ }
-            )
-            Divider(color = Color.White)
+                SettingsItem(
+                    iconResId = R.drawable.logout, // Replace with your logout icon
+                    titleResId = R.string.logout_title,
+                    descriptionResId = R.string.logout_description,
+                    onClick = { /* Handle logout click */ }
+                )
+                Divider(color = Color.White)
 
-            SettingsItem(
-                iconResId = R.drawable.delete, // Replace with your delete icon
-                titleResId = R.string.delete_account_title,
-                descriptionResId = R.string.delete_account_description,
-                onClick = { /* Handle delete account click */ }
-            )
+                SettingsItem(
+                    iconResId = R.drawable.delete, // Replace with your delete icon
+                    titleResId = R.string.delete_account_title,
+                    descriptionResId = R.string.delete_account_description,
+                    onClick = { /* Handle delete account click */ }
+                )
+            }
+            if (state.showPrivacyPolicyDialog == true) {
+                PrivacyPolicyDialog(settingsViewModel = viewModel)
+            }
         }
     }
 }
