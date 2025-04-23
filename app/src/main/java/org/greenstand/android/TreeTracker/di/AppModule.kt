@@ -71,6 +71,7 @@ import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteViewModel
+import org.greenstand.android.TreeTracker.settings.SettingsViewModel
 import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelectionViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
@@ -124,6 +125,8 @@ val appModule = module {
     viewModel { TreeImageReviewViewModel(get(), get(), get()) }
 
     viewModel { PermissionViewModel(get()) }
+
+    viewModel { SettingsViewModel(get()) }
 
     single { UserRepo(get(), get(), get(), get(), get(), get()) }
 
