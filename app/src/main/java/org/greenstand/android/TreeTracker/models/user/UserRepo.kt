@@ -63,6 +63,11 @@ class UserRepo(
         val userEntity = dao.getPowerUser() ?: return null
         return createUser(userEntity)
     }
+    suspend fun setPowerUserStatus(userId: Long, isPowerUser: Boolean) {
+        if (!isPowerUser || getPowerUser() == null) {
+            dao.updatePowerUserStatus(userId, isPowerUser)
+        }
+    }
 
     suspend fun createUser(
         firstName: String,

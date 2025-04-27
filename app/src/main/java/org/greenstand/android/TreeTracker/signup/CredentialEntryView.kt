@@ -69,6 +69,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.settings.SettingsViewModel
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -331,9 +332,16 @@ fun ExistingUserDialog(
                     buttonColors = AppButtonColors.Default,
                     selectedColor = Green,
                     onClick = {
-                        navController.navigate(NavRoute.WalletSelect.create()) {
-                            popUpTo(NavRoute.SignupFlow.route) { inclusive = true }
-                            launchSingleTop = true
+
+                        if(state.isTherePowerUser == false){
+                            viewModel.setExistingUserAsPowerUser(user.id)
+                            navController.navigate(NavRoute.Dashboard.route) {
+                                popUpTo(NavRoute.Language.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            CaptureSetupScopeManager.getData().user = user
+                            CaptureSetupScopeManager.nav.navFromNewUserCreation(navController)
                         }
                     }
                 )

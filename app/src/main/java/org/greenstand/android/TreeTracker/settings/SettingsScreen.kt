@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.signup.Credential
@@ -37,11 +38,16 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectState
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.AppColors.Green
+import org.greenstand.android.TreeTracker.view.AppColors.Red
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 import org.greenstand.android.TreeTracker.view.TopBarTitle
+import org.greenstand.android.TreeTracker.view.UserButton
+import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
 fun SettingsScreen() {
@@ -113,7 +119,9 @@ fun SettingsScreen() {
                     iconResId = R.drawable.logout, // Replace with your logout icon
                     titleResId = R.string.logout_title,
                     descriptionResId = R.string.logout_description,
-                    onClick = { /* Handle logout click */ }
+                    onClick = {
+                        viewModel.updateLogoutDialogVisibility(true)
+                    }
                 )
                 Divider(color = Color.White)
 
@@ -126,6 +134,33 @@ fun SettingsScreen() {
             }
             if (state.showPrivacyPolicyDialog == true) {
                 PrivacyPolicyDialog(settingsViewModel = viewModel)
+            }
+            if(state.showLogoutDialog == true){
+                CustomDialog(
+                    title = stringResource(R.string.logout_dialog_title),
+                    textContent = stringResource(R.string.logout_dialog_message),
+                    onPositiveClick = {
+                        viewModel.logout()
+                        navController.navigate(NavRoute.SignupFlow.route)
+                    },
+                    onNegativeClick = {
+                        viewModel.updateLogoutDialogVisibility(false)
+                    },
+                    content = {
+                        state.powerUser?.let { user ->
+                            UserButton(
+                                user = user,
+                                isSelected = false,
+                                buttonColors = AppButtonColors.Default,
+                                selectedColor = Red,
+                                onClick = {
+                                }
+                            )
+                        }
+
+                    }
+
+                )
             }
         }
     }

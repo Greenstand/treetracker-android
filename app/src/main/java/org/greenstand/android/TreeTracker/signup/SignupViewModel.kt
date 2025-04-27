@@ -40,6 +40,7 @@ data class SignUpState(
     val credential: Credential = Credential.Phone(),
     val autofocusTextEnabled: Boolean = false,
     val isInternetAvailable: Boolean = false,
+    val isTherePowerUser: Boolean? = null,
     val showSelfieTutorial: Boolean? = null,
     val showPrivacyDialog: Boolean? = true,
 )
@@ -84,7 +85,7 @@ class SignupViewModel(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
-            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired())
+            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired(), isTherePowerUser = !isInitialSetupRequired())
         }
     }
 
@@ -94,6 +95,12 @@ class SignupViewModel(
 
     fun updateLastName(lastName: String?) {
         _state.value = _state.value?.copy(lastName = lastName)
+    }
+
+    fun setExistingUserAsPowerUser(id: Long){
+        viewModelScope.launch {
+                userRepo.setPowerUserStatus(id, true)
+        }
     }
 
     fun updateEmail(email: String) {
