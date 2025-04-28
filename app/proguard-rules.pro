@@ -51,3 +51,6 @@
 # The SDK has several references of Apache HTTP client
 -dontwarn com.amazonaws.http.**
 -dontwarn com.amazonaws.metrics.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**
