@@ -18,11 +18,13 @@ package org.greenstand.android.TreeTracker.signup
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,6 +35,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -42,8 +45,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -80,6 +86,7 @@ import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.CountryPickerDropdown
 import org.greenstand.android.TreeTracker.view.CustomSnackbar
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
@@ -258,33 +265,75 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
 @Composable
 private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester, snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
     val focusManager = LocalFocusManager.current
-    BorderedTextField(
-        value = state.phone ?: "",
-        padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
-        onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
-        placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Phone,
-            imeAction = ImeAction.Go,
-        ),
-        keyboardActions = KeyboardActions(
-            onGo = {
-                focusManager.clearFocus()
-                if (state.isCredentialValid) {
-                    viewModel.submitInfo()
-                } else {
-                    scope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = context.getString(R.string.phone_validation_error)
-                        )
-                    }
-                }
+
+    var isDropdownOpen by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+    ) {
+
+        Box(Modifier.weight(2f)) {
+            BorderedTextField(
+                value = state.selectedCountryCode ?: "",
+                padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
+                onValueChange = { },
+                placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
+                onClick = { isDropdownOpen = !isDropdownOpen },
+                readOnly = true,
+                isEnabled = false
+            )
+            Log.v("gaurav", "This is executed 1, isDropdownOpen: $isDropdownOpen")
+            // DropdownMenu when the TextField is clicked
+            if (isDropdownOpen) {
+
+                    Log.v("gaurav", "This is executed 2, countries size: ${state.listOfCountries.size}")
+                    CountryPickerDropdown(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .wrapContentHeight(),
+                        onItemClick = { countryPickerData -> viewModel.updateCountryCode(countryPickerData.countryCode) },
+                        countryList = state.listOfCountries,
+                        defaultCountryCode = "+91",
+                        onDropdownDismiss = {
+                            isDropdownOpen = false
+                        },
+                    )
+
             }
-        ),
-        onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
-        focusRequester = focusRequester,
-        autofocusEnabled = state.autofocusTextEnabled
-    )
+        }
+
+        Box(Modifier.weight(3f)) {
+            BorderedTextField(
+                value = state.phone ?: "",
+                padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
+                onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
+                placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Go,
+                ),
+                keyboardActions = KeyboardActions(
+                    onGo = {
+                        focusManager.clearFocus()
+                        if (state.isCredentialValid) {
+                            viewModel.submitInfo()
+                        } else {
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = context.getString(R.string.phone_validation_error)
+                                )
+                            }
+                        }
+                    }
+                ),
+                onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
+                focusRequester = focusRequester,
+                autofocusEnabled = state.autofocusTextEnabled
+            )
+        }
+    }
 }
 
 @Composable

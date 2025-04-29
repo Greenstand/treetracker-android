@@ -15,19 +15,30 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.util.Log
+import com.hbb20.CCPCountry
+import com.hbb20.CountryCodePicker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
+import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
+import org.greenstand.android.TreeTracker.models.countries.CountryPickerData
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import org.greenstand.android.TreeTracker.view.getFlagMasterResID
+import java.util.Locale
+import java.util.UUID
+
 
 class UserRepo(
     private val locationUpdateManager: LocationUpdateManager,
@@ -141,6 +152,46 @@ class UserRepo(
             uploaded = false
         ).also { it.id = user.id }
         dao.updateUser(updated)
+    }
+
+
+    suspend fun getCountryList(): List<CountryPickerData> = withContext(Dispatchers.Default) {
+        CCPCountry.getLibraryMasterCountryList(TreeTrackerApplication.appContext, CountryCodePicker.Language.ENGLISH).map { Triple(it.phoneCode, it.nameCode, getFlagMasterResID(it)) }
+            .map { (first, second, third) -> CountryPickerData(first, second, third) }
+    }
+
+    fun getUserCountryName(): String {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val locales: LocaleList = TreeTrackerApplication.appContext.getResources().getConfiguration().getLocales()
+            if (!locales.isEmpty()) {
+                return locales.get(0).getCountry()
+            }
+            return ""
+        } else {
+            return TreeTrackerApplication.appContext.resources.configuration.locale.getCountry()
+        }
+        return ""*/
+
+        return Locale.getDefault().country
+    }
+
+    fun getCountryFromLatLng(context: Context, latitude: Double, longitude: Double): String? {
+        Log.v("gaurav", "Trying to access location from locationUpdateManager")
+        val geocoder = Geocoder(context, Locale.getDefault())
+
+        // Attempt to get the address list
+        try {
+            val addresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+
+            if (addresses?.isNotEmpty() == true) {
+                val address = addresses[0]
+                return address.countryName // Get the country name from the Address object
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return null // If geocoding fails, return null
     }
 
 }

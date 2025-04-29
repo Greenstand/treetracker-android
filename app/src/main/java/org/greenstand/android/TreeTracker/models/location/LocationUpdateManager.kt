@@ -17,9 +17,11 @@ package org.greenstand.android.TreeTracker.models.location
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -47,6 +49,7 @@ class LocationUpdateManager(
 
     private val locationUpdateListener = object : android.location.LocationListener {
         override fun onLocationChanged(location: Location) {
+            Log.v("gaurav", "Location fetched: $location")
             currentLocation = location
             Timber.d("Posting location value $currentLocation")
             locationUpdates.postValue(location)

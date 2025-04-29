@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.signup
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,9 +23,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.countries.CountryPickerData
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
+import java.util.Locale
 
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
@@ -42,6 +45,8 @@ data class SignUpState(
     val isInternetAvailable: Boolean = false,
     val showSelfieTutorial: Boolean? = null,
     val showPrivacyDialog: Boolean? = true,
+    val selectedCountryCode: String? = null,
+    val listOfCountries: List<CountryPickerData> = listOf()
 )
 
 sealed class Credential {
@@ -84,7 +89,10 @@ class SignupViewModel(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
-            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired())
+            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired(), listOfCountries = userRepo.getCountryList())
+            Log.v("gaurav", "User country is: " + userRepo.getUserCountryName());
+            _state.value = _state.value?.copy(selectedCountryCode = _state.value?.listOfCountries?.first { it.countryName.lowercase(Locale.getDefault()) == userRepo.getUserCountryName().toLowerCase(Locale.getDefault()) }?.countryCode ?: "")
+            Log.v("gaurav","State value updated, list of countries size is: ${state.value?.listOfCountries?.size}")
         }
     }
 
@@ -194,5 +202,9 @@ class SignupViewModel(
         _state.value = _state.value?.copy(
             showPrivacyDialog = false,
         )
+    }
+
+    fun updateCountryCode(countryCode: String) {
+        _state.value = _state.value?.copy(selectedCountryCode = countryCode)
     }
 }

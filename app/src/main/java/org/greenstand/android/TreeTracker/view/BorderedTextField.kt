@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -42,14 +43,16 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 fun BorderedTextField(
     padding: PaddingValues = PaddingValues(0.dp),
     value: String,
-
     onValueChange: (String) -> Unit,
     placeholder: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
     onFocusChanged: ((FocusState) -> Unit) = {},
     focusRequester: FocusRequester = FocusRequester.Default,
-    autofocusEnabled: Boolean = false
+    autofocusEnabled: Boolean = false,
+    onClick: () -> Unit = {},
+    readOnly: Boolean = false,
+    isEnabled: Boolean = true
 ) {
     Box(
         modifier = Modifier
@@ -65,7 +68,8 @@ fun BorderedTextField(
             modifier = Modifier
                 .padding(8.dp)
                 .focusRequester(focusRequester)
-                .onFocusChanged(onFocusChanged),
+                .onFocusChanged(onFocusChanged)
+                .clickable { onClick() },
             value = value,
             onValueChange = onValueChange,
             placeholder = placeholder,
@@ -76,7 +80,9 @@ fun BorderedTextField(
                 cursorColor = CustomTheme.textColors.lightText
             ),
             keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions
+            keyboardActions = keyboardActions,
+            readOnly = readOnly,
+            enabled = isEnabled
         )
     }
 
