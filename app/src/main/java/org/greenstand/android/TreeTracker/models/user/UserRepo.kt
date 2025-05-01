@@ -54,6 +54,11 @@ class UserRepo(
     suspend fun getUserWithWallet(wallet: String): User? {
         return createUser(dao.getUserByWallet(wallet))
     }
+    suspend fun deleteUser(wallet: String): Boolean {
+        val deletedRows = dao.deleteUserByWallet(wallet)
+        return deletedRows > 0
+    }
+
 
     suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean {
         return messagesDao.getUnreadMessageCountForWallet(wallet) >= 1

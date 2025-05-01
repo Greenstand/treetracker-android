@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -38,11 +39,20 @@ data class UserSelectState(
     val users: List<User> = emptyList(),
     val selectedUser: User? = null,
     val editMode: Boolean = false,
+    val deleteProfileState: DeleteProfileState = DeleteProfileState.INITIAL
 )
+enum class DeleteProfileState(){
+    INITIAL,
+    SHOWDIALOG,
+    DISMISSDIALOG,
+    ACCOUNTDELETEDLOCALLY,
+    ACCOUNTDELETEDANDADMINREQUESTED
+}
 
 class UserSelectViewModel(
     userId: Long?,
     private val userRepo: UserRepo,
+    private val messageRepo: MessagesRepo,
     locationDataCapturer: LocationDataCapturer,
     private val prefs: Preferences,
 ) : ViewModel() {
@@ -76,7 +86,19 @@ class UserSelectViewModel(
             selectedUser = user
         )
     }
-
+    fun deleteUser(){
+        viewModelScope.launch {
+            if(userRepo.deleteUser(_state.value.selectedUser?.wallet ?: "") ){
+                _state.value = _state.value.copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDLOCALLY)
+                messageRepo.saveMessage(
+                    wallet = _state.value.selectedUser?.wallet ?: "",
+                    to = "admin",
+                    body = "Hi admin, I would like to delete my account with the wallet ${_state.value.selectedUser?.wallet} I understand that all my data will be lost."
+                )
+                messageRepo.syncMessages()
+            }
+        }
+    }
     // 🔁 Toggle edit mode
     fun updateEditEnabled() {
         _state.value = _state.value.copy(editMode = !_state.value.editMode)
@@ -109,12 +131,16 @@ class UserSelectViewModel(
             userRepo.updateUser(user)
         }
     }
+
+    fun updateDeleteProfileState(deleteProfileState: DeleteProfileState) {
+        _state.value= _state.value.copy(deleteProfileState = deleteProfileState)
+    }
 }
 
 class UserSelectViewModelFactory(private val userId: Long) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return UserSelectViewModel(userId, get(), get(),get(),) as T
+        return UserSelectViewModel(userId, get(), get(),get(), get()) as T
     }
 }

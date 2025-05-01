@@ -129,7 +129,9 @@ fun SettingsScreen() {
                     iconResId = R.drawable.delete, // Replace with your delete icon
                     titleResId = R.string.delete_account_title,
                     descriptionResId = R.string.delete_account_description,
-                    onClick = { /* Handle delete account click */ }
+                    onClick = {
+                        navController.navigate(NavRoute.DeleteProfile.route)
+                    }
                 )
             }
             if (state.showPrivacyPolicyDialog == true) {
@@ -141,7 +143,12 @@ fun SettingsScreen() {
                     textContent = stringResource(R.string.logout_dialog_message),
                     onPositiveClick = {
                         viewModel.logout()
-                        navController.navigate(NavRoute.SignupFlow.route)
+                        navController.navigate(NavRoute.SignupFlow.route) {
+                            popUpTo(navController.graph.id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     },
                     onNegativeClick = {
                         viewModel.updateLogoutDialogVisibility(false)

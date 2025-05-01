@@ -84,7 +84,7 @@ fun ProfileScreen(
             ActionBar(
                 centerAction = {
                     Text(
-                        text = stringResource(id = R.string.settings),
+                        text = stringResource(id = R.string.profile_title),
                         color = AppColors.Green,
                         fontWeight = FontWeight.Bold,
                         style = CustomTheme.typography.large,
