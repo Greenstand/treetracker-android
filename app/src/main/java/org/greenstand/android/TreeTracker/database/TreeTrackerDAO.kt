@@ -74,6 +74,10 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM user WHERE power_user = 1")
     suspend fun getPowerUser(): UserEntity?
 
+    @Query("DELETE FROM user WHERE wallet = :wallet")
+    suspend fun deleteUserByWallet(wallet: String): Int
+
+
     @Query("UPDATE user SET power_user = :isPowerUser WHERE _id = :userId")
     suspend fun updatePowerUserStatus(userId: Long, isPowerUser: Boolean)
 

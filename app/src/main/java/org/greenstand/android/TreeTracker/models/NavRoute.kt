@@ -39,6 +39,7 @@ import org.greenstand.android.TreeTracker.messages.individualmeassagelist.Indivi
 import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
+import org.greenstand.android.TreeTracker.profile.DeleteProfileScreen
 import org.greenstand.android.TreeTracker.profile.ProfileScreen
 import org.greenstand.android.TreeTracker.profile.ProfileSelectScreen
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
@@ -79,6 +80,13 @@ sealed class NavRoute : KoinComponent {
             SignUpScreen()
         }
         override val route: String = "signup-flow"
+    }
+
+    object DeleteProfile : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            DeleteProfileScreen()
+        }
+        override val route: String = "delete-profile"
     }
 
     object Org : NavRoute() {
