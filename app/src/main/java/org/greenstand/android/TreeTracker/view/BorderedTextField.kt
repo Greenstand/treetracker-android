@@ -40,26 +40,24 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun BorderedTextField(
+    modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
     value: String,
-
     onValueChange: (String) -> Unit,
     placeholder: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
     onFocusChanged: ((FocusState) -> Unit) = {},
     focusRequester: FocusRequester = FocusRequester.Default,
-    autofocusEnabled: Boolean = false
+    autofocusEnabled: Boolean = false,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(padding)
             .border(
                 BorderStroke(0.5.dp, SolidColor(Color.White)),
                 RoundedCornerShape(16.dp),
             )
-            .padding(padding)
-
     ) {
         TextField(
             modifier = Modifier
