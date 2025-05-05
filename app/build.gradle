@@ -162,6 +162,9 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/io.netty.versions.properties'
         exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+
 
     }
     lint {
@@ -273,6 +276,13 @@ dependencies {
     testImplementation "org.robolectric:robolectric:4.8.1"
     androidTestImplementation "app.cash.turbine:turbine:0.12.1"
     testImplementation "app.cash.turbine:turbine:0.12.1"
+
+    // dependency for Compose UI test
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
+
+
 
 }
 
