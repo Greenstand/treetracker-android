@@ -19,6 +19,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -62,6 +63,7 @@ fun BorderedTextField(
         TextField(
             modifier = Modifier
                 .padding(8.dp)
+                .fillMaxSize()
                 .focusRequester(focusRequester)
                 .onFocusChanged(onFocusChanged),
             value = value,
