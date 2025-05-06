@@ -19,6 +19,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -40,30 +41,29 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun BorderedTextField(
+    modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
     value: String,
-
     onValueChange: (String) -> Unit,
     placeholder: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
     onFocusChanged: ((FocusState) -> Unit) = {},
     focusRequester: FocusRequester = FocusRequester.Default,
-    autofocusEnabled: Boolean = false
+    autofocusEnabled: Boolean = false,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(padding)
             .border(
                 BorderStroke(0.5.dp, SolidColor(Color.White)),
                 RoundedCornerShape(16.dp),
             )
-            .padding(padding)
-
     ) {
         TextField(
             modifier = Modifier
                 .padding(8.dp)
+                .fillMaxSize()
                 .focusRequester(focusRequester)
                 .onFocusChanged(onFocusChanged),
             value = value,
