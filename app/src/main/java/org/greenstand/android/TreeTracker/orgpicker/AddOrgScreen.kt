@@ -80,6 +80,7 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
             Spacer(modifier = Modifier.height(120.dp))
             BorderedTextField(
                 value = state.orgName,
+                modifier = Modifier.height(80.dp),
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> viewModel.updateOrgName(updatedName) },
                 placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
