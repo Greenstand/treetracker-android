@@ -59,6 +59,12 @@ import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.ProfileField
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import java.io.File
+import org.greenstand.android.TreeTracker.utils.ValidationUtils
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 
 @Composable
 fun ProfileScreen(
@@ -78,6 +84,21 @@ fun ProfileScreen(
                 viewModel.updateSelectedUser(photoPath = newPhotoPath)
             }
         }
+    }
+    var firstNameError by remember { mutableStateOf<String?>(null) }
+    var lastNameError by remember { mutableStateOf<String?>(null) }
+
+    fun validateNames(): Boolean {
+        val firstName = state.selectedUser?.firstName ?: ""
+        val lastName = state.selectedUser?.lastName ?: ""
+
+        val (firstNameValid, firstError) = ValidationUtils.validateName(firstName)
+        val (lastNameValid, lastError) = ValidationUtils.validateName(lastName)
+
+        firstNameError = firstError
+        lastNameError = lastError
+
+        return firstNameValid && lastNameValid
     }
     Scaffold(
         topBar = {
@@ -155,11 +176,45 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 ProfileField(stringResource(id = R.string.first_name_hint), selectedUser.firstName, state.editMode) {
-                    viewModel.updateSelectedUser(firstName = it)
+                    newFirstName ->
+
+                    val filtered = ValidationUtils.filterNameInput(newFirstName)
+                    viewModel.updateSelectedUser(firstName = filtered)
+                    if (state.editMode) {
+                        val (_, error) = ValidationUtils.validateName(filtered)
+                        firstNameError = error
+                    }
                 }
 
-                ProfileField(stringResource(id = R.string.last_name_hint), selectedUser.lastName ?: "", state.editMode) {
-                    viewModel.updateSelectedUser(lastName = it)
+                if (state.editMode && firstNameError != null) {
+                    Text(
+                        text = firstNameError!!,
+                        color = MaterialTheme.colors.error,
+                        style = CustomTheme.typography.small,
+                        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ProfileField(
+                    stringResource(id = R.string.last_name_hint), selectedUser.lastName ?: "", state.editMode) {
+                    newLastName ->
+                    val filtered = ValidationUtils.filterNameInput(newLastName)
+                    viewModel.updateSelectedUser(lastName = filtered)
+
+                    if (state.editMode) {
+                        val (_, error) = ValidationUtils.validateName(filtered)
+                        lastNameError = error
+                    }
+                }
+
+                if (state.editMode && lastNameError != null) {
+                    Text(
+                        text = lastNameError!!,
+                        color = MaterialTheme.colors.error,
+                        style = CustomTheme.typography.small,
+                        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                    )
                 }
                 if (selectedUser.wallet.contains("@")) {
                     ProfileField(stringResource(id = R.string.email_placeholder), selectedUser.wallet ?: "", state.editMode) {
@@ -180,10 +235,16 @@ fun ProfileScreen(
                             .align(Alignment.CenterHorizontally)
                             .size(width = 150.dp, 60.dp),
                         onClick = {
+                            // 验证名字
+                            val firstName = state.selectedUser?.firstName ?: ""
+                            val lastName = state.selectedUser?.lastName ?: ""
 
-                            scope.launch {
-                                viewModel.updateUserInDatabase()
-                                viewModel.updateEditEnabled()
+                            if (ValidationUtils.validateName(firstName).first &&
+                                ValidationUtils.validateName(lastName).first) {
+                                scope.launch {
+                                    viewModel.updateUserInDatabase()
+                                    viewModel.updateEditEnabled()
+                                }
                             }
                         }
                     ) {

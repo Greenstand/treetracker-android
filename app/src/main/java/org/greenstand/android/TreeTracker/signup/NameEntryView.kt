@@ -49,6 +49,13 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
+import org.greenstand.android.TreeTracker.utils.ValidationUtils
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
@@ -95,8 +102,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = !state.firstName.isNullOrBlank() &&
-                            !state.lastName.isNullOrBlank()
+                        isEnabled = viewModel.isFormValid()
                     ) {
                         cameraLauncher.launch(true)
                     }
@@ -128,6 +134,15 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     }
                 )
             )
+            state.firstNameError?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             BorderedTextField(
                 value = state.lastName ?: "",
                 padding = PaddingValues(4.dp),
@@ -146,6 +161,14 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     }
                 )
             )
+            state.lastNameError?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                )
+            }
         }
     }
 }
