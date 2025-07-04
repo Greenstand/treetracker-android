@@ -28,6 +28,15 @@ Developers will need to ask the #android_chat channel in Slack for the treetrack
 
 For development, select the build variant _dev_. This build variant is configured to allow trees to be added without a specific accuracy.  
 
+### ⚠️ JDK Compatibility for Robolectric Tests
+
+Some test files — such as DashboardViewModelTest.kt and TreeTrackerDaoTest.kt — rely on the [Robolectric](https://robolectric.org/) testing framework, which is **not compatible with JDK 21**.
+
+Since Android Studio ships with **JDK 21 by default**, these tests may fail to compile or run.  
+To resolve this, change the **Gradle JDK** in Android Studio to **OpenJDK 17.0.15 LTS**, which is compatible with Robolectric.
+
+You can download it from the [Microsoft OpenJDK site](https://learn.microsoft.com/en-us/java/openjdk/download).
+
 &nbsp;
 
 ## QC Deployment
