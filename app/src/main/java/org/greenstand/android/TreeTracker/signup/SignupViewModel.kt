@@ -25,6 +25,7 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
+import org.greenstand.android.TreeTracker.utils.ValidationUtils
 
 // Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
@@ -43,6 +44,8 @@ data class SignUpState(
     val isTherePowerUser: Boolean? = null,
     val showSelfieTutorial: Boolean? = null,
     val showPrivacyDialog: Boolean? = true,
+    val firstNameError: String? = null,
+    val lastNameError: String? = null,
 )
 
 sealed class Credential {
@@ -90,11 +93,27 @@ class SignupViewModel(
     }
 
     fun updateFirstName(firstName: String?) {
-        _state.value = _state.value?.copy(firstName = firstName)
+        val filtered = firstName?.let { ValidationUtils.filterNameInput(it) }
+        val (isValid, error) = ValidationUtils.validateName(filtered)
+        _state.value = _state.value?.copy(
+            firstName = filtered,
+            firstNameError = if (filtered.isNullOrEmpty()) null else error
+        )
     }
 
     fun updateLastName(lastName: String?) {
-        _state.value = _state.value?.copy(lastName = lastName)
+        val filtered = lastName?.let { ValidationUtils.filterNameInput(it) }
+        val (isValid, error) = ValidationUtils.validateName(filtered)
+        _state.value = _state.value?.copy(
+            lastName = filtered,
+            lastNameError = if (filtered.isNullOrEmpty()) null else error
+        )
+    }
+    fun isFormValid(): Boolean {
+        val state = _state.value ?: return false
+        val (firstNameValid, _) = ValidationUtils.validateName(state.firstName)
+        val (lastNameValid, _) = ValidationUtils.validateName(state.lastName)
+        return firstNameValid && lastNameValid
     }
 
     fun setExistingUserAsPowerUser(id: Long){
