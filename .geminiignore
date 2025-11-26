@@ -1,0 +1,61 @@
+# Gemini CLI Ignore
+
+# Android
+build/
+.gradle/
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.jar
+*.keystore
+*.jks
+local.properties
+.DS_Store
+
+# Gradle
+.gradle/
+build/
+gradle/
+gradlew
+gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Secrets
+secret_properties.enc
+google-services.json
+fab.properties
+fabric.properties
+
+# Fastlane & Spotless
+fastlane/
+spotless/
+
+# Other
+Gemfile.lock
+*.log
+.DS_Store
+*.zip
+*.tar
+*.gz
+
+# Code generation
+app/build/
+core-ui/build/
+
+# Temp files
+*.swp
+*~
+*.bak
+*.tmp
+*.orig
+
+# Schemas
+app/schemas/
