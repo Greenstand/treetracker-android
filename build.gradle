@@ -1,26 +1,23 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.9.24'
     repositories {
         google()
-//        jcenter()
         mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url 'https://jitpack.io' }
+        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = 'https://jitpack.io' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.0'
-        classpath 'com.google.gms:google-services:4.4.2'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.0"
+        classpath libs.android.gradlePlugin
+        classpath libs.google.services
+        classpath libs.firebase.crashlytics.gradle
+        classpath libs.kotlin.gradlePlugin
+        classpath libs.navigation.safeargs.gradlePlugin
 
-        classpath 'org.jlleitschuh.gradle:ktlint-gradle:11.0.0'
-        classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.18.0'
-        classpath 'io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.0-RC2'
-
+        classpath libs.ktlint.gradle
+        classpath libs.spotless.gradle
+        classpath libs.detekt.gradlePlugin
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -38,20 +35,16 @@ allprojects {
     }
     repositories {
         google()
-//        jcenter()
         mavenCentral()
         maven {
-            url "https://maven.google.com" // Google's Maven repository
+            url = "https://maven.google.com" // Google's Maven repository
         }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        maven { url 'https://jitpack.io' }
+        maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url = 'https://jitpack.io' }
     }
 
     ext {
-        compose_version = "1.1.1"
-        koin_version= "3.2.0-beta-1"
-        androidSupportVersion = '1.0.0'
-        retrofit2Version = '2.6.0'
+        // Keys properties - these still need to be loaded from treetracker.keys.properties
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"
         prod_treetracker_client_id = "configure in treetracker.keys.properties"
         prod_treetracker_client_secret = "configure in treetracker.keys.properties"
