@@ -18,7 +18,12 @@ package org.greenstand.android.TreeTracker.camera
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,7 +33,8 @@ import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.view.*
+import org.greenstand.android.TreeTracker.view.ApprovalButton
+import org.greenstand.android.TreeTracker.view.LocalImage
 
 @Composable
 fun ImageReviewScreen(photoPath: String) {
@@ -41,6 +47,7 @@ fun ImageReviewScreen(photoPath: String) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
                     .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {

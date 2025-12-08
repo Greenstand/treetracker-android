@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.dashboard
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,18 +28,27 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
+import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -154,11 +164,9 @@ fun Dashboard(
                 }
             }
         }
-    ) {
+    ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 20.dp),
+            modifier = Modifier.fillMaxSize().navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -199,8 +207,7 @@ fun Dashboard(
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     DashboardUploadProgressBar(
-                        progress = (state.treesRemainingToSync)
-                            .toFloat() / (state.totalTreesToSync),
+                        progress = state.uploadProgress,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
@@ -254,6 +261,7 @@ fun Dashboard(
 fun DashboardTopBar(state: DashboardState,
                     onSettingsClicked: () -> Unit = { }, onOrgClicked: () -> Unit) {
     ActionBar(
+        modifier = Modifier.statusBarsPadding(),
         leftAction = {
             Box(modifier = Modifier
                 .padding( 10.dp)
@@ -304,10 +312,14 @@ fun DashboardUploadProgressBar(
     val stroke = with(LocalDensity.current) {
         Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
     }
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+    )
 
     Canvas(
         modifier = modifier
-            .progressSemantics(progress)
+            .progressSemantics(animatedProgress)
             .fillMaxWidth()
     ) {
         val diameterOffset = stroke.width / 2
@@ -328,7 +340,7 @@ fun DashboardUploadProgressBar(
         )
 
         drawProgress(AppColors.MediumGray, 180f) // Background progress.
-        drawProgress(AppColors.Orange, progress * 180f) // Foreground progress.
+        drawProgress(AppColors.Orange, animatedProgress * 180f) // Foreground progress.
     }
 }
 

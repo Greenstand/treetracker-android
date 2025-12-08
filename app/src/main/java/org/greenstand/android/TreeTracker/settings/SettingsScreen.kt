@@ -2,59 +2,50 @@ package org.greenstand.android.TreeTracker.settings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.NavRoute
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.signup.Credential
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.userselect.UserSelectState
-import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
-import org.greenstand.android.TreeTracker.userselect.UserSelectViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.AppColors.Green
 import org.greenstand.android.TreeTracker.view.AppColors.Red
 import org.greenstand.android.TreeTracker.view.ArrowButton
-import org.greenstand.android.TreeTracker.view.LanguageButton
-import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
-import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 
 @Composable
 fun SettingsScreen() {
     val navController = LocalNavHostController.current
-    val focusRequester = remember { FocusRequester() }
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val viewModel: SettingsViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsState(SettingsState())
@@ -63,6 +54,7 @@ fun SettingsScreen() {
     Scaffold(
         topBar = {
             ActionBar(
+                modifier = Modifier.statusBarsPadding(),
                 centerAction = {
                     Text(
                         text = stringResource(id = R.string.settings),
@@ -77,18 +69,19 @@ fun SettingsScreen() {
         },
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
                         navController.popBackStack()
                     }
                 },
-
-                )
+            )
         }
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(it)
         ) {
             Column(
                 modifier = Modifier

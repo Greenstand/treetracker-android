@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
@@ -62,8 +64,10 @@ fun WalletSelectScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
+        modifier = Modifier,
         topBar = {
             ActionBar(
+                modifier = Modifier.statusBarsPadding(),
                 leftAction = {
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
@@ -78,6 +82,7 @@ fun WalletSelectScreen(
         },
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
@@ -107,11 +112,11 @@ fun WalletSelectScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(it)
                 .padding(
                     start = 10.dp,
                     top = 10.dp,
                     end = 10.dp,
-                    bottom = 90.dp
                 )
         ) {
             state.currentUser?.let { currentUser ->

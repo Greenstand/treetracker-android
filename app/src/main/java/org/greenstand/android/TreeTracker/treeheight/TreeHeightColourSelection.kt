@@ -21,8 +21,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
@@ -54,9 +56,12 @@ fun TreeHeightScreen() {
     val state by viewModel.state.observeAsState(TreeHeightSelectionState())
 
     Scaffold(
+        modifier = Modifier,
         topBar = {
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -73,6 +78,7 @@ fun TreeHeightScreen() {
         },
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
@@ -92,7 +98,7 @@ fun TreeHeightScreen() {
             modifier = Modifier.padding(padding).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp)
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp, bottom = padding.calculateBottomPadding())
         ) {
             items(state.colors) { color ->
                 val isSelected = color == state.selectedColor

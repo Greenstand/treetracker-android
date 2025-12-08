@@ -17,10 +17,12 @@ package org.greenstand.android.TreeTracker.messages.individualmeassagelist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +56,7 @@ fun IndividualMessageListScreen(
     Scaffold(
         topBar = {
             ActionBar(
+                modifier = Modifier.statusBarsPadding(),
                 leftAction = {
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
@@ -68,6 +71,7 @@ fun IndividualMessageListScreen(
         },
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
@@ -96,9 +100,9 @@ fun IndividualMessageListScreen(
     ) {
         if (state.messages.isNotEmpty()) {
             LazyVerticalGrid(
-                cells = GridCells.Fixed(2),
-                modifier = Modifier.padding(it), // Padding for bottom bar.
-                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.padding(it),
+                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp, bottom = it.calculateBottomPadding())
             ) {
                 items(state.messages) { message ->
 

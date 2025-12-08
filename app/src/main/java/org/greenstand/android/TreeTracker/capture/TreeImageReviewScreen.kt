@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -57,8 +59,10 @@ fun TreeImageReviewScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
+        modifier = Modifier,
         topBar = {
             ActionBar(
+                modifier = Modifier.statusBarsPadding(),
                 centerAction = {
                     TreeTrackerButton(
                         modifier = Modifier
@@ -77,6 +81,7 @@ fun TreeImageReviewScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
                     .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
@@ -117,7 +122,7 @@ fun TreeImageReviewScreen(
             )
         }
         LocalImage(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().navigationBarsPadding(),
             imagePath = state.treeImagePath ?: "",
             contentDescription = null,
             contentScale = ContentScale.Fit

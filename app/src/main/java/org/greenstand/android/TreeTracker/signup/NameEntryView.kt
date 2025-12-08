@@ -19,12 +19,18 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -49,13 +55,6 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
-import org.greenstand.android.TreeTracker.utils.ValidationUtils
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 
 @Composable
 fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
@@ -84,6 +83,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
     Scaffold(
         topBar = {
             ActionBar(
+                modifier = Modifier.statusBarsPadding(),
                 centerAction = {
                     TopBarTitle()
                 },
@@ -94,6 +94,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
         },
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
                         viewModel.goToCredentialEntry()

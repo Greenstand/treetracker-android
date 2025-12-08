@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.walletselect.addwallet
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -54,8 +55,10 @@ fun AddWalletScreen(
     val state by viewModel.state.observeAsState(AddWalletState())
 
     Scaffold(
+        modifier = Modifier,
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
                         CaptureSetupScopeManager.nav.navBackward(navController)
@@ -78,6 +81,7 @@ fun AddWalletScreen(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(it)
                 .padding(top = 120.dp)
         ) {
             BorderedTextField(

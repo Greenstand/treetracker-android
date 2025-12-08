@@ -18,8 +18,10 @@ package org.greenstand.android.TreeTracker.languagepicker
 import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
@@ -61,6 +63,7 @@ fun LanguageSelectScreen(
         },
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
@@ -97,6 +100,7 @@ fun LanguageSelectScreen(
 @Composable
 fun LanguageTopBar() {
     ActionBar(
+        modifier = Modifier.statusBarsPadding(),
         centerAction = { TopBarTitle() }
     )
 }
