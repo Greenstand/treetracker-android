@@ -15,6 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.treeheight
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -85,22 +87,32 @@ fun TreeHeightScreen() {
                 },
             )
         }
-    ) {
+    ) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.padding(padding).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp),
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp)
         ) {
             items(state.colors) { color ->
+                val isSelected = color == state.selectedColor
+                val animatedWidth by animateDpAsState(
+                    targetValue = if (isSelected) 350.dp else 200.dp,
+                    animationSpec = tween(durationMillis = 300),
+                )
+                val animatedHeight by animateDpAsState(
+                    targetValue = if (isSelected) 85.dp else 62.dp,
+                    animationSpec = tween(durationMillis = 300),
+                )
+
                 TreeTrackerButton(
                     colors = color,
-                    isSelected = color == state.selectedColor,
+                    isSelected = isSelected,
                     onClick = { viewModel.selectColor(color) },
-                    modifier = if (color == state.selectedColor) Modifier.size(
-                        width = 350.dp,
-                        height = 85.dp
-                    ) else Modifier.size(width = 200.dp, height = 62.dp)
+                    modifier = Modifier.size(
+                        width = animatedWidth,
+                        height = animatedHeight
+                    )
                 ) {}
             }
         }
