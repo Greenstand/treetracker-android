@@ -33,6 +33,7 @@ data class MapMarker(
     val isUploaded: Boolean,
     val note: String,
     val plantDate: Instant,
+    val imagePath: String?,
 )
 
 data class MapState(
@@ -73,6 +74,7 @@ class MapViewModel(
                                 isUploaded = tree.uploaded,
                                 note = tree.note,
                                 plantDate = tree.createdAt,
+                                imagePath = tree.photoPath,
                             )
                         }
                     )

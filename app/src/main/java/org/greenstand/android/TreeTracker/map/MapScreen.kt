@@ -15,13 +15,15 @@
  */
 package org.greenstand.android.TreeTracker.map
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,27 +36,30 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Scaffold
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -64,10 +69,9 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.maplibre.android.MapLibre
+import java.io.File
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -78,61 +82,55 @@ fun MapScreen(
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
 
-    DisposableEffect(Unit) {
+    LaunchedEffect(Unit) {
         MapLibre.getInstance(context)
-        onDispose { }
     }
 
-    Scaffold(
-        topBar = {
-            ActionBar(
-                modifier = Modifier.statusBarsPadding(),
-                centerAction = {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.map_title),
-                        color = AppColors.Green,
-                        fontWeight = FontWeight.Bold,
-                        style = CustomTheme.typography.large,
-                        textAlign = TextAlign.Center,
-                    )
-                },
-            )
-        },
-        bottomBar = {
-            ActionBar(
-                modifier = Modifier.navigationBarsPadding(),
-                leftAction = {
-                    ArrowButton(isLeft = true) {
-                        navController.popBackStack()
-                    }
-                },
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            LibreMap(
-                markers = state.markers,
-                selectedMarkerId = state.selectedMarkerId
-            )
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        LibreMap(
+            markers = state.markers,
+            selectedMarkerId = state.selectedMarkerId,
+            styleUrl = "https://tiles.openfreemap.org/styles/liberty",
+            onMarkerClick = { markerId ->
+                viewModel.selectMarker(markerId)
+            }
+        )
 
-            // Carousel at the bottom
-            if (state.markers.isNotEmpty()) {
-                TreeMarkerCarousel(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth(),
-                    markers = state.markers,
-                    selectedMarkerId = state.selectedMarkerId,
-                    onMarkerClick = { marker ->
-                        viewModel.selectMarker(marker.id)
-                    }
+        // Back button in top left corner
+        Surface(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 16.dp, top = 4.dp)
+                .statusBarsPadding(),
+            elevation = 4.dp,
+            shape = RoundedCornerShape(24.dp),
+            color = Color.White
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
                 )
             }
+        }
+
+        // Carousel overlay at bottom
+        if (state.markers.isNotEmpty()) {
+            TreeMarkerCarousel(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .navigationBarsPadding(),
+                markers = state.markers,
+                selectedMarkerId = state.selectedMarkerId,
+                onMarkerClick = { marker ->
+                    viewModel.selectMarker(marker.id)
+                }
+            )
         }
     }
 }
@@ -149,11 +147,10 @@ fun TreeMarkerCarousel(
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
 
-    // Calculate centering offset
-    val cardWidth = 200.dp
+    // Calculate centering offset based on selected card size
     val screenWidth = configuration.screenWidthDp.dp
     val centerOffset = with(density) {
-        ((screenWidth - cardWidth) / 2).toPx().toInt()
+        ((screenWidth - CARD_WIDTH_SELECTED) / 2).toPx().toInt()
     }
 
     // Scroll to selected marker when it changes
@@ -173,10 +170,11 @@ fun TreeMarkerCarousel(
     }
 
     LazyRow(
+        modifier = modifier.height(CARD_HEIGHT_SELECTED),
         state = listState,
-        modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         items(markers, key = { it.id }) { marker ->
             TreeMarkerCard(
@@ -195,31 +193,50 @@ fun TreeMarkerCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Animate width and height by 10% when selected
+    val cardWidth by animateDpAsState(
+        targetValue = if (isSelected) CARD_WIDTH_SELECTED else CARD_WIDTH_NORMAL,
+        animationSpec = tween(durationMillis = 300),
+        label = "card_width"
+    )
+
+    val cardHeight by animateDpAsState(
+        targetValue = if (isSelected) CARD_HEIGHT_SELECTED else CARD_HEIGHT_NORMAL,
+        animationSpec = tween(durationMillis = 300),
+        label = "card_height"
+    )
+
     Card(
         modifier = modifier
-            .width(200.dp)
+            .width(cardWidth)
+            .height(cardHeight)
             .clickable { onClick() },
         elevation = if (isSelected) 8.dp else 4.dp,
-        backgroundColor = AppColors.LightGray,
+        backgroundColor = Color.White,
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column {
-            // Placeholder image
-            Image(
-                painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
-                contentDescription = "Tree placeholder",
+        Column(
+            modifier = Modifier.fillMaxHeight()
+        ) {
+            // Tree image loaded from file path - takes 2/3 of card space
+            AsyncImage(
+                model = marker.imagePath?.let { File(it) },
+                contentDescription = "Tree image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
-                contentScale = ContentScale.Crop
+                    .weight(2f),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.yellow_leafs_placeholder),
+                error = painterResource(id = R.drawable.yellow_leafs_placeholder),
+                fallback = painterResource(id = R.drawable.yellow_leafs_placeholder)
             )
 
+            // Content section - takes 1/3 of card space
             Column(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(12.dp)
             ) {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Latitude/Longitude
                 Text(
                     text = "Lat: ${String.format("%.6f", marker.latitude)}",
                     style = CustomTheme.typography.small,
@@ -267,3 +284,9 @@ private fun formatPlantDate(instant: Instant): String {
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
     return javaDateTime.format(formatter)
 }
+
+// Card size constants
+private val CARD_WIDTH_NORMAL = 200.dp
+private val CARD_WIDTH_SELECTED = 220.dp
+private val CARD_HEIGHT_NORMAL = 280.dp
+private val CARD_HEIGHT_SELECTED = 308.dp
