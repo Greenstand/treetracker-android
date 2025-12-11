@@ -52,7 +52,9 @@ data class DashboardState(
     val isOrgButtonEnabled: Boolean = false,
     val showUnreadMessageNotification: Boolean = false,
     val showTreeSyncReminderDialog: Boolean = false
-)
+) {
+    val uploadProgress: Float = treesRemainingToSync.toFloat() / totalTreesToSync
+}
 
 class DashboardViewModel(
     private val dao: TreeTrackerDAO,

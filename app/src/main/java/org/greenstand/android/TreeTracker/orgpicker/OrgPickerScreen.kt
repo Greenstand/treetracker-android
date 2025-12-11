@@ -20,11 +20,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +59,9 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
     Scaffold(
         topBar = {
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -74,6 +78,7 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
         },
         bottomBar = {
             ActionBar(
+                modifier = Modifier.navigationBarsPadding(),
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
@@ -83,10 +88,10 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
                 }
             )
         },
-    ) {
+    ) { padding ->
         LazyVerticalGrid(
-            cells = GridCells.Fixed(2),
-            modifier = Modifier.fillMaxSize(),
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize().padding(padding),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalArrangement = Arrangement.Center
         ) {

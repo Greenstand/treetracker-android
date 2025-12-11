@@ -26,8 +26,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -95,7 +97,9 @@ fun TreeCaptureScreen(
     Scaffold(
         bottomBar = {
             ActionBar(
-                modifier = Modifier.background(color = AppColors.Gray),
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .background(color = AppColors.Gray),
                 leftAction = {
                     ArrowButton(
                         isLeft = true,
@@ -129,7 +133,7 @@ fun TreeCaptureScreen(
                 }
             )
         }
-    ) {
+    ) { padding ->
         if (state.isLocationAvailable == false) {
             CustomDialog(
                 dialogIcon = painterResource(id = R.drawable.error_outline),
@@ -162,6 +166,7 @@ fun TreeCaptureScreen(
             }
         )
         ActionBar(
+            modifier = Modifier.background(Color.Black).statusBarsPadding(),
             leftAction = {
                 UserImageButton(
                     onClick = {
@@ -204,15 +209,18 @@ fun TreeCaptureScreen(
 }
 
 @Composable
-fun CaptureCustomLoading(isLoading: Boolean, progress: Float) {
+fun CaptureCustomLoading(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    progress: Float
+) {
     if (isLoading) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .padding(bottom = 90.dp)
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

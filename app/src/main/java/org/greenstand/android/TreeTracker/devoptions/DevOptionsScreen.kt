@@ -16,13 +16,14 @@
 package org.greenstand.android.TreeTracker.devoptions
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Checkbox
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ListItem
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -32,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -69,6 +71,7 @@ fun DevOptionsScreen(
         Scaffold(
             bottomBar = {
                 ActionBar(
+                    modifier = Modifier.navigationBarsPadding(),
                     leftAction = {
                         ArrowButton(isLeft = true) {
                             onBackPressed()
@@ -77,7 +80,7 @@ fun DevOptionsScreen(
                 )
             },
         ) {
-            LazyColumn {
+            LazyColumn(modifier = Modifier.padding(it)) {
                 items(state.params) { param ->
                     ParamListItem(param) { newValue ->
                         onParamUpdated(param, newValue)
@@ -88,7 +91,6 @@ fun DevOptionsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ParamListItem(
     config: Config,
@@ -109,25 +111,29 @@ private fun ParamListItem(
         )
     }
 }
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 private fun BooleanParamListItem(
     config: BooleanConfig,
     onClicked: (Boolean) -> Unit,
 ) {
-    ListItem(
-        modifier = Modifier.padding(16.dp),
-        text = { Text(text = config.name) },
-        trailing = {
-            Checkbox(
-                checked = config.defaultValue,
-                onCheckedChange = onClicked,
-            )
-        }
-    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = config.name,
+            modifier = Modifier.weight(1f)
+        )
+        Checkbox(
+            checked = config.defaultValue,
+            onCheckedChange = onClicked,
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun IntParamListItem(
     config: IntConfig,
@@ -135,11 +141,8 @@ private fun IntParamListItem(
 ) {
     var text: String by remember { mutableStateOf(config.defaultValue.toString()) }
 
-    Column {
-        ListItem(
-            modifier = Modifier.padding(16.dp),
-            text = { Text(text = config.name) },
-        )
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = config.name)
         TextField(
             value = text,
             onValueChange = {
@@ -155,7 +158,6 @@ private fun IntParamListItem(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun FloatParamListItem(
     config: FloatConfig,
@@ -163,11 +165,8 @@ private fun FloatParamListItem(
 ) {
     var text: String by remember { mutableStateOf(config.defaultValue.toString()) }
 
-    Column {
-        ListItem(
-            modifier = Modifier.padding(16.dp),
-            text = { Text(text = config.name) },
-        )
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = config.name)
         TextField(
             value = text,
             onValueChange = {
