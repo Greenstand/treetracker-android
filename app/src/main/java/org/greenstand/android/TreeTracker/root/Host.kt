@@ -57,6 +57,7 @@ fun Host() {
                 NavRoute.ProfileSelect,
                 NavRoute.DeleteProfile,
                 NavRoute.DevOptions,
+                NavRoute.Map,
             ).forEach { addNavRoute(it) }
         }
     }

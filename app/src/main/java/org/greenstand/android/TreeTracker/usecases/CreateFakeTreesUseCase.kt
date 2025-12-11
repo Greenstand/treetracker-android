@@ -26,7 +26,8 @@ import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import org.greenstand.android.TreeTracker.utils.LocationUtils
+import java.util.UUID
 
 data class CreateFakeTreesParams(val amount: Int)
 
@@ -41,17 +42,24 @@ class CreateFakeTreesUseCase(
 ) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
+        val location = locationUpdateManager.currentLocation
+        val centerLat = location?.latitude ?: 0.0
+        val centerLon = location?.longitude ?: 0.0
+
         for (i in 1..(params.amount / 2) + 1) {
 
             val file = ImageUtils.createTestImageFile(context)
+
+            // Generate random location within 1 mile radius
+            val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
 
             val tree = Tree(
                 sessionId = sessionTracker.currentSessionId!!,
                 photoPath = file.absolutePath,
                 content = "My Note",
                 treeUuid = UUID.randomUUID(),
-                meanLongitude = 0.0,
-                meanLatitude = 0.0
+                meanLongitude = randomLon,
+                meanLatitude = randomLat
             )
 
             with(tree) {
@@ -144,12 +152,17 @@ class CreateFakeTreesUseCase(
     ) {
         val location = locationUpdateManager.currentLocation
         val time = timeProvider.currentTime()
+        val centerLat = location?.latitude ?: 0.0
+        val centerLon = location?.longitude ?: 0.0
+
+        // Generate random location within 1 mile radius
+        val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
 
         val planterCheckInEntity = PlanterCheckInEntity(
             planterInfoId = planterInfoId,
             localPhotoPath = ImageUtils.createTestImageFile(context).absolutePath,
-            longitude = location?.longitude ?: 0.0,
-            latitude = location?.latitude ?: 0.0,
+            longitude = randomLon,
+            latitude = randomLat,
             createdAt = time.toEpochMilliseconds(),
             photoUrl = null
         )
@@ -158,6 +171,13 @@ class CreateFakeTreesUseCase(
     }
 
     suspend fun createLegacyTree(planterInfoId: Long) {
+        val location = locationUpdateManager.currentLocation
+        val centerLat = location?.latitude ?: 0.0
+        val centerLon = location?.longitude ?: 0.0
+
+        // Generate random location within 1 mile radius
+        val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
+
         createLegacyTreeUseCase.execute(
             CreateLegacyTreeParams(
                 planterInfoId,
@@ -166,8 +186,8 @@ class CreateFakeTreesUseCase(
                     photoPath = ImageUtils.createTestImageFile(context).absolutePath,
                     content = "My Legacy Note",
                     treeUuid = UUID.randomUUID(),
-                    meanLongitude = 0.0,
-                    meanLatitude = 0.0
+                    meanLongitude = randomLon,
+                    meanLatitude = randomLat
                 )
             )
         )

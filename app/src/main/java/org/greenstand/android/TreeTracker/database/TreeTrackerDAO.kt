@@ -187,6 +187,9 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM tree WHERE _id IN (:ids)")
     suspend fun getTreesByIds(ids: List<Long>): List<TreeEntity>
 
+    @Query("SELECT * FROM tree")
+    suspend fun getAllTrees(): List<TreeEntity>
+
     @Query("UPDATE tree_capture SET bundle_id = :bundleId WHERE _id IN (:ids)")
     suspend fun updateTreeCapturesBundleIds(ids: List<Long>, bundleId: String)
 

@@ -99,6 +99,16 @@ fun SettingsScreen() {
                 Divider(color = Color.White)
 
                 SettingsItem(
+                    iconResId = R.drawable.map_icon,
+                    titleResId = R.string.map_title,
+                    descriptionResId = R.string.map_description,
+                    onClick = {
+                        navController.navigate(NavRoute.Map.route)
+                    }
+                )
+                Divider(color = Color.White)
+
+                SettingsItem(
                     iconResId = R.drawable.privacy_policy, // Replace with your privacy icon
                     titleResId = R.string.privacy_title,
                     descriptionResId = R.string.privacy_description,
