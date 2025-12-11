@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 
 data class MapMarker(
@@ -31,11 +32,13 @@ data class MapMarker(
     val id: String,
     val isUploaded: Boolean,
     val note: String,
+    val plantDate: Instant,
 )
 
 data class MapState(
     val markers: List<MapMarker> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val selectedMarkerId: String? = null,
 )
 
 class MapViewModel(
@@ -47,6 +50,10 @@ class MapViewModel(
 
     init {
         loadTrees()
+    }
+
+    fun selectMarker(markerId: String) {
+        _state.value = _state.value.copy(selectedMarkerId = markerId)
     }
 
     private fun loadTrees() {
@@ -65,6 +72,7 @@ class MapViewModel(
                                 id = "tree_${tree.id}",
                                 isUploaded = tree.uploaded,
                                 note = tree.note,
+                                plantDate = tree.createdAt,
                             )
                         }
                     )

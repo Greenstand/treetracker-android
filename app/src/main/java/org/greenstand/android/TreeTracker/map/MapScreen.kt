@@ -15,28 +15,51 @@
  */
 package org.greenstand.android.TreeTracker.map
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -45,12 +68,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.maplibre.android.MapLibre
-import org.maplibre.android.annotations.MarkerOptions
-import org.maplibre.android.camera.CameraPosition
-import org.maplibre.android.camera.CameraUpdateFactory
-import org.maplibre.android.geometry.LatLng
-import org.maplibre.android.geometry.LatLngBounds
-import org.maplibre.android.maps.MapView
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun MapScreen(
@@ -60,7 +78,6 @@ fun MapScreen(
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
 
-    // Initialize MapLibre
     DisposableEffect(Unit) {
         MapLibre.getInstance(context)
         onDispose { }
@@ -72,6 +89,7 @@ fun MapScreen(
                 modifier = Modifier.statusBarsPadding(),
                 centerAction = {
                     Text(
+                        modifier = Modifier.fillMaxWidth(),
                         text = stringResource(id = R.string.map_title),
                         color = AppColors.Green,
                         fontWeight = FontWeight.Bold,
@@ -97,89 +115,155 @@ fun MapScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            MapLibreMap(markers = state.markers)
+            LibreMap(
+                markers = state.markers,
+                selectedMarkerId = state.selectedMarkerId
+            )
+
+            // Carousel at the bottom
+            if (state.markers.isNotEmpty()) {
+                TreeMarkerCarousel(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    markers = state.markers,
+                    selectedMarkerId = state.selectedMarkerId,
+                    onMarkerClick = { marker ->
+                        viewModel.selectMarker(marker.id)
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
-fun MapLibreMap(
+fun TreeMarkerCarousel(
     markers: List<MapMarker>,
-    modifier: Modifier = Modifier,
-    styleUrl: String = "https://demotiles.maplibre.org/style.json"
+    selectedMarkerId: String?,
+    onMarkerClick: (MapMarker) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
 
-    val mapView = remember {
-        MapView(context).apply {
-            getMapAsync { mapLibreMap ->
-                mapLibreMap.setStyle(styleUrl) {
-                    // Set initial camera position (centered on equator with moderate zoom)
-                    val initialPosition = CameraPosition.Builder()
-                        .target(LatLng(0.0, 0.0))
-                        .zoom(2.0)
-                        .build()
-                    mapLibreMap.cameraPosition = initialPosition
+    // Calculate centering offset
+    val cardWidth = 200.dp
+    val screenWidth = configuration.screenWidthDp.dp
+    val centerOffset = with(density) {
+        ((screenWidth - cardWidth) / 2).toPx().toInt()
+    }
+
+    // Scroll to selected marker when it changes
+    LaunchedEffect(selectedMarkerId) {
+        selectedMarkerId?.let { id ->
+            val index = markers.indexOfFirst { it.id == id }
+            if (index != -1) {
+                coroutineScope.launch {
+                    // Scroll with offset to center the selected item
+                    listState.animateScrollToItem(
+                        index = index,
+                        scrollOffset = -centerOffset
+                    )
                 }
             }
         }
     }
 
-    // Handle lifecycle events
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> mapView.onStart()
-                Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                Lifecycle.Event.ON_STOP -> mapView.onStop()
-                Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            mapView.onDestroy()
+    LazyRow(
+        state = listState,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(markers, key = { it.id }) { marker ->
+            TreeMarkerCard(
+                marker = marker,
+                isSelected = marker.id == selectedMarkerId,
+                onClick = { onMarkerClick(marker) }
+            )
         }
     }
+}
 
-    AndroidView(
-        modifier = modifier.fillMaxSize(),
-        factory = { mapView },
-        update = { view ->
-            view.getMapAsync { mapLibreMap ->
-                mapLibreMap.getStyle { style ->
-                    // Clear existing markers
-                    mapLibreMap.clear()
+@Composable
+fun TreeMarkerCard(
+    marker: MapMarker,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .width(200.dp)
+            .clickable { onClick() },
+        elevation = if (isSelected) 8.dp else 4.dp,
+        backgroundColor = AppColors.LightGray,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column {
+            // Placeholder image
+            Image(
+                painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
+                contentDescription = "Tree placeholder",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                contentScale = ContentScale.Crop
+            )
 
-                    // Add markers in bulk
-                    if (markers.isNotEmpty()) {
-                        val markerOptions = markers.map { marker ->
-                            MarkerOptions()
-                                .position(LatLng(marker.latitude, marker.longitude))
-                        }
+            Column(
+                modifier = Modifier.padding(12.dp)
+            ) {
+                Spacer(modifier = Modifier.height(8.dp))
 
-                        // Add all markers at once
-                        mapLibreMap.addMarkers(markerOptions)
+                // Latitude/Longitude
+                Text(
+                    text = "Lat: ${String.format("%.6f", marker.latitude)}",
+                    style = CustomTheme.typography.small,
+                    color = AppColors.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "Lng: ${String.format("%.6f", marker.longitude)}",
+                    style = CustomTheme.typography.small,
+                    color = AppColors.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-                        // Calculate bounds to fit all markers
-                        val boundsBuilder = LatLngBounds.Builder()
-                        markers.forEach { marker ->
-                            boundsBuilder.include(LatLng(marker.latitude, marker.longitude))
-                        }
+                Spacer(modifier = Modifier.height(4.dp))
 
-                        val bounds = boundsBuilder.build()
-                        val padding = 100 // padding in pixels
+                // Note
+                Text(
+                    text = marker.note.ifEmpty { "No note" },
+                    style = CustomTheme.typography.small,
+                    color = AppColors.MediumGray,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-                        // Animate camera to show all markers
-                        mapLibreMap.animateCamera(
-                            CameraUpdateFactory.newLatLngBounds(bounds, padding)
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Plant date
+                Text(
+                    text = formatPlantDate(marker.plantDate),
+                    style = CustomTheme.typography.small,
+                    fontWeight = FontWeight.Bold,
+                    color = AppColors.Green,
+                    maxLines = 1
+                )
             }
         }
-    )
+    }
+}
+
+private fun formatPlantDate(instant: Instant): String {
+    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    val javaDateTime = localDateTime.toJavaLocalDateTime()
+    val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
+    return javaDateTime.format(formatter)
 }
