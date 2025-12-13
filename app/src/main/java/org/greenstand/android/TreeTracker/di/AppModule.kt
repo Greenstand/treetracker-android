@@ -36,6 +36,7 @@ import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.devoptions.Configurator
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
+import org.greenstand.android.TreeTracker.map.MapViewModel
 import org.greenstand.android.TreeTracker.messages.ChatViewModel
 import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementViewModel
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
@@ -127,6 +128,8 @@ val appModule = module {
     viewModel { PermissionViewModel(get()) }
 
     viewModel { SettingsViewModel(get()) }
+
+    viewModel { MapViewModel(get()) }
 
     single { UserRepo(get(), get(), get(), get(), get(), get()) }
 

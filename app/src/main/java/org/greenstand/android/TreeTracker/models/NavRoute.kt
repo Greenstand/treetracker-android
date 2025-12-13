@@ -32,6 +32,7 @@ import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
 import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsRoot
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
+import org.greenstand.android.TreeTracker.map.MapScreen
 import org.greenstand.android.TreeTracker.messages.ChatScreen
 import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
 import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementScreen
@@ -334,6 +335,15 @@ sealed class NavRoute : KoinComponent {
             DevOptionsRoot()
         }
         override val route: String = "dev"
+    }
+
+    object Map : NavRoute() {
+        override val content: @Composable (NavBackStackEntry) -> Unit = {
+            MapScreen()
+        }
+        override val route: String = "map"
+
+        fun create() = route
     }
 }
 
