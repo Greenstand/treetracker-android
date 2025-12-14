@@ -1,0 +1,111 @@
+name: Deploy to Firebase Beta
+
+on:
+  pull_request:
+    branches: [ master, release* ]
+
+jobs:
+  bump-version:
+    name: Bump version code
+    runs-on: ubuntu-latest
+    outputs:
+      version_code: ${{ steps.bump.outputs.version_code }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump version code
+        id: bump
+        uses: ./.github/workflows/actions/bump-version
+        with:
+          branch: ${{ github.head_ref || github.ref_name }}
+
+  build:
+    name: Build beta APK
+    needs: bump-version
+    uses: ./.github/workflows/build.yml
+    with:
+      build_variant: beta
+      upload_artifact: true
+    secrets: inherit
+
+  deploy:
+    name: Deploy to Firebase
+    runs-on: ubuntu-latest
+    needs: [bump-version, build]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-beta
+
+      - name: Deploy to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: 1:422699885542:android:aab16ef8fc4e5968a0ec27
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: Greenstand
+          releaseNotes: "A new release! Build ${{ needs.bump-version.outputs.version_code }}"
+          file: app-beta-release.apk
+
+#  notify:
+#    name: Send Slack notifications
+#    runs-on: ubuntu-latest
+#    needs: [bump-version, deploy]
+#    if: success()
+#
+#    steps:
+#      - name: Get git branch
+#        id: git-branch
+#        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+#
+#      - name: Send Slack notification (main)
+#        uses: slackapi/slack-github-action@v1
+#        with:
+#          payload: |
+#            {
+#              "text": "A new Greenstand Beta Build has been released on Firebase",
+#              "blocks": [
+#                {
+#                  "type": "section",
+#                  "text": {
+#                    "type": "mrkdwn",
+#                    "text": "A new Greenstand Beta Build has been released on Firebase\n*Build Number:* ${{ needs.bump-version.outputs.version_code }}\n*Branch:* ${{ steps.git-branch.outputs.branch }}"
+#                  }
+#                }
+#              ]
+#            }
+#        env:
+#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_URL }}
+#          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+#
+#      - name: Send Slack notification (QC)
+#        uses: slackapi/slack-github-action@v1
+#        with:
+#          payload: |
+#            {
+#              "text": "A new Greenstand Beta Build has been released on Firebase",
+#              "blocks": [
+#                {
+#                  "type": "section",
+#                  "text": {
+#                    "type": "mrkdwn",
+#                    "text": "A new Greenstand Beta Build has been released on Firebase\n*Build Number:* ${{ needs.bump-version.outputs.version_code }}\n*Branch:* ${{ steps.git-branch.outputs.branch }}"
+#                  }
+#                }
+#              ]
+#            }
+#        env:
+#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_URL_QC }}
+#          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

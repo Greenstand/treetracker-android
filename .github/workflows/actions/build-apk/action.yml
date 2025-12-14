@@ -1,0 +1,29 @@
+name: 'Build APK'
+description: 'Build APK for specified variant (assumes environment already set up)'
+
+inputs:
+  build_variant:
+    description: 'Build variant (dev, debug, beta, prerelease, release)'
+    required: true
+  decode_keystore:
+    description: 'Whether to decode keystore for signing'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Decode keystore (for release builds)
+      if: inputs.decode_keystore == 'true'
+      shell: bash
+      run: echo "${{ env.KEYSTORE_FILE }}" | base64 -d > keystore.jks
+
+    - name: Make gradlew executable
+      shell: bash
+      run: chmod +x ./gradlew
+
+    - name: Build APK
+      shell: bash
+      run: |
+        VARIANT=$(echo "${{ inputs.build_variant }}" | sed 's/\b\(.\)/\u\1/')
+        ./gradlew clean assemble${VARIANT}
