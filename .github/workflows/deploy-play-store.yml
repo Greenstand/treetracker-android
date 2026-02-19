@@ -27,7 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ github.head_ref || github.ref }}
 
       - name: Download APK artifact
         uses: actions/download-artifact@v4
