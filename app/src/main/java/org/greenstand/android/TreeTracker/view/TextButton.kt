@@ -67,6 +67,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
@@ -84,21 +85,16 @@ fun BoxScope.ArrowButton(
     isLeft: Boolean,
     onClick: () -> Unit,
 ) {
-    TreeTrackerButton(
-        isEnabled = isEnabled,
-        colors = colors,
-        modifier = Modifier
-            .align(Alignment.Center)
-            .size(height = 62.dp, width = 62.dp),
+    DepthIconButton(
+        icon = getPainter(colors = colors, isLeft = isLeft),
         onClick = onClick,
-    ) {
-        Image(
-            modifier = Modifier
-                .size(height = 45.dp, width = 45.dp),
-            painter = getPainter(colors = colors, isLeft = isLeft),
-            contentDescription = null,
-        )
-    }
+        modifier = Modifier.align(Alignment.Center),
+        colors = colors,
+        buttonSize = 62.dp,
+        iconSize = 45.dp,
+        isEnabled = isEnabled,
+        contentDescription = if (isLeft) "Previous" else "Next"
+    )
 }
 
 @Composable
@@ -149,27 +145,63 @@ fun ApprovalButton(
     }
 }
 
+/**
+ * A reusable depth button with an icon. Use this for consistent icon buttons
+ * throughout the app (info buttons, arrow buttons, etc.)
+ *
+ * @param icon The painter resource for the icon to display
+ * @param onClick The callback function for click event
+ * @param modifier The modifier to be applied to the button
+ * @param colors The button colors (defaults to WhiteLight)
+ * @param buttonSize The size of the button (defaults to 60.dp)
+ * @param iconSize The size of the icon inside the button (defaults to 45.dp)
+ * @param depth The depth of the 3D effect (defaults to 6f)
+ * @param isEnabled Whether the button is enabled (defaults to true)
+ * @param contentDescription Accessibility description for the icon
+ */
+@Composable
+fun DepthIconButton(
+    icon: Painter,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    colors: ButtonColors = AppButtonColors.WhiteLight,
+    buttonSize: Dp = 60.dp,
+    iconSize: Dp = 45.dp,
+    depth: Float = 6f,
+    isEnabled: Boolean = true,
+    contentDescription: String? = null
+) {
+    TreeTrackerButton(
+        modifier = modifier.size(buttonSize),
+        colors = colors,
+        onClick = onClick,
+        shape = TreeTrackerButtonShape.Circle,
+        depth = depth,
+        isEnabled = isEnabled
+    ) {
+        Image(
+            painter = icon,
+            modifier = Modifier.size(iconSize),
+            contentDescription = contentDescription
+        )
+    }
+}
+
 @Composable
 fun InfoButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Circle
-
 ) {
-    TreeTrackerButton(
-        modifier = modifier.size(60.dp),
-        colors = AppButtonColors.WhiteLight,
+    DepthIconButton(
+        icon = painterResource(id = R.drawable.info_icon),
         onClick = onClick,
-        shape = TreeTrackerButtonShape.Circle,
-        depth = 6f
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.info_icon),
-            modifier = Modifier
-                .size(80.dp),
-            contentDescription = null
-        )
-    }
+        modifier = modifier,
+        colors = AppButtonColors.WhiteLight,
+        buttonSize = 60.dp,
+        iconSize = 80.dp,
+        depth = 6f,
+        contentDescription = "Info"
+    )
 }
 
 @Composable
