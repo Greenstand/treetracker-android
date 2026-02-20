@@ -3,6 +3,7 @@ name: Deploy to Firebase Beta
 on:
   pull_request:
     branches: [ master, release* ]
+  workflow_dispatch:
 
 jobs:
   bump-version:
@@ -50,11 +51,18 @@ jobs:
         with:
           name: app-beta
 
+      - name: Validate Firebase token
+        run: |
+          if [ -z "${{ secrets.FIREBASE_TOKEN }}" ]; then
+            echo "FIREBASE_TOKEN is not set. Add it in repository secrets."
+            exit 1
+          fi
+
       - name: Deploy to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: 1:422699885542:android:aab16ef8fc4e5968a0ec27
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
           groups: Greenstand
           releaseNotes: "A new release! Build ${{ needs.bump-version.outputs.version_code }}"
           file: app-beta-release.apk
