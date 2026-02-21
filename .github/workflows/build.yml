@@ -1,0 +1,80 @@
+name: Build APK
+
+on:
+  workflow_call:
+    inputs:
+      build_variant:
+        description: "Build variant (dev, debug, beta, prerelease, release)"
+        required: true
+        type: string
+      upload_artifact:
+        description: "Whether to upload the built APK as an artifact"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      S3_DEV_IDENTITY_POOL_ID:
+        required: false
+      S3_TEST_IDENTITY_POOL_ID:
+        required: false
+      S3_PRODUCTION_IDENTITY_POOL_ID:
+        required: false
+      TREETRACKER_CLIENT_ID:
+        required: false
+      TREETRACKER_CLIENT_SECRET:
+        required: false
+      PROD_TREETRACKER_CLIENT_ID:
+        required: false
+      PROD_TREETRACKER_CLIENT_SECRET:
+        required: false
+      KEYSTORE_FILE:
+        required: false
+      KEYSTORE_PASSWORD:
+        required: false
+      KEY_ALIAS:
+        required: false
+      KEY_PASSWORD:
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      S3_DEV_IDENTITY_POOL_ID: ${{ secrets.S3_DEV_IDENTITY_POOL_ID }}
+      S3_TEST_IDENTITY_POOL_ID: ${{ secrets.S3_TEST_IDENTITY_POOL_ID }}
+      S3_PRODUCTION_IDENTITY_POOL_ID: ${{ secrets.S3_PRODUCTION_IDENTITY_POOL_ID }}
+      TREETRACKER_CLIENT_ID: ${{ secrets.TREETRACKER_CLIENT_ID }}
+      TREETRACKER_CLIENT_SECRET: ${{ secrets.TREETRACKER_CLIENT_SECRET }}
+      PROD_TREETRACKER_CLIENT_ID: ${{ secrets.PROD_TREETRACKER_CLIENT_ID }}
+      PROD_TREETRACKER_CLIENT_SECRET: ${{ secrets.PROD_TREETRACKER_CLIENT_SECRET }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup build environment
+        uses: ./.github/workflows/actions/setup-build-environment
+
+      - name: Build APK
+        uses: ./.github/workflows/actions/build-apk
+        with:
+          build_variant: ${{ inputs.build_variant }}
+          decode_keystore: ${{ inputs.build_variant == 'release' || inputs.build_variant == 'prerelease' }}
+
+      - name: Upload APK artifact
+        if: inputs.upload_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ inputs.build_variant }}
+          path: app/build/outputs/apk/${{ inputs.build_variant }}/*.apk
+          retention-days: 30
+
+      - name: Clean up
+        if: always()
+        run: |
+          rm -f treetracker.keys.properties
+          rm -f keystore.jks

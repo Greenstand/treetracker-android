@@ -1,0 +1,13 @@
+name: 'Run Tests'
+description: 'Execute Gradle tests (assumes environment already set up)'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Make gradlew executable
+      shell: bash
+      run: chmod +x ./gradlew
+
+    - name: Run tests
+      shell: bash
+      run: ./gradlew test --stacktrace
