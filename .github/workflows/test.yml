@@ -1,0 +1,47 @@
+name: Run Tests
+
+on:
+  workflow_call:
+    inputs:
+      use_dummy_keys:
+        description: "Whether to use dummy keys for testing"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      S3_DEV_IDENTITY_POOL_ID:
+        required: false
+      S3_TEST_IDENTITY_POOL_ID:
+        required: false
+      TREETRACKER_CLIENT_ID:
+        required: false
+      TREETRACKER_CLIENT_SECRET:
+        required: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      S3_DEV_IDENTITY_POOL_ID: ${{ secrets.S3_DEV_IDENTITY_POOL_ID }}
+      S3_TEST_IDENTITY_POOL_ID: ${{ secrets.S3_TEST_IDENTITY_POOL_ID }}
+      S3_PRODUCTION_IDENTITY_POOL_ID: ${{ secrets.S3_PRODUCTION_IDENTITY_POOL_ID }}
+      TREETRACKER_CLIENT_ID: ${{ secrets.TREETRACKER_CLIENT_ID }}
+      TREETRACKER_CLIENT_SECRET: ${{ secrets.TREETRACKER_CLIENT_SECRET }}
+      PROD_TREETRACKER_CLIENT_ID: ${{ secrets.PROD_TREETRACKER_CLIENT_ID }}
+      PROD_TREETRACKER_CLIENT_SECRET: ${{ secrets.PROD_TREETRACKER_CLIENT_SECRET }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup build environment
+        uses: ./.github/workflows/actions/setup-build-environment
+        with:
+          use_dummy_keys: ${{ inputs.use_dummy_keys }}
+
+      - name: Run tests
+        uses: ./.github/workflows/actions/run-tests
+
+      - name: Clean up property file
+        if: always()
+        run: rm -f treetracker.keys.properties

@@ -1,0 +1,54 @@
+name: 'Bump Version Code'
+description: 'Bumps the version code in build.gradle, commits, and pushes the change'
+inputs:
+  gradle-file:
+    description: 'Path to the build.gradle file'
+    required: false
+    default: 'app/build.gradle'
+  git-user-email:
+    description: 'Git user email for commits'
+    required: false
+    default: 'automation@treetracker.org'
+  git-user-name:
+    description: 'Git user name for commits'
+    required: false
+    default: 'Treetracker Automation'
+  branch:
+    description: 'Branch to push to'
+    required: false
+    default: 'master'
+outputs:
+  version_code:
+    description: 'The new version code'
+    value: ${{ steps.bump.outputs.version_code }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up git
+      shell: bash
+      run: |
+        git config --local user.email "${{ inputs.git-user-email }}"
+        git config --local user.name "${{ inputs.git-user-name }}"
+
+    - name: Bump version code
+      id: bump
+      shell: bash
+      run: |
+        # Read current version code
+        CURRENT_VERSION=$(grep -oP 'versionCode\s+\K\d+' ${{ inputs.gradle-file }})
+        NEW_VERSION=$((CURRENT_VERSION + 1))
+
+        # Update build.gradle
+        sed -i "s/versionCode $CURRENT_VERSION/versionCode $NEW_VERSION/" ${{ inputs.gradle-file }}
+
+        # Output the new version
+        echo "version_code=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "Bumped version from $CURRENT_VERSION to $NEW_VERSION"
+
+    - name: Commit version bump
+      shell: bash
+      run: |
+        git add ${{ inputs.gradle-file }}
+        git commit -m "Version Bump to ${{ steps.bump.outputs.version_code }}"
+        git push origin ${{ inputs.branch }}

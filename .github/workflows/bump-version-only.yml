@@ -1,0 +1,10 @@
+name: Bump Version Code Only
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bump-and-push:
+    name: Bump version and push
+    uses: ./.github/workflows/bump-version.yml
+    secrets: inherit

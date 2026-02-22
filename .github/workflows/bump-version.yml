@@ -1,0 +1,28 @@
+name: Bump Version Code
+
+on:
+  workflow_call:
+    outputs:
+      version_code:
+        description: "The new version code"
+        value: ${{ jobs.bump.outputs.version_code }}
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    outputs:
+      version_code: ${{ steps.bump.outputs.version_code }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump version code
+        id: bump
+        uses: ./.github/workflows/actions/bump-version
+        with:
+          branch: ${{ github.head_ref || github.ref_name }}
