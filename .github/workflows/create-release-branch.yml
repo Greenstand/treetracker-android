@@ -1,0 +1,65 @@
+name: Create Release Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Release version in X.Y.Z format (example: 1.2.3)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create-release-branch:
+    name: Validate and create release branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate input and create branch
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.release_version }}
+        run: |
+          set -euo pipefail
+
+          # Validate X.Y.Z where each part is numeric.
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: release_version must match format X.Y.Z where each X, Y, and Z is a number. Received: '$RELEASE_VERSION'"
+            exit 1
+          fi
+
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*'
+
+          # Collect existing release branches with strict X.Y.Z suffix.
+          mapfile -t existing_versions < <(
+            git for-each-ref --format='%(refname:short)' refs/remotes/origin/release/ \
+              | sed -nE 's#^origin/release/([0-9]+\.[0-9]+\.[0-9]+)$#\1#p'
+          )
+
+          if [ "${#existing_versions[@]}" -gt 0 ]; then
+            last_version="$(printf '%s\n' "${existing_versions[@]}" | sort -V | tail -n1)"
+            if [ "$(printf '%s\n%s\n' "$last_version" "$RELEASE_VERSION" | sort -V | tail -n1)" != "$RELEASE_VERSION" ] || [ "$RELEASE_VERSION" = "$last_version" ]; then
+              echo "Error: release_version must be greater than the last release branch version ($last_version). Received: '$RELEASE_VERSION'"
+              exit 1
+            fi
+          fi
+
+          release_branch="release/$RELEASE_VERSION"
+
+          if git show-ref --verify --quiet "refs/remotes/origin/$release_branch"; then
+            echo "Error: branch '$release_branch' already exists on origin."
+            exit 1
+          fi
+
+          git checkout -B "$release_branch" "origin/master"
+          git push origin "$release_branch"
+
+          echo "Created branch: $release_branch"
