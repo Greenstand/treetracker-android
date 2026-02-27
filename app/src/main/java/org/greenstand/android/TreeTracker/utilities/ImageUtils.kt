@@ -445,35 +445,43 @@ object ImageUtils {
         } else {
             ExifInterface.ORIENTATION_NORMAL
         }
-        val rotationAngle = when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> 90
-            ExifInterface.ORIENTATION_ROTATE_180 -> 180
-            ExifInterface.ORIENTATION_ROTATE_270 -> 270
-            ExifInterface.ORIENTATION_TRANSVERSE -> 270
-            else -> 0
+
+        val noScale = 1f
+        val mirrorScale = -1f
+        val rotate90 = 90f
+        val rotate180 = 180f
+        val rotate270 = 270f
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_NORMAL -> return
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.preScale(mirrorScale, noScale)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.setRotate(rotate180)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
+                matrix.setRotate(rotate180)
+                matrix.postScale(mirrorScale, noScale)
+            }
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.setRotate(rotate90)
+                matrix.postScale(mirrorScale, noScale)
+            }
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.setRotate(rotate90)
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.setRotate(rotate270)
+                matrix.postScale(mirrorScale, noScale)
+            }
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.setRotate(rotate270)
+            else -> return
         }
 
-        val matrix = Matrix().apply {
-            setRotate(
-                rotationAngle.toFloat(),
-                bmOptions.outWidth.toFloat() / 2,
-                bmOptions.outHeight.toFloat() / 2
-            )
-        }
-
-        val rotatedBitmap = Bitmap.createBitmap(
-            BitmapFactory.decodeFile(photoPath),
-            0,
-            0,
-            bmOptions.outWidth,
-            bmOptions.outHeight,
-            matrix,
-            true
+        val sourceBitmap = BitmapFactory.decodeFile(photoPath) ?: return
+        val transformedBitmap = Bitmap.createBitmap(
+            sourceBitmap, 0, 0, sourceBitmap.width, sourceBitmap.height, matrix, true
         )
 
         val compressionQuality = 70
         val byteArrayBitmapStream = ByteArrayOutputStream()
-        rotatedBitmap.compress(
+        transformedBitmap.compress(
             Bitmap.CompressFormat.JPEG, compressionQuality,
             byteArrayBitmapStream
         )
