@@ -3,6 +3,10 @@ name: Deploy to Firebase Beta
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: "Branch name to build and deploy from"
+        required: true
+        type: string
       release_notes:
         description: "Release notes for Firebase App Distribution"
         required: true
@@ -19,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ inputs.branch }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -27,7 +31,7 @@ jobs:
         id: bump
         uses: ./.github/workflows/actions/bump-version
         with:
-          branch: ${{ github.head_ref || github.ref_name }}
+          branch: ${{ inputs.branch }}
 
   build:
     name: Build beta APK
@@ -35,6 +39,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       build_variant: beta
+      source_ref: ${{ inputs.branch }}
       upload_artifact: true
     secrets: inherit
 
@@ -48,7 +53,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ inputs.branch }}
 
       - name: Download APK artifact
         uses: actions/download-artifact@v4
