@@ -7,6 +7,11 @@ on:
         description: "Build variant (dev, debug, beta, prerelease, release)"
         required: true
         type: string
+      source_ref:
+        description: "Git ref (branch/tag/SHA) to check out before building"
+        required: false
+        type: string
+        default: ""
       upload_artifact:
         description: "Whether to upload the built APK as an artifact"
         required: false
@@ -55,6 +60,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref != '' && inputs.source_ref || github.head_ref || github.ref }}
 
       - name: Setup build environment
         uses: ./.github/workflows/actions/setup-build-environment
