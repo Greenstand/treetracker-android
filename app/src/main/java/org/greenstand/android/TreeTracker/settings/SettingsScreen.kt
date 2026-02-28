@@ -145,11 +145,22 @@ fun SettingsScreen() {
                         navController.navigate(NavRoute.DeleteProfile.route)
                     }
                 )
+
+                Text(
+                    text = stringResource(
+                        id = R.string.app_version,
+                        BuildConfig.VERSION_NAME,
+                        BuildConfig.VERSION_CODE
+                    ),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
             }
             if (state.showPrivacyPolicyDialog == true) {
                 PrivacyPolicyDialog(settingsViewModel = viewModel)
             }
-            if(state.showLogoutDialog == true){
+            if (state.showLogoutDialog == true) {
                 CustomDialog(
                     title = stringResource(R.string.logout_dialog_title),
                     textContent = stringResource(R.string.logout_dialog_message),
