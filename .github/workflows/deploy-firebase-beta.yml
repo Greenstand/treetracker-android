@@ -7,6 +7,7 @@ on:
         description: "Branch name to build and deploy from"
         required: true
         type: string
+        default: master
       group:
         description: "Tester group to deploy to"
         required: true
@@ -17,7 +18,7 @@ on:
           - debug
         default: Greenstand
       release_notes:
-        description: "A new version is available!"
+        description: "Release Notes"
         required: true
         type: string
 
@@ -34,7 +35,7 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ADMIN_PAT }}
 
       - name: Bump version code
         id: bump
