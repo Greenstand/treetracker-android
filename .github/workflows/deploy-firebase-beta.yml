@@ -7,8 +7,17 @@ on:
         description: "Branch name to build and deploy from"
         required: true
         type: string
+      group:
+        description: "Tester group to deploy to"
+        required: true
+        type: choice
+        options:
+          - beta
+          - dev
+          - debug
+        default: beta
       release_notes:
-        description: "Release notes for Firebase App Distribution"
+        description: "A new version is available!"
         required: true
         type: string
 
@@ -85,7 +94,7 @@ jobs:
         with:
           appId: 1:422699885542:android:aab16ef8fc4e5968a0ec27
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          groups: debug
+          groups: ${{ inputs.group }}
           releaseNotes: ${{ github.event.inputs.release_notes }}
           file: ${{ steps.resolve-apk.outputs.apk_file }}
 
