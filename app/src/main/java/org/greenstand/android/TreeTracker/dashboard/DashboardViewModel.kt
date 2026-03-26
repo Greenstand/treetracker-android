@@ -97,6 +97,7 @@ class DashboardViewModel(
                 showSnackBar?.invoke(R.string.sync_preparing)
                 _isSyncing = true
             }
+            null -> { /* no work info available */ }
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -46,6 +47,7 @@ fun AddOrgScreen(
     val state by viewModel.state.observeAsState(AddOrgState())
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         bottomBar = {
             ActionBar(
                 leftAction = {

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
@@ -41,6 +42,7 @@ fun LanguageSelectScreen(
     val activity = LocalContext.current as Activity
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         topBar = {
             LanguageTopBar()
         },

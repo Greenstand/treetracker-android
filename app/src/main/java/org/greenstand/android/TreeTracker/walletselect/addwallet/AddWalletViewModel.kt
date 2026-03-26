@@ -44,7 +44,7 @@ class AddWalletViewModel(
 class AddWalletViewModelFactory(private val userId: Long)
     : ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddWalletViewModel(userId, get()) as T
     }
 }

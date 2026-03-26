@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,7 +21,6 @@ import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,7 +59,6 @@ import org.greenstand.android.TreeTracker.view.DepthSurfaceShape
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
-@OptIn(ExperimentalComposeApi::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
@@ -81,6 +80,7 @@ fun DashboardScreen(
     }
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         topBar = {
             DashboardTopBar(navController)
         },
@@ -130,8 +130,9 @@ fun DashboardScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     DashboardUploadProgressBar(
-                        progress = (state.treesRemainingToSync)
-                            .toFloat() / (state.totalTreesToSync),
+                        progress = if (state.totalTreesToSync > 0)
+                            (state.treesRemainingToSync).toFloat() / (state.totalTreesToSync)
+                        else 0f,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
@@ -197,7 +198,6 @@ fun DashboardTopBar(navController: NavController) {
     )
 }
 
-@ExperimentalComposeApi
 @Composable
 fun DashboardUploadProgressBar(
     progress: Float,
@@ -235,7 +235,6 @@ fun DashboardUploadProgressBar(
     }
 }
 
-@ExperimentalComposeApi
 @Composable
 fun DashBoardButton(
     text: String,
@@ -284,7 +283,6 @@ fun DashBoardButton(
     }
 }
 
-@ExperimentalComposeApi
 @Preview
 @Composable
 fun DashboardScreen_Preview(

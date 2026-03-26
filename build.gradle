@@ -1,21 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.9.24'
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
-        classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
+        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath 'com.google.gms:google-services:4.4.2'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
-        classpath 'org.jlleitschuh.gradle:ktlint-gradle:9.2.1'
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7"
+        classpath 'org.jlleitschuh.gradle:ktlint-gradle:11.0.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -27,7 +26,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven {
             url "https://maven.google.com" // Google's Maven repository
         }
@@ -35,10 +33,10 @@ allprojects {
     }
 
     ext {
-        compose_version = "1.1.1"
-        koin_version= "3.2.0-beta-1"
+        compose_version = "1.5.14"
+        koin_version = "3.5.3"
         androidSupportVersion = '1.0.0'
-        retrofit2Version = '2.6.0'
+        retrofit2Version = '2.9.0'
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"
         prod_treetracker_client_id = "configure in treetracker.keys.properties"
         prod_treetracker_client_secret = "configure in treetracker.keys.properties"

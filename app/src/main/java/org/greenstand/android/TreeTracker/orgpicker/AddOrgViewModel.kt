@@ -80,7 +80,7 @@ class AddOrgViewModelFactory(
     private val destinationWallet: String)
     : ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddOrgViewModel(userId, destinationWallet, get(), get(), get(), get(), get()) as T
     }
 }

@@ -3,6 +3,7 @@ package org.greenstand.android.TreeTracker.background
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -34,7 +35,15 @@ class SyncNotificationManager(
             .addAction(android.R.drawable.ic_delete, applicationContext.getString(R.string.cancel), intent)
             .setProgress(0, 0, true)
 
-        return ForegroundInfo(NOTIFICATION_ID, builder.build())
+        return ForegroundInfo(
+            NOTIFICATION_ID,
+            builder.build(),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            } else {
+                0
+            }
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
