@@ -2,8 +2,9 @@ package org.greenstand.android.TreeTracker.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.activity.enableEdgeToEdge
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.root.Root
@@ -18,9 +19,15 @@ class TreeTrackerActivity : ComponentActivity() {
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
     private val gpsUtils: GpsUtils by inject()
 
-
-    @OptIn(ExperimentalComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(
+                scrim = android.graphics.Color.argb(128, 0, 0, 0)
+            ),
+            navigationBarStyle = SystemBarStyle.dark(
+                scrim = android.graphics.Color.argb(128, 0, 0, 0)
+            )
+        )
         super.onCreate(savedInstanceState)
 
         languageSwitcher.applyCurrentLanguage(this)

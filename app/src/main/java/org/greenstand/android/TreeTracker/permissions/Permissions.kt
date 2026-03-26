@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -12,7 +13,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.shouldShowRationale
 import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -35,11 +38,14 @@ fun PermissionRequest(
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(PermissionItemsState())
     val permissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.CAMERA,
-        )
+        permissions = buildList {
+            add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            add(Manifest.permission.ACCESS_FINE_LOCATION)
+            add(Manifest.permission.CAMERA)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     )
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(
@@ -61,8 +67,8 @@ fun PermissionRequest(
         when (perm.permission) {
             Manifest.permission.CAMERA -> {
                 when {
-                    perm.hasPermission -> {}
-                    perm.shouldShowRationale -> {
+                    perm.status.isGranted -> {}
+                    perm.status.shouldShowRationale -> {
                         CustomDialog(
                             title = stringResource(R.string.accept_camera_permission_header),
                             textContent = stringResource(R.string.accept_camera_permission_message),
@@ -82,13 +88,13 @@ fun PermissionRequest(
             }
             Manifest.permission.ACCESS_FINE_LOCATION -> {
                 when {
-                    perm.hasPermission -> {
+                    perm.status.isGranted -> {
                         viewModel.isLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
                     }
-                    perm.shouldShowRationale -> {
+                    perm.status.shouldShowRationale -> {
                         LocationRationaleDialog(navController = navController, perm = perm)
                     }
                     else -> {
@@ -98,19 +104,23 @@ fun PermissionRequest(
             }
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
-                    perm.hasPermission -> {
+                    perm.status.isGranted -> {
                         viewModel.isLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
                     }
-                    perm.shouldShowRationale -> {
+                    perm.status.shouldShowRationale -> {
                         LocationRationaleDialog(navController = navController, perm = perm)
                     }
                     else -> {
                         PermissionDeniedPermanentlyDialog(navController)
                     }
                 }
+            }
+            Manifest.permission.POST_NOTIFICATIONS -> {
+                // Notification permission is requested automatically via the multi-permission request.
+                // No rationale dialog needed — if denied, sync will still work but without notifications.
             }
         }
     }

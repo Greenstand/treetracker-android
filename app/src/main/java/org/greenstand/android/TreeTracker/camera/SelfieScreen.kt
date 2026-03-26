@@ -37,6 +37,7 @@ fun SelfieScreen() {
 
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         topBar = {
             ActionBar(
                 centerAction = {

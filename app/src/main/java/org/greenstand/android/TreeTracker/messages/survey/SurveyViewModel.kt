@@ -93,7 +93,7 @@ class SurveyViewModel(
 class SurveyViewModelFactory(private val messageId: String)
     : ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SurveyViewModel(messageId, get(), get()) as T
     }
 }

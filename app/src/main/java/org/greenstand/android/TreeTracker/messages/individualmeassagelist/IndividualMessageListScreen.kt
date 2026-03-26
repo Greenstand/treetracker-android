@@ -3,9 +3,10 @@ package org.greenstand.android.TreeTracker.messages.individualmeassagelist
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ fun IndividualMessageListScreen(
     val state by viewModel.state.observeAsState(IndividualMessageListState())
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         topBar = {
             ActionBar(
                 leftAction = {
@@ -80,7 +82,7 @@ fun IndividualMessageListScreen(
         }
     ) {
         LazyVerticalGrid(
-            cells = GridCells.Fixed(2),
+            columns = GridCells.Fixed(2),
             modifier = Modifier.padding(it), // Padding for bottom bar.
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp)
         ) {

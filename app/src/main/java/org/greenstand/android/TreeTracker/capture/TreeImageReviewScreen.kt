@@ -31,6 +31,7 @@ fun TreeImageReviewScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         topBar = {
             ActionBar(
                 centerAction = {

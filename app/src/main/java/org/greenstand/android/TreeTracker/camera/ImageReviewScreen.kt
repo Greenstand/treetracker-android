@@ -23,6 +23,7 @@ fun ImageReviewScreen(photoPath: String) {
     val activity = LocalContext.current as Activity
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         bottomBar = {
             Row(
                 modifier = Modifier

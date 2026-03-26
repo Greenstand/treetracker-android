@@ -1,15 +1,12 @@
 package org.greenstand.android.TreeTracker.root
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.NavHost
-import androidx.navigation.get
+import androidx.navigation.compose.composable
 import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
-@ExperimentalComposeApi
 @Composable
 fun Host() {
 
@@ -41,15 +38,11 @@ fun Host() {
 }
 
 fun NavGraphBuilder.addNavRoute(navRoute: NavRoute) {
-    addDestination(
-        ComposeNavigator.Destination(provider[ComposeNavigator::class], navRoute.content).apply {
-            this.route = navRoute.route
-            navRoute.arguments.forEach { (argumentName, argument) ->
-                addArgument(argumentName, argument)
-            }
-            navRoute.deepLinks.forEach { deepLink ->
-                addDeepLink(deepLink)
-            }
-        }
-    )
+    composable(
+        route = navRoute.route,
+        arguments = navRoute.arguments,
+        deepLinks = navRoute.deepLinks,
+    ) { backStackEntry ->
+        navRoute.content(backStackEntry)
+    }
 }
