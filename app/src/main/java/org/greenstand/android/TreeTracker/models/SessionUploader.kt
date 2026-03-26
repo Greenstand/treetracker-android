@@ -37,8 +37,7 @@ class SessionUploader(
                 originUserId = session.originUserId,
                 targetWallet = session.destinationWallet,
                 organization = session.organization ?: "",
-                deviceConfigId = dao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid,
-                startTime = session.startTime.toEpochMilliseconds()
+                deviceConfigId = dao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid
             )
         }
 

@@ -16,8 +16,6 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import android.os.Build
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.annotations.SerializedName
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
@@ -46,5 +44,5 @@ data class DeviceRequest(
     @SerializedName("androidSdkVersion")
     val androidSdkVersion: Int = Build.VERSION.SDK_INT,
     @SerializedName("instanceId")
-    val instanceId: String = try { Tasks.await(FirebaseInstallations.getInstance().id) } catch (e: Exception) { "" }
+    val instanceId: String,
 )

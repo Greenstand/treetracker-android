@@ -15,9 +15,11 @@
  */
 package org.greenstand.android.TreeTracker.usecases
 
+import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
@@ -43,17 +45,22 @@ class SyncDataUseCase(
     override suspend fun execute(params: Unit): Boolean {
         try {
             withContext(Dispatchers.IO) {
+                val instanceId = try {
+                    FirebaseInstallations.getInstance().id.await()
+                } catch (e: Exception) {
+                    ""
+                }
 
                 executeIfContextActive("Message Sync") {
                     messagesRepo.syncMessages()
                 }
 
                 executeIfContextActive("Device Config Upload") {
-                    deviceConfigUploader.upload()
+                    deviceConfigUploader.upload(instanceId)
                 }
 
                 executeIfContextActive("User Upload") {
-                    planterUploader.upload()
+                    planterUploader.upload(instanceId)
                 }
 
                 executeIfContextActive("Session Upload") {
@@ -62,7 +69,7 @@ class SyncDataUseCase(
 
                 treeUpload(
                     onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
-                    onUpload = { treeUploader.uploadLegacyTrees(it) }
+                    onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) }
                 )
 
                 treeUpload(

@@ -28,7 +28,7 @@ class DeviceConfigUploader(
     private val gson: Gson,
 ) {
 
-    suspend fun upload() {
+    suspend fun upload(instanceId: String) {
         val deviceConfigsToUpload = dao.getDeviceConfigsToUpload()
 
         if (deviceConfigsToUpload.isEmpty()) {
@@ -43,6 +43,7 @@ class DeviceConfigUploader(
                 osVersion = config.osVersion,
                 sdkVersion = config.sdkVersion,
                 loggedAt = config.loggedAt.toString(),
+                instanceId = instanceId,
             )
         }
 

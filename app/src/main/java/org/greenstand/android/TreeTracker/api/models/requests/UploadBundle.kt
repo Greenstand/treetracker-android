@@ -54,13 +54,14 @@ constructor(
 
         fun createV1(
             newTreeRequests: List<NewTreeRequest>? = null,
-            registrations: List<RegistrationRequest>? = null
+            registrations: List<RegistrationRequest>? = null,
+            instanceId: String,
         ): UploadBundle {
             return UploadBundle(
                 version = "1",
                 trees = newTreeRequests,
                 registrations = registrations,
-                devices = listOf(DeviceRequest()),
+                devices = listOf(DeviceRequest(instanceId = instanceId)),
             )
         }
 
