@@ -15,6 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.camera
 
+import android.app.Activity
+import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Size
 import androidx.camera.core.AspectRatio
@@ -27,9 +29,9 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import timber.log.Timber
 import java.io.File
@@ -52,8 +54,14 @@ fun Camera(
 
                 cameraProviderFuture.addListener({
                     val cameraProvider = cameraProviderFuture.get()
-                    val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
-                    val screenSize = Size(metrics.widthPixels, metrics.widthPixels)
+                    val screenSize = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        val bounds = (previewView.context as Activity).windowManager.currentWindowMetrics.bounds
+                        Size(bounds.width(), bounds.width())
+                    } else {
+                        @Suppress("DEPRECATION")
+                        val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
+                        Size(metrics.widthPixels, metrics.widthPixels)
+                    }
 
                     val preview = if (isSelfieMode) {
                         Preview.Builder()

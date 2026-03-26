@@ -15,12 +15,12 @@ spotless = "6.18.0"
 detekt = "1.18.0-RC2"
 
 # AndroidX Core
-androidxCore = "1.8.0"
-androidxAppcompat = "1.3.1"
+androidxCore = "1.13.1"
+androidxAppcompat = "1.7.0"
 androidxMultidex = "2.0.1"
 androidxExifInterface = "1.3.2"
-androidxLifecycle = "2.3.1"
-androidxWork = "2.7.1"
+androidxLifecycle = "2.8.7"
+androidxWork = "2.9.1"
 androidxLegacySupport = "1.0.0"
 
 # Compose
@@ -28,10 +28,10 @@ compose = "1.6.7"
 composeActivity = "1.9.0"
 composeNavigation = "2.5.0"
 composeCompiler = "1.5.14"
-accompanist = "0.21.1-beta"
+accompanist = "0.34.0"
 
 # Kotlin
-kotlinxCoroutines = "1.5.0"
+kotlinxCoroutines = "1.8.1"
 kotlinxDatetime = "0.5.0"
 kotlinxSerialization = "1.6.2"
 
@@ -47,9 +47,9 @@ gson = "2.8.5"
 awsSdk = "2.16.8"
 
 # Camera
-camerax = "1.0.0"
-cameraxView = "1.0.0-alpha24"
-cameraxExt = "1.0.0-alpha24"
+camerax = "1.3.4"
+cameraxView = "1.3.4"
+cameraxExt = "1.3.4"
 
 # Dependency Injection
 koin = "3.2.0-beta-1"
@@ -58,10 +58,7 @@ koin = "3.2.0-beta-1"
 timber = "4.7.1"
 
 # Firebase
-firebaseBom = "25.10.0"
-firebaseAnalytics = "18.0.2"
-firebaseCrashlyticsKtx = "17.3.1"
-firebaseIid = "21.0.1"
+firebaseBom = "32.8.0"
 
 # Testing
 junit = "4.13.1"
@@ -83,7 +80,7 @@ maplibre = "11.5.1"
 coil = "2.5.0"
 
 # Other
-desugarJdkLibs = "1.1.5"
+desugarJdkLibs = "2.1.3"
 debugDatabase = "v1.0.6"
 
 [libraries]
@@ -94,6 +91,7 @@ androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "andr
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "androidxExifInterface" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidxWork" }
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "androidxLegacySupport" }
 
@@ -165,11 +163,11 @@ ktlint-gradle = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref =
 spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 
-# Firebase
+# Firebase (versions managed by BOM)
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
-firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebaseCrashlyticsKtx" }
-firebase-iid = { module = "com.google.firebase:firebase-iid", version.ref = "firebaseIid" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+firebase-installations = { module = "com.google.firebase:firebase-installations" }
 
 # Testing
 junit = { module = "junit:junit", version.ref = "junit" }

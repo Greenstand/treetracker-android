@@ -51,14 +51,18 @@ class Analytics(
             setUserProperty("model", Build.MODEL)
             setUserProperty("hardware", Build.HARDWARE)
             setUserProperty("device", Build.DEVICE)
-            setUserProperty("serial", Build.SERIAL)
+            setUserProperty("serial", "unknown")
             setUserProperty("android_release", Build.VERSION.RELEASE)
             setUserProperty("sdk_version", Build.VERSION.SDK_INT.toString())
         }
     }
 
     fun tagScreen(activty: Activity, screenName: String) {
-        firebaseAnalytics.setCurrentScreen(activty, screenName, null)
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            putString(FirebaseAnalytics.Param.SCREEN_CLASS, activty.javaClass.simpleName)
+        }
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
     }
 
     fun uploadComplete(treesOnDevice: Int) {

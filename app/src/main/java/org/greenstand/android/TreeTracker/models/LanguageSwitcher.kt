@@ -15,9 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import android.app.Activity
-import android.content.res.Configuration
-import android.content.res.Resources
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import org.greenstand.android.TreeTracker.preferences.PrefKey
@@ -45,24 +44,15 @@ enum class Language(val locale: Locale) {
 
 class LanguageSwitcher(private val prefs: Preferences) {
 
-    fun applyCurrentLanguage(activity: Activity) {
+    fun applyCurrentLanguage() {
         val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
-        language?.also { language ->
-            setLanguage(language, activity.resources)
-        }
+        language?.also { setLanguage(it) }
     }
 
-    fun setLanguage(language: Language, res: Resources) {
+    fun setLanguage(language: Language) {
         prefs.edit().putString(LANGUAGE_PREF_KEY, language.locale.toLanguageTag()).commit()
-
-        val config = Configuration(res.configuration).apply {
-            Locale.setDefault(language.locale)
-            setLocale(language.locale)
-        }
-
-        res.updateConfiguration(
-            config,
-            res.displayMetrics
+        AppCompatDelegate.setApplicationLocales(
+            LocaleListCompat.forLanguageTags(language.locale.toLanguageTag())
         )
     }
 

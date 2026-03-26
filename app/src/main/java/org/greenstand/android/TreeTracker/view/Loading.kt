@@ -61,7 +61,7 @@ fun DeterminateProgressBar(
 
     Canvas(
         modifier = modifier
-            .progressSemantics(progress)
+            .progressSemantics(progress.coerceIn(0f, 1f))
             .fillMaxWidth()
     ) {
         val diameterOffset = stroke.width / 2

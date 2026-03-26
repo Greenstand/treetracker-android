@@ -20,7 +20,7 @@ import android.hardware.SensorManager
 import android.location.LocationManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
 import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -101,7 +101,7 @@ val appModule = module {
 
     viewModel { AddOrgViewModel(get()) }
 
-    viewModel { LanguagePickerViewModel(get(), get()) }
+    viewModel { LanguagePickerViewModel(get()) }
 
     viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 
@@ -142,8 +142,6 @@ val appModule = module {
     single { OrgRepo(get(), get(), get()) }
 
     single { WorkManager.getInstance(get()) }
-
-    single { LocalBroadcastManager.getInstance(get()) }
 
     single { FirebaseAnalytics.getInstance(get()) }
 
