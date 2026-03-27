@@ -26,9 +26,13 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import org.greenstand.android.TreeTracker.models.NavRoute
+import androidx.navigation.toRoute
+import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
+import org.greenstand.android.TreeTracker.camera.SelfieScreen
+import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
+import org.greenstand.android.TreeTracker.navigation.SelfieRoute
+import org.greenstand.android.TreeTracker.navigation.trackedComposable
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.root.addNavRoute
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
@@ -65,11 +69,12 @@ class ImageCaptureActivity : ComponentActivity() {
                 LocalNavHostController provides navController
             ) {
                 TreeTrackerTheme {
-                    NavHost(navController, startDestination = NavRoute.Selfie.route) {
-                        listOf(
-                            NavRoute.Selfie,
-                            NavRoute.ImageReview,
-                        ).forEach { addNavRoute(it) }
+                    NavHost(navController, startDestination = SelfieRoute) {
+                        trackedComposable<SelfieRoute> { SelfieScreen() }
+                        trackedComposable<ImageReviewRoute> {
+                            val route = it.toRoute<ImageReviewRoute>()
+                            ImageReviewScreen(route.photoPath)
+                        }
                     }
                 }
             }

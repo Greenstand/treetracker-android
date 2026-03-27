@@ -3,7 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
-    id 'androidx.navigation.safeargs'
+    id 'org.jetbrains.kotlin.plugin.compose'
+    id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.firebase.crashlytics'
 }
 
@@ -60,10 +61,6 @@ android {
 
     kotlinOptions {
         jvmTarget = "11" //"1.8"
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.composeCompiler.get()
     }
 
     compileOptions {
@@ -206,6 +203,7 @@ dependencies {
     // Compose
     implementation libs.bundles.compose
     implementation libs.accompanist.permissions
+    implementation libs.androidx.compose.material.icons.extended
 
     // MapLibre
     implementation libs.maplibre.android.sdk
@@ -220,6 +218,7 @@ dependencies {
     implementation libs.kotlinx.coroutines.play.services
     implementation libs.kotlinx.datetime
     implementation libs.kotlinx.serialization.core
+    implementation libs.kotlinx.serialization.json
     coreLibraryDesugaring libs.desugar.jdk.libs
 
     // Database

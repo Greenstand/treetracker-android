@@ -15,64 +15,143 @@
  */
 package org.greenstand.android.TreeTracker.root
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.NavHost
-import androidx.navigation.get
-import org.greenstand.android.TreeTracker.models.NavRoute
+import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
+import org.greenstand.android.TreeTracker.camera.SelfieScreen
+import org.greenstand.android.TreeTracker.capture.TreeCaptureScreen
+import org.greenstand.android.TreeTracker.capture.TreeImageReviewScreen
+import org.greenstand.android.TreeTracker.dashboard.DashboardScreen
+import org.greenstand.android.TreeTracker.devoptions.DevOptionsRoot
+import org.greenstand.android.TreeTracker.languagepicker.LanguageSelectScreen
+import org.greenstand.android.TreeTracker.map.MapScreen
+import org.greenstand.android.TreeTracker.messages.ChatScreen
+import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
+import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementScreen
+import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
+import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
+import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
+import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
+import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
+import org.greenstand.android.TreeTracker.navigation.ChatRoute
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
+import org.greenstand.android.TreeTracker.navigation.DevOptionsRoute
+import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
+import org.greenstand.android.TreeTracker.navigation.IndividualMessageListRoute
+import org.greenstand.android.TreeTracker.navigation.LanguageRoute
+import org.greenstand.android.TreeTracker.navigation.MapRoute
+import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
+import org.greenstand.android.TreeTracker.navigation.OrgRoute
+import org.greenstand.android.TreeTracker.navigation.ProfileRoute
+import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
+import org.greenstand.android.TreeTracker.navigation.SelfieRoute
+import org.greenstand.android.TreeTracker.navigation.SessionNoteRoute
+import org.greenstand.android.TreeTracker.navigation.SettingsRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
+import org.greenstand.android.TreeTracker.navigation.SplashRoute
+import org.greenstand.android.TreeTracker.navigation.SurveyRoute
+import org.greenstand.android.TreeTracker.navigation.TreeCaptureRoute
+import org.greenstand.android.TreeTracker.navigation.TreeHeightScreenRoute
+import org.greenstand.android.TreeTracker.navigation.TreeImageReviewRoute
+import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
+import org.greenstand.android.TreeTracker.navigation.WalletSelectRoute
+import org.greenstand.android.TreeTracker.navigation.trackedComposable
+import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
+import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
+import org.greenstand.android.TreeTracker.profile.DeleteProfileScreen
+import org.greenstand.android.TreeTracker.profile.ProfileScreen
+import org.greenstand.android.TreeTracker.profile.ProfileSelectScreen
+import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
+import org.greenstand.android.TreeTracker.settings.SettingsScreen
+import org.greenstand.android.TreeTracker.signup.SignUpScreen
+import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.treeheight.TreeHeightScreen
+import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
+import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @ExperimentalComposeApi
 @Composable
 fun Host() {
-
     val navController = LocalNavHostController.current
 
     TreeTrackerTheme {
-        NavHost(navController, startDestination = NavRoute.Splash.route) {
-            listOf(
-                NavRoute.Splash,
-                NavRoute.Language,
-                NavRoute.SignupFlow,
-                NavRoute.Dashboard,
-                NavRoute.Org,
-                NavRoute.UserSelect,
-                NavRoute.WalletSelect,
-                NavRoute.AddWallet,
-                NavRoute.AddOrg,
-                NavRoute.TreeImageReview,
-                NavRoute.Selfie,
-                NavRoute.TreeCapture,
-                NavRoute.TreeHeightScreen,
-                NavRoute.Survey,
-                NavRoute.MessagesUserSelect,
-                NavRoute.IndividualMessageList,
-                NavRoute.Chat,
-                NavRoute.Announcement,
-                NavRoute.SessionNote,
-                NavRoute.Settings,
-                NavRoute.Profile,
-                NavRoute.ProfileSelect,
-                NavRoute.DeleteProfile,
-                NavRoute.DevOptions,
-                NavRoute.Map,
-            ).forEach { addNavRoute(it) }
+        NavHost(navController, startDestination = SplashRoute) {
+
+            trackedComposable<SplashRoute>(
+                deepLinks = listOf(
+                    navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" }
+                )
+            ) {
+                SplashScreen(it.arguments?.getString("orgJson"))
+            }
+
+            trackedComposable<LanguageRoute> {
+                val route = it.toRoute<LanguageRoute>()
+                LanguageSelectScreen(route.isFromTopBar)
+            }
+
+            trackedComposable<SignupFlowRoute> { SignUpScreen() }
+            trackedComposable<DashboardRoute> { DashboardScreen() }
+            trackedComposable<OrgRoute> { OrgPickerScreen() }
+            trackedComposable<UserSelectRoute> { UserSelectScreen() }
+            trackedComposable<WalletSelectRoute> { WalletSelectScreen() }
+            trackedComposable<AddWalletRoute> { AddWalletScreen() }
+            trackedComposable<AddOrgRoute> { AddOrgScreen() }
+            trackedComposable<SelfieRoute> { SelfieScreen() }
+            trackedComposable<TreeHeightScreenRoute> { TreeHeightScreen() }
+            trackedComposable<SessionNoteRoute> { SessionNoteScreen() }
+            trackedComposable<SettingsRoute> { SettingsScreen() }
+            trackedComposable<ProfileSelectRoute> { ProfileSelectScreen() }
+            trackedComposable<DeleteProfileRoute> { DeleteProfileScreen() }
+            trackedComposable<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
+            trackedComposable<DevOptionsRoute> { DevOptionsRoot() }
+            trackedComposable<MapRoute> { MapScreen() }
+
+            trackedComposable<ProfileRoute> {
+                val route = it.toRoute<ProfileRoute>()
+                ProfileScreen(route.planterInfoId)
+            }
+
+            trackedComposable<IndividualMessageListRoute> {
+                val route = it.toRoute<IndividualMessageListRoute>()
+                IndividualMessageListScreen(route.planterInfoId)
+            }
+
+            trackedComposable<SurveyRoute> {
+                val route = it.toRoute<SurveyRoute>()
+                SurveyScreen(route.messageId)
+            }
+
+            trackedComposable<ImageReviewRoute> {
+                val route = it.toRoute<ImageReviewRoute>()
+                ImageReviewScreen(route.photoPath)
+            }
+
+            trackedComposable<TreeCaptureRoute> {
+                val route = it.toRoute<TreeCaptureRoute>()
+                TreeCaptureScreen(route.profilePicUrl)
+            }
+
+            trackedComposable<TreeImageReviewRoute> { TreeImageReviewScreen() }
+
+            trackedComposable<ChatRoute> {
+                val route = it.toRoute<ChatRoute>()
+                ChatScreen(route.planterInfoId, route.otherChatIdentifier)
+            }
+
+            trackedComposable<AnnouncementRoute> {
+                val route = it.toRoute<AnnouncementRoute>()
+                AnnouncementScreen(route.messageId)
+            }
         }
     }
-}
-
-fun NavGraphBuilder.addNavRoute(navRoute: NavRoute) {
-    addDestination(
-        ComposeNavigator.Destination(provider[ComposeNavigator::class], navRoute.contentProvider).apply {
-            this.route = navRoute.route
-            navRoute.arguments.forEach { (argumentName, argument) ->
-                addArgument(argumentName, argument)
-            }
-            navRoute.deepLinks.forEach { deepLink ->
-                addDeepLink(deepLink)
-            }
-        }
-    )
 }

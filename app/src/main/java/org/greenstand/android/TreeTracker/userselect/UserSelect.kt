@@ -31,8 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -65,7 +66,7 @@ fun UserSelect(
                     if (isCreateUserEnabled) {
                         OrangeAddButton(
                             modifier = Modifier.align(Alignment.Center),
-                            onClick = { navController.navigate(NavRoute.SignupFlow.route) }
+                            onClick = { navController.navigate(SignupFlowRoute) }
                         )
                     }
                 },
@@ -87,8 +88,8 @@ fun UserSelect(
                         colors = navigationButtonColors,
                         onClick = {
                             if(!isFromSettings) {
-                                navController.navigate(NavRoute.Dashboard.route) {
-                                    popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+                                navController.navigate(DashboardRoute) {
+                                    popUpTo<DashboardRoute> { inclusive = true }
                                     launchSingleTop = true
                                 }
                             } else {

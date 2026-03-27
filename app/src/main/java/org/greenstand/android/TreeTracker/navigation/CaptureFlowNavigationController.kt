@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
@@ -52,11 +51,13 @@ class CaptureFlowNavigationController(
             GlobalScope.launch {
                 treeCapturer.saveTree()
             }
-            navController.popBackStack(NavRoute.TreeCapture.route, false)
+            navController.popBackStack<TreeCaptureRoute>(inclusive = false)
             return
         }
 
-        navController.navigate(navPath[currentNavPathIndex].route)
+        val destination = navPath[currentNavPathIndex]
+        val route = resolveDestinationRoute(destination)
+        navController.navigate(route)
     }
 
     fun navBackward(navController: NavHostController) {
@@ -72,17 +73,33 @@ class CaptureFlowNavigationController(
 
     fun goToDashboard(navController: NavHostController) {
         endSession()
-        navController.navigate(NavRoute.Dashboard.route) {
-            popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+        navController.navigate(DashboardRoute) {
+            popUpTo<DashboardRoute> { inclusive = true }
             launchSingleTop = true
         }
     }
 
     fun goToUserSelect(navController: NavHostController) {
         endSession()
-        navController.navigate(NavRoute.UserSelect.route) {
-            popUpTo(NavRoute.Dashboard.route) { inclusive = true }
+        navController.navigate(UserSelectRoute) {
+            popUpTo<DashboardRoute> { inclusive = true }
             launchSingleTop = true
+        }
+    }
+
+    private fun resolveDestinationRoute(destination: Destination): Any {
+        // Check if it's a no-arg route first
+        RouteRegistry.resolveNoArgRoute(destination.route)?.let { return it }
+
+        // Handle arg routes based on the pattern
+        return when {
+            destination.route.startsWith("tree-image-review") -> {
+                TreeImageReviewRoute(photoPath = treeCapturer.currentTree!!.photoPath!!)
+            }
+            destination.route.startsWith("capture") -> {
+                TreeCaptureRoute(profilePicUrl = "")
+            }
+            else -> error("Unknown capture flow destination: ${destination.route}")
         }
     }
 

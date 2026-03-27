@@ -9,7 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.SettingsRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.userselect.DeleteProfileState
@@ -73,7 +74,7 @@ fun DeleteProfileScreen() {
                 onPositiveClick = {
                     viewModel.deleteUser()
                     if(state.selectedUser?.isPowerUser == true){
-                        navController.navigate(NavRoute.SignupFlow.route) {
+                        navController.navigate(SignupFlowRoute) {
                             popUpTo(navController.graph.id) {
                                 inclusive = true
                             }
@@ -81,8 +82,8 @@ fun DeleteProfileScreen() {
                         }
 
                     } else {
-                        navController.navigate(NavRoute.Settings.route) {
-                            popUpTo(NavRoute.Settings.route) { inclusive = true }
+                        navController.navigate(SettingsRoute) {
+                            popUpTo<SettingsRoute> { inclusive = true }
                             launchSingleTop = true
                         }
                     }

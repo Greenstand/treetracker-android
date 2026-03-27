@@ -21,10 +21,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.utils.updateState
 
 data class TreeImageReviewState(
@@ -42,7 +42,7 @@ class TreeImageReviewViewModel(
     val state: LiveData<TreeImageReviewState> = _state
 
     private val forceNote = orgRepo.currentOrg().captureFlow
-        .find { it.route == NavRoute.TreeImageReview.route }
+        .find { it.route == RouteRegistry.ROUTE_TREE_IMAGE_REVIEW }
         ?.features
         ?.find { it == FORCE_NOTE_FEATURE } != null
 

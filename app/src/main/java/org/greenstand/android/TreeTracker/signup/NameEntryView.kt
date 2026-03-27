@@ -47,8 +47,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -67,8 +68,8 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
             viewModel.createUser(photoPath)?.let { user ->
                 if (user.isPowerUser) {
                     // In initial signup flow, clear stack and go to dashboard
-                    navController.navigate(NavRoute.Dashboard.route) {
-                        popUpTo(NavRoute.Language.route) { inclusive = true }
+                    navController.navigate(DashboardRoute) {
+                        popUpTo<LanguageRoute> { inclusive = true }
                         launchSingleTop = true
                     }
                 } else {

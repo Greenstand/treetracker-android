@@ -20,7 +20,7 @@ import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -45,19 +45,19 @@ class OrgRepo(
                 walletId = "",
                 captureSetupFlowJson = gson.toJson(
                     listOf(
-                        Destination(NavRoute.UserSelect.route),
-//                        Destination(NavRoute.WalletSelect.route),
-                        Destination(NavRoute.AddOrg.route),
+                        Destination(RouteRegistry.ROUTE_USER_SELECT),
+//                        Destination(RouteRegistry.ROUTE_WALLET_SELECT),
+                        Destination(RouteRegistry.ROUTE_ADD_ORG),
                     )
                 ),
                 captureFlowJson = gson.toJson(
                     listOf(
-                        Destination(NavRoute.TreeCapture.route),
+                        Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
                         // Uncomment this to test out forcing the note taking feature
-//                        Destination(NavRoute.TreeImageReview.route, listOf(FORCE_NOTE_FEATURE)),
-                        Destination(NavRoute.TreeImageReview.route),
+//                        Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, listOf(FORCE_NOTE_FEATURE)),
+                        Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW),
                         // For Kasiki Hai
-//                    Destination(NavRoute.TreeHeightScreen.route),
+//                    Destination(RouteRegistry.ROUTE_TREE_HEIGHT),
                     )
                 ),
             )

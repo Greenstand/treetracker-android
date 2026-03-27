@@ -30,7 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.signup.SignUpState
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
@@ -78,7 +78,7 @@ fun SelfieScreen() {
                 .fillMaxWidth()
                 .aspectRatio(1.0f),
             onImageCaptured = {
-                navController.navigate(NavRoute.ImageReview.create(it.path))
+                navController.navigate(ImageReviewRoute(photoPath = it.path))
             }
         )
         Box(

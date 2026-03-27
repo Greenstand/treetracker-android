@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.DevOptionsRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 
 @OptIn(ExperimentalUnitApi::class)
@@ -62,7 +62,7 @@ fun BoxScope.TopBarTitle() {
                     this.pointerInput(true) {
                         detectTapGestures(
                             onLongPress = {
-                                nav.navigate(NavRoute.DevOptions.route)
+                                nav.navigate(DevOptionsRoute)
                             }
                         )
                     }
