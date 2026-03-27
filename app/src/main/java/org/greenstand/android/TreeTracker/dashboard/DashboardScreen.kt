@@ -153,14 +153,15 @@ fun Dashboard(
         snackbarHost = {
             SnackbarHost(hostState = it, modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(Alignment.Top)) { snackBarData->
+                .navigationBarsPadding()
+                .wrapContentHeight(Alignment.Bottom)) { snackBarData->
                 val backgroundColor = Green
 
-                Box(modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
+                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
                     Snackbar(
                         contentColor = CustomTheme.textColors.darkText,
                         backgroundColor = backgroundColor,
-                        modifier = Modifier.align(Alignment.TopStart)
+                        modifier = Modifier.align(Alignment.BottomStart)
                     ) {
                         Text(text = snackBarData.message, fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(vertical = 15.dp))
                     }
