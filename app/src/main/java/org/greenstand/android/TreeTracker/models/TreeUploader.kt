@@ -45,11 +45,11 @@ class TreeUploader(
 
     fun log(msg: String) = Timber.tag("TreeUploader").d(msg)
 
-    suspend fun uploadLegacyTrees(treeIds: List<Long>) {
+    suspend fun uploadLegacyTrees(treeIds: List<Long>, instanceId: String) {
         windowedTreeUpload(treeIds) { treeIdBundle ->
             val legacyTrees = dao.getTreeCapturesByIds(treeIdBundle)
             uploadLegacyTreeImages(legacyTrees)
-            uploadLegacyTreeBundles(legacyTrees)
+            uploadLegacyTreeBundles(legacyTrees, instanceId)
 
             deleteLocalImages(legacyTrees.map { it.localPhotoPath })
             dao.removeTreeCapturesLocalImagePaths(legacyTrees.map { it.id })
@@ -138,7 +138,7 @@ class TreeUploader(
         log("Tree Image Upload Completed")
     }
 
-    private suspend fun uploadLegacyTreeBundles(trees: List<TreeCaptureEntity>) {
+    private suspend fun uploadLegacyTreeBundles(trees: List<TreeCaptureEntity>, instanceId: String) {
         log("Uploading Tree Bundle...")
         // Create a request object for each tree
         val treeRequestList = trees.map { tree ->
@@ -150,7 +150,7 @@ class TreeUploader(
             )
         }
 
-        val jsonBundle = gson.toJson(UploadBundle.createV1(newTreeRequests = treeRequestList))
+        val jsonBundle = gson.toJson(UploadBundle.createV1(newTreeRequests = treeRequestList, instanceId = instanceId,))
 
         // Create a hash ID to reference this upload bundle later
         val bundleId = jsonBundle.md5()

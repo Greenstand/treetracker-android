@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.languagepicker
 
 import android.content.SharedPreferences
-import android.content.res.Resources
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -72,7 +71,7 @@ class LanguagePickerPreviewProvider : PreviewParameterProvider<LanguagePickerVie
     private val languageSwitcher = LanguageSwitcher(Preferences(stubSharedPrefs))
 
     override val values: Sequence<LanguagePickerViewModel> = sequenceOf(
-        LanguagePickerViewModel(languageSwitcher, Resources.getSystem())
+        LanguagePickerViewModel(languageSwitcher)
     )
 
     override val count: Int = values.count()

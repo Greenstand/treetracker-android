@@ -20,6 +20,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -68,7 +69,7 @@ class TreeSyncWorker(
             notificationManager.createNotificationChannel(channel)
         }
 
-        val pendingFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
+        val pendingFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
         val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
             .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), pendingFlag))
             .setSmallIcon(R.drawable.upload_icon)
@@ -81,6 +82,10 @@ class TreeSyncWorker(
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
             .setContentText(applicationContext.getString(R.string.uploading_trees))
             .build()
-        return ForegroundInfo(1337, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(1337, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            ForegroundInfo(1337, notification)
+        }
     }
 }

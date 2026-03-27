@@ -149,8 +149,6 @@ android {
         }
     }
 
-    useLibrary 'org.apache.http.legacy'
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -202,6 +200,7 @@ dependencies {
     implementation libs.androidx.exifinterface
     implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.lifecycle.runtime.compose
     implementation libs.androidx.work.runtime.ktx
 
     // Compose
@@ -218,6 +217,7 @@ dependencies {
     implementation libs.kotlin.stdlib.jdk7
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.play.services
     implementation libs.kotlinx.datetime
     implementation libs.kotlinx.serialization.core
     coreLibraryDesugaring libs.desugar.jdk.libs
@@ -246,7 +246,7 @@ dependencies {
     implementation platform(libs.firebase.bom)
     implementation libs.firebase.analytics
     implementation libs.firebase.crashlytics.ktx
-    implementation libs.firebase.iid
+    implementation libs.firebase.installations
 
     // Testing
     testImplementation libs.bundles.testing

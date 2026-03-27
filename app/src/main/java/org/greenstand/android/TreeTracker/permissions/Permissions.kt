@@ -26,7 +26,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Lifecycle
@@ -35,7 +35,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.shouldShowRationale
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.permissions.PermissionItemsState
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
@@ -77,8 +79,8 @@ fun PermissionRequest(
         when (perm.permission) {
             Manifest.permission.CAMERA -> {
                 when {
-                    perm.hasPermission -> {}
-                    perm.shouldShowRationale -> {
+                    perm.status.isGranted -> {}
+                    perm.status.shouldShowRationale -> {
                         CustomDialog(
                             title = stringResource(R.string.accept_camera_permission_header),
                             textContent = stringResource(R.string.accept_camera_permission_message),
@@ -98,13 +100,13 @@ fun PermissionRequest(
             }
             Manifest.permission.ACCESS_FINE_LOCATION -> {
                 when {
-                    perm.hasPermission -> {
+                    perm.status.isGranted -> {
                         viewModel.isLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
                     }
-                    perm.shouldShowRationale -> {
+                    perm.status.shouldShowRationale -> {
                         LocationRationaleDialog(navController = navController, perm = perm)
                     }
                     else -> {
@@ -114,13 +116,13 @@ fun PermissionRequest(
             }
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
-                    perm.hasPermission -> {
+                    perm.status.isGranted -> {
                         viewModel.isLocationEnabled()
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
                     }
-                    perm.shouldShowRationale -> {
+                    perm.status.shouldShowRationale -> {
                         LocationRationaleDialog(navController = navController, perm = perm)
                     }
                     else -> {
@@ -168,7 +170,7 @@ fun PermissionDeniedPermanentlyDialog(navController: NavHostController) {
         onPositiveClick = {
             val intent = Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.fromParts("package", "org.greenstand.android.TreeTracker.debug", null)
+                Uri.fromParts("package", (activity as Activity).packageName, null)
             )
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(activity, intent, null)

@@ -30,6 +30,4 @@ data class SessionRequest(
     val organization: String,
     @SerializedName("device_configuration_id")
     val deviceConfigId: String,
-    @SerializedName("start_time")
-    val startTime: Long,
 )

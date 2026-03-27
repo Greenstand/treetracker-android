@@ -42,11 +42,11 @@ class PlanterUploader(
     private val objectStorageClient: ObjectStorageClient,
 ) {
 
-    suspend fun upload() {
+    suspend fun upload(instanceId: String) {
         withContext(Dispatchers.IO) {
             uploadLegacyPlanterImages()
             uploadUserImages()
-            uploadPlanterInfo()
+            uploadPlanterInfo(instanceId)
             uploadUsers()
             deleteLocalImagesThatWereUploaded()
         }
@@ -98,7 +98,7 @@ class PlanterUploader(
         }
     }
 
-    private suspend fun uploadPlanterInfo() {
+    private suspend fun uploadPlanterInfo(instanceId: String) {
         val planterInfoToUpload = dao.getAllPlanterInfoToUpload()
 
         Timber.tag(TAG)
@@ -132,7 +132,7 @@ class PlanterUploader(
             }
 
         val jsonBundle =
-            gson.toJson(UploadBundle.createV1(registrations = registrationRequests))
+            gson.toJson(UploadBundle.createV1(registrations = registrationRequests, instanceId = instanceId))
         val bundleId = jsonBundle.md5() + "_registrations"
         val planterInfoIds = planterInfoToUpload.map { it.id }
 

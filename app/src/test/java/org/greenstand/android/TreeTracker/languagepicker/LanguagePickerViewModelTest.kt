@@ -15,8 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.languagepicker
 
-import android.app.Activity
-import android.content.res.Resources
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -40,14 +38,13 @@ class LanguagePickerViewModelTest {
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
     private val languageSwitcher = mockk<LanguageSwitcher>(relaxed = true)
-    private val resources = mockk<Resources>(relaxUnitFun = true)
 
     private lateinit var testSubject: LanguagePickerViewModel
 
     @Before
     fun setup() {
         coEvery { languageSwitcher.currentLanguage() } returns Language.ENGLISH
-        testSubject = LanguagePickerViewModel(languageSwitcher, resources)
+        testSubject = LanguagePickerViewModel(languageSwitcher)
     }
 
     @Test
@@ -60,13 +57,12 @@ class LanguagePickerViewModelTest {
     fun `Verify set language calls the set language from the Language Switcher `() = runBlocking {
         val language = Language.ENGLISH
         testSubject.setLanguage(language)
-        coVerify { languageSwitcher.setLanguage(language, resources) }
+        coVerify { languageSwitcher.setLanguage(language) }
     }
 
     @Test
     fun `Verify refresh app language calls apply current language from language switcher`() = runBlocking {
-        val activity = mockk<Activity>(relaxed = true)
-        testSubject.refreshAppLanguage(activity)
-        coVerify { languageSwitcher.applyCurrentLanguage(activity) }
+        testSubject.refreshAppLanguage()
+        coVerify { languageSwitcher.applyCurrentLanguage() }
     }
 }

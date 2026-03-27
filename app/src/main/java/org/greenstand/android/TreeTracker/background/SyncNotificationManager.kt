@@ -46,15 +46,15 @@ class SyncNotificationManager(
             .setContentTitle(applicationContext.getString(R.string.syncing))
             .setContentText(applicationContext.getString(R.string.uploading_trees))
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setColor(applicationContext.resources.getColor(R.color.colorPrimary))
+            .setColor(androidx.core.content.ContextCompat.getColor(applicationContext, R.color.colorPrimary))
             .addAction(android.R.drawable.ic_delete, applicationContext.getString(R.string.cancel), intent)
             .setProgress(0, 0, true)
 
-        return ForegroundInfo(NOTIFICATION_ID, builder.build(),if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {
-            0
-        })
+            ForegroundInfo(NOTIFICATION_ID, builder.build())
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

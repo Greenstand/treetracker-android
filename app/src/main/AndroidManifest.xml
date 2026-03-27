@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -34,9 +35,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        android:enableOnBackInvokedCallback="true">
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync"
@@ -54,7 +55,6 @@
             android:name=".activities.TreeTrackerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
-            android:configChanges="locale"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="true"
@@ -99,9 +99,6 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-        <service
-            android:name=".background.SyncService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
 
     </application>
 </manifest>

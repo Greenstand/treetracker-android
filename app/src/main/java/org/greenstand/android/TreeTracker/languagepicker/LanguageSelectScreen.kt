@@ -15,7 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.languagepicker
 
-import android.app.Activity
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -31,7 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -55,7 +55,6 @@ fun LanguageSelectScreen(
 ) {
     val currentLanguage by viewModel.currentLanguage.observeAsState()
     val navController = LocalNavHostController.current
-    val activity = LocalContext.current as Activity
 
     Scaffold(
         topBar = {
@@ -74,7 +73,7 @@ fun LanguageSelectScreen(
                         } else {
                             navController.navigate(NavRoute.SignupFlow.route)
                         }
-                        viewModel.refreshAppLanguage(activity)
+                        viewModel.refreshAppLanguage()
                     }
                 }
             )

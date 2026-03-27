@@ -53,7 +53,7 @@ data class DashboardState(
     val showUnreadMessageNotification: Boolean = false,
     val showTreeSyncReminderDialog: Boolean = false
 ) {
-    val uploadProgress: Float = treesRemainingToSync.toFloat() / totalTreesToSync
+    val uploadProgress: Float = if (totalTreesToSync > 0) treesRemainingToSync.toFloat() / totalTreesToSync else 0f
 }
 
 class DashboardViewModel(

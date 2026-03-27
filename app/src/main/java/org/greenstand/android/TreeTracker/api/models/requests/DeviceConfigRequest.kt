@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import android.os.Build
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.annotations.SerializedName
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
@@ -40,13 +39,13 @@ class DeviceConfigRequest(
     @SerializedName("device")
     val device: String = Build.DEVICE,
     @SerializedName("serial")
-    val serial: String = Build.SERIAL,
+    val serial: String = "unknown",
     @SerializedName("os_version")
     val osVersion: String,
     @SerializedName("sdk_version")
     val sdkVersion: Int,
     @SerializedName("instance_id")
-    val instanceId: String = FirebaseInstanceId.getInstance().id,
+    val instanceId: String,
     @SerializedName("logged_at")
     val loggedAt: String
 )

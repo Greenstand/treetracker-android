@@ -48,7 +48,7 @@ class TreeTrackerActivity : ComponentActivity() {
             )
         )
 
-        languageSwitcher.applyCurrentLanguage(this)
+        languageSwitcher.applyCurrentLanguage()
 
         setContent {
             CustomTheme {
