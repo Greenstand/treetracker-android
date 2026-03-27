@@ -95,6 +95,7 @@ fun TreeCaptureScreen(
     }
 
     Scaffold(
+        backgroundColor = AppColors.Gray,
         bottomBar = {
             ActionBar(
                 modifier = Modifier
@@ -158,6 +159,9 @@ fun TreeCaptureScreen(
         Camera(
             isSelfieMode = false,
             cameraControl = cameraControl,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             onImageCaptured = {
                 viewModel.onImageCaptured(it)
                 if (state.isLocationAvailable == true) {
