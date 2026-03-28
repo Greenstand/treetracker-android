@@ -176,7 +176,6 @@ repositories {
     maven {
         url "https://maven.google.com"
     }
-    maven { url 'https://maven.fabric.io/public' }
     mavenCentral()
 }
 
@@ -212,7 +211,6 @@ dependencies {
     implementation libs.coil.compose
 
     // Kotlin
-    implementation libs.kotlin.stdlib.jdk7
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
     implementation libs.kotlinx.coroutines.play.services
@@ -237,7 +235,6 @@ dependencies {
 
     // Logging
     api libs.timber
-    implementation libs.androidx.legacy.support.v4
 
     // Firebase
     implementation platform(libs.firebase.bom)
