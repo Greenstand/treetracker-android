@@ -161,7 +161,7 @@ android {
     }
     lint {
         abortOnError false
-        checkReleaseBuilds false
+        checkReleaseBuilds true
     }
     namespace 'org.greenstand.android.TreeTracker'
 }
@@ -226,8 +226,6 @@ dependencies {
     implementation libs.androidx.room.ktx
     kapt libs.androidx.room.compiler
 
-    // Debug database for dev builds
-    devImplementation libs.debug.database
 
     // Networking
     api libs.retrofit.converter.gson

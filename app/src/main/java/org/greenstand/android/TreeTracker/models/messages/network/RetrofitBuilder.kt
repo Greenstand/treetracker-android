@@ -29,8 +29,12 @@ class RetrofitBuilder(private val gson: Gson) {
             .client(
                 OkHttpClient.Builder()
                     .addInterceptor(
-                        HttpLoggingInterceptor()
-                            .also { it.setLevel(HttpLoggingInterceptor.Level.BODY) }
+                        HttpLoggingInterceptor().also {
+                            it.setLevel(
+                                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                                else HttpLoggingInterceptor.Level.NONE
+                            )
+                        }
                     )
                     .build()
             )

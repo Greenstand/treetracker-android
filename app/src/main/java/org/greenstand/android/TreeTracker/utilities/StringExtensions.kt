@@ -35,7 +35,7 @@ fun String.md5(): String {
 
         return MD5Hash.toString()
     } catch (e: NoSuchAlgorithmException) {
-        e.printStackTrace()
+        timber.log.Timber.e(e, "MD5 algorithm not available")
     }
 
     return ""

@@ -116,8 +116,7 @@ fun Camera(
 
                                 override fun onError(exception: ImageCaptureException) {
                                     Timber.tag("CameraXApp")
-                                        .e("Photo capture failed: ${exception.localizedMessage}")
-                                    exception.printStackTrace()
+                                        .e(exception, "Photo capture failed")
                                 }
                             }
                         )

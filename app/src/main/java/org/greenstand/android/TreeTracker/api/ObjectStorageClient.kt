@@ -35,6 +35,7 @@ import java.util.*
 import java.util.Date
 import java.util.UUID
 import org.greenstand.android.TreeTracker.BuildConfig
+import timber.log.Timber
 
 @Suppress("ImplicitDefaultLocale")
 class ObjectStorageClient private constructor(applicationContext: Context) {
@@ -84,14 +85,10 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
                 Timber.tag("Acceleration").d("Bucket accelerate status: " + accelerateStatus)
                 */
             } catch (e: AmazonServiceException) {
-                // The call was transmitted successfully, but Amazon S3 couldn't process
-                // it, so it returned an error response.
-                e.printStackTrace()
+                Timber.e(e, "S3 service error during client initialization")
                 throw(e)
             } catch (e: Exception) {
-                // Amazon S3 couldn't be contacted for a response, or the client
-                // couldn't parse the response from Amazon S3.
-                e.printStackTrace()
+                Timber.e(e, "Failed to initialize S3 client")
                 throw(e)
             }
         } else {
