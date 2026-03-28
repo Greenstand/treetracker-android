@@ -228,9 +228,7 @@ val appModule = module {
 
     factory { CreateLegacyTreeUseCase(get(), get()) }
 
-    if (BuildConfig.DEBUG) {
-        factory { CreateFakeTreesUseCase(get(), get(), get(), get(), get(), get(), get()) }
-    }
+    factory { CreateFakeTreesUseCase(get(), get(), get(), get(), get(), get(), get()) }
 
     factory { CheckForInternetUseCase() }
 
