@@ -32,6 +32,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -48,12 +49,14 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import kotlinx.coroutines.launch
 
 @Composable
 fun TreeHeightScreen() {
     val viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current)
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(TreeHeightSelectionState())
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier,
@@ -86,7 +89,9 @@ fun TreeHeightScreen() {
                         colors = AppButtonColors.ProgressGreen,
                         onClick = {
                             state.selectedColor?.let {
-                                CaptureFlowScopeManager.nav.navForward(navController)
+                                scope.launch {
+                                    CaptureFlowScopeManager.nav.navForward(navController)
+                                }
                             }
                         }
                     )

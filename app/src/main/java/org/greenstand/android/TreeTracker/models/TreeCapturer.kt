@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.models
 import org.greenstand.android.TreeTracker.models.location.Convergence
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
+import timber.log.Timber
 import java.io.File
 import java.util.*
 
@@ -48,9 +49,13 @@ class TreeCapturer(
     }
 
     fun setImage(imageFile: File) {
+        val uuid = newTreeUuid
+            ?: error("pinLocation() must be called successfully before setImage()")
+        val sessionId = sessionTracker.currentSessionId
+            ?: error("Session must be started before setImage()")
         val tree = Tree(
-            treeUuid = newTreeUuid!!,
-            sessionId = sessionTracker.currentSessionId!!,
+            treeUuid = uuid,
+            sessionId = sessionId,
             content = "",
             photoPath = imageFile.absolutePath,
             convergence?.longitudeConvergence?.mean ?: 0.0,
@@ -76,9 +81,18 @@ class TreeCapturer(
         currentTree = currentTree?.copy(content = note)
     }
 
-    suspend fun saveTree() {
-        currentTree?.let {
-            createTreeUseCase.execute(it)
+    suspend fun saveTree(): Boolean {
+        val tree = currentTree
+        if (tree == null) {
+            Timber.tag("TreeCapturer").w("saveTree() called but currentTree is null, nothing to save")
+            return false
+        }
+        return try {
+            createTreeUseCase.execute(tree)
+            true
+        } catch (e: Exception) {
+            Timber.tag("TreeCapturer").e(e, "Failed to save tree")
+            false
         }
     }
 }

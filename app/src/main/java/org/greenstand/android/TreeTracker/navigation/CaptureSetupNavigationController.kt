@@ -16,11 +16,11 @@
 package org.greenstand.android.TreeTracker.navigation
 
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.organization.Destination
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 
@@ -29,57 +29,70 @@ class CaptureSetupNavigationController(
     private val stepCounter: StepCounter,
     private val sessionTracker: SessionTracker,
     private val locationDataCapturer: LocationDataCapturer,
-) {
+) : FlowNavigationController(orgRepo.currentOrg().captureSetupFlow) {
 
-    private var navPath = emptyList<Destination>()
-    private var currentNavPathIndex = 0
-
-    init {
-        navPath = orgRepo.currentOrg().captureSetupFlow
-    }
-
-    fun navForward(navController: NavHostController) {
-        // If we're done navigating inside the setup flow, go to the capture flow
-        if (currentNavPathIndex == navPath.size - 1) {
-            runBlocking {
-                stepCounter.enable()
-                sessionTracker.startSession()
+    /**
+     * Navigate forward in the setup flow. Suspend because completing setup
+     * requires starting a session (DB write) before navigating to capture.
+     */
+    suspend fun navForward(navController: NavHostController) {
+        if (isAtEnd) {
+            // Setup complete — start session and transition to capture flow
+            stepCounter.enable()
+            sessionTracker.startSession()
+            withContext(Dispatchers.Main) {
                 locationDataCapturer.startGpsUpdates()
             }
 
-            val userPhotoPath = CaptureSetupScopeManager.getData().user!!.photoPath
-            navController.navigate(TreeCaptureRoute(profilePicUrl = userPhotoPath))
+            val userPhotoPath = CaptureSetupScopeManager.getData().user?.photoPath ?: ""
+            withContext(Dispatchers.Main) {
+                navController.navigate(TreeCaptureRoute(profilePicUrl = userPhotoPath))
+            }
             CaptureSetupScopeManager.close()
         } else {
-            currentNavPathIndex++
+            incrementIndex()
             val destination = navPath[currentNavPathIndex]
-            val route = RouteRegistry.resolveNoArgRoute(destination.route)
+            val route = resolveNoArgDestination(destination)
                 ?: error("Unknown setup flow destination: ${destination.route}")
-            navController.navigate(route)
+            withContext(Dispatchers.Main) {
+                navController.navigate(route)
+            }
         }
     }
 
     fun navBackward(navController: NavHostController) {
-        currentNavPathIndex--
+        decrementIndex()
         navController.popBackStack()
     }
 
     fun navToUserSelect(navController: NavHostController) {
-        currentNavPathIndex = 0
+        resetIndex()
         navController.navigate(UserSelectRoute) {
             popUpTo<DashboardRoute>()
             launchSingleTop = true
         }
     }
 
-    fun navFromNewUserCreation(navController: NavHostController) {
-        currentNavPathIndex++
+    /**
+     * Navigate forward after a new user was created from the signup flow.
+     * Includes bounds checking to prevent IndexOutOfBoundsException.
+     */
+    suspend fun navFromNewUserCreation(navController: NavHostController) {
+        incrementIndex()
+        if (currentNavPathIndex >= navPath.size) {
+            // Signup was the last step — treat as setup complete
+            currentNavPathIndex = navPath.size - 1
+            navForward(navController)
+            return
+        }
         val destination = navPath[currentNavPathIndex]
-        val route = RouteRegistry.resolveNoArgRoute(destination.route)
+        val route = resolveNoArgDestination(destination)
             ?: error("Unknown setup flow destination: ${destination.route}")
-        navController.navigate(route) {
-            popUpTo<SignupFlowRoute> { inclusive = true }
-            launchSingleTop = true
+        withContext(Dispatchers.Main) {
+            navController.navigate(route) {
+                popUpTo<SignupFlowRoute> { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,11 +50,13 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(AddOrgState())
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         bottomBar = {
@@ -69,7 +72,7 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
                         isLeft = false,
                     ) {
                         viewModel.setDefaultOrg()
-                        CaptureSetupScopeManager.nav.navForward(navController)
+                        scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
                     }
                 }
             )
@@ -94,7 +97,7 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
                 keyboardActions = KeyboardActions(
                     onGo = {
                         viewModel.setDefaultOrg()
-                        CaptureSetupScopeManager.nav.navForward(navController)
+                        scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
                     }
                 )
             )
