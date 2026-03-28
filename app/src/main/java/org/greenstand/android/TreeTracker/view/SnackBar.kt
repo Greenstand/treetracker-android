@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.view
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
@@ -35,6 +36,7 @@ fun CustomSnackbar(
     backGroundColor: Color = AppColors.Green,
 ) {
     SnackbarHost(
+        modifier = Modifier.navigationBarsPadding(),
         hostState = snackbarHostState,
         snackbar = { data ->
             Snackbar(
