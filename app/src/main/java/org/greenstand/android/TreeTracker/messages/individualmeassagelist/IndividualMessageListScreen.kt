@@ -33,10 +33,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
+import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
+import org.greenstand.android.TreeTracker.navigation.ChatRoute
+import org.greenstand.android.TreeTracker.navigation.SurveyRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -79,9 +81,9 @@ fun IndividualMessageListScreen(
                         colors = AppButtonColors.MessagePurple,
                         onClick = {
                             when (val msg = state.selectedMessage) {
-                                is DirectMessage -> navController.navigate(NavRoute.Chat.create(userId, msg.from))
-                                is SurveyMessage -> navController.navigate(NavRoute.Survey.create(msg.id))
-                                is AnnouncementMessage -> navController.navigate(NavRoute.Announcement.create(msg.id))
+                                is DirectMessage -> navController.navigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
+                                is SurveyMessage -> navController.navigate(SurveyRoute(messageId = msg.id))
+                                is AnnouncementMessage -> navController.navigate(AnnouncementRoute(messageId = msg.id))
                             }
                         }
                     )

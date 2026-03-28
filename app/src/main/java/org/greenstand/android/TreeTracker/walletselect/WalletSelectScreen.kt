@@ -40,9 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -98,7 +98,7 @@ fun WalletSelectScreen(
                 centerAction = {
                     OrangeAddButton(
                         modifier = Modifier.align(Alignment.Center),
-                        onClick = { navController.navigate(NavRoute.AddWallet.create()) },
+                        onClick = { navController.navigate(AddWalletRoute) },
                     )
                 },
                 leftAction = {

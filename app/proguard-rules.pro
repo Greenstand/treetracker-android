@@ -54,3 +54,12 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.conscrypt.**
 -dontwarn org.openjsse.**
+
+# kotlinx-serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** { *** Companion; }
+-keepclasseswithmembers class kotlinx.serialization.json.** { kotlinx.serialization.KSerializer serializer(...); }
+-keep,includedescriptorclasses class org.greenstand.android.TreeTracker.**$$serializer { *; }
+-keepclassmembers class org.greenstand.android.TreeTracker.** { *** Companion; }
+-keepclasseswithmembers class org.greenstand.android.TreeTracker.** { kotlinx.serialization.KSerializer serializer(...); }

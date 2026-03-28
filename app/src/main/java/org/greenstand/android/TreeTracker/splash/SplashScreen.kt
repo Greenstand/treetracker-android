@@ -36,7 +36,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.LanguageRoute
+import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import timber.log.Timber
 
@@ -101,15 +103,15 @@ private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean {
 }
 
 private fun navigateToLanguageScreen(navController: NavHostController) {
-    navController.navigate(NavRoute.Language.create(isFromTopBar = false)) {
-        popUpTo(NavRoute.Splash.route) { inclusive = true }
+    navController.navigate(LanguageRoute(isFromTopBar = false)) {
+        popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }
 }
 
 private fun navigateToDashboardScreen(navController: NavHostController) {
-    navController.navigate(NavRoute.Dashboard.route) {
-        popUpTo(NavRoute.Splash.route) { inclusive = true }
+    navController.navigate(DashboardRoute) {
+        popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }
 }

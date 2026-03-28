@@ -60,8 +60,9 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.Constants
@@ -327,8 +328,8 @@ fun ExistingUserDialog(
 
                         if(state.isTherePowerUser == false){
                             viewModel.setExistingUserAsPowerUser(user.id)
-                            navController.navigate(NavRoute.Dashboard.route) {
-                                popUpTo(NavRoute.Language.route) { inclusive = true }
+                            navController.navigate(DashboardRoute) {
+                                popUpTo<LanguageRoute> { inclusive = true }
                                 launchSingleTop = true
                             }
                         } else {

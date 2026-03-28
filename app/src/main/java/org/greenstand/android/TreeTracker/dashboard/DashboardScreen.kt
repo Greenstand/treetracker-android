@@ -70,7 +70,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
+import org.greenstand.android.TreeTracker.navigation.OrgRoute
+import org.greenstand.android.TreeTracker.navigation.SettingsRoute
+import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -100,7 +103,7 @@ fun DashboardScreen(
             title = stringResource(R.string.upload_trees_soon_title),
             textContent = stringResource(R.string.upload_trees_text_content),
             onPositiveClick = {
-                navController.navigate(NavRoute.UserSelect.route)
+                navController.navigate(UserSelectRoute)
             }
         )
     }
@@ -108,18 +111,18 @@ fun DashboardScreen(
         state = state,
         snackBar = snackBar,
         onSyncClicked = { viewModel.sync() },
-        onOrgClicked = { navController.navigate(NavRoute.Org.route) },
+        onOrgClicked = { navController.navigate(OrgRoute) },
         onCaptureClicked = {
             if (state.showTreeSyncReminderDialog) {
                 showDialog = true
-            } else navController.navigate(NavRoute.UserSelect.route)
+            } else navController.navigate(UserSelectRoute)
         },
         onMessagesClicked = {
             viewModel.syncMessages()
-            navController.navigate(NavRoute.MessagesUserSelect.route)
+            navController.navigate(MessagesUserSelectRoute)
         },
         onSettingsClicked = {
-            navController.navigate(NavRoute.Settings.route)
+            navController.navigate(SettingsRoute)
         }
     )
 }

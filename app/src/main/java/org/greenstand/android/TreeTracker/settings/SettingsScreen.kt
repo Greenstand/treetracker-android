@@ -33,7 +33,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
+import org.greenstand.android.TreeTracker.navigation.MapRoute
+import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -100,7 +103,7 @@ fun SettingsScreen() {
                     titleResId = R.string.profile_title,
                     descriptionResId = R.string.profile_description,
                     onClick = {
-                        navController.navigate(NavRoute.ProfileSelect.route)
+                        navController.navigate(ProfileSelectRoute)
                     }
                 )
                 Divider(color = Color.White)
@@ -111,7 +114,7 @@ fun SettingsScreen() {
                         titleResId = R.string.map_title,
                         descriptionResId = R.string.map_description,
                         onClick = {
-                            navController.navigate(NavRoute.Map.route)
+                            navController.navigate(MapRoute)
                         }
                     )
                     Divider(color = Color.White)
@@ -142,7 +145,7 @@ fun SettingsScreen() {
                     titleResId = R.string.delete_account_title,
                     descriptionResId = R.string.delete_account_description,
                     onClick = {
-                        navController.navigate(NavRoute.DeleteProfile.route)
+                        navController.navigate(DeleteProfileRoute)
                     }
                 )
 
@@ -166,7 +169,7 @@ fun SettingsScreen() {
                     textContent = stringResource(R.string.logout_dialog_message),
                     onPositiveClick = {
                         viewModel.logout()
-                        navController.navigate(NavRoute.SignupFlow.route) {
+                        navController.navigate(SignupFlowRoute) {
                             popUpTo(navController.graph.id) {
                                 inclusive = true
                             }

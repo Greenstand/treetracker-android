@@ -31,7 +31,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
-import org.greenstand.android.TreeTracker.models.NavRoute
+import org.greenstand.android.TreeTracker.navigation.SelfieRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.LocalImage
@@ -54,9 +54,9 @@ fun ImageReviewScreen(photoPath: String) {
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = {
-                        navController.navigate(NavRoute.Selfie.route) {
+                        navController.navigate(SelfieRoute) {
                             launchSingleTop = true
-                            popUpTo(NavRoute.Selfie.route) { inclusive = true }
+                            popUpTo<SelfieRoute> { inclusive = true }
                         }
                     },
                     approval = false
