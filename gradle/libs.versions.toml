@@ -1,12 +1,13 @@
 [versions]
 # Android SDK
 compileSdk = "35"
-minSdk = "21"
+minSdk = "23"
 targetSdk = "35"
 
 # Plugins
 androidGradlePlugin = "8.11.0"
-kotlin = "2.0.21"
+kotlin = "2.3.20"
+ksp = "2.3.6"
 googleServices = "4.4.2"
 firebaseCrashlytics = "2.9.9"
 ktlint = "14.2.0"
@@ -33,7 +34,7 @@ kotlinxDatetime = "0.5.0"
 kotlinxSerialization = "1.7.3"
 
 # Database
-room = "2.6.1"
+room = "2.8.4"
 
 # Networking
 retrofit = "2.11.0"
@@ -157,6 +158,7 @@ firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlyti
 ktlint-gradle = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 # Firebase (versions managed by BOM)
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -189,7 +191,7 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }

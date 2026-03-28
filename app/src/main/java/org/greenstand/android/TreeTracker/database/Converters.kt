@@ -43,13 +43,13 @@ object Converters {
     fun stringToInstance(s: String?): Instant? = s?.toInstant()
 
     @TypeConverter
-    fun stringToArray(value: String?): List<String?>? {
+    fun stringToArray(value: String?): List<String>? {
         if (value == null) return null
-        return json.decodeFromString<List<String?>>(value)
+        return json.decodeFromString<List<String>>(value)
     }
 
     @TypeConverter
-    fun arrayToString(list: List<String?>?): String? {
+    fun arrayToString(list: List<String>?): String? {
         if (list == null) return null
         return json.encodeToString(list)
     }
