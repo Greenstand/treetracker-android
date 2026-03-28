@@ -43,7 +43,9 @@ class CreateFakeTreesUseCase(
 ) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
-        check(BuildConfig.DEBUG) { "CreateFakeTreesUseCase must not be called in release builds" }
+        check(BuildConfig.DEBUG || BuildConfig.BUILD_TYPE == "beta") {
+            "CreateFakeTreesUseCase must not be called in release builds"
+        }
 
         val location = locationUpdateManager.currentLocation
         val centerLat = location?.latitude ?: 0.0
