@@ -20,7 +20,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "organization")
-class OrganizationEntity(
+data class OrganizationEntity(
     @PrimaryKey
     @ColumnInfo(name = "_id")
     var id: String,

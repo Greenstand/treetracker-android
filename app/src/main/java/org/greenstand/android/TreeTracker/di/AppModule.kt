@@ -141,6 +141,8 @@ val appModule = module {
 
     single { OrgRepo(get(), get(), get()) }
 
+    single { org.greenstand.android.TreeTracker.models.organization.FeatureResolver(get()) }
+
     single { WorkManager.getInstance(get()) }
 
     single { FirebaseAnalytics.getInstance(get()) }

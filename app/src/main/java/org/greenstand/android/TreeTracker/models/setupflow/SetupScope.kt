@@ -19,23 +19,35 @@ import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationContr
 import org.koin.core.component.KoinScopeComponent
 import org.koin.core.component.createScope
 import org.koin.core.scope.Scope
+import timber.log.Timber
 
 object CaptureSetupScopeManager {
 
     private var currentScope: Scope? = null
 
+    val isOpen: Boolean get() = currentScope != null
+
     fun open() {
+        if (currentScope != null) {
+            Timber.tag("CaptureSetupScope").w("Scope already open, closing previous before reopening")
+            close()
+        }
         currentScope = CaptureSetupScope().scope
         currentScope?.get<CaptureSetupData>()
     }
 
-    fun getData(): CaptureSetupData = currentScope!!.get()
+    fun getData(): CaptureSetupData {
+        return currentScope?.get()
+            ?: error("CaptureSetupScope not open. Call open() before getData().")
+    }
 
     val nav: CaptureSetupNavigationController
-        get() = currentScope!!.get()
+        get() = currentScope?.get()
+            ?: error("CaptureSetupScope not open. Call open() before accessing nav.")
 
     fun close() {
         currentScope?.close()
+        currentScope = null
     }
 }
 

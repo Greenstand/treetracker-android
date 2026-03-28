@@ -37,36 +37,40 @@ class OrgRepo(
     private var currentOrg: Org? = null
 
     suspend fun init() {
-        dao.insertOrg(
-            OrganizationEntity(
-                id = "-1",
-                version = 1,
-                name = "Greenstand",
-                walletId = "",
-                captureSetupFlowJson = gson.toJson(
-                    listOf(
-                        Destination(RouteRegistry.ROUTE_USER_SELECT),
-//                        Destination(RouteRegistry.ROUTE_WALLET_SELECT),
-                        Destination(RouteRegistry.ROUTE_ADD_ORG),
-                    )
-                ),
-                captureFlowJson = gson.toJson(
-                    listOf(
-                        Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
-                        // Uncomment this to test out forcing the note taking feature
-//                        Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, listOf(FORCE_NOTE_FEATURE)),
-                        Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW),
-                        // For Kasiki Hai
-//                    Destination(RouteRegistry.ROUTE_TREE_HEIGHT),
-                    )
-                ),
-            )
-        )
-        val currentOrgId = prefs.getString(CURRENT_ORG_ID_KEY, "-1")
+        dao.insertOrg(defaultOrgEntity())
+        val currentOrgId = prefs.getString(CURRENT_ORG_ID_KEY, DEFAULT_ORG_ID)
         currentOrg = dao.getOrg(currentOrgId)?.toOrg()
-        Timber.tag("OrgRepo").d("Org set to: ${currentOrg!!.name}")
+        if (currentOrg == null) {
+            Timber.tag("OrgRepo").w("Stored org ID '$currentOrgId' not found, falling back to default")
+            currentOrg = dao.getOrg(DEFAULT_ORG_ID)?.toOrg()
+        }
+        Timber.tag("OrgRepo").d("Org set to: ${currentOrg?.name}")
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
+
+    private fun defaultOrgEntity() = OrganizationEntity(
+        id = DEFAULT_ORG_ID,
+        version = 1,
+        name = "Greenstand",
+        walletId = "",
+        captureSetupFlowJson = gson.toJson(
+            listOf(
+                Destination(RouteRegistry.ROUTE_USER_SELECT),
+//              Destination(RouteRegistry.ROUTE_WALLET_SELECT),
+                Destination(RouteRegistry.ROUTE_ADD_ORG),
+            )
+        ),
+        captureFlowJson = gson.toJson(
+            listOf(
+                Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
+                // Uncomment this to test out forcing the note taking feature
+//              Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, listOf(OrgFeature.FORCE_NOTE.key)),
+                Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW),
+                // For Kasiki Hai
+//              Destination(RouteRegistry.ROUTE_TREE_HEIGHT),
+            )
+        ),
+    )
 
     suspend fun getOrgs(): List<Org> {
         return dao.getAllOrgs().map { it.toOrg() }
@@ -75,24 +79,60 @@ class OrgRepo(
     suspend fun setOrg(orgId: String) {
         prefs.edit().putString(CURRENT_ORG_ID_KEY, orgId).commit()
         currentOrg = dao.getOrg(orgId)?.toOrg()
-        Timber.tag("OrgRepo").d("Org set to: ${currentOrg!!.name}")
+        if (currentOrg == null) {
+            Timber.tag("OrgRepo").w("Org '$orgId' not found after setOrg, falling back to default")
+            currentOrg = dao.getOrg(DEFAULT_ORG_ID)?.toOrg()
+        }
+        Timber.tag("OrgRepo").d("Org set to: ${currentOrg?.name}")
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
-    fun currentOrg(): Org = currentOrg!!
-
-    suspend fun addOrgFromJsonString(orgJsonString: String) {
-        val orgJsonObj = JsonParser().parse(orgJsonString).asJsonObject
-        val orgEntity = OrganizationEntity(
-            id = orgJsonObj.get(OrgJsonKeys.V1.ID).asString,
-            version = orgJsonObj.get(OrgJsonKeys.V1.VERSION).asInt,
-            name = orgJsonObj.get(OrgJsonKeys.V1.NAME).asString,
-            walletId = orgJsonObj.get(OrgJsonKeys.V1.WALLET_ID).asString,
-            captureSetupFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_SETUP_FLOW).asJsonArray.toString(),
-            captureFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_FLOW).asJsonArray.toString(),
+    fun currentOrg(): Org {
+        return currentOrg ?: error(
+            "OrgRepo not initialized. Call init() before accessing currentOrg()."
         )
-        dao.insertOrg(orgEntity)
-        setOrg(orgEntity.id)
+    }
+
+    suspend fun addOrgFromJsonString(orgJsonString: String): Boolean {
+        return try {
+            @Suppress("DEPRECATION")
+            val orgJsonObj = JsonParser().parse(orgJsonString).asJsonObject
+            val orgEntity = OrganizationEntity(
+                id = orgJsonObj.get(OrgJsonKeys.V1.ID).asString,
+                version = orgJsonObj.get(OrgJsonKeys.V1.VERSION).asInt,
+                name = orgJsonObj.get(OrgJsonKeys.V1.NAME).asString,
+                walletId = orgJsonObj.get(OrgJsonKeys.V1.WALLET_ID).asString,
+                captureSetupFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_SETUP_FLOW).asJsonArray.toString(),
+                captureFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_FLOW).asJsonArray.toString(),
+            )
+            val validatedEntity = validateOrgRoutes(orgEntity)
+            dao.insertOrg(validatedEntity)
+            setOrg(validatedEntity.id)
+            true
+        } catch (e: Exception) {
+            Timber.tag("OrgRepo").e(e, "Failed to parse org JSON, falling back to default org")
+            false
+        }
+    }
+
+    private fun validateOrgRoutes(entity: OrganizationEntity): OrganizationEntity {
+        val typeToken = object : TypeToken<List<Destination>>() {}.type
+        val setupFlow = gson.fromJson<List<Destination>>(entity.captureSetupFlowJson, typeToken)
+        val captureFlow = gson.fromJson<List<Destination>>(entity.captureFlowJson, typeToken)
+        val invalidSetup = setupFlow.filter { !RouteRegistry.isValidRoute(it.route) }
+        val invalidCapture = captureFlow.filter { !RouteRegistry.isValidRoute(it.route) }
+        if (invalidSetup.isNotEmpty()) {
+            Timber.tag("OrgRepo").w("Unknown setup flow routes: ${invalidSetup.map { it.route }}")
+        }
+        if (invalidCapture.isNotEmpty()) {
+            Timber.tag("OrgRepo").w("Unknown capture flow routes: ${invalidCapture.map { it.route }}")
+        }
+        val validSetup = setupFlow.filter { RouteRegistry.isValidRoute(it.route) }
+        val validCapture = captureFlow.filter { RouteRegistry.isValidRoute(it.route) }
+        return entity.copy(
+            captureSetupFlowJson = gson.toJson(validSetup),
+            captureFlowJson = gson.toJson(validCapture),
+        )
     }
 
     private fun OrganizationEntity.toOrg(): Org {
@@ -110,6 +150,7 @@ class OrgRepo(
     }
 
     companion object {
+        const val DEFAULT_ORG_ID = "-1"
         private val CURRENT_ORG_ID_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("current-org")
     }
 }

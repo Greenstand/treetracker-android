@@ -23,7 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
-import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.organization.FeatureResolver
+import org.greenstand.android.TreeTracker.models.organization.OrgFeature
 import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.utils.updateState
 
@@ -36,21 +37,21 @@ data class TreeImageReviewState(
 class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
     private val userRepo: UserRepo,
-    orgRepo: OrgRepo,
+    featureResolver: FeatureResolver,
 ) : ViewModel() {
     private val _state = MutableLiveData(TreeImageReviewState())
     val state: LiveData<TreeImageReviewState> = _state
 
-    private val forceNote = orgRepo.currentOrg().captureFlow
-        .find { it.route == RouteRegistry.ROUTE_TREE_IMAGE_REVIEW }
-        ?.features
-        ?.find { it == FORCE_NOTE_FEATURE } != null
+    private val forceNote = featureResolver.isCaptureFlowFeatureEnabled(
+        RouteRegistry.ROUTE_TREE_IMAGE_REVIEW,
+        OrgFeature.FORCE_NOTE,
+    )
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
             _state.value = _state.value?.copy(
                 showReviewTutorial = isFirstTrack(),
-                treeImagePath = treeCapturer.currentTree!!.photoPath,
+                treeImagePath = treeCapturer.currentTree?.photoPath,
             )
         }
     }
@@ -77,18 +78,14 @@ class TreeImageReviewViewModel(
 
     fun addNote() {
         viewModelScope.launch {
-            treeCapturer.setNote(_state.value!!.note)
+            treeCapturer.setNote(_state.value?.note ?: "")
             _state.value = _state.value?.copy(isDialogOpen = false)
         }
     }
 
-    suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
+    suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()?.numberOfTrees?.let { it < 1 } ?: true
 
     fun setDialogState(state: Boolean) {
         _state.value = _state.value?.copy(isDialogOpen = state)
-    }
-
-    companion object {
-        const val FORCE_NOTE_FEATURE = "forceNote"
     }
 }

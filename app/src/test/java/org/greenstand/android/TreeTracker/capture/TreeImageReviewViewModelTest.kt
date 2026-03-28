@@ -23,7 +23,7 @@ import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
-import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.organization.FeatureResolver
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -43,13 +43,13 @@ class TreeImageReviewViewModelTest {
 
     private val treeCapturer = mockk<TreeCapturer>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)
-    private val orgRepo = mockk<OrgRepo>(relaxed = true)
+    private val featureResolver = mockk<FeatureResolver>(relaxed = true)
 
     private lateinit var testSubject: TreeImageReviewViewModel
 
     @Before
     fun setUp() {
-        testSubject = TreeImageReviewViewModel(treeCapturer = treeCapturer, userRepo = userRepo, orgRepo = orgRepo)
+        testSubject = TreeImageReviewViewModel(treeCapturer = treeCapturer, userRepo = userRepo, featureResolver = featureResolver)
     }
     @Test
     fun `updateNote should update the note in the view model state`() = runTest {

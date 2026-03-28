@@ -311,6 +311,7 @@ fun ExistingUserDialog(
     navController: NavHostController,
     state: SignUpState
 ) {
+    val scope = rememberCoroutineScope()
     CustomDialog(
         title = stringResource(R.string.user_exists_header),
         textContent = stringResource(R.string.user_exists_message),
@@ -334,7 +335,7 @@ fun ExistingUserDialog(
                             }
                         } else {
                             CaptureSetupScopeManager.getData().user = user
-                            CaptureSetupScopeManager.nav.navFromNewUserCreation(navController)
+                            scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navController) }
                         }
                     }
                 )

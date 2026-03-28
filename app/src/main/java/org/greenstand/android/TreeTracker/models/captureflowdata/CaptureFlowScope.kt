@@ -19,23 +19,35 @@ import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationContro
 import org.koin.core.component.KoinScopeComponent
 import org.koin.core.component.createScope
 import org.koin.core.scope.Scope
+import timber.log.Timber
 
 object CaptureFlowScopeManager {
 
     private var currentScope: Scope? = null
 
+    val isOpen: Boolean get() = currentScope != null
+
     fun open() {
+        if (currentScope != null) {
+            Timber.tag("CaptureFlowScope").w("Scope already open, closing previous before reopening")
+            close()
+        }
         currentScope = CaptureFlowScope().scope
         currentScope?.get<CaptureFlowScope>()
     }
 
-    fun getData(): CaptureFlowScope = currentScope!!.get()
+    fun getData(): CaptureFlowScope {
+        return currentScope?.get()
+            ?: error("CaptureFlowScope not open. Call open() before getData().")
+    }
 
     val nav: CaptureFlowNavigationController
-        get() = currentScope!!.get()
+        get() = currentScope?.get()
+            ?: error("CaptureFlowScope not open. Call open() before accessing nav.")
 
     fun close() {
         currentScope?.close()
+        currentScope = null
     }
 }
 

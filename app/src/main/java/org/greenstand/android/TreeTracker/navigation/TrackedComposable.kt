@@ -15,6 +15,11 @@
  */
 package org.greenstand.android.TreeTracker.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavBackStackEntry
@@ -24,11 +29,22 @@ import androidx.navigation.compose.composable
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.koin.androidx.compose.get
 
+private const val TRANSITION_DURATION_MS = 500
+
+val FastFadeIn: EnterTransition = fadeIn(animationSpec = tween(TRANSITION_DURATION_MS))
+val FastFadeOut: ExitTransition = fadeOut(animationSpec = tween(TRANSITION_DURATION_MS))
+
 inline fun <reified T : Any> NavGraphBuilder.trackedComposable(
     deepLinks: List<NavDeepLink> = emptyList(),
     noinline content: @Composable (NavBackStackEntry) -> Unit,
 ) {
-    composable<T>(deepLinks = deepLinks) { backStackEntry ->
+    composable<T>(
+        deepLinks = deepLinks,
+        enterTransition = { FastFadeIn },
+        exitTransition = { FastFadeOut },
+        popEnterTransition = { FastFadeIn },
+        popExitTransition = { FastFadeOut },
+    ) { backStackEntry ->
         val exceptionDataCollector = get<ExceptionDataCollector>()
         val routeName = T::class.simpleName ?: "Unknown"
         LaunchedEffect(routeName) {

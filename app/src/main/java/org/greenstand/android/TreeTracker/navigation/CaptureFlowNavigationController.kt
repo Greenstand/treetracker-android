@@ -25,8 +25,8 @@ import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
-import org.greenstand.android.TreeTracker.models.organization.Destination
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import timber.log.Timber
 
 class CaptureFlowNavigationController(
     orgRepo: OrgRepo,
@@ -34,37 +34,37 @@ class CaptureFlowNavigationController(
     private val sessionTracker: SessionTracker,
     private val locationDataCapturer: LocationDataCapturer,
     private val treeCapturer: TreeCapturer,
-) {
-    private var navPath = emptyList<Destination>()
-    private var currentNavPathIndex = 0
+) : FlowNavigationController(orgRepo.currentOrg().captureFlow) {
 
-    init {
-        navPath = orgRepo.currentOrg().captureFlow
-    }
+    /**
+     * Navigate forward in the capture flow. Suspend because at the end of the flow
+     * it must save the tree to the database before looping back to capture.
+     */
+    suspend fun navForward(navController: NavHostController) {
+        incrementIndex()
 
-    fun navForward(navController: NavHostController) {
-        currentNavPathIndex++
-
-        // If navigating from last screen, pop to the first
+        // If navigating past last screen, save tree then loop back to capture
         if (currentNavPathIndex >= navPath.size) {
-            currentNavPathIndex = 0
-            GlobalScope.launch {
-                treeCapturer.saveTree()
+            resetIndex()
+            val saved = treeCapturer.saveTree()
+            if (!saved) {
+                Timber.tag("CaptureFlowNav").w("Tree save failed or no tree to save")
             }
-            navController.popBackStack<TreeCaptureRoute>(inclusive = false)
+            withContext(Dispatchers.Main) {
+                navController.popBackStack<TreeCaptureRoute>(inclusive = false)
+            }
             return
         }
 
         val destination = navPath[currentNavPathIndex]
         val route = resolveDestinationRoute(destination)
-        navController.navigate(route)
+        withContext(Dispatchers.Main) {
+            navController.navigate(route)
+        }
     }
 
     fun navBackward(navController: NavHostController) {
-        currentNavPathIndex--
-
-        // If we navigate back while on first screen (TreeCaptureScreen) then go to Dashboard
-        if (currentNavPathIndex < 0) {
+        if (!decrementIndex()) {
             goToDashboard(navController)
             return
         }
@@ -87,16 +87,15 @@ class CaptureFlowNavigationController(
         }
     }
 
-    private fun resolveDestinationRoute(destination: Destination): Any {
-        // Check if it's a no-arg route first
-        RouteRegistry.resolveNoArgRoute(destination.route)?.let { return it }
+    private fun resolveDestinationRoute(destination: org.greenstand.android.TreeTracker.models.organization.Destination): Any {
+        resolveNoArgDestination(destination)?.let { return it }
 
-        // Handle arg routes based on the pattern
+        val normalized = RouteRegistry.normalize(destination.route)
         return when {
-            destination.route.startsWith("tree-image-review") -> {
-                TreeImageReviewRoute(photoPath = treeCapturer.currentTree!!.photoPath!!)
+            normalized.startsWith("tree-image-review") -> {
+                TreeImageReviewRoute(photoPath = treeCapturer.currentTree?.photoPath ?: "")
             }
-            destination.route.startsWith("capture") -> {
+            normalized.startsWith("capture") -> {
                 TreeCaptureRoute(profilePicUrl = "")
             }
             else -> error("Unknown capture flow destination: ${destination.route}")
@@ -105,12 +104,16 @@ class CaptureFlowNavigationController(
 
     private fun endSession() {
         CaptureFlowScopeManager.close()
-        GlobalScope.launch {
-            sessionTracker.endSession()
-            stepCounter.disable()
-            withContext(Dispatchers.Main) {
-                locationDataCapturer.stopGpsUpdates()
-                locationDataCapturer.turnOffTreeCaptureMode()
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                sessionTracker.endSession()
+                stepCounter.disable()
+                withContext(Dispatchers.Main) {
+                    locationDataCapturer.stopGpsUpdates()
+                    locationDataCapturer.turnOffTreeCaptureMode()
+                }
+            } catch (e: Exception) {
+                Timber.tag("CaptureFlowNav").e(e, "Error ending session")
             }
         }
     }
