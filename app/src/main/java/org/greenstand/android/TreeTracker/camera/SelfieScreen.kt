@@ -67,15 +67,25 @@ fun SelfieScreen() {
                             viewModel.updateSelfieTutorialDialog(true)
                         }
                     )
+                },
+                centerAction = {
+                    CaptureButton(
+                        modifier = Modifier.align(Alignment.Center),
+                        onClick = {
+                            cameraControl.captureImage()
+                        },
+                        isEnabled = true
+                    )
                 }
             )
         }
-    ) {
+    ) { padding ->
         Camera(
             isSelfieMode = true,
             cameraControl = cameraControl,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(padding)
                 .aspectRatio(1.0f),
             onImageCaptured = {
                 navController.navigate(ImageReviewRoute(photoPath = it.path))
@@ -84,7 +94,7 @@ fun SelfieScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(padding)
                 .padding(bottom = 10.dp),
             contentAlignment = Alignment.BottomCenter
         ) {
@@ -95,12 +105,6 @@ fun SelfieScreen() {
                     }
                 )
             }
-            CaptureButton(
-                onClick = {
-                    cameraControl.captureImage()
-                },
-                isEnabled = true
-            )
         }
     }
 }
