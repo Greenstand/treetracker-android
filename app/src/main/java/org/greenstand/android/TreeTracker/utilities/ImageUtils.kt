@@ -93,7 +93,7 @@ object ImageUtils {
         try {
             exif = ExifInterface(photoPath!!)
         } catch (e: IOException) {
-            e.printStackTrace()
+            Timber.e(e, "Failed to read EXIF data from %s", photoPath)
         }
 
         val orientString = exif!!.getAttribute(ExifInterface.TAG_ORIENTATION)
@@ -435,7 +435,7 @@ object ImageUtils {
         val exif: ExifInterface = try {
             ExifInterface(photoPath)
         } catch (e: IOException) {
-            e.printStackTrace()
+            Timber.e(e, "Failed to read EXIF data from %s", photoPath)
             return
         }
 

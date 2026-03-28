@@ -16,8 +16,9 @@
 package org.greenstand.android.TreeTracker.navigation
 
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.models.SessionTracker
@@ -35,6 +36,8 @@ class CaptureFlowNavigationController(
     private val locationDataCapturer: LocationDataCapturer,
     private val treeCapturer: TreeCapturer,
 ) : FlowNavigationController(orgRepo.currentOrg().captureFlow) {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
      * Navigate forward in the capture flow. Suspend because at the end of the flow
@@ -104,7 +107,7 @@ class CaptureFlowNavigationController(
 
     private fun endSession() {
         CaptureFlowScopeManager.close()
-        GlobalScope.launch(Dispatchers.IO) {
+        scope.launch {
             try {
                 sessionTracker.endSession()
                 stepCounter.disable()
