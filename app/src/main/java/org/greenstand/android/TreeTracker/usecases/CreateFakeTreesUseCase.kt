@@ -18,7 +18,7 @@ package org.greenstand.android.TreeTracker.usecases
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
@@ -43,7 +43,7 @@ class CreateFakeTreesUseCase(
 ) : UseCase<CreateFakeTreesParams, Unit>() {
 
     override suspend fun execute(params: CreateFakeTreesParams) {
-        check(BuildConfig.DEBUG || BuildConfig.BUILD_TYPE == "beta") {
+        check(FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
             "CreateFakeTreesUseCase must not be called in release builds"
         }
 
