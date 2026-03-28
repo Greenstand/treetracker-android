@@ -16,8 +16,17 @@
 package org.greenstand.android.TreeTracker.utils
 
 import kotlinx.datetime.Instant
-import org.greenstand.android.TreeTracker.database.entity.*
-import org.greenstand.android.TreeTracker.database.legacy.entity.*
+import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
+import org.greenstand.android.TreeTracker.database.entity.LocationEntity
+import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
+import org.greenstand.android.TreeTracker.database.entity.SessionEntity
+import org.greenstand.android.TreeTracker.database.entity.TreeEntity
+import org.greenstand.android.TreeTracker.database.entity.UserEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.LocationDataEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.Question
@@ -335,6 +344,112 @@ object FakeFileGenerator {
             isRead = false,
             parentMessageId = "messageID",
             body = "description"
+        )
+    )
+
+    val fakeSessionWithEndTime = SessionEntity(
+        uuid = "uuid-end",
+        originUserId = "user",
+        originWallet = "Wallet",
+        destinationWallet = "destination",
+        startTime = Instant.DISTANT_FUTURE,
+        endTime = Instant.DISTANT_FUTURE,
+        organization = "Org",
+        isUploaded = false,
+        bundleId = "bundleId",
+        deviceConfigId = 11212,
+        note = "random"
+    )
+
+    val fakeDeviceConfigToUpload = DeviceConfigEntity(
+        uuid = "uui-upload",
+        appBuild = 2,
+        appVersion = "version2",
+        osVersion = "os version2",
+        sdkVersion = 33,
+        loggedAt = Instant.DISTANT_FUTURE,
+        isUploaded = false,
+        bundleId = "bundle-upload"
+    )
+
+    val fakeUserEntity = fakeUser
+
+    val fakeTreeCaptureList = listOf(
+        TreeCaptureEntity(
+            uuid = "uuid-1",
+            planterCheckInId = 1991,
+            localPhotoPath = null,
+            photoUrl = null,
+            noteContent = "note1",
+            latitude = 12.11,
+            longitude = 13.11,
+            accuracy = 1.11,
+            uploaded = false,
+            createAt = 11221,
+            bundleId = null
+        ),
+        TreeCaptureEntity(
+            uuid = "uuid-2",
+            planterCheckInId = 1992,
+            localPhotoPath = "path",
+            photoUrl = "url",
+            noteContent = "note2",
+            latitude = 14.11,
+            longitude = 15.11,
+            accuracy = 2.22,
+            uploaded = true,
+            createAt = 22332,
+            bundleId = "bundle"
+        )
+    )
+
+    val fakePlanterCheckInList = listOf(
+        PlanterCheckInEntity(
+            planterInfoId = 1,
+            localPhotoPath = "path1",
+            photoUrl = "url1",
+            latitude = 17.111,
+            longitude = 12.131,
+            createdAt = 121212
+        ),
+        PlanterCheckInEntity(
+            planterInfoId = 2,
+            localPhotoPath = "path2",
+            photoUrl = "url2",
+            latitude = 18.222,
+            longitude = 13.242,
+            createdAt = 232323
+        )
+    )
+
+    val fakePlanterInfoList = listOf(
+        PlanterInfoEntity(
+            identifier = "random1",
+            firstName = "Caleb",
+            lastName = "Langat",
+            organization = "Greenstand",
+            phone = "+2548171311",
+            email = null,
+            latitude = 12.11,
+            longitude = 15.13,
+            uploaded = false,
+            createdAt = 13131,
+            bundleId = null,
+            recordUuid = "random1"
+        ),
+        PlanterInfoEntity(
+            identifier = "random2",
+            firstName = "Jane",
+            lastName = "Doe",
+            organization = "TreeOrg",
+            phone = "+2548171312",
+            email = "jane@test.com",
+            latitude = 14.22,
+            longitude = 16.24,
+            uploaded = true,
+            createdAt = 24242,
+            bundleId = "bundle",
+            recordUuid = "random2"
         )
     )
 }

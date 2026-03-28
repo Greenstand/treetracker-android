@@ -18,20 +18,32 @@ package org.greenstand.android.TreeTracker.models.messages
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.messages.database.entities.MessageEntity
 import org.greenstand.android.TreeTracker.models.messages.network.MessagesApiService
-import org.greenstand.android.TreeTracker.models.messages.network.responses.*
+import org.greenstand.android.TreeTracker.models.messages.network.responses.LinksResponse
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageResponse
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
+import org.greenstand.android.TreeTracker.models.messages.network.responses.MessagesResponse
+import org.greenstand.android.TreeTracker.models.messages.network.responses.QueryResponse
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -224,5 +236,59 @@ class MessagesRepoTest {
             surveyId = messageResponse.survey?.id,
             isSurveyComplete = messageResponse.survey?.let { false }
         )
+    }
+
+    @Test
+    fun `markMessageAsRead delegates to DAO`() = runTest {
+        coEvery { messagesDAO.markMessageAsRead(any()) } returns Unit
+
+        messagesRepo.markMessageAsRead("msg-123")
+
+        coVerify { messagesDAO.markMessageAsRead(listOf("msg-123")) }
+    }
+
+    @Test
+    fun `saveMessage creates entity with correct fields`() = runTest {
+        val fakeTime = Instant.fromEpochMilliseconds(1000000L)
+        every { timeProvider.currentTime() } returns fakeTime
+        coEvery { messagesDAO.insertMessage(any()) } returns 0L
+
+        messagesRepo.saveMessage(
+            wallet = "test-wallet",
+            to = "admin",
+            body = "Hello admin"
+        )
+
+        coVerify {
+            messagesDAO.insertMessage(match { entity ->
+                entity.wallet == "test-wallet" &&
+                    entity.to == "admin" &&
+                    entity.body == "Hello admin" &&
+                    entity.from == "test-wallet" &&
+                    entity.type == MessageType.MESSAGE &&
+                    entity.shouldUpload &&
+                    entity.isRead &&
+                    entity.subject == null &&
+                    entity.parentMessageId == null
+            })
+        }
+    }
+
+    @Test
+    fun `checkForUnreadMessages returns true when count is at least 1`() = runTest {
+        coEvery { messagesDAO.getUnreadMessagesCount() } returns 5
+
+        val result = messagesRepo.checkForUnreadMessages()
+
+        kotlin.test.assertTrue(result)
+    }
+
+    @Test
+    fun `checkForUnreadMessages returns false when count is 0`() = runTest {
+        coEvery { messagesDAO.getUnreadMessagesCount() } returns 0
+
+        val result = messagesRepo.checkForUnreadMessages()
+
+        kotlin.test.assertFalse(result)
     }
 }
