@@ -16,15 +16,23 @@
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -129,5 +137,59 @@ class SignupViewModelTest {
     fun `close existing user dialog, returns true`() = runBlocking {
         signupViewModel.closeExistingUserDialog()
         assertNull(signupViewModel.state.getOrAwaitValueTest().existingUser)
+    }
+
+    @Test
+    fun `WHEN form has valid names THEN isFormValid returns true`() = runTest {
+        signupViewModel.updateFirstName("Caleb")
+        signupViewModel.updateLastName("Kaleb")
+        assertTrue(signupViewModel.isFormValid())
+    }
+
+    @Test
+    fun `WHEN form has empty first name THEN isFormValid returns false`() = runTest {
+        signupViewModel.updateFirstName("")
+        signupViewModel.updateLastName("Kaleb")
+        assertFalse(signupViewModel.isFormValid())
+    }
+
+    @Test
+    fun `WHEN updateCredentialType called with Email THEN state credential is Email`() = runTest {
+        signupViewModel.updateCredentialType(Credential.Email())
+        assertTrue(signupViewModel.state.getOrAwaitValueTest().credential is Credential.Email)
+    }
+
+    @Test
+    fun `WHEN submitInfo and user exists THEN existingUser is set`() = runTest {
+        val existingUser = FakeFileGenerator.fakeUsers.first()
+        signupViewModel.updatePhone("071321998893")
+
+        coEvery { userRepo.doesUserExists("071321998893") } returns true
+        coEvery { userRepo.getUserWithWallet("071321998893") } returns existingUser
+
+        signupViewModel.submitInfo()
+
+        assertNotNull(signupViewModel.state.getOrAwaitValueTest().existingUser)
+        assertEquals(existingUser.id, signupViewModel.state.getOrAwaitValueTest().existingUser!!.id)
+    }
+
+    @Test
+    fun `WHEN submitInfo and user not exists THEN navigates to name entry`() = runTest {
+        signupViewModel.updatePhone("071321998893")
+
+        coEvery { userRepo.doesUserExists("071321998893") } returns false
+
+        signupViewModel.submitInfo()
+
+        assertFalse(signupViewModel.state.getOrAwaitValueTest().isCredentialView)
+        assertFalse(signupViewModel.state.getOrAwaitValueTest().canGoToNextScreen)
+    }
+
+    @Test
+    fun `WHEN setExistingUserAsPowerUser THEN calls setPowerUserStatus`() = runTest {
+        val userId = 122L
+        signupViewModel.setExistingUserAsPowerUser(userId)
+
+        coVerify { userRepo.setPowerUserStatus(userId, true) }
     }
 }
