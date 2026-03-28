@@ -226,13 +226,6 @@ dependencies {
     implementation libs.androidx.room.ktx
     kapt libs.androidx.room.compiler
 
-    // Debug database for dev builds
-    devImplementation(libs.debug.database) {
-        exclude group: 'com.android.support'
-        exclude group: 'android.arch.persistence.room'
-        exclude group: 'android.arch.persistence'
-        exclude group: 'android.arch.core'
-    }
 
     // Networking
     api libs.retrofit.converter.gson
