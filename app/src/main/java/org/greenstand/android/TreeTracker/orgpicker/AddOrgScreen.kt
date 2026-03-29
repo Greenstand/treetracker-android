@@ -58,21 +58,40 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
     val state by viewModel.state.observeAsState(AddOrgState())
     val scope = rememberCoroutineScope()
 
+    AddOrg(
+        state = state,
+        onOrgNameChanged = { viewModel.updateOrgName(it) },
+        onAutofillClicked = { viewModel.applyOrgAutofill() },
+        onBackClicked = { CaptureSetupScopeManager.nav.navBackward(navController) },
+        onNextClicked = {
+            viewModel.setDefaultOrg()
+            scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+        },
+    )
+}
+
+@Composable
+fun AddOrg(
+    state: AddOrgState = AddOrgState(),
+    onOrgNameChanged: (String) -> Unit = {},
+    onAutofillClicked: () -> Unit = {},
+    onBackClicked: () -> Unit = {},
+    onNextClicked: () -> Unit = {},
+) {
     Scaffold(
         bottomBar = {
             ActionBar(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        CaptureSetupScopeManager.nav.navBackward(navController)
+                        onBackClicked()
                     }
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
                     ) {
-                        viewModel.setDefaultOrg()
-                        scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                        onNextClicked()
                     }
                 }
             )
@@ -87,7 +106,7 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
                 value = state.orgName,
                 modifier = Modifier.height(80.dp),
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> viewModel.updateOrgName(updatedName) },
+                onValueChange = { updatedName -> onOrgNameChanged(updatedName) },
                 placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -96,14 +115,13 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        viewModel.setDefaultOrg()
-                        scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                        onNextClicked()
                     }
                 )
             )
             state.previousOrgName?.let { prevOrgName ->
                 TreeTrackerButton(
-                    onClick = { viewModel.applyOrgAutofill() },
+                    onClick = onAutofillClicked,
                     modifier = Modifier
                         .padding(16.dp)
                         .size(height = 80.dp, width = 156.dp)

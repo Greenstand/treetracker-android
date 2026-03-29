@@ -65,7 +65,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -98,18 +97,10 @@ fun DashboardScreen(
     val navController = LocalNavHostController.current
     var showDialog by remember { mutableStateOf(false) }
 
-    if (showDialog) {
-        CustomDialog(
-            title = stringResource(R.string.upload_trees_soon_title),
-            textContent = stringResource(R.string.upload_trees_text_content),
-            onPositiveClick = {
-                navController.navigate(UserSelectRoute)
-            }
-        )
-    }
     Dashboard(
         state = state,
         snackBar = snackBar,
+        showSyncReminderDialog = showDialog,
         onSyncClicked = { viewModel.sync() },
         onOrgClicked = { navController.navigate(OrgRoute) },
         onCaptureClicked = {
@@ -117,13 +108,14 @@ fun DashboardScreen(
                 showDialog = true
             } else navController.navigate(UserSelectRoute)
         },
+        onDialogConfirm = { navController.navigate(UserSelectRoute) },
         onMessagesClicked = {
             viewModel.syncMessages()
             navController.navigate(MessagesUserSelectRoute)
         },
         onSettingsClicked = {
             navController.navigate(SettingsRoute)
-        }
+        },
     )
 }
 
@@ -132,12 +124,22 @@ fun DashboardScreen(
 fun Dashboard(
     state: DashboardState,
     snackBar: ConsumableSnackBar? = null,
+    showSyncReminderDialog: Boolean = false,
     onSyncClicked: () -> Unit = { },
     onOrgClicked: () -> Unit = { },
     onCaptureClicked: () -> Unit = { },
+    onDialogConfirm: () -> Unit = { },
     onMessagesClicked: () -> Unit = { },
     onSettingsClicked: () -> Unit = { },
 ) {
+    if (showSyncReminderDialog) {
+        CustomDialog(
+            title = stringResource(R.string.upload_trees_soon_title),
+            textContent = stringResource(R.string.upload_trees_text_content),
+            onPositiveClick = onDialogConfirm,
+        )
+    }
+
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
 
@@ -412,11 +414,3 @@ fun DashboardPreview() {
     }
 }
 
-@ExperimentalComposeApi
-@Preview
-@Composable
-fun DashboardScreen_Preview(
-    @PreviewParameter(DashboardPreviewParameter::class) viewModel: DashboardViewModel
-) {
-    DashboardScreen(viewModel = viewModel)
-}

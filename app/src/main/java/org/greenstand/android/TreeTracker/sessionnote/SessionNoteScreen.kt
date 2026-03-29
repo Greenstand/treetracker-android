@@ -53,20 +53,37 @@ fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = Loca
     val state by viewModel.state.collectAsState(SessionNoteState())
     val scope = rememberCoroutineScope()
 
+    SessionNote(
+        state = state,
+        onNoteChanged = { viewModel.updateNote(it) },
+        onBackClicked = { CaptureSetupScopeManager.nav.navBackward(navController) },
+        onNextClicked = {
+            scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+        },
+    )
+}
+
+@Composable
+fun SessionNote(
+    state: SessionNoteState = SessionNoteState(),
+    onNoteChanged: (String) -> Unit = {},
+    onBackClicked: () -> Unit = {},
+    onNextClicked: () -> Unit = {},
+) {
     Scaffold(
         bottomBar = {
             ActionBar(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        CaptureSetupScopeManager.nav.navBackward(navController)
+                        onBackClicked()
                     }
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
                     ) {
-                        scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                        onNextClicked()
                     }
                 }
             )
@@ -80,7 +97,7 @@ fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = Loca
             BorderedTextField(
                 value = state.note,
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedNote -> viewModel.updateNote(updatedNote) },
+                onValueChange = { updatedNote -> onNoteChanged(updatedNote) },
                 placeholder = { Text(text = stringResource(id = R.string.add_note_to_session), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -89,7 +106,7 @@ fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = Loca
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                        onNextClicked()
                     }
                 )
             )

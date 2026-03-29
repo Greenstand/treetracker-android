@@ -64,6 +64,19 @@ fun AnnouncementScreen(
     val state by viewModel.state.collectAsState(AnnouncementState())
     val navController = LocalNavHostController.current
 
+    Announcement(
+        state = state,
+        onBackClicked = { navController.popBackStack() },
+        onLinkClicked = { url -> openUrlLink(context = navController.context, url = url) },
+    )
+}
+
+@Composable
+fun Announcement(
+    state: AnnouncementState = AnnouncementState(),
+    onBackClicked: () -> Unit = {},
+    onLinkClicked: (String) -> Unit = {},
+) {
     Scaffold(
         topBar = {
             ActionBar(
@@ -80,9 +93,7 @@ fun AnnouncementScreen(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = {
-                            navController.popBackStack()
-                        }
+                        onClick = onBackClicked
                     )
                 },
             )
@@ -95,17 +106,16 @@ fun AnnouncementScreen(
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp)
                 .fillMaxSize()
         ) {
-            Announcement(state = state)
+            AnnouncementContent(state = state, onLinkClicked = onLinkClicked)
         }
     }
 }
 
 @Composable
-private fun Announcement(
+private fun AnnouncementContent(
     state: AnnouncementState,
+    onLinkClicked: (String) -> Unit,
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp)
@@ -144,7 +154,7 @@ private fun Announcement(
                 Modifier
                     .padding(top = 10.dp)
                     .clickable(onClick = {
-                        openUrlLink(context = context, url = url)
+                        onLinkClicked(url)
                     }),
                 color = AppColors.Green,
                 style = TextStyle(textDecoration = TextDecoration.Underline),

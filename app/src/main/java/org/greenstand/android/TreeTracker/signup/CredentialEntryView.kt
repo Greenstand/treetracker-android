@@ -52,18 +52,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.navigation.DashboardRoute
-import org.greenstand.android.TreeTracker.navigation.LanguageRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -81,8 +75,18 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 
 @Composable
-fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
-    val navController = LocalNavHostController.current
+fun CredentialEntryView(
+    state: SignUpState,
+    onBackClicked: () -> Unit = {},
+    onSubmitInfo: () -> Unit = {},
+    onUpdateEmail: (String) -> Unit = {},
+    onUpdatePhone: (String) -> Unit = {},
+    onUpdateCredentialType: (Credential) -> Unit = {},
+    onCloseExistingUserDialog: () -> Unit = {},
+    onExistingUserSelected: (User) -> Unit = {},
+    onEnableAutofocus: () -> Unit = {},
+    onClosePrivacyDialog: () -> Unit = {},
+) {
     val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -102,7 +106,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     modifier = Modifier.navigationBarsPadding(),
                     leftAction = {
                         ArrowButton(isLeft = true) {
-                            navController.popBackStack()
+                            onBackClicked()
                         }
                     },
                     rightAction = {
@@ -110,7 +114,7 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                             isLeft = false,
                         ) {
                             if (state.isCredentialValid) {
-                                viewModel.submitInfo()
+                                onSubmitInfo()
                             } else {
                                 when (state.credential) {
                                     is Credential.Email -> {
@@ -136,7 +140,11 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
         }
     ) {
         if (state.existingUser != null) {
-            ExistingUserDialog(viewModel = viewModel, navController = navController, state = state)
+            ExistingUserDialog(
+                state = state,
+                onCloseExistingUserDialog = onCloseExistingUserDialog,
+                onExistingUserSelected = onExistingUserSelected,
+            )
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -160,43 +168,43 @@ fun CredentialEntryView(viewModel: SignupViewModel, state: SignUpState) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                PhoneCredentialButton(state, viewModel)
-                EmailCredentialButton(state, viewModel)
+                PhoneCredentialButton(state, onUpdateCredentialType)
+                EmailCredentialButton(state, onUpdateCredentialType)
             }
 
             when (state.credential) {
-                is Credential.Email -> EmailTextField(state, viewModel, focusRequester, snackBarHostState, scope, context)
-                is Credential.Phone -> PhoneTextField(state, viewModel, focusRequester, snackBarHostState, scope, context)
+                is Credential.Email -> EmailTextField(state, onUpdateEmail, onSubmitInfo, onEnableAutofocus, focusRequester, snackBarHostState, scope, context)
+                is Credential.Phone -> PhoneTextField(state, onUpdatePhone, onSubmitInfo, onEnableAutofocus, focusRequester, snackBarHostState, scope, context)
             }
 
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
         }
         if (state.showPrivacyDialog == true) {
-            PrivacyPolicyDialog(signupViewModel = viewModel)
+            PrivacyPolicyDialog(onDismiss = onClosePrivacyDialog)
         }
     }
 }
 
 @Composable
-fun EmailCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
+fun EmailCredentialButton(state: SignUpState, onUpdateCredentialType: (Credential) -> Unit) {
     CredentialButton(
         credential = state.credential,
         credentialType = Credential.Email::class.java,
         placeholderTextRes = R.string.email_placeholder,
         onClick = {
-            viewModel.updateCredentialType(Credential.Email())
+            onUpdateCredentialType(Credential.Email())
         }
     )
 }
 
 @Composable
-fun PhoneCredentialButton(state: SignUpState, viewModel: SignupViewModel) {
+fun PhoneCredentialButton(state: SignUpState, onUpdateCredentialType: (Credential) -> Unit) {
     CredentialButton(
         credential = state.credential,
         credentialType = Credential.Phone::class.java,
         placeholderTextRes = R.string.phone_placeholder,
         onClick = {
-            viewModel.updateCredentialType(Credential.Phone())
+            onUpdateCredentialType(Credential.Phone())
         }
     )
 }
@@ -216,12 +224,21 @@ fun ViewWebMapText(isVisible: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester, snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+private fun EmailTextField(
+    state: SignUpState,
+    onUpdateEmail: (String) -> Unit,
+    onSubmitInfo: () -> Unit,
+    onEnableAutofocus: () -> Unit,
+    focusRequester: FocusRequester,
+    snackBarHostState: SnackbarHostState,
+    scope: CoroutineScope,
+    context: Context,
+) {
     val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.email ?: "",
         padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
-        onValueChange = { updatedEmail -> viewModel.updateEmail(updatedEmail) },
+        onValueChange = { updatedEmail -> onUpdateEmail(updatedEmail) },
         placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
@@ -233,7 +250,7 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
             onGo = {
                 focusManager.clearFocus()
                 if (state.isCredentialValid) {
-                    viewModel.submitInfo()
+                    onSubmitInfo()
                 } else {
                     scope.launch {
                         snackBarHostState.showSnackbar(
@@ -243,19 +260,28 @@ private fun EmailTextField(state: SignUpState, viewModel: SignupViewModel, focus
                 }
             }
         ),
-        onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
+        onFocusChanged = { if (it.isFocused) onEnableAutofocus() },
         focusRequester = focusRequester,
         autofocusEnabled = state.autofocusTextEnabled
     )
 }
 
 @Composable
-private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focusRequester: FocusRequester, snackBarHostState: SnackbarHostState, scope: CoroutineScope, context: Context) {
+private fun PhoneTextField(
+    state: SignUpState,
+    onUpdatePhone: (String) -> Unit,
+    onSubmitInfo: () -> Unit,
+    onEnableAutofocus: () -> Unit,
+    focusRequester: FocusRequester,
+    snackBarHostState: SnackbarHostState,
+    scope: CoroutineScope,
+    context: Context,
+) {
     val focusManager = LocalFocusManager.current
     BorderedTextField(
         value = state.phone ?: "",
         padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
-        onValueChange = { updatedPhone -> viewModel.updatePhone(updatedPhone) },
+        onValueChange = { updatedPhone -> onUpdatePhone(updatedPhone) },
         placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Phone,
@@ -265,7 +291,7 @@ private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focus
             onGo = {
                 focusManager.clearFocus()
                 if (state.isCredentialValid) {
-                    viewModel.submitInfo()
+                    onSubmitInfo()
                 } else {
                     scope.launch {
                         snackBarHostState.showSnackbar(
@@ -275,7 +301,7 @@ private fun PhoneTextField(state: SignUpState, viewModel: SignupViewModel, focus
                 }
             }
         ),
-        onFocusChanged = { if (it.isFocused) viewModel.enableAutofocus() },
+        onFocusChanged = { if (it.isFocused) onEnableAutofocus() },
         focusRequester = focusRequester,
         autofocusEnabled = state.autofocusTextEnabled
     )
@@ -307,17 +333,14 @@ fun <T : Credential> CredentialButton(
 
 @Composable
 fun ExistingUserDialog(
-    viewModel: SignupViewModel,
-    navController: NavHostController,
-    state: SignUpState
+    state: SignUpState,
+    onCloseExistingUserDialog: () -> Unit = {},
+    onExistingUserSelected: (User) -> Unit = {},
 ) {
-    val scope = rememberCoroutineScope()
     CustomDialog(
         title = stringResource(R.string.user_exists_header),
         textContent = stringResource(R.string.user_exists_message),
-        onNegativeClick = {
-            viewModel.closeExistingUserDialog()
-        },
+        onNegativeClick = onCloseExistingUserDialog,
         content = {
             state.existingUser?.let { user ->
                 UserButton(
@@ -325,29 +348,9 @@ fun ExistingUserDialog(
                     isSelected = false,
                     buttonColors = AppButtonColors.Default,
                     selectedColor = Green,
-                    onClick = {
-
-                        if(state.isTherePowerUser == false){
-                            viewModel.setExistingUserAsPowerUser(user.id)
-                            navController.navigate(DashboardRoute) {
-                                popUpTo<LanguageRoute> { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        } else {
-                            CaptureSetupScopeManager.getData().user = user
-                            scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navController) }
-                        }
-                    }
+                    onClick = { onExistingUserSelected(user) }
                 )
             }
         }
     )
-}
-
-@Preview
-@Composable
-fun SignupScreen_Preview(
-    @PreviewParameter(SignupViewPreviewProvider::class) viewModel: SignupViewModel
-) {
-    CredentialEntryView(viewModel = viewModel, state = SignUpState())
 }

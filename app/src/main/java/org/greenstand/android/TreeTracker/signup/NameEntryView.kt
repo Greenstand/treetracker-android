@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.signup
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,7 +33,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -44,13 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.activities.CaptureImageContract
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.navigation.DashboardRoute
-import org.greenstand.android.TreeTracker.navigation.LanguageRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
@@ -58,28 +50,15 @@ import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
-fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
-    val navController = LocalNavHostController.current
-    val scope = rememberCoroutineScope()
+fun NameEntryView(
+    state: SignUpState,
+    onUpdateFirstName: (String?) -> Unit = {},
+    onUpdateLastName: (String?) -> Unit = {},
+    isFormValid: () -> Boolean = { false },
+    onGoToCredentialEntry: () -> Unit = {},
+    onLaunchCamera: () -> Unit = {},
+) {
     val focusManager = LocalFocusManager.current
-
-    val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { photoPath ->
-        scope.launch {
-            viewModel.createUser(photoPath)?.let { user ->
-                if (user.isPowerUser) {
-                    // In initial signup flow, clear stack and go to dashboard
-                    navController.navigate(DashboardRoute) {
-                        popUpTo<LanguageRoute> { inclusive = true }
-                        launchSingleTop = true
-                    }
-                } else {
-                    // In tracking setup flow, clear login stack and go to wallet selection flow
-                    CaptureSetupScopeManager.getData().user = user
-                    scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navController) }
-                }
-            }
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -98,15 +77,15 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        viewModel.goToCredentialEntry()
+                        onGoToCredentialEntry()
                     }
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = viewModel.isFormValid()
+                        isEnabled = isFormValid()
                     ) {
-                        cameraLauncher.launch(true)
+                        onLaunchCamera()
                     }
                 }
             )
@@ -123,7 +102,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
             BorderedTextField(
                 value = state.firstName ?: "",
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> viewModel.updateFirstName(updatedName) },
+                onValueChange = { updatedName -> onUpdateFirstName(updatedName) },
                 placeholder = { Text(text = stringResource(id = R.string.first_name_hint), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -148,7 +127,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
             BorderedTextField(
                 value = state.lastName ?: "",
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> viewModel.updateLastName(updatedName) },
+                onValueChange = { updatedName -> onUpdateLastName(updatedName) },
                 placeholder = { Text(text = stringResource(id = R.string.last_name_hint), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -158,7 +137,7 @@ fun NameEntryView(viewModel: SignupViewModel, state: SignUpState) {
                 keyboardActions = KeyboardActions(
                     onGo = {
                         if (!state.firstName.isNullOrBlank() && !state.lastName.isNullOrBlank()) {
-                            cameraLauncher.launch(true)
+                            onLaunchCamera()
                         }
                     }
                 )

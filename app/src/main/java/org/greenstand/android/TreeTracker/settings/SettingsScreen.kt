@@ -61,6 +61,41 @@ fun SettingsScreen() {
         MapLibre.getInstance(context)
     }
 
+    Settings(
+        state = state,
+        onProfileClicked = { navController.navigate(ProfileSelectRoute) },
+        onMapClicked = { navController.navigate(MapRoute) },
+        onPrivacyClicked = { viewModel.setPrivacyDialogVisibility(true) },
+        onPrivacyDialogDismiss = { viewModel.setPrivacyDialogVisibility(false) },
+        onLogoutClicked = { viewModel.updateLogoutDialogVisibility(true) },
+        onLogoutConfirmed = {
+            viewModel.logout()
+            navController.navigate(SignupFlowRoute) {
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        },
+        onLogoutDismissed = { viewModel.updateLogoutDialogVisibility(false) },
+        onDeleteAccountClicked = { navController.navigate(DeleteProfileRoute) },
+        onBackClicked = { navController.popBackStack() },
+    )
+}
+
+@Composable
+fun Settings(
+    state: SettingsState = SettingsState(),
+    onProfileClicked: () -> Unit = {},
+    onMapClicked: () -> Unit = {},
+    onPrivacyClicked: () -> Unit = {},
+    onPrivacyDialogDismiss: () -> Unit = {},
+    onLogoutClicked: () -> Unit = {},
+    onLogoutConfirmed: () -> Unit = {},
+    onLogoutDismissed: () -> Unit = {},
+    onDeleteAccountClicked: () -> Unit = {},
+    onBackClicked: () -> Unit = {},
+) {
     Scaffold(
         topBar = {
             ActionBar(
@@ -82,7 +117,7 @@ fun SettingsScreen() {
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        navController.popBackStack()
+                        onBackClicked()
                     }
                 },
             )
@@ -99,12 +134,10 @@ fun SettingsScreen() {
                     .padding(start = 20.dp, end = 20.dp)
             ) {
                 SettingsItem(
-                    iconResId = R.drawable.account, // Replace with your profile icon
+                    iconResId = R.drawable.account,
                     titleResId = R.string.profile_title,
                     descriptionResId = R.string.profile_description,
-                    onClick = {
-                        navController.navigate(ProfileSelectRoute)
-                    }
+                    onClick = onProfileClicked
                 )
                 Divider(color = Color.White)
 
@@ -113,40 +146,32 @@ fun SettingsScreen() {
                         iconResId = R.drawable.map_icon,
                         titleResId = R.string.map_title,
                         descriptionResId = R.string.map_description,
-                        onClick = {
-                            navController.navigate(MapRoute)
-                        }
+                        onClick = onMapClicked
                     )
                     Divider(color = Color.White)
                 }
 
                 SettingsItem(
-                    iconResId = R.drawable.privacy_policy, // Replace with your privacy icon
+                    iconResId = R.drawable.privacy_policy,
                     titleResId = R.string.privacy_title,
                     descriptionResId = R.string.privacy_description,
-                    onClick = {
-                        viewModel.setPrivacyDialogVisibility(true)
-                    }
+                    onClick = onPrivacyClicked
                 )
                 Divider(color = Color.White)
 
                 SettingsItem(
-                    iconResId = R.drawable.logout, // Replace with your logout icon
+                    iconResId = R.drawable.logout,
                     titleResId = R.string.logout_title,
                     descriptionResId = R.string.logout_description,
-                    onClick = {
-                        viewModel.updateLogoutDialogVisibility(true)
-                    }
+                    onClick = onLogoutClicked
                 )
                 Divider(color = Color.White)
 
                 SettingsItem(
-                    iconResId = R.drawable.delete, // Replace with your delete icon
+                    iconResId = R.drawable.delete,
                     titleResId = R.string.delete_account_title,
                     descriptionResId = R.string.delete_account_description,
-                    onClick = {
-                        navController.navigate(DeleteProfileRoute)
-                    }
+                    onClick = onDeleteAccountClicked
                 )
 
                 Text(
@@ -161,24 +186,14 @@ fun SettingsScreen() {
                 )
             }
             if (state.showPrivacyPolicyDialog == true) {
-                PrivacyPolicyDialog(settingsViewModel = viewModel)
+                PrivacyPolicyDialog(onDismiss = onPrivacyDialogDismiss)
             }
             if (state.showLogoutDialog == true) {
                 CustomDialog(
                     title = stringResource(R.string.logout_dialog_title),
                     textContent = stringResource(R.string.logout_dialog_message),
-                    onPositiveClick = {
-                        viewModel.logout()
-                        navController.navigate(SignupFlowRoute) {
-                            popUpTo(navController.graph.id) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        }
-                    },
-                    onNegativeClick = {
-                        viewModel.updateLogoutDialogVisibility(false)
-                    },
+                    onPositiveClick = onLogoutConfirmed,
+                    onNegativeClick = onLogoutDismissed,
                     content = {
                         state.powerUser?.let { user ->
                             UserButton(

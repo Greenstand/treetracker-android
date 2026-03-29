@@ -52,10 +52,22 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
-
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(OrgPickerState())
 
+    OrgPicker(
+        state = state,
+        onOrgSelected = { viewModel.setOrg(it) },
+        onNextClicked = { navController.popBackStack() },
+    )
+}
+
+@Composable
+fun OrgPicker(
+    state: OrgPickerState = OrgPickerState(),
+    onOrgSelected: (Org) -> Unit = {},
+    onNextClicked: () -> Unit = {},
+) {
     Scaffold(
         topBar = {
             Box(
@@ -83,7 +95,7 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
                     ArrowButton(
                         isLeft = false,
                     ) {
-                        navController.popBackStack()
+                        onNextClicked()
                     }
                 }
             )
@@ -100,7 +112,7 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
                     org = org,
                     isSelected = org == state.currentOrg,
                     onClick = {
-                        viewModel.setOrg(org)
+                        onOrgSelected(org)
                     }
                 )
             }

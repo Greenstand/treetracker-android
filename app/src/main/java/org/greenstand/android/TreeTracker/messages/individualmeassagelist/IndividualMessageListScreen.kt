@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
+import org.greenstand.android.TreeTracker.models.messages.Message
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
 import org.greenstand.android.TreeTracker.navigation.ChatRoute
@@ -55,6 +56,28 @@ fun IndividualMessageListScreen(
     val navController = LocalNavHostController.current
     val state by viewModel.state.observeAsState(IndividualMessageListState())
 
+    IndividualMessageList(
+        state = state,
+        onBackClicked = { navController.popBackStack() },
+        onMessageSelected = { message -> viewModel.selectMessage(message) },
+        onNavigateToSelected = {
+            when (val msg = state.selectedMessage) {
+                is DirectMessage -> navController.navigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
+                is SurveyMessage -> navController.navigate(SurveyRoute(messageId = msg.id))
+                is AnnouncementMessage -> navController.navigate(AnnouncementRoute(messageId = msg.id))
+            }
+        },
+    )
+}
+
+@ExperimentalFoundationApi
+@Composable
+fun IndividualMessageList(
+    state: IndividualMessageListState = IndividualMessageListState(),
+    onBackClicked: () -> Unit = {},
+    onMessageSelected: (Message) -> Unit = {},
+    onNavigateToSelected: () -> Unit = {},
+) {
     Scaffold(
         topBar = {
             ActionBar(
@@ -62,9 +85,7 @@ fun IndividualMessageListScreen(
                 leftAction = {
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
-                            onClick = {
-                                navController.popBackStack()
-                            },
+                            onClick = onBackClicked,
                             imagePath = it
                         )
                     }
@@ -79,22 +100,14 @@ fun IndividualMessageListScreen(
                         isLeft = false,
                         isEnabled = state.selectedMessage != null,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = {
-                            when (val msg = state.selectedMessage) {
-                                is DirectMessage -> navController.navigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
-                                is SurveyMessage -> navController.navigate(SurveyRoute(messageId = msg.id))
-                                is AnnouncementMessage -> navController.navigate(AnnouncementRoute(messageId = msg.id))
-                            }
-                        }
+                        onClick = onNavigateToSelected
                     )
                 },
                 leftAction = {
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = {
-                            navController.popBackStack()
-                        }
+                        onClick = onBackClicked
                     )
                 }
             )
@@ -119,7 +132,7 @@ fun IndividualMessageListScreen(
                                     icon = R.drawable.individual_message_icon,
                                     messageTypeText = stringResource(R.string.message)
                                 ) {
-                                    viewModel.selectMessage(message)
+                                    onMessageSelected(message)
                                 }
                             is SurveyMessage ->
                                 IndividualMessageItem(
@@ -129,7 +142,7 @@ fun IndividualMessageListScreen(
                                     icon = R.drawable.quiz_icon,
                                     messageTypeText = stringResource(R.string.survey)
                                 ) {
-                                    viewModel.selectMessage(message)
+                                    onMessageSelected(message)
                                 }
                             is AnnouncementMessage ->
                                 IndividualMessageItem(
@@ -140,7 +153,7 @@ fun IndividualMessageListScreen(
                                     messageTypeText = stringResource(R.string.announcement),
                                     iconPadding = PaddingValues(bottom = 30.dp)
                                 ) {
-                                    viewModel.selectMessage(message)
+                                    onMessageSelected(message)
                                 }
                             else -> throw IllegalStateException("Unsupported type: $message")
                         }

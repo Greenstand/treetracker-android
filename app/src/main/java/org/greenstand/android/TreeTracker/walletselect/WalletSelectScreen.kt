@@ -57,12 +57,39 @@ import org.greenstand.android.TreeTracker.view.UserImageButton
 fun WalletSelectScreen(
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
-
     val state by viewModel.state.collectAsState(initial = WalletSelectState())
-
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
+    WalletSelect(
+        state = state,
+        onUserImageClicked = {
+            CaptureSetupScopeManager.nav.navToUserSelect(navController)
+        },
+        onForwardClicked = {
+            scope.launch {
+                state.currentUser?.let {
+                    CaptureSetupScopeManager.nav.navForward(navController)
+                }
+            }
+        },
+        onAddWalletClicked = { navController.navigate(AddWalletRoute) },
+        onBackClicked = {
+            CaptureSetupScopeManager.nav.navBackward(navController)
+        },
+        onWalletSelected = { viewModel.selectPlanter(it) },
+    )
+}
+
+@Composable
+fun WalletSelect(
+    state: WalletSelectState = WalletSelectState(),
+    onUserImageClicked: () -> Unit = { },
+    onForwardClicked: () -> Unit = { },
+    onAddWalletClicked: () -> Unit = { },
+    onBackClicked: () -> Unit = { },
+    onWalletSelected: (Long) -> Unit = { },
+) {
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -71,9 +98,7 @@ fun WalletSelectScreen(
                 leftAction = {
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
-                            onClick = {
-                                CaptureSetupScopeManager.nav.navToUserSelect(navController)
-                            },
+                            onClick = onUserImageClicked,
                             imagePath = it
                         )
                     }
@@ -88,22 +113,18 @@ fun WalletSelectScreen(
                         isLeft = false,
                         isEnabled = state.selectedUser != null
                     ) {
-                        scope.launch {
-                            state.currentUser?.let {
-                                CaptureSetupScopeManager.nav.navForward(navController)
-                            }
-                        }
+                        onForwardClicked()
                     }
                 },
                 centerAction = {
                     OrangeAddButton(
                         modifier = Modifier.align(Alignment.Center),
-                        onClick = { navController.navigate(AddWalletRoute) },
+                        onClick = onAddWalletClicked,
                     )
                 },
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        CaptureSetupScopeManager.nav.navBackward(navController)
+                        onBackClicked()
                     }
                 }
             )
@@ -122,14 +143,14 @@ fun WalletSelectScreen(
             state.currentUser?.let { currentUser ->
                 item {
                     WalletItem(currentUser, state.selectedUser == currentUser) {
-                        viewModel.selectPlanter(it)
+                        onWalletSelected(it)
                     }
                 }
             }
             state.alternateUsers.let { alternateUsers ->
                 items(alternateUsers) { user ->
                     WalletItem(user, state.selectedUser == user) {
-                        viewModel.selectPlanter(it)
+                        onWalletSelected(it)
                     }
                 }
             }

@@ -53,11 +53,43 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 fun TreeImageReviewScreen(
     viewModel: TreeImageReviewViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
-
     val state by viewModel.state.observeAsState(TreeImageReviewState())
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
+    TreeImageReview(
+        state = state,
+        onNoteClicked = { viewModel.setDialogState(true) },
+        onRejectClicked = {
+            CaptureFlowScopeManager.nav.navBackward(navController)
+        },
+        onApproveClicked = {
+            viewModel.checkIfCanNavigateForward {
+                scope.launch {
+                    CaptureFlowScopeManager.nav.navForward(navController)
+                }
+            }
+        },
+        onInfoClicked = { viewModel.updateReviewTutorialDialog(true) },
+        onNoteUpdated = { viewModel.updateNote(it) },
+        onNoteAdded = { viewModel.addNote() },
+        onDialogDismissed = { viewModel.setDialogState(false) },
+        onTutorialCompleted = { viewModel.updateReviewTutorialDialog(false) },
+    )
+}
+
+@Composable
+fun TreeImageReview(
+    state: TreeImageReviewState = TreeImageReviewState(),
+    onNoteClicked: () -> Unit = { },
+    onRejectClicked: () -> Unit = { },
+    onApproveClicked: () -> Unit = { },
+    onInfoClicked: () -> Unit = { },
+    onNoteUpdated: (String) -> Unit = { },
+    onNoteAdded: () -> Unit = { },
+    onDialogDismissed: () -> Unit = { },
+    onTutorialCompleted: () -> Unit = { },
+) {
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -68,9 +100,7 @@ fun TreeImageReviewScreen(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .size(width = 100.dp, 60.dp),
-                        onClick = {
-                            viewModel.setDialogState(true)
-                        }
+                        onClick = onNoteClicked,
                     ) {
                         Text(stringResource(R.string.note))
                     }
@@ -87,38 +117,33 @@ fun TreeImageReviewScreen(
             ) {
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
-                    onClick = {
-                        CaptureFlowScopeManager.nav.navBackward(navController)
-                    },
+                    onClick = onRejectClicked,
                     approval = false
                 )
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
-                    onClick = {
-                        viewModel.checkIfCanNavigateForward {
-                            scope.launch {
-                                CaptureFlowScopeManager.nav.navForward(navController)
-                            }
-                        }
-                    },
+                    onClick = onApproveClicked,
                     approval = true
                 )
                 InfoButton(
                     modifier = Modifier
                         .size(60.dp),
-                    onClick = { viewModel.updateReviewTutorialDialog(true) }
+                    onClick = onInfoClicked,
                 )
             }
         }
     ) {
         if (state.isDialogOpen) {
-            NoteDialog(state = state, viewModel = viewModel)
+            NoteDialog(
+                state = state,
+                onNoteUpdated = onNoteUpdated,
+                onNoteAdded = onNoteAdded,
+                onDialogDismissed = onDialogDismissed,
+            )
         }
         if (state.showReviewTutorial == true) {
             TreeCaptureReviewTutorial(
-                onCompleteClick = {
-                    viewModel.updateReviewTutorialDialog(false)
-                }
+                onCompleteClick = onTutorialCompleted,
             )
         }
         LocalImage(
@@ -131,17 +156,18 @@ fun TreeImageReviewScreen(
 }
 
 @Composable
-fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel) {
+fun NoteDialog(
+    state: TreeImageReviewState,
+    onNoteUpdated: (String) -> Unit = { },
+    onNoteAdded: () -> Unit = { },
+    onDialogDismissed: () -> Unit = { },
+) {
     CustomDialog(
         dialogIcon = painterResource(id = R.drawable.note),
         title = stringResource(R.string.add_note_to_tree),
         textInputValue = state.note,
-        onTextInputValueChange = { text -> viewModel.updateNote(text) },
-        onPositiveClick = {
-            viewModel.addNote()
-        },
-        onNegativeClick = {
-            viewModel.setDialogState(false)
-        }
+        onTextInputValueChange = { text -> onNoteUpdated(text) },
+        onPositiveClick = onNoteAdded,
+        onNegativeClick = onDialogDismissed,
     )
 }

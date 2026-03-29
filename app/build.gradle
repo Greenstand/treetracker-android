@@ -6,6 +6,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.firebase.crashlytics'
+    id 'io.github.takahirom.roborazzi'
 }
 
 def loadExtraProperties(String fileName) {
@@ -164,6 +165,56 @@ android {
         checkReleaseBuilds true
     }
     namespace 'org.greenstand.android.TreeTracker'
+
+    // includeAndroidResources is only needed for screenshot tests (Compose theme loads
+    // fonts from R.font.*). Enabling it globally causes Robolectric to fully initialize
+    // TreeTrackerApplication, which starts Koin and breaks existing unit tests.
+    testOptions {
+        unitTests {
+            includeAndroidResources = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
+        }
+    }
+}
+
+// Screenshot tests and regular unit tests are isolated from each other:
+// - `./gradlew test` runs only regular unit tests (excludes screenshot/)
+// - `./gradlew verifyRoborazziDebug` runs only screenshot tests (includes screenshot/ only)
+// This prevents Koin DI conflicts between the two test suites.
+def isRoborazziRun = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
+tasks.withType(Test).configureEach {
+    if (isRoborazziRun) {
+        include '**/screenshot/**'
+    } else {
+        exclude '**/screenshot/**'
+    }
+}
+
+// Roborazzi golden images are stored in src/test/snapshots/ and committed to git.
+// The plugin always reads/writes build/outputs/roborazzi/, so we sync manually.
+def snapshotsDir = file("src/test/snapshots")
+def roborazziOutputDir = file("$buildDir/outputs/roborazzi")
+
+afterEvaluate {
+    tasks.matching { it.name.matches("test.*UnitTest") }.configureEach {
+        doFirst {
+            if (snapshotsDir.exists()) {
+                copy {
+                    from snapshotsDir
+                    into roborazziOutputDir
+                }
+            }
+        }
+        doLast {
+            if (roborazziOutputDir.exists()) {
+                copy {
+                    from roborazziOutputDir
+                    include "*.png"
+                    exclude "*_actual.*", "*_compare.*", "*_delta.*"
+                    into snapshotsDir
+                }
+            }
+        }
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
@@ -251,6 +302,11 @@ dependencies {
     androidTestImplementation libs.androidx.test.espresso.core
     androidTestImplementation libs.turbine
     testImplementation libs.turbine
+
+    // Screenshot testing
+    testImplementation libs.bundles.roborazzi
+    testImplementation libs.androidx.compose.ui.test.junit4
+    debugImplementation libs.androidx.compose.ui.test.manifest
 }
 
 configurations.all {

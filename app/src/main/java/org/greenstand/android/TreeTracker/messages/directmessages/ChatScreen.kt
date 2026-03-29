@@ -54,7 +54,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -79,9 +78,29 @@ fun ChatScreen(
         )
     )
 ) {
-    val scrollState = rememberLazyListState()
     val state by viewModel.state.observeAsState(ChatState())
-    val navController: NavHostController = LocalNavHostController.current
+    val navController = LocalNavHostController.current
+
+    Chat(
+        state = state,
+        onBackClicked = { navController.popBackStack() },
+        onDraftTextChanged = { text -> viewModel.updateDraftText(text) },
+        onSendClicked = { viewModel.sendMessage() },
+        checkIsOtherUser = { index -> viewModel.checkIsOtherUser(index) },
+        checkChatAuthor = { index, isFirst -> viewModel.checkChatAuthor(index, isFirst) },
+    )
+}
+
+@Composable
+fun Chat(
+    state: ChatState = ChatState(),
+    onBackClicked: () -> Unit = {},
+    onDraftTextChanged: (String) -> Unit = {},
+    onSendClicked: () -> Unit = {},
+    checkIsOtherUser: (Int) -> Boolean = { false },
+    checkChatAuthor: (Int, Boolean) -> Boolean = { _, _ -> false },
+) {
+    val scrollState = rememberLazyListState()
 
     Scaffold(
         topBar = {
@@ -114,9 +133,7 @@ fun ChatScreen(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = {
-                            navController.popBackStack()
-                        }
+                        onClick = onBackClicked
                     )
                 }
             )
@@ -129,7 +146,8 @@ fun ChatScreen(
                 state = state,
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState,
-                viewModel = viewModel
+                checkIsOtherUser = checkIsOtherUser,
+                checkChatAuthor = checkChatAuthor,
             )
             Box(
                 modifier = Modifier
@@ -142,7 +160,7 @@ fun ChatScreen(
                         .fillMaxWidth()
                         .padding(5.dp),
                     value = state.draftText,
-                    onValueChange = { text -> viewModel.updateDraftText(text) },
+                    onValueChange = onDraftTextChanged,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Go,
@@ -155,9 +173,7 @@ fun ChatScreen(
                         )
                     },
                     keyboardActions = KeyboardActions(
-                        onGo = {
-                            viewModel.sendMessage()
-                        }
+                        onGo = { onSendClicked() }
                     ),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = AppColors.LightGray,
@@ -194,7 +210,8 @@ fun Messages(
     state: ChatState,
     scrollState: LazyListState,
     modifier: Modifier = Modifier,
-    viewModel: ChatViewModel
+    checkIsOtherUser: (Int) -> Boolean = { false },
+    checkChatAuthor: (Int, Boolean) -> Boolean = { _, _ -> false },
 ) {
     val messages = state.messages
     Box(modifier = modifier) {
@@ -209,9 +226,9 @@ fun Messages(
             items(messages.size) { index ->
                 Message(
                     msg = messages[index],
-                    isOtherUser = viewModel.checkIsOtherUser(index),
-                    isFirstMessageByAuthor = viewModel.checkChatAuthor(index, true),
-                    isLastMessageByAuthor = viewModel.checkChatAuthor(index, true)
+                    isOtherUser = checkIsOtherUser(index),
+                    isFirstMessageByAuthor = checkChatAuthor(index, true),
+                    isLastMessageByAuthor = checkChatAuthor(index, true)
                 )
             }
         }
