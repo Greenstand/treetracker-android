@@ -29,7 +29,7 @@ data class LanguagePickerState(
 
 sealed class LanguagePickerAction : Action {
     data class SetLanguage(val language: Language) : LanguagePickerAction()
-    object RefreshAppLanguage : LanguagePickerAction()
+    object ConfirmLanguage : LanguagePickerAction()
     object NavigateNext : LanguagePickerAction()
 }
 
@@ -46,10 +46,10 @@ class LanguagePickerViewModel(
     override fun handleAction(action: LanguagePickerAction) {
         when (action) {
             is LanguagePickerAction.SetLanguage -> {
-                languageSwitcher.setLanguage(action.language)
+                updateState { copy(currentLanguage = action.language) }
             }
-            is LanguagePickerAction.RefreshAppLanguage -> {
-                languageSwitcher.applyCurrentLanguage()
+            is LanguagePickerAction.ConfirmLanguage -> {
+                state.value.currentLanguage?.let { languageSwitcher.setLanguage(it) }
             }
             else -> { }
         }

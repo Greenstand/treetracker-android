@@ -16,12 +16,11 @@
 package org.greenstand.android.TreeTracker.activities
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.ExperimentalComposeApi
-import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.root.Root
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -29,9 +28,8 @@ import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.view.NoGPSDeviceDialog
 import org.koin.android.ext.android.inject
 
-class TreeTrackerActivity : ComponentActivity() {
+class TreeTrackerActivity : AppCompatActivity() {
 
-    private val languageSwitcher: LanguageSwitcher by inject()
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
     private val gpsUtils: GpsUtils by inject()
 
@@ -47,8 +45,6 @@ class TreeTrackerActivity : ComponentActivity() {
                 scrim = android.graphics.Color.argb(128, 0, 0, 0)
             )
         )
-
-        languageSwitcher.applyCurrentLanguage()
 
         setContent {
             CustomTheme {
