@@ -179,7 +179,7 @@ def snapshotsDir = file("src/test/snapshots")
 def roborazziOutputDir = file("$buildDir/outputs/roborazzi")
 
 afterEvaluate {
-    tasks.named("testDebugUnitTest").configure {
+    tasks.matching { it.name.matches("test.*UnitTest") }.configureEach {
         doFirst {
             if (snapshotsDir.exists()) {
                 copy {
