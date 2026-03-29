@@ -20,8 +20,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
@@ -49,7 +48,7 @@ class OrgPickerViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun `verify Org Repo gets correct Org Set`() = runBlockingTest {
+    fun `verify Org Repo gets correct Org Set`() = runTest {
         val orgList = FakeFileGenerator.fakeOrganizationList
         coEvery { orgRepo.getOrgs() } returns orgList
 
@@ -58,7 +57,7 @@ class OrgPickerViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun `set fake organization, returns success with valid Org`() = runBlocking {
+    fun `set fake organization, returns success with valid Org`() = runTest {
         val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
         // Given
         coEvery { orgRepo.currentOrg() } returns currentOrg

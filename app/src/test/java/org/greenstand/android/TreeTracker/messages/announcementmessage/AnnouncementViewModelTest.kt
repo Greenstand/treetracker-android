@@ -21,7 +21,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator.fakeAnnouncementMessage
@@ -49,38 +49,38 @@ class AnnouncementViewModelTest {
     }
 
     @Test
-    fun `verify messages repo gets the correct announcement message `() = runBlocking {
+    fun `verify messages repo gets the correct announcement message `() = runTest {
         coVerify { messagesRepo.getAnnouncementMessages(messageId) }
     }
 
     @Test
-    fun `WHEN get announcement is triggered THEN current URL changes`() = runBlocking {
+    fun `WHEN get announcement is triggered THEN current URL changes`() = runTest {
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentUrl, fakeAnnouncementMessage.videoLink)
         }
     }
     @Test
-    fun `WHEN get announcement is triggered THEN current title changes`() = runBlocking {
+    fun `WHEN get announcement is triggered THEN current title changes`() = runTest {
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentTitle, fakeAnnouncementMessage.subject)
         }
     }
     @Test
-    fun `WHEN get announcement is triggered THEN from state changes`() = runBlocking {
+    fun `WHEN get announcement is triggered THEN from state changes`() = runTest {
         announcementViewModel.state.test {
             assertEquals(awaitItem().from, fakeAnnouncementMessage.from)
         }
     }
 
     @Test
-    fun `WHEN get announcement is triggered THEN current body changes`() = runBlocking {
+    fun `WHEN get announcement is triggered THEN current body changes`() = runTest {
         announcementViewModel.state.test {
             assertEquals(awaitItem().currentBody, fakeAnnouncementMessage.body)
         }
     }
 
     @Test
-    fun `verify message repo marks message as read`() = runBlocking {
+    fun `verify message repo marks message as read`() = runTest {
         coVerify { messagesRepo.markMessageAsRead(messageId) }
     }
 }

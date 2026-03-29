@@ -20,13 +20,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
@@ -40,16 +35,12 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Mess
 import org.greenstand.android.TreeTracker.models.messages.network.responses.QueryResponse
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(JUnit4::class)
 class MessagesRepoTest {
 
     @get:Rule
@@ -59,7 +50,6 @@ class MessagesRepoTest {
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private lateinit var testDispatcher: TestCoroutineDispatcher
     private lateinit var apiService: MessagesApiService
     private lateinit var userRepo: UserRepo
     private lateinit var timeProvider: TimeProvider
@@ -71,9 +61,6 @@ class MessagesRepoTest {
 
     @Before
     fun setUp() {
-        testDispatcher = TestCoroutineDispatcher()
-        Dispatchers.setMain(testDispatcher)
-
         apiService = mockk()
         userRepo = mockk()
         timeProvider = mockk()
@@ -87,11 +74,6 @@ class MessagesRepoTest {
             messagesDAO,
             messageUploader
         )
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
     }
 
     private val userList: List<User> = List(10) {
@@ -111,7 +93,7 @@ class MessagesRepoTest {
 
     @Test
     fun `sync messages method fetches messages from api and saves them in database for every page and wallet correctly`() =
-        runBlocking {
+        runTest {
 
             // mock
             coEvery {

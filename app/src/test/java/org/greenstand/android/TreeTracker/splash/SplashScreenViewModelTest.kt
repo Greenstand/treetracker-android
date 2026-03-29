@@ -23,7 +23,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
@@ -98,7 +98,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `WHEN every condition in a function is true THEN entire body of the function is executed`() = runBlocking {
+    fun `WHEN every condition in a function is true THEN entire body of the function is executed`() = runTest {
         val user = FakeFileGenerator.emptyUser
         orgJsonString = "json string"
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
@@ -117,7 +117,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `functions are not executed where condition is false`() = runBlocking {
+    fun `functions are not executed where condition is false`() = runTest {
         val user = FakeFileGenerator.emptyUser
         orgJsonString = null
         coEvery { checkForInternetUseCase.execute(Unit) } returns false
@@ -136,7 +136,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `WHEN User object is null THEN isInitialSetupRequired is true`() = runBlocking {
+    fun `WHEN User object is null THEN isInitialSetupRequired is true`() = runTest {
         coEvery { userRepo.getPowerUser() } returns null
 
         val result = splashScreenViewModel.isInitialSetupRequired()
@@ -145,7 +145,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `WHEN User object is not  null THEN isInitialSetupRequired is false`() = runBlocking {
+    fun `WHEN User object is not  null THEN isInitialSetupRequired is false`() = runTest {
         val user = FakeFileGenerator.emptyUser
         coEvery { userRepo.getPowerUser() } returns user
 
@@ -155,7 +155,7 @@ class SplashScreenViewModelTest {
     }
 
     @Test
-    fun `WHEN function startGPSUpdatesForSignup() is called THEN function startGpsUpdates() is executed 1 time`() = runBlocking {
+    fun `WHEN function startGPSUpdatesForSignup() is called THEN function startGpsUpdates() is executed 1 time`() = runTest {
         splashScreenViewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
         verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
     }

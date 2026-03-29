@@ -20,7 +20,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
@@ -47,13 +47,13 @@ class LanguagePickerViewModelTest {
     }
 
     @Test
-    fun `Current language returns current language from the language switcher`() = runBlocking {
+    fun `Current language returns current language from the language switcher`() = runTest {
         val result = testSubject.state.value.currentLanguage
         assertEquals(result, Language.ENGLISH)
     }
 
     @Test
-    fun `Verify set language updates state without applying`() = runBlocking {
+    fun `Verify set language updates state without applying`() = runTest {
         val language = Language.SWAHILI
         testSubject.handleAction(LanguagePickerAction.SetLanguage(language))
         assertEquals(Language.SWAHILI, testSubject.state.value.currentLanguage)
@@ -61,7 +61,7 @@ class LanguagePickerViewModelTest {
     }
 
     @Test
-    fun `Verify confirm language calls set language from language switcher`() = runBlocking {
+    fun `Verify confirm language calls set language from language switcher`() = runTest {
         testSubject.handleAction(LanguagePickerAction.SetLanguage(Language.SWAHILI))
         testSubject.handleAction(LanguagePickerAction.ConfirmLanguage)
         coVerify { languageSwitcher.setLanguage(Language.SWAHILI) }
