@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.languagepicker
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -31,10 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.Language
@@ -56,6 +52,28 @@ fun LanguageSelectScreen(
     val currentLanguage by viewModel.currentLanguage.observeAsState()
     val navController = LocalNavHostController.current
 
+    LanguageSelect(
+        currentLanguage = currentLanguage,
+        isFromTopBar = isFromTopBar,
+        onLanguageSelected = { viewModel.setLanguage(it) },
+        onNextClicked = {
+            if (isFromTopBar) {
+                navController.popBackStack()
+            } else {
+                navController.navigate(SignupFlowRoute)
+            }
+            viewModel.refreshAppLanguage()
+        },
+    )
+}
+
+@Composable
+fun LanguageSelect(
+    currentLanguage: Language? = null,
+    isFromTopBar: Boolean = false,
+    onLanguageSelected: (Language) -> Unit = {},
+    onNextClicked: () -> Unit = {},
+) {
     Scaffold(
         topBar = {
             LanguageTopBar()
@@ -68,12 +86,7 @@ fun LanguageSelectScreen(
                         isLeft = false,
                         isEnabled = currentLanguage != null
                     ) {
-                        if (isFromTopBar) {
-                            navController.popBackStack()
-                        } else {
-                            navController.navigate(SignupFlowRoute)
-                        }
-                        viewModel.refreshAppLanguage()
+                        onNextClicked()
                     }
                 }
             )
@@ -89,7 +102,7 @@ fun LanguageSelectScreen(
                     text = language.toString(),
                     isSelected = language == currentLanguage,
                 ) {
-                    viewModel.setLanguage(language)
+                    onLanguageSelected(language)
                 }
             }
         }
@@ -126,15 +139,4 @@ fun LanguageButton(
             style = CustomTheme.typography.regular
         )
     }
-}
-
-@Preview
-@Composable
-fun LanguageSelectScreen_Preview(
-    @PreviewParameter(LanguagePickerPreviewProvider::class) viewModel: LanguagePickerViewModel,
-) {
-    LanguageSelectScreen(
-        true,
-        viewModel
-    )
 }

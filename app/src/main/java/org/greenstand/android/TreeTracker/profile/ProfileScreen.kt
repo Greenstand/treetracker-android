@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -61,9 +60,7 @@ fun ProfileScreen(
     val viewModel: UserSelectViewModel = viewModel(factory = UserSelectViewModelFactory(userId = userId))
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState(UserSelectState())
-
     val scope = rememberCoroutineScope()
-    val focusManager = LocalFocusManager.current
 
     val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { newPhotoPath ->
         if (!newPhotoPath.isNullOrEmpty()) {
@@ -73,21 +70,40 @@ fun ProfileScreen(
             }
         }
     }
+
+    Profile(
+        state = state,
+        onBackClicked = { navController.popBackStack() },
+        onEditToggleClicked = { viewModel.updateEditEnabled() },
+        onPhotoClicked = { cameraLauncher.launch(true) },
+        onFirstNameChanged = { viewModel.updateSelectedUser(firstName = it) },
+        onLastNameChanged = { viewModel.updateSelectedUser(lastName = it) },
+        onEmailChanged = { viewModel.updateSelectedUser(email = it) },
+        onPhoneChanged = { viewModel.updateSelectedUser(phone = it) },
+        onSaveClicked = {
+            scope.launch {
+                viewModel.updateUserInDatabase()
+                viewModel.updateEditEnabled()
+            }
+        },
+    )
+}
+
+@Composable
+fun Profile(
+    state: UserSelectState = UserSelectState(),
+    onBackClicked: () -> Unit = { },
+    onEditToggleClicked: () -> Unit = { },
+    onPhotoClicked: () -> Unit = { },
+    onFirstNameChanged: (String) -> Unit = { },
+    onLastNameChanged: (String) -> Unit = { },
+    onEmailChanged: (String) -> Unit = { },
+    onPhoneChanged: (String) -> Unit = { },
+    onSaveClicked: () -> Unit = { },
+) {
     var firstNameError by remember { mutableStateOf<String?>(null) }
     var lastNameError by remember { mutableStateOf<String?>(null) }
 
-    fun validateNames(): Boolean {
-        val firstName = state.selectedUser?.firstName ?: ""
-        val lastName = state.selectedUser?.lastName ?: ""
-
-        val (firstNameValid, firstError) = ValidationUtils.validateName(firstName)
-        val (lastNameValid, lastError) = ValidationUtils.validateName(lastName)
-
-        firstNameError = firstError
-        lastNameError = lastError
-
-        return firstNameValid && lastNameValid
-    }
     Scaffold(
         topBar = {
             ActionBar(
@@ -101,19 +117,17 @@ fun ProfileScreen(
                         textAlign = TextAlign.Center,
                     )
                 },
-
-                )
+            )
         },
         bottomBar = {
             ActionBar(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        navController.popBackStack()
+                        onBackClicked()
                     }
                 },
-
-                )
+            )
         }
     ) {
         Column(
@@ -142,12 +156,12 @@ fun ProfileScreen(
                             .aspectRatio(1.0f)
                             .padding(bottom = 20.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .clickable(enabled = state.editMode) { cameraLauncher.launch(true) },
+                            .clickable(enabled = state.editMode) { onPhotoClicked() },
                     )
                 }
 
                 TreeTrackerButton(
-                    onClick = { viewModel.updateEditEnabled() },
+                    onClick = onEditToggleClicked,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 16.dp)
@@ -165,11 +179,9 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                ProfileField(stringResource(id = R.string.first_name_hint), selectedUser.firstName, state.editMode) {
-                    newFirstName ->
-
+                ProfileField(stringResource(id = R.string.first_name_hint), selectedUser.firstName, state.editMode) { newFirstName ->
                     val filtered = ValidationUtils.filterNameInput(newFirstName)
-                    viewModel.updateSelectedUser(firstName = filtered)
+                    onFirstNameChanged(filtered)
                     if (state.editMode) {
                         val (_, error) = ValidationUtils.validateName(filtered)
                         firstNameError = error
@@ -187,11 +199,10 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 ProfileField(
-                    stringResource(id = R.string.last_name_hint), selectedUser.lastName ?: "", state.editMode) {
-                    newLastName ->
+                    stringResource(id = R.string.last_name_hint), selectedUser.lastName ?: "", state.editMode
+                ) { newLastName ->
                     val filtered = ValidationUtils.filterNameInput(newLastName)
-                    viewModel.updateSelectedUser(lastName = filtered)
-
+                    onLastNameChanged(filtered)
                     if (state.editMode) {
                         val (_, error) = ValidationUtils.validateName(filtered)
                         lastNameError = error
@@ -207,12 +218,12 @@ fun ProfileScreen(
                     )
                 }
                 if (selectedUser.wallet.contains("@")) {
-                    ProfileField(stringResource(id = R.string.email_placeholder), selectedUser.wallet ?: "", state.editMode) {
-                        viewModel.updateSelectedUser(email = it)
+                    ProfileField(stringResource(id = R.string.email_placeholder), selectedUser.wallet, state.editMode) {
+                        onEmailChanged(it)
                     }
                 } else {
-                    ProfileField(stringResource(id = R.string.phone_placeholder), selectedUser.wallet ?: "", state.editMode) {
-                        viewModel.updateSelectedUser(phone = it)
+                    ProfileField(stringResource(id = R.string.phone_placeholder), selectedUser.wallet, state.editMode) {
+                        onPhoneChanged(it)
                     }
                 }
 
@@ -225,16 +236,13 @@ fun ProfileScreen(
                             .align(Alignment.CenterHorizontally)
                             .size(width = 150.dp, 60.dp),
                         onClick = {
-                            // 验证名字
                             val firstName = state.selectedUser?.firstName ?: ""
                             val lastName = state.selectedUser?.lastName ?: ""
 
                             if (ValidationUtils.validateName(firstName).first &&
-                                ValidationUtils.validateName(lastName).first) {
-                                scope.launch {
-                                    viewModel.updateUserInDatabase()
-                                    viewModel.updateEditEnabled()
-                                }
+                                ValidationUtils.validateName(lastName).first
+                            ) {
+                                onSaveClicked()
                             }
                         }
                     ) {
@@ -252,11 +260,7 @@ fun ProfileScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
-
-
         }
     }
-
-
 }
 

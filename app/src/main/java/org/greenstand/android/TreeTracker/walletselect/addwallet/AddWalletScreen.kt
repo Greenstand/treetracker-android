@@ -54,6 +54,25 @@ fun AddWalletScreen(
     val scope = rememberCoroutineScope()
     val state by viewModel.state.observeAsState(AddWalletState())
 
+    AddWallet(
+        state = state,
+        onWalletNameChanged = { viewModel.updateWalletName(it) },
+        onBackClicked = { CaptureSetupScopeManager.nav.navBackward(navController) },
+        onNextClicked = {
+            scope.launch {
+                CaptureSetupScopeManager.nav.navForward(navController)
+            }
+        },
+    )
+}
+
+@Composable
+fun AddWallet(
+    state: AddWalletState = AddWalletState(),
+    onWalletNameChanged: (String) -> Unit = {},
+    onBackClicked: () -> Unit = {},
+    onNextClicked: () -> Unit = {},
+) {
     Scaffold(
         modifier = Modifier,
         bottomBar = {
@@ -61,7 +80,7 @@ fun AddWalletScreen(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        CaptureSetupScopeManager.nav.navBackward(navController)
+                        onBackClicked()
                     }
                 },
                 rightAction = {
@@ -69,9 +88,7 @@ fun AddWalletScreen(
                         isLeft = false,
                         isEnabled = state.walletName.isNotBlank()
                     ) {
-                        scope.launch {
-                            CaptureSetupScopeManager.nav.navForward(navController)
-                        }
+                        onNextClicked()
                     }
                 }
             )
@@ -87,7 +104,7 @@ fun AddWalletScreen(
             BorderedTextField(
                 value = state.walletName,
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> viewModel.updateWalletName(updatedName) },
+                onValueChange = { updatedName -> onWalletNameChanged(updatedName) },
                 placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -97,9 +114,7 @@ fun AddWalletScreen(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        scope.launch {
-                            CaptureSetupScopeManager.nav.navForward(navController)
-                        }
+                        onNextClicked()
                     }
                 )
             )

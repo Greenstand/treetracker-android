@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.dashboard
+package org.greenstand.android.TreeTracker.screenshot
 
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
+import org.greenstand.android.TreeTracker.settings.Settings
+import org.greenstand.android.TreeTracker.settings.SettingsState
+import org.junit.Test
 
-class DashboardPreviewParameter : PreviewParameterProvider<DashboardViewModel>, KoinComponent {
+class SettingsScreenshotTest : ScreenshotTest() {
 
-    override val values: Sequence<DashboardViewModel> = sequenceOf(
-        DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get())
-    )
-
-    override val count: Int = values.count()
+    @Test
+    fun settings_default() = snapshot {
+        Settings(state = SettingsState())
+    }
 }

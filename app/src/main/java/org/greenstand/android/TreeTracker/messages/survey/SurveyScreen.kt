@@ -65,6 +65,33 @@ fun SurveyScreen(
     if (showToast) {
         ShowToastMessage(stringResId = R.string.survey_completed)
     }
+
+    Survey(
+        state = state,
+        onPrevClicked = {
+            if (!viewModel.goToPrevQuestion()) {
+                navController.popBackStack()
+            }
+        },
+        onNextClicked = {
+            scope.launch {
+                if (!viewModel.goToNextQuestion()) {
+                    showToast = true
+                    navController.popBackStack()
+                }
+            }
+        },
+        onAnswerSelected = { index -> viewModel.selectAnswer(index) },
+    )
+}
+
+@Composable
+fun Survey(
+    state: SurveyScreenState = SurveyScreenState(),
+    onPrevClicked: () -> Unit = {},
+    onNextClicked: () -> Unit = {},
+    onAnswerSelected: (Int) -> Unit = {},
+) {
     Scaffold(
         topBar = {
             ActionBar(
@@ -81,25 +108,15 @@ fun SurveyScreen(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                    ) {
-                        if (!viewModel.goToPrevQuestion()) {
-                            navController.popBackStack()
-                        }
-                    }
+                        onClick = onPrevClicked,
+                    )
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
                         isEnabled = state.selectedAnswerIndex != null,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = {
-                            scope.launch {
-                                if (!viewModel.goToNextQuestion()) {
-                                    showToast = true
-                                    navController.popBackStack()
-                                }
-                            }
-                        }
+                        onClick = onNextClicked,
                     )
                 }
             )
@@ -123,9 +140,7 @@ fun SurveyScreen(
                         AnswerItem(
                             answerText = choices[index],
                             isSelected = state.selectedAnswerIndex == index,
-                            onClick = {
-                                viewModel.selectAnswer(index)
-                            }
+                            onClick = { onAnswerSelected(index) }
                         )
                     }
                 }

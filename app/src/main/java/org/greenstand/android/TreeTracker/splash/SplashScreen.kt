@@ -27,11 +27,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
@@ -49,18 +46,14 @@ fun SplashScreen(
     navController: NavHostController = LocalNavHostController.current,
 ) {
     val permissions = mutableListOf(
-//        Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.CAMERA,
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
 
-
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
     }
-
-
 
     val scope = rememberCoroutineScope()
 
@@ -89,6 +82,11 @@ fun SplashScreen(
         permissionRequester.launch(permissions.toTypedArray())
     }
 
+    Splash()
+}
+
+@Composable
+fun Splash() {
     Image(
         painter = painterResource(id = R.drawable.splash),
         contentDescription = null,
@@ -114,16 +112,4 @@ private fun navigateToDashboardScreen(navController: NavHostController) {
         popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }
-}
-
-@Preview
-@Composable
-fun SplashScreenPreview(
-    @PreviewParameter(SplashScreenPreviewProvider::class) viewModel: SplashScreenViewModel
-) {
-    SplashScreen(
-        null,
-        viewModel = viewModel,
-        navController = rememberNavController()
-    )
 }

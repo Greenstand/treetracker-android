@@ -38,10 +38,33 @@ import org.greenstand.android.TreeTracker.view.LocalImage
 
 @Composable
 fun ImageReviewScreen(photoPath: String) {
-
     val navController = LocalNavHostController.current
     val activity = LocalContext.current as Activity
 
+    ImageReview(
+        photoPath = photoPath,
+        onRejectClicked = {
+            navController.navigate(SelfieRoute) {
+                launchSingleTop = true
+                popUpTo<SelfieRoute> { inclusive = true }
+            }
+        },
+        onApproveClicked = {
+            val data = Intent().apply {
+                putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, photoPath)
+            }
+            activity.setResult(AppCompatActivity.RESULT_OK, data)
+            activity.finish()
+        },
+    )
+}
+
+@Composable
+fun ImageReview(
+    photoPath: String = "",
+    onRejectClicked: () -> Unit = { },
+    onApproveClicked: () -> Unit = { },
+) {
     Scaffold(
         bottomBar = {
             Row(
@@ -53,22 +76,11 @@ fun ImageReviewScreen(photoPath: String) {
             ) {
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
-                    onClick = {
-                        navController.navigate(SelfieRoute) {
-                            launchSingleTop = true
-                            popUpTo<SelfieRoute> { inclusive = true }
-                        }
-                    },
+                    onClick = onRejectClicked,
                     approval = false
                 )
                 ApprovalButton(
-                    onClick = {
-                        val data = Intent().apply {
-                            putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, photoPath)
-                        }
-                        activity.setResult(AppCompatActivity.RESULT_OK, data)
-                        activity.finish()
-                    },
+                    onClick = onApproveClicked,
                     approval = true
                 )
             }

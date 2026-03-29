@@ -25,16 +25,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.settings.SettingsViewModel
-import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 
 @Composable
 fun PrivacyPolicyDialog(
-    signupViewModel: SignupViewModel? = null,
-    settingsViewModel: SettingsViewModel? = null
+    onDismiss: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.Companion
@@ -80,13 +77,7 @@ fun PrivacyPolicyDialog(
                 .weight(0.8f)
                 .size(50.dp)
                 .align(Alignment.Companion.CenterHorizontally),
-            onClick = {
-                if (signupViewModel != null) {
-                    signupViewModel.closePrivacyPolicyDialog()
-                } else {
-                    settingsViewModel?.setPrivacyDialogVisibility(false)
-                }
-            },
+            onClick = onDismiss,
             approval = true
         )
     }

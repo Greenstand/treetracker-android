@@ -66,6 +66,7 @@ androidxArchCoreTesting = "2.1.0"
 mockk = "1.13.12"
 robolectric = "4.16.1"
 turbine = "0.12.1"
+roborazzi = "1.8.0-alpha-5"
 
 # MapLibre
 maplibre = "11.5.1"
@@ -173,6 +174,12 @@ androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", versi
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-rule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
+roborazzi-gradlePlugin = { module = "io.github.takahirom.roborazzi:roborazzi-gradle-plugin", version.ref = "roborazzi" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
 
 # Other
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
@@ -225,3 +232,5 @@ testing = [
     "robolectric",
     "turbine"
 ]
+
+roborazzi = ["roborazzi", "roborazzi-compose", "roborazzi-rule"]

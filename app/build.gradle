@@ -6,6 +6,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.firebase.crashlytics'
+    id 'io.github.takahirom.roborazzi'
 }
 
 def loadExtraProperties(String fileName) {
@@ -164,6 +165,40 @@ android {
         checkReleaseBuilds true
     }
     namespace 'org.greenstand.android.TreeTracker'
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+// Roborazzi golden images are stored in src/test/snapshots/ and committed to git.
+// The plugin always reads/writes build/outputs/roborazzi/, so we sync manually.
+def snapshotsDir = file("src/test/snapshots")
+def roborazziOutputDir = file("$buildDir/outputs/roborazzi")
+
+afterEvaluate {
+    tasks.named("testDebugUnitTest").configure {
+        doFirst {
+            if (snapshotsDir.exists()) {
+                copy {
+                    from snapshotsDir
+                    into roborazziOutputDir
+                }
+            }
+        }
+        doLast {
+            if (roborazziOutputDir.exists()) {
+                copy {
+                    from roborazziOutputDir
+                    include "*.png"
+                    exclude "*_actual.*", "*_compare.*", "*_delta.*"
+                    into snapshotsDir
+                }
+            }
+        }
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
@@ -251,6 +286,11 @@ dependencies {
     androidTestImplementation libs.androidx.test.espresso.core
     androidTestImplementation libs.turbine
     testImplementation libs.turbine
+
+    // Screenshot testing
+    testImplementation libs.bundles.roborazzi
+    testImplementation libs.androidx.compose.ui.test.junit4
+    debugImplementation libs.androidx.compose.ui.test.manifest
 }
 
 configurations.all {
