@@ -26,7 +26,6 @@ import org.greenstand.android.TreeTracker.models.messages.database.entities.Surv
 
 @Dao
 interface MessagesDAO {
-
     /**
      * Messages
      */
@@ -56,7 +55,10 @@ interface MessagesDAO {
     fun getAnnouncementMessagesForWallet(wallet: String): Flow<List<MessageEntity>>
 
     @Query("UPDATE messages SET bundle_id = :bundleId WHERE id IN (:ids)")
-    suspend fun updateMessageBundleIds(ids: List<String>, bundleId: String)
+    suspend fun updateMessageBundleIds(
+        ids: List<String>,
+        bundleId: String,
+    )
 
     @Query("SELECT * FROM messages WHERE should_upload = 1")
     suspend fun getMessagesToUpload(): List<MessageEntity>

@@ -32,7 +32,6 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class TreeHeightViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -48,15 +47,16 @@ class TreeHeightViewModelTest {
     }
 
     @Test
-    fun `selected color is progress green, asserts correct color added `() = runTest {
-        val color = AppButtonColors.ProgressGreen
-        treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(color))
+    fun `selected color is progress green, asserts correct color added `() =
+        runTest {
+            val color = AppButtonColors.ProgressGreen
+            treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(color))
 
-        val state = treeHeightSelectionViewModel.state.value
-        val result = state.colors.indexOf(state.selectedColor)
+            val state = treeHeightSelectionViewModel.state.value
+            val result = state.colors.indexOf(state.selectedColor)
 
-        verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, result.toString()) }
-        confirmVerified(treeCapturer)
-        Assert.assertEquals(result, 0)
-    }
+            verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, result.toString()) }
+            confirmVerified(treeCapturer)
+            Assert.assertEquals(result, 0)
+        }
 }

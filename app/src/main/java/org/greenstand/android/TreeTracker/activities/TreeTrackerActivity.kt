@@ -16,10 +16,10 @@
 package org.greenstand.android.TreeTracker.activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.ExperimentalComposeApi
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.root.Root
@@ -29,7 +29,6 @@ import org.greenstand.android.TreeTracker.view.NoGPSDeviceDialog
 import org.koin.android.ext.android.inject
 
 class TreeTrackerActivity : AppCompatActivity() {
-
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
     private val gpsUtils: GpsUtils by inject()
 
@@ -38,12 +37,14 @@ class TreeTrackerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(
-                scrim = android.graphics.Color.argb(128, 0, 0, 0) // 50% black scrim
-            ),
-            navigationBarStyle = SystemBarStyle.dark(
-                scrim = android.graphics.Color.argb(128, 0, 0, 0)
-            )
+            statusBarStyle =
+                SystemBarStyle.dark(
+                    scrim = android.graphics.Color.argb(128, 0, 0, 0), // 50% black scrim
+                ),
+            navigationBarStyle =
+                SystemBarStyle.dark(
+                    scrim = android.graphics.Color.argb(128, 0, 0, 0),
+                ),
         )
 
         setContent {

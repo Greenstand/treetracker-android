@@ -46,7 +46,6 @@ data class PlanterInfoEntity(
     @ColumnInfo(name = RECORD_UUID, defaultValue = "")
     var recordUuid: String,
 ) {
-
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
     var id: Long = 0

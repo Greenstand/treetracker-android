@@ -28,29 +28,31 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.*
+import org.greenstand.android.TreeTracker.BuildConfig
+import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Date
 import java.util.UUID
-import org.greenstand.android.TreeTracker.BuildConfig
-import timber.log.Timber
 
 @Suppress("ImplicitDefaultLocale")
-class ObjectStorageClient private constructor(applicationContext: Context) {
-
+class ObjectStorageClient private constructor(
+    applicationContext: Context,
+) {
     private var s3Client: AmazonS3? = null
 
     init {
 
         val region = Regions.fromName(BuildConfig.OBJECT_STORAGE_IDENTITY_REGION)
 
-        val credentialsProvider = CognitoCachingCredentialsProvider(
-            applicationContext,
-            BuildConfig.OBJECT_STORAGE_IDENTITY_POOL_ID,
-            region
-        )
+        val credentialsProvider =
+            CognitoCachingCredentialsProvider(
+                applicationContext,
+                BuildConfig.OBJECT_STORAGE_IDENTITY_POOL_ID,
+                region,
+            )
 
         if (BuildConfig.USE_AWS_S3) {
 
@@ -75,7 +77,7 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
                             BucketAccelerateStatus.Enabled
                     )
                 ));
-                */
+                 */
 
                 // Verify that transfer acceleration is enabled for the bucket.
                 // You need the right permissions to get this
@@ -83,7 +85,7 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
                          GetBucketAccelerateConfigurationRequest (bucketName))
                     ?.status
                 Timber.tag("Acceleration").d("Bucket accelerate status: " + accelerateStatus)
-                */
+                 */
             } catch (e: AmazonServiceException) {
                 Timber.e(e, "S3 service error during client initialization")
                 throw(e)
@@ -100,7 +102,11 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
 
     @SuppressLint("SimpleDateFormat")
     @Throws(AmazonClientException::class)
-    fun put(path: String, lat: Double, long: Double): String {
+    fun put(
+        path: String,
+        lat: Double,
+        long: Double,
+    ): String {
         val acl = AccessControlList()
         acl.grantPermission(GroupGrantee.AllUsers, Permission.Read)
 
@@ -110,26 +116,29 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
         val dosKey = timeStamp + '_' + lat + '_' + long + '_' + UUID.randomUUID() + '_' + image.name
         val poRequest = PutObjectRequest(BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES, dosKey, image)
         poRequest.withAccessControlList(acl)
-        val poResult = s3Client?.putObject(poRequest)
+        s3Client?.putObject(poRequest)
 
         if (BuildConfig.USE_AWS_S3) {
             return String.format(
                 "https://%s.s3.%s.amazonaws.com/%s",
                 BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES,
                 BuildConfig.OBJECT_STORAGE_ENDPOINT,
-                dosKey
+                dosKey,
             )
         } else {
             return String.format(
                 "https://%s.%s/%s",
                 BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES,
                 BuildConfig.OBJECT_STORAGE_ENDPOINT,
-                dosKey
+                dosKey,
             )
         }
     }
 
-    fun uploadBundle(jsonBundle: String, bundleId: String) {
+    fun uploadBundle(
+        jsonBundle: String,
+        bundleId: String,
+    ) {
         val byteArray = jsonBundle.toByteArray(Charsets.UTF_8)
         val inputStream = ByteArrayInputStream(byteArray)
 
@@ -140,32 +149,31 @@ class ObjectStorageClient private constructor(applicationContext: Context) {
 
         val dosKey = timeStamp + '_'.toString() + UUID.randomUUID() + '_'.toString() + bundleId + ".json"
 
-        val objectMetadata = ObjectMetadata().apply {
-            contentLength = inputStream.available().toLong()
-        }
+        val objectMetadata =
+            ObjectMetadata().apply {
+                contentLength = inputStream.available().toLong()
+            }
 
-        val putObjectRequest = PutObjectRequest(
-            BuildConfig.OBJECT_STORAGE_BUCKET_BATCH_UPLOADS,
-            dosKey,
-            inputStream,
-            objectMetadata
-        ).apply {
-            withAccessControlList(acl)
-        }
+        val putObjectRequest =
+            PutObjectRequest(
+                BuildConfig.OBJECT_STORAGE_BUCKET_BATCH_UPLOADS,
+                dosKey,
+                inputStream,
+                objectMetadata,
+            ).apply {
+                withAccessControlList(acl)
+            }
 
         s3Client?.putObject(putObjectRequest)
     }
 
     companion object {
-
         private var INSTANCE: ObjectStorageClient? = null
 
         fun init(context: Context) {
             INSTANCE = ObjectStorageClient(context)
         }
 
-        fun instance(): ObjectStorageClient {
-            return INSTANCE!!
-        }
+        fun instance(): ObjectStorageClient = INSTANCE!!
     }
 }

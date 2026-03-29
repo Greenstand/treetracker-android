@@ -15,12 +15,12 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
@@ -42,7 +42,6 @@ class PlanterUploader(
     private val json: Json,
     private val objectStorageClient: ObjectStorageClient,
 ) {
-
     suspend fun upload(instanceId: String) {
         withContext(Dispatchers.IO) {
             uploadLegacyPlanterImages()
@@ -55,82 +54,87 @@ class PlanterUploader(
 
     private suspend fun uploadLegacyPlanterImages() {
         coroutineScope {
-            dao.getPlanterCheckInsToUpload()
+            dao
+                .getPlanterCheckInsToUpload()
                 .filter { it.photoUrl == null && it.localPhotoPath != null }
                 .map { planterCheckIn ->
                     async {
-                        val imageUrl = uploadImageUseCase.execute(
-                            UploadImageParams(
-                                imagePath = planterCheckIn.localPhotoPath!!,
-                                lat = planterCheckIn.latitude,
-                                long = planterCheckIn.longitude
+                        val imageUrl =
+                            uploadImageUseCase.execute(
+                                UploadImageParams(
+                                    imagePath = planterCheckIn.localPhotoPath!!,
+                                    lat = planterCheckIn.latitude,
+                                    long = planterCheckIn.longitude,
+                                ),
                             )
-                        )
                         imageUrl?.let {
                             planterCheckIn.photoUrl = imageUrl
                             dao.updatePlanterCheckIn(planterCheckIn)
                         }
                     }
-                }
-                .forEach { it.await() }
+                }.forEach { it.await() }
         }
     }
 
     private suspend fun uploadUserImages() {
         coroutineScope {
-            dao.getAllUsersToUpload()
+            dao
+                .getAllUsersToUpload()
                 .filter { it.photoUrl == null }
                 .map { user ->
                     async {
-                        val imageUrl = uploadImageUseCase.execute(
-                            UploadImageParams(
-                                imagePath = user.photoPath,
-                                lat = user.latitude,
-                                long = user.longitude
+                        val imageUrl =
+                            uploadImageUseCase.execute(
+                                UploadImageParams(
+                                    imagePath = user.photoPath,
+                                    lat = user.latitude,
+                                    long = user.longitude,
+                                ),
                             )
-                        )
                         imageUrl?.let {
                             user.photoUrl = imageUrl
                             dao.updateUser(user)
                         }
                     }
-                }
-                .forEach { it.await() }
+                }.forEach { it.await() }
         }
     }
 
     private suspend fun uploadPlanterInfo(instanceId: String) {
         val planterInfoToUpload = dao.getAllPlanterInfoToUpload()
 
-        Timber.tag(TAG)
+        Timber
+            .tag(TAG)
             .d("Uploading Planter Info for ${planterInfoToUpload.size} planters")
 
         if (planterInfoToUpload.isEmpty()) {
             return
         }
-        val registrationRequests = planterInfoToUpload
-            .map { planterInfo ->
-                // Find the image this user first took during registration
-                // This image is the oldest image for PlanterCheckIn
-                val registrationPhotoUrl =
-                    dao.getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
-                        .minByOrNull { it.createdAt }
-                        ?.photoUrl
-                        ?: ""
+        val registrationRequests =
+            planterInfoToUpload
+                .map { planterInfo ->
+                    // Find the image this user first took during registration
+                    // This image is the oldest image for PlanterCheckIn
+                    val registrationPhotoUrl =
+                        dao
+                            .getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
+                            .minByOrNull { it.createdAt }
+                            ?.photoUrl
+                            ?: ""
 
-                RegistrationRequest(
-                    planterIdentifier = planterInfo.identifier,
-                    firstName = planterInfo.firstName,
-                    lastName = planterInfo.lastName,
-                    organization = planterInfo.organization,
-                    phone = planterInfo.phone,
-                    email = planterInfo.email,
-                    lat = planterInfo.latitude,
-                    lon = planterInfo.longitude,
-                    recordUuid = planterInfo.recordUuid,
-                    imageUrl = registrationPhotoUrl
-                )
-            }
+                    RegistrationRequest(
+                        planterIdentifier = planterInfo.identifier,
+                        firstName = planterInfo.firstName,
+                        lastName = planterInfo.lastName,
+                        organization = planterInfo.organization,
+                        phone = planterInfo.phone,
+                        email = planterInfo.email,
+                        lat = planterInfo.latitude,
+                        lon = planterInfo.longitude,
+                        recordUuid = planterInfo.recordUuid,
+                        imageUrl = registrationPhotoUrl,
+                    )
+                }
 
         val jsonBundle =
             json.encodeToString(UploadBundle.createV1(registrations = registrationRequests, instanceId = instanceId))
@@ -148,28 +152,30 @@ class PlanterUploader(
     private suspend fun uploadUsers() {
         val usersToUpload = dao.getAllUsersToUpload()
 
-        Timber.tag(TAG)
+        Timber
+            .tag(TAG)
             .d("Uploading ${usersToUpload.size} users")
 
         if (usersToUpload.isEmpty()) {
             return
         }
 
-        val walletRegistrations = usersToUpload
-            .map { user ->
-                WalletRegistrationRequest(
-                    registrationId = user.uuid,
-                    wallet = user.wallet,
-                    firstName = user.firstName,
-                    lastName = user.lastName,
-                    phone = user.phone,
-                    email = user.email,
-                    lat = user.latitude,
-                    lon = user.longitude,
-                    imageUrl = user.photoUrl!!,
-                    createdAt = user.createdAt.toString(),
-                )
-            }
+        val walletRegistrations =
+            usersToUpload
+                .map { user ->
+                    WalletRegistrationRequest(
+                        registrationId = user.uuid,
+                        wallet = user.wallet,
+                        firstName = user.firstName,
+                        lastName = user.lastName,
+                        phone = user.phone,
+                        email = user.email,
+                        lat = user.latitude,
+                        lon = user.longitude,
+                        imageUrl = user.photoUrl!!,
+                        createdAt = user.createdAt.toString(),
+                    )
+                }
 
         val jsonBundle =
             json.encodeToString(UploadBundle.createV2(walletRegistration = walletRegistrations))
@@ -186,13 +192,15 @@ class PlanterUploader(
 
     private suspend fun deleteLocalImagesThatWereUploaded() {
         // Delete all local image files for registrations except for the currently logged in users photo...
-        val loggedOutPlanterCheckIns = dao.getPlanterCheckInsToUpload()
-            .filter {
-                it.localPhotoPath != null && it.photoUrl != null
-            }
-            .sortedBy { it.createdAt }
+        val loggedOutPlanterCheckIns =
+            dao
+                .getPlanterCheckInsToUpload()
+                .filter {
+                    it.localPhotoPath != null && it.photoUrl != null
+                }.sortedBy { it.createdAt }
 
-        loggedOutPlanterCheckIns.mapNotNull { it.localPhotoPath }
+        loggedOutPlanterCheckIns
+            .mapNotNull { it.localPhotoPath }
             .forEach { localPhotoPath ->
                 val photoFile = File(localPhotoPath)
                 if (photoFile.exists()) {

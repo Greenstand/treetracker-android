@@ -23,5 +23,5 @@ inline fun <T> MutableStateFlow<T>.updateState(onUpdate: T.() -> T) {
 }
 
 inline fun <T> MutableLiveData<T>.updateState(onUpdate: T.() -> T) {
-    postValue(onUpdate(value ?: throw IllegalStateException("Must have state")))
+    postValue(onUpdate(checkNotNull(value) { "Must have state" }))
 }

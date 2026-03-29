@@ -49,7 +49,7 @@ fun IndividualMessageItem(
     text: String,
     icon: Int,
     iconPadding: PaddingValues? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     SelectableImageDetail(
         isSelected = isSelected,
@@ -62,13 +62,14 @@ fun IndividualMessageItem(
                 iconPadding = iconPadding,
             )
         },
-        onClick = onClick
+        onClick = onClick,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(32.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier = Modifier.weight(3f),
@@ -81,11 +82,12 @@ fun IndividualMessageItem(
             )
             if (isNotificationEnabled) {
                 Image(
-                    modifier = Modifier
-                        .size(33.dp)
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .size(33.dp)
+                            .weight(1f),
                     painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         }
@@ -99,17 +101,18 @@ fun Header(
     iconPadding: PaddingValues?,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(160.dp)
-            .background(AppColors.Purple),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .background(AppColors.Purple),
+        contentAlignment = Alignment.Center,
     ) {
         Image(
             modifier = iconPadding?.let { Modifier.padding(iconPadding) } ?: Modifier,
             painter = painter,
             contentDescription = null,
-            contentScale = ContentScale.Inside
+            contentScale = ContentScale.Inside,
         )
         Text(
             text = messageTypeText.uppercase(),
@@ -117,7 +120,7 @@ fun Header(
             fontWeight = FontWeight.Bold,
             style = CustomTheme.typography.regular,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 110.dp)
+            modifier = Modifier.padding(top = 110.dp),
         )
     }
 }

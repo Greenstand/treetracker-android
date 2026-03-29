@@ -41,7 +41,6 @@ import kotlin.test.assertNotNull
 
 @ExperimentalCoroutinesApi
 class WalletSelectViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -67,20 +66,21 @@ class WalletSelectViewModelTest {
     }
 
     @Test
-    fun `WHEN selectPlanter called THEN finds user and updates selectedUser in state`() = runTest {
-        val users = FakeFileGenerator.fakeUsers
-        val targetUser = users.first()
+    fun `WHEN selectPlanter called THEN finds user and updates selectedUser in state`() =
+        runTest {
+            val users = FakeFileGenerator.fakeUsers
+            val targetUser = users.first()
 
-        every { captureSetupData.user } returns targetUser
-        every { userRepo.users() } returns flowOf(users)
-        coEvery { userRepo.getUserList() } returns users
+            every { captureSetupData.user } returns targetUser
+            every { userRepo.users() } returns flowOf(users)
+            coEvery { userRepo.getUserList() } returns users
 
-        val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo)
 
-        viewModel.handleAction(WalletSelectAction.SelectPlanter(targetUser.id))
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(targetUser.id))
 
-        val state = viewModel.state.first()
-        assertNotNull(state.selectedUser)
-        assertEquals(targetUser.id, state.selectedUser!!.id)
-    }
+            val state = viewModel.state.first()
+            assertNotNull(state.selectedUser)
+            assertEquals(targetUser.id, state.selectedUser!!.id)
+        }
 }

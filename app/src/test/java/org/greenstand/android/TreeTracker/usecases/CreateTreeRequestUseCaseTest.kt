@@ -39,7 +39,6 @@ import kotlin.test.assertNotNull
 
 @ExperimentalCoroutinesApi
 class CreateTreeRequestUseCaseTest {
-
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -65,51 +64,54 @@ class CreateTreeRequestUseCaseTest {
     }
 
     @Test
-    fun `WHEN execute called THEN builds NewTreeRequest from DAO data`() = runTest {
-        val treeCapture = FakeFileGenerator.fakeTreeCapture.copy().also { it.id = 10L }
-        val planterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy().also { it.id = treeCapture.planterCheckInId }
-        val planterInfo = FakeFileGenerator.fakePlanterInfo.copy().also { it.id = planterCheckIn.planterInfoId }
-        val attributes = listOf(
-            TreeAttributeEntity(key = "color", value = "green", treeCaptureId = 10L),
-        )
+    fun `WHEN execute called THEN builds NewTreeRequest from DAO data`() =
+        runTest {
+            val treeCapture = FakeFileGenerator.fakeTreeCapture.copy().also { it.id = 10L }
+            val planterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy().also { it.id = treeCapture.planterCheckInId }
+            val planterInfo = FakeFileGenerator.fakePlanterInfo.copy().also { it.id = planterCheckIn.planterInfoId }
+            val attributes =
+                listOf(
+                    TreeAttributeEntity(key = "color", value = "green", treeCaptureId = 10L),
+                )
 
-        coEvery { dao.getTreeCaptureById(10L) } returns treeCapture
-        coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
-        coEvery { dao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns planterInfo
-        coEvery { dao.getTreeAttributeByTreeCaptureId(10L) } returns attributes
+            coEvery { dao.getTreeCaptureById(10L) } returns treeCapture
+            coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
+            coEvery { dao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns planterInfo
+            coEvery { dao.getTreeAttributeByTreeCaptureId(10L) } returns attributes
 
-        val params = CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg")
-        val result = createTreeRequestUseCase.execute(params)
+            val params = CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg")
+            val result = createTreeRequestUseCase.execute(params)
 
-        assertNotNull(result)
-        assertEquals(treeCapture.uuid, result.uuid)
-        assertEquals("https://example.com/tree.jpg", result.imageUrl)
-        assertEquals(planterCheckIn.id.toInt(), result.userId)
-        assertEquals(treeCapture.id, result.sequenceId)
-        assertEquals(treeCapture.latitude, result.lat)
-        assertEquals(treeCapture.longitude, result.lon)
-        assertEquals(planterInfo.identifier, result.planterIdentifier)
-        assertEquals(planterCheckIn.photoUrl, result.planterPhotoUrl)
-        assertEquals(treeCapture.createAt, result.timestamp)
-        assertEquals(treeCapture.noteContent, result.note)
-        assertEquals(1, result.attributes?.size)
-        assertEquals("color", result.attributes?.first()?.key)
-        assertEquals("green", result.attributes?.first()?.value)
-    }
+            assertNotNull(result)
+            assertEquals(treeCapture.uuid, result.uuid)
+            assertEquals("https://example.com/tree.jpg", result.imageUrl)
+            assertEquals(planterCheckIn.id.toInt(), result.userId)
+            assertEquals(treeCapture.id, result.sequenceId)
+            assertEquals(treeCapture.latitude, result.lat)
+            assertEquals(treeCapture.longitude, result.lon)
+            assertEquals(planterInfo.identifier, result.planterIdentifier)
+            assertEquals(planterCheckIn.photoUrl, result.planterPhotoUrl)
+            assertEquals(treeCapture.createAt, result.timestamp)
+            assertEquals(treeCapture.noteContent, result.note)
+            assertEquals(1, result.attributes?.size)
+            assertEquals("color", result.attributes?.first()?.key)
+            assertEquals("green", result.attributes?.first()?.value)
+        }
 
     @Test
-    fun `WHEN execute called and planter info not found THEN throws IllegalStateException`() = runTest {
-        val treeCapture = FakeFileGenerator.fakeTreeCapture.copy().also { it.id = 10L }
-        val planterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy().also { it.id = treeCapture.planterCheckInId }
+    fun `WHEN execute called and planter info not found THEN throws IllegalStateException`() =
+        runTest {
+            val treeCapture = FakeFileGenerator.fakeTreeCapture.copy().also { it.id = 10L }
+            val planterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy().also { it.id = treeCapture.planterCheckInId }
 
-        coEvery { dao.getTreeCaptureById(10L) } returns treeCapture
-        coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
-        coEvery { dao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns null
+            coEvery { dao.getTreeCaptureById(10L) } returns treeCapture
+            coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
+            coEvery { dao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns null
 
-        val params = CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg")
+            val params = CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg")
 
-        assertFailsWith<IllegalStateException> {
-            createTreeRequestUseCase.execute(params)
+            assertFailsWith<IllegalStateException> {
+                createTreeRequestUseCase.execute(params)
+            }
         }
-    }
 }

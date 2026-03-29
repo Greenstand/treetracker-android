@@ -27,9 +27,9 @@ import androidx.room.PrimaryKey
             entity = TreeCaptureEntity::class,
             parentColumns = [TreeCaptureEntity.ID],
             childColumns = [TreeAttributeEntity.TREE_CAPTURE_ID],
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class TreeAttributeEntity(
     @ColumnInfo(name = KEY)
@@ -37,9 +37,8 @@ data class TreeAttributeEntity(
     @ColumnInfo(name = VALUE)
     var value: String,
     @ColumnInfo(name = TREE_CAPTURE_ID, index = true)
-    var treeCaptureId: Long
+    var treeCaptureId: Long,
 ) {
-
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
     var id: Long = 0

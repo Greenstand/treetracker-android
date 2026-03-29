@@ -22,11 +22,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
-import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
-import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.viewmodel.Action
@@ -48,9 +46,19 @@ data class TreeCaptureState(
 
 sealed class TreeCaptureAction : Action {
     object CaptureLocation : TreeCaptureAction()
-    data class OnImageCaptured(val imageFile: File) : TreeCaptureAction()
-    data class UpdateBadGpsDialogState(val state: Boolean?) : TreeCaptureAction()
-    data class UpdateCaptureTutorialDialog(val show: Boolean) : TreeCaptureAction()
+
+    data class OnImageCaptured(
+        val imageFile: File,
+    ) : TreeCaptureAction()
+
+    data class UpdateBadGpsDialogState(
+        val state: Boolean?,
+    ) : TreeCaptureAction()
+
+    data class UpdateCaptureTutorialDialog(
+        val show: Boolean,
+    ) : TreeCaptureAction()
+
     object CreateFakeTrees : TreeCaptureAction()
 }
 
@@ -58,12 +66,9 @@ class TreeCaptureViewModel(
     profilePicUrl: String,
     private val userRepo: UserRepo,
     private val treeCapturer: TreeCapturer,
-    private val sessionTracker: SessionTracker,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
-    private val locationDataCapturer: LocationDataCapturer,
     private val configurator: Configurator,
 ) : BaseViewModel<TreeCaptureState, TreeCaptureAction>(TreeCaptureState(profilePicUrl = profilePicUrl)) {
-
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val enabled = configurator.getBoolean(ConfigKeys.FORCE_IMAGE_SIZE)
@@ -110,11 +115,13 @@ class TreeCaptureViewModel(
     private suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
 }
 
-class TreeCaptureViewModelFactory(private val profilePicUrl: String) :
-    ViewModelProvider.Factory, KoinComponent {
+class TreeCaptureViewModelFactory(
+    private val profilePicUrl: String,
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         CaptureFlowScopeManager.open()
-        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get(), get()) as T
+        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get()) as T
     }
 }

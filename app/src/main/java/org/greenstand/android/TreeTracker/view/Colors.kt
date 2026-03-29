@@ -66,74 +66,82 @@ object AppColors {
 }
 
 object AppButtonColors {
+    val Default =
+        DepthButtonColors(
+            color = AppColors.Gray,
+            shadowColor = AppColors.GrayShadow,
+            disabledColor = AppColors.GrayShadow,
+            disabledShadowColor = AppColors.GrayShadow,
+        )
 
-    val Default = DepthButtonColors(
-        color = AppColors.Gray,
-        shadowColor = AppColors.GrayShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
-    )
+    val WhiteLight =
+        DepthButtonColors(
+            color = Color.White,
+            shadowColor = AppColors.MediumGray,
+            disabledColor = AppColors.MediumGray,
+            disabledShadowColor = AppColors.Gray,
+        )
 
-    val WhiteLight = DepthButtonColors(
-        color = Color.White,
-        shadowColor = AppColors.MediumGray,
-        disabledColor = AppColors.MediumGray,
-        disabledShadowColor = AppColors.Gray
-    )
+    val ProgressGreen =
+        DepthButtonColors(
+            color = AppColors.Green,
+            shadowColor = AppColors.GreenShadow,
+            disabledColor = AppColors.GreenDisabled,
+            disabledShadowColor = AppColors.GreenShadowDisabled,
+        )
+    val DeclineRed =
+        DepthButtonColors(
+            color = AppColors.Red,
+            shadowColor = AppColors.RedShadow,
+            disabledColor = AppColors.RedDisabled,
+            disabledShadowColor = AppColors.RedShadowDisabled,
+        )
 
-    val ProgressGreen = DepthButtonColors(
-        color = AppColors.Green,
-        shadowColor = AppColors.GreenShadow,
-        disabledColor = AppColors.GreenDisabled,
-        disabledShadowColor = AppColors.GreenShadowDisabled
-    )
-    val DeclineRed = DepthButtonColors(
-        color = AppColors.Red,
-        shadowColor = AppColors.RedShadow,
-        disabledColor = AppColors.RedDisabled,
-        disabledShadowColor = AppColors.RedShadowDisabled
-    )
+    val MessagePurple =
+        DepthButtonColors(
+            color = AppColors.Purple,
+            shadowColor = AppColors.PurpleShadow,
+            disabledColor = AppColors.PurpleDisabled,
+            disabledShadowColor = AppColors.PurpleShadowDisabled,
+        )
 
-    val MessagePurple = DepthButtonColors(
-        color = AppColors.Purple,
-        shadowColor = AppColors.PurpleShadow,
-        disabledColor = AppColors.PurpleDisabled,
-        disabledShadowColor = AppColors.PurpleShadowDisabled
-    )
-
-    val UploadOrange = DepthButtonColors(
-        color = AppColors.Orange,
-        shadowColor = AppColors.OrangeShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
-    )
-    val Yellow = DepthButtonColors(
-        color = AppColors.Yellow,
-        shadowColor = AppColors.YellowShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
-    )
-    val SkyBlue = DepthButtonColors(
-        color = AppColors.SkyBlue,
-        shadowColor = AppColors.SkyBlueShadow,
-        disabledColor = AppColors.GrayShadow,
-        disabledShadowColor = AppColors.GrayShadow
-    )
+    val UploadOrange =
+        DepthButtonColors(
+            color = AppColors.Orange,
+            shadowColor = AppColors.OrangeShadow,
+            disabledColor = AppColors.GrayShadow,
+            disabledShadowColor = AppColors.GrayShadow,
+        )
+    val Yellow =
+        DepthButtonColors(
+            color = AppColors.Yellow,
+            shadowColor = AppColors.YellowShadow,
+            disabledColor = AppColors.GrayShadow,
+            disabledShadowColor = AppColors.GrayShadow,
+        )
+    val SkyBlue =
+        DepthButtonColors(
+            color = AppColors.SkyBlue,
+            shadowColor = AppColors.SkyBlueShadow,
+            disabledColor = AppColors.GrayShadow,
+            disabledShadowColor = AppColors.GrayShadow,
+        )
 }
 
-val Colors = darkColors(
-    primary = AppColors.Gray,
-    primaryVariant = AppColors.GrayShadow,
-    onPrimary = AppColors.Green,
-    secondary = Color.Blue,
-    onSecondary = AppColors.Green,
-    background = AppColors.Gray,
-    onBackground = AppColors.Green,
-    surface = AppColors.Gray,
-    onSurface = AppColors.Green,
-    error = Color.Red,
-    onError = AppColors.Green
-)
+val Colors =
+    darkColors(
+        primary = AppColors.Gray,
+        primaryVariant = AppColors.GrayShadow,
+        onPrimary = AppColors.Green,
+        secondary = Color.Blue,
+        onSecondary = AppColors.Green,
+        background = AppColors.Gray,
+        onBackground = AppColors.Green,
+        surface = AppColors.Gray,
+        onSurface = AppColors.Green,
+        error = Color.Red,
+        onError = AppColors.Green,
+    )
 
 @Preview
 @Composable
@@ -177,11 +185,15 @@ fun ColorPalettePreview() {
 }
 
 @Composable
-private fun Palette(name: String, color: Color) {
+private fun Palette(
+    name: String,
+    color: Color,
+) {
     Column(
-        modifier = Modifier
-            .size(100.dp)
-            .background(color)
+        modifier =
+            Modifier
+                .size(100.dp)
+                .background(color),
     ) {
         Text(text = name)
         Text(text = "#${Integer.toHexString(color.toArgb()).uppercase()}")

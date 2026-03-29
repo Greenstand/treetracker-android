@@ -24,7 +24,6 @@ package org.greenstand.android.TreeTracker.navigation
  * stable aliases (e.g. "tree-capture") for backwards compatibility.
  */
 object RouteRegistry {
-
     // Stable route identifiers used in org JSON configs.
     // Legacy route strings with path params are kept for backwards compatibility.
     const val ROUTE_USER_SELECT = "user-select"
@@ -39,27 +38,30 @@ object RouteRegistry {
     private const val ALIAS_TREE_CAPTURE = "tree-capture"
     private const val ALIAS_TREE_IMAGE_REVIEW = "image-review"
 
-    private val noArgRoutes: Map<String, Any> = mapOf(
-        ROUTE_USER_SELECT to UserSelectRoute,
-        ROUTE_WALLET_SELECT to WalletSelectRoute,
-        ROUTE_ADD_ORG to AddOrgRoute,
-        ROUTE_SESSION_NOTE to SessionNoteRoute,
-        ROUTE_TREE_HEIGHT to TreeHeightScreenRoute,
-    )
+    private val noArgRoutes: Map<String, Any> =
+        mapOf(
+            ROUTE_USER_SELECT to UserSelectRoute,
+            ROUTE_WALLET_SELECT to WalletSelectRoute,
+            ROUTE_ADD_ORG to AddOrgRoute,
+            ROUTE_SESSION_NOTE to SessionNoteRoute,
+            ROUTE_TREE_HEIGHT to TreeHeightScreenRoute,
+        )
 
     // Routes that require arguments at navigation time
-    private val argRoutePatterns: Set<String> = setOf(
-        ROUTE_TREE_CAPTURE,
-        ROUTE_TREE_IMAGE_REVIEW,
-        ALIAS_TREE_CAPTURE,
-        ALIAS_TREE_IMAGE_REVIEW,
-    )
+    private val argRoutePatterns: Set<String> =
+        setOf(
+            ROUTE_TREE_CAPTURE,
+            ROUTE_TREE_IMAGE_REVIEW,
+            ALIAS_TREE_CAPTURE,
+            ALIAS_TREE_IMAGE_REVIEW,
+        )
 
     // Map aliases to their canonical route identifiers
-    private val aliasMap: Map<String, String> = mapOf(
-        ALIAS_TREE_CAPTURE to ROUTE_TREE_CAPTURE,
-        ALIAS_TREE_IMAGE_REVIEW to ROUTE_TREE_IMAGE_REVIEW,
-    )
+    private val aliasMap: Map<String, String> =
+        mapOf(
+            ALIAS_TREE_CAPTURE to ROUTE_TREE_CAPTURE,
+            ALIAS_TREE_IMAGE_REVIEW to ROUTE_TREE_IMAGE_REVIEW,
+        )
 
     /**
      * Resolves a route string to a no-arg typed route object.
@@ -74,16 +76,13 @@ object RouteRegistry {
     /**
      * Checks whether a route string is recognized by the registry.
      */
-    fun isValidRoute(routeString: String): Boolean {
-        return routeString in noArgRoutes
-            || routeString in argRoutePatterns
-            || routeString in aliasMap
-    }
+    fun isValidRoute(routeString: String): Boolean =
+        routeString in noArgRoutes ||
+            routeString in argRoutePatterns ||
+            routeString in aliasMap
 
     /**
      * Normalizes a route string, resolving aliases to their canonical form.
      */
-    fun normalize(routeString: String): String {
-        return aliasMap[routeString] ?: routeString
-    }
+    fun normalize(routeString: String): String = aliasMap[routeString] ?: routeString
 }

@@ -24,7 +24,6 @@ class TreesToSyncHelper(
     private val preferences: Preferences,
     private val dao: TreeTrackerDAO,
 ) {
-
     suspend fun refreshTreeCountToSync() {
         val treesToSync = dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
         preferences.edit().putInt(TREES_TO_SYNC_KEY, treesToSync).commit()

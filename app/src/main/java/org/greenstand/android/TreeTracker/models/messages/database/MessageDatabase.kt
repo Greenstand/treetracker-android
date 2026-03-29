@@ -36,21 +36,21 @@ import org.greenstand.android.TreeTracker.models.messages.database.entities.Surv
 )
 @TypeConverters(Converters::class)
 abstract class MessageDatabase : RoomDatabase() {
-
     abstract fun messagesDao(): MessagesDAO
 
     companion object {
-
         private var INSTANCE: MessageDatabase? = null
 
         fun getInstance(context: Context): MessageDatabase {
             if (INSTANCE == null) {
                 synchronized(MessageDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        MessageDatabase::class.java,
-                        DB_NAME
-                    ).build()
+                    INSTANCE =
+                        Room
+                            .databaseBuilder(
+                                context.applicationContext,
+                                MessageDatabase::class.java,
+                                DB_NAME,
+                            ).build()
                 }
             }
             return INSTANCE!!

@@ -27,9 +27,9 @@ import androidx.room.PrimaryKey
             entity = PlanterCheckInEntity::class,
             parentColumns = [PlanterCheckInEntity.ID],
             childColumns = [TreeCaptureEntity.PLANTER_CHECK_IN_ID],
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class TreeCaptureEntity(
     @ColumnInfo(name = UUID)
@@ -53,9 +53,8 @@ data class TreeCaptureEntity(
     @ColumnInfo(name = CREATED_AT)
     var createAt: Long,
     @ColumnInfo(name = BUNDLE_ID)
-    var bundleId: String? = null
+    var bundleId: String? = null,
 ) {
-
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
     var id: Long = 0

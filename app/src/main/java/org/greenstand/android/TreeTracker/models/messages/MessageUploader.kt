@@ -15,10 +15,10 @@
  */
 package org.greenstand.android.TreeTracker.models.messages
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
@@ -31,11 +31,11 @@ class MessageUploader(
     private val messagesDAO: MessagesDAO,
     private val json: Json,
 ) {
-
     @OptIn(ExperimentalTime::class)
     suspend fun uploadMessages() {
         coroutineScope {
-            messagesDAO.getMessageIdsToUpload()
+            messagesDAO
+                .getMessageIdsToUpload()
                 .windowed(LIMIT, LIMIT, true)
                 .map { async { uploadMessageBundle(it) } }
                 .onEach { it.await() }
@@ -44,15 +44,17 @@ class MessageUploader(
 
     private suspend fun uploadMessageBundle(messageIdsToUpload: List<String>) {
         val messageEntitiesToUpload = messagesDAO.getMessagesByIds(messageIdsToUpload)
-        val messageRequests = messageEntitiesToUpload.map { messageEntity ->
-            DatabaseConverters.createMessageRequestFromEntities(messageEntity)
-        }
+        val messageRequests =
+            messageEntitiesToUpload.map { messageEntity ->
+                DatabaseConverters.createMessageRequestFromEntities(messageEntity)
+            }
 
-        val jsonBundle = json.encodeToString(
-            UploadBundle.createV2(
-                messages = messageRequests,
+        val jsonBundle =
+            json.encodeToString(
+                UploadBundle.createV2(
+                    messages = messageRequests,
+                ),
             )
-        )
         val bundleId = jsonBundle.md5() + "_messages"
         val messageIds = messageEntitiesToUpload.map { it.id }
 

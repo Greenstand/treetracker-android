@@ -36,19 +36,23 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
-
     companion object {
         const val SELFIE_MODE = "SELFIE_MODE"
         const val TAKEN_IMAGE_PATH = "TAKEN_IMAGE_PATH"
     }
 
-    override fun createIntent(context: Context, selfieMode: Boolean): Intent {
-        return Intent(context, ImageCaptureActivity::class.java).apply {
+    override fun createIntent(
+        context: Context,
+        selfieMode: Boolean,
+    ): Intent =
+        Intent(context, ImageCaptureActivity::class.java).apply {
             putExtra(SELFIE_MODE, selfieMode)
         }
-    }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): String? {
+    override fun parseResult(
+        resultCode: Int,
+        intent: Intent?,
+    ): String? {
         if (resultCode == Activity.RESULT_OK) {
             return intent?.getStringExtra(TAKEN_IMAGE_PATH)
         }
@@ -57,7 +61,6 @@ class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
 }
 
 class ImageCaptureActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -66,7 +69,7 @@ class ImageCaptureActivity : ComponentActivity() {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalNavHostController provides navController
+                LocalNavHostController provides navController,
             ) {
                 TreeTrackerTheme {
                     NavHost(navController, startDestination = SelfieRoute) {

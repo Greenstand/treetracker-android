@@ -20,28 +20,32 @@ import org.greenstand.android.TreeTracker.orgpicker.AddOrgState
 import org.junit.Test
 
 class AddOrgScreenshotTest : ScreenshotTest() {
+    @Test
+    fun addOrg_default() =
+        snapshot {
+            AddOrg(state = AddOrgState())
+        }
 
     @Test
-    fun addOrg_default() = snapshot {
-        AddOrg(state = AddOrgState())
-    }
+    fun addOrg_with_name() =
+        snapshot {
+            AddOrg(
+                state =
+                    AddOrgState(
+                        orgName = "Greenstand",
+                    ),
+            )
+        }
 
     @Test
-    fun addOrg_with_name() = snapshot {
-        AddOrg(
-            state = AddOrgState(
-                orgName = "Greenstand",
-            ),
-        )
-    }
-
-    @Test
-    fun addOrg_with_autofill() = snapshot {
-        AddOrg(
-            state = AddOrgState(
-                orgName = "",
-                previousOrgName = "EcoRestore",
-            ),
-        )
-    }
+    fun addOrg_with_autofill() =
+        snapshot {
+            AddOrg(
+                state =
+                    AddOrgState(
+                        orgName = "",
+                        previousOrgName = "EcoRestore",
+                    ),
+            )
+        }
 }

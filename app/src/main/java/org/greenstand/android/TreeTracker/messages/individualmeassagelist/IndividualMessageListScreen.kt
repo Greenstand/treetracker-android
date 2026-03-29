@@ -50,7 +50,7 @@ import org.greenstand.android.TreeTracker.view.UserImageButton
 @Composable
 fun IndividualMessageListScreen(
     userId: Long,
-    viewModel: IndividualMessageListViewModel = viewModel(factory = IndividualMessageListViewModelFactory(userId))
+    viewModel: IndividualMessageListViewModel = viewModel(factory = IndividualMessageListViewModelFactory(userId)),
 ) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
@@ -89,10 +89,10 @@ fun IndividualMessageList(
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
                             onClick = { onHandleAction(IndividualMessageListAction.NavigateBack) },
-                            imagePath = it
+                            imagePath = it,
                         )
                     }
-                }
+                },
             )
         },
         bottomBar = {
@@ -103,24 +103,24 @@ fun IndividualMessageList(
                         isLeft = false,
                         isEnabled = state.selectedMessage != null,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = { onHandleAction(IndividualMessageListAction.NavigateToSelected) }
+                        onClick = { onHandleAction(IndividualMessageListAction.NavigateToSelected) },
                     )
                 },
                 leftAction = {
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = { onHandleAction(IndividualMessageListAction.NavigateBack) }
+                        onClick = { onHandleAction(IndividualMessageListAction.NavigateBack) },
                     )
-                }
+                },
             )
-        }
+        },
     ) {
         if (state.messages.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.padding(it),
-                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp, bottom = it.calculateBottomPadding())
+                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp, bottom = it.calculateBottomPadding()),
             ) {
                 items(state.messages) { message ->
 
@@ -133,7 +133,7 @@ fun IndividualMessageList(
                                     isNotificationEnabled = !message.isRead,
                                     text = message.from,
                                     icon = R.drawable.individual_message_icon,
-                                    messageTypeText = stringResource(R.string.message)
+                                    messageTypeText = stringResource(R.string.message),
                                 ) {
                                     onHandleAction(IndividualMessageListAction.SelectMessage(message))
                                 }
@@ -143,7 +143,7 @@ fun IndividualMessageList(
                                     isNotificationEnabled = !message.isRead,
                                     text = message.title,
                                     icon = R.drawable.quiz_icon,
-                                    messageTypeText = stringResource(R.string.survey)
+                                    messageTypeText = stringResource(R.string.survey),
                                 ) {
                                     onHandleAction(IndividualMessageListAction.SelectMessage(message))
                                 }
@@ -154,11 +154,11 @@ fun IndividualMessageList(
                                     text = message.subject,
                                     icon = R.drawable.announcement_icon,
                                     messageTypeText = stringResource(R.string.announcement),
-                                    iconPadding = PaddingValues(bottom = 30.dp)
+                                    iconPadding = PaddingValues(bottom = 30.dp),
                                 ) {
                                     onHandleAction(IndividualMessageListAction.SelectMessage(message))
                                 }
-                            else -> throw IllegalStateException("Unsupported type: $message")
+                            else -> error("Unsupported type: $message")
                         }
                     }
                 }

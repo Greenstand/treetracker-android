@@ -41,13 +41,14 @@ data class MapState(
 )
 
 sealed class MapAction : Action {
-    data class SelectMarker(val markerId: String) : MapAction()
+    data class SelectMarker(
+        val markerId: String,
+    ) : MapAction()
 }
 
 class MapViewModel(
-    private val dao: TreeTrackerDAO
+    private val dao: TreeTrackerDAO,
 ) : BaseViewModel<MapState, MapAction>(MapState()) {
-
     init {
         loadTrees()
     }
@@ -64,24 +65,25 @@ class MapViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
 
-            val trees = withContext(Dispatchers.IO) {
-                val allTreeEntities = dao.getAllTrees()
-                buildList {
-                    addAll(
-                        allTreeEntities.map { tree ->
-                            MapMarker(
-                                latitude = tree.latitude,
-                                longitude = tree.longitude,
-                                id = "tree_${tree.id}",
-                                isUploaded = tree.uploaded,
-                                note = tree.note,
-                                plantDate = tree.createdAt,
-                                imagePath = tree.photoPath,
-                            )
-                        }
-                    )
+            val trees =
+                withContext(Dispatchers.IO) {
+                    val allTreeEntities = dao.getAllTrees()
+                    buildList {
+                        addAll(
+                            allTreeEntities.map { tree ->
+                                MapMarker(
+                                    latitude = tree.latitude,
+                                    longitude = tree.longitude,
+                                    id = "tree_${tree.id}",
+                                    isUploaded = tree.uploaded,
+                                    note = tree.note,
+                                    plantDate = tree.createdAt,
+                                    imagePath = tree.photoPath,
+                                )
+                            },
+                        )
+                    }
                 }
-            }
 
             updateState {
                 copy(markers = trees, isLoading = false)

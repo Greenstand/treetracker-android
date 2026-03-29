@@ -1,3 +1,18 @@
+/*
+ * Copyright 2026 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.profile
 
 import androidx.compose.foundation.layout.Box
@@ -28,8 +43,9 @@ fun DeleteProfileScreen() {
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
     val state by viewModel.state.collectAsState()
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier =
+            Modifier
+                .fillMaxSize(),
     ) {
         UserSelect(
             navigationButtonColors = AppButtonColors.ProgressGreen,
@@ -38,7 +54,7 @@ fun DeleteProfileScreen() {
             onNavigateForward = { user ->
                 viewModel.handleAction(UserSelectAction.SelectUser(user))
                 viewModel.handleAction(UserSelectAction.UpdateDeleteProfileState(DeleteProfileState.SHOWDIALOG))
-            }
+            },
         )
 
         if (state.deleteProfileState == DeleteProfileState.SHOWDIALOG) {
@@ -59,28 +75,25 @@ fun DeleteProfileScreen() {
                             buttonColors = AppButtonColors.Default,
                             selectedColor = Red,
                             onClick = {
-                            }
+                            },
                         )
                     }
-
-                }
-
+                },
             )
         }
-        if ((state.deleteProfileState == DeleteProfileState.ACCOUNTDELETEDLOCALLY ) || (state.deleteProfileState == DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED )) {
+        if ((state.deleteProfileState == DeleteProfileState.ACCOUNTDELETEDLOCALLY) || (state.deleteProfileState == DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED)) {
             CustomDialog(
                 title = stringResource(R.string.account_deleted),
                 textContent = stringResource(R.string.account_deleted_message),
                 onPositiveClick = {
                     viewModel.handleAction(UserSelectAction.DeleteUser)
-                    if(state.selectedUser?.isPowerUser == true){
+                    if (state.selectedUser?.isPowerUser == true) {
                         navController.navigate(SignupFlowRoute) {
                             popUpTo(navController.graph.id) {
                                 inclusive = true
                             }
                             launchSingleTop = true
                         }
-
                     } else {
                         navController.navigate(SettingsRoute) {
                             popUpTo<SettingsRoute> { inclusive = true }
@@ -96,14 +109,11 @@ fun DeleteProfileScreen() {
                             buttonColors = AppButtonColors.Default,
                             selectedColor = Red,
                             onClick = {
-                            }
+                            },
                         )
                     }
-
-                }
-
+                },
             )
         }
-
     }
 }

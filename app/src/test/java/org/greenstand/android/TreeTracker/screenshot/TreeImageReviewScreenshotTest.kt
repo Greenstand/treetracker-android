@@ -20,9 +20,9 @@ import org.greenstand.android.TreeTracker.capture.TreeImageReviewState
 import org.junit.Test
 
 class TreeImageReviewScreenshotTest : ScreenshotTest() {
-
     @Test
-    fun tree_image_review_default() = snapshot {
-        TreeImageReview(state = TreeImageReviewState())
-    }
+    fun tree_image_review_default() =
+        snapshot {
+            TreeImageReview(state = TreeImageReviewState())
+        }
 }

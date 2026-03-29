@@ -34,11 +34,12 @@ fun ActionBar(
     rightAction: @Composable (BoxScope.() -> Unit) = { },
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(4.dp)
-            .height(80.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(4.dp)
+                .height(80.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(modifier = Modifier.weight(1f)) {
             leftAction()

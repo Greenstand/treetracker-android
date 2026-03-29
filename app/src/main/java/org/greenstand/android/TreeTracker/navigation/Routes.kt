@@ -55,20 +55,39 @@ import kotlinx.serialization.Serializable
 
 // Routes with arguments
 
-@Serializable data class ProfileRoute(val planterInfoId: Long)
+@Serializable data class ProfileRoute(
+    val planterInfoId: Long,
+)
 
-@Serializable data class IndividualMessageListRoute(val planterInfoId: Long)
+@Serializable data class IndividualMessageListRoute(
+    val planterInfoId: Long,
+)
 
-@Serializable data class SurveyRoute(val messageId: String)
+@Serializable data class SurveyRoute(
+    val messageId: String,
+)
 
-@Serializable data class ImageReviewRoute(val photoPath: String)
+@Serializable data class ImageReviewRoute(
+    val photoPath: String,
+)
 
-@Serializable data class LanguageRoute(val isFromTopBar: Boolean = true)
+@Serializable data class LanguageRoute(
+    val isFromTopBar: Boolean = true,
+)
 
-@Serializable data class TreeCaptureRoute(val profilePicUrl: String)
+@Serializable data class TreeCaptureRoute(
+    val profilePicUrl: String,
+)
 
-@Serializable data class TreeImageReviewRoute(val photoPath: String)
+@Serializable data class TreeImageReviewRoute(
+    val photoPath: String,
+)
 
-@Serializable data class ChatRoute(val planterInfoId: Long, val otherChatIdentifier: String)
+@Serializable data class ChatRoute(
+    val planterInfoId: Long,
+    val otherChatIdentifier: String,
+)
 
-@Serializable data class AnnouncementRoute(val messageId: String)
+@Serializable data class AnnouncementRoute(
+    val messageId: String,
+)

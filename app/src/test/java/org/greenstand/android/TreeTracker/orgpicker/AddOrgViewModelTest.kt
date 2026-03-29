@@ -38,7 +38,6 @@ import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class AddOrgViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -69,59 +68,63 @@ class AddOrgViewModelTest {
     }
 
     @Test
-    fun `WHEN init THEN loads userImagePath and previousOrgName from prefs`() = runTest {
-        val fakeUser = FakeFileGenerator.fakeUsers.first()
-        every { captureSetupData.user } returns fakeUser
-        every { preferences.getString(any(), any()) } returns "PreviousOrg"
+    fun `WHEN init THEN loads userImagePath and previousOrgName from prefs`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns "PreviousOrg"
 
-        val viewModel = AddOrgViewModel(preferences)
+            val viewModel = AddOrgViewModel(preferences)
 
-        val state = viewModel.state.value
-        assertEquals(fakeUser.photoPath, state.userImagePath)
-        assertEquals("PreviousOrg", state.previousOrgName)
-    }
-
-    @Test
-    fun `WHEN updateOrgName called THEN updates state and CaptureSetupScopeManager`() = runTest {
-        val fakeUser = FakeFileGenerator.fakeUsers.first()
-        every { captureSetupData.user } returns fakeUser
-        every { preferences.getString(any(), any()) } returns null
-
-        val viewModel = AddOrgViewModel(preferences)
-
-        viewModel.handleAction(AddOrgAction.UpdateOrgName("NewOrg"))
-
-        val state = viewModel.state.value
-        assertEquals("NewOrg", state.orgName)
-        verify { captureSetupData.organizationName = "NewOrg" }
-    }
+            val state = viewModel.state.value
+            assertEquals(fakeUser.photoPath, state.userImagePath)
+            assertEquals("PreviousOrg", state.previousOrgName)
+        }
 
     @Test
-    fun `WHEN applyOrgAutofill called THEN sets orgName to previousOrgName`() = runTest {
-        val fakeUser = FakeFileGenerator.fakeUsers.first()
-        every { captureSetupData.user } returns fakeUser
-        every { preferences.getString(any(), any()) } returns "AutofillOrg"
+    fun `WHEN updateOrgName called THEN updates state and CaptureSetupScopeManager`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns null
 
-        val viewModel = AddOrgViewModel(preferences)
+            val viewModel = AddOrgViewModel(preferences)
 
-        viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
+            viewModel.handleAction(AddOrgAction.UpdateOrgName("NewOrg"))
 
-        val state = viewModel.state.value
-        assertEquals("AutofillOrg", state.orgName)
-    }
+            val state = viewModel.state.value
+            assertEquals("NewOrg", state.orgName)
+            verify { captureSetupData.organizationName = "NewOrg" }
+        }
 
     @Test
-    fun `WHEN setDefaultOrg called with non-blank orgName THEN saves org name to prefs`() = runTest {
-        val fakeUser = FakeFileGenerator.fakeUsers.first()
-        every { captureSetupData.user } returns fakeUser
-        every { preferences.getString(any(), any()) } returns null
+    fun `WHEN applyOrgAutofill called THEN sets orgName to previousOrgName`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns "AutofillOrg"
 
-        val viewModel = AddOrgViewModel(preferences)
+            val viewModel = AddOrgViewModel(preferences)
 
-        viewModel.handleAction(AddOrgAction.UpdateOrgName("SavedOrg"))
-        viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+            viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
 
-        verify { mockEditor.putString(any(), "SavedOrg") }
-        verify { mockEditor.apply() }
-    }
+            val state = viewModel.state.value
+            assertEquals("AutofillOrg", state.orgName)
+        }
+
+    @Test
+    fun `WHEN setDefaultOrg called with non-blank orgName THEN saves org name to prefs`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns null
+
+            val viewModel = AddOrgViewModel(preferences)
+
+            viewModel.handleAction(AddOrgAction.UpdateOrgName("SavedOrg"))
+            viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+
+            verify { mockEditor.putString(any(), "SavedOrg") }
+            verify { mockEditor.apply() }
+        }
 }

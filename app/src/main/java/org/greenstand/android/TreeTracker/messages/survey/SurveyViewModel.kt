@@ -37,9 +37,14 @@ data class SurveyScreenState(
 )
 
 sealed class SurveyAction : Action {
-    data class SelectAnswer(val answerIndex: Int) : SurveyAction()
+    data class SelectAnswer(
+        val answerIndex: Int,
+    ) : SurveyAction()
+
     object GoToNextQuestion : SurveyAction()
+
     object GoToPrevQuestion : SurveyAction()
+
     object NavigateBack : SurveyAction()
 }
 
@@ -48,7 +53,6 @@ class SurveyViewModel(
     private val messagesRepo: MessagesRepo,
     private val userRepo: UserRepo,
 ) : BaseViewModel<SurveyScreenState, SurveyAction>(SurveyScreenState()) {
-
     private lateinit var survey: SurveyMessage
     private var currentQuestionIndex: Int = 0
     private val answers: Array<Int?> = Array(3) { null }
@@ -60,7 +64,7 @@ class SurveyViewModel(
             updateState {
                 copy(
                     userImagePath = user!!.photoPath,
-                    currentQuestion = survey.questions[currentQuestionIndex]
+                    currentQuestion = survey.questions[currentQuestionIndex],
                 )
             }
             messagesRepo.markMessageAsRead(messageId)
@@ -82,9 +86,11 @@ class SurveyViewModel(
     private fun goToNextQuestion() {
         viewModelScope.launch {
             if (currentQuestionIndex == survey.questions.size - 1) {
-                val answerStrings = survey.questions.mapIndexed { index, question ->
-                    answers[index]?.let { question.choices[it] }
-                }.requireNoNulls()
+                val answerStrings =
+                    survey.questions
+                        .mapIndexed { index, question ->
+                            answers[index]?.let { question.choices[it] }
+                        }.requireNoNulls()
                 messagesRepo.saveSurveyAnswers(messageId, answerStrings)
                 updateState { copy(surveyComplete = true) }
                 return@launch
@@ -93,7 +99,7 @@ class SurveyViewModel(
             updateState {
                 copy(
                     selectedAnswerIndex = answers[currentQuestionIndex],
-                    currentQuestion = survey.questions[currentQuestionIndex]
+                    currentQuestion = survey.questions[currentQuestionIndex],
                 )
             }
         }
@@ -108,16 +114,16 @@ class SurveyViewModel(
         updateState {
             copy(
                 selectedAnswerIndex = answers[currentQuestionIndex],
-                currentQuestion = survey.questions[currentQuestionIndex]
+                currentQuestion = survey.questions[currentQuestionIndex],
             )
         }
     }
 }
 
-class SurveyViewModelFactory(private val messageId: String) :
-    ViewModelProvider.Factory, KoinComponent {
+class SurveyViewModelFactory(
+    private val messageId: String,
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SurveyViewModel(messageId, get(), get()) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SurveyViewModel(messageId, get(), get()) as T
 }

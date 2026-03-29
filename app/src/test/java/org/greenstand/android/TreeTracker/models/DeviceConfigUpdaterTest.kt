@@ -40,7 +40,6 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 @ExperimentalCoroutinesApi
 class DeviceConfigUpdaterTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -59,52 +58,58 @@ class DeviceConfigUpdaterTest {
     fun setUp() {
         MockKAnnotations.init(this)
         every { timeProvider.currentTime() } returns Instant.parse("2023-01-01T00:00:00Z")
-        deviceConfigUpdater = DeviceConfigUpdater(
-            dao = dao,
-            timeProvider = timeProvider,
-        )
+        deviceConfigUpdater =
+            DeviceConfigUpdater(
+                dao = dao,
+                timeProvider = timeProvider,
+            )
     }
 
     @Test
-    fun `WHEN getLatestDeviceConfig returns null THEN saves new config`() = runTest {
-        coEvery { dao.getLatestDeviceConfig() } returns null
+    fun `WHEN getLatestDeviceConfig returns null THEN saves new config`() =
+        runTest {
+            coEvery { dao.getLatestDeviceConfig() } returns null
 
-        deviceConfigUpdater.saveLatestConfig()
+            deviceConfigUpdater.saveLatestConfig()
 
-        coVerify(atLeast = 1) { dao.insertDeviceConfig(any()) }
-    }
-
-    @Test
-    fun `WHEN app version differs from stored THEN saves new config`() = runTest {
-        val existingConfig = DeviceConfigEntity(
-            uuid = "test-uuid",
-            appVersion = "different-version",
-            appBuild = BuildConfig.VERSION_CODE,
-            osVersion = android.os.Build.VERSION.RELEASE,
-            sdkVersion = android.os.Build.VERSION.SDK_INT,
-            loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
-        )
-        coEvery { dao.getLatestDeviceConfig() } returns existingConfig
-
-        deviceConfigUpdater.saveLatestConfig()
-
-        coVerify(atLeast = 1) { dao.insertDeviceConfig(any()) }
-    }
+            coVerify(atLeast = 1) { dao.insertDeviceConfig(any()) }
+        }
 
     @Test
-    fun `WHEN config matches current values THEN does not save again`() = runTest {
-        val matchingConfig = DeviceConfigEntity(
-            uuid = "test-uuid",
-            appVersion = BuildConfig.VERSION_NAME,
-            appBuild = BuildConfig.VERSION_CODE,
-            osVersion = android.os.Build.VERSION.RELEASE,
-            sdkVersion = android.os.Build.VERSION.SDK_INT,
-            loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
-        )
-        coEvery { dao.getLatestDeviceConfig() } returns matchingConfig
+    fun `WHEN app version differs from stored THEN saves new config`() =
+        runTest {
+            val existingConfig =
+                DeviceConfigEntity(
+                    uuid = "test-uuid",
+                    appVersion = "different-version",
+                    appBuild = BuildConfig.VERSION_CODE,
+                    osVersion = android.os.Build.VERSION.RELEASE,
+                    sdkVersion = android.os.Build.VERSION.SDK_INT,
+                    loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
+                )
+            coEvery { dao.getLatestDeviceConfig() } returns existingConfig
 
-        deviceConfigUpdater.saveLatestConfig()
+            deviceConfigUpdater.saveLatestConfig()
 
-        coVerify(exactly = 0) { dao.insertDeviceConfig(any()) }
-    }
+            coVerify(atLeast = 1) { dao.insertDeviceConfig(any()) }
+        }
+
+    @Test
+    fun `WHEN config matches current values THEN does not save again`() =
+        runTest {
+            val matchingConfig =
+                DeviceConfigEntity(
+                    uuid = "test-uuid",
+                    appVersion = BuildConfig.VERSION_NAME,
+                    appBuild = BuildConfig.VERSION_CODE,
+                    osVersion = android.os.Build.VERSION.RELEASE,
+                    sdkVersion = android.os.Build.VERSION.SDK_INT,
+                    loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
+                )
+            coEvery { dao.getLatestDeviceConfig() } returns matchingConfig
+
+            deviceConfigUpdater.saveLatestConfig()
+
+            coVerify(exactly = 0) { dao.insertDeviceConfig(any()) }
+        }
 }

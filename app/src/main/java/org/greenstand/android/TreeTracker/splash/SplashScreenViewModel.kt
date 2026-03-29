@@ -53,7 +53,6 @@ class SplashScreenViewModel(
     private val orgRepo: OrgRepo,
     private val exceptionDataCollector: ExceptionDataCollector,
 ) : BaseViewModel<SplashState, SplashAction>(SplashState()) {
-
     override fun handleAction(action: SplashAction) {
         when (action) {
             is SplashAction.StartGPSUpdatesForSignup -> {
@@ -86,10 +85,10 @@ class SplashScreenViewModel(
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
 }
 
-class SplashScreenViewModelFactory(private val orgJsonString: String?) :
-    ViewModelProvider.Factory, KoinComponent {
+class SplashScreenViewModelFactory(
+    private val orgJsonString: String?,
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SplashScreenViewModel(orgJsonString, get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgJsonString, get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
 }

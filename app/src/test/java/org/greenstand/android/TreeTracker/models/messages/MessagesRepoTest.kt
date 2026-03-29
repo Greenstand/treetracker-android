@@ -42,7 +42,6 @@ import org.junit.rules.TestRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MessagesRepoTest {
-
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
 
@@ -67,34 +66,35 @@ class MessagesRepoTest {
         messagesDAO = mockk()
         messageUploader = mockk()
 
-        messagesRepo = MessagesRepo(
-            apiService,
-            userRepo,
-            timeProvider,
-            messagesDAO,
-            messageUploader
-        )
+        messagesRepo =
+            MessagesRepo(
+                apiService,
+                userRepo,
+                timeProvider,
+                messagesDAO,
+                messageUploader,
+            )
     }
 
-    private val userList: List<User> = List(10) {
-        User(
-            it.toLong(),
-            it.toString(),
-            it,
-            it.toString(),
-            it.toString(),
-            it.toString(),
-            false,
-            it % 2 == 0
-        )
-    }
+    private val userList: List<User> =
+        List(10) {
+            User(
+                it.toLong(),
+                it.toString(),
+                it,
+                it.toString(),
+                it.toString(),
+                it.toString(),
+                false,
+                it % 2 == 0,
+            )
+        }
 
     private val lastTimeMessageSynced = "123456789"
 
     @Test
     fun `sync messages method fetches messages from api and saves them in database for every page and wallet correctly`() =
         runTest {
-
             // mock
             coEvery {
                 userRepo.getUserList()
@@ -124,11 +124,12 @@ class MessagesRepoTest {
                             offset = offset,
                             limit = limit,
                         )
-                    } returns MessagesResponse(
-                        getMessageResponseList(limit, offset, i),
-                        LinksResponse(null, null),
-                        QueryResponse(total, i.toString(), limit, offset)
-                    )
+                    } returns
+                        MessagesResponse(
+                            getMessageResponseList(limit, offset, i),
+                            LinksResponse(null, null),
+                            QueryResponse(total, i.toString(), limit, offset),
+                        )
                 }
             }
 
@@ -151,7 +152,7 @@ class MessagesRepoTest {
 
                         getMessageResponseList(limit, offset, i).forEach {
                             messagesDAO.insertMessage(
-                                getMessageEntityFromResponse(it, i.toString())
+                                getMessageEntityFromResponse(it, i.toString()),
                             )
                         }
                     }
@@ -163,7 +164,7 @@ class MessagesRepoTest {
         initialOffset: Int = 0,
         limit: Int = 100,
         total: Int,
-        action: (offset: Int) -> Unit
+        action: (offset: Int) -> Unit,
     ) {
         var offset = initialOffset
 
@@ -177,9 +178,9 @@ class MessagesRepoTest {
     private fun getMessageResponseList(
         limit: Int,
         offset: Int,
-        userIndex: Int
-    ): List<MessageResponse> {
-        return List<MessageResponse>(10) {
+        userIndex: Int,
+    ): List<MessageResponse> =
+        List<MessageResponse>(10) {
             MessageResponse(
                 id = ((limit + offset) + it + userIndex).toString(),
                 type = MessageType.MESSAGE,
@@ -191,16 +192,15 @@ class MessagesRepoTest {
                 parentMessageId = null,
                 videoLink = null,
                 surveyResponse = null,
-                survey = null
+                survey = null,
             )
         }
-    }
 
     private fun getMessageEntityFromResponse(
         messageResponse: MessageResponse,
-        wallet: String
-    ): MessageEntity {
-        return MessageEntity(
+        wallet: String,
+    ): MessageEntity =
+        MessageEntity(
             id = messageResponse.id,
             wallet = wallet,
             type = messageResponse.type,
@@ -216,61 +216,66 @@ class MessagesRepoTest {
             bundleId = null,
             isRead = false,
             surveyId = messageResponse.survey?.id,
-            isSurveyComplete = messageResponse.survey?.let { false }
-        )
-    }
-
-    @Test
-    fun `markMessageAsRead delegates to DAO`() = runTest {
-        coEvery { messagesDAO.markMessageAsRead(any()) } returns Unit
-
-        messagesRepo.markMessageAsRead("msg-123")
-
-        coVerify { messagesDAO.markMessageAsRead(listOf("msg-123")) }
-    }
-
-    @Test
-    fun `saveMessage creates entity with correct fields`() = runTest {
-        val fakeTime = Instant.fromEpochMilliseconds(1000000L)
-        every { timeProvider.currentTime() } returns fakeTime
-        coEvery { messagesDAO.insertMessage(any()) } returns 0L
-
-        messagesRepo.saveMessage(
-            wallet = "test-wallet",
-            to = "admin",
-            body = "Hello admin"
+            isSurveyComplete = messageResponse.survey?.let { false },
         )
 
-        coVerify {
-            messagesDAO.insertMessage(match { entity ->
-                entity.wallet == "test-wallet" &&
-                    entity.to == "admin" &&
-                    entity.body == "Hello admin" &&
-                    entity.from == "test-wallet" &&
-                    entity.type == MessageType.MESSAGE &&
-                    entity.shouldUpload &&
-                    entity.isRead &&
-                    entity.subject == null &&
-                    entity.parentMessageId == null
-            })
+    @Test
+    fun `markMessageAsRead delegates to DAO`() =
+        runTest {
+            coEvery { messagesDAO.markMessageAsRead(any()) } returns Unit
+
+            messagesRepo.markMessageAsRead("msg-123")
+
+            coVerify { messagesDAO.markMessageAsRead(listOf("msg-123")) }
         }
-    }
 
     @Test
-    fun `checkForUnreadMessages returns true when count is at least 1`() = runTest {
-        coEvery { messagesDAO.getUnreadMessagesCount() } returns 5
+    fun `saveMessage creates entity with correct fields`() =
+        runTest {
+            val fakeTime = Instant.fromEpochMilliseconds(1000000L)
+            every { timeProvider.currentTime() } returns fakeTime
+            coEvery { messagesDAO.insertMessage(any()) } returns 0L
 
-        val result = messagesRepo.checkForUnreadMessages()
+            messagesRepo.saveMessage(
+                wallet = "test-wallet",
+                to = "admin",
+                body = "Hello admin",
+            )
 
-        kotlin.test.assertTrue(result)
-    }
+            coVerify {
+                messagesDAO.insertMessage(
+                    match { entity ->
+                        entity.wallet == "test-wallet" &&
+                            entity.to == "admin" &&
+                            entity.body == "Hello admin" &&
+                            entity.from == "test-wallet" &&
+                            entity.type == MessageType.MESSAGE &&
+                            entity.shouldUpload &&
+                            entity.isRead &&
+                            entity.subject == null &&
+                            entity.parentMessageId == null
+                    },
+                )
+            }
+        }
 
     @Test
-    fun `checkForUnreadMessages returns false when count is 0`() = runTest {
-        coEvery { messagesDAO.getUnreadMessagesCount() } returns 0
+    fun `checkForUnreadMessages returns true when count is at least 1`() =
+        runTest {
+            coEvery { messagesDAO.getUnreadMessagesCount() } returns 5
 
-        val result = messagesRepo.checkForUnreadMessages()
+            val result = messagesRepo.checkForUnreadMessages()
 
-        kotlin.test.assertFalse(result)
-    }
+            kotlin.test.assertTrue(result)
+        }
+
+    @Test
+    fun `checkForUnreadMessages returns false when count is 0`() =
+        runTest {
+            coEvery { messagesDAO.getUnreadMessagesCount() } returns 0
+
+            val result = messagesRepo.checkForUnreadMessages()
+
+            kotlin.test.assertFalse(result)
+        }
 }

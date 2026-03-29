@@ -30,7 +30,6 @@ class CaptureSetupNavigationController(
     private val sessionTracker: SessionTracker,
     private val locationDataCapturer: LocationDataCapturer,
 ) : FlowNavigationController(orgRepo.currentOrg().captureSetupFlow) {
-
     /**
      * Navigate forward in the setup flow. Suspend because completing setup
      * requires starting a session (DB write) before navigating to capture.
@@ -52,8 +51,9 @@ class CaptureSetupNavigationController(
         } else {
             incrementIndex()
             val destination = navPath[currentNavPathIndex]
-            val route = resolveNoArgDestination(destination)
-                ?: error("Unknown setup flow destination: ${destination.route}")
+            val route =
+                resolveNoArgDestination(destination)
+                    ?: error("Unknown setup flow destination: ${destination.route}")
             withContext(Dispatchers.Main) {
                 navController.navigate(route)
             }
@@ -86,8 +86,9 @@ class CaptureSetupNavigationController(
             return
         }
         val destination = navPath[currentNavPathIndex]
-        val route = resolveNoArgDestination(destination)
-            ?: error("Unknown setup flow destination: ${destination.route}")
+        val route =
+            resolveNoArgDestination(destination)
+                ?: error("Unknown setup flow destination: ${destination.route}")
         withContext(Dispatchers.Main) {
             navController.navigate(route) {
                 popUpTo<SignupFlowRoute> { inclusive = true }

@@ -29,7 +29,6 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class PermissionViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -45,11 +44,12 @@ class PermissionViewModelTest {
     }
 
     @Test
-    fun `verify isLocationEnabled sets the correct value in the permission Items state`() = runTest {
-        val provider = LocationManager.GPS_PROVIDER
-        coEvery { locationManager.isProviderEnabled(provider) } returns true
-        testSubject.handleAction(PermissionAction.CheckLocationEnabled)
-        val result = testSubject.state.value.isLocationEnabled!!
-        assertTrue(result)
-    }
+    fun `verify isLocationEnabled sets the correct value in the permission Items state`() =
+        runTest {
+            val provider = LocationManager.GPS_PROVIDER
+            coEvery { locationManager.isProviderEnabled(provider) } returns true
+            testSubject.handleAction(PermissionAction.CheckLocationEnabled)
+            val result = testSubject.state.value.isLocationEnabled!!
+            assertTrue(result)
+        }
 }

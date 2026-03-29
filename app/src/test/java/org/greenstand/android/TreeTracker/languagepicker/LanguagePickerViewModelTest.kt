@@ -47,23 +47,26 @@ class LanguagePickerViewModelTest {
     }
 
     @Test
-    fun `Current language returns current language from the language switcher`() = runTest {
-        val result = testSubject.state.value.currentLanguage
-        assertEquals(result, Language.ENGLISH)
-    }
+    fun `Current language returns current language from the language switcher`() =
+        runTest {
+            val result = testSubject.state.value.currentLanguage
+            assertEquals(result, Language.ENGLISH)
+        }
 
     @Test
-    fun `Verify set language updates state without applying`() = runTest {
-        val language = Language.SWAHILI
-        testSubject.handleAction(LanguagePickerAction.SetLanguage(language))
-        assertEquals(Language.SWAHILI, testSubject.state.value.currentLanguage)
-        coVerify(exactly = 0) { languageSwitcher.setLanguage(any()) }
-    }
+    fun `Verify set language updates state without applying`() =
+        runTest {
+            val language = Language.SWAHILI
+            testSubject.handleAction(LanguagePickerAction.SetLanguage(language))
+            assertEquals(Language.SWAHILI, testSubject.state.value.currentLanguage)
+            coVerify(exactly = 0) { languageSwitcher.setLanguage(any()) }
+        }
 
     @Test
-    fun `Verify confirm language calls set language from language switcher`() = runTest {
-        testSubject.handleAction(LanguagePickerAction.SetLanguage(Language.SWAHILI))
-        testSubject.handleAction(LanguagePickerAction.ConfirmLanguage)
-        coVerify { languageSwitcher.setLanguage(Language.SWAHILI) }
-    }
+    fun `Verify confirm language calls set language from language switcher`() =
+        runTest {
+            testSubject.handleAction(LanguagePickerAction.SetLanguage(Language.SWAHILI))
+            testSubject.handleAction(LanguagePickerAction.ConfirmLanguage)
+            coVerify { languageSwitcher.setLanguage(Language.SWAHILI) }
+        }
 }

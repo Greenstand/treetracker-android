@@ -33,7 +33,6 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class TreeImageReviewViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -50,34 +49,42 @@ class TreeImageReviewViewModelTest {
     fun setUp() {
         testSubject = TreeImageReviewViewModel(treeCapturer = treeCapturer, userRepo = userRepo, featureResolver = featureResolver)
     }
+
     @Test
-    fun `updateNote should update the note in the view model state`() = runTest {
-        val note = "Note"
-        testSubject.handleAction(TreeImageReviewAction.UpdateNote(note))
-        val expected = testSubject.state.value.note
-        assertEquals(expected, note)
-    }
+    fun `updateNote should update the note in the view model state`() =
+        runTest {
+            val note = "Note"
+            testSubject.handleAction(TreeImageReviewAction.UpdateNote(note))
+            val expected = testSubject.state.value.note
+            assertEquals(expected, note)
+        }
+
     @Test
-    fun `updateReviewTutorialDialog should update showReviewTutorial flag state `() = runTest {
-        val showTutorial = true
-        testSubject.handleAction(TreeImageReviewAction.UpdateReviewTutorialDialog(showTutorial))
-        val expected = testSubject.state.value.showReviewTutorial!!
-        assertTrue(expected)
-    }
+    fun `updateReviewTutorialDialog should update showReviewTutorial flag state `() =
+        runTest {
+            val showTutorial = true
+            testSubject.handleAction(TreeImageReviewAction.UpdateReviewTutorialDialog(showTutorial))
+            val expected = testSubject.state.value.showReviewTutorial!!
+            assertTrue(expected)
+        }
+
     @Test
-    fun `addNote should set the note in the tree capturer and close the dialog`() = runTest {
-        val note = "Some note"
-        testSubject.handleAction(TreeImageReviewAction.UpdateNote(note))
-        testSubject.handleAction(TreeImageReviewAction.AddNote)
-        verify { treeCapturer.setNote(note) }
-        val expected = testSubject.state.value.isDialogOpen
-        assertFalse(expected)
-    }
+    fun `addNote should set the note in the tree capturer and close the dialog`() =
+        runTest {
+            val note = "Some note"
+            testSubject.handleAction(TreeImageReviewAction.UpdateNote(note))
+            testSubject.handleAction(TreeImageReviewAction.AddNote)
+            verify { treeCapturer.setNote(note) }
+            val expected = testSubject.state.value.isDialogOpen
+            assertFalse(expected)
+        }
+
     @Test
-    fun `setDialogState should update the dialog open state in the view model`() = runTest {
-        val isDialogOpen = true
-        testSubject.handleAction(TreeImageReviewAction.SetDialogState(isDialogOpen))
-        val expected = testSubject.state.value.isDialogOpen
-        assertTrue(expected)
-    }
+    fun `setDialogState should update the dialog open state in the view model`() =
+        runTest {
+            val isDialogOpen = true
+            testSubject.handleAction(TreeImageReviewAction.SetDialogState(isDialogOpen))
+            val expected = testSubject.state.value.isDialogOpen
+            assertTrue(expected)
+        }
 }

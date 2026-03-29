@@ -66,7 +66,7 @@ fun UserSelect(
                     if (isCreateUserEnabled) {
                         OrangeAddButton(
                             modifier = Modifier.align(Alignment.Center),
-                            onClick = { navController.navigate(SignupFlowRoute) }
+                            onClick = { navController.navigate(SignupFlowRoute) },
                         )
                     }
                 },
@@ -79,7 +79,7 @@ fun UserSelect(
                             state.selectedUser?.let {
                                 onNavigateForward(it)
                             }
-                        }
+                        },
                     )
                 },
                 leftAction = {
@@ -87,7 +87,7 @@ fun UserSelect(
                         isLeft = true,
                         colors = navigationButtonColors,
                         onClick = {
-                            if(!isFromSettings) {
+                            if (!isFromSettings) {
                                 navController.navigate(DashboardRoute) {
                                     popUpTo<DashboardRoute> { inclusive = true }
                                     launchSingleTop = true
@@ -95,16 +95,16 @@ fun UserSelect(
                             } else {
                                 navController.popBackStack()
                             }
-                        }
+                        },
                     )
-                }
+                },
             )
-        }
+        },
     ) {
         LazyVerticalGrid(
             modifier = Modifier.statusBarsPadding(),
             columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp, bottom = it.calculateBottomPadding())
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp, bottom = it.calculateBottomPadding()),
         ) {
             items(state.users) { user ->
                 UserButton(
@@ -113,7 +113,7 @@ fun UserSelect(
                     buttonColors = AppButtonColors.Default,
                     selectedColor = selectedColor,
                     onClick = { viewModel.handleAction(UserSelectAction.SelectUser(user)) },
-                    isNotificationEnabled = isNotificationEnabled && user.unreadMessagesAvailable
+                    isNotificationEnabled = isNotificationEnabled && user.unreadMessagesAvailable,
                 )
             }
         }

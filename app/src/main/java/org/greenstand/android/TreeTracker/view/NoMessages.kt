@@ -35,18 +35,18 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 
 @Composable
 fun NoMessages() {
-
     Column(
-        modifier = Modifier
-            .padding(bottom = 30.dp)
-            .fillMaxSize()
-            .wrapContentHeight(),
+        modifier =
+            Modifier
+                .padding(bottom = 30.dp)
+                .fillMaxSize()
+                .wrapContentHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Image(
             painter = painterResource(id = R.drawable.open_mailbox_with_lowered_flag),
-            contentDescription = null
+            contentDescription = null,
         )
         Text(
             text = stringResource(R.string.no_messages_yet),

@@ -31,7 +31,6 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class OrgPickerViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -48,25 +47,27 @@ class OrgPickerViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun `verify Org Repo gets correct Org Set`() = runTest {
-        val orgList = FakeFileGenerator.fakeOrganizationList
-        coEvery { orgRepo.getOrgs() } returns orgList
+    fun `verify Org Repo gets correct Org Set`() =
+        runTest {
+            val orgList = FakeFileGenerator.fakeOrganizationList
+            coEvery { orgRepo.getOrgs() } returns orgList
 
-        coVerify { orgRepo.getOrgs() }
-    }
+            coVerify { orgRepo.getOrgs() }
+        }
 
     @Test
     @Throws(Exception::class)
-    fun `set fake organization, returns success with valid Org`() = runTest {
-        val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
-        // Given
-        coEvery { orgRepo.currentOrg() } returns currentOrg
+    fun `set fake organization, returns success with valid Org`() =
+        runTest {
+            val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
+            // Given
+            coEvery { orgRepo.currentOrg() } returns currentOrg
 
-        // When
-        orgPickerViewModel.handleAction(OrgPickerAction.SetOrg(FakeFileGenerator.fakeOrganizationList.first()))
+            // When
+            orgPickerViewModel.handleAction(OrgPickerAction.SetOrg(FakeFileGenerator.fakeOrganizationList.first()))
 
-        // Assert state has correct data
-        val result = orgPickerViewModel.state.value.currentOrg
-        Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
-    }
+            // Assert state has correct data
+            val result = orgPickerViewModel.state.value.currentOrg
+            Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
+        }
 }

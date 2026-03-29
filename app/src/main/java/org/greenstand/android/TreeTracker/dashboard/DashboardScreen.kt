@@ -105,7 +105,9 @@ fun DashboardScreen(
         onCaptureClicked = {
             if (state.showTreeSyncReminderDialog) {
                 showDialog = true
-            } else navController.navigate(UserSelectRoute)
+            } else {
+                navController.navigate(UserSelectRoute)
+            }
         },
         onDialogConfirm = { navController.navigate(UserSelectRoute) },
         onMessagesClicked = {
@@ -148,27 +150,31 @@ fun Dashboard(
 
     Scaffold(
         topBar = {
-            DashboardTopBar(state, onSettingsClicked,onOrgClicked)
+            DashboardTopBar(state, onSettingsClicked, onOrgClicked)
         },
         scaffoldState = scaffoldState,
         snackbarHost = {
-            SnackbarHost(hostState = it, modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .wrapContentHeight(Alignment.Bottom)) { snackBarData->
+            SnackbarHost(
+                hostState = it,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .wrapContentHeight(Alignment.Bottom),
+            ) { snackBarData ->
                 val backgroundColor = Green
 
                 Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
                     Snackbar(
                         contentColor = CustomTheme.textColors.darkText,
                         backgroundColor = backgroundColor,
-                        modifier = Modifier.align(Alignment.BottomStart)
+                        modifier = Modifier.align(Alignment.BottomStart),
                     ) {
                         Text(text = snackBarData.message, fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(vertical = 15.dp))
                     }
                 }
             }
-        }
+        },
     ) { padding ->
         Column(
             modifier = Modifier.fillMaxSize().navigationBarsPadding(),
@@ -181,33 +187,36 @@ fun Dashboard(
                 Image(
                     painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
                     contentDescription = "",
-                    modifier = Modifier
-                        .align(CenterVertically)
-                        .padding(top = 5.dp, bottom = 10.dp, end = 10.dp)
-                        .size(width = 30.dp, height = 30.dp)
+                    modifier =
+                        Modifier
+                            .align(CenterVertically)
+                            .padding(top = 5.dp, bottom = 10.dp, end = 10.dp)
+                            .size(width = 30.dp, height = 30.dp),
                 )
                 Text(
                     modifier = Modifier.align(CenterVertically),
                     text = state.treesSynced.toString(),
                     fontWeight = FontWeight.Bold,
                     color = CustomTheme.textColors.uploadText,
-                    style = CustomTheme.typography.large
+                    style = CustomTheme.typography.large,
                 )
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 20.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.Top,
             ) {
                 // Upload indicator.
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .fillMaxHeight()
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(0.5f)
+                            .fillMaxHeight()
+                            .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -224,61 +233,71 @@ fun Dashboard(
                 }
                 Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
                 DashBoardButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .weight(1f),
                     text = stringResource(R.string.upload),
                     colors = AppButtonColors.UploadOrange,
                     onClick = onSyncClicked,
                     shape = TreeTrackerButtonShape.Circle,
-                    image = painterResource(id = R.drawable.upload_icon)
+                    image = painterResource(id = R.drawable.upload_icon),
                 )
             }
 
             DashBoardButton(
                 text = stringResource(R.string.messages),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-                    .fillMaxSize(),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .fillMaxSize(),
                 colors = AppButtonColors.MessagePurple,
                 onClick = onMessagesClicked,
                 image = painterResource(id = R.drawable.announcement_icon),
-                showUnreadNotification = state.showUnreadMessageNotification
+                showUnreadNotification = state.showUnreadMessageNotification,
             )
 
             DashBoardButton(
                 text = stringResource(R.string.track),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-                    .fillMaxSize(),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .fillMaxSize(),
                 colors = AppButtonColors.ProgressGreen,
                 onClick = onCaptureClicked,
-                image = painterResource(id = R.drawable.track_icon)
+                image = painterResource(id = R.drawable.track_icon),
             )
         }
     }
 }
 
+@Suppress("UnusedParameter")
 @Composable
-fun DashboardTopBar(state: DashboardState,
-                    onSettingsClicked: () -> Unit = { }, onOrgClicked: () -> Unit) {
+fun DashboardTopBar(
+    state: DashboardState,
+    onSettingsClicked: () -> Unit = { },
+    onOrgClicked: () -> Unit,
+) {
     ActionBar(
         modifier = Modifier.statusBarsPadding(),
         leftAction = {
-            Box(modifier = Modifier
-                .padding( 10.dp)
+            Box(
+                modifier =
+                    Modifier
+                        .padding(10.dp),
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.settings_filled),
                     contentDescription = "",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clickable {
-                            onSettingsClicked()
-                        }
+                    modifier =
+                        Modifier
+                            .size(50.dp)
+                            .clickable {
+                                onSettingsClicked()
+                            },
                 )
             }
 //            Move Logic to settings screen for org feature
@@ -303,7 +322,7 @@ fun DashboardTopBar(state: DashboardState,
             */
         },
         centerAction = { TopBarTitle() },
-        rightAction = { LanguageButton() }
+        rightAction = { LanguageButton() },
     )
 }
 
@@ -314,18 +333,20 @@ fun DashboardUploadProgressBar(
     modifier: Modifier = Modifier,
 ) {
     val strokeWidth = 8.dp
-    val stroke = with(LocalDensity.current) {
-        Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
-    }
+    val stroke =
+        with(LocalDensity.current) {
+            Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
+        }
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
     Canvas(
-        modifier = modifier
-            .progressSemantics(animatedProgress)
-            .fillMaxWidth()
+        modifier =
+            modifier
+                .progressSemantics(animatedProgress)
+                .fillMaxWidth(),
     ) {
         val diameterOffset = stroke.width / 2
         val arcDimension = size.width - 2 * diameterOffset
@@ -333,7 +354,7 @@ fun DashboardUploadProgressBar(
         // Function to draw a default styled arc.
         fun drawProgress(
             color: Color,
-            sweepAngle: Float
+            sweepAngle: Float,
         ) = drawArc(
             color = color,
             startAngle = 180f,
@@ -341,7 +362,7 @@ fun DashboardUploadProgressBar(
             useCenter = false,
             topLeft = Offset(diameterOffset, diameterOffset),
             size = Size(arcDimension, arcDimension),
-            style = stroke
+            style = stroke,
         )
 
         drawProgress(AppColors.MediumGray, 180f) // Background progress.
@@ -369,27 +390,30 @@ fun DashBoardButton(
         Image(
             painter = image,
             contentDescription = "",
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(top = 25.dp, bottom = 40.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .padding(top = 25.dp, bottom = 40.dp),
         )
         Text(
             text = text,
             style = CustomTheme.typography.medium,
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.darkText,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp),
             textAlign = TextAlign.Center,
         )
         if (showUnreadNotification) {
             Image(
-                modifier = Modifier
-                    .padding(bottom = 12.dp, end = 8.dp)
-                    .size(33.dp)
-                    .align(Alignment.BottomEnd),
+                modifier =
+                    Modifier
+                        .padding(bottom = 12.dp, end = 8.dp)
+                        .size(33.dp)
+                        .align(Alignment.BottomEnd),
                 painter = painterResource(id = R.drawable.notification_icon),
                 contentDescription = null,
             )
@@ -402,14 +426,14 @@ fun DashBoardButton(
 fun DashboardPreview() {
     PreviewDependencies {
         Dashboard(
-            state = DashboardState(
-                treesRemainingToSync = 51,
-                treesSynced = 146,
-                totalTreesToSync = 200,
-                isOrgButtonEnabled = true,
-                showUnreadMessageNotification = true,
-            ),
+            state =
+                DashboardState(
+                    treesRemainingToSync = 51,
+                    treesSynced = 146,
+                    totalTreesToSync = 200,
+                    isOrgButtonEnabled = true,
+                    showUnreadMessageNotification = true,
+                ),
         )
     }
 }
-

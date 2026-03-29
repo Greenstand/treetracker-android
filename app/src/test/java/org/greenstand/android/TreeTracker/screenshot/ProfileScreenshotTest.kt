@@ -21,39 +21,44 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectState
 import org.junit.Test
 
 class ProfileScreenshotTest : ScreenshotTest() {
-
-    private val sampleUser = User(
-        id = 1L,
-        wallet = "jane@example.com",
-        numberOfTrees = 42,
-        firstName = "Jane",
-        lastName = "Planter",
-        photoPath = "",
-        isPowerUser = true,
-        unreadMessagesAvailable = false,
-    )
-
-    @Test
-    fun profile_loading() = snapshot {
-        Profile(state = UserSelectState())
-    }
-
-    @Test
-    fun profile_with_user() = snapshot {
-        Profile(
-            state = UserSelectState(
-                selectedUser = sampleUser,
-            ),
+    private val sampleUser =
+        User(
+            id = 1L,
+            wallet = "jane@example.com",
+            numberOfTrees = 42,
+            firstName = "Jane",
+            lastName = "Planter",
+            photoPath = "",
+            isPowerUser = true,
+            unreadMessagesAvailable = false,
         )
-    }
 
     @Test
-    fun profile_edit_mode() = snapshot {
-        Profile(
-            state = UserSelectState(
-                selectedUser = sampleUser,
-                editMode = true,
-            ),
-        )
-    }
+    fun profile_loading() =
+        snapshot {
+            Profile(state = UserSelectState())
+        }
+
+    @Test
+    fun profile_with_user() =
+        snapshot {
+            Profile(
+                state =
+                    UserSelectState(
+                        selectedUser = sampleUser,
+                    ),
+            )
+        }
+
+    @Test
+    fun profile_edit_mode() =
+        snapshot {
+            Profile(
+                state =
+                    UserSelectState(
+                        selectedUser = sampleUser,
+                        editMode = true,
+                    ),
+            )
+        }
 }

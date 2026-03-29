@@ -37,7 +37,6 @@ import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class CreateLegacyTreeUseCaseTest {
-
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -52,75 +51,81 @@ class CreateLegacyTreeUseCaseTest {
 
     private lateinit var createLegacyTreeUseCase: CreateLegacyTreeUseCase
 
-    private val fakeTree = Tree(
-        treeUuid = UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
-        sessionId = 100L,
-        content = "Legacy note",
-        photoPath = "/photos/legacy-tree.jpg",
-        meanLongitude = 36.82,
-        meanLatitude = -1.29,
-    )
+    private val fakeTree =
+        Tree(
+            treeUuid = UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
+            sessionId = 100L,
+            content = "Legacy note",
+            photoPath = "/photos/legacy-tree.jpg",
+            meanLongitude = 36.82,
+            meanLatitude = -1.29,
+        )
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        createLegacyTreeUseCase = CreateLegacyTreeUseCase(
-            dao = dao,
-            timeProvider = timeProvider,
-        )
+        createLegacyTreeUseCase =
+            CreateLegacyTreeUseCase(
+                dao = dao,
+                timeProvider = timeProvider,
+            )
     }
 
     @Test
-    fun `WHEN execute called THEN creates TreeCaptureEntity with correct fields and inserts with attributes`() = runTest {
-        val fakeTime = Instant.fromEpochMilliseconds(5000000L)
-        every { timeProvider.currentTime() } returns fakeTime
-        coEvery { dao.insertTreeWithAttributes(any(), any()) } returns 77L
+    fun `WHEN execute called THEN creates TreeCaptureEntity with correct fields and inserts with attributes`() =
+        runTest {
+            val fakeTime = Instant.fromEpochMilliseconds(5000000L)
+            every { timeProvider.currentTime() } returns fakeTime
+            coEvery { dao.insertTreeWithAttributes(any(), any()) } returns 77L
 
-        val params = CreateLegacyTreeParams(
-            planterCheckInId = 42L,
-            tree = fakeTree,
-        )
+            val params =
+                CreateLegacyTreeParams(
+                    planterCheckInId = 42L,
+                    tree = fakeTree,
+                )
 
-        val result = createLegacyTreeUseCase.execute(params)
+            val result = createLegacyTreeUseCase.execute(params)
 
-        assertEquals(77L, result)
-        coVerify {
-            dao.insertTreeWithAttributes(
-                match { entity ->
-                    entity.uuid == "550e8400-e29b-41d4-a716-446655440000" &&
-                        entity.planterCheckInId == 42L &&
-                        entity.localPhotoPath == "/photos/legacy-tree.jpg" &&
-                        entity.photoUrl == null &&
-                        entity.noteContent == "Legacy note" &&
-                        entity.longitude == 36.82 &&
-                        entity.latitude == -1.29 &&
-                        entity.accuracy == 0.0 &&
-                        entity.createAt == fakeTime.epochSeconds
-                },
-                any()
-            )
+            assertEquals(77L, result)
+            coVerify {
+                dao.insertTreeWithAttributes(
+                    match { entity ->
+                        entity.uuid == "550e8400-e29b-41d4-a716-446655440000" &&
+                            entity.planterCheckInId == 42L &&
+                            entity.localPhotoPath == "/photos/legacy-tree.jpg" &&
+                            entity.photoUrl == null &&
+                            entity.noteContent == "Legacy note" &&
+                            entity.longitude == 36.82 &&
+                            entity.latitude == -1.29 &&
+                            entity.accuracy == 0.0 &&
+                            entity.createAt == fakeTime.epochSeconds
+                    },
+                    any(),
+                )
+            }
         }
-    }
 
     @Test
-    fun `WHEN execute called THEN uses timeProvider currentTime epochSeconds for createAt`() = runTest {
-        val fakeTime = Instant.fromEpochMilliseconds(9999000L)
-        every { timeProvider.currentTime() } returns fakeTime
-        coEvery { dao.insertTreeWithAttributes(any(), any()) } returns 1L
+    fun `WHEN execute called THEN uses timeProvider currentTime epochSeconds for createAt`() =
+        runTest {
+            val fakeTime = Instant.fromEpochMilliseconds(9999000L)
+            every { timeProvider.currentTime() } returns fakeTime
+            coEvery { dao.insertTreeWithAttributes(any(), any()) } returns 1L
 
-        val params = CreateLegacyTreeParams(
-            planterCheckInId = 1L,
-            tree = fakeTree,
-        )
+            val params =
+                CreateLegacyTreeParams(
+                    planterCheckInId = 1L,
+                    tree = fakeTree,
+                )
 
-        createLegacyTreeUseCase.execute(params)
+            createLegacyTreeUseCase.execute(params)
 
-        verify { timeProvider.currentTime() }
-        coVerify {
-            dao.insertTreeWithAttributes(
-                match { it.createAt == fakeTime.epochSeconds },
-                any()
-            )
+            verify { timeProvider.currentTime() }
+            coVerify {
+                dao.insertTreeWithAttributes(
+                    match { it.createAt == fakeTime.epochSeconds },
+                    any(),
+                )
+            }
         }
-    }
 }

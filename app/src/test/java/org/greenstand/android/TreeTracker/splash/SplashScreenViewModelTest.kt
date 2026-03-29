@@ -83,80 +83,86 @@ class SplashScreenViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        splashScreenViewModel = SplashScreenViewModel(
-            orgJsonString = orgJsonString,
-            userRepo = userRepo,
-            treesToSyncHelper = treesToSyncHelper,
-            sessionTracker = sessionTracker,
-            deviceConfigUpdater = deviceConfigUpdater,
-            locationDataCapturer = locationDataCapturer,
-            messagesRepo = messagesRepo,
-            checkForInternetUseCase = checkForInternetUseCase,
-            orgRepo = orgRepo,
-            exceptionDataCollector = exceptionDataCollector
-        )
+        splashScreenViewModel =
+            SplashScreenViewModel(
+                orgJsonString = orgJsonString,
+                userRepo = userRepo,
+                treesToSyncHelper = treesToSyncHelper,
+                sessionTracker = sessionTracker,
+                deviceConfigUpdater = deviceConfigUpdater,
+                locationDataCapturer = locationDataCapturer,
+                messagesRepo = messagesRepo,
+                checkForInternetUseCase = checkForInternetUseCase,
+                orgRepo = orgRepo,
+                exceptionDataCollector = exceptionDataCollector,
+            )
     }
 
     @Test
-    fun `WHEN every condition in a function is true THEN entire body of the function is executed`() = runTest {
-        val user = FakeFileGenerator.emptyUser
-        orgJsonString = "json string"
-        coEvery { checkForInternetUseCase.execute(Unit) } returns true
-        coEvery { userRepo.getPowerUser() } returns user
-        every { sessionTracker.wasSessionInterrupted() } returns true
-        every { treesToSyncHelper.getTreeCountToSync() } returns -1
+    fun `WHEN every condition in a function is true THEN entire body of the function is executed`() =
+        runTest {
+            val user = FakeFileGenerator.emptyUser
+            orgJsonString = "json string"
+            coEvery { checkForInternetUseCase.execute(Unit) } returns true
+            coEvery { userRepo.getPowerUser() } returns user
+            every { sessionTracker.wasSessionInterrupted() } returns true
+            every { treesToSyncHelper.getTreeCountToSync() } returns -1
 
-        splashScreenViewModel.bootstrap()
+            splashScreenViewModel.bootstrap()
 
-        coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
-        coVerify(exactly = 1) { orgRepo.init() }
-        coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some string") }
-        coVerify(exactly = 1) { messagesRepo.syncMessages() }
-        coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
-        coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
-    }
-
-    @Test
-    fun `functions are not executed where condition is false`() = runTest {
-        val user = FakeFileGenerator.emptyUser
-        orgJsonString = null
-        coEvery { checkForInternetUseCase.execute(Unit) } returns false
-        coEvery { userRepo.getPowerUser() } returns null
-        every { sessionTracker.wasSessionInterrupted() } returns false
-        every { treesToSyncHelper.getTreeCountToSync() } returns 1
-
-        splashScreenViewModel.bootstrap()
-
-        coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
-        coVerify(exactly = 1) { orgRepo.init() }
-        coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some stirng") }
-        coVerify(exactly = 0) { messagesRepo.syncMessages() }
-        coVerify(exactly = 0) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
-        coVerify(exactly = 0) { treesToSyncHelper.refreshTreeCountToSync() }
-    }
+            coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
+            coVerify(exactly = 1) { orgRepo.init() }
+            coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some string") }
+            coVerify(exactly = 1) { messagesRepo.syncMessages() }
+            coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
+            coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
+        }
 
     @Test
-    fun `WHEN User object is null THEN isInitialSetupRequired is true`() = runTest {
-        coEvery { userRepo.getPowerUser() } returns null
+    fun `functions are not executed where condition is false`() =
+        runTest {
+            val user = FakeFileGenerator.emptyUser
+            orgJsonString = null
+            coEvery { checkForInternetUseCase.execute(Unit) } returns false
+            coEvery { userRepo.getPowerUser() } returns null
+            every { sessionTracker.wasSessionInterrupted() } returns false
+            every { treesToSyncHelper.getTreeCountToSync() } returns 1
 
-        val result = splashScreenViewModel.isInitialSetupRequired()
+            splashScreenViewModel.bootstrap()
 
-        assertTrue(result)
-    }
+            coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
+            coVerify(exactly = 1) { orgRepo.init() }
+            coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some stirng") }
+            coVerify(exactly = 0) { messagesRepo.syncMessages() }
+            coVerify(exactly = 0) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
+            coVerify(exactly = 0) { treesToSyncHelper.refreshTreeCountToSync() }
+        }
 
     @Test
-    fun `WHEN User object is not  null THEN isInitialSetupRequired is false`() = runTest {
-        val user = FakeFileGenerator.emptyUser
-        coEvery { userRepo.getPowerUser() } returns user
+    fun `WHEN User object is null THEN isInitialSetupRequired is true`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns null
 
-        val result = splashScreenViewModel.isInitialSetupRequired()
+            val result = splashScreenViewModel.isInitialSetupRequired()
 
-        assertFalse(result)
-    }
+            assertTrue(result)
+        }
 
     @Test
-    fun `WHEN function startGPSUpdatesForSignup() is called THEN function startGpsUpdates() is executed 1 time`() = runTest {
-        splashScreenViewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
-        verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
-    }
+    fun `WHEN User object is not  null THEN isInitialSetupRequired is false`() =
+        runTest {
+            val user = FakeFileGenerator.emptyUser
+            coEvery { userRepo.getPowerUser() } returns user
+
+            val result = splashScreenViewModel.isInitialSetupRequired()
+
+            assertFalse(result)
+        }
+
+    @Test
+    fun `WHEN function startGPSUpdatesForSignup() is called THEN function startGpsUpdates() is executed 1 time`() =
+        runTest {
+            splashScreenViewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
+            verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
+        }
 }

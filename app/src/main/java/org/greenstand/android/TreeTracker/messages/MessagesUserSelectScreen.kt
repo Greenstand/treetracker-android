@@ -32,6 +32,6 @@ fun MessagesUserSelectScreen() {
         selectedColor = AppColors.Purple,
         onNavigateForward = { user ->
             navController.navigate(IndividualMessageListRoute(planterInfoId = user.id))
-        }
+        },
     )
 }

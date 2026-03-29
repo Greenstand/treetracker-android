@@ -71,12 +71,14 @@ private const val ConversationTestTag = "ConversationTestTag"
 fun ChatScreen(
     userId: Long,
     otherChatIdentifier: String,
-    viewModel: ChatViewModel = viewModel(
-        factory = ChatViewModelFactory(
-            userId,
-            otherChatIdentifier
-        )
-    )
+    viewModel: ChatViewModel =
+        viewModel(
+            factory =
+                ChatViewModelFactory(
+                    userId,
+                    otherChatIdentifier,
+                ),
+        ),
 ) {
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
@@ -120,10 +122,10 @@ fun Chat(
                     state.currentUser?.photoPath?.let {
                         RoundedLocalImageContainer(
                             imagePath = it,
-                            modifier = Modifier.align(Alignment.Center)
+                            modifier = Modifier.align(Alignment.Center),
                         )
                     }
-                }
+                },
             )
         },
         bottomBar = {
@@ -133,14 +135,14 @@ fun Chat(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = onBackClicked
+                        onClick = onBackClicked,
                     )
-                }
+                },
             )
-        }
+        },
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(it)
+            modifier = Modifier.fillMaxSize().padding(it),
         ) {
             Messages(
                 state = state,
@@ -150,39 +152,44 @@ fun Chat(
                 checkChatAuthor = checkChatAuthor,
             )
             Box(
-                modifier = Modifier
-                    .padding(top = 4.dp, start = 4.dp, end = 4.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight()
+                modifier =
+                    Modifier
+                        .padding(top = 4.dp, start = 4.dp, end = 4.dp)
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
             ) {
                 TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
                     value = state.draftText,
                     onValueChange = onDraftTextChanged,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Go,
-                        autoCorrect = false,
-                    ),
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Go,
+                            autoCorrect = false,
+                        ),
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.click_to_write_message),
-                            color = Color.White
+                            color = Color.White,
                         )
                     },
-                    keyboardActions = KeyboardActions(
-                        onGo = { onSendClicked() }
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = AppColors.LightGray,
-                        backgroundColor = AppColors.DeepGray,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    maxLines = 2
+                    keyboardActions =
+                        KeyboardActions(
+                            onGo = { onSendClicked() },
+                        ),
+                    colors =
+                        TextFieldDefaults.textFieldColors(
+                            textColor = AppColors.LightGray,
+                            backgroundColor = AppColors.DeepGray,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                        ),
+                    maxLines = 2,
                 )
             }
         }
@@ -192,9 +199,10 @@ fun Chat(
 @Composable
 fun BoxScope.OtherChatIcon(text: String) {
     RoundedImageContainer(
-        modifier = Modifier
-            .align(Alignment.Center)
-            .background(color = AppColors.MediumGray)
+        modifier =
+            Modifier
+                .align(Alignment.Center)
+                .background(color = AppColors.MediumGray),
     ) {
         Text(
             text = text.uppercase(),
@@ -219,16 +227,17 @@ fun Messages(
             reverseLayout = true,
             state = scrollState,
             contentPadding = PaddingValues(top = 10.dp),
-            modifier = Modifier
-                .testTag(ConversationTestTag)
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .testTag(ConversationTestTag)
+                    .fillMaxSize(),
         ) {
             items(messages.size) { index ->
                 Message(
                     msg = messages[index],
                     isOtherUser = checkIsOtherUser(index),
                     isFirstMessageByAuthor = checkChatAuthor(index, true),
-                    isLastMessageByAuthor = checkChatAuthor(index, true)
+                    isLastMessageByAuthor = checkChatAuthor(index, true),
                 )
             }
         }
@@ -240,15 +249,16 @@ fun Message(
     msg: DirectMessage,
     isOtherUser: Boolean,
     isFirstMessageByAuthor: Boolean,
-    isLastMessageByAuthor: Boolean
+    isLastMessageByAuthor: Boolean,
 ) {
     val spaceBetweenAuthors =
         if (isLastMessageByAuthor) Modifier.padding(bottom = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
         Column(
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .weight(1f)
+            modifier =
+                Modifier
+                    .padding(end = 16.dp)
+                    .weight(1f),
         ) {
             ChatItemBubble(msg, isOtherUser)
             if (isFirstMessageByAuthor) {
@@ -267,33 +277,36 @@ fun ChatItemBubble(
     message: DirectMessage,
     isOtherUser: Boolean,
 ) {
-    val modifier: Modifier = if (isOtherUser) {
-        Modifier
-            .padding(start = 10.dp, end = 60.dp)
-            .background(
-                color = AppColors.MessageReceivedBackground,
-                shape = RoundedCornerShape(6.dp)
-            )
-    } else {
-        Modifier
-            .padding(start = 60.dp, end = 10.dp)
-            .background(
-                color = AppColors.MessageAuthorBackground,
-                shape = RoundedCornerShape(6.dp)
-            )
-    }
+    val modifier: Modifier =
+        if (isOtherUser) {
+            Modifier
+                .padding(start = 10.dp, end = 60.dp)
+                .background(
+                    color = AppColors.MessageReceivedBackground,
+                    shape = RoundedCornerShape(6.dp),
+                )
+        } else {
+            Modifier
+                .padding(start = 60.dp, end = 10.dp)
+                .background(
+                    color = AppColors.MessageAuthorBackground,
+                    shape = RoundedCornerShape(6.dp),
+                )
+        }
 
-    val horizontalAlignment = if (isOtherUser) {
-        Alignment.Start
-    } else {
-        Alignment.End
-    }
+    val horizontalAlignment =
+        if (isOtherUser) {
+            Alignment.Start
+        } else {
+            Alignment.End
+        }
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(8.dp),
-        horizontalAlignment = horizontalAlignment
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(8.dp),
+        horizontalAlignment = horizontalAlignment,
     ) {
         Text(
             text = message.body,

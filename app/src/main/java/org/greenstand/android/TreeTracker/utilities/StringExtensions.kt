@@ -28,8 +28,9 @@ fun String.md5(): String {
         val MD5Hash = StringBuffer()
         for (i in messageDigest.indices) {
             var h = Integer.toHexString(0xFF and messageDigest[i].toInt())
-            while (h.length < 2)
+            while (h.length < 2) {
                 h = "0$h"
+            }
             MD5Hash.append(h)
         }
 
@@ -44,9 +45,10 @@ fun String.md5(): String {
 private val HEX_CHARS = "0123456789ABCDEF"
 
 fun String.hashString(algorithmName: String): String {
-    val bytes = MessageDigest
-        .getInstance(algorithmName)
-        .digest(this.toByteArray())
+    val bytes =
+        MessageDigest
+            .getInstance(algorithmName)
+            .digest(this.toByteArray())
     val result = StringBuilder(bytes.size * 2)
     bytes.forEach {
         val i = it.toInt()

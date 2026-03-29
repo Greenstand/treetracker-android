@@ -71,7 +71,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
-
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -87,14 +86,16 @@ fun BoxScope.ArrowButton(
     TreeTrackerButton(
         isEnabled = isEnabled,
         colors = colors,
-        modifier = Modifier
-            .align(Alignment.Center)
-            .size(height = 62.dp, width = 62.dp),
+        modifier =
+            Modifier
+                .align(Alignment.Center)
+                .size(height = 62.dp, width = 62.dp),
         onClick = onClick,
     ) {
         Image(
-            modifier = Modifier
-                .size(height = 45.dp, width = 45.dp),
+            modifier =
+                Modifier
+                    .size(height = 45.dp, width = 45.dp),
             painter = getPainter(colors = colors, isLeft = isLeft),
             contentDescription = null,
         )
@@ -102,21 +103,32 @@ fun BoxScope.ArrowButton(
 }
 
 @Composable
-private fun getPainter(colors: ButtonColors, isLeft: Boolean): Painter {
+private fun getPainter(
+    colors: ButtonColors,
+    isLeft: Boolean,
+): Painter {
     val painter: Painter
     return when (colors) {
         AppButtonColors.MessagePurple -> {
             painter =
-                if (isLeft) painterResource(id = R.drawable.arrow_backward) else painterResource(
-                    id = R.drawable.arrow_forward
-                )
+                if (isLeft) {
+                    painterResource(id = R.drawable.arrow_backward)
+                } else {
+                    painterResource(
+                        id = R.drawable.arrow_forward,
+                    )
+                }
             painter
         }
         else -> {
             painter =
-                if (isLeft) painterResource(id = R.drawable.arrow_backward) else painterResource(
-                    id = R.drawable.arrow_forward
-                )
+                if (isLeft) {
+                    painterResource(id = R.drawable.arrow_backward)
+                } else {
+                    painterResource(
+                        id = R.drawable.arrow_forward,
+                    )
+                }
             painter
         }
     }
@@ -138,8 +150,9 @@ fun ApprovalButton(
         if (approval) painterResource(id = R.drawable.check) else painterResource(id = R.drawable.close)
     TreeTrackerButton(
         colors = color,
-        modifier = modifier
-            .size(height = 60.dp, width = 60.dp),
+        modifier =
+            modifier
+                .size(height = 60.dp, width = 60.dp),
         onClick = onClick,
     ) {
         Image(
@@ -149,25 +162,26 @@ fun ApprovalButton(
     }
 }
 
+@Suppress("UnusedParameter")
 @Composable
 fun InfoButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Circle
-
+    shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Circle,
 ) {
     TreeTrackerButton(
         modifier = modifier.size(60.dp),
         colors = AppButtonColors.WhiteLight,
         onClick = onClick,
         shape = TreeTrackerButtonShape.Circle,
-        depth = 6f
+        depth = 6f,
     ) {
         Image(
             painter = painterResource(id = R.drawable.info_icon),
-            modifier = Modifier
-                .size(80.dp),
-            contentDescription = null
+            modifier =
+                Modifier
+                    .size(80.dp),
+            contentDescription = null,
         )
     }
 }
@@ -177,28 +191,30 @@ fun BoxScope.LanguageButton() {
     val navController = LocalNavHostController.current
     // Avoid creating a viewmodel if we're in Preview Mode.
     // Viewmodels are large, we do not want to load them in the preview
-    val languageViewModel: LanguagePickerViewModel? = if (!LocalInspectionMode.current) {
-        viewModel(factory = LocalViewModelFactory.current)
-    } else {
-        null
-    }
+    val languageViewModel: LanguagePickerViewModel? =
+        if (!LocalInspectionMode.current) {
+            viewModel(factory = LocalViewModelFactory.current)
+        } else {
+            null
+        }
     val languageState = languageViewModel?.state?.collectAsState()
     val language: String = languageState?.value?.currentLanguage?.toString() ?: "EN"
 
     TreeTrackerButton(
         colors = AppButtonColors.ProgressGreen,
-        modifier = Modifier
-            .align(Alignment.Center)
-            .size(width = 100.dp, 60.dp),
+        modifier =
+            Modifier
+                .align(Alignment.Center)
+                .size(width = 100.dp, 60.dp),
         onClick = {
             navController.navigate(LanguageRoute())
-        }
+        },
     ) {
         Text(
             text = language,
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.darkText,
-            style = CustomTheme.typography.regular
+            style = CustomTheme.typography.regular,
         )
     }
 }
@@ -210,28 +226,29 @@ fun BoxScope.UserImageButton(
     imagePath: String,
 ) {
     TreeTrackerButton(
-        modifier = modifier
-            .align(Alignment.Center)
-            .width(100.dp)
-            .height(100.dp)
-            .padding(
-                start = 15.dp,
-                top = 10.dp,
-                end = 10.dp,
-                bottom = 10.dp
-            )
-            .aspectRatio(1.0f)
-            .clip(RoundedCornerShape(10.dp)),
+        modifier =
+            modifier
+                .align(Alignment.Center)
+                .width(100.dp)
+                .height(100.dp)
+                .padding(
+                    start = 15.dp,
+                    top = 10.dp,
+                    end = 10.dp,
+                    bottom = 10.dp,
+                ).aspectRatio(1.0f)
+                .clip(RoundedCornerShape(10.dp)),
         onClick = onClick,
     ) {
         LocalImage(
-            modifier = Modifier
-                .padding(bottom = 12.dp, end = 1.dp)
-                .fillMaxSize()
-                .aspectRatio(1.0f)
-                .clip(RoundedCornerShape(10.dp)),
+            modifier =
+                Modifier
+                    .padding(bottom = 12.dp, end = 1.dp)
+                    .fillMaxSize()
+                    .aspectRatio(1.0f)
+                    .clip(RoundedCornerShape(10.dp)),
             imagePath = imagePath,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
     }
 }
@@ -250,40 +267,39 @@ fun TreeTrackerButton(
     onClick: () -> Unit,
     content: @Composable (BoxScope.() -> Unit),
 ) {
-
     val haptic = LocalHapticFeedback.current
     val onClickState = rememberUpdatedState(onClick)
     var isPressed by remember { mutableStateOf(false) }
     isSelected?.let { isPressed = isSelected }
     val verticalOffset: Float by animateFloatAsState(
         targetValue = if (isPressed) depth else 0f,
-        animationSpec = tween(durationMillis = 100)
+        animationSpec = tween(durationMillis = 100),
     )
 
     // Parent box handles clicking and sends size constraints to children
     BoxWithConstraints(
-        modifier = modifier
-            .apply {
-                if (shape == TreeTrackerButtonShape.Circle) {
-                    aspectRatio(1f)
-                }
-            }
-            .pointerInput(isEnabled) {
-                if (!isEnabled) return@pointerInput
-                detectTapGestures(
-                    onTap = {
-                        onClickState.value.invoke()
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    },
-                    onPress = {
-                        isPressed = true
-                        tryAwaitRelease()
-                        if (isSelected == null) {
-                            isPressed = false
-                        }
+        modifier =
+            modifier
+                .apply {
+                    if (shape == TreeTrackerButtonShape.Circle) {
+                        aspectRatio(1f)
                     }
-                )
-            }
+                }.pointerInput(isEnabled) {
+                    if (!isEnabled) return@pointerInput
+                    detectTapGestures(
+                        onTap = {
+                            onClickState.value.invoke()
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        },
+                        onPress = {
+                            isPressed = true
+                            tryAwaitRelease()
+                            if (isSelected == null) {
+                                isPressed = false
+                            }
+                        },
+                    )
+                },
     ) {
         val contentColor by colors.contentColor(isEnabled)
         val shadowColor by colors.backgroundColor(isEnabled)
@@ -299,35 +315,35 @@ fun TreeTrackerButton(
 
         // Box 1 stays still and is aligned to the bottom
         Box(
-            modifier = Modifier
-                .padding(
-                    top = depth.dp,
-                    start = circleStartOffset
-                )
-                .height(maxHeight - depth.dp)
-                .width(width)
-                .clip(clipShape)
-                .background(color = shadowColor)
-                .align(Alignment.BottomCenter)
+            modifier =
+                Modifier
+                    .padding(
+                        top = depth.dp,
+                        start = circleStartOffset,
+                    ).height(maxHeight - depth.dp)
+                    .width(width)
+                    .clip(clipShape)
+                    .background(color = shadowColor)
+                    .align(Alignment.BottomCenter),
         )
         // Box 2 gets pushed down by an animated top padding value which
         // eventually aligns it directly above box 1
         Box(
             contentAlignment = contentAlignment,
-            modifier = Modifier
-                .padding(
-                    top = verticalOffset.dp,
-                    start = circleStartOffset
-                )
-                .height(maxHeight - depth.dp)
-                .width(width)
-                .clip(clipShape)
-                .background(color = contentColor)
-                .border(
-                    width = 1.dp,
-                    brush = borderBrushOverride ?: SolidColor(shadowColor),
-                    shape = clipShape,
-                )
+            modifier =
+                Modifier
+                    .padding(
+                        top = verticalOffset.dp,
+                        start = circleStartOffset,
+                    ).height(maxHeight - depth.dp)
+                    .width(width)
+                    .clip(clipShape)
+                    .background(color = contentColor)
+                    .border(
+                        width = 1.dp,
+                        brush = borderBrushOverride ?: SolidColor(shadowColor),
+                        shape = clipShape,
+                    ),
         ) {
             content()
         }
@@ -336,7 +352,7 @@ fun TreeTrackerButton(
 
 enum class TreeTrackerButtonShape {
     Rectangle,
-    Circle
+    Circle,
 }
 
 @Composable
@@ -348,15 +364,17 @@ fun OrangeAddButton(
         onClick = onClick,
         shape = TreeTrackerButtonShape.Circle,
         colors = AppButtonColors.UploadOrange,
-        modifier = modifier
-            .size(70.dp)
+        modifier =
+            modifier
+                .size(70.dp),
     ) {
         Image(
             painter = painterResource(id = R.drawable.add),
             contentDescription = "",
-            modifier = Modifier
-                .size(55.dp)
-                .padding(top = 5.dp)
+            modifier =
+                Modifier
+                    .size(55.dp)
+                    .padding(top = 5.dp),
         )
     }
 }
@@ -365,7 +383,7 @@ fun OrangeAddButton(
 fun CaptureButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    isEnabled: Boolean
+    isEnabled: Boolean,
 ) {
     TreeTrackerButton(
         modifier = modifier.size(70.dp),
@@ -373,11 +391,12 @@ fun CaptureButton(
         colors = AppButtonColors.ProgressGreen,
         onClick = onClick,
         shape = TreeTrackerButtonShape.Circle,
-        depth = 10f
+        depth = 10f,
     ) {
         ImageCaptureCircle(
-            modifier = Modifier
-                .size(60.dp),
+            modifier =
+                Modifier
+                    .size(60.dp),
             color = AppColors.Green,
             shadowColor = AppColors.Gray,
         )
@@ -391,27 +410,29 @@ fun ImageCaptureCircle(
     shadowColor: Color,
 ) {
     Canvas(
-        modifier = modifier.background(shape = CircleShape, color = color)
-
+        modifier = modifier.background(shape = CircleShape, color = color),
     ) {
         drawCircle(
             color = shadowColor,
             radius = 50f,
-            center = Offset(
-                x = size.width / 2,
-                y = size.height / 2
-            ),
-            style = Stroke(
-                width = 5.dp.toPx()
-            )
+            center =
+                Offset(
+                    x = size.width / 2,
+                    y = size.height / 2,
+                ),
+            style =
+                Stroke(
+                    width = 5.dp.toPx(),
+                ),
         )
         drawCircle(
             color = shadowColor,
             radius = 30f,
-            center = Offset(
-                x = size.width / 2,
-                y = size.height / 2
-            ),
+            center =
+                Offset(
+                    x = size.width / 2,
+                    y = size.height / 2,
+                ),
         )
     }
 }
@@ -421,18 +442,13 @@ class DepthButtonColors(
     val shadowColor: Color,
     val color: Color,
     val disabledShadowColor: Color,
-    val disabledColor: Color
+    val disabledColor: Color,
 ) : ButtonColors {
+    @Composable
+    override fun backgroundColor(enabled: Boolean): State<Color> = rememberUpdatedState(if (enabled) shadowColor else disabledShadowColor)
 
     @Composable
-    override fun backgroundColor(enabled: Boolean): State<Color> {
-        return rememberUpdatedState(if (enabled) shadowColor else disabledShadowColor)
-    }
-
-    @Composable
-    override fun contentColor(enabled: Boolean): State<Color> {
-        return rememberUpdatedState(if (enabled) color else disabledColor)
-    }
+    override fun contentColor(enabled: Boolean): State<Color> = rememberUpdatedState(if (enabled) color else disabledColor)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -462,30 +478,33 @@ class DepthButtonColors(
 fun TreeTrackerButtonPreview() {
     TreeTrackerTheme {
         Column(
-            modifier = Modifier
-                .background(AppColors.Gray)
-                .height(300.dp)
-                .width(200.dp),
+            modifier =
+                Modifier
+                    .background(AppColors.Gray)
+                    .height(300.dp)
+                    .width(200.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             TreeTrackerButton(
-                modifier = Modifier
-                    .height(100.dp)
-                    .wrapContentWidth(),
+                modifier =
+                    Modifier
+                        .height(100.dp)
+                        .wrapContentWidth(),
                 isEnabled = true,
-                onClick = {}
+                onClick = {},
             ) {
                 Text("Button 1", Modifier.align(Alignment.Center))
             }
             Spacer(Modifier.height(10.dp))
             TreeTrackerButton(
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(100.dp),
+                modifier =
+                    Modifier
+                        .height(100.dp)
+                        .width(100.dp),
                 isEnabled = true,
                 shape = TreeTrackerButtonShape.Circle,
-                onClick = {}
+                onClick = {},
             ) {
                 Text("Button 1", Modifier.align(Alignment.Center))
             }

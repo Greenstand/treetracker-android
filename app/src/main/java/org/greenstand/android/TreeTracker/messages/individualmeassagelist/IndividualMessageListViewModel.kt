@@ -39,8 +39,12 @@ data class IndividualMessageListState(
 )
 
 sealed class IndividualMessageListAction : Action {
-    data class SelectMessage(val message: Message) : IndividualMessageListAction()
+    data class SelectMessage(
+        val message: Message,
+    ) : IndividualMessageListAction()
+
     object NavigateBack : IndividualMessageListAction()
+
     object NavigateToSelected : IndividualMessageListAction()
 }
 
@@ -49,11 +53,11 @@ class IndividualMessageListViewModel(
     private val userRepo: UserRepo,
     private val messagesRepo: MessagesRepo,
 ) : BaseViewModel<IndividualMessageListState, IndividualMessageListAction>(IndividualMessageListState()) {
-
     init {
         viewModelScope.launch {
             val currentUser = userRepo.getUser(userId)
-            messagesRepo.getMessageFlow(currentUser!!.wallet)
+            messagesRepo
+                .getMessageFlow(currentUser!!.wallet)
                 .collect { updateMessages(it, currentUser) }
         }
     }
@@ -67,22 +71,29 @@ class IndividualMessageListViewModel(
         }
     }
 
-    private fun updateMessages(messages: List<Message>, currentUser: User) {
-        val externalChatMessages = messages
-            .filterIsInstance<DirectMessage>()
-            .filter { it.from != currentUser.wallet }
-            .sortedByDescending { it.composedAt }
-            .groupBy { it.from }
+    private fun updateMessages(
+        messages: List<Message>,
+        currentUser: User,
+    ) {
+        val externalChatMessages =
+            messages
+                .filterIsInstance<DirectMessage>()
+                .filter { it.from != currentUser.wallet }
+                .sortedByDescending { it.composedAt }
+                .groupBy { it.from }
 
-        val chatsToShow = externalChatMessages.keys
-            .map { externalChatMessages[it]!!.first() }
-        val surveysToShow = messages
-            .filterIsInstance<SurveyMessage>()
-            .filterNot { it.isComplete }
+        val chatsToShow =
+            externalChatMessages.keys
+                .map { externalChatMessages[it]!!.first() }
+        val surveysToShow =
+            messages
+                .filterIsInstance<SurveyMessage>()
+                .filterNot { it.isComplete }
         val announcementsToShow = messages.filterIsInstance<AnnouncementMessage>()
 
-        val messagesToShow = (chatsToShow + surveysToShow + announcementsToShow)
-            .sortedByDescending { it.composedAt }
+        val messagesToShow =
+            (chatsToShow + surveysToShow + announcementsToShow)
+                .sortedByDescending { it.composedAt }
 
         updateState {
             copy(
@@ -93,10 +104,10 @@ class IndividualMessageListViewModel(
     }
 }
 
-class IndividualMessageListViewModelFactory(private val userId: Long) :
-    ViewModelProvider.Factory, KoinComponent {
+class IndividualMessageListViewModelFactory(
+    private val userId: Long,
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return IndividualMessageListViewModel(userId, get(), get()) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = IndividualMessageListViewModel(userId, get(), get()) as T
 }

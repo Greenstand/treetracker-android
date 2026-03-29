@@ -28,9 +28,8 @@ import org.greenstand.android.TreeTracker.models.messages.network.requests.Messa
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 
 object DatabaseConverters {
-
-    fun createMessageRequestFromEntities(messageEntity: MessageEntity): MessageRequest {
-        return when (messageEntity.type) {
+    fun createMessageRequestFromEntities(messageEntity: MessageEntity): MessageRequest =
+        when (messageEntity.type) {
             MessageType.MESSAGE ->
                 MessageRequest(
                     id = messageEntity.id,
@@ -56,20 +55,17 @@ object DatabaseConverters {
                     surveyId = messageEntity.surveyId,
                 )
             MessageType.ANNOUNCE,
-            MessageType.SURVEY ->
-                throw IllegalStateException(
-                    "Invalid message type ${messageEntity.type} is being created for upload"
-                )
+            MessageType.SURVEY,
+            ->
+                error("Invalid message type ${messageEntity.type} is being created for upload")
         }
-    }
 
     fun createMessageFromEntities(
         messageEntity: MessageEntity,
         surveyEntity: SurveyEntity? = null,
-        questionEntities: List<QuestionEntity>? = null
-    ): Message {
-
-        return when (messageEntity.type) {
+        questionEntities: List<QuestionEntity>? = null,
+    ): Message =
+        when (messageEntity.type) {
             MessageType.MESSAGE ->
                 DirectMessage(
                     id = messageEntity.id,
@@ -101,12 +97,13 @@ object DatabaseConverters {
                     isRead = messageEntity.isRead,
                     surveyId = surveyEntity.id,
                     isComplete = messageEntity.isSurveyComplete ?: false,
-                    questions = questionEntities?.map {
-                        Question(
-                            prompt = it.prompt,
-                            choices = it.choices
-                        )
-                    } ?: emptyList()
+                    questions =
+                        questionEntities?.map {
+                            Question(
+                                prompt = it.prompt,
+                                choices = it.choices,
+                            )
+                        } ?: emptyList(),
                 )
             MessageType.SURVEY_RESPONSE ->
                 SurveyResponseMessage(
@@ -117,13 +114,13 @@ object DatabaseConverters {
                     responses = messageEntity.surveyResponse ?: emptyList(),
                     isRead = messageEntity.isRead,
                     surveyId = surveyEntity!!.id,
-                    questions = questionEntities?.map {
-                        Question(
-                            prompt = it.prompt,
-                            choices = it.choices
-                        )
-                    } ?: emptyList()
+                    questions =
+                        questionEntities?.map {
+                            Question(
+                                prompt = it.prompt,
+                                choices = it.choices,
+                            )
+                        } ?: emptyList(),
                 )
         }
-    }
 }

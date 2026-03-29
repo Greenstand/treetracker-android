@@ -38,30 +38,42 @@ data class UserSelectState(
     val users: List<User> = emptyList(),
     val selectedUser: User? = null,
     val editMode: Boolean = false,
-    val deleteProfileState: DeleteProfileState = DeleteProfileState.INITIAL
+    val deleteProfileState: DeleteProfileState = DeleteProfileState.INITIAL,
 )
-enum class DeleteProfileState(){
+
+enum class DeleteProfileState {
     INITIAL,
     SHOWDIALOG,
     DISMISSDIALOG,
     ACCOUNTDELETEDLOCALLY,
-    ACCOUNTDELETEDANDADMINREQUESTED
+    ACCOUNTDELETEDANDADMINREQUESTED,
 }
 
 sealed class UserSelectAction : Action {
-    data class SelectUser(val user: User) : UserSelectAction()
+    data class SelectUser(
+        val user: User,
+    ) : UserSelectAction()
+
     object DeleteUser : UserSelectAction()
+
     object ToggleEditMode : UserSelectAction()
+
     data class UpdateSelectedUser(
         val firstName: String? = null,
         val lastName: String? = null,
         val phone: String? = null,
         val email: String? = null,
-        val photoPath: String? = null
+        val photoPath: String? = null,
     ) : UserSelectAction()
+
     object SaveUserToDatabase : UserSelectAction()
-    data class UpdateDeleteProfileState(val deleteProfileState: DeleteProfileState) : UserSelectAction()
+
+    data class UpdateDeleteProfileState(
+        val deleteProfileState: DeleteProfileState,
+    ) : UserSelectAction()
+
     object NavigateBack : UserSelectAction()
+
     object NavigateToPhoto : UserSelectAction()
 }
 
@@ -72,16 +84,15 @@ class UserSelectViewModel(
     locationDataCapturer: LocationDataCapturer,
     private val prefs: Preferences,
 ) : BaseViewModel<UserSelectState, UserSelectAction>(UserSelectState()) {
-
     init {
         CaptureSetupScopeManager.open()
         locationDataCapturer.startGpsUpdates()
-        userRepo.users()
+        userRepo
+            .users()
             .onEach { userList ->
                 updateState { copy(users = userList) }
-            }
-            .launchIn(viewModelScope)
-        if(userId != null){
+            }.launchIn(viewModelScope)
+        if (userId != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 val user = userRepo.getUser(userId)
                 updateState { copy(selectedUser = user) }
@@ -116,12 +127,12 @@ class UserSelectViewModel(
 
     private fun deleteUser() {
         viewModelScope.launch {
-            if(userRepo.deleteUser(currentState.selectedUser?.wallet ?: "")) {
+            if (userRepo.deleteUser(currentState.selectedUser?.wallet ?: "")) {
                 updateState { copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDLOCALLY) }
                 messageRepo.saveMessage(
                     wallet = currentState.selectedUser?.wallet ?: "",
                     to = "admin",
-                    body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost."
+                    body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost.",
                 )
                 messageRepo.syncMessages()
             }
@@ -130,20 +141,21 @@ class UserSelectViewModel(
 
     private fun updateSelectedUser(action: UserSelectAction.UpdateSelectedUser) {
         val currentUser = currentState.selectedUser ?: return
-        val updatedUser = currentUser.copy(
-            firstName = action.firstName ?: currentUser.firstName,
-            lastName = action.lastName ?: currentUser.lastName,
-            wallet = action.phone ?: action.email ?: currentUser.wallet,
-            photoPath = action.photoPath ?: currentUser.photoPath,
-        )
+        val updatedUser =
+            currentUser.copy(
+                firstName = action.firstName ?: currentUser.firstName,
+                lastName = action.lastName ?: currentUser.lastName,
+                wallet = action.phone ?: action.email ?: currentUser.wallet,
+                photoPath = action.photoPath ?: currentUser.photoPath,
+            )
         updateState { copy(selectedUser = updatedUser) }
     }
 }
 
-class UserSelectViewModelFactory(private val userId: Long) :
-    ViewModelProvider.Factory, KoinComponent {
+class UserSelectViewModelFactory(
+    private val userId: Long,
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return UserSelectViewModel(userId, get(), get(), get(), get()) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = UserSelectViewModel(userId, get(), get(), get(), get()) as T
 }

@@ -37,13 +37,14 @@ import androidx.compose.ui.unit.dp
 fun showLoadingSpinner(isLoading: Boolean) {
     if (isLoading) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(height = 70.dp, width = 70.dp),
-                color = AppColors.Green
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(height = 70.dp, width = 70.dp),
+                color = AppColors.Green,
             )
         }
     }
@@ -55,14 +56,16 @@ fun DeterminateProgressBar(
     modifier: Modifier = Modifier,
 ) {
     val strokeWidth = 8.dp
-    val stroke = with(LocalDensity.current) {
-        Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
-    }
+    val stroke =
+        with(LocalDensity.current) {
+            Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
+        }
 
     Canvas(
-        modifier = modifier
-            .progressSemantics(progress.coerceIn(0f, 1f))
-            .fillMaxWidth()
+        modifier =
+            modifier
+                .progressSemantics(progress.coerceIn(0f, 1f))
+                .fillMaxWidth(),
     ) {
         val diameterOffset = stroke.width / 2
         val arcDimension = size.width - 2 * diameterOffset
@@ -70,7 +73,7 @@ fun DeterminateProgressBar(
         // Function to draw a default styled arc.
         fun drawProgress(
             color: Color,
-            sweepAngle: Float
+            sweepAngle: Float,
         ) = drawArc(
             color = color,
             startAngle = 180f,
@@ -78,7 +81,7 @@ fun DeterminateProgressBar(
             useCenter = false,
             topLeft = Offset(diameterOffset, diameterOffset),
             size = Size(arcDimension, arcDimension),
-            style = stroke
+            style = stroke,
         )
 
         drawProgress(AppColors.MediumGray, 360f) // Background progress.

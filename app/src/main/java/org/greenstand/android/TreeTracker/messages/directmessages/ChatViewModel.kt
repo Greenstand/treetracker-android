@@ -37,8 +37,12 @@ data class ChatState(
 )
 
 sealed class ChatAction : Action {
-    data class UpdateDraftText(val text: String) : ChatAction()
+    data class UpdateDraftText(
+        val text: String,
+    ) : ChatAction()
+
     object SendMessage : ChatAction()
+
     object NavigateBack : ChatAction()
 }
 
@@ -48,7 +52,6 @@ class ChatViewModel(
     private val userRepo: UserRepo,
     private val messagesRepo: MessagesRepo,
 ) : BaseViewModel<ChatState, ChatAction>(ChatState()) {
-
     init {
         viewModelScope.launch {
             val currentUser = userRepo.getUser(userId)
@@ -76,7 +79,7 @@ class ChatViewModel(
                     messagesRepo.saveMessage(
                         currentState.currentUser!!.wallet,
                         otherChatIdentifier,
-                        currentState.draftText
+                        currentState.draftText,
                     )
                     updateState { copy(draftText = "") }
                 }
@@ -85,7 +88,10 @@ class ChatViewModel(
         }
     }
 
-    fun checkChatAuthor(index: Int, isFirstMessage: Boolean): Boolean {
+    fun checkChatAuthor(
+        index: Int,
+        isFirstMessage: Boolean,
+    ): Boolean {
         val messages = currentState.messages
         val prevAuthor = messages.getOrNull(index - 1)?.from
         val nextAuthor = messages.getOrNull(index + 1)?.from
@@ -95,15 +101,14 @@ class ChatViewModel(
         return if (isFirstMessage) isFirstMessageByAuthor else isLastMessageByAuthor
     }
 
-    fun checkIsOtherUser(index: Int): Boolean {
-        return currentState.messages[index].from == otherChatIdentifier
-    }
+    fun checkIsOtherUser(index: Int): Boolean = currentState.messages[index].from == otherChatIdentifier
 }
 
-class ChatViewModelFactory(private val userId: Long, private val otherChatIdentifier: String) :
-    ViewModelProvider.Factory, KoinComponent {
+class ChatViewModelFactory(
+    private val userId: Long,
+    private val otherChatIdentifier: String,
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChatViewModel(userId, otherChatIdentifier, get(), get()) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = ChatViewModel(userId, otherChatIdentifier, get(), get()) as T
 }

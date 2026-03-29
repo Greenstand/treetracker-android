@@ -23,11 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TreeTrackerTheme(content: @Composable () -> Unit) {
-    return MaterialTheme(
+fun TreeTrackerTheme(content: @Composable () -> Unit) =
+    MaterialTheme(
         colors = Colors,
         typography = Typography(),
         shapes = Shapes(small = RoundedCornerShape(12.dp)),
-        content = content
+        content = content,
     )
-}

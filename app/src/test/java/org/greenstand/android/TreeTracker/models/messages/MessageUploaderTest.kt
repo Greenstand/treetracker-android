@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.models.messages
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import kotlinx.serialization.json.Json
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -26,6 +25,7 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
@@ -39,7 +39,6 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class MessageUploaderTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -52,7 +51,12 @@ class MessageUploaderTest {
     @MockK(relaxed = true)
     private lateinit var messagesDAO: MessagesDAO
 
-    private val json = Json { explicitNulls = true; ignoreUnknownKeys = true; encodeDefaults = true }
+    private val json =
+        Json {
+            explicitNulls = true
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
 
     private lateinit var messageUploader: MessageUploader
 
@@ -61,11 +65,12 @@ class MessageUploaderTest {
         MockKAnnotations.init(this)
         mockkObject(DeviceUtils)
         every { DeviceUtils.deviceId } returns "test-device-id"
-        messageUploader = MessageUploader(
-            objectStorageClient = objectStorageClient,
-            messagesDAO = messagesDAO,
-            json = json,
-        )
+        messageUploader =
+            MessageUploader(
+                objectStorageClient = objectStorageClient,
+                messagesDAO = messagesDAO,
+                json = json,
+            )
     }
 
     @After
@@ -74,43 +79,46 @@ class MessageUploaderTest {
     }
 
     @Test
-    fun `WHEN messages to upload exist THEN uploads message bundles and marks as uploaded`() = runTest {
-        val messageEntity = MessageEntity(
-            id = "msg-1",
-            wallet = "wallet-1",
-            type = MessageType.MESSAGE,
-            from = "sender",
-            to = "recipient",
-            subject = null,
-            body = "Hello",
-            composedAt = "2023-01-01T00:00:00Z",
-            parentMessageId = null,
-            videoLink = null,
-            surveyResponse = null,
-            shouldUpload = true,
-            bundleId = null,
-            isRead = false,
-            surveyId = null,
-            isSurveyComplete = null,
-        )
+    fun `WHEN messages to upload exist THEN uploads message bundles and marks as uploaded`() =
+        runTest {
+            val messageEntity =
+                MessageEntity(
+                    id = "msg-1",
+                    wallet = "wallet-1",
+                    type = MessageType.MESSAGE,
+                    from = "sender",
+                    to = "recipient",
+                    subject = null,
+                    body = "Hello",
+                    composedAt = "2023-01-01T00:00:00Z",
+                    parentMessageId = null,
+                    videoLink = null,
+                    surveyResponse = null,
+                    shouldUpload = true,
+                    bundleId = null,
+                    isRead = false,
+                    surveyId = null,
+                    isSurveyComplete = null,
+                )
 
-        coEvery { messagesDAO.getMessageIdsToUpload() } returns listOf("msg-1")
-        coEvery { messagesDAO.getMessagesByIds(listOf("msg-1")) } returns listOf(messageEntity)
+            coEvery { messagesDAO.getMessageIdsToUpload() } returns listOf("msg-1")
+            coEvery { messagesDAO.getMessagesByIds(listOf("msg-1")) } returns listOf(messageEntity)
 
-        messageUploader.uploadMessages()
+            messageUploader.uploadMessages()
 
-        coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
-        coVerify(exactly = 1) { messagesDAO.markMessagesAsUploaded(listOf("msg-1")) }
-        coVerify(exactly = 1) { messagesDAO.updateMessageBundleIds(listOf("msg-1"), any()) }
-    }
+            coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 1) { messagesDAO.markMessagesAsUploaded(listOf("msg-1")) }
+            coVerify(exactly = 1) { messagesDAO.updateMessageBundleIds(listOf("msg-1"), any()) }
+        }
 
     @Test
-    fun `WHEN no messages to upload THEN no-ops`() = runTest {
-        coEvery { messagesDAO.getMessageIdsToUpload() } returns emptyList()
+    fun `WHEN no messages to upload THEN no-ops`() =
+        runTest {
+            coEvery { messagesDAO.getMessageIdsToUpload() } returns emptyList()
 
-        messageUploader.uploadMessages()
+            messageUploader.uploadMessages()
 
-        coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
-        coVerify(exactly = 0) { messagesDAO.markMessagesAsUploaded(any()) }
-    }
+            coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 0) { messagesDAO.markMessagesAsUploaded(any()) }
+        }
 }

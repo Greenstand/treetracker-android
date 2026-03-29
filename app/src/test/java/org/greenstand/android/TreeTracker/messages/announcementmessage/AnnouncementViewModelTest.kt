@@ -49,38 +49,46 @@ class AnnouncementViewModelTest {
     }
 
     @Test
-    fun `verify messages repo gets the correct announcement message `() = runTest {
-        coVerify { messagesRepo.getAnnouncementMessages(messageId) }
-    }
+    fun `verify messages repo gets the correct announcement message `() =
+        runTest {
+            coVerify { messagesRepo.getAnnouncementMessages(messageId) }
+        }
 
     @Test
-    fun `WHEN get announcement is triggered THEN current URL changes`() = runTest {
-        announcementViewModel.state.test {
-            assertEquals(awaitItem().currentUrl, fakeAnnouncementMessage.videoLink)
+    fun `WHEN get announcement is triggered THEN current URL changes`() =
+        runTest {
+            announcementViewModel.state.test {
+                assertEquals(awaitItem().currentUrl, fakeAnnouncementMessage.videoLink)
+            }
         }
-    }
-    @Test
-    fun `WHEN get announcement is triggered THEN current title changes`() = runTest {
-        announcementViewModel.state.test {
-            assertEquals(awaitItem().currentTitle, fakeAnnouncementMessage.subject)
-        }
-    }
-    @Test
-    fun `WHEN get announcement is triggered THEN from state changes`() = runTest {
-        announcementViewModel.state.test {
-            assertEquals(awaitItem().from, fakeAnnouncementMessage.from)
-        }
-    }
 
     @Test
-    fun `WHEN get announcement is triggered THEN current body changes`() = runTest {
-        announcementViewModel.state.test {
-            assertEquals(awaitItem().currentBody, fakeAnnouncementMessage.body)
+    fun `WHEN get announcement is triggered THEN current title changes`() =
+        runTest {
+            announcementViewModel.state.test {
+                assertEquals(awaitItem().currentTitle, fakeAnnouncementMessage.subject)
+            }
         }
-    }
 
     @Test
-    fun `verify message repo marks message as read`() = runTest {
-        coVerify { messagesRepo.markMessageAsRead(messageId) }
-    }
+    fun `WHEN get announcement is triggered THEN from state changes`() =
+        runTest {
+            announcementViewModel.state.test {
+                assertEquals(awaitItem().from, fakeAnnouncementMessage.from)
+            }
+        }
+
+    @Test
+    fun `WHEN get announcement is triggered THEN current body changes`() =
+        runTest {
+            announcementViewModel.state.test {
+                assertEquals(awaitItem().currentBody, fakeAnnouncementMessage.body)
+            }
+        }
+
+    @Test
+    fun `verify message repo marks message as read`() =
+        runTest {
+            coVerify { messagesRepo.markMessageAsRead(messageId) }
+        }
 }

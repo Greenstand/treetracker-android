@@ -51,33 +51,31 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEnti
     ],
     autoMigrations = [
         // 8 -> 9 for v2.2
-        AutoMigration(from = 8, to = 9)
+        AutoMigration(from = 8, to = 9),
     ],
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun treeTrackerDao(): TreeTrackerDAO
 
     companion object {
-
         private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        AppDatabase::class.java,
-                        DB_NAME
-                    )
-                        .addMigrations(
-                            MIGRATION_3_4,
-                            MIGRATION_4_5,
-                            MIGRATION_5_6,
-                            MIGRATION_6_7,
-                        )
-                        .build()
+                    INSTANCE =
+                        Room
+                            .databaseBuilder(
+                                context.applicationContext,
+                                AppDatabase::class.java,
+                                DB_NAME,
+                            ).addMigrations(
+                                MIGRATION_3_4,
+                                MIGRATION_4_5,
+                                MIGRATION_5_6,
+                                MIGRATION_6_7,
+                            ).build()
                 }
             }
             return INSTANCE!!

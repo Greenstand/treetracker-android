@@ -65,7 +65,7 @@ fun SelfieScreen() {
                         modifier = Modifier.align(Alignment.Center),
                         onClick = {
                             viewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(true))
-                        }
+                        },
                     )
                 },
                 centerAction = {
@@ -74,35 +74,37 @@ fun SelfieScreen() {
                         onClick = {
                             cameraControl.captureImage()
                         },
-                        isEnabled = true
+                        isEnabled = true,
                     )
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         Camera(
             isSelfieMode = true,
             cameraControl = cameraControl,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding)
-                .aspectRatio(1.0f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(padding)
+                    .aspectRatio(1.0f),
             onImageCaptured = {
                 navController.navigate(ImageReviewRoute(photoPath = it.path))
-            }
+            },
         )
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(bottom = 10.dp),
-            contentAlignment = Alignment.BottomCenter
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(bottom = 10.dp),
+            contentAlignment = Alignment.BottomCenter,
         ) {
             if (state.showSelfieTutorial == true) {
                 SelfieTutorial(
                     onCompleteClick = {
                         viewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(false))
-                    }
+                    },
                 )
             }
         }

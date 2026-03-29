@@ -20,9 +20,10 @@ import org.greenstand.android.TreeTracker.models.messages.network.RetrofitBuilde
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-val networkModule = module {
+val networkModule =
+    module {
 
-    single { RetrofitBuilder(get()).create() }
+        single { RetrofitBuilder(get()).create() }
 
-    single { get<Retrofit>().create(MessagesApiService::class.java) }
-}
+        single { get<Retrofit>().create(MessagesApiService::class.java) }
+    }

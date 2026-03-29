@@ -50,8 +50,8 @@ data class UserEntity(
     var photoUrl: String?,
     @ColumnInfo(
         name =
-        "power_user",
-        defaultValue = "0"
+            "power_user",
+        defaultValue = "0",
     )
     var powerUser: Boolean,
 ) {

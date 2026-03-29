@@ -31,7 +31,6 @@ import kotlin.test.assertFalse
 
 @ExperimentalCoroutinesApi
 class CheckForInternetUseCaseTest {
-
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -56,12 +55,13 @@ class CheckForInternetUseCaseTest {
     }
 
     @Test
-    fun `WHEN execute called and exception occurs THEN returns false`() = runTest {
-        mockkStatic(Runtime::class)
-        every { Runtime.getRuntime() } throws RuntimeException("Mocked runtime failure")
+    fun `WHEN execute called and exception occurs THEN returns false`() =
+        runTest {
+            mockkStatic(Runtime::class)
+            every { Runtime.getRuntime() } throws RuntimeException("Mocked runtime failure")
 
-        val result = checkForInternetUseCase.execute(Unit)
+            val result = checkForInternetUseCase.execute(Unit)
 
-        assertFalse(result)
-    }
+            assertFalse(result)
+        }
 }

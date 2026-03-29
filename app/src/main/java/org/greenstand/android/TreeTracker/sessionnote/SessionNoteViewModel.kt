@@ -27,13 +27,16 @@ data class SessionNoteState(
 )
 
 sealed class SessionNoteAction : Action {
-    data class UpdateNote(val note: String) : SessionNoteAction()
+    data class UpdateNote(
+        val note: String,
+    ) : SessionNoteAction()
+
     object NavigateBack : SessionNoteAction()
+
     object NavigateNext : SessionNoteAction()
 }
 
 class SessionNoteViewModel : BaseViewModel<SessionNoteState, SessionNoteAction>(SessionNoteState()) {
-
     init {
         viewModelScope.launch {
             updateState {

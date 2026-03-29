@@ -27,9 +27,9 @@ import androidx.room.PrimaryKey
             entity = SurveyEntity::class,
             parentColumns = ["id"],
             childColumns = ["survey_id"],
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 class QuestionEntity(
     @ColumnInfo(name = "survey_id", index = true)

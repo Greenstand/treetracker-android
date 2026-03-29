@@ -18,8 +18,9 @@ package org.greenstand.android.TreeTracker.models.setupflow
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.models.user.User
 
-class CaptureSetupData(private val exceptionDataCollector: ExceptionDataCollector) {
-
+class CaptureSetupData(
+    private val exceptionDataCollector: ExceptionDataCollector,
+) {
     var user: User? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.USER_WALLET, value?.wallet)

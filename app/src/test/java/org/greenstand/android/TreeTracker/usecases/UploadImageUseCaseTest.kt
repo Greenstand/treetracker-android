@@ -32,7 +32,6 @@ import kotlin.test.assertNull
 
 @ExperimentalCoroutinesApi
 class UploadImageUseCaseTest {
-
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -51,33 +50,37 @@ class UploadImageUseCaseTest {
     }
 
     @Test
-    fun `WHEN execute called successfully THEN returns URL from client`() = runTest {
-        val expectedUrl = "https://bucket.s3.amazonaws.com/image.jpg"
-        every { objectStorageClient.put("/photos/tree.jpg", 1.0, 2.0) } returns expectedUrl
+    fun `WHEN execute called successfully THEN returns URL from client`() =
+        runTest {
+            val expectedUrl = "https://bucket.s3.amazonaws.com/image.jpg"
+            every { objectStorageClient.put("/photos/tree.jpg", 1.0, 2.0) } returns expectedUrl
 
-        val params = UploadImageParams(
-            imagePath = "/photos/tree.jpg",
-            lat = 1.0,
-            long = 2.0,
-        )
+            val params =
+                UploadImageParams(
+                    imagePath = "/photos/tree.jpg",
+                    lat = 1.0,
+                    long = 2.0,
+                )
 
-        val result = uploadImageUseCase.execute(params)
+            val result = uploadImageUseCase.execute(params)
 
-        assertEquals(expectedUrl, result)
-    }
+            assertEquals(expectedUrl, result)
+        }
 
     @Test
-    fun `WHEN execute called and AmazonClientException occurs THEN returns null`() = runTest {
-        every { objectStorageClient.put(any(), any(), any()) } throws AmazonClientException("Network error")
+    fun `WHEN execute called and AmazonClientException occurs THEN returns null`() =
+        runTest {
+            every { objectStorageClient.put(any(), any(), any()) } throws AmazonClientException("Network error")
 
-        val params = UploadImageParams(
-            imagePath = "/photos/tree.jpg",
-            lat = 1.0,
-            long = 2.0,
-        )
+            val params =
+                UploadImageParams(
+                    imagePath = "/photos/tree.jpg",
+                    lat = 1.0,
+                    long = 2.0,
+                )
 
-        val result = uploadImageUseCase.execute(params)
+            val result = uploadImageUseCase.execute(params)
 
-        assertNull(result)
-    }
+            assertNull(result)
+        }
 }

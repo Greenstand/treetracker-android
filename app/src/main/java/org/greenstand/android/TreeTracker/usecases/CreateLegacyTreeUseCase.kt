@@ -33,23 +33,27 @@ class CreateLegacyTreeUseCase(
     private val dao: TreeTrackerDAO,
     private val timeProvider: TimeProvider,
 ) : UseCase<CreateLegacyTreeParams, Long>() {
-
-    override suspend fun execute(params: CreateLegacyTreeParams): Long = withContext(Dispatchers.IO) {
-        val entity = TreeCaptureEntity(
-            uuid = params.tree.treeUuid.toString(),
-            planterCheckInId = params.planterCheckInId,
-            localPhotoPath = params.tree.photoPath,
-            photoUrl = null,
-            noteContent = params.tree.content,
-            longitude = params.tree.meanLongitude,
-            latitude = params.tree.meanLatitude,
-            accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
-            createAt = timeProvider.currentTime().epochSeconds, // legacy bulk pack uses seconds, not milliseconds
-        )
-        val attributeEntitites = params.tree.treeCaptureAttributes().map {
-            TreeAttributeEntity(it.key, it.value, -1)
-        }.toList()
-        Timber.d("Inserting TreeCapture entity $entity")
-        dao.insertTreeWithAttributes(entity, attributeEntitites)
-    }
+    override suspend fun execute(params: CreateLegacyTreeParams): Long =
+        withContext(Dispatchers.IO) {
+            val entity =
+                TreeCaptureEntity(
+                    uuid = params.tree.treeUuid.toString(),
+                    planterCheckInId = params.planterCheckInId,
+                    localPhotoPath = params.tree.photoPath,
+                    photoUrl = null,
+                    noteContent = params.tree.content,
+                    longitude = params.tree.meanLongitude,
+                    latitude = params.tree.meanLatitude,
+                    accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
+                    createAt = timeProvider.currentTime().epochSeconds, // legacy bulk pack uses seconds, not milliseconds
+                )
+            val attributeEntitites =
+                params.tree
+                    .treeCaptureAttributes()
+                    .map {
+                        TreeAttributeEntity(it.key, it.value, -1)
+                    }.toList()
+            Timber.d("Inserting TreeCapture entity $entity")
+            dao.insertTreeWithAttributes(entity, attributeEntitites)
+        }
 }

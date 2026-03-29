@@ -35,11 +35,22 @@ data class TreeImageReviewState(
 )
 
 sealed class TreeImageReviewAction : Action {
-    data class UpdateNote(val note: String) : TreeImageReviewAction()
+    data class UpdateNote(
+        val note: String,
+    ) : TreeImageReviewAction()
+
     object CheckIfCanNavigateForward : TreeImageReviewAction()
-    data class UpdateReviewTutorialDialog(val show: Boolean) : TreeImageReviewAction()
+
+    data class UpdateReviewTutorialDialog(
+        val show: Boolean,
+    ) : TreeImageReviewAction()
+
     object AddNote : TreeImageReviewAction()
-    data class SetDialogState(val isOpen: Boolean) : TreeImageReviewAction()
+
+    data class SetDialogState(
+        val isOpen: Boolean,
+    ) : TreeImageReviewAction()
+
     object NavigateBack : TreeImageReviewAction()
 }
 
@@ -48,11 +59,11 @@ class TreeImageReviewViewModel(
     private val userRepo: UserRepo,
     featureResolver: FeatureResolver,
 ) : BaseViewModel<TreeImageReviewState, TreeImageReviewAction>(TreeImageReviewState()) {
-
-    private val forceNote = featureResolver.isCaptureFlowFeatureEnabled(
-        RouteRegistry.ROUTE_TREE_IMAGE_REVIEW,
-        OrgFeature.FORCE_NOTE,
-    )
+    private val forceNote =
+        featureResolver.isCaptureFlowFeatureEnabled(
+            RouteRegistry.ROUTE_TREE_IMAGE_REVIEW,
+            OrgFeature.FORCE_NOTE,
+        )
 
     init {
         viewModelScope.launch(Dispatchers.Main) {

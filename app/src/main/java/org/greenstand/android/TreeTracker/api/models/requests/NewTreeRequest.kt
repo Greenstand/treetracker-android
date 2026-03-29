@@ -45,7 +45,7 @@ data class NewTreeRequest(
     @SerialName("planter_identifier")
     val planterIdentifier: String? = null,
     @SerialName("attributes")
-    val attributes: List<AttributeRequest>? = null
+    val attributes: List<AttributeRequest>? = null,
 )
 
 @Serializable
@@ -53,5 +53,5 @@ data class AttributeRequest(
     @SerialName("key")
     val key: String,
     @SerialName("value")
-    val value: String
+    val value: String,
 )

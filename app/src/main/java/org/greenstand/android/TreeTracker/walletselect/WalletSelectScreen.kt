@@ -55,7 +55,7 @@ import org.greenstand.android.TreeTracker.view.UserImageButton
 
 @Composable
 fun WalletSelectScreen(
-    viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
+    viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
@@ -101,10 +101,10 @@ fun WalletSelect(
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
                             onClick = { onHandleAction(WalletSelectAction.NavigateToUserSelect) },
-                            imagePath = it
+                            imagePath = it,
                         )
                     }
-                }
+                },
             )
         },
         bottomBar = {
@@ -113,7 +113,7 @@ fun WalletSelect(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.selectedUser != null
+                        isEnabled = state.selectedUser != null,
                     ) {
                         onHandleAction(WalletSelectAction.NavigateForward)
                     }
@@ -128,19 +128,20 @@ fun WalletSelect(
                     ArrowButton(isLeft = true) {
                         onHandleAction(WalletSelectAction.NavigateBack)
                     }
-                }
+                },
             )
         },
     ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(
-                    start = 10.dp,
-                    top = 10.dp,
-                    end = 10.dp,
-                )
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .padding(
+                        start = 10.dp,
+                        top = 10.dp,
+                        end = 10.dp,
+                    ),
         ) {
             state.currentUser?.let { currentUser ->
                 item {
@@ -161,8 +162,11 @@ fun WalletSelect(
 }
 
 @Composable
-fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
-
+fun WalletItem(
+    user: User,
+    isSelected: Boolean,
+    onClick: (Long) -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -175,20 +179,22 @@ fun WalletItem(user: User, isSelected: Boolean, onClick: (Long) -> Unit) {
         Image(
             painter = image,
             contentDescription = "",
-            modifier = modifier
-                .weight(2f)
-                .height(140.dp)
+            modifier =
+                modifier
+                    .weight(2f)
+                    .height(140.dp),
         )
         Image(
             painter = arrowImage,
             contentDescription = "",
-            modifier = Modifier
-                .weight(1f)
-                .height(40.dp)
-                .padding(
-                    end = 20.dp,
-                    start = 10.dp
-                )
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .height(40.dp)
+                    .padding(
+                        end = 20.dp,
+                        start = 10.dp,
+                    ),
         )
         Box(modifier = Modifier.weight(2.6f)) {
             UserButton(

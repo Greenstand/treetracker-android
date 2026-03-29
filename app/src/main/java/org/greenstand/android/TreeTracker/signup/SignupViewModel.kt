@@ -64,28 +64,57 @@ sealed class Credential {
 }
 
 sealed class SignupAction : Action {
-    data class UpdateFirstName(val firstName: String?) : SignupAction()
-    data class UpdateLastName(val lastName: String?) : SignupAction()
-    data class UpdateEmail(val email: String) : SignupAction()
-    data class UpdatePhone(val phone: String) : SignupAction()
-    data class UpdateCredentialType(val credential: Credential) : SignupAction()
+    data class UpdateFirstName(
+        val firstName: String?,
+    ) : SignupAction()
+
+    data class UpdateLastName(
+        val lastName: String?,
+    ) : SignupAction()
+
+    data class UpdateEmail(
+        val email: String,
+    ) : SignupAction()
+
+    data class UpdatePhone(
+        val phone: String,
+    ) : SignupAction()
+
+    data class UpdateCredentialType(
+        val credential: Credential,
+    ) : SignupAction()
+
     object SubmitInfo : SignupAction()
+
     object CloseExistingUserDialog : SignupAction()
-    data class UpdateSelfieTutorialDialog(val show: Boolean) : SignupAction()
+
+    data class UpdateSelfieTutorialDialog(
+        val show: Boolean,
+    ) : SignupAction()
+
     object EnableAutofocus : SignupAction()
+
     object GoToCredentialEntry : SignupAction()
+
     object ClosePrivacyPolicyDialog : SignupAction()
-    data class SetExistingUserAsPowerUser(val id: Long) : SignupAction()
+
+    data class SetExistingUserAsPowerUser(
+        val id: Long,
+    ) : SignupAction()
+
     object NavigateBack : SignupAction()
+
     object LaunchCamera : SignupAction()
-    data class ExistingUserSelected(val user: User) : SignupAction()
+
+    data class ExistingUserSelected(
+        val user: User,
+    ) : SignupAction()
 }
 
 class SignupViewModel(
     private val userRepo: UserRepo,
-    private val checkForInternetUseCase: CheckForInternetUseCase
+    private val checkForInternetUseCase: CheckForInternetUseCase,
 ) : BaseViewModel<SignUpState, SignupAction>(SignUpState()) {
-
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
@@ -94,7 +123,7 @@ class SignupViewModel(
                 copy(
                     isInternetAvailable = result,
                     showSelfieTutorial = initialSetupRequired,
-                    isTherePowerUser = !initialSetupRequired
+                    isTherePowerUser = !initialSetupRequired,
                 )
             }
         }
@@ -102,18 +131,20 @@ class SignupViewModel(
 
     override fun handleAction(action: SignupAction) {
         when (action) {
-            is SignupAction.UpdateFirstName -> updateName(action.firstName) { filtered, error ->
-                copy(firstName = filtered, firstNameError = if (filtered.isNullOrEmpty()) null else error)
-            }
-            is SignupAction.UpdateLastName -> updateName(action.lastName) { filtered, error ->
-                copy(lastName = filtered, lastNameError = if (filtered.isNullOrEmpty()) null else error)
-            }
+            is SignupAction.UpdateFirstName ->
+                updateName(action.firstName) { filtered, error ->
+                    copy(firstName = filtered, firstNameError = if (filtered.isNullOrEmpty()) null else error)
+                }
+            is SignupAction.UpdateLastName ->
+                updateName(action.lastName) { filtered, error ->
+                    copy(lastName = filtered, lastNameError = if (filtered.isNullOrEmpty()) null else error)
+                }
             is SignupAction.UpdateEmail -> {
                 updateState {
                     copy(
                         email = action.email.lowercase(),
                         phone = null,
-                        isCredentialValid = action.email.contains('@')
+                        isCredentialValid = action.email.contains('@'),
                     )
                 }
             }
@@ -122,7 +153,7 @@ class SignupViewModel(
                     copy(
                         phone = action.phone,
                         email = null,
-                        isCredentialValid = Validation.isValidPhoneNumber(action.phone)
+                        isCredentialValid = Validation.isValidPhoneNumber(action.phone),
                     )
                 }
             }
@@ -161,7 +192,10 @@ class SignupViewModel(
         }
     }
 
-    private fun updateName(name: String?, applyUpdate: SignUpState.(String?, String?) -> SignUpState) {
+    private fun updateName(
+        name: String?,
+        applyUpdate: SignUpState.(String?, String?) -> SignUpState,
+    ) {
         val filtered = name?.let { ValidationUtils.filterNameInput(it) }
         val (_, error) = ValidationUtils.validateName(filtered)
         updateState { applyUpdate(filtered, error) }
@@ -191,24 +225,24 @@ class SignupViewModel(
     suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
             val state = currentState
-            val userId = userRepo.createUser(
-                firstName = state.firstName!!,
-                lastName = state.lastName!!,
-                phone = state.phone,
-                email = state.email,
-                wallet = extractIdentifier(state),
-                photoPath = photoPath,
-                isPowerUser = userRepo.getPowerUser() == null,
-            )
+            val userId =
+                userRepo.createUser(
+                    firstName = state.firstName!!,
+                    lastName = state.lastName!!,
+                    phone = state.phone,
+                    email = state.email,
+                    wallet = extractIdentifier(state),
+                    photoPath = photoPath,
+                    isPowerUser = userRepo.getPowerUser() == null,
+                )
             return userRepo.getUser(userId)
         }
         return null
     }
 
-    private fun extractIdentifier(state: SignUpState): String {
-        return when (state.credential) {
+    private fun extractIdentifier(state: SignUpState): String =
+        when (state.credential) {
             is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
-    }
 }

@@ -55,7 +55,7 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 @Composable
 fun SurveyScreen(
     messageId: String,
-    viewModel: SurveyViewModel = viewModel(factory = SurveyViewModelFactory(messageId))
+    viewModel: SurveyViewModel = viewModel(factory = SurveyViewModelFactory(messageId)),
 ) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
@@ -116,9 +116,9 @@ fun Survey(
                         colors = AppButtonColors.MessagePurple,
                         onClick = { onHandleAction(SurveyAction.GoToNextQuestion) },
                     )
-                }
+                },
             )
-        }
+        },
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(it),
@@ -133,12 +133,12 @@ fun Survey(
                 state.currentQuestion?.choices?.let { choices ->
                     items(
                         count = choices.size,
-                        key = { it }
+                        key = { it },
                     ) { index ->
                         AnswerItem(
                             answerText = choices[index],
                             isSelected = state.selectedAnswerIndex == index,
-                            onClick = { onHandleAction(SurveyAction.SelectAnswer(index)) }
+                            onClick = { onHandleAction(SurveyAction.SelectAnswer(index)) },
                         )
                     }
                 }
@@ -152,7 +152,7 @@ fun BoxScope.UserImage(imagePath: String?) {
     imagePath?.let {
         RoundedLocalImageContainer(
             imagePath = it,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
         )
     }
 }
@@ -164,7 +164,7 @@ fun QuestionPrompt(promptText: String) {
         text = promptText,
         textAlign = TextAlign.Center,
         color = CustomTheme.textColors.lightText,
-        style = CustomTheme.typography.large
+        style = CustomTheme.typography.large,
     )
 }
 
@@ -175,9 +175,10 @@ fun AnswerItem(
     onClick: () -> Unit,
 ) {
     TreeTrackerButton(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(68.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(68.dp),
         colors = if (isSelected) AppButtonColors.ProgressGreen else AppButtonColors.Default,
         onClick = onClick,
     ) {
@@ -185,16 +186,18 @@ fun AnswerItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                modifier = Modifier
-                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                modifier =
+                    Modifier
+                        .padding(vertical = 12.dp, horizontal = 4.dp),
                 text = answerText,
                 textAlign = TextAlign.Center,
                 color = CustomTheme.textColors.lightText,
-                style = CustomTheme.typography.large
+                style = CustomTheme.typography.large,
             )
         }
     }
 }
+
 @Composable
 fun ShowToastMessage(stringResId: Int) {
     val context = LocalContext.current

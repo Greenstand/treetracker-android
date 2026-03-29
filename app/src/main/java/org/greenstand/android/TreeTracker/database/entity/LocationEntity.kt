@@ -27,9 +27,9 @@ import androidx.room.PrimaryKey
             entity = SessionEntity::class,
             parentColumns = ["_id"],
             childColumns = ["session_id"],
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class LocationEntity(
     @ColumnInfo(name = "json_value")
@@ -40,8 +40,10 @@ data class LocationEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
     var id: Long = 0
+
     @ColumnInfo(name = "uploaded", index = true)
     var uploaded: Boolean = false
+
     @ColumnInfo(name = "create_at")
     var createdAt: Long = System.currentTimeMillis()
 }

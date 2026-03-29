@@ -1,3 +1,18 @@
+/*
+ * Copyright 2026 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.map
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -6,10 +21,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -34,50 +49,54 @@ fun LibreMap(
     selectedMarkerId: String?,
     modifier: Modifier = Modifier,
     styleUrl: String = "https://demotiles.maplibre.org/style.json",
-    onMarkerClick: (String) -> Unit = {}
+    onMarkerClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val mapView = remember {
-        MapView(context).apply {
-            getMapAsync { mapLibreMap ->
-                mapLibreMap.setStyle(styleUrl) { style ->
-                    // Set initial camera position (centered on equator with moderate zoom)
-                    val initialPosition = CameraPosition.Builder()
-                        .target(LatLng(0.0, 0.0))
-                        .zoom(2.0)
-                        .build()
-                    mapLibreMap.cameraPosition = initialPosition
-                    val locationComponent = mapLibreMap.locationComponent
-                    locationComponent.activateLocationComponent(
-                        LocationComponentActivationOptions
-                            .builder(context, style)
-                            .locationComponentOptions(
-                                LocationComponentOptions.builder(context)
-                                    .pulseEnabled(true)
-                                    .build()
-                            )
-                            .build()
-                    )
-                    locationComponent.isLocationComponentEnabled = true
+    val mapView =
+        remember {
+            MapView(context).apply {
+                getMapAsync { mapLibreMap ->
+                    mapLibreMap.setStyle(styleUrl) { style ->
+                        // Set initial camera position (centered on equator with moderate zoom)
+                        val initialPosition =
+                            CameraPosition
+                                .Builder()
+                                .target(LatLng(0.0, 0.0))
+                                .zoom(2.0)
+                                .build()
+                        mapLibreMap.cameraPosition = initialPosition
+                        val locationComponent = mapLibreMap.locationComponent
+                        locationComponent.activateLocationComponent(
+                            LocationComponentActivationOptions
+                                .builder(context, style)
+                                .locationComponentOptions(
+                                    LocationComponentOptions
+                                        .builder(context)
+                                        .pulseEnabled(true)
+                                        .build(),
+                                ).build(),
+                        )
+                        locationComponent.isLocationComponentEnabled = true
+                    }
                 }
             }
         }
-    }
 
     // Handle lifecycle events
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> mapView.onStart()
-                Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                Lifecycle.Event.ON_STOP -> mapView.onStop()
-                Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
-                else -> {}
+        val observer =
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_START -> mapView.onStart()
+                    Lifecycle.Event.ON_RESUME -> mapView.onResume()
+                    Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                    Lifecycle.Event.ON_STOP -> mapView.onStop()
+                    Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
+                    else -> {}
+                }
             }
-        }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
@@ -98,50 +117,53 @@ fun LibreMap(
                     // Add markers in bulk as GeoJSON
                     if (markers.isNotEmpty()) {
                         // Create GeoJSON FeatureCollection
-                        val featureCollection = buildJsonObject {
-                            put("type", "FeatureCollection")
-                            putJsonArray("features") {
-                                markers.forEach { marker ->
-                                    addJsonObject {
-                                        put("type", "Feature")
-                                        putJsonObject("geometry") {
-                                            put("type", "Point")
-                                            putJsonArray("coordinates") {
-                                                add(kotlinx.serialization.json.JsonPrimitive(marker.longitude))
-                                                add(kotlinx.serialization.json.JsonPrimitive(marker.latitude))
+                        val featureCollection =
+                            buildJsonObject {
+                                put("type", "FeatureCollection")
+                                putJsonArray("features") {
+                                    markers.forEach { marker ->
+                                        addJsonObject {
+                                            put("type", "Feature")
+                                            putJsonObject("geometry") {
+                                                put("type", "Point")
+                                                putJsonArray("coordinates") {
+                                                    add(kotlinx.serialization.json.JsonPrimitive(marker.longitude))
+                                                    add(kotlinx.serialization.json.JsonPrimitive(marker.latitude))
+                                                }
                                             }
-                                        }
-                                        putJsonObject("properties") {
-                                            put("id", marker.id)
+                                            putJsonObject("properties") {
+                                                put("id", marker.id)
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
                         // Add GeoJSON source
                         val source = GeoJsonSource("tree-markers-source", featureCollection.toString())
                         style.addSource(source)
 
                         // Add circle layer with green dots
-                        val radiusExpression = if (selectedMarkerId != null) {
-                            Expression.switchCase(
-                                Expression.eq(Expression.get("id"), Expression.literal(selectedMarkerId)),
-                                Expression.literal(12f), // Selected marker radius
-                                Expression.literal(8f)     // Default marker radius
-                            )
-                        } else {
-                            Expression.literal(8f)
-                        }
+                        val radiusExpression =
+                            if (selectedMarkerId != null) {
+                                Expression.switchCase(
+                                    Expression.eq(Expression.get("id"), Expression.literal(selectedMarkerId)),
+                                    Expression.literal(12f), // Selected marker radius
+                                    Expression.literal(8f), // Default marker radius
+                                )
+                            } else {
+                                Expression.literal(8f)
+                            }
 
-                        val circleLayer = CircleLayer("tree-markers-layer", "tree-markers-source").apply {
-                            setProperties(
-                                PropertyFactory.circleRadius(radiusExpression),
-                                PropertyFactory.circleColor("#4CAF50"),
-                                PropertyFactory.circleStrokeWidth(2f),
-                                PropertyFactory.circleStrokeColor("#FFFFFF")
-                            )
-                        }
+                        val circleLayer =
+                            CircleLayer("tree-markers-layer", "tree-markers-source").apply {
+                                setProperties(
+                                    PropertyFactory.circleRadius(radiusExpression),
+                                    PropertyFactory.circleColor("#4CAF50"),
+                                    PropertyFactory.circleStrokeWidth(2f),
+                                    PropertyFactory.circleStrokeColor("#FFFFFF"),
+                                )
+                            }
                         style.addLayer(circleLayer)
 
                         // Add click listener for markers
@@ -167,10 +189,12 @@ fun LibreMap(
                         if (selectedMarkerId != null) {
                             val selectedMarker = markers.find { it.id == selectedMarkerId }
                             selectedMarker?.let { marker ->
-                                val position = CameraPosition.Builder()
-                                    .target(LatLng(marker.latitude, marker.longitude))
-                                    .zoom(14.0)
-                                    .build()
+                                val position =
+                                    CameraPosition
+                                        .Builder()
+                                        .target(LatLng(marker.latitude, marker.longitude))
+                                        .zoom(14.0)
+                                        .build()
                                 mapLibreMap.animateCamera(CameraUpdateFactory.newCameraPosition(position))
                             }
                         } else {
@@ -185,12 +209,12 @@ fun LibreMap(
 
                             // Animate camera to show all markers
                             mapLibreMap.animateCamera(
-                                CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                                CameraUpdateFactory.newLatLngBounds(bounds, padding),
                             )
                         }
                     }
                 }
             }
-        }
+        },
     )
 }

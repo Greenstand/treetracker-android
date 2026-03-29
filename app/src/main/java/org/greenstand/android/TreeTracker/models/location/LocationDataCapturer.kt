@@ -18,14 +18,14 @@ package org.greenstand.android.TreeTracker.models.location
 import android.location.Location
 import androidx.annotation.MainThread
 import androidx.lifecycle.Observer
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
@@ -63,86 +63,90 @@ class LocationDataCapturer(
         }
     }
 
-    private val locationObserver: Observer<Location?> = Observer { l ->
-        l?.let { location ->
-            val locationDataConfig = convergenceConfiguration.locationDataConfig
-            val convergenceDataSize = locationDataConfig.convergenceDataSize
-            if (isInTreeCaptureMode()) {
-                val evictedLocation: Location? = if (locationsDeque.size >= convergenceDataSize)
-                    locationsDeque.pollFirst() else null
-                locationsDeque.add(location)
-
-                if (locationsDeque.size >= convergenceDataSize) {
-                    if (currentConvergence == null ||
-                        currentConvergence?.locations!!.size < convergenceDataSize
-                    ) {
-                        currentConvergence = Convergence(locationsDeque.toList())
-                        currentConvergence?.computeConvergence()
-                    } else {
-                        currentConvergence?.computeSlidingWindowConvergence(
-                            evictedLocation!!, location
-                        )
-                    }
-                    Timber.d(
-                        "Convergence: Longitude Mean: " +
-                            "[${currentConvergence?.longitudeConvergence?.mean}]. \n" +
-                            "Longitude standard deviation value: " +
-                            "[${currentConvergence?.longitudeConvergence?.standardDeviation}]"
-                    )
-                    Timber.d(
-                        "Convergence: Latitude Mean: " +
-                            "[${currentConvergence?.latitudeConvergence?.mean}]. \n " +
-                            "Latitude standard deviation value: " +
-                            "[${currentConvergence?.latitudeConvergence?.standardDeviation}]"
-                    )
-
-                    val longStdDev = currentConvergence?.longitudinalStandardDeviation()
-                    val latStdDev = currentConvergence?.latitudinalStandardDeviation()
-                    if (longStdDev != null && latStdDev != null) {
-                        val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(), locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
-                        newestPercentageConvergence = min(1f, minimumConvergenceRatio)
-
-                        if (longStdDev < locationDataConfig.lonStdDevThreshold &&
-                            latStdDev < locationDataConfig.latStdDevThreshold
-                        ) {
-                            convergenceStatus = ConvergenceStatus.CONVERGED
-                            lastConvergenceWithinRange = currentConvergence
+    private val locationObserver: Observer<Location?> =
+        Observer { l ->
+            l?.let { location ->
+                val locationDataConfig = convergenceConfiguration.locationDataConfig
+                val convergenceDataSize = locationDataConfig.convergenceDataSize
+                if (isInTreeCaptureMode()) {
+                    val evictedLocation: Location? =
+                        if (locationsDeque.size >= convergenceDataSize) {
+                            locationsDeque.pollFirst()
                         } else {
-                            convergenceStatus = ConvergenceStatus.NOT_CONVERGED
+                            null
+                        }
+                    locationsDeque.add(location)
+
+                    if (locationsDeque.size >= convergenceDataSize) {
+                        if (currentConvergence == null ||
+                            currentConvergence?.locations!!.size < convergenceDataSize
+                        ) {
+                            currentConvergence = Convergence(locationsDeque.toList())
+                            currentConvergence?.computeConvergence()
+                        } else {
+                            currentConvergence?.computeSlidingWindowConvergence(
+                                evictedLocation!!,
+                                location,
+                            )
+                        }
+                        Timber.d(
+                            "Convergence: Longitude Mean: " +
+                                "[${currentConvergence?.longitudeConvergence?.mean}]. \n" +
+                                "Longitude standard deviation value: " +
+                                "[${currentConvergence?.longitudeConvergence?.standardDeviation}]",
+                        )
+                        Timber.d(
+                            "Convergence: Latitude Mean: " +
+                                "[${currentConvergence?.latitudeConvergence?.mean}]. \n " +
+                                "Latitude standard deviation value: " +
+                                "[${currentConvergence?.latitudeConvergence?.standardDeviation}]",
+                        )
+
+                        val longStdDev = currentConvergence?.longitudinalStandardDeviation()
+                        val latStdDev = currentConvergence?.latitudinalStandardDeviation()
+                        if (longStdDev != null && latStdDev != null) {
+                            val minimumConvergenceRatio = min(locationDataConfig.latStdDevThreshold.div(latStdDev).toFloat(), locationDataConfig.lonStdDevThreshold.div(longStdDev).toFloat())
+                            newestPercentageConvergence = min(1f, minimumConvergenceRatio)
+
+                            if (longStdDev < locationDataConfig.lonStdDevThreshold &&
+                                latStdDev < locationDataConfig.latStdDevThreshold
+                            ) {
+                                convergenceStatus = ConvergenceStatus.CONVERGED
+                                lastConvergenceWithinRange = currentConvergence
+                            } else {
+                                convergenceStatus = ConvergenceStatus.NOT_CONVERGED
+                            }
                         }
                     }
                 }
-            }
 
-            sessionTracker.currentSessionId?.let { currentSessionId ->
+                sessionTracker.currentSessionId?.let { currentSessionId ->
 
-                MainScope().launch(Dispatchers.IO) {
-                    val locationData =
-                        LocationData(
-                            currentSessionId,
-                            location.latitude,
-                            location.longitude,
-                            location.accuracy,
-                            generatedTreeUuid?.toString(),
-                            convergenceStatus,
-                            timeProvider.currentTime().toString(),
+                    MainScope().launch(Dispatchers.IO) {
+                        val locationData =
+                            LocationData(
+                                currentSessionId,
+                                location.latitude,
+                                location.longitude,
+                                location.accuracy,
+                                generatedTreeUuid?.toString(),
+                                convergenceStatus,
+                                timeProvider.currentTime().toString(),
+                            )
+                        val jsonValue = json.encodeToString(locationData)
+                        Timber.d("Inserting new location data $jsonValue")
+                        treeTrackerDAO.insertLocationData(
+                            LocationEntity(
+                                locationDataJson = jsonValue,
+                                sessionId = currentSessionId,
+                            ),
                         )
-                    val jsonValue = json.encodeToString(locationData)
-                    Timber.d("Inserting new location data $jsonValue")
-                    treeTrackerDAO.insertLocationData(
-                        LocationEntity(
-                            locationDataJson = jsonValue,
-                            sessionId = currentSessionId,
-                        )
-                    )
+                    }
                 }
             }
         }
-    }
 
-    fun isLocationCoordinateAvailable(): Boolean {
-        return (lastConvergenceWithinRange != null || currentConvergence != null)
-    }
+    fun isLocationCoordinateAvailable(): Boolean = (lastConvergenceWithinRange != null || currentConvergence != null)
 
     fun startGpsUpdates() {
         if (areLocationUpdatesOn) {
@@ -170,8 +174,7 @@ class LocationDataCapturer(
      *  @throws IllegalStateException - If invoked outside the scope of tree capture
      */
     fun convergence(): Convergence {
-        if (!isInTreeCaptureMode())
-            throw IllegalStateException()
+        check(isInTreeCaptureMode()) { "Invoked outside the scope of tree capture" }
         return lastConvergenceWithinRange ?: currentConvergence!!
     }
 
@@ -191,9 +194,7 @@ class LocationDataCapturer(
 
     fun isConvergenceWithinRange(): Boolean = ConvergenceStatus.CONVERGED == convergenceStatus
 
-    private fun isInTreeCaptureMode(): Boolean {
-        return generatedTreeUuid != null
-    }
+    private fun isInTreeCaptureMode(): Boolean = generatedTreeUuid != null
 
     fun turnOnTreeCaptureMode() {
         generatedTreeUuid = UUID.randomUUID()

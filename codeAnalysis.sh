@@ -1,9 +1,8 @@
 #!/bin/bash
+set -euo pipefail
 
-./gradlew ktlintFormat && ./gradlew ktlintCheck && ./gradlew detekt && ./gradlew spotlessApply
+# Run formatters first, then checkers in a single Gradle invocation
+echo "Running code analysis..."
+./gradlew spotlessApply ktlintFormat ktlintCheck detekt
 
-# Before use it, in the first time, you must guarantee some running permissions:
-# chmod +x codeAnalysis.sh
-#
-# After that, you just need to run:
-# ./codeAnalysis.sh
+echo "Code analysis passed!"

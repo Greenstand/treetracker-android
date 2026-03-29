@@ -29,7 +29,6 @@ class TreeCapturer(
     private val deviceOrientation: DeviceOrientation,
     private val sessionTracker: SessionTracker,
 ) {
-
     private var newTreeUuid: UUID? = null
     private var convergence: Convergence? = null
     var currentTree: Tree? = null
@@ -49,23 +48,27 @@ class TreeCapturer(
     }
 
     fun setImage(imageFile: File) {
-        val uuid = newTreeUuid
-            ?: error("pinLocation() must be called successfully before setImage()")
-        val sessionId = sessionTracker.currentSessionId
-            ?: error("Session must be started before setImage()")
-        val tree = Tree(
-            treeUuid = uuid,
-            sessionId = sessionId,
-            content = "",
-            photoPath = imageFile.absolutePath,
-            convergence?.longitudeConvergence?.mean ?: 0.0,
-            convergence?.latitudeConvergence?.mean ?: 0.0
-        )
+        val uuid =
+            newTreeUuid
+                ?: error("pinLocation() must be called successfully before setImage()")
+        val sessionId =
+            sessionTracker.currentSessionId
+                ?: error("Session must be started before setImage()")
+        val tree =
+            Tree(
+                treeUuid = uuid,
+                sessionId = sessionId,
+                content = "",
+                photoPath = imageFile.absolutePath,
+                convergence?.longitudeConvergence?.mean ?: 0.0,
+                convergence?.latitudeConvergence?.mean ?: 0.0,
+            )
         tree.addTreeAttribute(Tree.ABS_STEP_COUNT_KEY, (stepCounter.absoluteStepCount ?: 0).toString())
         tree.addTreeAttribute(Tree.DELTA_STEP_COUNT_KEY, stepCounter.deltaSteps.toString())
         deviceOrientation.rotationMatrixSnapshot?.let {
             tree.addTreeAttribute(
-                Tree.ROTATION_MATRIX_KEY, it.joinToString(",")
+                Tree.ROTATION_MATRIX_KEY,
+                it.joinToString(","),
             )
         }
         currentTree = tree
@@ -73,7 +76,10 @@ class TreeCapturer(
         stepCounter.snapshotAbsoluteStepCountOnTreeCapture()
     }
 
-    fun addAttribute(key: String, value: String) {
+    fun addAttribute(
+        key: String,
+        value: String,
+    ) {
         currentTree?.addTreeAttribute(key, value)
     }
 

@@ -27,7 +27,7 @@ fun PreviewDependencies(content: @Composable () -> Unit) {
     val navController = rememberNavController()
 
     CompositionLocalProvider(
-        LocalNavHostController provides navController
+        LocalNavHostController provides navController,
     ) {
         CustomTheme {
             TreeTrackerTheme {

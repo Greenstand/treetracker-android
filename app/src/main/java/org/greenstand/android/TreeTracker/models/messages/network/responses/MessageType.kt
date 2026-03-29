@@ -20,8 +20,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class MessageType {
-    @SerialName("message") MESSAGE,
-    @SerialName("announce") ANNOUNCE,
-    @SerialName("survey") SURVEY,
-    @SerialName("survey_response") SURVEY_RESPONSE,
+    @SerialName("message")
+    MESSAGE,
+
+    @SerialName("announce")
+    ANNOUNCE,
+
+    @SerialName("survey")
+    SURVEY,
+
+    @SerialName("survey_response")
+    SURVEY_RESPONSE,
 }

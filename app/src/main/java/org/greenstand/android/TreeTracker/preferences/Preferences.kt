@@ -22,9 +22,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 
 class Preferences(
-    private val prefs: SharedPreferences
+    private val prefs: SharedPreferences,
 ) {
-
     private val prefUpdateFlow: MutableSharedFlow<String> = MutableSharedFlow(replay = 1)
     private val preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -43,42 +42,52 @@ class Preferences(
         _userId = userId
     }
 
-    fun getBoolean(prefKey: PrefKey, default: Boolean): Boolean {
-        return prefs.getBoolean(computePath(prefKey), default)
-    }
+    fun getBoolean(
+        prefKey: PrefKey,
+        default: Boolean,
+    ): Boolean = prefs.getBoolean(computePath(prefKey), default)
 
-    fun getString(prefKey: PrefKey, default: String? = null): String? {
-        return prefs.getString(computePath(prefKey), default)
-    }
+    fun getString(
+        prefKey: PrefKey,
+        default: String? = null,
+    ): String? = prefs.getString(computePath(prefKey), default)
 
-    fun getLong(prefKey: PrefKey, default: Long = -1): Long {
-        return prefs.getLong(computePath(prefKey), default)
-    }
+    fun getLong(
+        prefKey: PrefKey,
+        default: Long = -1,
+    ): Long = prefs.getLong(computePath(prefKey), default)
 
-    fun getFloat(prefKey: PrefKey, default: Float = -1f): Float {
-        return prefs.getFloat(computePath(prefKey), default)
-    }
+    fun getFloat(
+        prefKey: PrefKey,
+        default: Float = -1f,
+    ): Float = prefs.getFloat(computePath(prefKey), default)
 
-    fun getInt(prefKey: PrefKey, default: Int = -1): Int {
-        return prefs.getInt(computePath(prefKey), default)
-    }
+    fun getInt(
+        prefKey: PrefKey,
+        default: Int = -1,
+    ): Int = prefs.getInt(computePath(prefKey), default)
 
-    fun observeInt(key: PrefKey, default: Int = -1): Flow<Int> {
-        return prefUpdateFlow.filter { it == computePath(key) }
+    fun observeInt(
+        key: PrefKey,
+        default: Int = -1,
+    ): Flow<Int> =
+        prefUpdateFlow
+            .filter { it == computePath(key) }
             .map { getInt(key, default) }
-    }
 
-    fun observeString(key: PrefKey, default: String? = null): Flow<String?> {
-        return prefUpdateFlow.filter { it == computePath(key) }
+    fun observeString(
+        key: PrefKey,
+        default: String? = null,
+    ): Flow<String?> =
+        prefUpdateFlow
+            .filter { it == computePath(key) }
             .map { getString(key, default) }
-    }
 
-    private fun computePath(prefKey: PrefKey): String {
-        return when (prefKey) {
+    private fun computePath(prefKey: PrefKey): String =
+        when (prefKey) {
             is UserPrefKey -> prefKey.path + "/$_userId"
             else -> prefKey.path
         }
-    }
 
     fun clearSessionData() {
         clearPrefKeyUsage(PrefKeys.SESSION)
@@ -93,42 +102,56 @@ class Preferences(
         editor.apply()
     }
 
-    fun edit(): Editor {
-        return Editor(prefs) {
+    fun edit(): Editor =
+        Editor(prefs) {
             computePath(it)
         }
-    }
 
     class Editor(
         prefs: SharedPreferences,
-        private val computePath: (PrefKey) -> String
+        private val computePath: (PrefKey) -> String,
     ) {
-
         private var editor = prefs.edit()
 
-        fun putBoolean(prefKey: PrefKey, value: Boolean) = apply {
+        fun putBoolean(
+            prefKey: PrefKey,
+            value: Boolean,
+        ) = apply {
             editor.putBoolean(computePath(prefKey), value)
         }
 
-        fun putString(prefKey: PrefKey, value: String?) = apply {
+        fun putString(
+            prefKey: PrefKey,
+            value: String?,
+        ) = apply {
             editor.putString(computePath(prefKey), value)
         }
 
-        fun putLong(prefKey: PrefKey, value: Long) = apply {
+        fun putLong(
+            prefKey: PrefKey,
+            value: Long,
+        ) = apply {
             editor.putLong(computePath(prefKey), value)
         }
 
-        fun putFloat(prefKey: PrefKey, value: Float) = apply {
+        fun putFloat(
+            prefKey: PrefKey,
+            value: Float,
+        ) = apply {
             editor.putFloat(computePath(prefKey), value)
         }
 
-        fun putInt(prefKey: PrefKey, value: Int) = apply {
+        fun putInt(
+            prefKey: PrefKey,
+            value: Int,
+        ) = apply {
             editor.putInt(computePath(prefKey), value)
         }
 
-        fun remove(prefKey: PrefKey) = apply {
-            editor.remove(computePath(prefKey))
-        }
+        fun remove(prefKey: PrefKey) =
+            apply {
+                editor.remove(computePath(prefKey))
+            }
 
         fun apply() {
             editor.apply()

@@ -49,5 +49,5 @@ class DeviceConfigRequest(
     @SerialName("instance_id")
     val instanceId: String,
     @SerialName("logged_at")
-    val loggedAt: String
+    val loggedAt: String,
 )

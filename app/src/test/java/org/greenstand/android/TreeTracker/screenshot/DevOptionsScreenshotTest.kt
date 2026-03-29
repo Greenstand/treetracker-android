@@ -20,11 +20,11 @@ import org.greenstand.android.TreeTracker.devoptions.DevOptionsState
 import org.junit.Test
 
 class DevOptionsScreenshotTest : ScreenshotTest() {
-
     @Test
-    fun dev_options_default() = snapshot {
-        DevOptionsScreen(
-            state = DevOptionsState(),
-        )
-    }
+    fun dev_options_default() =
+        snapshot {
+            DevOptionsScreen(
+                state = DevOptionsState(),
+            )
+        }
 }

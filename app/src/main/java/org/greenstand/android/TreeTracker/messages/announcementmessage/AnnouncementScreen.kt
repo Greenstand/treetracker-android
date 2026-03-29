@@ -56,9 +56,10 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 @Composable
 fun AnnouncementScreen(
     messageId: String,
-    viewModel: AnnouncementViewModel = viewModel(
-        factory = AnnouncementViewModelFactory(messageId)
-    )
+    viewModel: AnnouncementViewModel =
+        viewModel(
+            factory = AnnouncementViewModelFactory(messageId),
+        ),
 ) {
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
@@ -95,18 +96,17 @@ fun Announcement(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = { onHandleAction(AnnouncementAction.NavigateBack) }
+                        onClick = { onHandleAction(AnnouncementAction.NavigateBack) },
                     )
                 },
             )
         },
-
     ) {
         Column(
             Modifier
                 .padding(it)
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp)
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             AnnouncementContent(state = state, onHandleAction = onHandleAction)
         }
@@ -119,16 +119,16 @@ private fun AnnouncementContent(
     onHandleAction: (AnnouncementAction) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .padding(start = 10.dp, end = 10.dp)
-            .background(
-                color = AppColors.MessageReceivedBackground,
-                shape = RoundedCornerShape(6.dp)
-            )
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(8.dp),
-        horizontalAlignment = Alignment.Start
+        modifier =
+            Modifier
+                .padding(start = 10.dp, end = 10.dp)
+                .background(
+                    color = AppColors.MessageReceivedBackground,
+                    shape = RoundedCornerShape(6.dp),
+                ).fillMaxWidth()
+                .wrapContentHeight()
+                .padding(8.dp),
+        horizontalAlignment = Alignment.Start,
     ) {
         state.currentTitle?.let { title ->
             Text(
@@ -137,7 +137,7 @@ private fun AnnouncementContent(
                 fontWeight = FontWeight.Bold,
                 style = CustomTheme.typography.large,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(CenterHorizontally)
+                modifier = Modifier.align(CenterHorizontally),
             )
         }
         Spacer(modifier = Modifier.height(6.dp))
@@ -165,7 +165,10 @@ private fun AnnouncementContent(
     }
 }
 
-private fun openUrlLink(context: Context, url: String) {
+private fun openUrlLink(
+    context: Context,
+    url: String,
+) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(url)
     ContextCompat.startActivity(context, intent, null)

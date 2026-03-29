@@ -28,25 +28,26 @@ class SessionUploader(
     private val objectStorageClient: ObjectStorageClient,
     private val json: Json,
 ) {
-
     suspend fun upload() {
         val sessionsToUpload = dao.getSessionsToUpload()
 
-        val sessionRequests = sessionsToUpload.map { session ->
-            SessionRequest(
-                sessionId = session.uuid,
-                originUserId = session.originUserId,
-                targetWallet = session.destinationWallet,
-                organization = session.organization ?: "",
-                deviceConfigId = dao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid
-            )
-        }
+        val sessionRequests =
+            sessionsToUpload.map { session ->
+                SessionRequest(
+                    sessionId = session.uuid,
+                    originUserId = session.originUserId,
+                    targetWallet = session.destinationWallet,
+                    organization = session.organization ?: "",
+                    deviceConfigId = dao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid,
+                )
+            }
 
-        val jsonBundle = json.encodeToString(
-            UploadBundle.createV2(
-                sessions = sessionRequests,
+        val jsonBundle =
+            json.encodeToString(
+                UploadBundle.createV2(
+                    sessions = sessionRequests,
+                ),
             )
-        )
         val bundleId = jsonBundle.md5() + "_sessions"
         val sessionIds = sessionsToUpload.map { it.id }
 

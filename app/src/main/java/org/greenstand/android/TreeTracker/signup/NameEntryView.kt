@@ -66,7 +66,7 @@ fun NameEntryView(
                 },
                 rightAction = {
                     LanguageButton()
-                }
+                },
             )
         },
         bottomBar = {
@@ -80,19 +80,20 @@ fun NameEntryView(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = isFormValid()
+                        isEnabled = isFormValid(),
                     ) {
                         onHandleAction(SignupAction.LaunchCamera)
                     }
-                }
+                },
             )
-        }
+        },
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.6f)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+                    .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -101,23 +102,25 @@ fun NameEntryView(
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateFirstName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.first_name_hint), color = Color.White) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
-                    autoCorrect = false,
-                ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
-                )
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
+                        autoCorrect = false,
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onGo = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        },
+                    ),
             )
             state.firstNameError?.let { error ->
                 Text(
                     text = error,
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp),
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -126,25 +129,27 @@ fun NameEntryView(
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateLastName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.last_name_hint), color = Color.White) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Go,
-                    autoCorrect = false,
-                ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        if (!state.firstName.isNullOrBlank() && !state.lastName.isNullOrBlank()) {
-                            onHandleAction(SignupAction.LaunchCamera)
-                        }
-                    }
-                )
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Go,
+                        autoCorrect = false,
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onGo = {
+                            if (!state.firstName.isNullOrBlank() && !state.lastName.isNullOrBlank()) {
+                                onHandleAction(SignupAction.LaunchCamera)
+                            }
+                        },
+                    ),
             )
             state.lastNameError?.let { error ->
                 Text(
                     text = error,
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp),
                 )
             }
         }

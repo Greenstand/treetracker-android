@@ -46,7 +46,7 @@ fun CustomSnackbar(
                     Text(
                         text = data.message,
                         style = CustomTheme.typography.regular,
-                        color = CustomTheme.textColors.darkText
+                        color = CustomTheme.textColors.darkText,
                     )
                 },
                 action = {
@@ -55,12 +55,12 @@ fun CustomSnackbar(
                             Text(
                                 text = actionLabel,
                                 style = CustomTheme.typography.regular,
-                                color = CustomTheme.textColors.darkText
+                                color = CustomTheme.textColors.darkText,
                             )
                         }
                     }
-                }
+                },
             )
-        }
+        },
     )
 }

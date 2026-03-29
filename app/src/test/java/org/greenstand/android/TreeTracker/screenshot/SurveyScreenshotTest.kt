@@ -21,34 +21,40 @@ import org.greenstand.android.TreeTracker.models.messages.Question
 import org.junit.Test
 
 class SurveyScreenshotTest : ScreenshotTest() {
+    @Test
+    fun survey_default() =
+        snapshot {
+            Survey(state = SurveyScreenState())
+        }
 
     @Test
-    fun survey_default() = snapshot {
-        Survey(state = SurveyScreenState())
-    }
+    fun survey_with_question() =
+        snapshot {
+            Survey(
+                state =
+                    SurveyScreenState(
+                        currentQuestion =
+                            Question(
+                                prompt = "How healthy are the trees you planted?",
+                                choices = listOf("Very healthy", "Somewhat healthy", "Not healthy", "Dead"),
+                            ),
+                    ),
+            )
+        }
 
     @Test
-    fun survey_with_question() = snapshot {
-        Survey(
-            state = SurveyScreenState(
-                currentQuestion = Question(
-                    prompt = "How healthy are the trees you planted?",
-                    choices = listOf("Very healthy", "Somewhat healthy", "Not healthy", "Dead"),
-                ),
-            ),
-        )
-    }
-
-    @Test
-    fun survey_with_selected_answer() = snapshot {
-        Survey(
-            state = SurveyScreenState(
-                currentQuestion = Question(
-                    prompt = "What type of soil is at the planting site?",
-                    choices = listOf("Sandy", "Clay", "Loam", "Rocky"),
-                ),
-                selectedAnswerIndex = 2,
-            ),
-        )
-    }
+    fun survey_with_selected_answer() =
+        snapshot {
+            Survey(
+                state =
+                    SurveyScreenState(
+                        currentQuestion =
+                            Question(
+                                prompt = "What type of soil is at the planting site?",
+                                choices = listOf("Sandy", "Clay", "Loam", "Rocky"),
+                            ),
+                        selectedAnswerIndex = 2,
+                    ),
+            )
+        }
 }

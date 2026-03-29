@@ -35,11 +35,12 @@ fun RoundedImageContainer(
     content: @Composable (() -> Unit),
 ) {
     Box(
-        modifier = Modifier
-            .width(70.dp)
-            .height(70.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .clipToBounds() then modifier,
+        modifier =
+            Modifier
+                .width(70.dp)
+                .height(70.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .clipToBounds() then modifier,
         contentAlignment = contentAlignment,
     ) {
         content()
@@ -57,10 +58,11 @@ fun RoundedLocalImageContainer(
         contentAlignment = contentAlignment,
     ) {
         LocalImage(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .fillMaxSize(),
             imagePath = imagePath,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
     }
 }

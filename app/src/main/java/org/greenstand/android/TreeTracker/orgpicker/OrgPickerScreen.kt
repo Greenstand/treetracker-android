@@ -74,10 +74,11 @@ fun OrgPicker(
     Scaffold(
         topBar = {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding(),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding(),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = stringResource(R.string.select_organization).uppercase(),
@@ -85,9 +86,10 @@ fun OrgPicker(
                     style = CustomTheme.typography.medium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.Center),
+                    modifier =
+                        Modifier
+                            .padding(8.dp)
+                            .align(Alignment.Center),
                 )
             }
         },
@@ -100,7 +102,7 @@ fun OrgPicker(
                     ) {
                         onHandleAction(OrgPickerAction.NavigateNext)
                     }
-                }
+                },
             )
         },
     ) { padding ->
@@ -108,7 +110,7 @@ fun OrgPicker(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize().padding(padding),
             horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             items(state.orgs) { org ->
                 OrgItem(
@@ -116,7 +118,7 @@ fun OrgPicker(
                     isSelected = org == state.currentOrg,
                     onClick = {
                         onHandleAction(OrgPickerAction.SetOrg(org))
-                    }
+                    },
                 )
             }
         }
@@ -124,21 +126,26 @@ fun OrgPicker(
 }
 
 @Composable
-fun OrgItem(org: Org, isSelected: Boolean, onClick: () -> Unit) {
+fun OrgItem(
+    org: Org,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
     TreeTrackerButton(
         colors = AppButtonColors.ProgressGreen,
         onClick = onClick,
         isSelected = isSelected,
-        modifier = Modifier
-            .padding(16.dp)
-            .size(height = 80.dp, width = 156.dp)
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .size(height = 80.dp, width = 156.dp),
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = org.name.uppercase(),
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.darkText,
-            style = CustomTheme.typography.regular
+            style = CustomTheme.typography.regular,
         )
     }
 }

@@ -20,18 +20,20 @@ import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletState
 import org.junit.Test
 
 class AddWalletScreenshotTest : ScreenshotTest() {
+    @Test
+    fun addWallet_default() =
+        snapshot {
+            AddWallet(state = AddWalletState())
+        }
 
     @Test
-    fun addWallet_default() = snapshot {
-        AddWallet(state = AddWalletState())
-    }
-
-    @Test
-    fun addWallet_with_name() = snapshot {
-        AddWallet(
-            state = AddWalletState(
-                walletName = "jane.planter",
-            ),
-        )
-    }
+    fun addWallet_with_name() =
+        snapshot {
+            AddWallet(
+                state =
+                    AddWalletState(
+                        walletName = "jane.planter",
+                    ),
+            )
+        }
 }

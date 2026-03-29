@@ -41,25 +41,27 @@ data class CustomTypography(
     val small: TextStyle,
     val regular: TextStyle,
     val medium: TextStyle,
-    val large: TextStyle
+    val large: TextStyle,
 )
 
-val LocalCustomColors = staticCompositionLocalOf {
-    CustomTextColors(
-        lightText = Color.Unspecified,
-        darkText = Color.Unspecified,
-        primaryText = Color.Unspecified,
-        uploadText = Color.Unspecified
-    )
-}
-val LocalCustomTypography = staticCompositionLocalOf {
-    CustomTypography(
-        small = TextStyle.Default,
-        regular = TextStyle.Default,
-        medium = TextStyle.Default,
-        large = TextStyle.Default
-    )
-}
+val LocalCustomColors =
+    staticCompositionLocalOf {
+        CustomTextColors(
+            lightText = Color.Unspecified,
+            darkText = Color.Unspecified,
+            primaryText = Color.Unspecified,
+            uploadText = Color.Unspecified,
+        )
+    }
+val LocalCustomTypography =
+    staticCompositionLocalOf {
+        CustomTypography(
+            small = TextStyle.Default,
+            regular = TextStyle.Default,
+            medium = TextStyle.Default,
+            large = TextStyle.Default,
+        )
+    }
 
 object CustomTheme {
     val textColors: CustomTextColors
@@ -74,27 +76,30 @@ object CustomTheme {
 fun CustomTheme(
     textColors: CustomTextColors = CustomTheme.textColors,
     typography: CustomTypography = CustomTheme.typography,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-    val montserrat = FontFamily(
-        Font(R.font.montserrat),
-        Font(R.font.montserrat_bold, FontWeight.Bold)
-    )
-    val textColors = CustomTextColors(
-        lightText = Color(0xFFF0F0F0),
-        primaryText = AppColors.Green,
-        darkText = Color(0xFF191C1F),
-        uploadText = Color(0xFFF19400)
-    )
-    val customTypography = CustomTypography(
-        small = TextStyle(fontSize = 12.sp, fontFamily = montserrat),
-        regular = TextStyle(fontSize = 14.sp, fontFamily = montserrat),
-        medium = TextStyle(fontSize = 16.sp, fontFamily = montserrat),
-        large = TextStyle(fontSize = 24.sp, fontFamily = montserrat)
-    )
+    val montserrat =
+        FontFamily(
+            Font(R.font.montserrat),
+            Font(R.font.montserrat_bold, FontWeight.Bold),
+        )
+    val textColors =
+        CustomTextColors(
+            lightText = Color(0xFFF0F0F0),
+            primaryText = AppColors.Green,
+            darkText = Color(0xFF191C1F),
+            uploadText = Color(0xFFF19400),
+        )
+    val customTypography =
+        CustomTypography(
+            small = TextStyle(fontSize = 12.sp, fontFamily = montserrat),
+            regular = TextStyle(fontSize = 14.sp, fontFamily = montserrat),
+            medium = TextStyle(fontSize = 16.sp, fontFamily = montserrat),
+            large = TextStyle(fontSize = 24.sp, fontFamily = montserrat),
+        )
     CompositionLocalProvider(
         LocalCustomColors provides textColors,
         LocalCustomTypography provides customTypography,
-        content = content
+        content = content,
     )
 }

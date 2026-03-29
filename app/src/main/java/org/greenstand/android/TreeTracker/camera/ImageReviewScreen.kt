@@ -50,9 +50,10 @@ fun ImageReviewScreen(photoPath: String) {
             }
         },
         onApproveClicked = {
-            val data = Intent().apply {
-                putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, photoPath)
-            }
+            val data =
+                Intent().apply {
+                    putExtra(CaptureImageContract.TAKEN_IMAGE_PATH, photoPath)
+                }
             activity.setResult(AppCompatActivity.RESULT_OK, data)
             activity.finish()
         },
@@ -68,29 +69,30 @@ fun ImageReview(
     Scaffold(
         bottomBar = {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(bottom = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = onRejectClicked,
-                    approval = false
+                    approval = false,
                 )
                 ApprovalButton(
                     onClick = onApproveClicked,
-                    approval = true
+                    approval = true,
                 )
             }
-        }
+        },
     ) {
         LocalImage(
             modifier = Modifier.fillMaxSize(),
             imagePath = photoPath,
             contentDescription = null,
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Fit,
         )
     }
 }

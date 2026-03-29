@@ -35,14 +35,16 @@ data class AnnouncementState(
 
 sealed class AnnouncementAction : Action {
     object NavigateBack : AnnouncementAction()
-    data class OpenLink(val url: String) : AnnouncementAction()
+
+    data class OpenLink(
+        val url: String,
+    ) : AnnouncementAction()
 }
 
 class AnnouncementViewModel(
     private val messageId: String,
     private val messagesRepo: MessagesRepo,
 ) : BaseViewModel<AnnouncementState, AnnouncementAction>(AnnouncementState()) {
-
     private lateinit var announcement: AnnouncementMessage
 
     init {
@@ -53,7 +55,7 @@ class AnnouncementViewModel(
                     from = announcement.from,
                     currentTitle = announcement.subject,
                     currentBody = announcement.body,
-                    currentUrl = announcement.videoLink
+                    currentUrl = announcement.videoLink,
                 )
             }
             messagesRepo.markMessageAsRead(messageId)
@@ -67,10 +69,8 @@ class AnnouncementViewModel(
 
 class AnnouncementViewModelFactory(
     private val messageId: String,
-) :
-    ViewModelProvider.Factory, KoinComponent {
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AnnouncementViewModel(messageId, get()) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = AnnouncementViewModel(messageId, get()) as T
 }

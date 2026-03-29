@@ -22,7 +22,6 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface MessagesApiService {
-
     @GET("messaging/message")
     suspend fun getMessages(
         @Header("apiKey") apiKey: String = BuildConfig.TREETRACKER_CLIENT_SECRET,

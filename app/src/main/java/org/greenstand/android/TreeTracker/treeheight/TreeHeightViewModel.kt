@@ -23,24 +23,26 @@ import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class TreeHeightSelectionState(
-    val colors: List<ButtonColors> = listOf(
-        AppButtonColors.ProgressGreen,
-        AppButtonColors.MessagePurple,
-        AppButtonColors.Yellow,
-        AppButtonColors.SkyBlue,
-        AppButtonColors.UploadOrange
-    ),
+    val colors: List<ButtonColors> =
+        listOf(
+            AppButtonColors.ProgressGreen,
+            AppButtonColors.MessagePurple,
+            AppButtonColors.Yellow,
+            AppButtonColors.SkyBlue,
+            AppButtonColors.UploadOrange,
+        ),
     val selectedColor: ButtonColors? = null,
 )
 
 sealed class TreeHeightAction : Action {
-    data class SelectColor(val color: ButtonColors) : TreeHeightAction()
+    data class SelectColor(
+        val color: ButtonColors,
+    ) : TreeHeightAction()
 }
 
 class TreeHeightSelectionViewModel(
     private val treeCapturer: TreeCapturer,
 ) : BaseViewModel<TreeHeightSelectionState, TreeHeightAction>(TreeHeightSelectionState()) {
-
     override fun handleAction(action: TreeHeightAction) {
         when (action) {
             is TreeHeightAction.SelectColor -> {

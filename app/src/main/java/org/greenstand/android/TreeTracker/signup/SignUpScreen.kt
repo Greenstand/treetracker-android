@@ -35,21 +35,22 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
-    val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { photoPath ->
-        scope.launch {
-            viewModel.createUser(photoPath)?.let { user ->
-                if (user.isPowerUser) {
-                    navController.navigate(DashboardRoute) {
-                        popUpTo<LanguageRoute> { inclusive = true }
-                        launchSingleTop = true
+    val cameraLauncher =
+        rememberLauncherForActivityResult(contract = CaptureImageContract()) { photoPath ->
+            scope.launch {
+                viewModel.createUser(photoPath)?.let { user ->
+                    if (user.isPowerUser) {
+                        navController.navigate(DashboardRoute) {
+                            popUpTo<LanguageRoute> { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    } else {
+                        CaptureSetupScopeManager.getData().user = user
+                        scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navController) }
                     }
-                } else {
-                    CaptureSetupScopeManager.getData().user = user
-                    scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navController) }
                 }
             }
         }
-    }
 
     SignUp(
         state = state,

@@ -62,10 +62,11 @@ fun TreeHeightScreen() {
         modifier = Modifier,
         topBar = {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding(),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding(),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = stringResource(R.string.select_tree_height_colour).uppercase(),
@@ -73,9 +74,10 @@ fun TreeHeightScreen() {
                     style = CustomTheme.typography.medium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.Center),
+                    modifier =
+                        Modifier
+                            .padding(8.dp)
+                            .align(Alignment.Center),
                 )
             }
         },
@@ -93,17 +95,17 @@ fun TreeHeightScreen() {
                                     CaptureFlowScopeManager.nav.navForward(navController)
                                 }
                             }
-                        }
+                        },
                     )
                 },
             )
-        }
+        },
     ) { padding ->
         LazyColumn(
             modifier = Modifier.padding(padding).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp, bottom = padding.calculateBottomPadding())
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp, bottom = padding.calculateBottomPadding()),
         ) {
             items(state.colors) { color ->
                 val isSelected = color == state.selectedColor
@@ -120,10 +122,11 @@ fun TreeHeightScreen() {
                     colors = color,
                     isSelected = isSelected,
                     onClick = { viewModel.handleAction(TreeHeightAction.SelectColor(color)) },
-                    modifier = Modifier.size(
-                        width = animatedWidth,
-                        height = animatedHeight
-                    )
+                    modifier =
+                        Modifier.size(
+                            width = animatedWidth,
+                            height = animatedHeight,
+                        ),
                 ) {}
             }
         }

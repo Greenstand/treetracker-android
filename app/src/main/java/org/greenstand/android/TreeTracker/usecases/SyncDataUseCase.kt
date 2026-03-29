@@ -39,17 +39,17 @@ class SyncDataUseCase(
     private val deviceConfigUploader: DeviceConfigUploader,
     private val messagesRepo: MessagesRepo,
 ) : UseCase<Unit, Boolean>() {
-
     private val TAG = "SyncDataUseCase"
 
     override suspend fun execute(params: Unit): Boolean {
         try {
             withContext(Dispatchers.IO) {
-                val instanceId = try {
-                    FirebaseInstallations.getInstance().id.await()
-                } catch (e: Exception) {
-                    ""
-                }
+                val instanceId =
+                    try {
+                        FirebaseInstallations.getInstance().id.await()
+                    } catch (e: Exception) {
+                        ""
+                    }
 
                 executeIfContextActive("Message Sync") {
                     messagesRepo.syncMessages()
@@ -69,12 +69,12 @@ class SyncDataUseCase(
 
                 treeUpload(
                     onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
-                    onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) }
+                    onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
                 )
 
                 treeUpload(
                     onGetTreeIds = { dao.getAllTreeIdsToUpload() },
-                    onUpload = { treeUploader.uploadTrees(it) }
+                    onUpload = { treeUploader.uploadTrees(it) },
                 )
 
                 executeIfContextActive("Location Upload") {
@@ -90,7 +90,7 @@ class SyncDataUseCase(
 
     private suspend fun treeUpload(
         onGetTreeIds: suspend () -> List<Long>,
-        onUpload: suspend (List<Long>) -> Unit
+        onUpload: suspend (List<Long>) -> Unit,
     ) {
         var treeIds = onGetTreeIds()
         while (treeIds.isNotEmpty() && coroutineContext.isActive) {
@@ -102,7 +102,8 @@ class SyncDataUseCase(
                 treeIds = remainingIds
             } else {
                 if (remainingIds.isNotEmpty()) {
-                    Timber.tag(TAG)
+                    Timber
+                        .tag(TAG)
                         .e("Remaining trees failed to upload, ending tree sync...")
                 }
                 break
@@ -110,7 +111,10 @@ class SyncDataUseCase(
         }
     }
 
-    private suspend fun executeIfContextActive(tag: String, action: suspend () -> Unit) {
+    private suspend fun executeIfContextActive(
+        tag: String,
+        action: suspend () -> Unit,
+    ) {
         try {
             if (coroutineContext.isActive) {
                 action()

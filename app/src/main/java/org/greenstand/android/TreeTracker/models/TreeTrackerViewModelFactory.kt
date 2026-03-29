@@ -38,10 +38,11 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 @Suppress("UNCHECKED_CAST")
-class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), KoinComponent {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return when {
+class TreeTrackerViewModelFactory :
+    ViewModelProvider.NewInstanceFactory(),
+    KoinComponent {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        when {
             modelClass.isAssignableFrom(UserSelectViewModel::class.java) -> get<UserSelectViewModel>() as T
             modelClass.isAssignableFrom(DashboardViewModel::class.java) -> get<DashboardViewModel>() as T
             modelClass.isAssignableFrom(SignupViewModel::class.java) -> get<SignupViewModel>() as T
@@ -61,5 +62,4 @@ class TreeTrackerViewModelFactory : ViewModelProvider.NewInstanceFactory(), Koin
             modelClass.isAssignableFrom(MapViewModel::class.java) -> get<MapViewModel>() as T
             else -> throw RuntimeException("Unable to create instance of ${modelClass.simpleName}. Did you forget to update the TreeTrackerViewModelFactory?")
         }
-    }
 }

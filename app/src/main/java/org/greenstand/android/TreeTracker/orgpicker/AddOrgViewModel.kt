@@ -31,23 +31,28 @@ data class AddOrgState(
 )
 
 sealed class AddOrgAction : Action {
-    data class UpdateOrgName(val orgName: String) : AddOrgAction()
+    data class UpdateOrgName(
+        val orgName: String,
+    ) : AddOrgAction()
+
     object ApplyOrgAutofill : AddOrgAction()
+
     object SetDefaultOrg : AddOrgAction()
+
     object NavigateBack : AddOrgAction()
+
     object NavigateNext : AddOrgAction()
 }
 
 class AddOrgViewModel(
     private val preferences: Preferences,
 ) : BaseViewModel<AddOrgState, AddOrgAction>(AddOrgState()) {
-
     init {
         viewModelScope.launch {
             updateState {
                 copy(
                     userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath,
-                    previousOrgName = preferences.getString(PREV_ORG_KEY)
+                    previousOrgName = preferences.getString(PREV_ORG_KEY),
                 )
             }
         }

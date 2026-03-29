@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.models.organization
 
 object OrgJsonKeys {
-
     object V1 {
         const val ID = "id"
         const val VERSION = "version"

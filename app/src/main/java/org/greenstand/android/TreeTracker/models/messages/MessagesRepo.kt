@@ -46,7 +46,6 @@ class MessagesRepo(
     private val messagesDao: MessagesDAO,
     private val messageUploader: MessageUploader,
 ) {
-
     suspend fun markMessageAsRead(messageId: String) {
         messagesDao.markMessageAsRead(listOf(messageId))
     }
@@ -55,7 +54,11 @@ class MessagesRepo(
         messagesDao.markMessageAsRead(messageIds)
     }
 
-    suspend fun saveMessage(wallet: String, to: String, body: String) {
+    suspend fun saveMessage(
+        wallet: String,
+        to: String,
+        body: String,
+    ) {
         messagesDao.insertMessage(
             MessageEntity(
                 id = UUID.randomUUID().toString(),
@@ -74,11 +77,14 @@ class MessagesRepo(
                 isRead = true,
                 surveyId = null,
                 isSurveyComplete = null,
-            )
+            ),
         )
     }
 
-    suspend fun saveSurveyAnswers(messageId: String, surveyResponse: List<String>) {
+    suspend fun saveSurveyAnswers(
+        messageId: String,
+        surveyResponse: List<String>,
+    ) {
         val surveyMessage = messagesDao.getMessage(messageId)!!
         // make messages point to surveys to have survey and response point to same survey
         messagesDao.insertMessage(
@@ -99,21 +105,22 @@ class MessagesRepo(
                 isRead = true,
                 surveyId = surveyMessage.surveyId,
                 isSurveyComplete = true,
-            )
+            ),
         )
         messagesDao.markSurveyMessageComplete(surveyMessage.id)
     }
 
-    fun getMessageFlow(wallet: String): Flow<List<Message>> {
-        return messagesDao.getMessagesForWalletFlow(wallet)
+    fun getMessageFlow(wallet: String): Flow<List<Message>> =
+        messagesDao
+            .getMessagesForWalletFlow(wallet)
             .map { messages -> messages.map { convertMessageEntityToMessage(it) } }
-    }
 
     fun getDirectMessages(
         wallet: String,
-        otherChatIdentifier: String
-    ): Flow<List<DirectMessage>> {
-        return messagesDao.getDirectMessagesForWallet(wallet)
+        otherChatIdentifier: String,
+    ): Flow<List<DirectMessage>> =
+        messagesDao
+            .getDirectMessagesForWallet(wallet)
             .map { messages ->
                 messages
                     .map { convertMessageEntityToMessage(it) }
@@ -121,159 +128,163 @@ class MessagesRepo(
                     .filter { (it.from == wallet || it.from == otherChatIdentifier) && (it.to == otherChatIdentifier || it.to == wallet) }
                     .sortedByDescending { it.composedAt }
             }
-    }
 
-    suspend fun getAnnouncementMessages(id: String): AnnouncementMessage {
-        return convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as AnnouncementMessage
-    }
+    suspend fun getAnnouncementMessages(id: String): AnnouncementMessage = convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as AnnouncementMessage
 
-    suspend fun getSurveyMessage(id: String): SurveyMessage {
-        return convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as SurveyMessage
-    }
+    suspend fun getSurveyMessage(id: String): SurveyMessage = convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as SurveyMessage
 
     /**
      * When uploading trees, messages will be synced locally by this method
      */
-    suspend fun syncMessages() = withContext(Dispatchers.IO) {
-        for (wallet in userRepo.getUserList().map { it.wallet }) {
-            try {
-                ensureActive()
-                fetchMessagesForWallet(wallet)
-            } catch (e: CancellationException) {
-                // rethrow cancellation exception
-                throw e
-            } catch (e: Exception) {
-                if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
-                    // 404 indicates the user has never had messages before
-                    continue
-                } else {
-                    Timber.e(e)
+    suspend fun syncMessages() =
+        withContext(Dispatchers.IO) {
+            for (wallet in userRepo.getUserList().map { it.wallet }) {
+                try {
+                    ensureActive()
+                    fetchMessagesForWallet(wallet)
+                } catch (e: CancellationException) {
+                    // rethrow cancellation exception
+                    throw e
+                } catch (e: Exception) {
+                    if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
+                        // 404 indicates the user has never had messages before
+                        continue
+                    } else {
+                        Timber.e(e)
+                    }
                 }
             }
+
+            messageUploader.uploadMessages()
         }
 
-        messageUploader.uploadMessages()
-    }
+    private suspend fun fetchMessagesForWallet(wallet: String) =
+        withContext(Dispatchers.IO) {
+            val lastSyncTime = getLastSyncTime(wallet)
+            val query =
+                QueryResponse(
+                    handle = wallet,
+                    limit = 100,
+                    offset = 0,
+                    total = -1,
+                )
 
-    private suspend fun fetchMessagesForWallet(wallet: String) = withContext(Dispatchers.IO) {
-        val lastSyncTime = getLastSyncTime(wallet)
-        val query = QueryResponse(
-            handle = wallet,
-            limit = 100,
-            offset = 0,
-            total = -1,
-        )
+            val result = fetchMessagesFromServerAndSaveInDb(query.offset, query.limit, wallet, lastSyncTime)
+            if (result.query.total == 0) return@withContext
 
-        val result = fetchMessagesFromServerAndSaveInDb(query.offset, query.limit, wallet, lastSyncTime)
-        if (result.query.total == 0) return@withContext
+            var offset = result.query.offset
+            val limit = result.query.limit
+            val total = result.query.total
 
-        var offset = result.query.offset
-        val limit = result.query.limit
-        val total = result.query.total
+            val asyncExecutions = mutableListOf<Deferred<Any>>()
 
-        val asyncExecutions = mutableListOf<Deferred<Any>>()
+            while (total >= limit + offset) {
+                ensureActive()
+                offset += limit
 
-        while (total >= limit + offset) {
-            ensureActive()
-            offset += limit
+                // store this offset value in-case it gets changed in the next iteration.
+                val _offset = offset
 
-            // store this offset value in-case it gets changed in the next iteration.
-            val _offset = offset
-
-            asyncExecutions += async {
-                fetchMessagesFromServerAndSaveInDb(_offset, limit, wallet, lastSyncTime) // pass _offset instead of offset.
+                asyncExecutions +=
+                    async {
+                        fetchMessagesFromServerAndSaveInDb(_offset, limit, wallet, lastSyncTime) // pass _offset instead of offset.
+                    }
             }
-        }
 
-        asyncExecutions.awaitAll()
-    }
+            asyncExecutions.awaitAll()
+        }
 
     private suspend fun fetchMessagesFromServerAndSaveInDb(
         offset: Int,
         limit: Int,
         wallet: String,
-        lastSyncTime: String
-    ): MessagesResponse = withContext(Dispatchers.IO) {
-        val result = apiService.getMessages(
-            wallet = wallet,
-            lastSyncTime = lastSyncTime,
-            offset = offset,
-            limit = limit,
-        )
+        lastSyncTime: String,
+    ): MessagesResponse =
+        withContext(Dispatchers.IO) {
+            val result =
+                apiService.getMessages(
+                    wallet = wallet,
+                    lastSyncTime = lastSyncTime,
+                    offset = offset,
+                    limit = limit,
+                )
 
-        if (result.query.total == 0) return@withContext result
+            if (result.query.total == 0) return@withContext result
 
-        result.messages.runInParallel {
-            saveMessageResponse(wallet, it.copy())
+            result.messages.runInParallel {
+                saveMessageResponse(wallet, it.copy())
+            }
+
+            return@withContext result
         }
 
-        return@withContext result
-    }
+    private suspend fun saveMessageResponse(
+        wallet: String,
+        message: MessageResponse,
+    ): Unit =
+        withContext(Dispatchers.IO) {
+            if (message.type == MessageType.SURVEY_RESPONSE) return@withContext
 
-    private suspend fun saveMessageResponse(wallet: String, message: MessageResponse): Unit = withContext(Dispatchers.IO) {
-        if (message.type == MessageType.SURVEY_RESPONSE) return@withContext
+            val messageEntity =
+                with(message) {
+                    MessageEntity(
+                        id = id,
+                        wallet = wallet,
+                        type = type,
+                        from = from,
+                        to = to,
+                        subject = subject,
+                        body = body,
+                        composedAt = composedAt,
+                        parentMessageId = parentMessageId,
+                        videoLink = videoLink,
+                        surveyResponse = null,
+                        shouldUpload = false,
+                        bundleId = null,
+                        isRead = false,
+                        surveyId = survey?.id,
+                        isSurveyComplete = survey?.let { false },
+                    )
+                }
+            messagesDao.insertMessage(messageEntity)
 
-        val messageEntity = with(message) {
-            MessageEntity(
-                id = id,
-                wallet = wallet,
-                type = type,
-                from = from,
-                to = to,
-                subject = subject,
-                body = body,
-                composedAt = composedAt,
-                parentMessageId = parentMessageId,
-                videoLink = videoLink,
-                surveyResponse = null,
-                shouldUpload = false,
-                bundleId = null,
-                isRead = false,
-                surveyId = survey?.id,
-                isSurveyComplete = survey?.let { false },
-            )
+            // If there is no survey, don't continue on
+            message.survey ?: return@withContext
+
+            // If survey exists, we'll reuse it
+            if (messagesDao.getSurvey(message.survey.id) != null) {
+                return@withContext
+            }
+
+            val surveyEntity =
+                with(message.survey) {
+                    SurveyEntity(
+                        id = id,
+                        title = title,
+                    )
+                }
+            messagesDao.insertSurvey(surveyEntity)
+
+            message.survey.questions.map { question ->
+                val questionEntity =
+                    QuestionEntity(
+                        surveyId = message.survey.id,
+                        prompt = question.prompt,
+                        choices = question.choices,
+                    )
+                messagesDao.insertQuestion(questionEntity)
+            }
         }
-        messagesDao.insertMessage(messageEntity)
 
-        // If there is no survey, don't continue on
-        message.survey ?: return@withContext
-
-        // If survey exists, we'll reuse it
-        if (messagesDao.getSurvey(message.survey.id) != null) {
-            return@withContext
-        }
-
-        val surveyEntity = with(message.survey) {
-            SurveyEntity(
-                id = id,
-                title = title,
-            )
-        }
-        messagesDao.insertSurvey(surveyEntity)
-
-        message.survey.questions.map { question ->
-            val questionEntity = QuestionEntity(
-                surveyId = message.survey.id,
-                prompt = question.prompt,
-                choices = question.choices,
-            )
-            messagesDao.insertQuestion(questionEntity)
-        }
-    }
-
-    private suspend fun convertMessageEntityToMessage(messageEntity: MessageEntity): Message {
-        return messagesDao.getSurvey(messageEntity.surveyId)?.let { surveyEntity ->
+    private suspend fun convertMessageEntityToMessage(messageEntity: MessageEntity): Message =
+        messagesDao.getSurvey(messageEntity.surveyId)?.let { surveyEntity ->
             val questionEntities = messagesDao.getQuestionsForSurvey(surveyEntity.id)
             DatabaseConverters.createMessageFromEntities(messageEntity, surveyEntity, questionEntities)
         } ?: DatabaseConverters.createMessageFromEntities(messageEntity, null, null)
-    }
 
-    private suspend fun getLastSyncTime(wallet: String): String {
-        return messagesDao.getLatestSyncTimeForWallet(wallet)
+    private suspend fun getLastSyncTime(wallet: String): String =
+        messagesDao.getLatestSyncTimeForWallet(wallet)
             ?: Instant.fromEpochMilliseconds(0).toString()
-    }
 
-    suspend fun checkForUnreadMessages(): Boolean {
-        return messagesDao.getUnreadMessagesCount() >= 1
-    }
+    suspend fun checkForUnreadMessages(): Boolean = messagesDao.getUnreadMessagesCount() >= 1
 }

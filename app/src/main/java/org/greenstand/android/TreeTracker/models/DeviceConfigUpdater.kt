@@ -26,7 +26,6 @@ class DeviceConfigUpdater(
     private val dao: TreeTrackerDAO,
     private val timeProvider: TimeProvider,
 ) {
-
     suspend fun saveLatestConfig() {
         val config = dao.getLatestDeviceConfig() ?: saveNewDeviceConfig()
         if (config.appVersion != BuildConfig.VERSION_NAME ||
@@ -39,14 +38,15 @@ class DeviceConfigUpdater(
     }
 
     private suspend fun saveNewDeviceConfig(): DeviceConfigEntity {
-        val deviceConfigEntity = DeviceConfigEntity(
-            uuid = UUID.randomUUID().toString(),
-            appVersion = BuildConfig.VERSION_NAME,
-            appBuild = BuildConfig.VERSION_CODE,
-            osVersion = Build.VERSION.RELEASE,
-            sdkVersion = Build.VERSION.SDK_INT,
-            loggedAt = timeProvider.currentTime(),
-        )
+        val deviceConfigEntity =
+            DeviceConfigEntity(
+                uuid = UUID.randomUUID().toString(),
+                appVersion = BuildConfig.VERSION_NAME,
+                appBuild = BuildConfig.VERSION_CODE,
+                osVersion = Build.VERSION.RELEASE,
+                sdkVersion = Build.VERSION.SDK_INT,
+                loggedAt = timeProvider.currentTime(),
+            )
 
         dao.insertDeviceConfig(deviceConfigEntity)
 

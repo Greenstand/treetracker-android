@@ -98,9 +98,10 @@ fun TreeCaptureScreen(
         backgroundColor = AppColors.Gray,
         bottomBar = {
             ActionBar(
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .background(color = AppColors.Gray),
+                modifier =
+                    Modifier
+                        .navigationBarsPadding()
+                        .background(color = AppColors.Gray),
                 leftAction = {
                     ArrowButton(
                         isLeft = true,
@@ -113,8 +114,9 @@ fun TreeCaptureScreen(
                 },
                 centerAction = {
                     CaptureButton(
-                        modifier = Modifier
-                            .align(Alignment.Center),
+                        modifier =
+                            Modifier
+                                .align(Alignment.Center),
                         onClick = {
                             viewModel.handleAction(TreeCaptureAction.CaptureLocation)
                             scope.launch { cameraControl.captureImage() }
@@ -127,11 +129,11 @@ fun TreeCaptureScreen(
                         modifier = Modifier.align(Alignment.Center),
                         onClick = {
                             viewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(true))
-                        }
+                        },
                     )
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         if (state.isLocationAvailable == false) {
             CustomDialog(
@@ -143,23 +145,24 @@ fun TreeCaptureScreen(
                 },
                 onNegativeClick = {
                     CaptureFlowScopeManager.nav.goToDashboard(navController)
-                }
+                },
             )
         }
         if (state.showCaptureTutorial == true) {
             TreeCaptureTutorial(
                 onCompleteClick = {
                     viewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(false))
-                }
+                },
             )
         }
 
         Camera(
             isSelfieMode = false,
             cameraControl = cameraControl,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
             onImageCaptured = {
                 viewModel.handleAction(TreeCaptureAction.OnImageCaptured(it))
                 if (state.isLocationAvailable == true) {
@@ -167,7 +170,7 @@ fun TreeCaptureScreen(
                         CaptureFlowScopeManager.nav.navForward(navController)
                     }
                 }
-            }
+            },
         )
         ActionBar(
             modifier = Modifier.background(Color.Black).statusBarsPadding(),
@@ -178,33 +181,35 @@ fun TreeCaptureScreen(
                             CaptureFlowScopeManager.nav.goToUserSelect(navController)
                         }
                     },
-                    imagePath = state.profilePicUrl
+                    imagePath = state.profilePicUrl,
                 )
             },
             rightAction = {
                 if (FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
                     TreeTrackerButton(
-                        modifier = Modifier
-                            .size(height = 70.dp, width = 70.dp)
-                            .align(Alignment.Center),
+                        modifier =
+                            Modifier
+                                .size(height = 70.dp, width = 70.dp)
+                                .align(Alignment.Center),
                         isEnabled = !state.isCreatingFakeTrees,
                         onClick = {
                             viewModel.handleAction(TreeCaptureAction.CreateFakeTrees)
                         },
                         colors = AppButtonColors.ProgressGreen,
-                        shape = TreeTrackerButtonShape.Circle
+                        shape = TreeTrackerButtonShape.Circle,
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
                             contentDescription = null,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(30.dp, 30.dp),
-                            colorFilter = ColorFilter.tint(Color.Black)
+                            modifier =
+                                Modifier
+                                    .align(Alignment.Center)
+                                    .size(30.dp, 30.dp),
+                            colorFilter = ColorFilter.tint(Color.Black),
                         )
                     }
                 }
-            }
+            },
         )
         CaptureCustomLoading(isLoading = state.isGettingLocation || state.isCreatingFakeTrees, progress = state.convergencePercentage)
     }
@@ -214,27 +219,29 @@ fun TreeCaptureScreen(
 fun CaptureCustomLoading(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
-    progress: Float
+    progress: Float,
 ) {
     if (isLoading) {
         Box(
-            modifier = modifier
-                .padding(bottom = 90.dp)
-                .fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
+            modifier =
+                modifier
+                    .padding(bottom = 90.dp)
+                    .fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter,
         ) {
             Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(20.dp)
-                    .background(color = AppColors.Gray, shape = RoundedCornerShape(percent = 10))
-                    .alpha(0.7f)
-                    .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
-                    .padding(10.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(20.dp)
+                        .background(color = AppColors.Gray, shape = RoundedCornerShape(percent = 10))
+                        .alpha(0.7f)
+                        .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
+                        .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
+                verticalArrangement = Arrangement.Bottom,
             ) {
                 Text(
                     text = stringResource(R.string.tracking_progress_header),
@@ -251,9 +258,10 @@ fun CaptureCustomLoading(
                 )
                 Spacer(modifier = Modifier.height(15.dp))
                 CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(height = 80.dp, width = 80.dp)
-                        .padding(top = 10.dp),
+                    modifier =
+                        Modifier
+                            .size(height = 80.dp, width = 80.dp)
+                            .padding(top = 10.dp),
                     color = AppColors.Green,
                 )
                 Spacer(modifier = Modifier.height(15.dp))
