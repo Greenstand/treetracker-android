@@ -173,11 +173,15 @@ android {
     }
 }
 
-// Screenshot tests only run via Roborazzi Gradle tasks (recordRoborazziDebug,
-// verifyRoborazziDebug, etc.). Exclude them from regular `./gradlew test` runs.
+// Screenshot tests and regular unit tests are isolated from each other:
+// - `./gradlew test` runs only regular unit tests (excludes screenshot/)
+// - `./gradlew verifyRoborazziDebug` runs only screenshot tests (includes screenshot/ only)
+// This prevents Koin DI conflicts between the two test suites.
 def isRoborazziRun = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
 tasks.withType(Test).configureEach {
-    if (!isRoborazziRun) {
+    if (isRoborazziRun) {
+        include '**/screenshot/**'
+    } else {
         exclude '**/screenshot/**'
     }
 }
