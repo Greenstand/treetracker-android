@@ -166,9 +166,12 @@ android {
     }
     namespace 'org.greenstand.android.TreeTracker'
 
+    // includeAndroidResources is only needed for screenshot tests (Compose theme loads
+    // fonts from R.font.*). Enabling it globally causes Robolectric to fully initialize
+    // TreeTrackerApplication, which starts Koin and breaks existing unit tests.
     testOptions {
         unitTests {
-            includeAndroidResources = true
+            includeAndroidResources = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
         }
     }
 }

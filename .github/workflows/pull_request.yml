@@ -60,14 +60,12 @@ jobs:
           s3_test_identity_pool_id=dummy-pool-id-test" > treetracker.keys.properties
       - name: Verify screenshots unchanged
         run: bash ./gradlew verifyRoborazziDebug --stacktrace
-      - name: Upload screenshot diffs
-        if: failure()
+      - name: Upload screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshot-diffs
-          path: |
-            app/build/outputs/roborazzi/*_compare.*
-            app/build/outputs/roborazzi/*_actual.*
+          name: screenshots
+          path: app/build/outputs/roborazzi/
           retention-days: 14
       - name: Upload build reports
         if: failure()
