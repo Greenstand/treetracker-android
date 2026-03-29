@@ -20,7 +20,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
@@ -47,21 +47,23 @@ class LanguagePickerViewModelTest {
     }
 
     @Test
-    fun `Current language returns current language from the language switcher`() = runBlocking {
+    fun `Current language returns current language from the language switcher`() = runTest {
         val result = testSubject.state.value.currentLanguage
         assertEquals(result, Language.ENGLISH)
     }
 
     @Test
-    fun `Verify set language calls the set language from the Language Switcher `() = runBlocking {
-        val language = Language.ENGLISH
+    fun `Verify set language updates state without applying`() = runTest {
+        val language = Language.SWAHILI
         testSubject.handleAction(LanguagePickerAction.SetLanguage(language))
-        coVerify { languageSwitcher.setLanguage(language) }
+        assertEquals(Language.SWAHILI, testSubject.state.value.currentLanguage)
+        coVerify(exactly = 0) { languageSwitcher.setLanguage(any()) }
     }
 
     @Test
-    fun `Verify refresh app language calls apply current language from language switcher`() = runBlocking {
-        testSubject.handleAction(LanguagePickerAction.RefreshAppLanguage)
-        coVerify { languageSwitcher.applyCurrentLanguage() }
+    fun `Verify confirm language calls set language from language switcher`() = runTest {
+        testSubject.handleAction(LanguagePickerAction.SetLanguage(Language.SWAHILI))
+        testSubject.handleAction(LanguagePickerAction.ConfirmLanguage)
+        coVerify { languageSwitcher.setLanguage(Language.SWAHILI) }
     }
 }

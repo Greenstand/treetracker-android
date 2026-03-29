@@ -20,7 +20,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -45,7 +45,7 @@ class PermissionViewModelTest {
     }
 
     @Test
-    fun `verify isLocationEnabled sets the correct value in the permission Items state`() = runBlocking {
+    fun `verify isLocationEnabled sets the correct value in the permission Items state`() = runTest {
         val provider = LocationManager.GPS_PROVIDER
         coEvery { locationManager.isProviderEnabled(provider) } returns true
         testSubject.handleAction(PermissionAction.CheckLocationEnabled)

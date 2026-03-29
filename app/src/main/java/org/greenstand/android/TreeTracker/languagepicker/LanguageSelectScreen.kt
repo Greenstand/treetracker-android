@@ -57,12 +57,12 @@ fun LanguageSelectScreen(
         onHandleAction = { action ->
             when (action) {
                 is LanguagePickerAction.NavigateNext -> {
+                    viewModel.handleAction(LanguagePickerAction.ConfirmLanguage)
                     if (isFromTopBar) {
                         navController.popBackStack()
                     } else {
                         navController.navigate(SignupFlowRoute)
                     }
-                    viewModel.handleAction(LanguagePickerAction.RefreshAppLanguage)
                 }
                 else -> viewModel.handleAction(action)
             }

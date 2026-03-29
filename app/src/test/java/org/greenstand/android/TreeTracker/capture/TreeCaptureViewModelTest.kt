@@ -21,7 +21,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.devoptions.Configurator
 import org.greenstand.android.TreeTracker.models.SessionTracker
@@ -88,7 +88,7 @@ class TreeCaptureViewModelTest {
     }
 
     @Test
-    fun `WHEN numberOfTrees greater than 0 THEN showCaptureTutorial is false`() = runBlocking {
+    fun `WHEN numberOfTrees greater than 0 THEN showCaptureTutorial is false`() = runTest {
         coEvery { userRepo.getPowerUser() } returns User(
             id = 5,
             wallet = "",
@@ -105,7 +105,7 @@ class TreeCaptureViewModelTest {
     }
 
     @Test
-    fun `WHEN numberOfTrees less than 1 THEN showCaptureTutorial is true`() = runBlocking {
+    fun `WHEN numberOfTrees less than 1 THEN showCaptureTutorial is true`() = runTest {
         coEvery { userRepo.getPowerUser() } returns User(
             id = 5,
             wallet = "",
@@ -123,7 +123,7 @@ class TreeCaptureViewModelTest {
 
     @Test
     fun `WHEN location coordinate is available THEN isLocationAvailable state true AND isGettingLocation state always false `() =
-        runBlocking {
+        runTest {
             coEvery { treeCapturer.pinLocation() } returns true
 
             treeCaptureViewModel = createViewModel()
@@ -136,21 +136,21 @@ class TreeCaptureViewModelTest {
         }
 
     @Test
-    fun `WHEN updateBadGpsDialogState true THEN isLocationAvailable state true`() = runBlocking {
+    fun `WHEN updateBadGpsDialogState true THEN isLocationAvailable state true`() = runTest {
         treeCaptureViewModel = createViewModel()
         treeCaptureViewModel.handleAction(TreeCaptureAction.UpdateBadGpsDialogState(true))
         assertTrue(treeCaptureViewModel.state.value.isLocationAvailable ?: false)
     }
 
     @Test
-    fun `WHEN updateCaptureTutorialDialog true THEN showCaptureTutorial state true`() = runBlocking {
+    fun `WHEN updateCaptureTutorialDialog true THEN showCaptureTutorial state true`() = runTest {
         treeCaptureViewModel = createViewModel()
         treeCaptureViewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(true))
         assertTrue(treeCaptureViewModel.state.value.showCaptureTutorial ?: false)
     }
 
     @Test
-    fun `WHEN create fake trees THEN createFakeTreesUseCase is called 1 time AND isCreatingFakeTrees state always false`() = runBlocking {
+    fun `WHEN create fake trees THEN createFakeTreesUseCase is called 1 time AND isCreatingFakeTrees state always false`() = runTest {
         treeCaptureViewModel = createViewModel()
         treeCaptureViewModel.handleAction(TreeCaptureAction.CreateFakeTrees)
 

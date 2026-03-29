@@ -21,7 +21,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.messages.ChatAction
 import org.greenstand.android.TreeTracker.messages.ChatViewModel
@@ -56,7 +56,7 @@ class ChatViewModelTest {
         testSubject = ChatViewModel(userId, otherChatIdentifier, userRepo, messagesRepo)
     }
     @Test
-    fun `WHEN draft text is empty,returns empty string, THEN when draft text updates, returns correct data`() = runBlocking {
+    fun `WHEN draft text is empty,returns empty string, THEN when draft text updates, returns correct data`() = runTest {
         assertEquals(testSubject.state.value.draftText, "")
         testSubject.handleAction(ChatAction.UpdateDraftText("random"))
         val result = testSubject.state.value.draftText
@@ -64,13 +64,13 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `Verify message repo saves message`() = runBlocking {
+    fun `Verify message repo saves message`() = runTest {
         testSubject.handleAction(ChatAction.UpdateDraftText("Draft"))
         testSubject.handleAction(ChatAction.SendMessage)
         coVerify { messagesRepo.saveMessage("some random text", "Mary", "Draft") }
     }
     @Test
-    fun `WHEN current user sends message THEN message is sent AND draft message is cleared`() = runBlocking {
+    fun `WHEN current user sends message THEN message is sent AND draft message is cleared`() = runTest {
         testSubject.handleAction(ChatAction.UpdateDraftText("Hello, World"))
         testSubject.handleAction(ChatAction.SendMessage)
         val result = testSubject.state.value.draftText
@@ -78,22 +78,22 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `Check chat author, Assert True if its First Message by Author`() = runBlocking {
+    fun `Check chat author, Assert True if its First Message by Author`() = runTest {
         assertTrue(testSubject.checkChatAuthor(0, true))
     }
     @Test
-    fun `Check chat author, Assert False if its not First Message by Author`() = runBlocking {
+    fun `Check chat author, Assert False if its not First Message by Author`() = runTest {
         assertFalse(testSubject.checkChatAuthor(1, true))
     }
 
     @Test
-    fun `Check Is Other User, Assert True for messages from other user`() = runBlocking {
+    fun `Check Is Other User, Assert True for messages from other user`() = runTest {
         val result = testSubject.checkIsOtherUser(2)
         assertTrue(result)
     }
 
     @Test
-    fun `Check Is Other User, Assert False for messages from current user`() = runBlocking {
+    fun `Check Is Other User, Assert False for messages from current user`() = runTest {
         val result = testSubject.checkIsOtherUser(1)
         assertFalse(result)
     }

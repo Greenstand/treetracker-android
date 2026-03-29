@@ -20,7 +20,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
@@ -55,64 +54,64 @@ class SignupViewModelTest {
     }
     // First Name
     @Test
-    fun `update first name, returns valid first name`() = runBlocking {
+    fun `update first name, returns valid first name`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateFirstName("Caleb"))
         assertEquals(signupViewModel.state.value.firstName, FakeFileGenerator.fakeUsers.first().firstName)
     }
     @Test
-    fun `Blank first name, returns Empty input `() = runBlocking {
+    fun `Blank first name, returns Empty input `() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateFirstName(""))
         assertEquals(signupViewModel.state.value.firstName, FakeFileGenerator.emptyUser.firstName)
     }
     // Last Name
     @Test
-    fun `update last name, returns valid last name`() = runBlocking {
+    fun `update last name, returns valid last name`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateLastName("Kaleb"))
         assertEquals(signupViewModel.state.value.lastName, FakeFileGenerator.fakeUsers.first().lastName)
     }
     @Test
-    fun `Blank last name, returns Empty input `() = runBlocking {
+    fun `Blank last name, returns Empty input `() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateLastName(""))
         assertEquals(signupViewModel.state.value.lastName, FakeFileGenerator.emptyUser.lastName)
     }
     // Email
     @Test
-    fun `update email contains valid credentials, returns success`() = runBlocking {
+    fun `update email contains valid credentials, returns success`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateEmail("somerandom@gmsail.com"))
         assertNull(signupViewModel.state.value.phone)
         assertEquals(signupViewModel.state.value.email, "somerandom@gmsail.com")
     }
     @Test
-    fun `update email contains invalid credentials, returns Error`() = runBlocking {
+    fun `update email contains invalid credentials, returns Error`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateEmail("somerandom!!gmsail.com"))
         assertNotEquals(signupViewModel.state.value.email, "somerandom@gmsail.com")
     }
     // Phone
     @Test
-    fun `update phone contains valid credentials, returns success`() = runBlocking {
+    fun `update phone contains valid credentials, returns success`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdatePhone("071321998893"))
         assertTrue(signupViewModel.state.value.isCredentialValid)
         assertNull(signupViewModel.state.value.email)
     }
     @Test
-    fun `update phone contains invalid credentials, returns Error`() = runBlocking {
+    fun `update phone contains invalid credentials, returns Error`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdatePhone("random1919"))
         assertFalse(signupViewModel.state.value.isCredentialValid)
     }
     // Selfie Tutorial Dialogs
     @Test
-    fun `update selfie tutorial dialog state = false, returns false`() = runBlocking {
+    fun `update selfie tutorial dialog state = false, returns false`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(false))
         assertFalse(signupViewModel.state.value.showSelfieTutorial!!)
     }
     @Test
-    fun `update selfie tutorial dialog state = true, returns true`() = runBlocking {
+    fun `update selfie tutorial dialog state = true, returns true`() = runTest {
         signupViewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(true))
         assertTrue(signupViewModel.state.value.showSelfieTutorial!!)
     }
     // Go to Credentials Entry
     @Test
-    fun `Go to credentials Entry, returns true`() = runBlocking {
+    fun `Go to credentials Entry, returns true`() = runTest {
         signupViewModel.handleAction(SignupAction.GoToCredentialEntry)
         assertTrue(signupViewModel.state.value.isCredentialView)
         assertTrue(signupViewModel.state.value.canGoToNextScreen)
@@ -121,19 +120,19 @@ class SignupViewModelTest {
     }
     // Enables Autofocus
     @Test
-    fun `enable autofocus, returns true`() = runBlocking {
+    fun `enable autofocus, returns true`() = runTest {
         signupViewModel.handleAction(SignupAction.EnableAutofocus)
         assertTrue(signupViewModel.state.value.autofocusTextEnabled)
     }
     // Close privacy policy dialog
     @Test
-    fun `close privacy policy dialog, returns false`() = runBlocking {
+    fun `close privacy policy dialog, returns false`() = runTest {
         signupViewModel.handleAction(SignupAction.ClosePrivacyPolicyDialog)
         assertFalse(signupViewModel.state.value.showPrivacyDialog!!)
     }
     // Close Existing User Dialog
     @Test
-    fun `close existing user dialog, returns true`() = runBlocking {
+    fun `close existing user dialog, returns true`() = runTest {
         signupViewModel.handleAction(SignupAction.CloseExistingUserDialog)
         assertNull(signupViewModel.state.value.existingUser)
     }

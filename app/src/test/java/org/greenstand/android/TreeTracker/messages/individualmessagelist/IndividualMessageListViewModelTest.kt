@@ -21,7 +21,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListAction
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
@@ -54,26 +54,26 @@ class IndividualMessageListViewModelTest {
     }
 
     @Test
-    fun `verify user repo gets the correct user`() = runBlocking {
+    fun `verify user repo gets the correct user`() = runTest {
         coVerify { userRepo.getUser(userId) }
     }
 
     @Test
-    fun `WHEN message flow is triggered THEN state updates with correct message and user`() = runBlocking {
+    fun `WHEN message flow is triggered THEN state updates with correct message and user`() = runTest {
         val message = testSubject.state.value.messages.first()
         val currentUser = testSubject.state.value.currentUser
         assertEquals(message, FakeFileGenerator.messages.first())
         assertEquals(currentUser, FakeFileGenerator.fakeUsers.first())
     }
     @Test
-    fun `WHEN selected message is triggered THEN state updates with correct message`() = runBlocking {
+    fun `WHEN selected message is triggered THEN state updates with correct message`() = runTest {
         testSubject.handleAction(IndividualMessageListAction.SelectMessage(FakeFileGenerator.fakeSurveyMessage))
         val result = testSubject.state.value.selectedMessage
         assertEquals(result, FakeFileGenerator.messages[2])
     }
 
     @Test
-    fun `WHEN selected message is null, Assert Null, THEN when we select message, returns correct data`() = runBlocking {
+    fun `WHEN selected message is null, Assert Null, THEN when we select message, returns correct data`() = runTest {
         val message = FakeFileGenerator.fakeDirectMessage
         assertNull(testSubject.state.value.selectedMessage)
         testSubject.handleAction(IndividualMessageListAction.SelectMessage(message))
