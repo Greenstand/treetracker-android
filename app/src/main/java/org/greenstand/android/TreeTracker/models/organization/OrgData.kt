@@ -15,6 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.models.organization
 
+import kotlinx.serialization.Serializable
+
 data class Org(
     val id: String,
     val name: String,
@@ -24,6 +26,7 @@ data class Org(
     val captureFlow: List<Destination>,
 )
 
+@Serializable
 data class Destination(
     val route: String,
     val features: List<String>? = null,

@@ -15,7 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.DeviceConfigRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
@@ -25,7 +26,7 @@ import org.greenstand.android.TreeTracker.utilities.md5
 class DeviceConfigUploader(
     private val dao: TreeTrackerDAO,
     private val objectStorageClient: ObjectStorageClient,
-    private val gson: Gson,
+    private val json: Json,
 ) {
 
     suspend fun upload(instanceId: String) {
@@ -47,7 +48,7 @@ class DeviceConfigUploader(
             )
         }
 
-        val jsonBundle = gson.toJson(
+        val jsonBundle = json.encodeToString(
             UploadBundle.createV2(
                 deviceConfigs = deviceConfigRequests
             )

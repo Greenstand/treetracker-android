@@ -226,7 +226,7 @@ dependencies {
 
 
     // Networking
-    api libs.retrofit.converter.gson
+    implementation libs.retrofit.converter.kotlinx.serialization
     implementation libs.retrofit
     implementation libs.okhttp.logging.interceptor
 
@@ -256,7 +256,6 @@ dependencies {
 configurations.all {
     resolutionStrategy {
         preferProjectModules()
-        force libs.gson
     }
 }
 

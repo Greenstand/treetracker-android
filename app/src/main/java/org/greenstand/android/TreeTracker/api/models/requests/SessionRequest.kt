@@ -15,19 +15,18 @@
  */
 package org.greenstand.android.TreeTracker.api.models.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SessionRequest(
-    @SerializedName("id")
+    @SerialName("id")
     val sessionId: String,
-    @SerializedName("originating_wallet_registration_id")
+    @SerialName("originating_wallet_registration_id")
     val originUserId: String,
-    // Disabled temporarily
-    //    @SerializedName("origin_wallet")
-    //    val wallet: String,
-    @SerializedName("target_wallet")
+    @SerialName("target_wallet")
     val targetWallet: String,
     val organization: String,
-    @SerializedName("device_configuration_id")
+    @SerialName("device_configuration_id")
     val deviceConfigId: String,
 )

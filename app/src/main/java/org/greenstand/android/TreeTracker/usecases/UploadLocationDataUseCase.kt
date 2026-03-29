@@ -16,7 +16,8 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.amazonaws.AmazonClientException
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
@@ -30,7 +31,7 @@ import timber.log.Timber
 
 class UploadLocationDataUseCase(
     private val dao: TreeTrackerDAO,
-    private val gson: Gson
+    private val json: Json
 ) : UseCase<Unit, Boolean>() {
 
     private val storageClient = ObjectStorageClient.instance()
@@ -44,7 +45,7 @@ class UploadLocationDataUseCase(
                 val sessionIdToLocations = locationEntities.groupBy { it.sessionId }
                 val sessionIdToLocationRequests = sessionIdToLocations
                     .map { (sessionId, entities) ->
-                        val locationRequests = entities.map { gson.fromJson(it.locationDataJson, LocationData::class.java) }
+                        val locationRequests = entities.map { json.decodeFromString<LocationData>(it.locationDataJson) }
                             .map {
                                 LocationRequest(
                                     accuracy = it.accuracy,
@@ -64,7 +65,7 @@ class UploadLocationDataUseCase(
                     )
                 }
 
-                val dataBundle = gson.toJson(
+                val dataBundle = json.encodeToString(
                     UploadBundle.createV2(
                         tracks = trackRequests,
                     )

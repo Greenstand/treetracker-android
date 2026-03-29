@@ -15,21 +15,23 @@
  */
 package org.greenstand.android.TreeTracker.models.messages.network.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MessageRequest(
     val id: String,
     val parentMessageId: String?,
-    @SerializedName("recipient_handle")
+    @SerialName("recipient_handle")
     val recipientHandle: String,
-    @SerializedName("author_handle")
+    @SerialName("author_handle")
     val authorHandle: String,
     val type: String,
     val body: String?,
-    @SerializedName("survey_response")
+    @SerialName("survey_response")
     val surveyResponse: List<String>?,
-    @SerializedName("survey_id")
+    @SerialName("survey_id")
     val surveyId: String?,
-    @SerializedName("composed_at")
+    @SerialName("composed_at")
     val composedAt: String,
 )

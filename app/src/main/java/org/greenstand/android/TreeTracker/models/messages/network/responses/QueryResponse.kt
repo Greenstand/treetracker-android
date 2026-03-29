@@ -15,6 +15,9 @@
  */
 package org.greenstand.android.TreeTracker.models.messages.network.responses
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class QueryResponse(
     val total: Int,
     val handle: String,

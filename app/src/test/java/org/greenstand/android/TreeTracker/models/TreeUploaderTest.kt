@@ -16,7 +16,7 @@
 package org.greenstand.android.TreeTracker.models
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -69,7 +69,7 @@ class TreeUploaderTest {
     @MockK(relaxed = true)
     private lateinit var dao: TreeTrackerDAO
 
-    private val gson = Gson()
+    private val json = Json { explicitNulls = true; ignoreUnknownKeys = true; encodeDefaults = true }
 
     private lateinit var treeUploader: TreeUploader
 
@@ -83,7 +83,7 @@ class TreeUploaderTest {
             objectStorageClient = objectStorageClient,
             createTreeRequestUseCase = createTreeRequestUseCase,
             dao = dao,
-            gson = gson,
+            json = json,
         )
     }
 

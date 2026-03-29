@@ -16,36 +16,38 @@
 package org.greenstand.android.TreeTracker.api.models.requests
 
 import android.os.Build
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
+@Serializable
 class DeviceConfigRequest(
-    @SerializedName("id")
+    @SerialName("id")
     val id: String, // uuid
-    @SerializedName("device_identifier")
+    @SerialName("device_identifier")
     val deviceIdentifier: String = DeviceUtils.deviceId,
-    @SerializedName("app_version")
+    @SerialName("app_version")
     val appVersion: String,
-    @SerializedName("app_build")
+    @SerialName("app_build")
     val appBuild: Int,
-    @SerializedName("manufacturer")
+    @SerialName("manufacturer")
     val manufacturer: String = Build.MANUFACTURER,
-    @SerializedName("brand")
+    @SerialName("brand")
     val brand: String = Build.BRAND,
-    @SerializedName("model")
+    @SerialName("model")
     val model: String = Build.MODEL,
-    @SerializedName("hardware")
+    @SerialName("hardware")
     val hardware: String = Build.HARDWARE,
-    @SerializedName("device")
+    @SerialName("device")
     val device: String = Build.DEVICE,
-    @SerializedName("serial")
+    @SerialName("serial")
     val serial: String = "unknown",
-    @SerializedName("os_version")
+    @SerialName("os_version")
     val osVersion: String,
-    @SerializedName("sdk_version")
+    @SerialName("sdk_version")
     val sdkVersion: Int,
-    @SerializedName("instance_id")
+    @SerialName("instance_id")
     val instanceId: String,
-    @SerializedName("logged_at")
+    @SerialName("logged_at")
     val loggedAt: String
 )

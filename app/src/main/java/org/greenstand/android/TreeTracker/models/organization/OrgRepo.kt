@@ -15,9 +15,11 @@
  */
 package org.greenstand.android.TreeTracker.models.organization
 
-import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
 import org.greenstand.android.TreeTracker.navigation.RouteRegistry
@@ -31,7 +33,7 @@ import timber.log.Timber
 class OrgRepo(
     private val dao: TreeTrackerDAO,
     private val prefs: Preferences,
-    private val gson: Gson,
+    private val json: Json,
 ) {
 
     private var currentOrg: Org? = null
@@ -53,14 +55,14 @@ class OrgRepo(
         version = 1,
         name = "Greenstand",
         walletId = "",
-        captureSetupFlowJson = gson.toJson(
+        captureSetupFlowJson = json.encodeToString(
             listOf(
                 Destination(RouteRegistry.ROUTE_USER_SELECT),
 //              Destination(RouteRegistry.ROUTE_WALLET_SELECT),
                 Destination(RouteRegistry.ROUTE_ADD_ORG),
             )
         ),
-        captureFlowJson = gson.toJson(
+        captureFlowJson = json.encodeToString(
             listOf(
                 Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
                 // Uncomment this to test out forcing the note taking feature
@@ -95,15 +97,14 @@ class OrgRepo(
 
     suspend fun addOrgFromJsonString(orgJsonString: String): Boolean {
         return try {
-            @Suppress("DEPRECATION")
-            val orgJsonObj = JsonParser().parse(orgJsonString).asJsonObject
+            val orgJsonObj = Json.parseToJsonElement(orgJsonString).jsonObject
             val orgEntity = OrganizationEntity(
-                id = orgJsonObj.get(OrgJsonKeys.V1.ID).asString,
-                version = orgJsonObj.get(OrgJsonKeys.V1.VERSION).asInt,
-                name = orgJsonObj.get(OrgJsonKeys.V1.NAME).asString,
-                walletId = orgJsonObj.get(OrgJsonKeys.V1.WALLET_ID).asString,
-                captureSetupFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_SETUP_FLOW).asJsonArray.toString(),
-                captureFlowJson = orgJsonObj.get(OrgJsonKeys.V1.CAPTURE_FLOW).asJsonArray.toString(),
+                id = orgJsonObj[OrgJsonKeys.V1.ID]?.jsonPrimitive?.content ?: "",
+                version = orgJsonObj[OrgJsonKeys.V1.VERSION]?.jsonPrimitive?.content?.toIntOrNull() ?: 0,
+                name = orgJsonObj[OrgJsonKeys.V1.NAME]?.jsonPrimitive?.content ?: "",
+                walletId = orgJsonObj[OrgJsonKeys.V1.WALLET_ID]?.jsonPrimitive?.content ?: "",
+                captureSetupFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_SETUP_FLOW]?.jsonArray.toString(),
+                captureFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_FLOW]?.jsonArray.toString(),
             )
             val validatedEntity = validateOrgRoutes(orgEntity)
             dao.insertOrg(validatedEntity)
@@ -116,9 +117,8 @@ class OrgRepo(
     }
 
     private fun validateOrgRoutes(entity: OrganizationEntity): OrganizationEntity {
-        val typeToken = object : TypeToken<List<Destination>>() {}.type
-        val setupFlow = gson.fromJson<List<Destination>>(entity.captureSetupFlowJson, typeToken)
-        val captureFlow = gson.fromJson<List<Destination>>(entity.captureFlowJson, typeToken)
+        val setupFlow = json.decodeFromString<List<Destination>>(entity.captureSetupFlowJson)
+        val captureFlow = json.decodeFromString<List<Destination>>(entity.captureFlowJson)
         val invalidSetup = setupFlow.filter { !RouteRegistry.isValidRoute(it.route) }
         val invalidCapture = captureFlow.filter { !RouteRegistry.isValidRoute(it.route) }
         if (invalidSetup.isNotEmpty()) {
@@ -130,15 +130,14 @@ class OrgRepo(
         val validSetup = setupFlow.filter { RouteRegistry.isValidRoute(it.route) }
         val validCapture = captureFlow.filter { RouteRegistry.isValidRoute(it.route) }
         return entity.copy(
-            captureSetupFlowJson = gson.toJson(validSetup),
-            captureFlowJson = gson.toJson(validCapture),
+            captureSetupFlowJson = json.encodeToString(validSetup),
+            captureFlowJson = json.encodeToString(validCapture),
         )
     }
 
     private fun OrganizationEntity.toOrg(): Org {
-        val typeToken = object : TypeToken<List<Destination>>() {}.type
-        val captureSetupDestinations = gson.fromJson<List<Destination>>(captureSetupFlowJson, typeToken)
-        val captureDestinations = gson.fromJson<List<Destination>>(captureFlowJson, typeToken)
+        val captureSetupDestinations = json.decodeFromString<List<Destination>>(captureSetupFlowJson)
+        val captureDestinations = json.decodeFromString<List<Destination>>(captureFlowJson)
         return Org(
             id = id,
             name = name,

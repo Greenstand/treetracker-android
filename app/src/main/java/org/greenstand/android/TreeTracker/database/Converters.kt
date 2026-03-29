@@ -16,24 +16,25 @@
 package org.greenstand.android.TreeTracker.database
 
 import androidx.room.TypeConverter
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant
-import java.lang.reflect.Type
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 object Converters {
 
-    val gson = Gson()
+    val json = Json { ignoreUnknownKeys = true }
 
     @TypeConverter
     fun jsonToMap(value: String?): Map<String, String>? {
-        return gson.fromJson(value, Map::class.java) as? Map<String, String>
+        if (value == null) return null
+        return json.decodeFromString<Map<String, String>>(value)
     }
 
     @TypeConverter
     fun mapToJson(map: Map<String, String>?): String? {
-        return gson.toJson(map)
+        if (map == null) return null
+        return json.encodeToString(map)
     }
 
     @TypeConverter
@@ -46,12 +47,13 @@ object Converters {
 
     @TypeConverter
     fun stringToArray(value: String?): List<String?>? {
-        val listType: Type = object : TypeToken<List<String?>?>() {}.type
-        return gson.fromJson(value, listType)
+        if (value == null) return null
+        return json.decodeFromString<List<String?>>(value)
     }
 
     @TypeConverter
     fun arrayToString(list: List<String?>?): String? {
-        return gson.toJson(list)
+        if (list == null) return null
+        return json.encodeToString(list)
     }
 }

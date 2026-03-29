@@ -38,7 +38,6 @@ room = "2.6.1"
 # Networking
 retrofit = "2.11.0"
 okhttp = "4.9.3"
-gson = "2.13.2"
 
 # AWS
 awsSdk = "2.16.8"
@@ -119,9 +118,8 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 
 # Networking
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+retrofit-converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
 okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 # AWS
 aws-android-sdk-core = { module = "com.amazonaws:aws-android-sdk-core", version.ref = "awsSdk" }

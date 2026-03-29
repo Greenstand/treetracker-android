@@ -16,7 +16,7 @@
 package org.greenstand.android.TreeTracker.models.messages
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -52,7 +52,7 @@ class MessageUploaderTest {
     @MockK(relaxed = true)
     private lateinit var messagesDAO: MessagesDAO
 
-    private val gson = Gson()
+    private val json = Json { explicitNulls = true; ignoreUnknownKeys = true; encodeDefaults = true }
 
     private lateinit var messageUploader: MessageUploader
 
@@ -64,7 +64,7 @@ class MessageUploaderTest {
         messageUploader = MessageUploader(
             objectStorageClient = objectStorageClient,
             messagesDAO = messagesDAO,
-            gson = gson,
+            json = json,
         )
     }
 

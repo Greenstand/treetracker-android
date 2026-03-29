@@ -46,10 +46,10 @@ class ConvertersTest {
     }
 
     @Test
-    fun `WHEN mapToJson receives null THEN returns null string representation`() = runTest {
+    fun `WHEN mapToJson receives null THEN returns null`() = runTest {
         val result = Converters.mapToJson(null)
 
-        assertEquals("null", result)
+        assertNull(result)
     }
 
     @Test

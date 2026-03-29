@@ -15,6 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import kotlinx.serialization.Serializable
+
 enum class Accuracy {
     GOOD,
     BAD,
@@ -27,8 +29,10 @@ data class ConvergenceStats(
     val standardDeviation: Double
 )
 
+@Serializable
 enum class ConvergenceStatus { CONVERGED, NOT_CONVERGED, TIMED_OUT }
 
+@Serializable
 data class LocationData(
     val planterCheckInId: Long?,
     val latitude: Double,

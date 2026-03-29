@@ -15,27 +15,29 @@
  */
 package org.greenstand.android.TreeTracker.api.models.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class WalletRegistrationRequest(
-    @SerializedName("id")
+    @SerialName("id")
     val registrationId: String,
-    @SerializedName("wallet")
+    @SerialName("wallet")
     val wallet: String,
-    @SerializedName("user_photo_url")
+    @SerialName("user_photo_url")
     val imageUrl: String,
-    @SerializedName("first_name")
+    @SerialName("first_name")
     val firstName: String,
-    @SerializedName("last_name")
+    @SerialName("last_name")
     val lastName: String,
-    @SerializedName("phone")
+    @SerialName("phone")
     val phone: String?,
-    @SerializedName("email")
+    @SerialName("email")
     val email: String?,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: Double,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: Double,
-    @SerializedName("registered_at")
+    @SerialName("registered_at")
     val createdAt: String,
 )
