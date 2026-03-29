@@ -36,6 +36,7 @@ import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
+import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -112,8 +113,9 @@ class DashboardViewModelTest {
     }
     @Test
     fun `updateData should update the state with correct values querying totalTreesToSync`() = runBlocking {
-        val treesToSyncResult = testSubject.state.value.totalTreesToSync
-        assertEquals(treesToSyncResult, 6)
+        // updateData() runs on Dispatchers.IO, so wait for state to be populated
+        testSubject.state.first { it.totalTreesToSync != 0 }
+        assertEquals(6, testSubject.state.value.totalTreesToSync)
     }
 
     @Test

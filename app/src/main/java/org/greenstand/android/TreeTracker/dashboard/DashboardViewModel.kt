@@ -141,38 +141,42 @@ class DashboardViewModel(
 
     override fun handleAction(action: DashboardAction) {
         when (action) {
-            is DashboardAction.SyncMessages -> {
-                viewModelScope.launch {
-                    if (checkForInternetUseCase.execute(Unit)) {
-                        messagesRepo.syncMessages()
-                    }
-                }
-            }
-            is DashboardAction.Sync -> {
-                viewModelScope.launch {
-                    if (_isSyncing == false) {
-                        if (!FeatureFlags.DEBUG_ENABLED) {
-                            val treesToSync = treesToSyncHelper.getTreeCountToSync()
-                            when (treesToSync) {
-                                0 -> triggerSnackBar(R.string.nothing_to_sync)
-                                else -> startDataSynchronization()
-                            }
-                        } else {
-                            startDataSynchronization()
-                        }
-                        val state = currentState
-                        analytics.syncButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
-                    } else {
-                        updateTimerJob?.cancel()
-                        updateTimerJob = null
-                        workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
-
-                        val state = currentState
-                        analytics.stopButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
-                    }
-                }
-            }
+            is DashboardAction.SyncMessages -> syncMessages()
+            is DashboardAction.Sync -> toggleSync()
             else -> { }
+        }
+    }
+
+    private fun syncMessages() {
+        viewModelScope.launch {
+            if (checkForInternetUseCase.execute(Unit)) {
+                messagesRepo.syncMessages()
+            }
+        }
+    }
+
+    private fun toggleSync() {
+        viewModelScope.launch {
+            if (_isSyncing == false) {
+                if (!FeatureFlags.DEBUG_ENABLED) {
+                    val treesToSync = treesToSyncHelper.getTreeCountToSync()
+                    when (treesToSync) {
+                        0 -> triggerSnackBar(R.string.nothing_to_sync)
+                        else -> startDataSynchronization()
+                    }
+                } else {
+                    startDataSynchronization()
+                }
+                val state = currentState
+                analytics.syncButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
+            } else {
+                updateTimerJob?.cancel()
+                updateTimerJob = null
+                workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
+
+                val state = currentState
+                analytics.stopButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
+            }
         }
     }
 

@@ -96,32 +96,11 @@ class UserSelectViewModel(
                 CaptureSetupScopeManager.getData().user = action.user
                 updateState { copy(selectedUser = action.user) }
             }
-            is UserSelectAction.DeleteUser -> {
-                viewModelScope.launch {
-                    if(userRepo.deleteUser(currentState.selectedUser?.wallet ?: "")) {
-                        updateState { copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDLOCALLY) }
-                        messageRepo.saveMessage(
-                            wallet = currentState.selectedUser?.wallet ?: "",
-                            to = "admin",
-                            body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost."
-                        )
-                        messageRepo.syncMessages()
-                    }
-                }
-            }
+            is UserSelectAction.DeleteUser -> deleteUser()
             is UserSelectAction.ToggleEditMode -> {
                 updateState { copy(editMode = !editMode) }
             }
-            is UserSelectAction.UpdateSelectedUser -> {
-                val currentUser = currentState.selectedUser ?: return
-                val updatedUser = currentUser.copy(
-                    firstName = action.firstName ?: currentUser.firstName,
-                    lastName = action.lastName ?: currentUser.lastName,
-                    wallet = action.phone ?: action.email ?: currentUser.wallet,
-                    photoPath = action.photoPath ?: currentUser.photoPath,
-                )
-                updateState { copy(selectedUser = updatedUser) }
-            }
+            is UserSelectAction.UpdateSelectedUser -> updateSelectedUser(action)
             is UserSelectAction.SaveUserToDatabase -> {
                 val user = currentState.selectedUser ?: return
                 viewModelScope.launch(Dispatchers.IO) {
@@ -133,6 +112,31 @@ class UserSelectViewModel(
             }
             else -> { }
         }
+    }
+
+    private fun deleteUser() {
+        viewModelScope.launch {
+            if(userRepo.deleteUser(currentState.selectedUser?.wallet ?: "")) {
+                updateState { copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDLOCALLY) }
+                messageRepo.saveMessage(
+                    wallet = currentState.selectedUser?.wallet ?: "",
+                    to = "admin",
+                    body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost."
+                )
+                messageRepo.syncMessages()
+            }
+        }
+    }
+
+    private fun updateSelectedUser(action: UserSelectAction.UpdateSelectedUser) {
+        val currentUser = currentState.selectedUser ?: return
+        val updatedUser = currentUser.copy(
+            firstName = action.firstName ?: currentUser.firstName,
+            lastName = action.lastName ?: currentUser.lastName,
+            wallet = action.phone ?: action.email ?: currentUser.wallet,
+            photoPath = action.photoPath ?: currentUser.photoPath,
+        )
+        updateState { copy(selectedUser = updatedUser) }
     }
 }
 

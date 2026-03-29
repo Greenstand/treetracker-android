@@ -102,25 +102,11 @@ class SignupViewModel(
 
     override fun handleAction(action: SignupAction) {
         when (action) {
-            is SignupAction.UpdateFirstName -> {
-                val filtered = action.firstName?.let { ValidationUtils.filterNameInput(it) }
-                val (_, error) = ValidationUtils.validateName(filtered)
-                updateState {
-                    copy(
-                        firstName = filtered,
-                        firstNameError = if (filtered.isNullOrEmpty()) null else error
-                    )
-                }
+            is SignupAction.UpdateFirstName -> updateName(action.firstName) { filtered, error ->
+                copy(firstName = filtered, firstNameError = if (filtered.isNullOrEmpty()) null else error)
             }
-            is SignupAction.UpdateLastName -> {
-                val filtered = action.lastName?.let { ValidationUtils.filterNameInput(it) }
-                val (_, error) = ValidationUtils.validateName(filtered)
-                updateState {
-                    copy(
-                        lastName = filtered,
-                        lastNameError = if (filtered.isNullOrEmpty()) null else error
-                    )
-                }
+            is SignupAction.UpdateLastName -> updateName(action.lastName) { filtered, error ->
+                copy(lastName = filtered, lastNameError = if (filtered.isNullOrEmpty()) null else error)
             }
             is SignupAction.UpdateEmail -> {
                 updateState {
@@ -143,18 +129,7 @@ class SignupViewModel(
             is SignupAction.UpdateCredentialType -> {
                 updateState { copy(credential = action.credential) }
             }
-            is SignupAction.SubmitInfo -> {
-                val credential = extractIdentifier(currentState)
-
-                viewModelScope.launch {
-                    if (userRepo.doesUserExists(credential)) {
-                        val existingUser = userRepo.getUserWithWallet(credential)
-                        updateState { copy(existingUser = existingUser) }
-                    } else {
-                        updateState { copy(isCredentialView = false, canGoToNextScreen = false) }
-                    }
-                }
-            }
+            is SignupAction.SubmitInfo -> submitInfo()
             is SignupAction.CloseExistingUserDialog -> {
                 updateState { copy(existingUser = null) }
             }
@@ -183,6 +158,24 @@ class SignupViewModel(
                 }
             }
             else -> { }
+        }
+    }
+
+    private fun updateName(name: String?, applyUpdate: SignUpState.(String?, String?) -> SignUpState) {
+        val filtered = name?.let { ValidationUtils.filterNameInput(it) }
+        val (_, error) = ValidationUtils.validateName(filtered)
+        updateState { applyUpdate(filtered, error) }
+    }
+
+    private fun submitInfo() {
+        val credential = extractIdentifier(currentState)
+        viewModelScope.launch {
+            if (userRepo.doesUserExists(credential)) {
+                val existingUser = userRepo.getUserWithWallet(credential)
+                updateState { copy(existingUser = existingUser) }
+            } else {
+                updateState { copy(isCredentialView = false, canGoToNextScreen = false) }
+            }
         }
     }
 

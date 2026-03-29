@@ -73,39 +73,43 @@ class SurveyViewModel(
                 answers[currentQuestionIndex] = action.answerIndex
                 updateState { copy(selectedAnswerIndex = answers[currentQuestionIndex]) }
             }
-            is SurveyAction.GoToNextQuestion -> {
-                viewModelScope.launch {
-                    if (currentQuestionIndex == survey.questions.size - 1) {
-                        val answerStrings = survey.questions.mapIndexed { index, question ->
-                            answers[index]?.let { question.choices[it] }
-                        }.requireNoNulls()
-                        messagesRepo.saveSurveyAnswers(messageId, answerStrings)
-                        updateState { copy(surveyComplete = true) }
-                        return@launch
-                    }
-                    currentQuestionIndex++
-                    updateState {
-                        copy(
-                            selectedAnswerIndex = answers[currentQuestionIndex],
-                            currentQuestion = survey.questions[currentQuestionIndex]
-                        )
-                    }
-                }
-            }
-            is SurveyAction.GoToPrevQuestion -> {
-                if (currentQuestionIndex == 0) {
-                    updateState { copy(shouldNavigateBack = true) }
-                    return
-                }
-                currentQuestionIndex--
-                updateState {
-                    copy(
-                        selectedAnswerIndex = answers[currentQuestionIndex],
-                        currentQuestion = survey.questions[currentQuestionIndex]
-                    )
-                }
-            }
+            is SurveyAction.GoToNextQuestion -> goToNextQuestion()
+            is SurveyAction.GoToPrevQuestion -> goToPrevQuestion()
             else -> { }
+        }
+    }
+
+    private fun goToNextQuestion() {
+        viewModelScope.launch {
+            if (currentQuestionIndex == survey.questions.size - 1) {
+                val answerStrings = survey.questions.mapIndexed { index, question ->
+                    answers[index]?.let { question.choices[it] }
+                }.requireNoNulls()
+                messagesRepo.saveSurveyAnswers(messageId, answerStrings)
+                updateState { copy(surveyComplete = true) }
+                return@launch
+            }
+            currentQuestionIndex++
+            updateState {
+                copy(
+                    selectedAnswerIndex = answers[currentQuestionIndex],
+                    currentQuestion = survey.questions[currentQuestionIndex]
+                )
+            }
+        }
+    }
+
+    private fun goToPrevQuestion() {
+        if (currentQuestionIndex == 0) {
+            updateState { copy(shouldNavigateBack = true) }
+            return
+        }
+        currentQuestionIndex--
+        updateState {
+            copy(
+                selectedAnswerIndex = answers[currentQuestionIndex],
+                currentQuestion = survey.questions[currentQuestionIndex]
+            )
         }
     }
 }

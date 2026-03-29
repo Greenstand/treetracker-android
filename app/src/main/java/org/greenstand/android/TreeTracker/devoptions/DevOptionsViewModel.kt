@@ -52,20 +52,22 @@ class DevOptionsViewModel(
 
     override fun handleAction(action: DevOptionsAction) {
         when (action) {
-            is DevOptionsAction.UpdateParam -> {
-                configurator.putValue(action.param, action.newValue)
-                updateState {
-                    val updatedParamList = params.updateListItem(action.param) {
-                        when (this) {
-                            is BooleanConfig -> copy(defaultValue = action.newValue as Boolean)
-                            is IntConfig -> copy(defaultValue = action.newValue as Int)
-                            is FloatConfig -> copy(defaultValue = action.newValue as Float)
-                        }
-                    }
-                    copy(params = updatedParamList)
+            is DevOptionsAction.UpdateParam -> updateParam(action.param, action.newValue)
+            else -> { }
+        }
+    }
+
+    private fun updateParam(param: Config, newValue: Any) {
+        configurator.putValue(param, newValue)
+        updateState {
+            val updatedParamList = params.updateListItem(param) {
+                when (this) {
+                    is BooleanConfig -> copy(defaultValue = newValue as Boolean)
+                    is IntConfig -> copy(defaultValue = newValue as Int)
+                    is FloatConfig -> copy(defaultValue = newValue as Float)
                 }
             }
-            else -> { }
+            copy(params = updatedParamList)
         }
     }
 
