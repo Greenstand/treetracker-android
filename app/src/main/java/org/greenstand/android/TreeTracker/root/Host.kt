@@ -80,10 +80,13 @@ import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @ExperimentalComposeApi
 @Composable
-fun Host() {
+fun          Host() {
     val navController = LocalNavHostController.current
 
     TreeTrackerTheme {
+
+
+
         NavHost(navController, startDestination = SplashRoute) {
             trackedComposable<SplashRoute>(
                 deepLinks =
@@ -96,7 +99,10 @@ fun Host() {
 
             trackedComposable<LanguageRoute> {
                 val route = it.toRoute<LanguageRoute>()
-                LanguageSelectScreen(route.isFromTopBar)
+
+
+
+                        LanguageSelectScreen(route.isFromTopBar)
             }
 
             trackedComposable<SignupFlowRoute> { SignUpScreen() }
