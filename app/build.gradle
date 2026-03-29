@@ -173,6 +173,15 @@ android {
     }
 }
 
+// Screenshot tests only run via Roborazzi Gradle tasks (recordRoborazziDebug,
+// verifyRoborazziDebug, etc.). Exclude them from regular `./gradlew test` runs.
+def isRoborazziRun = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
+tasks.withType(Test).configureEach {
+    if (!isRoborazziRun) {
+        exclude '**/screenshot/**'
+    }
+}
+
 // Roborazzi golden images are stored in src/test/snapshots/ and committed to git.
 // The plugin always reads/writes build/outputs/roborazzi/, so we sync manually.
 def snapshotsDir = file("src/test/snapshots")
