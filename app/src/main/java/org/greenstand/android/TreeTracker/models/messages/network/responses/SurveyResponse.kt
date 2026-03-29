@@ -15,6 +15,9 @@
  */
 package org.greenstand.android.TreeTracker.models.messages.network.responses
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class SurveyResponse(
     val id: String,
     val title: String,

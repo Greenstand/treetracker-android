@@ -15,7 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -40,7 +41,7 @@ class TreeUploader(
     private val objectStorageClient: ObjectStorageClient,
     private val createTreeRequestUseCase: CreateTreeRequestUseCase,
     private val dao: TreeTrackerDAO,
-    private val gson: Gson
+    private val json: Json
 ) {
 
     fun log(msg: String) = Timber.tag("TreeUploader").d(msg)
@@ -150,7 +151,7 @@ class TreeUploader(
             )
         }
 
-        val jsonBundle = gson.toJson(UploadBundle.createV1(newTreeRequests = treeRequestList, instanceId = instanceId,))
+        val jsonBundle = json.encodeToString(UploadBundle.createV1(newTreeRequests = treeRequestList, instanceId = instanceId,))
 
         // Create a hash ID to reference this upload bundle later
         val bundleId = jsonBundle.md5()
@@ -182,7 +183,7 @@ class TreeUploader(
             )
         }
 
-        val jsonBundle = gson.toJson(UploadBundle.createV2(treeCaptures = treeRequestList))
+        val jsonBundle = json.encodeToString(UploadBundle.createV2(treeCaptures = treeRequestList))
 
         // Create a hash ID to reference this upload bundle later
         val bundleId = "${jsonBundle.md5()}_captures"

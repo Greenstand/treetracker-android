@@ -16,7 +16,8 @@
 package org.greenstand.android.TreeTracker.models.organization
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -51,7 +52,7 @@ class OrgRepoTest {
     @MockK(relaxed = true)
     private lateinit var prefs: Preferences
 
-    private val gson = Gson()
+    private val json = Json { explicitNulls = true; ignoreUnknownKeys = true; encodeDefaults = true }
 
     private lateinit var mockEditor: Preferences.Editor
 
@@ -61,8 +62,8 @@ class OrgRepoTest {
         id: String,
         name: String,
         walletId: String = "wallet",
-        captureSetupFlowJson: String = gson.toJson(listOf(Destination("user-select"))),
-        captureFlowJson: String = gson.toJson(listOf(Destination("capture/{profilePicUrl}")))
+        captureSetupFlowJson: String = json.encodeToString(listOf(Destination("user-select"))),
+        captureFlowJson: String = json.encodeToString(listOf(Destination("capture/{profilePicUrl}")))
     ): OrganizationEntity {
         return OrganizationEntity(
             id = id,
@@ -83,7 +84,7 @@ class OrgRepoTest {
     }
 
     private fun createOrgRepo(): OrgRepo {
-        return OrgRepo(dao = dao, prefs = prefs, gson = gson)
+        return OrgRepo(dao = dao, prefs = prefs, json = json)
     }
 
     @Test

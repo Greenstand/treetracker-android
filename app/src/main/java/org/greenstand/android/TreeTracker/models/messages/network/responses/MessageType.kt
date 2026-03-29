@@ -15,9 +15,13 @@
  */
 package org.greenstand.android.TreeTracker.models.messages.network.responses
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class MessageType {
-    MESSAGE,
-    ANNOUNCE,
-    SURVEY,
-    SURVEY_RESPONSE,
+    @SerialName("message") MESSAGE,
+    @SerialName("announce") ANNOUNCE,
+    @SerialName("survey") SURVEY,
+    @SerialName("survey_response") SURVEY_RESPONSE,
 }

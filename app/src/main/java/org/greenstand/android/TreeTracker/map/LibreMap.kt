@@ -10,8 +10,11 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.addJsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -95,27 +98,25 @@ fun LibreMap(
                     // Add markers in bulk as GeoJSON
                     if (markers.isNotEmpty()) {
                         // Create GeoJSON FeatureCollection
-                        val features = JsonArray()
-                        markers.forEach { marker ->
-                            val feature = JsonObject().apply {
-                                addProperty("type", "Feature")
-                                add("geometry", JsonObject().apply {
-                                    addProperty("type", "Point")
-                                    add("coordinates", JsonArray().apply {
-                                        add(marker.longitude)
-                                        add(marker.latitude)
-                                    })
-                                })
-                                add("properties", JsonObject().apply {
-                                    addProperty("id", marker.id)
-                                })
+                        val featureCollection = buildJsonObject {
+                            put("type", "FeatureCollection")
+                            putJsonArray("features") {
+                                markers.forEach { marker ->
+                                    addJsonObject {
+                                        put("type", "Feature")
+                                        putJsonObject("geometry") {
+                                            put("type", "Point")
+                                            putJsonArray("coordinates") {
+                                                add(kotlinx.serialization.json.JsonPrimitive(marker.longitude))
+                                                add(kotlinx.serialization.json.JsonPrimitive(marker.latitude))
+                                            }
+                                        }
+                                        putJsonObject("properties") {
+                                            put("id", marker.id)
+                                        }
+                                    }
+                                }
                             }
-                            features.add(feature)
-                        }
-
-                        val featureCollection = JsonObject().apply {
-                            addProperty("type", "FeatureCollection")
-                            add("features", features)
                         }
 
                         // Add GeoJSON source

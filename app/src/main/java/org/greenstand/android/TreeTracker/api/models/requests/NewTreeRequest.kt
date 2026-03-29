@@ -15,40 +15,43 @@
  */
 package org.greenstand.android.TreeTracker.api.models.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NewTreeRequest(
-    @SerializedName("user_id")
+    @SerialName("user_id")
     val userId: Int = 0,
-    @SerializedName("uuid")
+    @SerialName("uuid")
     val uuid: String? = null,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: Double = 0.toDouble(),
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: Double = 0.toDouble(),
-    @SerializedName("gps_accuracy")
+    @SerialName("gps_accuracy")
     val gpsAccuracy: Int = 0,
-    @SerializedName("note")
+    @SerialName("note")
     val note: String? = null,
-    @SerializedName("timestamp")
+    @SerialName("timestamp")
     val timestamp: Long = 0,
-    @SerializedName("image_url")
+    @SerialName("image_url")
     val imageUrl: String? = null,
-    @SerializedName("sequence_id")
+    @SerialName("sequence_id")
     val sequenceId: Long = 0,
-    @SerializedName("device_identifier")
+    @SerialName("device_identifier")
     val deviceIdentifier: String? = null,
-    @SerializedName("planter_photo_url")
+    @SerialName("planter_photo_url")
     val planterPhotoUrl: String? = null,
-    @SerializedName("planter_identifier")
+    @SerialName("planter_identifier")
     val planterIdentifier: String? = null,
-    @SerializedName("attributes")
+    @SerialName("attributes")
     val attributes: List<AttributeRequest>? = null
 )
 
+@Serializable
 data class AttributeRequest(
-    @SerializedName("key")
+    @SerialName("key")
     val key: String,
-    @SerializedName("value")
+    @SerialName("value")
     val value: String
 )

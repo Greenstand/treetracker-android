@@ -15,7 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -38,7 +39,7 @@ import java.io.File
 class PlanterUploader(
     private val dao: TreeTrackerDAO,
     private val uploadImageUseCase: UploadImageUseCase,
-    private val gson: Gson,
+    private val json: Json,
     private val objectStorageClient: ObjectStorageClient,
 ) {
 
@@ -132,7 +133,7 @@ class PlanterUploader(
             }
 
         val jsonBundle =
-            gson.toJson(UploadBundle.createV1(registrations = registrationRequests, instanceId = instanceId))
+            json.encodeToString(UploadBundle.createV1(registrations = registrationRequests, instanceId = instanceId))
         val bundleId = jsonBundle.md5() + "_registrations"
         val planterInfoIds = planterInfoToUpload.map { it.id }
 
@@ -171,7 +172,7 @@ class PlanterUploader(
             }
 
         val jsonBundle =
-            gson.toJson(UploadBundle.createV2(walletRegistration = walletRegistrations))
+            json.encodeToString(UploadBundle.createV2(walletRegistration = walletRegistrations))
         val bundleId = jsonBundle.md5() + "_registrations"
         val userIds = usersToUpload.map { it.id }
 

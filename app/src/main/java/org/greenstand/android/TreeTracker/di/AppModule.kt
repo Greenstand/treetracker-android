@@ -25,7 +25,7 @@ import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
@@ -61,8 +61,6 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessageUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
-import org.greenstand.android.TreeTracker.models.messages.network.MessageTypeDeserializer
-import org.greenstand.android.TreeTracker.models.messages.network.responses.MessageType
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
@@ -198,10 +196,11 @@ val appModule = module {
     single { ConvergenceConfiguration(get()) }
 
     single {
-        GsonBuilder()
-            .registerTypeAdapter(MessageType::class.java, MessageTypeDeserializer())
-            .serializeNulls()
-            .create()
+        Json {
+            explicitNulls = true
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
     }
 
     single { TreeTrackerViewModelFactory() }

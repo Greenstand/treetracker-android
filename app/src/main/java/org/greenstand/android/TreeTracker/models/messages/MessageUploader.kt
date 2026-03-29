@@ -15,7 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.models.messages
 
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
@@ -28,7 +29,7 @@ import kotlin.time.ExperimentalTime
 class MessageUploader(
     private val objectStorageClient: ObjectStorageClient,
     private val messagesDAO: MessagesDAO,
-    private val gson: Gson,
+    private val json: Json,
 ) {
 
     @OptIn(ExperimentalTime::class)
@@ -47,7 +48,7 @@ class MessageUploader(
             DatabaseConverters.createMessageRequestFromEntities(messageEntity)
         }
 
-        val jsonBundle = gson.toJson(
+        val jsonBundle = json.encodeToString(
             UploadBundle.createV2(
                 messages = messageRequests,
             )

@@ -15,11 +15,15 @@
  */
 package org.greenstand.android.TreeTracker.api.models.requests
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TracksRequest(
     val sessionId: String,
     val locations: List<LocationRequest>
 )
 
+@Serializable
 data class LocationRequest(
     val accuracy: Float,
     val capturedAt: String,

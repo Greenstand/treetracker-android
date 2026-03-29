@@ -18,7 +18,8 @@ package org.greenstand.android.TreeTracker.models.location
 import android.location.Location
 import androidx.annotation.MainThread
 import androidx.lifecycle.Observer
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.TimeoutCancellationException
@@ -41,7 +42,7 @@ class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
     private val treeTrackerDAO: TreeTrackerDAO,
     private val convergenceConfiguration: ConvergenceConfiguration,
-    private val gson: Gson,
+    private val json: Json,
     private val sessionTracker: SessionTracker,
     private val timeProvider: TimeProvider,
 ) {
@@ -126,7 +127,7 @@ class LocationDataCapturer(
                             convergenceStatus,
                             timeProvider.currentTime().toString(),
                         )
-                    val jsonValue = gson.toJson(locationData)
+                    val jsonValue = json.encodeToString(locationData)
                     Timber.d("Inserting new location data $jsonValue")
                     treeTrackerDAO.insertLocationData(
                         LocationEntity(

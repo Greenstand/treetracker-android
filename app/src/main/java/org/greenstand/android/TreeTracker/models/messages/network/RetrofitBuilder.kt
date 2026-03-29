@@ -15,14 +15,15 @@
  */
 package org.greenstand.android.TreeTracker.models.messages.network
 
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenstand.android.TreeTracker.BuildConfig
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-class RetrofitBuilder(private val gson: Gson) {
+class RetrofitBuilder(private val json: Json) {
 
     fun create(): Retrofit {
         return Retrofit.Builder()
@@ -39,7 +40,7 @@ class RetrofitBuilder(private val gson: Gson) {
                     .build()
             )
             .baseUrl(BASE_ENDPOINT)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
 

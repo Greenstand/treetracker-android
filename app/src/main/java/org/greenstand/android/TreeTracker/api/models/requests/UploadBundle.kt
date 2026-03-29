@@ -15,38 +15,40 @@
  */
 package org.greenstand.android.TreeTracker.api.models.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.greenstand.android.TreeTracker.models.messages.network.requests.MessageRequest
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
+@Serializable
 class UploadBundle
 constructor(
-    @SerializedName("pack_format_version")
+    @SerialName("pack_format_version")
     val version: String,
 
-    @SerializedName("device_id")
+    @SerialName("device_id")
     val deviceId: String = DeviceUtils.deviceId,
 
     // V1
-    @SerializedName("trees")
+    @SerialName("trees")
     val trees: List<NewTreeRequest>? = null,
-    @SerializedName("registrations")
+    @SerialName("registrations")
     val registrations: List<RegistrationRequest>? = null,
-    @SerializedName("devices")
+    @SerialName("devices")
     val devices: List<DeviceRequest>? = null,
 
     // V2
-    @SerializedName("wallet_registrations")
+    @SerialName("wallet_registrations")
     val walletRegistrations: List<WalletRegistrationRequest>? = null,
-    @SerializedName("captures")
+    @SerialName("captures")
     val treeCaptures: List<TreeCaptureRequest>? = null,
-    @SerializedName("device_configurations")
+    @SerialName("device_configurations")
     val deviceConfig: List<DeviceConfigRequest>? = null,
-    @SerializedName("sessions")
+    @SerialName("sessions")
     val sessions: List<SessionRequest>? = null,
-    @SerializedName("tracks")
+    @SerialName("tracks")
     val tracks: List<TracksRequest>? = null,
-    @SerializedName("messages")
+    @SerialName("messages")
     val messages: List<MessageRequest>? = null,
 ) {
 

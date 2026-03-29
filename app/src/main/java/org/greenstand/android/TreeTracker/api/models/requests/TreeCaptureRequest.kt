@@ -15,29 +15,31 @@
  */
 package org.greenstand.android.TreeTracker.api.models.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class TreeCaptureRequest(
-    @SerializedName("session_id")
+    @SerialName("session_id")
     val sessionId: String,
-    @SerializedName("id")
+    @SerialName("id")
     val treeId: String,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: Double,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: Double,
-    @SerializedName("note")
+    @SerialName("note")
     val note: String?,
-    @SerializedName("image_url")
+    @SerialName("image_url")
     val imageUrl: String,
-    @SerializedName("captured_at")
+    @SerialName("captured_at")
     val createdAt: String,
-    @SerializedName("abs_step_count")
+    @SerialName("abs_step_count")
     val stepCount: Long?,
-    @SerializedName("delta_step_count")
+    @SerialName("delta_step_count")
     val deltaStepCount: Long?,
-    @SerializedName("rotation_matrix")
+    @SerialName("rotation_matrix")
     val rotationMatrix: String?,
-    @SerializedName("extra_attributes")
+    @SerialName("extra_attributes")
     val extraAttributes: String?,
 )
