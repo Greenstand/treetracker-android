@@ -21,7 +21,7 @@ object FeatureFlags {
     val DEBUG_ENABLED: Boolean = (
         BuildConfig.BUILD_TYPE == "dev" ||
             BuildConfig.BUILD_TYPE == "debug"
-        )
+    )
     val BETA: Boolean = BuildConfig.BUILD_TYPE == "beta"
     val TREE_HEIGHT_FEATURE_ENABLED: Boolean = BuildConfig.TREE_HEIGHT_FEATURE_ENABLED
     val TREE_NOTE_FEATURE_ENABLED: Boolean = BuildConfig.TREE_NOTE_FEATURE_ENABLED

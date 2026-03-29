@@ -18,10 +18,10 @@ package org.greenstand.android.TreeTracker.usecases
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
@@ -30,7 +30,9 @@ import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.utils.LocationUtils
 import java.util.UUID
 
-data class CreateFakeTreesParams(val amount: Int)
+data class CreateFakeTreesParams(
+    val amount: Int,
+)
 
 class CreateFakeTreesUseCase(
     private val sessionTracker: SessionTracker,
@@ -41,7 +43,6 @@ class CreateFakeTreesUseCase(
     private val createLegacyTreeUseCase: CreateLegacyTreeUseCase,
     private val timeProvider: TimeProvider,
 ) : UseCase<CreateFakeTreesParams, Unit>() {
-
     override suspend fun execute(params: CreateFakeTreesParams) {
         check(FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
             "CreateFakeTreesUseCase must not be called in release builds"
@@ -51,21 +52,21 @@ class CreateFakeTreesUseCase(
         val centerLat = location?.latitude ?: 0.0
         val centerLon = location?.longitude ?: 0.0
 
-        for (i in 1..(params.amount / 2) + 1) {
-
+        repeat((params.amount / 2) + 1) {
             val file = ImageUtils.createTestImageFile(context)
 
             // Generate random location within 1 mile radius
             val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
 
-            val tree = Tree(
-                sessionId = sessionTracker.currentSessionId!!,
-                photoPath = file.absolutePath,
-                content = "My Note",
-                treeUuid = UUID.randomUUID(),
-                meanLongitude = randomLon,
-                meanLatitude = randomLat
-            )
+            val tree =
+                Tree(
+                    sessionId = sessionTracker.currentSessionId!!,
+                    photoPath = file.absolutePath,
+                    content = "My Note",
+                    treeUuid = UUID.randomUUID(),
+                    meanLongitude = randomLon,
+                    meanLatitude = randomLat,
+                )
 
             with(tree) {
                 addTreeAttribute(Tree.DBH_ATTR_KEY, "10")
@@ -85,38 +86,40 @@ class CreateFakeTreesUseCase(
         // User 2 checks in 1 time and plants trees
         // User 1 checks in 1 time and plants trees
 
-        val planterOne = createLegacyUser(
-            firstName = "TestUser1",
-            lastName = "LastName1",
-            organization = "Umbrella Corp",
-            phone = "123-421-1203",
-            email = "testEmail1@gmail.com",
-            identifier = "@TestUser1"
-        )
+        val planterOne =
+            createLegacyUser(
+                firstName = "TestUser1",
+                lastName = "LastName1",
+                organization = "Umbrella Corp",
+                phone = "123-421-1203",
+                email = "testEmail1@gmail.com",
+                identifier = "@TestUser1",
+            )
         createLegacyCheckIn(planterOne.id)
-        for (i in 1..legacyTreeAmount / 4) {
+        repeat(legacyTreeAmount / 4) {
             createLegacyTree(planterOne.id)
         }
         createLegacyCheckIn(planterOne.id)
-        for (i in 1..legacyTreeAmount / 4) {
+        repeat(legacyTreeAmount / 4) {
             createLegacyTree(planterOne.id)
         }
 
-        val planterTwo = createLegacyUser(
-            firstName = "TestUser2",
-            lastName = "LastName2",
-            organization = "Umbrella Corp",
-            phone = "123-421-9499",
-            email = "testEmail2@gmail.com",
-            identifier = "@TestUser2"
-        )
+        val planterTwo =
+            createLegacyUser(
+                firstName = "TestUser2",
+                lastName = "LastName2",
+                organization = "Umbrella Corp",
+                phone = "123-421-9499",
+                email = "testEmail2@gmail.com",
+                identifier = "@TestUser2",
+            )
         createLegacyCheckIn(planterTwo.id)
-        for (i in 1..legacyTreeAmount / 4) {
+        repeat(legacyTreeAmount / 4) {
             createLegacyTree(planterTwo.id)
         }
 
         createLegacyCheckIn(planterOne.id)
-        for (i in 1..legacyTreeAmount / 4) {
+        repeat(legacyTreeAmount / 4) {
             createLegacyTree(planterOne.id)
         }
     }
@@ -128,29 +131,29 @@ class CreateFakeTreesUseCase(
         phone: String?,
         email: String?,
         identifier: String,
-    ): PlanterInfoEntity {
-        return withContext(Dispatchers.IO) {
+    ): PlanterInfoEntity =
+        withContext(Dispatchers.IO) {
             val location = locationUpdateManager.currentLocation
             val time = timeProvider.currentTime()
 
-            val entity = PlanterInfoEntity(
-                identifier = identifier,
-                firstName = firstName,
-                lastName = lastName,
-                organization = organization,
-                phone = phone,
-                email = email,
-                longitude = location?.longitude ?: 0.0,
-                latitude = location?.latitude ?: 0.0,
-                createdAt = time.toEpochMilliseconds(),
-                uploaded = false,
-                recordUuid = UUID.randomUUID().toString(),
-            )
+            val entity =
+                PlanterInfoEntity(
+                    identifier = identifier,
+                    firstName = firstName,
+                    lastName = lastName,
+                    organization = organization,
+                    phone = phone,
+                    email = email,
+                    longitude = location?.longitude ?: 0.0,
+                    latitude = location?.latitude ?: 0.0,
+                    createdAt = time.toEpochMilliseconds(),
+                    uploaded = false,
+                    recordUuid = UUID.randomUUID().toString(),
+                )
 
             val id = dao.insertPlanterInfo(entity)
             dao.getPlanterInfoById(id)!!
         }
-    }
 
     suspend fun createLegacyCheckIn(
         planterInfoId: Long,
@@ -163,14 +166,15 @@ class CreateFakeTreesUseCase(
         // Generate random location within 1 mile radius
         val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
 
-        val planterCheckInEntity = PlanterCheckInEntity(
-            planterInfoId = planterInfoId,
-            localPhotoPath = ImageUtils.createTestImageFile(context).absolutePath,
-            longitude = randomLon,
-            latitude = randomLat,
-            createdAt = time.toEpochMilliseconds(),
-            photoUrl = null
-        )
+        val planterCheckInEntity =
+            PlanterCheckInEntity(
+                planterInfoId = planterInfoId,
+                localPhotoPath = ImageUtils.createTestImageFile(context).absolutePath,
+                longitude = randomLon,
+                latitude = randomLat,
+                createdAt = time.toEpochMilliseconds(),
+                photoUrl = null,
+            )
 
         dao.insertPlanterCheckIn(planterCheckInEntity)
     }
@@ -192,9 +196,9 @@ class CreateFakeTreesUseCase(
                     content = "My Legacy Note",
                     treeUuid = UUID.randomUUID(),
                     meanLongitude = randomLon,
-                    meanLatitude = randomLat
-                )
-            )
+                    meanLatitude = randomLat,
+                ),
+            ),
         )
     }
 }

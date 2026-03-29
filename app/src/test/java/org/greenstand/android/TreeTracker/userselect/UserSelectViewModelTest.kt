@@ -48,7 +48,6 @@ import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class UserSelectViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -84,70 +83,73 @@ class UserSelectViewModelTest {
         unmockkObject(CaptureSetupScopeManager)
     }
 
-    private fun createViewModel(userId: Long? = null): UserSelectViewModel {
-        return UserSelectViewModel(
+    private fun createViewModel(userId: Long? = null): UserSelectViewModel =
+        UserSelectViewModel(
             userId = userId,
             userRepo = userRepo,
             messageRepo = messagesRepo,
             locationDataCapturer = locationDataCapturer,
             prefs = preferences,
         )
-    }
 
     @Test
-    fun `WHEN selectUser called THEN sets prefs userId and updates state selectedUser`() = runTest {
-        val viewModel = createViewModel()
-        val user = FakeFileGenerator.fakeUsers.first()
+    fun `WHEN selectUser called THEN sets prefs userId and updates state selectedUser`() =
+        runTest {
+            val viewModel = createViewModel()
+            val user = FakeFileGenerator.fakeUsers.first()
 
-        viewModel.handleAction(UserSelectAction.SelectUser(user))
+            viewModel.handleAction(UserSelectAction.SelectUser(user))
 
-        verify { preferences.setUserId(user.id) }
-        verify { captureSetupData.user = user }
-        val state = viewModel.state.first()
-        assertNotNull(state.selectedUser)
-        assertEquals(user.id, state.selectedUser!!.id)
-    }
-
-    @Test
-    fun `WHEN updateEditEnabled called THEN toggles editMode in state`() = runTest {
-        val viewModel = createViewModel()
-
-        val initialState = viewModel.state.first()
-        assertFalse(initialState.editMode)
-
-        viewModel.handleAction(UserSelectAction.ToggleEditMode)
-
-        val updatedState = viewModel.state.first()
-        assertTrue(updatedState.editMode)
-
-        viewModel.handleAction(UserSelectAction.ToggleEditMode)
-
-        val toggledBackState = viewModel.state.first()
-        assertFalse(toggledBackState.editMode)
-    }
+            verify { preferences.setUserId(user.id) }
+            verify { captureSetupData.user = user }
+            val state = viewModel.state.first()
+            assertNotNull(state.selectedUser)
+            assertEquals(user.id, state.selectedUser!!.id)
+        }
 
     @Test
-    fun `WHEN updateSelectedUser called THEN updates only provided fields`() = runTest {
-        val viewModel = createViewModel()
-        val user = FakeFileGenerator.fakeUsers.first()
-        viewModel.handleAction(UserSelectAction.SelectUser(user))
+    fun `WHEN updateEditEnabled called THEN toggles editMode in state`() =
+        runTest {
+            val viewModel = createViewModel()
 
-        viewModel.handleAction(UserSelectAction.UpdateSelectedUser(firstName = "UpdatedFirst"))
+            val initialState = viewModel.state.first()
+            assertFalse(initialState.editMode)
 
-        val state = viewModel.state.first()
-        assertNotNull(state.selectedUser)
-        assertEquals("UpdatedFirst", state.selectedUser!!.firstName)
-        assertEquals(user.lastName, state.selectedUser!!.lastName)
-        assertEquals(user.photoPath, state.selectedUser!!.photoPath)
-    }
+            viewModel.handleAction(UserSelectAction.ToggleEditMode)
+
+            val updatedState = viewModel.state.first()
+            assertTrue(updatedState.editMode)
+
+            viewModel.handleAction(UserSelectAction.ToggleEditMode)
+
+            val toggledBackState = viewModel.state.first()
+            assertFalse(toggledBackState.editMode)
+        }
 
     @Test
-    fun `WHEN updateDeleteProfileState called THEN updates state`() = runTest {
-        val viewModel = createViewModel()
+    fun `WHEN updateSelectedUser called THEN updates only provided fields`() =
+        runTest {
+            val viewModel = createViewModel()
+            val user = FakeFileGenerator.fakeUsers.first()
+            viewModel.handleAction(UserSelectAction.SelectUser(user))
 
-        viewModel.handleAction(UserSelectAction.UpdateDeleteProfileState(DeleteProfileState.SHOWDIALOG))
+            viewModel.handleAction(UserSelectAction.UpdateSelectedUser(firstName = "UpdatedFirst"))
 
-        val state = viewModel.state.first()
-        assertEquals(DeleteProfileState.SHOWDIALOG, state.deleteProfileState)
-    }
+            val state = viewModel.state.first()
+            assertNotNull(state.selectedUser)
+            assertEquals("UpdatedFirst", state.selectedUser!!.firstName)
+            assertEquals(user.lastName, state.selectedUser!!.lastName)
+            assertEquals(user.photoPath, state.selectedUser!!.photoPath)
+        }
+
+    @Test
+    fun `WHEN updateDeleteProfileState called THEN updates state`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            viewModel.handleAction(UserSelectAction.UpdateDeleteProfileState(DeleteProfileState.SHOWDIALOG))
+
+            val state = viewModel.state.first()
+            assertEquals(DeleteProfileState.SHOWDIALOG, state.deleteProfileState)
+        }
 }

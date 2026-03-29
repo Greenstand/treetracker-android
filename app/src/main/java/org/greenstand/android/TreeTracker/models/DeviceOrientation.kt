@@ -25,9 +25,8 @@ import androidx.lifecycle.OnLifecycleEvent
 import timber.log.Timber
 
 class DeviceOrientation(
-    private val sensorManager: SensorManager
+    private val sensorManager: SensorManager,
 ) : LifecycleObserver {
-
     val orientationEventListener = OrientationEventListener()
     var rotationMatrixSnapshot: FloatArray? = null
         private set
@@ -37,7 +36,9 @@ class DeviceOrientation(
     fun enable() {
         Timber.d("DeviceOrientation - registering rotation vector sensor")
         sensorManager.registerListener(
-            orientationEventListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_FASTEST
+            orientationEventListener,
+            rotationVectorSensor,
+            SensorManager.SENSOR_DELAY_FASTEST,
         )
     }
 
@@ -54,8 +55,10 @@ class DeviceOrientation(
     }
 
     inner class OrientationEventListener : SensorEventListener {
-
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        override fun onAccuracyChanged(
+            sensor: Sensor?,
+            accuracy: Int,
+        ) {
             // Ignore
         }
 
@@ -64,7 +67,7 @@ class DeviceOrientation(
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, it.values)
                 Timber.d(
                     "DeviceOrientation - Rotation Matrix " +
-                        "[${rotationMatrix.joinToString(",")}]"
+                        "[${rotationMatrix.joinToString(",")}]",
                 )
             }
         }

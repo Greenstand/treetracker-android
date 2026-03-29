@@ -20,32 +20,36 @@ import org.greenstand.android.TreeTracker.messages.announcementmessage.Announcem
 import org.junit.Test
 
 class AnnouncementScreenshotTest : ScreenshotTest() {
+    @Test
+    fun announcement_default() =
+        snapshot {
+            Announcement(state = AnnouncementState())
+        }
 
     @Test
-    fun announcement_default() = snapshot {
-        Announcement(state = AnnouncementState())
-    }
+    fun announcement_with_content() =
+        snapshot {
+            Announcement(
+                state =
+                    AnnouncementState(
+                        from = "Greenstand Admin",
+                        currentBody = "Thank you for your contributions to reforestation. Your trees are making a difference!",
+                        currentTitle = "Monthly Update",
+                    ),
+            )
+        }
 
     @Test
-    fun announcement_with_content() = snapshot {
-        Announcement(
-            state = AnnouncementState(
-                from = "Greenstand Admin",
-                currentBody = "Thank you for your contributions to reforestation. Your trees are making a difference!",
-                currentTitle = "Monthly Update",
-            ),
-        )
-    }
-
-    @Test
-    fun announcement_with_url() = snapshot {
-        Announcement(
-            state = AnnouncementState(
-                from = "Greenstand",
-                currentTitle = "New Feature Available",
-                currentBody = "We have launched a new mapping tool. Check it out!",
-                currentUrl = "https://map.treetracker.org",
-            ),
-        )
-    }
+    fun announcement_with_url() =
+        snapshot {
+            Announcement(
+                state =
+                    AnnouncementState(
+                        from = "Greenstand",
+                        currentTitle = "New Feature Available",
+                        currentBody = "We have launched a new mapping tool. Check it out!",
+                        currentUrl = "https://map.treetracker.org",
+                    ),
+            )
+        }
 }

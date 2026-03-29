@@ -29,9 +29,8 @@ import timber.log.Timber
 
 class StepCounter(
     private val sensorManager: SensorManager,
-    private val preferences: Preferences
+    private val preferences: Preferences,
 ) : LifecycleObserver {
-
     private val stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
     private val stepCountEventListener = StepCountEventListener()
 
@@ -41,8 +40,11 @@ class StepCounter(
 
     var absoluteStepCountOnTreeCapture: Int?
         get() = preferences.getInt(ABS_STEP_COUNT_ON_TREE_CAPTURE)
-        private set(value) = preferences
-            .edit().putInt(ABS_STEP_COUNT_ON_TREE_CAPTURE, value ?: 0).apply()
+        private set(value) =
+            preferences
+                .edit()
+                .putInt(ABS_STEP_COUNT_ON_TREE_CAPTURE, value ?: 0)
+                .apply()
 
     // Delta step count is the difference between the absolute count at the time of capturing
     // a tree minus the last absolute step count recorded when capturing a previous tree. This
@@ -53,7 +55,9 @@ class StepCounter(
     fun enable() {
         Timber.d("StepCounter: enable - register listener")
         sensorManager.registerListener(
-            stepCountEventListener, stepCounter, SensorManager.SENSOR_DELAY_FASTEST
+            stepCountEventListener,
+            stepCounter,
+            SensorManager.SENSOR_DELAY_FASTEST,
         )
     }
 
@@ -68,7 +72,10 @@ class StepCounter(
     }
 
     inner class StepCountEventListener : SensorEventListener {
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        override fun onAccuracyChanged(
+            sensor: Sensor?,
+            accuracy: Int,
+        ) {
             // Ignore
         }
 
@@ -83,7 +90,8 @@ class StepCounter(
     companion object {
         private val BASE_KEY = PrefKeys.SESSION + PrefKey("steps")
         private val ABS_STEP_COUNT = BASE_KEY + PrefKey("abs-step-count")
-        private val ABS_STEP_COUNT_ON_TREE_CAPTURE = BASE_KEY +
-            PrefKey("abs-step-count-on-tree-capture")
+        private val ABS_STEP_COUNT_ON_TREE_CAPTURE =
+            BASE_KEY +
+                PrefKey("abs-step-count-on-tree-capture")
     }
 }

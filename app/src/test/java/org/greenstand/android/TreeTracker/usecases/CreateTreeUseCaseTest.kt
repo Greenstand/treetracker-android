@@ -38,7 +38,6 @@ import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class CreateTreeUseCaseTest {
-
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -56,59 +55,64 @@ class CreateTreeUseCaseTest {
 
     private lateinit var createTreeUseCase: CreateTreeUseCase
 
-    private val fakeTree = Tree(
-        treeUuid = UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
-        sessionId = 100L,
-        content = "Test note",
-        photoPath = "/photos/tree.jpg",
-        meanLongitude = 36.82,
-        meanLatitude = -1.29,
-    )
+    private val fakeTree =
+        Tree(
+            treeUuid = UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
+            sessionId = 100L,
+            content = "Test note",
+            photoPath = "/photos/tree.jpg",
+            meanLongitude = 36.82,
+            meanLatitude = -1.29,
+        )
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        createTreeUseCase = CreateTreeUseCase(
-            dao = dao,
-            analytics = analytics,
-            timeProvider = timeProvider,
-        )
+        createTreeUseCase =
+            CreateTreeUseCase(
+                dao = dao,
+                analytics = analytics,
+                timeProvider = timeProvider,
+            )
     }
 
     @Test
-    fun `WHEN execute called THEN inserts TreeEntity via DAO and returns ID`() = runTest {
-        val fakeTime = Instant.fromEpochMilliseconds(1000000L)
-        every { timeProvider.currentTime() } returns fakeTime
-        coEvery { dao.insertTree(any()) } returns 55L
+    fun `WHEN execute called THEN inserts TreeEntity via DAO and returns ID`() =
+        runTest {
+            val fakeTime = Instant.fromEpochMilliseconds(1000000L)
+            every { timeProvider.currentTime() } returns fakeTime
+            coEvery { dao.insertTree(any()) } returns 55L
 
-        val result = createTreeUseCase.execute(fakeTree)
+            val result = createTreeUseCase.execute(fakeTree)
 
-        assertEquals(55L, result)
-        coVerify { dao.insertTree(any()) }
-    }
-
-    @Test
-    fun `WHEN execute called THEN calls analytics treePlanted`() = runTest {
-        val fakeTime = Instant.fromEpochMilliseconds(1000000L)
-        every { timeProvider.currentTime() } returns fakeTime
-        coEvery { dao.insertTree(any()) } returns 1L
-
-        createTreeUseCase.execute(fakeTree)
-
-        verify { analytics.treePlanted() }
-    }
-
-    @Test
-    fun `WHEN execute called THEN uses timeProvider for createdAt`() = runTest {
-        val fakeTime = Instant.fromEpochMilliseconds(5555555L)
-        every { timeProvider.currentTime() } returns fakeTime
-        coEvery { dao.insertTree(any()) } returns 1L
-
-        createTreeUseCase.execute(fakeTree)
-
-        verify { timeProvider.currentTime() }
-        coVerify {
-            dao.insertTree(match { it.createdAt == fakeTime })
+            assertEquals(55L, result)
+            coVerify { dao.insertTree(any()) }
         }
-    }
+
+    @Test
+    fun `WHEN execute called THEN calls analytics treePlanted`() =
+        runTest {
+            val fakeTime = Instant.fromEpochMilliseconds(1000000L)
+            every { timeProvider.currentTime() } returns fakeTime
+            coEvery { dao.insertTree(any()) } returns 1L
+
+            createTreeUseCase.execute(fakeTree)
+
+            verify { analytics.treePlanted() }
+        }
+
+    @Test
+    fun `WHEN execute called THEN uses timeProvider for createdAt`() =
+        runTest {
+            val fakeTime = Instant.fromEpochMilliseconds(5555555L)
+            every { timeProvider.currentTime() } returns fakeTime
+            coEvery { dao.insertTree(any()) } returns 1L
+
+            createTreeUseCase.execute(fakeTree)
+
+            verify { timeProvider.currentTime() }
+            coVerify {
+                dao.insertTree(match { it.createdAt == fakeTime })
+            }
+        }
 }

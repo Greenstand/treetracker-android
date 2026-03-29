@@ -1,3 +1,18 @@
+/*
+ * Copyright 2026 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.view.dialogs
 
 import androidx.compose.foundation.Image
@@ -34,28 +49,31 @@ fun PrivacyPolicyDialog(
     onDismiss: () -> Unit = {},
 ) {
     Column(
-        modifier = Modifier.Companion
-            .padding(start = 30.dp, end = 30.dp, top = 10.dp, bottom = 40.dp)
-            .fillMaxSize()
-            .padding(2.dp)
-            .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
-            .clip(RoundedCornerShape(percent = 10))
-            .background(color = AppColors.Gray)
-            .padding(10.dp),
+        modifier =
+            Modifier.Companion
+                .padding(start = 30.dp, end = 30.dp, top = 10.dp, bottom = 40.dp)
+                .fillMaxSize()
+                .padding(2.dp)
+                .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
+                .clip(RoundedCornerShape(percent = 10))
+                .background(color = AppColors.Gray)
+                .padding(10.dp),
     ) {
         Row(
-            modifier = Modifier.Companion
-                .weight(0.8f)
-                .fillMaxWidth()
-                .padding(bottom = 4.dp),
+            modifier =
+                Modifier.Companion
+                    .weight(0.8f)
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
             horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.Companion.CenterVertically
+            verticalAlignment = Alignment.Companion.CenterVertically,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.greenstand_logo),
                 contentDescription = null,
-                modifier = Modifier.Companion
-                    .size(width = 20.dp, height = 20.dp)
+                modifier =
+                    Modifier.Companion
+                        .size(width = 20.dp, height = 20.dp),
             )
             Spacer(modifier = Modifier.Companion.width(5.dp))
             Text(
@@ -67,18 +85,20 @@ fun PrivacyPolicyDialog(
         }
         Text(
             text = stringResource(id = R.string.policy_text_blob),
-            modifier = Modifier.Companion
-                .padding(bottom = 15.dp)
-                .weight(9f)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier.Companion
+                    .padding(bottom = 15.dp)
+                    .weight(9f)
+                    .verticalScroll(rememberScrollState()),
         )
         ApprovalButton(
-            modifier = Modifier.Companion
-                .weight(0.8f)
-                .size(50.dp)
-                .align(Alignment.Companion.CenterHorizontally),
+            modifier =
+                Modifier.Companion
+                    .weight(0.8f)
+                    .size(50.dp)
+                    .align(Alignment.Companion.CenterHorizontally),
             onClick = onDismiss,
-            approval = true
+            approval = true,
         )
     }
 }

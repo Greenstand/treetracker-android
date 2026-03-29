@@ -15,16 +15,14 @@
  */
 package org.greenstand.android.TreeTracker.preferences
 
-open class PrefKey(val path: String) {
-
-    operator fun plus(prefKey: PrefKey): PrefKey {
-        return when (prefKey) {
+open class PrefKey(
+    val path: String,
+) {
+    operator fun plus(prefKey: PrefKey): PrefKey =
+        when (prefKey) {
             is UserPrefKey -> UserPrefKey("$path/${prefKey.path}")
             else -> PrefKey("$path/${prefKey.path}")
         }
-    }
 
-    fun asUserPref(): UserPrefKey {
-        return UserPrefKey(path)
-    }
+    fun asUserPref(): UserPrefKey = UserPrefKey(path)
 }

@@ -48,31 +48,34 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 @ExperimentalPermissionsApi
 @Composable
 fun PermissionRequest(
-    viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current)
+    viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
-    val permissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.CAMERA,
+    val permissionsState =
+        rememberMultiplePermissionsState(
+            permissions =
+                listOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CAMERA,
+                ),
         )
-    )
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
-            val observer = LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_START) {
-                    permissionsState.launchMultiplePermissionRequest()
+            val observer =
+                LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_START) {
+                        permissionsState.launchMultiplePermissionRequest()
+                    }
                 }
-            }
             lifecycleOwner.lifecycle.addObserver(observer)
             onDispose {
                 lifecycleOwner.lifecycle.removeObserver(observer)
             }
-        }
+        },
     )
 
     permissionsState.permissions.forEach { perm ->
@@ -90,7 +93,7 @@ fun PermissionRequest(
                             onPositiveClick = {
                                 perm.launchPermissionRequest()
                                 navController.popBackStack()
-                            }
+                            },
                         )
                     }
                     else -> {
@@ -136,7 +139,10 @@ fun PermissionRequest(
 
 @ExperimentalPermissionsApi
 @Composable
-fun LocationRationaleDialog(navController: NavHostController, perm: PermissionState) {
+fun LocationRationaleDialog(
+    navController: NavHostController,
+    perm: PermissionState,
+) {
     CustomDialog(
         title = stringResource(R.string.accept_location_permission_header),
         textContent = stringResource(R.string.accept_location_permission_message),
@@ -146,7 +152,7 @@ fun LocationRationaleDialog(navController: NavHostController, perm: PermissionSt
         onPositiveClick = {
             perm.launchPermissionRequest()
             navController.popBackStack()
-        }
+        },
     )
 }
 
@@ -168,12 +174,13 @@ fun PermissionDeniedPermanentlyDialog(navController: NavHostController) {
             navController.popBackStack()
         },
         onPositiveClick = {
-            val intent = Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.fromParts("package", (activity as Activity).packageName, null)
-            )
+            val intent =
+                Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", (activity as Activity).packageName, null),
+                )
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(activity, intent, null)
-        }
+        },
     )
 }

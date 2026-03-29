@@ -22,7 +22,6 @@ import org.koin.core.scope.Scope
 import timber.log.Timber
 
 object CaptureSetupScopeManager {
-
     private var currentScope: Scope? = null
 
     val isOpen: Boolean get() = currentScope != null
@@ -36,14 +35,14 @@ object CaptureSetupScopeManager {
         currentScope?.get<CaptureSetupData>()
     }
 
-    fun getData(): CaptureSetupData {
-        return currentScope?.get()
+    fun getData(): CaptureSetupData =
+        currentScope?.get()
             ?: error("CaptureSetupScope not open. Call open() before getData().")
-    }
 
     val nav: CaptureSetupNavigationController
-        get() = currentScope?.get()
-            ?: error("CaptureSetupScope not open. Call open() before accessing nav.")
+        get() =
+            currentScope?.get()
+                ?: error("CaptureSetupScope not open. Call open() before accessing nav.")
 
     fun close() {
         currentScope?.close()

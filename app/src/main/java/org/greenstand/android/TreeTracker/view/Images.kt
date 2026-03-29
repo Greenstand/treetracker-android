@@ -45,7 +45,7 @@ fun LocalImage(
             bitmap = it,
             contentDescription = contentDescription,
             modifier = modifier,
-            contentScale = contentScale
+            contentScale = contentScale,
         )
     } ?: placeHolder(modifier)
 }
@@ -59,7 +59,8 @@ fun loadLocalImage(
         scope.launch {
             try {
                 value = BitmapFactory.decodeFile(imagePath).asImageBitmap()
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TracksRequest(
     val sessionId: String,
-    val locations: List<LocationRequest>
+    val locations: List<LocationRequest>,
 )
 
 @Serializable

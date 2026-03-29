@@ -20,13 +20,11 @@ import android.hardware.SensorManager
 import android.location.LocationManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-
 import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import kotlinx.serialization.json.Json
-import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
@@ -92,161 +90,168 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.component.get
 import org.koin.dsl.module
 
-val appModule = module {
+val appModule =
+    module {
 
-    viewModel { SessionNoteViewModel() }
+        viewModel { SessionNoteViewModel() }
 
-    viewModel { AddWalletViewModel() }
+        viewModel { AddWalletViewModel() }
 
-    viewModel { AddOrgViewModel(get()) }
+        viewModel { AddOrgViewModel(get()) }
 
-    viewModel { LanguagePickerViewModel(get()) }
+        viewModel { LanguagePickerViewModel(get()) }
 
-    viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 
-    viewModel { OrgPickerViewModel(get()) }
+        viewModel { OrgPickerViewModel(get()) }
 
-    viewModel { UserSelectViewModel(null, get(), get(), get(), get()) }
+        viewModel { UserSelectViewModel(null, get(), get(), get(), get()) }
 
-    viewModel { DevOptionsViewModel(get(), get()) }
+        viewModel { DevOptionsViewModel(get(), get()) }
 
-    viewModel { TreeHeightSelectionViewModel(get()) }
+        viewModel { TreeHeightSelectionViewModel(get()) }
 
-    viewModel { org.greenstand.android.TreeTracker.signup.SignupViewModel(get(), get()) }
+        viewModel {
+            org.greenstand.android.TreeTracker.signup
+                .SignupViewModel(get(), get())
+        }
 
-    viewModel { WalletSelectViewModel(get()) }
+        viewModel { WalletSelectViewModel(get()) }
 
-    viewModel { IndividualMessageListViewModel(get(), get(), get()) }
+        viewModel { IndividualMessageListViewModel(get(), get(), get()) }
 
-    viewModel { ChatViewModel(get(), get(), get(), get()) }
+        viewModel { ChatViewModel(get(), get(), get(), get()) }
 
-    viewModel { AnnouncementViewModel(get(), get()) }
+        viewModel { AnnouncementViewModel(get(), get()) }
 
-    viewModel { TreeImageReviewViewModel(get(), get(), get()) }
+        viewModel { TreeImageReviewViewModel(get(), get(), get()) }
 
-    viewModel { PermissionViewModel(get()) }
+        viewModel { PermissionViewModel(get()) }
 
-    viewModel { SettingsViewModel(get()) }
+        viewModel { SettingsViewModel(get()) }
 
-    viewModel { MapViewModel(get()) }
+        viewModel { MapViewModel(get()) }
 
-    single { UserRepo(get(), get(), get(), get(), get(), get()) }
+        single { UserRepo(get(), get(), get(), get(), get(), get()) }
 
-    factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
+        factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
-    single { Configurator(get()) }
+        single { Configurator(get()) }
 
-    single { DeviceConfigUpdater(get(), get()) }
+        single { DeviceConfigUpdater(get(), get()) }
 
-    single { OrgRepo(get(), get(), get()) }
+        single { OrgRepo(get(), get(), get()) }
 
-    single { org.greenstand.android.TreeTracker.models.organization.FeatureResolver(get()) }
+        single {
+            org.greenstand.android.TreeTracker.models.organization
+                .FeatureResolver(get())
+        }
 
-    single { WorkManager.getInstance(get()) }
+        single { WorkManager.getInstance(get()) }
 
-    single { FirebaseAnalytics.getInstance(get()) }
+        single { FirebaseAnalytics.getInstance(get()) }
 
-    single { Analytics(get(), get()) }
+        single { Analytics(get(), get()) }
 
-    single { DeviceUtils }
+        single { DeviceUtils }
 
-    single { GpsUtils(get()) }
+        single { GpsUtils(get()) }
 
-    single { SyncNotificationManager(get()) }
+        single { SyncNotificationManager(get()) }
 
-    single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
+        single { androidContext().getSharedPreferences("org.greenstand.android", Context.MODE_PRIVATE) }
 
-    single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
+        single { androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager }
 
-    single { androidContext().resources }
+        single { androidContext().resources }
 
-    single { MessagesRepo(get(), get(), get(), get(), get()) }
+        single { MessagesRepo(get(), get(), get(), get(), get()) }
 
-    factory { MessageUploader(get(), get(), get()) }
+        factory { MessageUploader(get(), get(), get()) }
 
-    single { LocationUpdateManager(get(), get(), get()) }
+        single { LocationUpdateManager(get(), get(), get()) }
 
-    single { ObjectStorageClient.instance() }
+        single { ObjectStorageClient.instance() }
 
-    single { NotificationManagerCompat.from(get()) }
+        single { NotificationManagerCompat.from(get()) }
 
-    single {
-        LocationDataCapturer(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-        )
-    }
+        single {
+            LocationDataCapturer(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+            )
+        }
 
-    single { Preferences(get()) }
+        single { Preferences(get()) }
 
-    single {
-        ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
-    }
+        single {
+            ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
+        }
 
-    single { SessionTracker(get(), get(), get(), get(), get(), get()) }
+        single { SessionTracker(get(), get(), get(), get(), get(), get()) }
 
-    single { StepCounter(get(), get()) }
+        single { StepCounter(get(), get()) }
 
-    single { DeviceOrientation(get()) }
+        single { DeviceOrientation(get()) }
 
-    single { ConvergenceConfiguration(get()) }
+        single { ConvergenceConfiguration(get()) }
 
-    single {
-        Json {
-            explicitNulls = true
-            ignoreUnknownKeys = true
-            encodeDefaults = true
+        single {
+            Json {
+                explicitNulls = true
+                ignoreUnknownKeys = true
+                encodeDefaults = true
+            }
+        }
+
+        single { TreeTrackerViewModelFactory() }
+
+        single { ExceptionDataCollector(get()) }
+
+        factory { TimeProvider(get()) }
+
+        factory { TreesToSyncHelper(get(), get()) }
+
+        factory { PlanterUploader(get(), get(), get(), get()) }
+
+        factory { SessionUploader(get(), get(), get()) }
+
+        factory { DeviceConfigUploader(get(), get(), get()) }
+
+        factory { LanguageSwitcher(get()) }
+
+        factory { UploadImageUseCase(get()) }
+
+        factory { UploadLocationDataUseCase(get(), get()) }
+
+        factory { CreateTreeUseCase(get(), get(), get()) }
+
+        factory { CreateLegacyTreeUseCase(get(), get()) }
+
+        factory { CreateFakeTreesUseCase(get(), get(), get(), get(), get(), get(), get()) }
+
+        factory { CheckForInternetUseCase() }
+
+        factory { CreateTreeRequestUseCase(get()) }
+
+        factory { TreeUploader(get(), get(), get(), get(), get()) }
+
+        factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
+
+        factory { Firebase.crashlytics }
+
+        scope<CaptureSetupScope> {
+            scoped { CaptureSetupData(get()) }
+            scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
+        }
+
+        scope<CaptureFlowScope> {
+            scoped { CaptureFlowData() }
+            scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get()) }
+            scoped { TreeCapturer(get(), get(), get(), get(), get()) }
         }
     }
-
-    single { TreeTrackerViewModelFactory() }
-
-    single { ExceptionDataCollector(get()) }
-
-    factory { TimeProvider(get()) }
-
-    factory { TreesToSyncHelper(get(), get()) }
-
-    factory { PlanterUploader(get(), get(), get(), get()) }
-
-    factory { SessionUploader(get(), get(), get()) }
-
-    factory { DeviceConfigUploader(get(), get(), get()) }
-
-    factory { LanguageSwitcher(get()) }
-
-    factory { UploadImageUseCase(get()) }
-
-    factory { UploadLocationDataUseCase(get(), get()) }
-
-    factory { CreateTreeUseCase(get(), get(), get()) }
-
-    factory { CreateLegacyTreeUseCase(get(), get()) }
-
-    factory { CreateFakeTreesUseCase(get(), get(), get(), get(), get(), get(), get()) }
-
-    factory { CheckForInternetUseCase() }
-
-    factory { CreateTreeRequestUseCase(get()) }
-
-    factory { TreeUploader(get(), get(), get(), get(), get()) }
-
-    factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
-
-    factory { Firebase.crashlytics }
-
-    scope<CaptureSetupScope> {
-        scoped { CaptureSetupData(get()) }
-        scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
-    }
-
-    scope<CaptureFlowScope> {
-        scoped { CaptureFlowData() }
-        scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get()) }
-        scoped { TreeCapturer(get(), get(), get(), get(), get()) }
-    }
-}

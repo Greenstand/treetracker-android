@@ -21,8 +21,9 @@ import timber.log.Timber
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Convergence(val locations: List<Location>) {
-
+class Convergence(
+    val locations: List<Location>,
+) {
     var longitudeConvergence: ConvergenceStats? = null
         private set
     var latitudeConvergence: ConvergenceStats? = null
@@ -45,14 +46,16 @@ class Convergence(val locations: List<Location>) {
     fun computeSlidingWindowStats(
         currentStats: ConvergenceStats,
         replacingValue: Double,
-        newValue: Double
+        newValue: Double,
     ): ConvergenceStats {
-        val newMean = currentStats.mean -
-            (replacingValue / locations.size) +
-            (newValue / locations.size)
-        val newVariance = currentStats.variance -
-            ((replacingValue - currentStats.mean).pow(2.0) / locations.size) +
-            ((newValue - newMean).pow(2.0) / locations.size)
+        val newMean =
+            currentStats.mean -
+                (replacingValue / locations.size) +
+                (newValue / locations.size)
+        val newVariance =
+            currentStats.variance -
+                ((replacingValue - currentStats.mean).pow(2.0) / locations.size) +
+                ((newValue - newMean).pow(2.0) / locations.size)
         val newStdDev = sqrt(newVariance)
         return ConvergenceStats(newMean, newVariance, newStdDev)
     }
@@ -66,27 +69,28 @@ class Convergence(val locations: List<Location>) {
         latitudeConvergence = computeStats(latitudeData)
     }
 
-    fun computeSlidingWindowConvergence(replaceLocation: Location, newLocation: Location) {
+    fun computeSlidingWindowConvergence(
+        replaceLocation: Location,
+        newLocation: Location,
+    ) {
         Timber.d("Convergence: Evaluating running convergence stats")
-        longitudeConvergence = computeSlidingWindowStats(
-            longitudeConvergence!!,
-            replaceLocation.longitude,
-            newLocation.longitude
-        )
-        latitudeConvergence = computeSlidingWindowStats(
-            latitudeConvergence!!,
-            replaceLocation.latitude,
-            newLocation.latitude
-        )
+        longitudeConvergence =
+            computeSlidingWindowStats(
+                longitudeConvergence!!,
+                replaceLocation.longitude,
+                newLocation.longitude,
+            )
+        latitudeConvergence =
+            computeSlidingWindowStats(
+                latitudeConvergence!!,
+                replaceLocation.latitude,
+                newLocation.latitude,
+            )
     }
 
-    fun longitudinalStandardDeviation(): Double? {
-        return longitudeConvergence?.standardDeviation
-    }
+    fun longitudinalStandardDeviation(): Double? = longitudeConvergence?.standardDeviation
 
-    fun latitudinalStandardDeviation(): Double? {
-        return latitudeConvergence?.standardDeviation
-    }
+    fun latitudinalStandardDeviation(): Double? = latitudeConvergence?.standardDeviation
 
     private fun computeStats(data: List<Double>): ConvergenceStats {
         val mean = data.sum() / data.size

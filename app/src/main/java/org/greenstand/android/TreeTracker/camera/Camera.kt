@@ -54,49 +54,58 @@ fun Camera(
 
                 cameraProviderFuture.addListener({
                     val cameraProvider = cameraProviderFuture.get()
-                    val screenSize = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        val bounds = (previewView.context as Activity).windowManager.currentWindowMetrics.bounds
-                        Size(bounds.width(), bounds.width())
-                    } else {
-                        @Suppress("DEPRECATION")
-                        val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
-                        Size(metrics.widthPixels, metrics.widthPixels)
-                    }
-
-                    val preview = if (isSelfieMode) {
-                        Preview.Builder()
-                            .setTargetResolution(screenSize)
-                            .build()
-                    } else {
-                        Preview.Builder()
-                            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                            .build()
-                    }
-
-                    val imageCapture = if (isSelfieMode) {
-                        ImageCapture.Builder()
-                            .setTargetResolution(Size(1000, 1000))
-                            .build()
-                    } else {
-                        ImageCapture.Builder()
-                            .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                            // .setTargetResolution(Size(800, 800))
-                            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                            .build()
-                    }
-
-                    cameraControl.captureListener = {
-
-                        val file = ImageUtils.createImageFile(context)
-
-                        val metadata = ImageCapture.Metadata().apply {
-                            // Mirror image when using the front camera
-                            isReversedHorizontal = isSelfieMode
+                    val screenSize =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            val bounds = (previewView.context as Activity).windowManager.currentWindowMetrics.bounds
+                            Size(bounds.width(), bounds.width())
+                        } else {
+                            @Suppress("DEPRECATION")
+                            val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
+                            Size(metrics.widthPixels, metrics.widthPixels)
                         }
 
-                        val outputOptions = ImageCapture.OutputFileOptions.Builder(file)
-                            .setMetadata(metadata)
-                            .build()
+                    val preview =
+                        if (isSelfieMode) {
+                            Preview
+                                .Builder()
+                                .setTargetResolution(screenSize)
+                                .build()
+                        } else {
+                            Preview
+                                .Builder()
+                                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                                .build()
+                        }
+
+                    val imageCapture =
+                        if (isSelfieMode) {
+                            ImageCapture
+                                .Builder()
+                                .setTargetResolution(Size(1000, 1000))
+                                .build()
+                        } else {
+                            ImageCapture
+                                .Builder()
+                                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                                // .setTargetResolution(Size(800, 800))
+                                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                                .build()
+                        }
+
+                    cameraControl.captureListener = {
+                        val file = ImageUtils.createImageFile(context)
+
+                        val metadata =
+                            ImageCapture.Metadata().apply {
+                                // Mirror image when using the front camera
+                                isReversedHorizontal = isSelfieMode
+                            }
+
+                        val outputOptions =
+                            ImageCapture.OutputFileOptions
+                                .Builder(file)
+                                .setMetadata(metadata)
+                                .build()
 
                         imageCapture.takePicture(
                             outputOptions,
@@ -109,29 +118,38 @@ fun Camera(
                                         targetHeight = cameraControl.imageScaleHeight,
                                     )
                                     ImageUtils.orientImage(file.absolutePath)
-                                    Timber.tag("CameraXApp")
+                                    Timber
+                                        .tag("CameraXApp")
                                         .d("Photo capture succeeded: ${file.absolutePath}")
                                     onImageCaptured(file)
                                 }
 
                                 override fun onError(exception: ImageCaptureException) {
-                                    Timber.tag("CameraXApp")
+                                    Timber
+                                        .tag("CameraXApp")
                                         .e(exception, "Photo capture failed")
                                 }
-                            }
+                            },
                         )
                     }
 
-                    val cameraSelector = CameraSelector.Builder()
-                        .requireLensFacing(
-                            if (isSelfieMode) CameraSelector.LENS_FACING_FRONT
-                            else CameraSelector.LENS_FACING_BACK
-                        )
-                        .build()
+                    val cameraSelector =
+                        CameraSelector
+                            .Builder()
+                            .requireLensFacing(
+                                if (isSelfieMode) {
+                                    CameraSelector.LENS_FACING_FRONT
+                                } else {
+                                    CameraSelector.LENS_FACING_BACK
+                                },
+                            ).build()
 
                     cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
-                        lifecycleOwner, cameraSelector, imageCapture, preview
+                        lifecycleOwner,
+                        cameraSelector,
+                        imageCapture,
+                        preview,
                     )
 
                     preview.setSurfaceProvider(previewView.surfaceProvider)
@@ -142,7 +160,6 @@ fun Camera(
 }
 
 class CameraControl {
-
     var captureListener: (() -> Unit)? = null
 
     var isImageScalingEnabled: Boolean = false

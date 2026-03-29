@@ -21,8 +21,12 @@ import com.google.firebase.ktx.Firebase
 import timber.log.Timber
 
 class ExceptionLogger : Timber.Tree() {
-
-    override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) {
+    override fun log(
+        priority: Int,
+        tag: String?,
+        message: String,
+        throwable: Throwable?,
+    ) {
         if (priority == Log.VERBOSE || priority == Log.DEBUG) {
             return
         }

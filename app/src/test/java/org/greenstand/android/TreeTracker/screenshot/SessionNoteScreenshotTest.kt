@@ -20,18 +20,20 @@ import org.greenstand.android.TreeTracker.sessionnote.SessionNoteState
 import org.junit.Test
 
 class SessionNoteScreenshotTest : ScreenshotTest() {
+    @Test
+    fun sessionNote_default() =
+        snapshot {
+            SessionNote(state = SessionNoteState())
+        }
 
     @Test
-    fun sessionNote_default() = snapshot {
-        SessionNote(state = SessionNoteState())
-    }
-
-    @Test
-    fun sessionNote_with_text() = snapshot {
-        SessionNote(
-            state = SessionNoteState(
-                note = "Planted 15 mango trees near the river bank. Soil was moist and weather was favorable.",
-            ),
-        )
-    }
+    fun sessionNote_with_text() =
+        snapshot {
+            SessionNote(
+                state =
+                    SessionNoteState(
+                        note = "Planted 15 mango trees near the river bank. Soil was moist and weather was favorable.",
+                    ),
+            )
+        }
 }

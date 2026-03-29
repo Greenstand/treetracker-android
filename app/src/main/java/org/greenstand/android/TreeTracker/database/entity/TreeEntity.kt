@@ -28,9 +28,9 @@ import kotlinx.datetime.Instant
             entity = SessionEntity::class,
             parentColumns = ["_id"],
             childColumns = ["session_id"],
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class TreeEntity(
     @ColumnInfo(name = "uuid")

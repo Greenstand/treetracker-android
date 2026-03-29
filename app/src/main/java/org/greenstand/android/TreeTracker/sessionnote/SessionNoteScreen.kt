@@ -85,9 +85,9 @@ fun SessionNote(
                     ) {
                         onHandleAction(SessionNoteAction.NavigateNext)
                     }
-                }
+                },
             )
-        }
+        },
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(it),
@@ -99,16 +99,18 @@ fun SessionNote(
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedNote -> onHandleAction(SessionNoteAction.UpdateNote(updatedNote)) },
                 placeholder = { Text(text = stringResource(id = R.string.add_note_to_session), color = Color.White) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Go,
-                    autoCorrect = false,
-                ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        onHandleAction(SessionNoteAction.NavigateNext)
-                    }
-                )
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Go,
+                        autoCorrect = false,
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onGo = {
+                            onHandleAction(SessionNoteAction.NavigateNext)
+                        },
+                    ),
             )
         }
     }

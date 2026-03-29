@@ -33,7 +33,6 @@ import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class DevOptionsViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -52,33 +51,37 @@ class DevOptionsViewModelTest {
     }
 
     @Test
-    fun `WHEN init THEN loads config params from configurator`() = runTest {
-        every { configurator.getBoolean(any()) } returns false
-        every { configurator.getInt(any()) } returns 100
-        every { configurator.getFloat(any()) } returns 0.5f
+    fun `WHEN init THEN loads config params from configurator`() =
+        runTest {
+            every { configurator.getBoolean(any()) } returns false
+            every { configurator.getInt(any()) } returns 100
+            every { configurator.getFloat(any()) } returns 0.5f
 
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
 
-        val state = viewModel.state.first()
-        assertEquals(ConfigKeys.configList.size, state.params.size)
-    }
+            val state = viewModel.state.first()
+            assertEquals(ConfigKeys.configList.size, state.params.size)
+        }
 
     @Test
-    fun `WHEN updateParam called with BooleanConfig THEN updates configurator and state`() = runTest {
-        every { configurator.getBoolean(any()) } returns false
-        every { configurator.getInt(any()) } returns 100
-        every { configurator.getFloat(any()) } returns 0.5f
+    fun `WHEN updateParam called with BooleanConfig THEN updates configurator and state`() =
+        runTest {
+            every { configurator.getBoolean(any()) } returns false
+            every { configurator.getInt(any()) } returns 100
+            every { configurator.getFloat(any()) } returns 0.5f
 
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
 
-        val booleanParam = ConfigKeys.FORCE_IMAGE_SIZE
-        viewModel.handleAction(DevOptionsAction.UpdateParam(booleanParam, true))
+            val booleanParam = ConfigKeys.FORCE_IMAGE_SIZE
+            viewModel.handleAction(DevOptionsAction.UpdateParam(booleanParam, true))
 
-        verify { configurator.putValue(booleanParam, true) }
+            verify { configurator.putValue(booleanParam, true) }
 
-        val state = viewModel.state.first()
-        val updatedParam = state.params.filterIsInstance<BooleanConfig>()
-            .find { it.key == booleanParam.key }
-        assertTrue(updatedParam!!.defaultValue)
-    }
+            val state = viewModel.state.first()
+            val updatedParam =
+                state.params
+                    .filterIsInstance<BooleanConfig>()
+                    .find { it.key == booleanParam.key }
+            assertTrue(updatedParam!!.defaultValue)
+        }
 }

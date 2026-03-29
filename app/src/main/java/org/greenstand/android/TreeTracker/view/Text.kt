@@ -39,12 +39,12 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 
 @OptIn(ExperimentalUnitApi::class)
 object TextStyles {
-
-    val DarkText = TextStyle(
-        color = AppColors.GrayShadow,
-        fontSize = TextUnit(24f, TextUnitType.Sp),
-        fontWeight = FontWeight.Bold
-    )
+    val DarkText =
+        TextStyle(
+            color = AppColors.GrayShadow,
+            fontSize = TextUnit(24f, TextUnitType.Sp),
+            fontWeight = FontWeight.Bold,
+        )
 }
 
 @Composable
@@ -53,22 +53,24 @@ fun BoxScope.TopBarTitle() {
     Image(
         painter = painterResource(id = R.drawable.greenstand_logo),
         contentDescription = "Treetracker icon",
-        modifier = Modifier
-            .height(100.dp)
-            .width(100.dp)
-            .align(Alignment.Center)
-            .padding(all = 15.dp).run {
-                if (BuildConfig.DEBUG) {
-                    this.pointerInput(true) {
-                        detectTapGestures(
-                            onLongPress = {
-                                nav.navigate(DevOptionsRoute)
-                            }
-                        )
+        modifier =
+            Modifier
+                .height(100.dp)
+                .width(100.dp)
+                .align(Alignment.Center)
+                .padding(all = 15.dp)
+                .run {
+                    if (BuildConfig.DEBUG) {
+                        this.pointerInput(true) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    nav.navigate(DevOptionsRoute)
+                                },
+                            )
+                        }
+                    } else {
+                        this
                     }
-                } else {
-                    this
-                }
-            }
+                },
     )
 }

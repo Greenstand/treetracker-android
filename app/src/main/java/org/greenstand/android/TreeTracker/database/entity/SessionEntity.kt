@@ -28,9 +28,9 @@ import kotlinx.datetime.Instant
             entity = DeviceConfigEntity::class,
             parentColumns = ["_id"],
             childColumns = ["device_config_id"],
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class SessionEntity(
     @ColumnInfo(name = "uuid")

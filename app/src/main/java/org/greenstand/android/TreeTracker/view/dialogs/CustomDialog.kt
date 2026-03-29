@@ -44,7 +44,6 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 
-@Composable
 /**
  * @param dialogIcon Icon to be displayed in the dialog.
  * @param title The Dialog's title text.
@@ -54,12 +53,15 @@ import org.greenstand.android.TreeTracker.view.ApprovalButton
  * @param onNegativeClick The callback action for clicking the negative approval button.
  * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
  */
+@Composable
 fun CustomDialog(
     dialogIcon: Painter? = painterResource(id = R.drawable.greenstand_logo),
     backgroundModifier: Modifier = Modifier,
     title: String = "",
     textContent: String? = null,
-    content: @Composable() (() -> Unit)? = null,
+    content:
+        @Composable()
+        (() -> Unit)? = null,
     onPositiveClick: (() -> Unit)? = null,
     onNegativeClick: (() -> Unit)? = null,
     textInputValue: String = "",
@@ -69,18 +71,20 @@ fun CustomDialog(
         onDismissRequest = { },
         title = {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp),
                 horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 dialogIcon?.let {
                     Image(
                         painter = it,
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(width = 16.dp, height = 16.dp)
+                        modifier =
+                            Modifier
+                                .size(width = 16.dp, height = 16.dp),
                     )
                 }
                 Spacer(modifier = Modifier.width(5.dp))
@@ -92,39 +96,42 @@ fun CustomDialog(
                 )
             }
         },
-        modifier = backgroundModifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(2.dp)
-            .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
-            .clip(RoundedCornerShape(percent = 10)),
+        modifier =
+            backgroundModifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(2.dp)
+                .border(1.dp, color = AppColors.Green, shape = RoundedCornerShape(percent = 10))
+                .clip(RoundedCornerShape(percent = 10)),
         backgroundColor = AppColors.Gray,
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
             ) {
                 textContent?.let {
                     Text(
                         text = it,
                         color = CustomTheme.textColors.primaryText,
                         style = CustomTheme.typography.regular,
-                        modifier = Modifier.padding(bottom = 5.dp)
+                        modifier = Modifier.padding(bottom = 5.dp),
                     )
                 }
                 onTextInputValueChange?.let {
                     TextField(
                         value = textInputValue,
                         modifier = Modifier.wrapContentHeight(),
-                        onValueChange = onTextInputValueChange
+                        onValueChange = onTextInputValueChange,
                     )
                 }
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                    contentAlignment = Alignment.Center,
                 ) {
                     content?.let { it() }
                 }
@@ -132,27 +139,30 @@ fun CustomDialog(
         },
         buttons = {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 onNegativeClick?.let {
                     ApprovalButton(
-                        modifier = Modifier
-                            .padding(end = 24.dp)
-                            .size(40.dp),
+                        modifier =
+                            Modifier
+                                .padding(end = 24.dp)
+                                .size(40.dp),
                         onClick = it,
-                        approval = false
+                        approval = false,
                     )
                 }
 
                 onPositiveClick?.let {
                     ApprovalButton(
-                        modifier = Modifier
-                            .size(40.dp),
+                        modifier =
+                            Modifier
+                                .size(40.dp),
                         onClick = it,
-                        approval = true
+                        approval = true,
                     )
                 }
             }

@@ -53,30 +53,33 @@ fun BorderedTextField(
     autofocusEnabled: Boolean = false,
 ) {
     Box(
-        modifier = modifier
-            .padding(padding)
-            .border(
-                BorderStroke(0.5.dp, SolidColor(Color.White)),
-                RoundedCornerShape(16.dp),
-            )
+        modifier =
+            modifier
+                .padding(padding)
+                .border(
+                    BorderStroke(0.5.dp, SolidColor(Color.White)),
+                    RoundedCornerShape(16.dp),
+                ),
     ) {
         TextField(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxSize()
-                .focusRequester(focusRequester)
-                .onFocusChanged(onFocusChanged),
+            modifier =
+                Modifier
+                    .padding(8.dp)
+                    .fillMaxSize()
+                    .focusRequester(focusRequester)
+                    .onFocusChanged(onFocusChanged),
             value = value,
             onValueChange = onValueChange,
             placeholder = placeholder,
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                backgroundColor = MaterialTheme.colors.primary,
-                cursorColor = CustomTheme.textColors.lightText
-            ),
+            colors =
+                TextFieldDefaults.textFieldColors(
+                    textColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    backgroundColor = MaterialTheme.colors.primary,
+                    cursorColor = CustomTheme.textColors.lightText,
+                ),
             keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions
+            keyboardActions = keyboardActions,
         )
     }
 

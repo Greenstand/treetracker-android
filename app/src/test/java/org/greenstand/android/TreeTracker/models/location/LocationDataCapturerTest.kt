@@ -21,12 +21,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import kotlinx.serialization.json.Json
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.LocationDataConfig
@@ -42,7 +42,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class LocationDataCapturerTest {
-
     private lateinit var locationDataCapturer: LocationDataCapturer
 
     @MockK(relaxed = true)
@@ -50,8 +49,10 @@ class LocationDataCapturerTest {
 
     @MockK(relaxed = true)
     private lateinit var convergenceConfiguration: ConvergenceConfiguration
+
     @MockK(relaxed = true)
     private lateinit var timeProvider: TimeProvider
+
     @MockK(relaxed = true)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var preferences: Preferences
@@ -70,14 +71,19 @@ class LocationDataCapturerTest {
         MockKAnnotations.init(this)
         preferences = Preferences(sharedPreferences)
         every { convergenceConfiguration.locationDataConfig } returns LocationDataConfig()
-        locationDataCapturer = LocationDataCapturer(
-            locationUpdateManager,
-            treeTrackerDAO,
-            convergenceConfiguration,
-            Json { explicitNulls = true; ignoreUnknownKeys = true; encodeDefaults = true },
-            sessionTracker,
-            timeProvider,
-        )
+        locationDataCapturer =
+            LocationDataCapturer(
+                locationUpdateManager,
+                treeTrackerDAO,
+                convergenceConfiguration,
+                Json {
+                    explicitNulls = true
+                    ignoreUnknownKeys = true
+                    encodeDefaults = true
+                },
+                sessionTracker,
+                timeProvider,
+            )
     }
 
     @Test
@@ -92,7 +98,6 @@ class LocationDataCapturerTest {
 
     @Test
     fun turnOnTreeCaptureMode() {
-
         locationDataCapturer.turnOnTreeCaptureMode()
 
         assertNotNull("Tree UUID is generated", locationDataCapturer.generatedTreeUuid)
@@ -100,7 +105,6 @@ class LocationDataCapturerTest {
 
     @Test
     fun turnOffTreeCaptureMode() {
-
         locationDataCapturer.turnOffTreeCaptureMode()
 
         assertNull("Tree UUID is reset to null", locationDataCapturer.generatedTreeUuid)
@@ -108,7 +112,6 @@ class LocationDataCapturerTest {
 
     @Test
     fun noConvergenceUntilMinLocationSize() {
-
         val locationsLiveData = MutableLiveData<Location>()
         every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
 
@@ -125,17 +128,17 @@ class LocationDataCapturerTest {
         assertFalse(locationDataCapturer.isConvergenceWithinRange())
     }
 
-    val locationValuesLowVariance = listOf(
-        Pair(-122.08400001, 37.42149486),
-        Pair(-122.08400111, 37.42149487),
-        Pair(-122.08400021519, 37.42149483),
-        Pair(-122.08400021999, 37.42149489),
-        Pair(-122.0840086753, 37.42149481)
-    )
+    val locationValuesLowVariance =
+        listOf(
+            Pair(-122.08400001, 37.42149486),
+            Pair(-122.08400111, 37.42149487),
+            Pair(-122.08400021519, 37.42149483),
+            Pair(-122.08400021999, 37.42149489),
+            Pair(-122.0840086753, 37.42149481),
+        )
 
     @Test
     fun convergenceWithinRange() {
-
         val locationsLiveData = MutableLiveData<Location>()
         every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
 
@@ -151,13 +154,14 @@ class LocationDataCapturerTest {
     }
 
     // Hard coded longitude and latitude pair values
-    val locationValuesHighVariance = listOf(
-        Pair(-122.08400001, 37.42149486),
-        Pair(-122.08500111, 37.42149487),
-        Pair(-122.093821519, 37.42149483),
-        Pair(-122.0913121999, 37.42149489),
-        Pair(-122.0773486753, 37.42149481)
-    )
+    val locationValuesHighVariance =
+        listOf(
+            Pair(-122.08400001, 37.42149486),
+            Pair(-122.08500111, 37.42149487),
+            Pair(-122.093821519, 37.42149483),
+            Pair(-122.0913121999, 37.42149489),
+            Pair(-122.0773486753, 37.42149481),
+        )
 
     @Test
     fun convergenceNotWithinRange() {
@@ -176,15 +180,17 @@ class LocationDataCapturerTest {
         assertFalse(locationDataCapturer.isConvergenceWithinRange())
     }
 
-    val locationsWithLowAndHighVariance = listOf(
-        Pair(-122.08400001, 37.42149486),
-        Pair(-122.08400111, 37.42149487),
-        Pair(-122.08400021519, 37.42149483),
-        Pair(-122.08400021999, 37.42149489),
-        Pair(-122.0840086753, 37.42149481),
-        Pair(-122.0913121999, 37.42149489),
-        Pair(-122.0773486753, 37.42149481)
-    )
+    val locationsWithLowAndHighVariance =
+        listOf(
+            Pair(-122.08400001, 37.42149486),
+            Pair(-122.08400111, 37.42149487),
+            Pair(-122.08400021519, 37.42149483),
+            Pair(-122.08400021999, 37.42149489),
+            Pair(-122.0840086753, 37.42149481),
+            Pair(-122.0913121999, 37.42149489),
+            Pair(-122.0773486753, 37.42149481),
+        )
+
     @Test
     fun unconvergeWhenGPSWanders() {
         val locationsLiveData = MutableLiveData<Location>()
@@ -201,7 +207,7 @@ class LocationDataCapturerTest {
 
         assertTrue(
             "Converges with low variance location values",
-            locationDataCapturer.isConvergenceWithinRange()
+            locationDataCapturer.isConvergenceWithinRange(),
         )
 
         for (i in 5..6) {
@@ -212,7 +218,7 @@ class LocationDataCapturerTest {
         }
         assertFalse(
             "location unconverges when gps values wander",
-            locationDataCapturer.isConvergenceWithinRange()
+            locationDataCapturer.isConvergenceWithinRange(),
         )
     }
 }

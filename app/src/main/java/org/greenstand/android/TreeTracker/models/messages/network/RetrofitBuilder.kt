@@ -23,26 +23,29 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-class RetrofitBuilder(private val json: Json) {
-
-    fun create(): Retrofit {
-        return Retrofit.Builder()
+class RetrofitBuilder(
+    private val json: Json,
+) {
+    fun create(): Retrofit =
+        Retrofit
+            .Builder()
             .client(
-                OkHttpClient.Builder()
+                OkHttpClient
+                    .Builder()
                     .addInterceptor(
                         HttpLoggingInterceptor().also {
                             it.setLevel(
-                                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-                                else HttpLoggingInterceptor.Level.NONE
+                                if (BuildConfig.DEBUG) {
+                                    HttpLoggingInterceptor.Level.BODY
+                                } else {
+                                    HttpLoggingInterceptor.Level.NONE
+                                },
                             )
-                        }
-                    )
-                    .build()
-            )
-            .baseUrl(BASE_ENDPOINT)
+                        },
+                    ).build(),
+            ).baseUrl(BASE_ENDPOINT)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
-    }
 
     companion object {
         private const val BASE_ENDPOINT = BuildConfig.API_GATEWAY

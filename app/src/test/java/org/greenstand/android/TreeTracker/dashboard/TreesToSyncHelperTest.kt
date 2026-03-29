@@ -34,7 +34,6 @@ import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class TreesToSyncHelperTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -57,38 +56,42 @@ class TreesToSyncHelperTest {
         every { preferences.edit() } returns mockEditor
         every { mockEditor.putInt(any(), any()) } returns mockEditor
 
-        treesToSyncHelper = TreesToSyncHelper(
-            preferences = preferences,
-            dao = dao,
-        )
+        treesToSyncHelper =
+            TreesToSyncHelper(
+                preferences = preferences,
+                dao = dao,
+            )
     }
 
     @Test
-    fun `WHEN refreshTreeCountToSync called THEN sums legacy and new tree counts and stores in prefs`() = runTest {
-        coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 5
-        coEvery { dao.getNonUploadedTreeImageCount() } returns 10
+    fun `WHEN refreshTreeCountToSync called THEN sums legacy and new tree counts and stores in prefs`() =
+        runTest {
+            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 5
+            coEvery { dao.getNonUploadedTreeImageCount() } returns 10
 
-        treesToSyncHelper.refreshTreeCountToSync()
+            treesToSyncHelper.refreshTreeCountToSync()
 
-        val mockEditor = preferences.edit()
-        verify { mockEditor.putInt(any(), 15) }
-    }
-
-    @Test
-    fun `WHEN getTreeCountToSync called THEN reads from prefs`() = runTest {
-        every { preferences.getInt(any(), -1) } returns 42
-
-        val result = treesToSyncHelper.getTreeCountToSync()
-
-        assertEquals(42, result)
-    }
+            val mockEditor = preferences.edit()
+            verify { mockEditor.putInt(any(), 15) }
+        }
 
     @Test
-    fun `WHEN getTreeCountToSync called with no stored value THEN returns negative one as default`() = runTest {
-        every { preferences.getInt(any(), -1) } returns -1
+    fun `WHEN getTreeCountToSync called THEN reads from prefs`() =
+        runTest {
+            every { preferences.getInt(any(), -1) } returns 42
 
-        val result = treesToSyncHelper.getTreeCountToSync()
+            val result = treesToSyncHelper.getTreeCountToSync()
 
-        assertEquals(-1, result)
-    }
+            assertEquals(42, result)
+        }
+
+    @Test
+    fun `WHEN getTreeCountToSync called with no stored value THEN returns negative one as default`() =
+        runTest {
+            every { preferences.getInt(any(), -1) } returns -1
+
+            val result = treesToSyncHelper.getTreeCountToSync()
+
+            assertEquals(-1, result)
+        }
 }

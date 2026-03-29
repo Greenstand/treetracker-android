@@ -36,7 +36,6 @@ import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class AddWalletViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -59,27 +58,29 @@ class AddWalletViewModelTest {
     }
 
     @Test
-    fun `WHEN init THEN sets userImagePath from CaptureSetupScopeManager`() = runTest {
-        val fakeUser = FakeFileGenerator.fakeUsers.first()
-        every { captureSetupData.user } returns fakeUser
+    fun `WHEN init THEN sets userImagePath from CaptureSetupScopeManager`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
 
-        val viewModel = AddWalletViewModel()
+            val viewModel = AddWalletViewModel()
 
-        val state = viewModel.state.value
-        assertEquals(fakeUser.photoPath, state.userImagePath)
-    }
+            val state = viewModel.state.value
+            assertEquals(fakeUser.photoPath, state.userImagePath)
+        }
 
     @Test
-    fun `WHEN updateWalletName called THEN updates state walletName and CaptureSetupScopeManager data`() = runTest {
-        val fakeUser = FakeFileGenerator.fakeUsers.first()
-        every { captureSetupData.user } returns fakeUser
+    fun `WHEN updateWalletName called THEN updates state walletName and CaptureSetupScopeManager data`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
 
-        val viewModel = AddWalletViewModel()
+            val viewModel = AddWalletViewModel()
 
-        viewModel.handleAction(AddWalletAction.UpdateWalletName("new-wallet-name"))
+            viewModel.handleAction(AddWalletAction.UpdateWalletName("new-wallet-name"))
 
-        val state = viewModel.state.value
-        assertEquals("new-wallet-name", state.walletName)
-        verify { captureSetupData.destinationWallet = "new-wallet-name" }
-    }
+            val state = viewModel.state.value
+            assertEquals("new-wallet-name", state.walletName)
+            verify { captureSetupData.destinationWallet = "new-wallet-name" }
+        }
 }

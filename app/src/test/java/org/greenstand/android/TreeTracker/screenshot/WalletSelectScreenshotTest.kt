@@ -20,9 +20,9 @@ import org.greenstand.android.TreeTracker.walletselect.WalletSelectState
 import org.junit.Test
 
 class WalletSelectScreenshotTest : ScreenshotTest() {
-
     @Test
-    fun wallet_select_default() = snapshot {
-        WalletSelect(state = WalletSelectState())
-    }
+    fun wallet_select_default() =
+        snapshot {
+            WalletSelect(state = WalletSelectState())
+        }
 }

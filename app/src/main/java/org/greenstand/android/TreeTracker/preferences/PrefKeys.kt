@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.preferences
 
 object PrefKeys {
-
     private val ROOT = PrefKey("greenstand")
 
     /**

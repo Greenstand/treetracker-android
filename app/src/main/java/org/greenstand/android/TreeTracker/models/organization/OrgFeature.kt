@@ -21,7 +21,9 @@ import timber.log.Timber
  * Type-safe feature flags that can be enabled per-destination in org flow configs.
  * Features are specified as strings in org JSON and mapped to enum values here.
  */
-enum class OrgFeature(val key: String) {
+enum class OrgFeature(
+    val key: String,
+) {
     FORCE_NOTE("forceNote"),
     ;
 
@@ -43,27 +45,36 @@ enum class OrgFeature(val key: String) {
  * Inject this via Koin to check features in ViewModels instead of
  * manually searching destination lists.
  */
-class FeatureResolver(private val orgRepo: OrgRepo) {
-
+class FeatureResolver(
+    private val orgRepo: OrgRepo,
+) {
     /**
      * Check if a feature is enabled for a specific route in the capture flow.
      */
-    fun isCaptureFlowFeatureEnabled(routeId: String, feature: OrgFeature): Boolean {
-        return orgRepo.currentOrg().captureFlow
+    fun isCaptureFlowFeatureEnabled(
+        routeId: String,
+        feature: OrgFeature,
+    ): Boolean =
+        orgRepo
+            .currentOrg()
+            .captureFlow
             .find { it.route == routeId }
             ?.features
             ?.any { OrgFeature.fromKey(it) == feature }
             ?: false
-    }
 
     /**
      * Check if a feature is enabled for a specific route in the setup flow.
      */
-    fun isSetupFlowFeatureEnabled(routeId: String, feature: OrgFeature): Boolean {
-        return orgRepo.currentOrg().captureSetupFlow
+    fun isSetupFlowFeatureEnabled(
+        routeId: String,
+        feature: OrgFeature,
+    ): Boolean =
+        orgRepo
+            .currentOrg()
+            .captureSetupFlow
             .find { it.route == routeId }
             ?.features
             ?.any { OrgFeature.fromKey(it) == feature }
             ?: false
-    }
 }

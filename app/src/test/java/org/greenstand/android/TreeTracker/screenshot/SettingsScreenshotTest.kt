@@ -20,9 +20,9 @@ import org.greenstand.android.TreeTracker.settings.SettingsState
 import org.junit.Test
 
 class SettingsScreenshotTest : ScreenshotTest() {
-
     @Test
-    fun settings_default() = snapshot {
-        Settings(state = SettingsState())
-    }
+    fun settings_default() =
+        snapshot {
+            Settings(state = SettingsState())
+        }
 }

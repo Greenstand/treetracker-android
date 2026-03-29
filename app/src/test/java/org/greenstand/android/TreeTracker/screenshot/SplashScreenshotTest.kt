@@ -19,9 +19,9 @@ import org.greenstand.android.TreeTracker.splash.Splash
 import org.junit.Test
 
 class SplashScreenshotTest : ScreenshotTest() {
-
     @Test
-    fun splash_default() = snapshot {
-        Splash()
-    }
+    fun splash_default() =
+        snapshot {
+            Splash()
+        }
 }

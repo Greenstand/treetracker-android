@@ -38,7 +38,6 @@ import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class SessionTrackerTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -73,39 +72,43 @@ class SessionTrackerTest {
         every { preferences.edit() } returns mockEditor
         every { mockEditor.putLong(any(), any()) } returns mockEditor
 
-        sessionTracker = SessionTracker(
-            dao = dao,
-            treesToSyncHelper = treesToSyncHelper,
-            preferences = preferences,
-            timeProvider = timeProvider,
-            orgRepo = orgRepo,
-            exceptionDataCollector = exceptionDataCollector,
-        )
+        sessionTracker =
+            SessionTracker(
+                dao = dao,
+                treesToSyncHelper = treesToSyncHelper,
+                preferences = preferences,
+                timeProvider = timeProvider,
+                orgRepo = orgRepo,
+                exceptionDataCollector = exceptionDataCollector,
+            )
     }
 
     @Test
-    fun `WHEN no active session THEN endSession no-ops`() = runTest {
-        sessionTracker.endSession()
+    fun `WHEN no active session THEN endSession no-ops`() =
+        runTest {
+            sessionTracker.endSession()
 
-        coVerify(exactly = 0) { dao.getSessionById(any()) }
-        coVerify(exactly = 0) { dao.updateSession(any()) }
-    }
-
-    @Test
-    fun `WHEN no currentSessionId but prefs has valid value THEN wasSessionInterrupted returns true`() = runTest {
-        every { preferences.getLong(any(), any()) } returns 5L
-
-        val result = sessionTracker.wasSessionInterrupted()
-
-        assertTrue(result)
-    }
+            coVerify(exactly = 0) { dao.getSessionById(any()) }
+            coVerify(exactly = 0) { dao.updateSession(any()) }
+        }
 
     @Test
-    fun `WHEN prefs returns negative one THEN wasSessionInterrupted returns false`() = runTest {
-        every { preferences.getLong(any(), any()) } returns -1L
+    fun `WHEN no currentSessionId but prefs has valid value THEN wasSessionInterrupted returns true`() =
+        runTest {
+            every { preferences.getLong(any(), any()) } returns 5L
 
-        val result = sessionTracker.wasSessionInterrupted()
+            val result = sessionTracker.wasSessionInterrupted()
 
-        assertFalse(result)
-    }
+            assertTrue(result)
+        }
+
+    @Test
+    fun `WHEN prefs returns negative one THEN wasSessionInterrupted returns false`() =
+        runTest {
+            every { preferences.getLong(any(), any()) } returns -1L
+
+            val result = sessionTracker.wasSessionInterrupted()
+
+            assertFalse(result)
+        }
 }

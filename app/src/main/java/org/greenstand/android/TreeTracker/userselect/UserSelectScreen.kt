@@ -32,6 +32,6 @@ fun UserSelectScreen() {
         isNotificationEnabled = true,
         onNavigateForward = {
             scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
-        }
+        },
     )
 }

@@ -54,26 +54,30 @@ fun SelectableImageDetail(
     content: @Composable () -> Unit,
 ) {
     TreeTrackerButton(
-        modifier = Modifier
-            .padding(8.dp)
-            .height(270.dp)
-            .width(156.dp)
-            .wrapContentHeight(),
+        modifier =
+            Modifier
+                .padding(8.dp)
+                .height(270.dp)
+                .width(156.dp)
+                .wrapContentHeight(),
         colors = buttonColors,
         onClick = onClick,
         isSelected = isSelected,
-        borderBrushOverride = verticalGradient(
-            colors = listOf(
-                AppColors.Gray,
-                selectedColor
-            )
-        ).takeIf { isSelected },
+        borderBrushOverride =
+            verticalGradient(
+                colors =
+                    listOf(
+                        AppColors.Gray,
+                        selectedColor,
+                    ),
+            ).takeIf { isSelected },
         contentAlignment = Alignment.TopCenter,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
@@ -81,20 +85,22 @@ fun SelectableImageDetail(
                 LocalImage(
                     imagePath = it,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .aspectRatio(1.0f)
-                        .padding(bottom = 20.dp)
-                        .clip(RoundedCornerShape(10.dp)),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .aspectRatio(1.0f)
+                            .padding(bottom = 20.dp)
+                            .clip(RoundedCornerShape(10.dp)),
                 )
             }
             header?.let { it() }
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
             ) {
                 content()
             }
@@ -116,7 +122,7 @@ fun UserButton(
         isSelected = isSelected,
         buttonColors = buttonColors,
         selectedColor = selectedColor,
-        onClick = onClick
+        onClick = onClick,
     ) {
         Text(
             text = "${user.firstName} ${user.lastName}",
@@ -124,7 +130,7 @@ fun UserButton(
             style = CustomTheme.typography.small,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = user.wallet,
@@ -132,18 +138,19 @@ fun UserButton(
             style = CustomTheme.typography.small,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Row(
             modifier = Modifier.padding(top = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.white_leaf),
                 contentDescription = "",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(width = 20.dp, height = 22.dp)
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterVertically)
+                        .size(width = 20.dp, height = 22.dp),
             )
             Text(
                 text = user.numberOfTrees.toString(), // TODO: Fetch user's token count.
@@ -154,11 +161,12 @@ fun UserButton(
             )
             if (isNotificationEnabled) {
                 Image(
-                    modifier = Modifier
-                        .size(33.dp)
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .size(33.dp)
+                            .weight(1f),
                     painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         }

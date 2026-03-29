@@ -22,11 +22,12 @@ import kotlinx.coroutines.withContext
 
 suspend fun <Data> List<Data>.runInParallel(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    action: suspend (Data) -> Unit
+    action: suspend (Data) -> Unit,
 ) = withContext(dispatcher) {
-    this@runInParallel.map {
-        async { action(it) }
-    }.forEach {
-        it.await()
-    }
+    this@runInParallel
+        .map {
+            async { action(it) }
+        }.forEach {
+            it.await()
+        }
 }

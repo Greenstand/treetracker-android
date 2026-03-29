@@ -76,7 +76,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun MapScreen(
-    viewModel: MapViewModel = viewModel(factory = LocalViewModelFactory.current)
+    viewModel: MapViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val navController = LocalNavHostController.current
     val context = LocalContext.current
@@ -87,7 +87,7 @@ fun MapScreen(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         LibreMap(
             markers = state.markers,
@@ -95,21 +95,22 @@ fun MapScreen(
             styleUrl = "https://tiles.openfreemap.org/styles/liberty",
             onMarkerClick = { markerId ->
                 viewModel.handleAction(MapAction.SelectMarker(markerId))
-            }
+            },
         )
 
         // Back button in top left corner
         Surface(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 16.dp, top = 4.dp)
-                .statusBarsPadding(),
+            modifier =
+                Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 16.dp, top = 4.dp)
+                    .statusBarsPadding(),
             elevation = 4.dp,
             shape = RoundedCornerShape(24.dp),
-            color = Color.White
+            color = Color.White,
         ) {
             IconButton(
-                onClick = { navController.popBackStack() }
+                onClick = { navController.popBackStack() },
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -121,15 +122,16 @@ fun MapScreen(
         // Carousel overlay at bottom
         if (state.markers.isNotEmpty()) {
             TreeMarkerCarousel(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .navigationBarsPadding(),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .navigationBarsPadding(),
                 markers = state.markers,
                 selectedMarkerId = state.selectedMarkerId,
                 onMarkerClick = { marker ->
                     viewModel.handleAction(MapAction.SelectMarker(marker.id))
-                }
+                },
             )
         }
     }
@@ -140,7 +142,7 @@ fun TreeMarkerCarousel(
     markers: List<MapMarker>,
     selectedMarkerId: String?,
     onMarkerClick: (MapMarker) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -149,9 +151,10 @@ fun TreeMarkerCarousel(
 
     // Calculate centering offset based on selected card size
     val screenWidth = configuration.screenWidthDp.dp
-    val centerOffset = with(density) {
-        ((screenWidth - CARD_WIDTH_SELECTED) / 2).toPx().toInt()
-    }
+    val centerOffset =
+        with(density) {
+            ((screenWidth - CARD_WIDTH_SELECTED) / 2).toPx().toInt()
+        }
 
     // Scroll to selected marker when it changes
     LaunchedEffect(selectedMarkerId) {
@@ -162,7 +165,7 @@ fun TreeMarkerCarousel(
                     // Scroll with offset to center the selected item
                     listState.animateScrollToItem(
                         index = index,
-                        scrollOffset = -centerOffset
+                        scrollOffset = -centerOffset,
                     )
                 }
             }
@@ -180,7 +183,7 @@ fun TreeMarkerCarousel(
             TreeMarkerCard(
                 marker = marker,
                 isSelected = marker.id == selectedMarkerId,
-                onClick = { onMarkerClick(marker) }
+                onClick = { onMarkerClick(marker) },
             )
         }
     }
@@ -191,65 +194,68 @@ fun TreeMarkerCard(
     marker: MapMarker,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // Animate width and height by 10% when selected
     val cardWidth by animateDpAsState(
         targetValue = if (isSelected) CARD_WIDTH_SELECTED else CARD_WIDTH_NORMAL,
         animationSpec = tween(durationMillis = 300),
-        label = "card_width"
+        label = "card_width",
     )
 
     val cardHeight by animateDpAsState(
         targetValue = if (isSelected) CARD_HEIGHT_SELECTED else CARD_HEIGHT_NORMAL,
         animationSpec = tween(durationMillis = 300),
-        label = "card_height"
+        label = "card_height",
     )
 
     Card(
-        modifier = modifier
-            .width(cardWidth)
-            .height(cardHeight)
-            .clickable { onClick() },
+        modifier =
+            modifier
+                .width(cardWidth)
+                .height(cardHeight)
+                .clickable { onClick() },
         elevation = if (isSelected) 8.dp else 4.dp,
         backgroundColor = Color.White,
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
     ) {
         Column(
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier.fillMaxHeight(),
         ) {
             // Tree image loaded from file path - takes 2/3 of card space
             AsyncImage(
                 model = marker.imagePath?.let { File(it) },
                 contentDescription = "Tree image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(2f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(2f),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.yellow_leafs_placeholder),
                 error = painterResource(id = R.drawable.yellow_leafs_placeholder),
-                fallback = painterResource(id = R.drawable.yellow_leafs_placeholder)
+                fallback = painterResource(id = R.drawable.yellow_leafs_placeholder),
             )
 
             // Content section - takes 1/3 of card space
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(12.dp)
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(12.dp),
             ) {
                 Text(
-                    text = "Lat: ${String.format("%.6f", marker.latitude)}",
+                    text = "Lat: ${String.format(java.util.Locale.US, "%.6f", marker.latitude)}",
                     style = CustomTheme.typography.small,
                     color = AppColors.Gray,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = "Lng: ${String.format("%.6f", marker.longitude)}",
+                    text = "Lng: ${String.format(java.util.Locale.US, "%.6f", marker.longitude)}",
                     style = CustomTheme.typography.small,
                     color = AppColors.Gray,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -260,7 +266,7 @@ fun TreeMarkerCard(
                     style = CustomTheme.typography.small,
                     color = AppColors.MediumGray,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -271,7 +277,7 @@ fun TreeMarkerCard(
                     style = CustomTheme.typography.small,
                     fontWeight = FontWeight.Bold,
                     color = AppColors.Green,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }

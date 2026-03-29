@@ -24,26 +24,28 @@ import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import java.util.Locale
 
-enum class Language(val locale: Locale) {
+enum class Language(
+    val locale: Locale,
+) {
     ENGLISH(Locale("en")),
     SWAHILI(Locale("sw")),
-    PORTUGUESE(Locale("pt"));
+    PORTUGUESE(Locale("pt")),
+    ;
 
     companion object {
-
-        fun fromString(lang: String): Language? {
-            return when (lang.lowercase()) {
+        fun fromString(lang: String): Language? =
+            when (lang.lowercase()) {
                 "en" -> ENGLISH
                 "sw" -> SWAHILI
                 "pt" -> PORTUGUESE
                 else -> null
             }
-        }
     }
 }
 
-class LanguageSwitcher(private val prefs: Preferences) {
-
+class LanguageSwitcher(
+    private val prefs: Preferences,
+) {
     fun applyCurrentLanguage() {
         val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
         language?.also { setLanguage(it) }
@@ -52,18 +54,16 @@ class LanguageSwitcher(private val prefs: Preferences) {
     fun setLanguage(language: Language) {
         prefs.edit().putString(LANGUAGE_PREF_KEY, language.locale.toLanguageTag()).commit()
         AppCompatDelegate.setApplicationLocales(
-            LocaleListCompat.forLanguageTags(language.locale.toLanguageTag())
+            LocaleListCompat.forLanguageTags(language.locale.toLanguageTag()),
         )
     }
 
-    fun currentLanguage(): Language? {
-        return Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
-    }
+    fun currentLanguage(): Language? = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
 
-    fun observeCurrentLanguage(): Flow<Language> {
-        return prefs.observeString(LANGUAGE_PREF_KEY)
+    fun observeCurrentLanguage(): Flow<Language> =
+        prefs
+            .observeString(LANGUAGE_PREF_KEY)
             .mapNotNull { langString -> langString?.let { Language.fromString(it) } }
-    }
 
     companion object {
         val LANGUAGE_PREF_KEY = PrefKeys.USER_SETTINGS + PrefKey("language")

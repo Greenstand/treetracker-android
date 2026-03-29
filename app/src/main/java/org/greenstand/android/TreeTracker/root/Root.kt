@@ -33,7 +33,7 @@ fun Root(viewModelFactory: TreeTrackerViewModelFactory) {
 
     CompositionLocalProvider(
         LocalViewModelFactory provides viewModelFactory,
-        LocalNavHostController provides navController
+        LocalNavHostController provides navController,
     ) {
         Host()
     }

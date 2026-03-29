@@ -76,7 +76,7 @@ fun DevOptionsScreen(
                         ArrowButton(isLeft = true) {
                             onHandleAction(DevOptionsAction.NavigateBack)
                         }
-                    }
+                    },
                 )
             },
         ) {
@@ -97,18 +97,21 @@ private fun ParamListItem(
     onClicked: (Any) -> Unit,
 ) {
     when (config) {
-        is BooleanConfig -> BooleanParamListItem(
-            config = config,
-            onClicked = { onClicked(it) }
-        )
-        is IntConfig -> IntParamListItem(
-            config = config,
-            onTextUpdated = { onClicked(it) }
-        )
-        is FloatConfig -> FloatParamListItem(
-            config = config,
-            onTextUpdated = { onClicked(it) }
-        )
+        is BooleanConfig ->
+            BooleanParamListItem(
+                config = config,
+                onClicked = { onClicked(it) },
+            )
+        is IntConfig ->
+            IntParamListItem(
+                config = config,
+                onTextUpdated = { onClicked(it) },
+            )
+        is FloatConfig ->
+            FloatParamListItem(
+                config = config,
+                onTextUpdated = { onClicked(it) },
+            )
     }
 }
 
@@ -118,14 +121,15 @@ private fun BooleanParamListItem(
     onClicked: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = config.name,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         Checkbox(
             checked = config.defaultValue,
@@ -151,9 +155,10 @@ private fun IntParamListItem(
                     onTextUpdated(value)
                 }
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-            )
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                ),
         )
     }
 }
@@ -175,9 +180,10 @@ private fun FloatParamListItem(
                     onTextUpdated(value)
                 }
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-            )
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                ),
         )
     }
 }

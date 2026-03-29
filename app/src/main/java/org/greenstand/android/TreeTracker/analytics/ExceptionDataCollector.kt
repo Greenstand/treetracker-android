@@ -18,9 +18,8 @@ package org.greenstand.android.TreeTracker.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class ExceptionDataCollector(
-    private val firebaseCrashlytics: FirebaseCrashlytics
+    private val firebaseCrashlytics: FirebaseCrashlytics,
 ) {
-
     private var currentRoute: String? = null
     private var lastRoute: String? = null
 
@@ -39,7 +38,10 @@ class ExceptionDataCollector(
         set(LAST_ROUTE, lastRoute)
     }
 
-    fun set(key: String, value: String?) {
+    fun set(
+        key: String,
+        value: String?,
+    ) {
         value ?: return
 
         if (key == USER_WALLET || key == POWER_USER_WALLET) {
@@ -50,7 +52,10 @@ class ExceptionDataCollector(
         }
     }
 
-    fun set(key: String, value: Boolean) {
+    fun set(
+        key: String,
+        value: Boolean,
+    ) {
         firebaseCrashlytics.setCustomKey(key, value)
     }
 

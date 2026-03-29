@@ -36,395 +36,55 @@ import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.user.User
 
 object FakeFileGenerator {
+    val fakeUsers =
+        listOf(
+            User(
+                id = 122,
+                wallet = "some random text",
+                numberOfTrees = 4,
+                firstName = "Caleb",
+                lastName = "Kaleb",
+                isPowerUser = true,
+                photoPath = "some random text",
+                unreadMessagesAvailable = false,
+            ),
+            User(
+                id = 155,
+                wallet = "some random text",
+                numberOfTrees = 7,
+                firstName = "Jane",
+                lastName = "Joseph",
+                isPowerUser = false,
+                photoPath = "some random text",
+                unreadMessagesAvailable = true,
+            ),
+            User(
+                id = 48848,
+                wallet = "some random text",
+                numberOfTrees = 11,
+                firstName = "Mike",
+                lastName = "Vincent",
+                isPowerUser = true,
+                photoPath = "some random text",
+                unreadMessagesAvailable = false,
+            ),
+        )
 
-    val fakeUsers = listOf(
+    val emptyUser =
         User(
             id = 122,
             wallet = "some random text",
             numberOfTrees = 4,
-            firstName = "Caleb",
-            lastName = "Kaleb",
+            firstName = "",
+            lastName = "",
             isPowerUser = true,
             photoPath = "some random text",
-            unreadMessagesAvailable = false
-        ),
-        User(
-            id = 155,
-            wallet = "some random text",
-            numberOfTrees = 7,
-            firstName = "Jane",
-            lastName = "Joseph",
-            isPowerUser = false,
-            photoPath = "some random text",
-            unreadMessagesAvailable = true
-        ),
-        User(
-            id = 48848,
-            wallet = "some random text",
-            numberOfTrees = 11,
-            firstName = "Mike",
-            lastName = "Vincent",
-            isPowerUser = true,
-            photoPath = "some random text",
-            unreadMessagesAvailable = false
+            unreadMessagesAvailable = false,
         )
-    )
 
-    val emptyUser = User(
-        id = 122,
-        wallet = "some random text",
-        numberOfTrees = 4,
-        firstName = "",
-        lastName = "",
-        isPowerUser = true,
-        photoPath = "some random text",
-        unreadMessagesAvailable = false
-    )
-
-    val fakePlanterInfo = PlanterInfoEntity(
-        identifier = "random",
-        firstName = "Caleb",
-        lastName = "Langat",
-        organization = "Greenstand",
-        phone = "+2548171311",
-        email = null,
-        latitude = 12.11,
-        longitude = 15.13,
-        uploaded = false,
-        createdAt = 13131,
-        bundleId = null,
-        recordUuid = "random"
-    )
-
-    val fakeUser = UserEntity(
-        uuid = "random",
-        wallet = "string",
-        firstName = "Jay",
-        lastName = "Ray",
-        phone = "07151515120",
-        email = null,
-        latitude = 12.222,
-        longitude = 1212.1212,
-        uploaded = false,
-        createdAt = Instant.DISTANT_FUTURE,
-        bundleId = null,
-        photoPath = "lol",
-        photoUrl = "anotherString",
-        powerUser = true
-    )
-
-    val fakePlanterCheckInEntity = PlanterCheckInEntity(
-        planterInfoId = 1,
-        localPhotoPath = "new",
-        photoUrl = "String",
-        latitude = 17.111,
-        longitude = 12.131,
-        createdAt = 121212
-    )
-    val fakeTree = listOf(
-        TreeEntity(
-            uuid = "just some string",
-            sessionId = 1921,
-            photoUrl = "random photo",
-            photoPath = "random photo path",
-            note = "string",
-            latitude = 88.11,
-            longitude = 99.11,
-            uploaded = false,
-            createdAt = Instant.DISTANT_FUTURE,
-            bundleId = "bundled",
-            extraAttributes = null
-        ),
-        TreeEntity(
-            uuid = "just a string",
-            sessionId = 111,
-            photoUrl = "random ",
-            photoPath = "random path",
-            note = "string",
-            latitude = 88.11,
-            longitude = 99.11,
-            uploaded = false,
-            createdAt = Instant.DISTANT_FUTURE,
-            bundleId = "bundled",
-            extraAttributes = null
-        )
-    )
-    val fakeOrg = listOf(
-        OrganizationEntity(
-            id = "new",
-            version = 4,
-            name = "GreenStand",
-            walletId = "wallet",
-            captureFlowJson = "random",
-            captureSetupFlowJson = "another random"
-        ),
-        OrganizationEntity(
-            id = "random",
-            version = 6,
-            name = "Green",
-            walletId = "wallet Id",
-            captureFlowJson = "random one",
-            captureSetupFlowJson = "first another random"
-        )
-    )
-
-    val fakeTreeCapture = TreeCaptureEntity(
-        uuid = "uuid",
-        planterCheckInId = 1991,
-        localPhotoPath = null,
-        photoUrl = null,
-        noteContent = "note",
-        latitude = 12.11,
-        longitude = 13.11,
-        accuracy = 1.11,
-        uploaded = false,
-        createAt = 11221,
-        bundleId = null
-    )
-    val fakeDeviceConfig = DeviceConfigEntity(
-        uuid = "uui",
-        appBuild = 1,
-        appVersion = "version",
-        osVersion = "os version",
-        sdkVersion = 32,
-        loggedAt = Instant.DISTANT_FUTURE,
-        isUploaded = false,
-        bundleId = "bundle"
-    )
-
-    val fakeLocation = LocationEntity(
-        locationDataJson = "location",
-        sessionId = 1212
-    )
-
-    val fakeSession = SessionEntity(
-        uuid = "uuid",
-        originUserId = "user",
-        originWallet = "Wallet",
-        destinationWallet = "destination",
-        startTime = Instant.DISTANT_FUTURE,
-        endTime = null,
-        organization = "Org",
-        isUploaded = true,
-        bundleId = "bundleId",
-        deviceConfigId = 11212,
-        note = "random"
-    )
-
-    val fakeLocationData = LocationDataEntity(
-        locationDataJson = "random String"
-    )
-
-    val fakeTreeAttribute = TreeAttributeEntity(
-        key = "random key",
-        value = "random value",
-        treeCaptureId = 1212
-    )
-
-    val fakeOrganizationList = listOf(
-        Org(
-            id = "id",
-            name = "GreenStand",
-            walletId = "wallet",
-            logoPath = "logo",
-            captureFlow = listOf(
-                Destination(
-                    route = "first Destination",
-                    features = null
-                ),
-                Destination(
-                    route = "second Destination",
-                    features = null
-                )
-            ),
-            captureSetupFlow =
-            listOf(
-                Destination(
-                    route = "first Destination",
-                    features = null
-                ),
-                Destination(
-                    route = "second Destination",
-                    features = null
-                )
-            )
-        ),
-        Org(
-            id = "newId",
-            name = "random",
-            walletId = "SecondWallet",
-            logoPath = "newLogo",
-            captureFlow = listOf(
-                Destination(
-                    route = "new Destination",
-                    features = null
-                ),
-                Destination(
-                    route = "Destination",
-                    features = null
-                )
-            ),
-            captureSetupFlow =
-            listOf(
-                Destination(
-                    route = "another Destination",
-                    features = null
-                ),
-                Destination(
-                    route = "random Destination",
-                    features = null
-                )
-            )
-        )
-    )
-    val fakeAnnouncementMessage = AnnouncementMessage(
-        id = "id",
-        from = "from",
-        to = "to",
-        composedAt = "composedAt",
-        isRead = true,
-        subject = "subject",
-        body = null,
-        videoLink = "videoLink"
-    )
-    val fakeDirectMessage = DirectMessage(
-        id = "identity",
-        from = "from",
-        to = "to",
-        composedAt = "compose",
-        isRead = false,
-        parentMessageId = "newId",
-        body = "body"
-    )
-    val fakeSurveyMessage = SurveyMessage(
-        id = "identity",
-        from = "from",
-        to = "to",
-        composedAt = "compose",
-        isRead = false,
-        surveyId = "surveyId",
-        title = "",
-        questions = listOf(
-            Question(
-                prompt = "prompt",
-                choices = listOf("choice1, choice2")
-            ),
-            Question(
-                prompt = "new prompt",
-                choices = listOf("yellow, black")
-            )
-        ),
-        isComplete = true
-    )
-    val messages = listOf(fakeAnnouncementMessage, fakeDirectMessage, fakeSurveyMessage)
-    val fakeDirectMessageList = listOf(
-        DirectMessage(
-            id = "new",
-            from = "Carla",
-            to = "Caleb",
-            composedAt = "compose_random",
-            isRead = true,
-            parentMessageId = "parentMessageId",
-            body = "random body"
-        ),
-        DirectMessage(
-            id = "helloId",
-            from = "Carla",
-            to = "john",
-            composedAt = "random",
-            isRead = false,
-            parentMessageId = "messageID",
-            body = "description"
-        ),
-        DirectMessage(
-            id = "helloId",
-            from = "Mary",
-            to = "Ezra",
-            composedAt = "random",
-            isRead = false,
-            parentMessageId = "messageID",
-            body = "description"
-        )
-    )
-
-    val fakeSessionWithEndTime = SessionEntity(
-        uuid = "uuid-end",
-        originUserId = "user",
-        originWallet = "Wallet",
-        destinationWallet = "destination",
-        startTime = Instant.DISTANT_FUTURE,
-        endTime = Instant.DISTANT_FUTURE,
-        organization = "Org",
-        isUploaded = false,
-        bundleId = "bundleId",
-        deviceConfigId = 11212,
-        note = "random"
-    )
-
-    val fakeDeviceConfigToUpload = DeviceConfigEntity(
-        uuid = "uui-upload",
-        appBuild = 2,
-        appVersion = "version2",
-        osVersion = "os version2",
-        sdkVersion = 33,
-        loggedAt = Instant.DISTANT_FUTURE,
-        isUploaded = false,
-        bundleId = "bundle-upload"
-    )
-
-    val fakeUserEntity = fakeUser
-
-    val fakeTreeCaptureList = listOf(
-        TreeCaptureEntity(
-            uuid = "uuid-1",
-            planterCheckInId = 1991,
-            localPhotoPath = null,
-            photoUrl = null,
-            noteContent = "note1",
-            latitude = 12.11,
-            longitude = 13.11,
-            accuracy = 1.11,
-            uploaded = false,
-            createAt = 11221,
-            bundleId = null
-        ),
-        TreeCaptureEntity(
-            uuid = "uuid-2",
-            planterCheckInId = 1992,
-            localPhotoPath = "path",
-            photoUrl = "url",
-            noteContent = "note2",
-            latitude = 14.11,
-            longitude = 15.11,
-            accuracy = 2.22,
-            uploaded = true,
-            createAt = 22332,
-            bundleId = "bundle"
-        )
-    )
-
-    val fakePlanterCheckInList = listOf(
-        PlanterCheckInEntity(
-            planterInfoId = 1,
-            localPhotoPath = "path1",
-            photoUrl = "url1",
-            latitude = 17.111,
-            longitude = 12.131,
-            createdAt = 121212
-        ),
-        PlanterCheckInEntity(
-            planterInfoId = 2,
-            localPhotoPath = "path2",
-            photoUrl = "url2",
-            latitude = 18.222,
-            longitude = 13.242,
-            createdAt = 232323
-        )
-    )
-
-    val fakePlanterInfoList = listOf(
+    val fakePlanterInfo =
         PlanterInfoEntity(
-            identifier = "random1",
+            identifier = "random",
             firstName = "Caleb",
             lastName = "Langat",
             organization = "Greenstand",
@@ -435,21 +95,386 @@ object FakeFileGenerator {
             uploaded = false,
             createdAt = 13131,
             bundleId = null,
-            recordUuid = "random1"
-        ),
-        PlanterInfoEntity(
-            identifier = "random2",
-            firstName = "Jane",
-            lastName = "Doe",
-            organization = "TreeOrg",
-            phone = "+2548171312",
-            email = "jane@test.com",
-            latitude = 14.22,
-            longitude = 16.24,
-            uploaded = true,
-            createdAt = 24242,
-            bundleId = "bundle",
-            recordUuid = "random2"
+            recordUuid = "random",
         )
-    )
+
+    val fakeUser =
+        UserEntity(
+            uuid = "random",
+            wallet = "string",
+            firstName = "Jay",
+            lastName = "Ray",
+            phone = "07151515120",
+            email = null,
+            latitude = 12.222,
+            longitude = 1212.1212,
+            uploaded = false,
+            createdAt = Instant.DISTANT_FUTURE,
+            bundleId = null,
+            photoPath = "lol",
+            photoUrl = "anotherString",
+            powerUser = true,
+        )
+
+    val fakePlanterCheckInEntity =
+        PlanterCheckInEntity(
+            planterInfoId = 1,
+            localPhotoPath = "new",
+            photoUrl = "String",
+            latitude = 17.111,
+            longitude = 12.131,
+            createdAt = 121212,
+        )
+    val fakeTree =
+        listOf(
+            TreeEntity(
+                uuid = "just some string",
+                sessionId = 1921,
+                photoUrl = "random photo",
+                photoPath = "random photo path",
+                note = "string",
+                latitude = 88.11,
+                longitude = 99.11,
+                uploaded = false,
+                createdAt = Instant.DISTANT_FUTURE,
+                bundleId = "bundled",
+                extraAttributes = null,
+            ),
+            TreeEntity(
+                uuid = "just a string",
+                sessionId = 111,
+                photoUrl = "random ",
+                photoPath = "random path",
+                note = "string",
+                latitude = 88.11,
+                longitude = 99.11,
+                uploaded = false,
+                createdAt = Instant.DISTANT_FUTURE,
+                bundleId = "bundled",
+                extraAttributes = null,
+            ),
+        )
+    val fakeOrg =
+        listOf(
+            OrganizationEntity(
+                id = "new",
+                version = 4,
+                name = "GreenStand",
+                walletId = "wallet",
+                captureFlowJson = "random",
+                captureSetupFlowJson = "another random",
+            ),
+            OrganizationEntity(
+                id = "random",
+                version = 6,
+                name = "Green",
+                walletId = "wallet Id",
+                captureFlowJson = "random one",
+                captureSetupFlowJson = "first another random",
+            ),
+        )
+
+    val fakeTreeCapture =
+        TreeCaptureEntity(
+            uuid = "uuid",
+            planterCheckInId = 1991,
+            localPhotoPath = null,
+            photoUrl = null,
+            noteContent = "note",
+            latitude = 12.11,
+            longitude = 13.11,
+            accuracy = 1.11,
+            uploaded = false,
+            createAt = 11221,
+            bundleId = null,
+        )
+    val fakeDeviceConfig =
+        DeviceConfigEntity(
+            uuid = "uui",
+            appBuild = 1,
+            appVersion = "version",
+            osVersion = "os version",
+            sdkVersion = 32,
+            loggedAt = Instant.DISTANT_FUTURE,
+            isUploaded = false,
+            bundleId = "bundle",
+        )
+
+    val fakeLocation =
+        LocationEntity(
+            locationDataJson = "location",
+            sessionId = 1212,
+        )
+
+    val fakeSession =
+        SessionEntity(
+            uuid = "uuid",
+            originUserId = "user",
+            originWallet = "Wallet",
+            destinationWallet = "destination",
+            startTime = Instant.DISTANT_FUTURE,
+            endTime = null,
+            organization = "Org",
+            isUploaded = true,
+            bundleId = "bundleId",
+            deviceConfigId = 11212,
+            note = "random",
+        )
+
+    val fakeLocationData =
+        LocationDataEntity(
+            locationDataJson = "random String",
+        )
+
+    val fakeTreeAttribute =
+        TreeAttributeEntity(
+            key = "random key",
+            value = "random value",
+            treeCaptureId = 1212,
+        )
+
+    val fakeOrganizationList =
+        listOf(
+            Org(
+                id = "id",
+                name = "GreenStand",
+                walletId = "wallet",
+                logoPath = "logo",
+                captureFlow =
+                    listOf(
+                        Destination(
+                            route = "first Destination",
+                            features = null,
+                        ),
+                        Destination(
+                            route = "second Destination",
+                            features = null,
+                        ),
+                    ),
+                captureSetupFlow =
+                    listOf(
+                        Destination(
+                            route = "first Destination",
+                            features = null,
+                        ),
+                        Destination(
+                            route = "second Destination",
+                            features = null,
+                        ),
+                    ),
+            ),
+            Org(
+                id = "newId",
+                name = "random",
+                walletId = "SecondWallet",
+                logoPath = "newLogo",
+                captureFlow =
+                    listOf(
+                        Destination(
+                            route = "new Destination",
+                            features = null,
+                        ),
+                        Destination(
+                            route = "Destination",
+                            features = null,
+                        ),
+                    ),
+                captureSetupFlow =
+                    listOf(
+                        Destination(
+                            route = "another Destination",
+                            features = null,
+                        ),
+                        Destination(
+                            route = "random Destination",
+                            features = null,
+                        ),
+                    ),
+            ),
+        )
+    val fakeAnnouncementMessage =
+        AnnouncementMessage(
+            id = "id",
+            from = "from",
+            to = "to",
+            composedAt = "composedAt",
+            isRead = true,
+            subject = "subject",
+            body = null,
+            videoLink = "videoLink",
+        )
+    val fakeDirectMessage =
+        DirectMessage(
+            id = "identity",
+            from = "from",
+            to = "to",
+            composedAt = "compose",
+            isRead = false,
+            parentMessageId = "newId",
+            body = "body",
+        )
+    val fakeSurveyMessage =
+        SurveyMessage(
+            id = "identity",
+            from = "from",
+            to = "to",
+            composedAt = "compose",
+            isRead = false,
+            surveyId = "surveyId",
+            title = "",
+            questions =
+                listOf(
+                    Question(
+                        prompt = "prompt",
+                        choices = listOf("choice1, choice2"),
+                    ),
+                    Question(
+                        prompt = "new prompt",
+                        choices = listOf("yellow, black"),
+                    ),
+                ),
+            isComplete = true,
+        )
+    val messages = listOf(fakeAnnouncementMessage, fakeDirectMessage, fakeSurveyMessage)
+    val fakeDirectMessageList =
+        listOf(
+            DirectMessage(
+                id = "new",
+                from = "Carla",
+                to = "Caleb",
+                composedAt = "compose_random",
+                isRead = true,
+                parentMessageId = "parentMessageId",
+                body = "random body",
+            ),
+            DirectMessage(
+                id = "helloId",
+                from = "Carla",
+                to = "john",
+                composedAt = "random",
+                isRead = false,
+                parentMessageId = "messageID",
+                body = "description",
+            ),
+            DirectMessage(
+                id = "helloId",
+                from = "Mary",
+                to = "Ezra",
+                composedAt = "random",
+                isRead = false,
+                parentMessageId = "messageID",
+                body = "description",
+            ),
+        )
+
+    val fakeSessionWithEndTime =
+        SessionEntity(
+            uuid = "uuid-end",
+            originUserId = "user",
+            originWallet = "Wallet",
+            destinationWallet = "destination",
+            startTime = Instant.DISTANT_FUTURE,
+            endTime = Instant.DISTANT_FUTURE,
+            organization = "Org",
+            isUploaded = false,
+            bundleId = "bundleId",
+            deviceConfigId = 11212,
+            note = "random",
+        )
+
+    val fakeDeviceConfigToUpload =
+        DeviceConfigEntity(
+            uuid = "uui-upload",
+            appBuild = 2,
+            appVersion = "version2",
+            osVersion = "os version2",
+            sdkVersion = 33,
+            loggedAt = Instant.DISTANT_FUTURE,
+            isUploaded = false,
+            bundleId = "bundle-upload",
+        )
+
+    val fakeUserEntity = fakeUser
+
+    val fakeTreeCaptureList =
+        listOf(
+            TreeCaptureEntity(
+                uuid = "uuid-1",
+                planterCheckInId = 1991,
+                localPhotoPath = null,
+                photoUrl = null,
+                noteContent = "note1",
+                latitude = 12.11,
+                longitude = 13.11,
+                accuracy = 1.11,
+                uploaded = false,
+                createAt = 11221,
+                bundleId = null,
+            ),
+            TreeCaptureEntity(
+                uuid = "uuid-2",
+                planterCheckInId = 1992,
+                localPhotoPath = "path",
+                photoUrl = "url",
+                noteContent = "note2",
+                latitude = 14.11,
+                longitude = 15.11,
+                accuracy = 2.22,
+                uploaded = true,
+                createAt = 22332,
+                bundleId = "bundle",
+            ),
+        )
+
+    val fakePlanterCheckInList =
+        listOf(
+            PlanterCheckInEntity(
+                planterInfoId = 1,
+                localPhotoPath = "path1",
+                photoUrl = "url1",
+                latitude = 17.111,
+                longitude = 12.131,
+                createdAt = 121212,
+            ),
+            PlanterCheckInEntity(
+                planterInfoId = 2,
+                localPhotoPath = "path2",
+                photoUrl = "url2",
+                latitude = 18.222,
+                longitude = 13.242,
+                createdAt = 232323,
+            ),
+        )
+
+    val fakePlanterInfoList =
+        listOf(
+            PlanterInfoEntity(
+                identifier = "random1",
+                firstName = "Caleb",
+                lastName = "Langat",
+                organization = "Greenstand",
+                phone = "+2548171311",
+                email = null,
+                latitude = 12.11,
+                longitude = 15.13,
+                uploaded = false,
+                createdAt = 13131,
+                bundleId = null,
+                recordUuid = "random1",
+            ),
+            PlanterInfoEntity(
+                identifier = "random2",
+                firstName = "Jane",
+                lastName = "Doe",
+                organization = "TreeOrg",
+                phone = "+2548171312",
+                email = "jane@test.com",
+                latitude = 14.22,
+                longitude = 16.24,
+                uploaded = true,
+                createdAt = 24242,
+                bundleId = "bundle",
+                recordUuid = "random2",
+            ),
+        )
 }

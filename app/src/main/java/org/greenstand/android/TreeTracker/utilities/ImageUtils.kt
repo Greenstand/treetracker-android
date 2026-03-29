@@ -35,11 +35,13 @@ import kotlin.math.ceil
 import kotlin.math.round
 
 object ImageUtils {
-
     private const val JPEG_FILE_PREFIX = "IMG_"
     private const val JPEG_FILE_SUFFIX = ".jpg"
 
-    fun createTestImageFile(context: Context, imageFileName: String = "testtreeimage.jpg"): File {
+    fun createTestImageFile(
+        context: Context,
+        imageFileName: String = "testtreeimage.jpg",
+    ): File {
         val myInput = context.assets.open(imageFileName)
         val f = createImageFile(context)
         val fos = FileOutputStream(f)
@@ -59,9 +61,11 @@ object ImageUtils {
         return File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, directory)
     }
 
-    fun decodeBitmap(photoPath: String?, density: Float): Bitmap? {
-
-        /* Get the size of the image */
+    fun decodeBitmap(
+        photoPath: String?,
+        density: Float,
+    ): Bitmap? {
+        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(photoPath, bmOptions)
@@ -86,7 +90,7 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
         bmOptions.inJustDecodeBounds = false
 
-        /* Decode the JPEG file into a Bitmap */
+        // Decode the JPEG file into a Bitmap
         val bitmap = BitmapFactory.decodeFile(photoPath, bmOptions) ?: return null
 
         var exif: ExifInterface? = null
@@ -97,28 +101,39 @@ object ImageUtils {
         }
 
         val orientString = exif!!.getAttribute(ExifInterface.TAG_ORIENTATION)
-        val orientation = if (orientString != null)
-            Integer.parseInt(orientString)
-        else
-            ExifInterface.ORIENTATION_NORMAL
+        val orientation =
+            if (orientString != null) {
+                Integer.parseInt(orientString)
+            } else {
+                ExifInterface.ORIENTATION_NORMAL
+            }
         var rotationAngle = 0
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
             rotationAngle = 90
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+        }
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
             rotationAngle = 180
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+        }
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
             rotationAngle = 270
+        }
 
         Timber.d("rotationAngle $rotationAngle")
 
         val matrix = Matrix()
         matrix.setRotate(
-            rotationAngle.toFloat(), bitmap.width.toFloat() / 2,
-            bitmap.height.toFloat() / 2
+            rotationAngle.toFloat(),
+            bitmap.width.toFloat() / 2,
+            bitmap.height.toFloat() / 2,
         )
         return Bitmap.createBitmap(
-            bitmap, 0, 0,
-            bmOptions.outWidth, bmOptions.outHeight, matrix, true
+            bitmap,
+            0,
+            0,
+            bmOptions.outWidth,
+            bmOptions.outHeight,
+            matrix,
+            true,
         )
     }
 
@@ -145,7 +160,11 @@ object ImageUtils {
     /**
      * out put image data pixels to console
      */
-    fun printImage(image: IntArray, rows: Int, cols: Int) {
+    fun printImage(
+        image: IntArray,
+        rows: Int,
+        cols: Int,
+    ) {
         var counter = 0.0
 
         println()
@@ -161,18 +180,22 @@ object ImageUtils {
         }
     }
 
-    fun getGrayPixelFromBitmap(imagePath: String?, scaleToWidth: Int): Array<Array<Int>>? {
-
-        /* Get the size of the image */
+    fun getGrayPixelFromBitmap(
+        imagePath: String?,
+        scaleToWidth: Int,
+    ): Array<Array<Int>>? {
+        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(imagePath, bmOptions)
         val imageWidth = bmOptions.outWidth
 
-        var sampleSize = Math.ceil(
-            (imageWidth.toFloat() / scaleToWidth.toFloat())
-                .toDouble()
-        ).toInt()
+        var sampleSize =
+            Math
+                .ceil(
+                    (imageWidth.toFloat() / scaleToWidth.toFloat())
+                        .toDouble(),
+                ).toInt()
         // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
@@ -191,7 +214,6 @@ object ImageUtils {
 
         val rows = bitmap.height
         val cols = bitmap.width
-        val bc = bitmap.byteCount
         val pix = IntArray(rows * cols)
         bitmap.getPixels(pix, 0, cols, 0, 0, cols, rows)
 
@@ -212,7 +234,6 @@ object ImageUtils {
      * blur and image with gaussian kernel with random width between 0 (no blur) and 10.
      */
     public fun generateRandomBlurredImage(image: Array<Array<Int>>): Array<Array<Int>> {
-
         val ran = kotlin.random.Random(System.currentTimeMillis()).nextInt(0, 10)
         println(ran)
         if (ran > 0) {
@@ -220,6 +241,7 @@ object ImageUtils {
         }
         return image
     }
+
     /**
      *  Get grayscale image using standard formula.
      */
@@ -244,8 +266,10 @@ object ImageUtils {
     /**
      * make a gaussian kernel
      */
-    fun gaussian(width: Int, sigma: Double): Pair<Array<Array<Double>>, Double> {
-
+    fun gaussian(
+        width: Int,
+        sigma: Double,
+    ): Pair<Array<Array<Double>>, Double> {
         val result = Array(width) { Array(width) { 0.0 } }
 
         val center = width / 2
@@ -276,7 +300,7 @@ object ImageUtils {
         pixRow: Int,
         pixCol: Int,
         kernelWidth: Int,
-        normal: Double
+        normal: Double,
     ): Double {
         val rowOffset = kernelWidth / 2
         val colOffset = kernelWidth / 2
@@ -301,7 +325,7 @@ object ImageUtils {
     fun applyGaussianKernel(
         image: Array<Array<Int>>,
         kWidth: Int,
-        sigma: Double
+        sigma: Double,
     ): Array<Array<Int>> {
         val imRows = image.lastIndex + 1
         val imCols = image.get(0).lastIndex + 1
@@ -315,9 +339,15 @@ object ImageUtils {
 
         for (r in rowStart until rowEnd) {
             for (c in colStart until colEnd) {
-                result[r][c] = performCorrelation(
-                    image, kernelAndNorm.first, r, c, kWidth, kernelAndNorm.second
-                ).toInt()
+                result[r][c] =
+                    performCorrelation(
+                        image,
+                        kernelAndNorm.first,
+                        r,
+                        c,
+                        kWidth,
+                        kernelAndNorm.second,
+                    ).toInt()
             }
         }
         return result
@@ -327,7 +357,6 @@ object ImageUtils {
      * // Compute average of sum of squares of the gradient in H and V directions.
      */
     fun brennersFocusMetric(input: Array<Array<Int>>): Double {
-
         val rows = input.lastIndex + 1
         val cols = input[0].lastIndex + 1
 
@@ -352,11 +381,12 @@ object ImageUtils {
             for (col in 0 until cols) {
                 val horizontalGradientAtRowColumn = horizontalGradients[row][col]
                 val verticalGradientAtRowColumn = verticalGradients[row][col]
-                sum += if (abs(horizontalGradientAtRowColumn) > abs(verticalGradientAtRowColumn)) {
-                    horizontalGradientAtRowColumn * horizontalGradientAtRowColumn
-                } else {
-                    verticalGradientAtRowColumn * verticalGradientAtRowColumn
-                }
+                sum +=
+                    if (abs(horizontalGradientAtRowColumn) > abs(verticalGradientAtRowColumn)) {
+                        horizontalGradientAtRowColumn * horizontalGradientAtRowColumn
+                    } else {
+                        verticalGradientAtRowColumn * verticalGradientAtRowColumn
+                    }
             }
         }
         return sum / (rows * cols).toDouble()
@@ -367,11 +397,10 @@ object ImageUtils {
         forceScaling: Boolean,
         targetHeight: Int,
     ) {
+        // There isn't enough memory to open up more than a couple camera photos
+        // So pre-scale the target bitmap into which the file is decoded
 
-        /* There isn't enough memory to open up more than a couple camera photos */
-        /* So pre-scale the target bitmap into which the file is decoded */
-
-        /* Get the size of the image */
+        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, bmOptions)
@@ -395,27 +424,34 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
         bmOptions.inJustDecodeBounds = false
 
-        /* Decode the JPEG file into a Bitmap */
+        // Decode the JPEG file into a Bitmap
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
         val matrix = Matrix()
 
-        val scaledImageBitmap = if (forceScaling) {
-            val width = requiredWidth.toFloat()
-            val aspectRatio = imageWidth.toFloat() / imageHeight.toFloat()
-            val scaledHeight = round(width / aspectRatio)
-            Bitmap.createScaledBitmap(bitmap, width.toInt(), scaledHeight.toInt(), false)
-        } else {
-            Bitmap.createBitmap(
-                bitmap, 0, 0,
-                bmOptions.outWidth, bmOptions.outHeight, matrix, true
-            )
-        }
+        val scaledImageBitmap =
+            if (forceScaling) {
+                val width = requiredWidth.toFloat()
+                val aspectRatio = imageWidth.toFloat() / imageHeight.toFloat()
+                val scaledHeight = round(width / aspectRatio)
+                Bitmap.createScaledBitmap(bitmap, width.toInt(), scaledHeight.toInt(), false)
+            } else {
+                Bitmap.createBitmap(
+                    bitmap,
+                    0,
+                    0,
+                    bmOptions.outWidth,
+                    bmOptions.outHeight,
+                    matrix,
+                    true,
+                )
+            }
 
         val compressionQuality = 70
         val byteArrayBitmapStream = ByteArrayOutputStream()
         scaledImageBitmap.compress(
-            Bitmap.CompressFormat.JPEG, compressionQuality,
-            byteArrayBitmapStream
+            Bitmap.CompressFormat.JPEG,
+            compressionQuality,
+            byteArrayBitmapStream,
         )
         val fileOutputStream = FileOutputStream(path)
         byteArrayBitmapStream.writeTo(fileOutputStream)
@@ -426,25 +462,28 @@ object ImageUtils {
     }
 
     fun orientImage(photoPath: String) {
-        /* Get the size of the image */
-        val bmOptions = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true
-        }
+        // Get the size of the image
+        val bmOptions =
+            BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
         BitmapFactory.decodeFile(photoPath, bmOptions)
 
-        val exif: ExifInterface = try {
-            ExifInterface(photoPath)
-        } catch (e: IOException) {
-            Timber.e(e, "Failed to read EXIF data from %s", photoPath)
-            return
-        }
+        val exif: ExifInterface =
+            try {
+                ExifInterface(photoPath)
+            } catch (e: IOException) {
+                Timber.e(e, "Failed to read EXIF data from %s", photoPath)
+                return
+            }
 
         val orientationString = exif.getAttribute(ExifInterface.TAG_ORIENTATION)
-        val orientation = if (orientationString != null) {
-            Integer.parseInt(orientationString)
-        } else {
-            ExifInterface.ORIENTATION_NORMAL
-        }
+        val orientation =
+            if (orientationString != null) {
+                Integer.parseInt(orientationString)
+            } else {
+                ExifInterface.ORIENTATION_NORMAL
+            }
 
         val noScale = 1f
         val mirrorScale = -1f
@@ -475,15 +514,23 @@ object ImageUtils {
         }
 
         val sourceBitmap = BitmapFactory.decodeFile(photoPath) ?: return
-        val transformedBitmap = Bitmap.createBitmap(
-            sourceBitmap, 0, 0, sourceBitmap.width, sourceBitmap.height, matrix, true
-        )
+        val transformedBitmap =
+            Bitmap.createBitmap(
+                sourceBitmap,
+                0,
+                0,
+                sourceBitmap.width,
+                sourceBitmap.height,
+                matrix,
+                true,
+            )
 
         val compressionQuality = 70
         val byteArrayBitmapStream = ByteArrayOutputStream()
         transformedBitmap.compress(
-            Bitmap.CompressFormat.JPEG, compressionQuality,
-            byteArrayBitmapStream
+            Bitmap.CompressFormat.JPEG,
+            compressionQuality,
+            byteArrayBitmapStream,
         )
         val fileOutputStream = FileOutputStream(photoPath)
         byteArrayBitmapStream.writeTo(fileOutputStream)
@@ -499,11 +546,10 @@ object ImageUtils {
     }
 
     fun base64Image(path: String): String {
+        // There isn't enough memory to open up more than a couple camera photos
+        // So pre-scale the target bitmap into which the file is decoded
 
-        /* There isn't enough memory to open up more than a couple camera photos */
-        /* So pre-scale the target bitmap into which the file is decoded */
-
-        /* Get the size of the image */
+        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, bmOptions)
@@ -531,19 +577,26 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
         bmOptions.inJustDecodeBounds = false
 
-        /* Decode the JPEG file into a Bitmap */
+        // Decode the JPEG file into a Bitmap
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
 
-        val rotatedBitmap = Bitmap.createBitmap(
-            bitmap, 0, 0,
-            bmOptions.outWidth, bmOptions.outHeight, Matrix(), true
-        )
+        val rotatedBitmap =
+            Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                bmOptions.outWidth,
+                bmOptions.outHeight,
+                Matrix(),
+                true,
+            )
         val compressionQuality = 80
         val encodedImage: String
         val byteArrayBitmapStream = ByteArrayOutputStream()
         rotatedBitmap.compress(
-            Bitmap.CompressFormat.JPEG, compressionQuality,
-            byteArrayBitmapStream
+            Bitmap.CompressFormat.JPEG,
+            compressionQuality,
+            byteArrayBitmapStream,
         )
         val b = byteArrayBitmapStream.toByteArray()
         encodedImage = Base64.encodeToString(b, Base64.DEFAULT)

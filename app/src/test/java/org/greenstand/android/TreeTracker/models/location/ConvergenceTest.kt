@@ -24,20 +24,20 @@ import org.junit.Before
 import org.junit.Test
 
 class ConvergenceTest {
-
     lateinit var convergence: Convergence
 
     val locations = mutableListOf<Location>()
 
     // Hard coded longitude and latitude pair values
-    val locationValues = listOf(
-        Pair(-122.08400001, 37.42149486),
-        Pair(-122.08500111, 37.42149487),
-        Pair(-122.093121519, 37.42149483),
-        Pair(-122.0915121999, 37.42149489),
-        Pair(-122.0773486753, 37.42149481),
-        Pair(-121.0184743902, 37.42149490)
-    )
+    val locationValues =
+        listOf(
+            Pair(-122.08400001, 37.42149486),
+            Pair(-122.08500111, 37.42149487),
+            Pair(-122.093121519, 37.42149483),
+            Pair(-122.0915121999, 37.42149489),
+            Pair(-122.0773486753, 37.42149481),
+            Pair(-121.0184743902, 37.42149490),
+        )
 
     // Stats derived from first five pairs from locationValues
     val LONGITUDINAL_MEAN = -122.08619670284
@@ -68,7 +68,6 @@ class ConvergenceTest {
 
     @Test
     fun convergenceOnThresholdDataSize() {
-
         convergence.computeConvergence()
 
         assertNotNull(convergence.longitudeConvergence)
@@ -77,45 +76,54 @@ class ConvergenceTest {
 
     @Test
     fun longitudeConvergenceComputation() {
-
         convergence.computeConvergence()
 
         assertEquals(
-            "longitude mean computation", LONGITUDINAL_MEAN,
-            convergence.longitudeConvergence!!.mean, 0.0
+            "longitude mean computation",
+            LONGITUDINAL_MEAN,
+            convergence.longitudeConvergence!!.mean,
+            0.0,
         )
         assertEquals(
-            "longitude variance computation", LONGITUDINAL_VARIANCE,
-            convergence.longitudeConvergence!!.variance, 0.0
+            "longitude variance computation",
+            LONGITUDINAL_VARIANCE,
+            convergence.longitudeConvergence!!.variance,
+            0.0,
         )
         assertEquals(
-            "longitude std dev computation", LONGITUDINAL_STD_DEV,
-            convergence.longitudeConvergence!!.standardDeviation, 0.0
+            "longitude std dev computation",
+            LONGITUDINAL_STD_DEV,
+            convergence.longitudeConvergence!!.standardDeviation,
+            0.0,
         )
     }
 
     @Test
     fun latitudeConvergenceComputation() {
-
         convergence.computeConvergence()
 
         assertEquals(
-            "latitude mean computation", LATITUDINAL_MEAN,
-            convergence.latitudeConvergence!!.mean, 0.0
+            "latitude mean computation",
+            LATITUDINAL_MEAN,
+            convergence.latitudeConvergence!!.mean,
+            0.0,
         )
         assertEquals(
-            "latitude variance computation", LATITUDINAL_VARIANCE,
-            convergence.latitudeConvergence!!.variance, 0.0
+            "latitude variance computation",
+            LATITUDINAL_VARIANCE,
+            convergence.latitudeConvergence!!.variance,
+            0.0,
         )
         assertEquals(
-            "latitude std dev computation", LATITUDINAL_STD_DEV,
-            convergence.latitudeConvergence!!.standardDeviation, 0.0
+            "latitude std dev computation",
+            LATITUDINAL_STD_DEV,
+            convergence.latitudeConvergence!!.standardDeviation,
+            0.0,
         )
     }
 
     @Test
     fun longitudinalSlidingWindowComputation() {
-
         // Perform initial computation
         convergence.computeConvergence()
 
@@ -124,22 +132,27 @@ class ConvergenceTest {
         convergence.computeSlidingWindowConvergence(locations[0], locations[5])
 
         assertEquals(
-            "Longitude Mean - sliding window", SLIDING_LONGITUDINAL_MEAN,
-            convergence.longitudeConvergence!!.mean, 0.0
+            "Longitude Mean - sliding window",
+            SLIDING_LONGITUDINAL_MEAN,
+            convergence.longitudeConvergence!!.mean,
+            0.0,
         )
         assertEquals(
-            "Longitude Variance - sliding window", SLIDING_LONGITUDINAL_VARIANCE,
-            convergence.longitudeConvergence!!.variance, 0.0
+            "Longitude Variance - sliding window",
+            SLIDING_LONGITUDINAL_VARIANCE,
+            convergence.longitudeConvergence!!.variance,
+            0.0,
         )
         assertEquals(
-            "Longitude std dev - sliding window", SLIDING_LONGITUDINAL_STD_DEV,
-            convergence.longitudeConvergence!!.standardDeviation, 0.0
+            "Longitude std dev - sliding window",
+            SLIDING_LONGITUDINAL_STD_DEV,
+            convergence.longitudeConvergence!!.standardDeviation,
+            0.0,
         )
     }
 
     @Test
     fun latitudeSlidingWindowComputation() {
-
         // Perform initial computation
         convergence.computeConvergence()
 
@@ -147,16 +160,22 @@ class ConvergenceTest {
         convergence.computeSlidingWindowConvergence(locations[0], locations[5])
 
         assertEquals(
-            "Latitude Mean - sliding window", SLIDING_LATITUDE_MEAN,
-            convergence.latitudeConvergence!!.mean, 0.0
+            "Latitude Mean - sliding window",
+            SLIDING_LATITUDE_MEAN,
+            convergence.latitudeConvergence!!.mean,
+            0.0,
         )
         assertEquals(
-            "Latitude Variance - sliding window", SLIDING_LATITUDE_VARIANCE,
-            convergence.latitudeConvergence!!.variance, 0.0
+            "Latitude Variance - sliding window",
+            SLIDING_LATITUDE_VARIANCE,
+            convergence.latitudeConvergence!!.variance,
+            0.0,
         )
         assertEquals(
-            "Latitude std dev - sliding window", SLIDING_LATITUDE_STD_DEV,
-            convergence.latitudeConvergence!!.standardDeviation, 0.0
+            "Latitude std dev - sliding window",
+            SLIDING_LATITUDE_STD_DEV,
+            convergence.latitudeConvergence!!.standardDeviation,
+            0.0,
         )
     }
 }

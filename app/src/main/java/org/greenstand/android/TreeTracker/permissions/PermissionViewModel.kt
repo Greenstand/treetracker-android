@@ -20,7 +20,7 @@ import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class PermissionItemsState(
-    val isLocationEnabled: Boolean? = null
+    val isLocationEnabled: Boolean? = null,
 )
 
 sealed class PermissionAction : Action {
@@ -28,9 +28,8 @@ sealed class PermissionAction : Action {
 }
 
 class PermissionViewModel(
-    private val locationManager: LocationManager
+    private val locationManager: LocationManager,
 ) : BaseViewModel<PermissionItemsState, PermissionAction>(PermissionItemsState()) {
-
     override fun handleAction(action: PermissionAction) {
         when (action) {
             is PermissionAction.CheckLocationEnabled -> {

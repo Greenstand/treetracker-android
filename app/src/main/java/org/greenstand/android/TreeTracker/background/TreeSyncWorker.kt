@@ -35,9 +35,9 @@ import org.koin.core.component.inject
 
 class TreeSyncWorker(
     context: Context,
-    workerParameters: WorkerParameters
-) : CoroutineWorker(context, workerParameters), KoinComponent {
-
+    workerParameters: WorkerParameters,
+) : CoroutineWorker(context, workerParameters),
+    KoinComponent {
     private val exceptionDataCollector: ExceptionDataCollector by inject()
     private val syncDataBundleUseCase: SyncDataUseCase by inject()
     private val syncNotificationManager: SyncNotificationManager by inject()
@@ -61,27 +61,30 @@ class TreeSyncWorker(
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            )
+            val channel =
+                NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH,
+                )
             notificationManager.createNotificationChannel(channel)
         }
 
         val pendingFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-        val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-            .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), pendingFlag))
-            .setSmallIcon(R.drawable.upload_icon)
-            .setOngoing(true)
-            .setAutoCancel(true)
-            .setOnlyAlertOnce(true)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
-            .setContentTitle(applicationContext.getString(R.string.app_name))
-            .setLocalOnly(true)
-            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
-            .setContentText(applicationContext.getString(R.string.uploading_trees))
-            .build()
+        val notification =
+            NotificationCompat
+                .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+                .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), pendingFlag))
+                .setSmallIcon(R.drawable.upload_icon)
+                .setOngoing(true)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setContentTitle(applicationContext.getString(R.string.app_name))
+                .setLocalOnly(true)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+                .setContentText(applicationContext.getString(R.string.uploading_trees))
+                .build()
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ForegroundInfo(1337, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {

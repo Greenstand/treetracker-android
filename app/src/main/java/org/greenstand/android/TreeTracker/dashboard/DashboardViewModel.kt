@@ -58,11 +58,17 @@ data class DashboardState(
 
 sealed class DashboardAction : Action {
     object Sync : DashboardAction()
+
     object SyncMessages : DashboardAction()
+
     object NavigateToOrg : DashboardAction()
+
     object NavigateToCapture : DashboardAction()
+
     object NavigateToMessages : DashboardAction()
+
     object NavigateToSettings : DashboardAction()
+
     object ConfirmSyncReminderDialog : DashboardAction()
 }
 
@@ -76,16 +82,16 @@ class DashboardViewModel(
     private val checkForInternetUseCase: CheckForInternetUseCase,
     locationDataCapturer: LocationDataCapturer,
 ) : BaseViewModel<DashboardState, DashboardAction>(DashboardState()) {
-
     private var _isSyncing: Boolean? by Delegates.observable(false) { _, _, startedSyncing ->
         startedSyncing ?: return@observable
         if (startedSyncing) {
-            updateTimerJob = viewModelScope.launch {
-                while (true) {
-                    delay(750)
-                    updateData()
+            updateTimerJob =
+                viewModelScope.launch {
+                    while (true) {
+                        delay(750)
+                        updateData()
+                    }
                 }
-            }
         } else {
             updateData()
             updateTimerJob?.cancel()
@@ -99,43 +105,45 @@ class DashboardViewModel(
         updateState { copy(snackBar = ConsumableSnackBar(stringRes)) }
     }
 
-    private val syncObserver = Observer<List<WorkInfo>> { infoList ->
-        when (infoList.map { it.state }.elementAtOrNull(0)) {
-            State.BLOCKED -> {
-                triggerSnackBar(R.string.sync_blocked)
-                _isSyncing = false
-            }
-            SUCCEEDED -> {
-                if (_isSyncing != false) {
-                    triggerSnackBar(R.string.sync_successful)
+    private val syncObserver =
+        Observer<List<WorkInfo>> { infoList ->
+            when (infoList.map { it.state }.elementAtOrNull(0)) {
+                State.BLOCKED -> {
+                    triggerSnackBar(R.string.sync_blocked)
+                    _isSyncing = false
                 }
-                _isSyncing = false
-            }
-            State.CANCELLED -> {
-                triggerSnackBar(R.string.sync_stopped)
-                _isSyncing = false
-            }
-            State.FAILED -> {
-                triggerSnackBar(R.string.sync_failed)
-                _isSyncing = false
-            }
-            State.RUNNING -> {
-                triggerSnackBar(R.string.sync_started)
-                _isSyncing = true
-            }
-            State.ENQUEUED -> {
-                triggerSnackBar(R.string.sync_preparing)
-                _isSyncing = true
-            }
+                SUCCEEDED -> {
+                    if (_isSyncing != false) {
+                        triggerSnackBar(R.string.sync_successful)
+                    }
+                    _isSyncing = false
+                }
+                State.CANCELLED -> {
+                    triggerSnackBar(R.string.sync_stopped)
+                    _isSyncing = false
+                }
+                State.FAILED -> {
+                    triggerSnackBar(R.string.sync_failed)
+                    _isSyncing = false
+                }
+                State.RUNNING -> {
+                    triggerSnackBar(R.string.sync_started)
+                    _isSyncing = true
+                }
+                State.ENQUEUED -> {
+                    triggerSnackBar(R.string.sync_preparing)
+                    _isSyncing = true
+                }
 
-            null -> {}
+                null -> {}
+            }
         }
-    }
 
     init {
         updateData()
         locationDataCapturer.stopGpsUpdates()
-        workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
+        workManager
+            .getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
             .observeForever(syncObserver)
     }
 
@@ -197,7 +205,7 @@ class DashboardViewModel(
                         treesSynced = syncedTreeCount,
                         isOrgButtonEnabled = isOrgButtonEnabled,
                         showUnreadMessageNotification = hasUnreadMessages,
-                        showTreeSyncReminderDialog = totalTreesToSync >= 2000
+                        showTreeSyncReminderDialog = totalTreesToSync >= 2000,
                     )
                 }
             }
@@ -205,9 +213,10 @@ class DashboardViewModel(
     }
 
     private fun startDataSynchronization() {
-        val request = OneTimeWorkRequestBuilder<TreeSyncWorker>()
-            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.SECONDS)
-            .build()
+        val request =
+            OneTimeWorkRequestBuilder<TreeSyncWorker>()
+                .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.SECONDS)
+                .build()
 
         workManager.enqueueUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID, ExistingWorkPolicy.KEEP, request)
     }

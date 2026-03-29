@@ -20,33 +20,37 @@ import org.greenstand.android.TreeTracker.dashboard.DashboardState
 import org.junit.Test
 
 class DashboardScreenshotTest : ScreenshotTest() {
+    @Test
+    fun dashboard_default() =
+        snapshot {
+            Dashboard(state = DashboardState())
+        }
 
     @Test
-    fun dashboard_default() = snapshot {
-        Dashboard(state = DashboardState())
-    }
+    fun dashboard_with_trees() =
+        snapshot {
+            Dashboard(
+                state =
+                    DashboardState(
+                        treesRemainingToSync = 51,
+                        treesSynced = 146,
+                        totalTreesToSync = 200,
+                    ),
+            )
+        }
 
     @Test
-    fun dashboard_with_trees() = snapshot {
-        Dashboard(
-            state = DashboardState(
-                treesRemainingToSync = 51,
-                treesSynced = 146,
-                totalTreesToSync = 200,
-            ),
-        )
-    }
-
-    @Test
-    fun dashboard_with_notifications() = snapshot {
-        Dashboard(
-            state = DashboardState(
-                treesRemainingToSync = 51,
-                treesSynced = 146,
-                totalTreesToSync = 200,
-                showUnreadMessageNotification = true,
-                isOrgButtonEnabled = true,
-            ),
-        )
-    }
+    fun dashboard_with_notifications() =
+        snapshot {
+            Dashboard(
+                state =
+                    DashboardState(
+                        treesRemainingToSync = 51,
+                        treesSynced = 146,
+                        totalTreesToSync = 200,
+                        showUnreadMessageNotification = true,
+                        isOrgButtonEnabled = true,
+                    ),
+            )
+        }
 }

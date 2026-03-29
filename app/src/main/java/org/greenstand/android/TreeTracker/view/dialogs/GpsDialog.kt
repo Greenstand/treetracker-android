@@ -27,6 +27,6 @@ fun NoGPSDeviceDialog(onPositiveClick: () -> Unit) {
         dialogIcon = painterResource(id = R.drawable.error_outline),
         title = stringResource(R.string.no_gps_device_header),
         textContent = stringResource(R.string.no_gps_device_content),
-        onPositiveClick = onPositiveClick
+        onPositiveClick = onPositiveClick,
     )
 }

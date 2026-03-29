@@ -24,29 +24,36 @@ data class DevOptionsState(
 )
 
 sealed class DevOptionsAction : Action {
-    data class UpdateParam(val param: Config, val newValue: Any) : DevOptionsAction()
+    data class UpdateParam(
+        val param: Config,
+        val newValue: Any,
+    ) : DevOptionsAction()
+
     object NavigateBack : DevOptionsAction()
 }
 
 class DevOptionsViewModel(
     private val configurator: Configurator,
-    private val convergenceConfiguration: ConvergenceConfiguration
+    private val convergenceConfiguration: ConvergenceConfiguration,
 ) : BaseViewModel<DevOptionsState, DevOptionsAction>(DevOptionsState()) {
-
     init {
-        val updatedParams = ConfigKeys.configList.map { param ->
-            when (param) {
-                is BooleanConfig -> param.copy(
-                    defaultValue = configurator.getBoolean(param)
-                )
-                is IntConfig -> param.copy(
-                    defaultValue = configurator.getInt(param)
-                )
-                is FloatConfig -> param.copy(
-                    defaultValue = configurator.getFloat(param)
-                )
+        val updatedParams =
+            ConfigKeys.configList.map { param ->
+                when (param) {
+                    is BooleanConfig ->
+                        param.copy(
+                            defaultValue = configurator.getBoolean(param),
+                        )
+                    is IntConfig ->
+                        param.copy(
+                            defaultValue = configurator.getInt(param),
+                        )
+                    is FloatConfig ->
+                        param.copy(
+                            defaultValue = configurator.getFloat(param),
+                        )
+                }
             }
-        }
         updateState { copy(params = updatedParams) }
     }
 
@@ -57,16 +64,20 @@ class DevOptionsViewModel(
         }
     }
 
-    private fun updateParam(param: Config, newValue: Any) {
+    private fun updateParam(
+        param: Config,
+        newValue: Any,
+    ) {
         configurator.putValue(param, newValue)
         updateState {
-            val updatedParamList = params.updateListItem(param) {
-                when (this) {
-                    is BooleanConfig -> copy(defaultValue = newValue as Boolean)
-                    is IntConfig -> copy(defaultValue = newValue as Int)
-                    is FloatConfig -> copy(defaultValue = newValue as Float)
+            val updatedParamList =
+                params.updateListItem(param) {
+                    when (this) {
+                        is BooleanConfig -> copy(defaultValue = newValue as Boolean)
+                        is IntConfig -> copy(defaultValue = newValue as Int)
+                        is FloatConfig -> copy(defaultValue = newValue as Float)
+                    }
                 }
-            }
             copy(params = updatedParamList)
         }
     }
@@ -77,11 +88,15 @@ class DevOptionsViewModel(
     }
 }
 
-fun <T> List<T>.updateListItem(item: T, onUpdate: T.() -> T): List<T> {
-    return this.toMutableList().updateMutableItem(item, onUpdate)
-}
+fun <T> List<T>.updateListItem(
+    item: T,
+    onUpdate: T.() -> T,
+): List<T> = this.toMutableList().updateMutableItem(item, onUpdate)
 
-fun <T> MutableList<T>.updateMutableItem(item: T, onUpdate: T.() -> T): List<T> {
+fun <T> MutableList<T>.updateMutableItem(
+    item: T,
+    onUpdate: T.() -> T,
+): List<T> {
     val indexToUpdate = this.indexOf(item)
     this[indexToUpdate]?.onUpdate()?.let { updatedItem ->
         this.removeAt(indexToUpdate)

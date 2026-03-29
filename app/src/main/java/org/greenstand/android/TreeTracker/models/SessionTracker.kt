@@ -37,7 +37,6 @@ class SessionTracker(
     private val orgRepo: OrgRepo,
     private val exceptionDataCollector: ExceptionDataCollector,
 ) {
-
     private var _currentSessionId: Long? = null
     val currentSessionId: Long?
         get() = _currentSessionId
@@ -47,19 +46,20 @@ class SessionTracker(
         endSession()
 
         withContext(Dispatchers.IO) {
-            val userEntity = dao.getUserById(captureSetupData.user!!.id) ?: throw IllegalStateException("Could not find user of id ${captureSetupData.user!!.id}")
+            val userEntity = dao.getUserById(captureSetupData.user!!.id) ?: error("Could not find user of id ${captureSetupData.user!!.id}")
 
-            val sessionEntity = SessionEntity(
-                uuid = UUID.randomUUID().toString(),
-                originUserId = userEntity.uuid,
-                originWallet = userEntity.wallet,
-                destinationWallet = userEntity.wallet ?: orgRepo.currentOrg().walletId,
-                startTime = timeProvider.currentTime(),
-                isUploaded = false,
-                organization = captureSetupData.organizationName,
-                deviceConfigId = dao.getLatestDeviceConfig()!!.id,
-                note = captureSetupData.sessionNote,
-            )
+            val sessionEntity =
+                SessionEntity(
+                    uuid = UUID.randomUUID().toString(),
+                    originUserId = userEntity.uuid,
+                    originWallet = userEntity.wallet,
+                    destinationWallet = userEntity.wallet ?: orgRepo.currentOrg().walletId,
+                    startTime = timeProvider.currentTime(),
+                    isUploaded = false,
+                    organization = captureSetupData.organizationName,
+                    deviceConfigId = dao.getLatestDeviceConfig()!!.id,
+                    note = captureSetupData.sessionNote,
+                )
 
             _currentSessionId = dao.insertSession(sessionEntity)
 
@@ -94,10 +94,9 @@ class SessionTracker(
         exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, false)
     }
 
-    fun wasSessionInterrupted(): Boolean {
-        return _currentSessionId == null &&
+    fun wasSessionInterrupted(): Boolean =
+        _currentSessionId == null &&
             preferences.getLong(SESSION_ID_KEY) != -1L
-    }
 
     companion object {
         // Session key is used to keep track of session ID after app is killed. If the app is killed

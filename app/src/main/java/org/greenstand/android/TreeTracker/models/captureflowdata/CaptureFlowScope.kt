@@ -22,7 +22,6 @@ import org.koin.core.scope.Scope
 import timber.log.Timber
 
 object CaptureFlowScopeManager {
-
     private var currentScope: Scope? = null
 
     val isOpen: Boolean get() = currentScope != null
@@ -36,14 +35,14 @@ object CaptureFlowScopeManager {
         currentScope?.get<CaptureFlowScope>()
     }
 
-    fun getData(): CaptureFlowScope {
-        return currentScope?.get()
+    fun getData(): CaptureFlowScope =
+        currentScope?.get()
             ?: error("CaptureFlowScope not open. Call open() before getData().")
-    }
 
     val nav: CaptureFlowNavigationController
-        get() = currentScope?.get()
-            ?: error("CaptureFlowScope not open. Call open() before accessing nav.")
+        get() =
+            currentScope?.get()
+                ?: error("CaptureFlowScope not open. Call open() before accessing nav.")
 
     fun close() {
         currentScope?.close()

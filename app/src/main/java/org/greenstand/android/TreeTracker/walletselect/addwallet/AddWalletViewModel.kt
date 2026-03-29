@@ -27,13 +27,16 @@ data class AddWalletState(
 )
 
 sealed class AddWalletAction : Action {
-    data class UpdateWalletName(val destinationWallet: String) : AddWalletAction()
+    data class UpdateWalletName(
+        val destinationWallet: String,
+    ) : AddWalletAction()
+
     object NavigateBack : AddWalletAction()
+
     object NavigateNext : AddWalletAction()
 }
 
 class AddWalletViewModel : BaseViewModel<AddWalletState, AddWalletAction>(AddWalletState()) {
-
     init {
         viewModelScope.launch {
             updateState {

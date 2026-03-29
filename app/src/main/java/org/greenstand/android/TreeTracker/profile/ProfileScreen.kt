@@ -1,3 +1,18 @@
+/*
+ * Copyright 2026 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.profile
 
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -60,12 +75,13 @@ fun ProfileScreen(
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
 
-    val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { newPhotoPath ->
-        if (!newPhotoPath.isNullOrEmpty()) {
-            state.selectedUser?.photoPath = newPhotoPath
-            viewModel.handleAction(UserSelectAction.UpdateSelectedUser(photoPath = newPhotoPath))
+    val cameraLauncher =
+        rememberLauncherForActivityResult(contract = CaptureImageContract()) { newPhotoPath ->
+            if (!newPhotoPath.isNullOrEmpty()) {
+                state.selectedUser?.photoPath = newPhotoPath
+                viewModel.handleAction(UserSelectAction.UpdateSelectedUser(photoPath = newPhotoPath))
+            }
         }
-    }
 
     Profile(
         state = state,
@@ -115,14 +131,15 @@ fun Profile(
                     }
                 },
             )
-        }
+        },
     ) {
         Column(
-            modifier = Modifier
-                .padding(it)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(it)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp)
+                    .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -130,29 +147,32 @@ fun Profile(
 
             if (selectedUser != null) {
                 Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(start = 20.dp, end = 20.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(start = 20.dp, end = 20.dp),
                 ) {
                     LocalImage(
                         imagePath = selectedUser.photoPath,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .aspectRatio(1.0f)
-                            .padding(bottom = 20.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .clickable(enabled = state.editMode) { onHandleAction(UserSelectAction.NavigateToPhoto) },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .aspectRatio(1.0f)
+                                .padding(bottom = 20.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .clickable(enabled = state.editMode) { onHandleAction(UserSelectAction.NavigateToPhoto) },
                     )
                 }
 
                 TreeTrackerButton(
                     onClick = { onHandleAction(UserSelectAction.ToggleEditMode) },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 16.dp)
-                        .size(height = 80.dp, width = 156.dp)
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 16.dp)
+                            .size(height = 80.dp, width = 156.dp),
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
@@ -160,7 +180,7 @@ fun Profile(
                         fontWeight = FontWeight.Bold,
                         color = CustomTheme.textColors.primaryText,
                         style = CustomTheme.typography.regular,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
 
@@ -180,13 +200,15 @@ fun Profile(
                         text = firstNameError!!,
                         color = MaterialTheme.colors.error,
                         style = CustomTheme.typography.small,
-                        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                        modifier = Modifier.padding(start = 8.dp, top = 4.dp),
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
                 ProfileField(
-                    stringResource(id = R.string.last_name_hint), selectedUser.lastName ?: "", state.editMode
+                    stringResource(id = R.string.last_name_hint),
+                    selectedUser.lastName ?: "",
+                    state.editMode,
                 ) { newLastName ->
                     val filtered = ValidationUtils.filterNameInput(newLastName)
                     onHandleAction(UserSelectAction.UpdateSelectedUser(lastName = filtered))
@@ -201,7 +223,7 @@ fun Profile(
                         text = lastNameError!!,
                         color = MaterialTheme.colors.error,
                         style = CustomTheme.typography.small,
-                        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                        modifier = Modifier.padding(start = 8.dp, top = 4.dp),
                     )
                 }
                 if (selectedUser.wallet.contains("@")) {
@@ -219,9 +241,10 @@ fun Profile(
 
                     TreeTrackerButton(
                         colors = AppButtonColors.ProgressGreen,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .size(width = 150.dp, 60.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .size(width = 150.dp, 60.dp),
                         onClick = {
                             val firstName = state.selectedUser?.firstName ?: ""
                             val lastName = state.selectedUser?.lastName ?: ""
@@ -231,20 +254,20 @@ fun Profile(
                             ) {
                                 onHandleAction(UserSelectAction.SaveUserToDatabase)
                             }
-                        }
+                        },
                     ) {
                         Text(
                             text = stringResource(id = R.string.save_changes),
                             fontWeight = FontWeight.Bold,
                             color = CustomTheme.textColors.darkText,
-                            style = CustomTheme.typography.regular
+                            style = CustomTheme.typography.regular,
                         )
                     }
                 }
             } else {
                 Text(
                     text = stringResource(id = R.string.loading_user_profile),
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
             }
         }

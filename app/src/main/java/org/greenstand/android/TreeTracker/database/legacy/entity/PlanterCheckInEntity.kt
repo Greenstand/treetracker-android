@@ -27,9 +27,9 @@ import androidx.room.PrimaryKey
             entity = PlanterInfoEntity::class,
             parentColumns = [PlanterInfoEntity.ID],
             childColumns = [PlanterCheckInEntity.PLANTER_INFO_ID],
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class PlanterCheckInEntity(
     @ColumnInfo(name = PLANTER_INFO_ID, index = true)
@@ -43,9 +43,8 @@ data class PlanterCheckInEntity(
     @ColumnInfo(name = LONGITUDE)
     var longitude: Double,
     @ColumnInfo(name = CREATED_AT)
-    var createdAt: Long
+    var createdAt: Long,
 ) {
-
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = ID)
     var id: Long = 0

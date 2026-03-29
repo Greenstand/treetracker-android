@@ -19,9 +19,9 @@ import org.greenstand.android.TreeTracker.camera.ImageReview
 import org.junit.Test
 
 class ImageReviewScreenshotTest : ScreenshotTest() {
-
     @Test
-    fun imageReview_default() = snapshot {
-        ImageReview(photoPath = "/dummy/path/photo.jpg")
-    }
+    fun imageReview_default() =
+        snapshot {
+            ImageReview(photoPath = "/dummy/path/photo.jpg")
+        }
 }

@@ -36,7 +36,6 @@ import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class SessionNoteViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -59,16 +58,17 @@ class SessionNoteViewModelTest {
     }
 
     @Test
-    fun `WHEN updateNote called THEN updates state note`() = runTest {
-        val fakeUser = FakeFileGenerator.fakeUsers.first()
-        every { captureSetupData.user } returns fakeUser
+    fun `WHEN updateNote called THEN updates state note`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
 
-        val viewModel = SessionNoteViewModel()
+            val viewModel = SessionNoteViewModel()
 
-        viewModel.handleAction(SessionNoteAction.UpdateNote("This is a test note"))
+            viewModel.handleAction(SessionNoteAction.UpdateNote("This is a test note"))
 
-        val state = viewModel.state.value
-        assertEquals("This is a test note", state.note)
-        verify { captureSetupData.sessionNote = "This is a test note" }
-    }
+            val state = viewModel.state.value
+            assertEquals("This is a test note", state.note)
+            verify { captureSetupData.sessionNote = "This is a test note" }
+        }
 }

@@ -33,9 +33,8 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 class Analytics(
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val deviceUtils: DeviceUtils
+    private val deviceUtils: DeviceUtils,
 ) {
-
     init {
         setupStaticDeviceProperties()
     }
@@ -57,14 +56,19 @@ class Analytics(
         }
     }
 
-    fun tagScreen(activty: Activity, screenName: String) {
-        val bundle = Bundle().apply {
-            putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-            putString(FirebaseAnalytics.Param.SCREEN_CLASS, activty.javaClass.simpleName)
-        }
+    fun tagScreen(
+        activty: Activity,
+        screenName: String,
+    ) {
+        val bundle =
+            Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, activty.javaClass.simpleName)
+            }
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
     }
 
+    @Suppress("UnusedParameter")
     fun uploadComplete(treesOnDevice: Int) {
     }
 
@@ -76,11 +80,15 @@ class Analytics(
         firebaseAnalytics.logEvent(USER_CHECK_IN, Bundle())
     }
 
-    fun userInfoCreated(phone: String, email: String) {
-        val bundle = Bundle().apply {
-            putString("email", email)
-            putString("phone", phone)
-        }
+    fun userInfoCreated(
+        phone: String,
+        email: String,
+    ) {
+        val bundle =
+            Bundle().apply {
+                putString("email", email)
+                putString("phone", phone)
+            }
         firebaseAnalytics.logEvent(USER_INFO_CREATED, bundle)
     }
 
@@ -93,35 +101,50 @@ class Analytics(
     }
 
     fun treeNoteAdded(noteLength: Int) {
-        val bundle = Bundle().apply {
-            putInt("note_length", noteLength)
-        }
+        val bundle =
+            Bundle().apply {
+                putInt("note_length", noteLength)
+            }
         firebaseAnalytics.logEvent(NOTE_ADDED, bundle)
     }
 
-    fun syncButtonTapped(totalTrees: Int, treesSynced: Int, treesToSync: Int) {
-        val bundle = Bundle().apply {
-            putInt("total_trees", totalTrees)
-            putInt("synced_trees", treesSynced)
-            putInt("trees_unsynced", treesToSync)
-        }
+    fun syncButtonTapped(
+        totalTrees: Int,
+        treesSynced: Int,
+        treesToSync: Int,
+    ) {
+        val bundle =
+            Bundle().apply {
+                putInt("total_trees", totalTrees)
+                putInt("synced_trees", treesSynced)
+                putInt("trees_unsynced", treesToSync)
+            }
         firebaseAnalytics.logEvent(SYNC_BUTTON_CLICKED, bundle)
     }
 
-    fun stopButtonTapped(totalTrees: Int, treesSynced: Int, treesToSync: Int) {
-        val bundle = Bundle().apply {
-            putInt("total_trees", totalTrees)
-            putInt("synced_trees", treesSynced)
-            putInt("trees_unsynced", treesToSync)
-        }
+    fun stopButtonTapped(
+        totalTrees: Int,
+        treesSynced: Int,
+        treesToSync: Int,
+    ) {
+        val bundle =
+            Bundle().apply {
+                putInt("total_trees", totalTrees)
+                putInt("synced_trees", treesSynced)
+                putInt("trees_unsynced", treesToSync)
+            }
         firebaseAnalytics.logEvent(STOP_BUTTON_CLICKED, bundle)
     }
 
-    fun markerClicked(lat: Double, long: Double) {
-        val bundle = Bundle().apply {
-            putDouble("lat", lat)
-            putDouble("long", long)
-        }
+    fun markerClicked(
+        lat: Double,
+        long: Double,
+    ) {
+        val bundle =
+            Bundle().apply {
+                putDouble("lat", lat)
+                putDouble("long", long)
+            }
         firebaseAnalytics.logEvent(MARKER_CLICKED, bundle)
     }
 }

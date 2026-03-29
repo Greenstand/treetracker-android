@@ -35,7 +35,6 @@ class OrgRepo(
     private val prefs: Preferences,
     private val json: Json,
 ) {
-
     private var currentOrg: Org? = null
 
     suspend fun init() {
@@ -50,33 +49,34 @@ class OrgRepo(
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
-    private fun defaultOrgEntity() = OrganizationEntity(
-        id = DEFAULT_ORG_ID,
-        version = 1,
-        name = "Greenstand",
-        walletId = "",
-        captureSetupFlowJson = json.encodeToString(
-            listOf(
-                Destination(RouteRegistry.ROUTE_USER_SELECT),
+    private fun defaultOrgEntity() =
+        OrganizationEntity(
+            id = DEFAULT_ORG_ID,
+            version = 1,
+            name = "Greenstand",
+            walletId = "",
+            captureSetupFlowJson =
+                json.encodeToString(
+                    listOf(
+                        Destination(RouteRegistry.ROUTE_USER_SELECT),
 //              Destination(RouteRegistry.ROUTE_WALLET_SELECT),
-                Destination(RouteRegistry.ROUTE_ADD_ORG),
-            )
-        ),
-        captureFlowJson = json.encodeToString(
-            listOf(
-                Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
-                // Uncomment this to test out forcing the note taking feature
+                        Destination(RouteRegistry.ROUTE_ADD_ORG),
+                    ),
+                ),
+            captureFlowJson =
+                json.encodeToString(
+                    listOf(
+                        Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
+                        // Uncomment this to test out forcing the note taking feature
 //              Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, listOf(OrgFeature.FORCE_NOTE.key)),
-                Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW),
-                // For Kasiki Hai
+                        Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW),
+                        // For Kasiki Hai
 //              Destination(RouteRegistry.ROUTE_TREE_HEIGHT),
-            )
-        ),
-    )
+                    ),
+                ),
+        )
 
-    suspend fun getOrgs(): List<Org> {
-        return dao.getAllOrgs().map { it.toOrg() }
-    }
+    suspend fun getOrgs(): List<Org> = dao.getAllOrgs().map { it.toOrg() }
 
     suspend fun setOrg(orgId: String) {
         prefs.edit().putString(CURRENT_ORG_ID_KEY, orgId).commit()
@@ -89,23 +89,23 @@ class OrgRepo(
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
-    fun currentOrg(): Org {
-        return currentOrg ?: error(
-            "OrgRepo not initialized. Call init() before accessing currentOrg()."
+    fun currentOrg(): Org =
+        currentOrg ?: error(
+            "OrgRepo not initialized. Call init() before accessing currentOrg().",
         )
-    }
 
-    suspend fun addOrgFromJsonString(orgJsonString: String): Boolean {
-        return try {
+    suspend fun addOrgFromJsonString(orgJsonString: String): Boolean =
+        try {
             val orgJsonObj = Json.parseToJsonElement(orgJsonString).jsonObject
-            val orgEntity = OrganizationEntity(
-                id = orgJsonObj[OrgJsonKeys.V1.ID]?.jsonPrimitive?.content ?: "",
-                version = orgJsonObj[OrgJsonKeys.V1.VERSION]?.jsonPrimitive?.content?.toIntOrNull() ?: 0,
-                name = orgJsonObj[OrgJsonKeys.V1.NAME]?.jsonPrimitive?.content ?: "",
-                walletId = orgJsonObj[OrgJsonKeys.V1.WALLET_ID]?.jsonPrimitive?.content ?: "",
-                captureSetupFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_SETUP_FLOW]?.jsonArray.toString(),
-                captureFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_FLOW]?.jsonArray.toString(),
-            )
+            val orgEntity =
+                OrganizationEntity(
+                    id = orgJsonObj[OrgJsonKeys.V1.ID]?.jsonPrimitive?.content ?: "",
+                    version = orgJsonObj[OrgJsonKeys.V1.VERSION]?.jsonPrimitive?.content?.toIntOrNull() ?: 0,
+                    name = orgJsonObj[OrgJsonKeys.V1.NAME]?.jsonPrimitive?.content ?: "",
+                    walletId = orgJsonObj[OrgJsonKeys.V1.WALLET_ID]?.jsonPrimitive?.content ?: "",
+                    captureSetupFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_SETUP_FLOW]?.jsonArray.toString(),
+                    captureFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_FLOW]?.jsonArray.toString(),
+                )
             val validatedEntity = validateOrgRoutes(orgEntity)
             dao.insertOrg(validatedEntity)
             setOrg(validatedEntity.id)
@@ -114,7 +114,6 @@ class OrgRepo(
             Timber.tag("OrgRepo").e(e, "Failed to parse org JSON, falling back to default org")
             false
         }
-    }
 
     private fun validateOrgRoutes(entity: OrganizationEntity): OrganizationEntity {
         val setupFlow = json.decodeFromString<List<Destination>>(entity.captureSetupFlowJson)
@@ -144,7 +143,7 @@ class OrgRepo(
             walletId = walletId,
             logoPath = "",
             captureSetupFlow = captureSetupDestinations,
-            captureFlow = captureDestinations
+            captureFlow = captureDestinations,
         )
     }
 

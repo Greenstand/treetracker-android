@@ -22,7 +22,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 object Converters {
-
     val json = Json { ignoreUnknownKeys = true }
 
     @TypeConverter
@@ -38,9 +37,7 @@ object Converters {
     }
 
     @TypeConverter
-    fun instantToString(instant: Instant?): String? {
-        return instant?.let { it.toString() }
-    }
+    fun instantToString(instant: Instant?): String? = instant?.let { it.toString() }
 
     @TypeConverter
     fun stringToInstance(s: String?): Instant? = s?.toInstant()

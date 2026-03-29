@@ -48,7 +48,7 @@ import org.greenstand.android.TreeTracker.view.BorderedTextField
 
 @Composable
 fun AddWalletScreen(
-    viewModel: AddWalletViewModel = viewModel(factory = LocalViewModelFactory.current)
+    viewModel: AddWalletViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
@@ -84,37 +84,40 @@ fun AddWallet(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.walletName.isNotBlank()
+                        isEnabled = state.walletName.isNotBlank(),
                     ) {
                         onHandleAction(AddWalletAction.NavigateNext)
                     }
-                }
+                },
             )
-        }
+        },
     ) {
         Box(
             contentAlignment = Alignment.TopCenter,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(top = 120.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .padding(top = 120.dp),
         ) {
             BorderedTextField(
                 value = state.walletName,
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(AddWalletAction.UpdateWalletName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Go,
-                    autoCorrect = false,
-                    capitalization = KeyboardCapitalization.None
-                ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        onHandleAction(AddWalletAction.NavigateNext)
-                    }
-                )
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Go,
+                        autoCorrect = false,
+                        capitalization = KeyboardCapitalization.None,
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onGo = {
+                            onHandleAction(AddWalletAction.NavigateNext)
+                        },
+                    ),
             )
         }
     }

@@ -22,18 +22,18 @@ import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 data class CreateTreeRequestParams(
     val treeId: Long,
-    val treeImageUrl: String
+    val treeImageUrl: String,
 )
 
-class CreateTreeRequestUseCase(private val dao: TreeTrackerDAO) :
-    UseCase<CreateTreeRequestParams, NewTreeRequest>() {
-
+class CreateTreeRequestUseCase(
+    private val dao: TreeTrackerDAO,
+) : UseCase<CreateTreeRequestParams, NewTreeRequest>() {
     override suspend fun execute(params: CreateTreeRequestParams): NewTreeRequest {
-
         val treeCapture = dao.getTreeCaptureById(params.treeId)
         val planterCheckIn = dao.getPlanterCheckInById(treeCapture.planterCheckInId)
-        val planterInfo = dao.getPlanterInfoById(planterCheckIn.planterInfoId)
-            ?: throw IllegalStateException("No Planter Info")
+        val planterInfo =
+            dao.getPlanterInfoById(planterCheckIn.planterInfoId)
+                ?: error("No Planter Info")
 
         val attributesList = dao.getTreeAttributeByTreeCaptureId(treeCapture.id)
         val attributesRequest = mutableListOf<AttributeRequest>()
@@ -54,7 +54,7 @@ class CreateTreeRequestUseCase(private val dao: TreeTrackerDAO) :
             planterPhotoUrl = planterCheckIn.photoUrl,
             timestamp = treeCapture.createAt,
             note = treeCapture.noteContent,
-            attributes = attributesRequest
+            attributes = attributesRequest,
         )
     }
 }

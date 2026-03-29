@@ -55,46 +55,56 @@ class ChatViewModelTest {
         coEvery { messagesRepo.getDirectMessages(any(), any()) } returns flowOf(FakeFileGenerator.fakeDirectMessageList)
         testSubject = ChatViewModel(userId, otherChatIdentifier, userRepo, messagesRepo)
     }
-    @Test
-    fun `WHEN draft text is empty,returns empty string, THEN when draft text updates, returns correct data`() = runTest {
-        assertEquals(testSubject.state.value.draftText, "")
-        testSubject.handleAction(ChatAction.UpdateDraftText("random"))
-        val result = testSubject.state.value.draftText
-        assertEquals(result, "random")
-    }
 
     @Test
-    fun `Verify message repo saves message`() = runTest {
-        testSubject.handleAction(ChatAction.UpdateDraftText("Draft"))
-        testSubject.handleAction(ChatAction.SendMessage)
-        coVerify { messagesRepo.saveMessage("some random text", "Mary", "Draft") }
-    }
-    @Test
-    fun `WHEN current user sends message THEN message is sent AND draft message is cleared`() = runTest {
-        testSubject.handleAction(ChatAction.UpdateDraftText("Hello, World"))
-        testSubject.handleAction(ChatAction.SendMessage)
-        val result = testSubject.state.value.draftText
-        assertEquals(result, "")
-    }
+    fun `WHEN draft text is empty,returns empty string, THEN when draft text updates, returns correct data`() =
+        runTest {
+            assertEquals(testSubject.state.value.draftText, "")
+            testSubject.handleAction(ChatAction.UpdateDraftText("random"))
+            val result = testSubject.state.value.draftText
+            assertEquals(result, "random")
+        }
 
     @Test
-    fun `Check chat author, Assert True if its First Message by Author`() = runTest {
-        assertTrue(testSubject.checkChatAuthor(0, true))
-    }
-    @Test
-    fun `Check chat author, Assert False if its not First Message by Author`() = runTest {
-        assertFalse(testSubject.checkChatAuthor(1, true))
-    }
+    fun `Verify message repo saves message`() =
+        runTest {
+            testSubject.handleAction(ChatAction.UpdateDraftText("Draft"))
+            testSubject.handleAction(ChatAction.SendMessage)
+            coVerify { messagesRepo.saveMessage("some random text", "Mary", "Draft") }
+        }
 
     @Test
-    fun `Check Is Other User, Assert True for messages from other user`() = runTest {
-        val result = testSubject.checkIsOtherUser(2)
-        assertTrue(result)
-    }
+    fun `WHEN current user sends message THEN message is sent AND draft message is cleared`() =
+        runTest {
+            testSubject.handleAction(ChatAction.UpdateDraftText("Hello, World"))
+            testSubject.handleAction(ChatAction.SendMessage)
+            val result = testSubject.state.value.draftText
+            assertEquals(result, "")
+        }
 
     @Test
-    fun `Check Is Other User, Assert False for messages from current user`() = runTest {
-        val result = testSubject.checkIsOtherUser(1)
-        assertFalse(result)
-    }
+    fun `Check chat author, Assert True if its First Message by Author`() =
+        runTest {
+            assertTrue(testSubject.checkChatAuthor(0, true))
+        }
+
+    @Test
+    fun `Check chat author, Assert False if its not First Message by Author`() =
+        runTest {
+            assertFalse(testSubject.checkChatAuthor(1, true))
+        }
+
+    @Test
+    fun `Check Is Other User, Assert True for messages from other user`() =
+        runTest {
+            val result = testSubject.checkIsOtherUser(2)
+            assertTrue(result)
+        }
+
+    @Test
+    fun `Check Is Other User, Assert False for messages from current user`() =
+        runTest {
+            val result = testSubject.checkIsOtherUser(1)
+            assertFalse(result)
+        }
 }

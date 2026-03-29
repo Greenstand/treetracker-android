@@ -85,11 +85,11 @@ fun Host() {
 
     TreeTrackerTheme {
         NavHost(navController, startDestination = SplashRoute) {
-
             trackedComposable<SplashRoute>(
-                deepLinks = listOf(
-                    navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" }
-                )
+                deepLinks =
+                    listOf(
+                        navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" },
+                    ),
             ) {
                 SplashScreen(it.arguments?.getString("orgJson"))
             }

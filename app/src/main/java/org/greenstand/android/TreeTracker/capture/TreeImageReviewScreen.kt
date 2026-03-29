@@ -29,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -51,12 +50,10 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
 fun TreeImageReviewScreen(
-    viewModel: TreeImageReviewViewModel = viewModel(factory = LocalViewModelFactory.current)
+    viewModel: TreeImageReviewViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
-    val scope = rememberCoroutineScope()
-
     LaunchedEffect(state.canNavigateForward) {
         if (state.canNavigateForward) {
             CaptureFlowScopeManager.nav.navForward(navController)
@@ -88,41 +85,44 @@ fun TreeImageReview(
                 modifier = Modifier.statusBarsPadding(),
                 centerAction = {
                     TreeTrackerButton(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(width = 100.dp, 60.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.Center)
+                                .size(width = 100.dp, 60.dp),
                         onClick = { onHandleAction(TreeImageReviewAction.SetDialogState(true)) },
                     ) {
                         Text(stringResource(R.string.note))
                     }
-                }
+                },
             )
         },
         bottomBar = {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(bottom = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = { onHandleAction(TreeImageReviewAction.NavigateBack) },
-                    approval = false
+                    approval = false,
                 )
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = { onHandleAction(TreeImageReviewAction.CheckIfCanNavigateForward) },
-                    approval = true
+                    approval = true,
                 )
                 InfoButton(
-                    modifier = Modifier
-                        .size(60.dp),
+                    modifier =
+                        Modifier
+                            .size(60.dp),
                     onClick = { onHandleAction(TreeImageReviewAction.UpdateReviewTutorialDialog(true)) },
                 )
             }
-        }
+        },
     ) {
         if (state.isDialogOpen) {
             NoteDialog(
@@ -139,7 +139,7 @@ fun TreeImageReview(
             modifier = Modifier.fillMaxSize().navigationBarsPadding(),
             imagePath = state.treeImagePath ?: "",
             contentDescription = null,
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Fit,
         )
     }
 }

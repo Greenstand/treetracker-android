@@ -22,52 +22,61 @@ import org.greenstand.android.TreeTracker.signup.SignUpState
 import org.junit.Test
 
 class SignUpScreenshotTest : ScreenshotTest() {
+    @Test
+    fun signup_credential_phone_default() =
+        snapshot {
+            CredentialEntryView(
+                state =
+                    SignUpState(
+                        showPrivacyDialog = false,
+                    ),
+            )
+        }
 
     @Test
-    fun signup_credential_phone_default() = snapshot {
-        CredentialEntryView(
-            state = SignUpState(
-                showPrivacyDialog = false,
-            ),
-        )
-    }
+    fun signup_credential_email() =
+        snapshot {
+            CredentialEntryView(
+                state =
+                    SignUpState(
+                        credential = Credential.Email(),
+                        showPrivacyDialog = false,
+                    ),
+            )
+        }
 
     @Test
-    fun signup_credential_email() = snapshot {
-        CredentialEntryView(
-            state = SignUpState(
-                credential = Credential.Email(),
-                showPrivacyDialog = false,
-            ),
-        )
-    }
+    fun signup_privacy_dialog() =
+        snapshot {
+            CredentialEntryView(
+                state =
+                    SignUpState(
+                        showPrivacyDialog = true,
+                    ),
+            )
+        }
 
     @Test
-    fun signup_privacy_dialog() = snapshot {
-        CredentialEntryView(
-            state = SignUpState(
-                showPrivacyDialog = true,
-            ),
-        )
-    }
+    fun signup_name_entry_default() =
+        snapshot {
+            NameEntryView(
+                state =
+                    SignUpState(
+                        isCredentialView = false,
+                    ),
+            )
+        }
 
     @Test
-    fun signup_name_entry_default() = snapshot {
-        NameEntryView(
-            state = SignUpState(
-                isCredentialView = false,
-            ),
-        )
-    }
-
-    @Test
-    fun signup_name_entry_with_names() = snapshot {
-        NameEntryView(
-            state = SignUpState(
-                isCredentialView = false,
-                firstName = "John",
-                lastName = "Doe",
-            ),
-        )
-    }
+    fun signup_name_entry_with_names() =
+        snapshot {
+            NameEntryView(
+                state =
+                    SignUpState(
+                        isCredentialView = false,
+                        firstName = "John",
+                        lastName = "Doe",
+                    ),
+            )
+        }
 }

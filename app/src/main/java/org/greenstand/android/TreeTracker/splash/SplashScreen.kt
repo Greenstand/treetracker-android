@@ -45,11 +45,12 @@ fun SplashScreen(
     viewModel: SplashScreenViewModel = viewModel(factory = SplashScreenViewModelFactory(orgJsonString)),
     navController: NavHostController = LocalNavHostController.current,
 ) {
-    val permissions = mutableListOf(
-        Manifest.permission.CAMERA,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
+    val permissions =
+        mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
@@ -57,27 +58,28 @@ fun SplashScreen(
 
     val scope = rememberCoroutineScope()
 
-    val permissionRequester = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { result ->
-            scope.launch {
-                if (isLocationPermissionGranted(result)) {
-                    Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
+    val permissionRequester =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestMultiplePermissions(),
+            onResult = { result ->
+                scope.launch {
+                    if (isLocationPermissionGranted(result)) {
+                        Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
-                    viewModel.bootstrap()
+                        viewModel.bootstrap()
 
-                    delay(1000)
+                        delay(1000)
 
-                    if (viewModel.isInitialSetupRequired()) {
-                        viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
-                        navigateToLanguageScreen(navController)
-                    } else {
-                        navigateToDashboardScreen(navController)
+                        if (viewModel.isInitialSetupRequired()) {
+                            viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
+                            navigateToLanguageScreen(navController)
+                        } else {
+                            navigateToDashboardScreen(navController)
+                        }
                     }
                 }
-            }
-        }
-    )
+            },
+        )
     LaunchedEffect(true) {
         permissionRequester.launch(permissions.toTypedArray())
     }
@@ -91,14 +93,13 @@ fun Splash() {
         painter = painterResource(id = R.drawable.splash),
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     )
 }
 
-private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean {
-    return result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean =
+    result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
         result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-}
 
 private fun navigateToLanguageScreen(navController: NavHostController) {
     navController.navigate(LanguageRoute(isFromTopBar = false)) {

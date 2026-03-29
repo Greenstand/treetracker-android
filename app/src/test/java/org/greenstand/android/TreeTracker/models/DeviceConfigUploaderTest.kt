@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.models
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import kotlinx.serialization.json.Json
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,6 +26,7 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -44,7 +44,6 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 @ExperimentalCoroutinesApi
 class DeviceConfigUploaderTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -57,7 +56,12 @@ class DeviceConfigUploaderTest {
     @MockK(relaxed = true)
     private lateinit var objectStorageClient: ObjectStorageClient
 
-    private val json = Json { explicitNulls = true; ignoreUnknownKeys = true; encodeDefaults = true }
+    private val json =
+        Json {
+            explicitNulls = true
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
 
     private lateinit var deviceConfigUploader: DeviceConfigUploader
 
@@ -66,11 +70,12 @@ class DeviceConfigUploaderTest {
         MockKAnnotations.init(this)
         mockkObject(DeviceUtils)
         every { DeviceUtils.deviceId } returns "test-device-id"
-        deviceConfigUploader = DeviceConfigUploader(
-            dao = dao,
-            objectStorageClient = objectStorageClient,
-            json = json,
-        )
+        deviceConfigUploader =
+            DeviceConfigUploader(
+                dao = dao,
+                objectStorageClient = objectStorageClient,
+                json = json,
+            )
     }
 
     @After
@@ -79,33 +84,36 @@ class DeviceConfigUploaderTest {
     }
 
     @Test
-    fun `WHEN upload called with configs THEN creates requests uploads bundle and marks uploaded`() = runTest {
-        val deviceConfig = DeviceConfigEntity(
-            uuid = "config-uuid-1",
-            appVersion = "1.0",
-            appBuild = 1,
-            osVersion = "13",
-            sdkVersion = 33,
-            loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
-        ).apply { id = 1L }
+    fun `WHEN upload called with configs THEN creates requests uploads bundle and marks uploaded`() =
+        runTest {
+            val deviceConfig =
+                DeviceConfigEntity(
+                    uuid = "config-uuid-1",
+                    appVersion = "1.0",
+                    appBuild = 1,
+                    osVersion = "13",
+                    sdkVersion = 33,
+                    loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
+                ).apply { id = 1L }
 
-        coEvery { dao.getDeviceConfigsToUpload() } returns listOf(deviceConfig)
+            coEvery { dao.getDeviceConfigsToUpload() } returns listOf(deviceConfig)
 
-        deviceConfigUploader.upload("instance-123")
+            deviceConfigUploader.upload("instance-123")
 
-        coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
-        coVerify(exactly = 1) { dao.updateDeviceConfigUploadStatus(listOf(1L), true) }
-        coVerify(exactly = 1) { dao.updateDeviceConfigBundleIds(listOf(1L), any()) }
-    }
+            coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 1) { dao.updateDeviceConfigUploadStatus(listOf(1L), true) }
+            coVerify(exactly = 1) { dao.updateDeviceConfigBundleIds(listOf(1L), any()) }
+        }
 
     @Test
-    fun `WHEN no configs to upload THEN no-ops`() = runTest {
-        coEvery { dao.getDeviceConfigsToUpload() } returns emptyList()
+    fun `WHEN no configs to upload THEN no-ops`() =
+        runTest {
+            coEvery { dao.getDeviceConfigsToUpload() } returns emptyList()
 
-        deviceConfigUploader.upload("instance-123")
+            deviceConfigUploader.upload("instance-123")
 
-        coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
-        coVerify(exactly = 0) { dao.updateDeviceConfigUploadStatus(any(), any()) }
-        coVerify(exactly = 0) { dao.updateDeviceConfigBundleIds(any(), any()) }
-    }
+            coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 0) { dao.updateDeviceConfigUploadStatus(any(), any()) }
+            coVerify(exactly = 0) { dao.updateDeviceConfigBundleIds(any(), any()) }
+        }
 }

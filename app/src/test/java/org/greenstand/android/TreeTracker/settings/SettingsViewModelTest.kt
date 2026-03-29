@@ -36,7 +36,6 @@ import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class SettingsViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -52,72 +51,78 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `WHEN init THEN loads power user`() = runTest {
-        val powerUser = FakeFileGenerator.fakeUsers.first()
-        coEvery { userRepo.getPowerUser() } returns powerUser
+    fun `WHEN init THEN loads power user`() =
+        runTest {
+            val powerUser = FakeFileGenerator.fakeUsers.first()
+            coEvery { userRepo.getPowerUser() } returns powerUser
 
-        val viewModel = SettingsViewModel(userRepo)
+            val viewModel = SettingsViewModel(userRepo)
 
-        val state = viewModel.state.first()
-        assertNotNull(state.powerUser)
-        assertEquals(powerUser.id, state.powerUser!!.id)
-    }
-
-    @Test
-    fun `WHEN setPrivacyDialogVisibility true THEN showPrivacyPolicyDialog is true`() = runTest {
-        coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
-
-        val viewModel = SettingsViewModel(userRepo)
-        viewModel.handleAction(SettingsAction.SetPrivacyDialogVisibility(true))
-
-        val state = viewModel.state.first()
-        assertTrue(state.showPrivacyPolicyDialog!!)
-    }
+            val state = viewModel.state.first()
+            assertNotNull(state.powerUser)
+            assertEquals(powerUser.id, state.powerUser!!.id)
+        }
 
     @Test
-    fun `WHEN setPrivacyDialogVisibility false THEN showPrivacyPolicyDialog is false`() = runTest {
-        coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+    fun `WHEN setPrivacyDialogVisibility true THEN showPrivacyPolicyDialog is true`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
 
-        val viewModel = SettingsViewModel(userRepo)
-        viewModel.handleAction(SettingsAction.SetPrivacyDialogVisibility(false))
+            val viewModel = SettingsViewModel(userRepo)
+            viewModel.handleAction(SettingsAction.SetPrivacyDialogVisibility(true))
 
-        val state = viewModel.state.first()
-        assertFalse(state.showPrivacyPolicyDialog!!)
-    }
-
-    @Test
-    fun `WHEN logout THEN calls setPowerUserStatus and hides logout dialog`() = runTest {
-        val powerUser = FakeFileGenerator.fakeUsers.first()
-        coEvery { userRepo.getPowerUser() } returns powerUser
-
-        val viewModel = SettingsViewModel(userRepo)
-
-        viewModel.handleAction(SettingsAction.Logout)
-
-        coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
-        val state = viewModel.state.first()
-        assertFalse(state.showLogoutDialog!!)
-    }
+            val state = viewModel.state.first()
+            assertTrue(state.showPrivacyPolicyDialog!!)
+        }
 
     @Test
-    fun `WHEN updateLogoutDialogVisibility true THEN shows dialog`() = runTest {
-        coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+    fun `WHEN setPrivacyDialogVisibility false THEN showPrivacyPolicyDialog is false`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
 
-        val viewModel = SettingsViewModel(userRepo)
-        viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(true))
+            val viewModel = SettingsViewModel(userRepo)
+            viewModel.handleAction(SettingsAction.SetPrivacyDialogVisibility(false))
 
-        val state = viewModel.state.first()
-        assertTrue(state.showLogoutDialog!!)
-    }
+            val state = viewModel.state.first()
+            assertFalse(state.showPrivacyPolicyDialog!!)
+        }
 
     @Test
-    fun `WHEN updateLogoutDialogVisibility false THEN hides dialog`() = runTest {
-        coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+    fun `WHEN logout THEN calls setPowerUserStatus and hides logout dialog`() =
+        runTest {
+            val powerUser = FakeFileGenerator.fakeUsers.first()
+            coEvery { userRepo.getPowerUser() } returns powerUser
 
-        val viewModel = SettingsViewModel(userRepo)
-        viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
+            val viewModel = SettingsViewModel(userRepo)
 
-        val state = viewModel.state.first()
-        assertFalse(state.showLogoutDialog!!)
-    }
+            viewModel.handleAction(SettingsAction.Logout)
+
+            coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+            val state = viewModel.state.first()
+            assertFalse(state.showLogoutDialog!!)
+        }
+
+    @Test
+    fun `WHEN updateLogoutDialogVisibility true THEN shows dialog`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+
+            val viewModel = SettingsViewModel(userRepo)
+            viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(true))
+
+            val state = viewModel.state.first()
+            assertTrue(state.showLogoutDialog!!)
+        }
+
+    @Test
+    fun `WHEN updateLogoutDialogVisibility false THEN hides dialog`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+
+            val viewModel = SettingsViewModel(userRepo)
+            viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
+
+            val state = viewModel.state.first()
+            assertFalse(state.showLogoutDialog!!)
+        }
 }

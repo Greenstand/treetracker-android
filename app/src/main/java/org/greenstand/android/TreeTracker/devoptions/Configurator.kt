@@ -20,31 +20,37 @@ import org.greenstand.android.TreeTracker.preferences.Preferences
 class Configurator constructor(
     private val prefs: Preferences,
 ) {
-    fun getBoolean(config: BooleanConfig): Boolean {
-        return prefs.getBoolean(config.key, config.defaultValue)
-    }
+    fun getBoolean(config: BooleanConfig): Boolean = prefs.getBoolean(config.key, config.defaultValue)
 
-    fun putBoolean(config: BooleanConfig, value: Boolean) {
+    fun putBoolean(
+        config: BooleanConfig,
+        value: Boolean,
+    ) {
         prefs.edit().putBoolean(config.key, value).apply()
     }
 
-    fun getInt(config: IntConfig): Int {
-        return prefs.getInt(config.key, config.defaultValue)
-    }
+    fun getInt(config: IntConfig): Int = prefs.getInt(config.key, config.defaultValue)
 
-    fun putInt(config: IntConfig, value: Int) {
+    fun putInt(
+        config: IntConfig,
+        value: Int,
+    ) {
         prefs.edit().putInt(config.key, value).apply()
     }
 
-    fun getFloat(config: FloatConfig): Float {
-        return prefs.getFloat(config.key, config.defaultValue)
-    }
+    fun getFloat(config: FloatConfig): Float = prefs.getFloat(config.key, config.defaultValue)
 
-    fun putFloat(config: FloatConfig, value: Float) {
+    fun putFloat(
+        config: FloatConfig,
+        value: Float,
+    ) {
         prefs.edit().putFloat(config.key, value).apply()
     }
 
-    fun putValue(config: Config, value: Any) {
+    fun putValue(
+        config: Config,
+        value: Any,
+    ) {
         when (value) {
             is Boolean -> putBoolean(config as BooleanConfig, value)
             is Int -> putInt(config as IntConfig, value)
@@ -52,11 +58,10 @@ class Configurator constructor(
         }
     }
 
-    fun getValue(config: Config): Any {
-        return when (config) {
+    fun getValue(config: Config): Any =
+        when (config) {
             is BooleanConfig -> getBoolean(config)
             is IntConfig -> getInt(config)
             is FloatConfig -> getFloat(config)
         }
-    }
 }

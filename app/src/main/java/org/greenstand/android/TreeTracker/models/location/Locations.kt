@@ -20,13 +20,13 @@ import kotlinx.serialization.Serializable
 enum class Accuracy {
     GOOD,
     BAD,
-    NONE
+    NONE,
 }
 
 data class ConvergenceStats(
     val mean: Double,
     val variance: Double,
-    val standardDeviation: Double
+    val standardDeviation: Double,
 )
 
 @Serializable
@@ -40,5 +40,5 @@ data class LocationData(
     val accuracy: Float,
     val treeUuid: String?,
     val convergenceStatus: ConvergenceStatus?,
-    val capturedAt: String
+    val capturedAt: String,
 )

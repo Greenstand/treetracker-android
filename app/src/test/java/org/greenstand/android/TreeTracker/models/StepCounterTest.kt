@@ -34,7 +34,6 @@ import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class StepCounterTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -60,46 +59,51 @@ class StepCounterTest {
         every { preferences.edit() } returns mockEditor
         every { mockEditor.putInt(any(), any()) } returns mockEditor
 
-        stepCounter = StepCounter(
-            sensorManager = sensorManager,
-            preferences = preferences,
-        )
+        stepCounter =
+            StepCounter(
+                sensorManager = sensorManager,
+                preferences = preferences,
+            )
     }
 
     @Test
-    fun `WHEN absoluteStepCount and absoluteStepCountOnTreeCapture set THEN deltaSteps returns difference`() = runTest {
-        every { preferences.getInt(any(), any()) } returnsMany listOf(100, 80)
+    fun `WHEN absoluteStepCount and absoluteStepCountOnTreeCapture set THEN deltaSteps returns difference`() =
+        runTest {
+            every { preferences.getInt(any(), any()) } returnsMany listOf(100, 80)
 
-        val delta = stepCounter.deltaSteps
+            val delta = stepCounter.deltaSteps
 
-        assertEquals(20, delta)
-    }
-
-    @Test
-    fun `WHEN snapshotAbsoluteStepCountOnTreeCapture called THEN stores current absolute count`() = runTest {
-        every { preferences.getInt(any(), any()) } returns 150
-
-        stepCounter.snapshotAbsoluteStepCountOnTreeCapture()
-
-        val editor = preferences.edit()
-        verify { editor.putInt(any(), 150) }
-    }
-
-    @Test
-    fun `WHEN enable called THEN registers sensor listener on SensorManager`() = runTest {
-        stepCounter.enable()
-
-        verify(exactly = 1) {
-            sensorManager.registerListener(any<android.hardware.SensorEventListener>(), any<android.hardware.Sensor>(), eq(SensorManager.SENSOR_DELAY_FASTEST))
+            assertEquals(20, delta)
         }
-    }
 
     @Test
-    fun `WHEN disable called THEN unregisters sensor listener`() = runTest {
-        stepCounter.disable()
+    fun `WHEN snapshotAbsoluteStepCountOnTreeCapture called THEN stores current absolute count`() =
+        runTest {
+            every { preferences.getInt(any(), any()) } returns 150
 
-        verify(exactly = 1) {
-            sensorManager.unregisterListener(any<android.hardware.SensorEventListener>())
+            stepCounter.snapshotAbsoluteStepCountOnTreeCapture()
+
+            val editor = preferences.edit()
+            verify { editor.putInt(any(), 150) }
         }
-    }
+
+    @Test
+    fun `WHEN enable called THEN registers sensor listener on SensorManager`() =
+        runTest {
+            stepCounter.enable()
+
+            verify(exactly = 1) {
+                sensorManager.registerListener(any<android.hardware.SensorEventListener>(), any<android.hardware.Sensor>(), eq(SensorManager.SENSOR_DELAY_FASTEST))
+            }
+        }
+
+    @Test
+    fun `WHEN disable called THEN unregisters sensor listener`() =
+        runTest {
+            stepCounter.disable()
+
+            verify(exactly = 1) {
+                sensorManager.unregisterListener(any<android.hardware.SensorEventListener>())
+            }
+        }
 }

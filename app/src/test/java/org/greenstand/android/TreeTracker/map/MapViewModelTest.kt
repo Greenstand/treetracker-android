@@ -35,7 +35,6 @@ import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class MapViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -51,66 +50,71 @@ class MapViewModelTest {
     }
 
     @Test
-    fun `WHEN init loads trees THEN markers are mapped and isLoading is false`() = runTest {
-        val treeEntity1 = TreeEntity(
-            uuid = "uuid-1",
-            sessionId = 1,
-            photoPath = "/photo1.jpg",
-            photoUrl = null,
-            note = "tree note 1",
-            latitude = 12.34,
-            longitude = 56.78,
-            uploaded = false,
-            createdAt = Instant.fromEpochMilliseconds(1000000),
-        ).apply { id = 1L }
+    fun `WHEN init loads trees THEN markers are mapped and isLoading is false`() =
+        runTest {
+            val treeEntity1 =
+                TreeEntity(
+                    uuid = "uuid-1",
+                    sessionId = 1,
+                    photoPath = "/photo1.jpg",
+                    photoUrl = null,
+                    note = "tree note 1",
+                    latitude = 12.34,
+                    longitude = 56.78,
+                    uploaded = false,
+                    createdAt = Instant.fromEpochMilliseconds(1000000),
+                ).apply { id = 1L }
 
-        val treeEntity2 = TreeEntity(
-            uuid = "uuid-2",
-            sessionId = 2,
-            photoPath = "/photo2.jpg",
-            photoUrl = null,
-            note = "tree note 2",
-            latitude = 34.56,
-            longitude = 78.90,
-            uploaded = true,
-            createdAt = Instant.fromEpochMilliseconds(2000000),
-        ).apply { id = 2L }
+            val treeEntity2 =
+                TreeEntity(
+                    uuid = "uuid-2",
+                    sessionId = 2,
+                    photoPath = "/photo2.jpg",
+                    photoUrl = null,
+                    note = "tree note 2",
+                    latitude = 34.56,
+                    longitude = 78.90,
+                    uploaded = true,
+                    createdAt = Instant.fromEpochMilliseconds(2000000),
+                ).apply { id = 2L }
 
-        coEvery { dao.getAllTrees() } returns listOf(treeEntity1, treeEntity2)
+            coEvery { dao.getAllTrees() } returns listOf(treeEntity1, treeEntity2)
 
-        val viewModel = MapViewModel(dao)
+            val viewModel = MapViewModel(dao)
 
-        val state = viewModel.state.first { !it.isLoading }
-        assertEquals(2, state.markers.size)
-        assertEquals("tree_1", state.markers[0].id)
-        assertEquals(12.34, state.markers[0].latitude)
-        assertEquals(56.78, state.markers[0].longitude)
-        assertFalse(state.markers[0].isUploaded)
-        assertEquals("tree note 1", state.markers[0].note)
-        assertEquals("/photo1.jpg", state.markers[0].imagePath)
-        assertEquals("tree_2", state.markers[1].id)
-        assertTrue(state.markers[1].isUploaded)
-    }
-
-    @Test
-    fun `WHEN init with empty tree list THEN markers are empty`() = runTest {
-        coEvery { dao.getAllTrees() } returns emptyList()
-
-        val viewModel = MapViewModel(dao)
-
-        val state = viewModel.state.first { !it.isLoading }
-        assertTrue(state.markers.isEmpty())
-    }
+            val state = viewModel.state.first { !it.isLoading }
+            assertEquals(2, state.markers.size)
+            assertEquals("tree_1", state.markers[0].id)
+            assertEquals(12.34, state.markers[0].latitude)
+            assertEquals(56.78, state.markers[0].longitude)
+            assertFalse(state.markers[0].isUploaded)
+            assertEquals("tree note 1", state.markers[0].note)
+            assertEquals("/photo1.jpg", state.markers[0].imagePath)
+            assertEquals("tree_2", state.markers[1].id)
+            assertTrue(state.markers[1].isUploaded)
+        }
 
     @Test
-    fun `WHEN selectMarker called THEN selectedMarkerId updates in state`() = runTest {
-        coEvery { dao.getAllTrees() } returns emptyList()
+    fun `WHEN init with empty tree list THEN markers are empty`() =
+        runTest {
+            coEvery { dao.getAllTrees() } returns emptyList()
 
-        val viewModel = MapViewModel(dao)
-        viewModel.state.first { !it.isLoading }
+            val viewModel = MapViewModel(dao)
 
-        viewModel.handleAction(MapAction.SelectMarker("tree_42"))
+            val state = viewModel.state.first { !it.isLoading }
+            assertTrue(state.markers.isEmpty())
+        }
 
-        assertEquals("tree_42", viewModel.state.value.selectedMarkerId)
-    }
+    @Test
+    fun `WHEN selectMarker called THEN selectedMarkerId updates in state`() =
+        runTest {
+            coEvery { dao.getAllTrees() } returns emptyList()
+
+            val viewModel = MapViewModel(dao)
+            viewModel.state.first { !it.isLoading }
+
+            viewModel.handleAction(MapAction.SelectMarker("tree_42"))
+
+            assertEquals("tree_42", viewModel.state.value.selectedMarkerId)
+        }
 }

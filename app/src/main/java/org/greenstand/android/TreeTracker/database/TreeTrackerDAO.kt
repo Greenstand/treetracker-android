@@ -37,7 +37,6 @@ import org.greenstand.android.TreeTracker.database.legacy.views.TreeMapMarkerDbV
 
 @Dao
 interface TreeTrackerDAO {
-
     @Query("SELECT _id FROM planter_info WHERE planter_identifier = :identifier")
     suspend fun getPlanterInfoIdByIdentifier(identifier: String): Long?
 
@@ -77,10 +76,11 @@ interface TreeTrackerDAO {
     @Query("DELETE FROM user WHERE wallet = :wallet")
     suspend fun deleteUserByWallet(wallet: String): Int
 
-
     @Query("UPDATE user SET power_user = :isPowerUser WHERE _id = :userId")
-    suspend fun updatePowerUserStatus(userId: Long, isPowerUser: Boolean)
-
+    suspend fun updatePowerUserStatus(
+        userId: Long,
+        isPowerUser: Boolean,
+    )
 
     @Update
     suspend fun updatePlanterInfo(planterInfoEntity: PlanterInfoEntity)
@@ -98,16 +98,28 @@ interface TreeTrackerDAO {
     suspend fun deletePlanterInfo(planterInfoEntity: PlanterInfoEntity)
 
     @Query("UPDATE planter_info SET bundle_id = :bundleId WHERE _id IN (:ids)")
-    suspend fun updatePlanterInfoBundleIds(ids: List<Long>, bundleId: String)
+    suspend fun updatePlanterInfoBundleIds(
+        ids: List<Long>,
+        bundleId: String,
+    )
 
     @Query("UPDATE user SET bundle_id = :bundleId WHERE _id IN (:ids)")
-    suspend fun updateUserBundleIds(ids: List<Long>, bundleId: String)
+    suspend fun updateUserBundleIds(
+        ids: List<Long>,
+        bundleId: String,
+    )
 
     @Query("UPDATE planter_info SET uploaded = :isUploaded WHERE _id IN (:ids)")
-    suspend fun updatePlanterInfoUploadStatus(ids: List<Long>, isUploaded: Boolean)
+    suspend fun updatePlanterInfoUploadStatus(
+        ids: List<Long>,
+        isUploaded: Boolean,
+    )
 
     @Query("UPDATE user SET uploaded = :isUploaded WHERE _id IN (:ids)")
-    suspend fun updateUserUploadStatus(ids: List<Long>, isUploaded: Boolean)
+    suspend fun updateUserUploadStatus(
+        ids: List<Long>,
+        isUploaded: Boolean,
+    )
 
     @Transaction
     @Query("SELECT * FROM planter_check_in WHERE local_photo_path IS NOT NULL")
@@ -191,16 +203,28 @@ interface TreeTrackerDAO {
     suspend fun getAllTrees(): List<TreeEntity>
 
     @Query("UPDATE tree_capture SET bundle_id = :bundleId WHERE _id IN (:ids)")
-    suspend fun updateTreeCapturesBundleIds(ids: List<Long>, bundleId: String)
+    suspend fun updateTreeCapturesBundleIds(
+        ids: List<Long>,
+        bundleId: String,
+    )
 
     @Query("UPDATE tree SET bundle_id = :bundleId WHERE _id IN (:ids)")
-    suspend fun updateTreesBundleIds(ids: List<Long>, bundleId: String)
+    suspend fun updateTreesBundleIds(
+        ids: List<Long>,
+        bundleId: String,
+    )
 
     @Query("UPDATE tree SET uploaded = :uploaded WHERE _id IN (:ids)")
-    suspend fun updateTreesUploadStatus(ids: List<Long>, uploaded: Boolean)
+    suspend fun updateTreesUploadStatus(
+        ids: List<Long>,
+        uploaded: Boolean,
+    )
 
     @Query("UPDATE tree_capture SET uploaded = :isUploaded WHERE _id IN (:ids)")
-    suspend fun updateTreeCapturesUploadStatus(ids: List<Long>, isUploaded: Boolean)
+    suspend fun updateTreeCapturesUploadStatus(
+        ids: List<Long>,
+        isUploaded: Boolean,
+    )
 
     @Query("UPDATE tree_capture SET local_photo_path = null WHERE _id IN (:ids)")
     suspend fun removeTreeCapturesLocalImagePaths(ids: List<Long>)
@@ -226,7 +250,7 @@ interface TreeTrackerDAO {
     @Transaction
     suspend fun insertTreeWithAttributes(
         tree: TreeCaptureEntity,
-        attributes: List<TreeAttributeEntity>?
+        attributes: List<TreeAttributeEntity>?,
     ): Long {
         val treeId = insertTreeCapture(tree)
         attributes?.forEach {
@@ -249,10 +273,16 @@ interface TreeTrackerDAO {
     suspend fun getLocationData(): List<LocationEntity>
 
     @Query("UPDATE location_data SET uploaded = :isUploaded WHERE _id IN (:ids)")
-    suspend fun updateLegacyLocationDataUploadStatus(ids: List<Long>, isUploaded: Boolean)
+    suspend fun updateLegacyLocationDataUploadStatus(
+        ids: List<Long>,
+        isUploaded: Boolean,
+    )
 
     @Query("UPDATE location SET uploaded = :isUploaded WHERE _id IN (:ids)")
-    suspend fun updateLocationDataUploadStatus(ids: List<Long>, isUploaded: Boolean)
+    suspend fun updateLocationDataUploadStatus(
+        ids: List<Long>,
+        isUploaded: Boolean,
+    )
 
     @Query("DELETE FROM location_data WHERE uploaded = 1")
     suspend fun purgeUploadedTreeLocations()
@@ -276,10 +306,16 @@ interface TreeTrackerDAO {
     suspend fun getSessionsToUpload(): List<SessionEntity>
 
     @Query("UPDATE session SET bundle_id = :bundleId WHERE _id IN (:ids)")
-    suspend fun updateSessionBundleIds(ids: List<Long>, bundleId: String)
+    suspend fun updateSessionBundleIds(
+        ids: List<Long>,
+        bundleId: String,
+    )
 
     @Query("UPDATE session SET uploaded = :isUploaded WHERE _id IN (:ids)")
-    suspend fun updateSessionUploadStatus(ids: List<Long>, isUploaded: Boolean)
+    suspend fun updateSessionUploadStatus(
+        ids: List<Long>,
+        isUploaded: Boolean,
+    )
 
     @Query("SELECT * FROM device_config WHERE uploaded = 0")
     suspend fun getDeviceConfigsToUpload(): List<DeviceConfigEntity>
@@ -291,10 +327,16 @@ interface TreeTrackerDAO {
     suspend fun insertDeviceConfig(deviceConfig: DeviceConfigEntity): Long
 
     @Query("UPDATE device_config SET bundle_id = :bundleId WHERE _id IN (:ids)")
-    suspend fun updateDeviceConfigBundleIds(ids: List<Long>, bundleId: String)
+    suspend fun updateDeviceConfigBundleIds(
+        ids: List<Long>,
+        bundleId: String,
+    )
 
     @Query("UPDATE device_config SET uploaded = :isUploaded WHERE _id IN (:ids)")
-    suspend fun updateDeviceConfigUploadStatus(ids: List<Long>, isUploaded: Boolean)
+    suspend fun updateDeviceConfigUploadStatus(
+        ids: List<Long>,
+        isUploaded: Boolean,
+    )
 
     @Query("SELECT * FROM device_config ORDER BY logged_at DESC LIMIT 1")
     suspend fun getLatestDeviceConfig(): DeviceConfigEntity?

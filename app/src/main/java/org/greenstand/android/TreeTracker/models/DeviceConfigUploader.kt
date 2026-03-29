@@ -28,7 +28,6 @@ class DeviceConfigUploader(
     private val objectStorageClient: ObjectStorageClient,
     private val json: Json,
 ) {
-
     suspend fun upload(instanceId: String) {
         val deviceConfigsToUpload = dao.getDeviceConfigsToUpload()
 
@@ -36,23 +35,25 @@ class DeviceConfigUploader(
             return
         }
 
-        val deviceConfigRequests = deviceConfigsToUpload.map { config ->
-            DeviceConfigRequest(
-                id = config.uuid,
-                appVersion = config.appVersion,
-                appBuild = config.appBuild,
-                osVersion = config.osVersion,
-                sdkVersion = config.sdkVersion,
-                loggedAt = config.loggedAt.toString(),
-                instanceId = instanceId,
-            )
-        }
+        val deviceConfigRequests =
+            deviceConfigsToUpload.map { config ->
+                DeviceConfigRequest(
+                    id = config.uuid,
+                    appVersion = config.appVersion,
+                    appBuild = config.appBuild,
+                    osVersion = config.osVersion,
+                    sdkVersion = config.sdkVersion,
+                    loggedAt = config.loggedAt.toString(),
+                    instanceId = instanceId,
+                )
+            }
 
-        val jsonBundle = json.encodeToString(
-            UploadBundle.createV2(
-                deviceConfigs = deviceConfigRequests
+        val jsonBundle =
+            json.encodeToString(
+                UploadBundle.createV2(
+                    deviceConfigs = deviceConfigRequests,
+                ),
             )
-        )
         val bundleId = jsonBundle.md5() + "_deviceConfigs"
         val deviceConfigIds = deviceConfigsToUpload.map { it.id }
 

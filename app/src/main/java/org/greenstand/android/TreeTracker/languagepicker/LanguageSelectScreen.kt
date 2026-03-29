@@ -85,18 +85,18 @@ fun LanguageSelect(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = state.currentLanguage != null
+                        isEnabled = state.currentLanguage != null,
                     ) {
                         onHandleAction(LanguagePickerAction.NavigateNext)
                     }
-                }
+                },
             )
         },
     ) {
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             items(Language.values()) { language ->
                 LanguageButton(
@@ -114,7 +114,7 @@ fun LanguageSelect(
 fun LanguageTopBar() {
     ActionBar(
         modifier = Modifier.statusBarsPadding(),
-        centerAction = { TopBarTitle() }
+        centerAction = { TopBarTitle() },
     )
 }
 
@@ -128,16 +128,17 @@ fun LanguageButton(
         colors = AppButtonColors.ProgressGreen,
         onClick = onClick,
         isSelected = isSelected,
-        modifier = Modifier
-            .padding(16.dp)
-            .size(height = 80.dp, width = 156.dp)
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .size(height = 80.dp, width = 156.dp),
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = text,
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.darkText,
-            style = CustomTheme.typography.regular
+            style = CustomTheme.typography.regular,
         )
     }
 }

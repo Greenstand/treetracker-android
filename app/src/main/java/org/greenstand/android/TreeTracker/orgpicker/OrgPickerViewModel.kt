@@ -24,18 +24,20 @@ import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class OrgPickerState(
     val orgs: List<Org> = emptyList(),
-    val currentOrg: Org? = null
+    val currentOrg: Org? = null,
 )
 
 sealed class OrgPickerAction : Action {
-    data class SetOrg(val org: Org) : OrgPickerAction()
+    data class SetOrg(
+        val org: Org,
+    ) : OrgPickerAction()
+
     object NavigateNext : OrgPickerAction()
 }
 
 class OrgPickerViewModel(
     private val orgRepo: OrgRepo,
 ) : BaseViewModel<OrgPickerState, OrgPickerAction>(OrgPickerState()) {
-
     init {
         viewModelScope.launch {
             val orgs = orgRepo.getOrgs()
@@ -43,7 +45,7 @@ class OrgPickerViewModel(
             updateState {
                 copy(
                     orgs = orgs,
-                    currentOrg = currentOrg
+                    currentOrg = currentOrg,
                 )
             }
         }

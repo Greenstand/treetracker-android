@@ -39,7 +39,6 @@ import org.robolectric.annotation.GraphicsMode
     sdk = [35],
 )
 abstract class ScreenshotTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -51,7 +50,6 @@ abstract class ScreenshotTest {
         }
         composeTestRule.onRoot().captureRoboImage()
     }
-
 }
 
 @Composable

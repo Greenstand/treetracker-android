@@ -21,7 +21,6 @@ import org.greenstand.android.TreeTracker.devoptions.Configurator
 class ConvergenceConfiguration(
     private val configurator: Configurator,
 ) {
-
     var locationDataConfig: LocationDataConfig
         private set
 
@@ -31,12 +30,13 @@ class ConvergenceConfiguration(
     }
 
     fun refreshConfig() {
-        locationDataConfig = LocationDataConfig(
-            convergenceTimeout = configurator.getInt(ConfigKeys.CONVERGENCE_TIMEOUT).toLong(),
-            convergenceDataSize = configurator.getInt(ConfigKeys.CONVERGENCE_DATA_SIZE),
-            lonStdDevThreshold = configurator.getFloat(ConfigKeys.LON_STD_DEV_THRESHOLD),
-            latStdDevThreshold = configurator.getFloat(ConfigKeys.LAT_STD_DEV_THRESHOLD),
-        )
+        locationDataConfig =
+            LocationDataConfig(
+                convergenceTimeout = configurator.getInt(ConfigKeys.CONVERGENCE_TIMEOUT).toLong(),
+                convergenceDataSize = configurator.getInt(ConfigKeys.CONVERGENCE_DATA_SIZE),
+                lonStdDevThreshold = configurator.getFloat(ConfigKeys.LON_STD_DEV_THRESHOLD),
+                latStdDevThreshold = configurator.getFloat(ConfigKeys.LAT_STD_DEV_THRESHOLD),
+            )
     }
 }
 
@@ -46,5 +46,5 @@ data class LocationDataConfig(
     val convergenceTimeout: Long = 20000L,
     val convergenceDataSize: Int = 5,
     val lonStdDevThreshold: Float = 0.00001F,
-    val latStdDevThreshold: Float = 0.00001F
+    val latStdDevThreshold: Float = 0.00001F,
 )

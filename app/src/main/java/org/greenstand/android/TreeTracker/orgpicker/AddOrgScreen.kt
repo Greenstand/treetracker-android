@@ -93,9 +93,9 @@ fun AddOrg(
                     ) {
                         onHandleAction(AddOrgAction.NavigateNext)
                     }
-                }
+                },
             )
-        }
+        },
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(it),
@@ -108,23 +108,26 @@ fun AddOrg(
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(AddOrgAction.UpdateOrgName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Go,
-                    autoCorrect = false,
-                ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        onHandleAction(AddOrgAction.NavigateNext)
-                    }
-                )
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Go,
+                        autoCorrect = false,
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onGo = {
+                            onHandleAction(AddOrgAction.NavigateNext)
+                        },
+                    ),
             )
             state.previousOrgName?.let { prevOrgName ->
                 TreeTrackerButton(
                     onClick = { onHandleAction(AddOrgAction.ApplyOrgAutofill) },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(height = 80.dp, width = 156.dp)
+                    modifier =
+                        Modifier
+                            .padding(16.dp)
+                            .size(height = 80.dp, width = 156.dp),
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
@@ -132,7 +135,7 @@ fun AddOrg(
                         fontWeight = FontWeight.Bold,
                         color = CustomTheme.textColors.primaryText,
                         style = CustomTheme.typography.regular,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }

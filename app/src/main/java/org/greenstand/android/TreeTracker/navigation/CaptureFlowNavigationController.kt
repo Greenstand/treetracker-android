@@ -36,7 +36,6 @@ class CaptureFlowNavigationController(
     private val locationDataCapturer: LocationDataCapturer,
     private val treeCapturer: TreeCapturer,
 ) : FlowNavigationController(orgRepo.currentOrg().captureFlow) {
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**

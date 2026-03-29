@@ -1,3 +1,18 @@
+/*
+ * Copyright 2026 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.greenstand.android.TreeTracker.settings
 
 import androidx.compose.foundation.Image
@@ -100,8 +115,7 @@ fun Settings(
                         textAlign = TextAlign.Center,
                     )
                 },
-
-                )
+            )
         },
         bottomBar = {
             ActionBar(
@@ -112,23 +126,25 @@ fun Settings(
                     }
                 },
             )
-        }
+        },
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 20.dp, end = 20.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp, end = 20.dp),
             ) {
                 SettingsItem(
                     iconResId = R.drawable.account,
                     titleResId = R.string.profile_title,
                     descriptionResId = R.string.profile_description,
-                    onClick = { onHandleAction(SettingsAction.NavigateToProfile) }
+                    onClick = { onHandleAction(SettingsAction.NavigateToProfile) },
                 )
                 Divider(color = Color.White)
 
@@ -137,7 +153,7 @@ fun Settings(
                         iconResId = R.drawable.map_icon,
                         titleResId = R.string.map_title,
                         descriptionResId = R.string.map_description,
-                        onClick = { onHandleAction(SettingsAction.NavigateToMap) }
+                        onClick = { onHandleAction(SettingsAction.NavigateToMap) },
                     )
                     Divider(color = Color.White)
                 }
@@ -146,7 +162,7 @@ fun Settings(
                     iconResId = R.drawable.privacy_policy,
                     titleResId = R.string.privacy_title,
                     descriptionResId = R.string.privacy_description,
-                    onClick = { onHandleAction(SettingsAction.SetPrivacyDialogVisibility(true)) }
+                    onClick = { onHandleAction(SettingsAction.SetPrivacyDialogVisibility(true)) },
                 )
                 Divider(color = Color.White)
 
@@ -154,7 +170,7 @@ fun Settings(
                     iconResId = R.drawable.logout,
                     titleResId = R.string.logout_title,
                     descriptionResId = R.string.logout_description,
-                    onClick = { onHandleAction(SettingsAction.UpdateLogoutDialogVisibility(true)) }
+                    onClick = { onHandleAction(SettingsAction.UpdateLogoutDialogVisibility(true)) },
                 )
                 Divider(color = Color.White)
 
@@ -162,18 +178,19 @@ fun Settings(
                     iconResId = R.drawable.delete,
                     titleResId = R.string.delete_account_title,
                     descriptionResId = R.string.delete_account_description,
-                    onClick = { onHandleAction(SettingsAction.NavigateToDeleteAccount) }
+                    onClick = { onHandleAction(SettingsAction.NavigateToDeleteAccount) },
                 )
 
                 Text(
-                    text = stringResource(
-                        id = R.string.app_version,
-                        BuildConfig.VERSION_NAME,
-                        BuildConfig.VERSION_CODE
-                    ),
+                    text =
+                        stringResource(
+                            id = R.string.app_version,
+                            BuildConfig.VERSION_NAME,
+                            BuildConfig.VERSION_CODE,
+                        ),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = Color.White
+                    color = Color.White,
                 )
             }
             if (state.showPrivacyPolicyDialog == true) {
@@ -193,12 +210,10 @@ fun Settings(
                                 buttonColors = AppButtonColors.Default,
                                 selectedColor = Red,
                                 onClick = {
-                                }
+                                },
                             )
                         }
-
-                    }
-
+                    },
                 )
             }
         }
@@ -210,19 +225,20 @@ fun SettingsItem(
     iconResId: Int,
     titleResId: Int,
     descriptionResId: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             painter = painterResource(id = iconResId),
             contentDescription = null, // decorative element
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
@@ -230,13 +246,12 @@ fun SettingsItem(
                 text = stringResource(id = titleResId),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = Color.White
-
+                color = Color.White,
             )
             Text(
                 text = stringResource(id = descriptionResId),
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = Color.Gray,
             )
         }
     }

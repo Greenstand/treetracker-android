@@ -24,21 +24,25 @@ import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class LanguagePickerState(
-    val currentLanguage: Language? = null
+    val currentLanguage: Language? = null,
 )
 
 sealed class LanguagePickerAction : Action {
-    data class SetLanguage(val language: Language) : LanguagePickerAction()
+    data class SetLanguage(
+        val language: Language,
+    ) : LanguagePickerAction()
+
     object ConfirmLanguage : LanguagePickerAction()
+
     object NavigateNext : LanguagePickerAction()
 }
 
 class LanguagePickerViewModel(
     private val languageSwitcher: LanguageSwitcher,
 ) : BaseViewModel<LanguagePickerState, LanguagePickerAction>(LanguagePickerState(currentLanguage = languageSwitcher.currentLanguage())) {
-
     init {
-        languageSwitcher.observeCurrentLanguage()
+        languageSwitcher
+            .observeCurrentLanguage()
             .onEach { updateState { copy(currentLanguage = it) } }
             .launchIn(viewModelScope)
     }

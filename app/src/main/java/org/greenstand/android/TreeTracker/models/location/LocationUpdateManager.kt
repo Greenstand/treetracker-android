@@ -29,9 +29,8 @@ import timber.log.Timber
 class LocationUpdateManager(
     private val locationManager: LocationManager,
     private val context: Context,
-    private val convergenceConfiguration: ConvergenceConfiguration
+    private val convergenceConfiguration: ConvergenceConfiguration,
 ) {
-
     private val locationUpdates = MutableLiveData<Location?>()
     val locationUpdateLiveData: LiveData<Location?> = locationUpdates
 
@@ -45,31 +44,36 @@ class LocationUpdateManager(
         locationUpdates.postValue(null)
     }
 
-    private val locationUpdateListener = object : android.location.LocationListener {
-        override fun onLocationChanged(location: Location) {
-            currentLocation = location
-            Timber.d("Posting location value $currentLocation")
-            locationUpdates.postValue(location)
+    private val locationUpdateListener =
+        object : android.location.LocationListener {
+            override fun onLocationChanged(location: Location) {
+                currentLocation = location
+                Timber.d("Posting location value $currentLocation")
+                locationUpdates.postValue(location)
+            }
+
+            override fun onProviderEnabled(provider: String) {}
+
+            override fun onProviderDisabled(provider: String) {}
+
+            override fun onStatusChanged(
+                p0: String?,
+                p1: Int,
+                p2: Bundle?,
+            ) {
+                Timber.d("Location status changed %s %d", p0, p1)
+            }
         }
 
-        override fun onProviderEnabled(provider: String) {}
-
-        override fun onProviderDisabled(provider: String) {}
-
-        override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
-            Timber.d("Location status changed %s %d", p0, p1)
-        }
-    }
-
-    fun startLocationUpdates(): Boolean {
-        return if (hasLocationPermissions()) {
+    fun startLocationUpdates(): Boolean =
+        if (hasLocationPermissions()) {
             if (!isUpdating) {
                 val locationDataConfig = convergenceConfiguration.locationDataConfig
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     locationDataConfig.minTimeBetweenUpdates,
                     locationDataConfig.minDistanceBetweenUpdates,
-                    locationUpdateListener
+                    locationUpdateListener,
                 )
                 isUpdating = true
             }
@@ -78,12 +82,12 @@ class LocationUpdateManager(
             isUpdating = false
             false
         }
-    }
 
     fun stopLocationUpdates(): Boolean {
         Timber.d("Request to stop location updates submitted")
-        if (locationUpdateLiveData.hasObservers())
+        if (locationUpdateLiveData.hasObservers()) {
             return false
+        }
         Timber.d("Request to stop location update honored")
         locationManager.removeUpdates(locationUpdateListener)
         locationUpdates.postValue(null)
@@ -103,23 +107,25 @@ class LocationUpdateManager(
                 LocationManager.GPS_PROVIDER,
                 locationDataConfig.minTimeBetweenUpdates,
                 locationDataConfig.minDistanceBetweenUpdates,
-                locationUpdateListener
+                locationUpdateListener,
             )
         }
     }
 
     private fun hasLocationPermissions(): Boolean {
-        val fineLocationPermission = ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        val coarseLocationPermission = ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
-        )
+        val fineLocationPermission =
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+            )
+        val coarseLocationPermission =
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            )
         return (
             fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
                 coarseLocationPermission == PackageManager.PERMISSION_GRANTED
-            )
+        )
     }
 }

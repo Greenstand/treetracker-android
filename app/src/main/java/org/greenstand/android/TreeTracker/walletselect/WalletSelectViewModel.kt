@@ -33,26 +33,33 @@ data class WalletSelectState(
 )
 
 sealed class WalletSelectAction : Action {
-    data class SelectPlanter(val planterInfoId: Long) : WalletSelectAction()
+    data class SelectPlanter(
+        val planterInfoId: Long,
+    ) : WalletSelectAction()
+
     object NavigateToUserSelect : WalletSelectAction()
+
     object NavigateForward : WalletSelectAction()
+
     object NavigateToAddWallet : WalletSelectAction()
+
     object NavigateBack : WalletSelectAction()
 }
 
-class WalletSelectViewModel(private val userRepo: UserRepo) : BaseViewModel<WalletSelectState, WalletSelectAction>(WalletSelectState()) {
-
+class WalletSelectViewModel(
+    private val userRepo: UserRepo,
+) : BaseViewModel<WalletSelectState, WalletSelectAction>(WalletSelectState()) {
     init {
         viewModelScope.launch {
             val currentUser = CaptureSetupScopeManager.getData().user
-            userRepo.users()
+            userRepo
+                .users()
                 .map { users -> users.filter { it.id != currentUser?.id } }
                 .onEach { users ->
                     updateState {
                         copy(currentUser = currentUser, alternateUsers = users)
                     }
-                }
-                .launchIn(this)
+                }.launchIn(this)
         }
     }
 
