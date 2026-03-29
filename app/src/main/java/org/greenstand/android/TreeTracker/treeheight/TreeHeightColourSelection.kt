@@ -30,8 +30,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -49,13 +50,12 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
-import kotlinx.coroutines.launch
 
 @Composable
 fun TreeHeightScreen() {
     val viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current)
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(TreeHeightSelectionState())
+    val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -119,7 +119,7 @@ fun TreeHeightScreen() {
                 TreeTrackerButton(
                     colors = color,
                     isSelected = isSelected,
-                    onClick = { viewModel.selectColor(color) },
+                    onClick = { viewModel.handleAction(TreeHeightAction.SelectColor(color)) },
                     modifier = Modifier.size(
                         width = animatedWidth,
                         height = animatedHeight

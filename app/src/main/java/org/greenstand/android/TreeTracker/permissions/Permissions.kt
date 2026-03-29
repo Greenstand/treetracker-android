@@ -23,14 +23,14 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -39,7 +39,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.permissions.PermissionItemsState
+import org.greenstand.android.TreeTracker.permissions.PermissionAction
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -51,7 +51,7 @@ fun PermissionRequest(
     viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(PermissionItemsState())
+    val state by viewModel.state.collectAsState()
     val permissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -101,7 +101,7 @@ fun PermissionRequest(
             Manifest.permission.ACCESS_FINE_LOCATION -> {
                 when {
                     perm.status.isGranted -> {
-                        viewModel.isLocationEnabled()
+                        viewModel.handleAction(PermissionAction.CheckLocationEnabled)
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }
@@ -117,7 +117,7 @@ fun PermissionRequest(
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.status.isGranted -> {
-                        viewModel.isLocationEnabled()
+                        viewModel.handleAction(PermissionAction.CheckLocationEnabled)
                         if (state.isLocationEnabled == false) {
                             enableLocation()
                         }

@@ -16,12 +16,11 @@
 package org.greenstand.android.TreeTracker.treeheight
 
 import androidx.compose.material.ButtonColors
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.view.AppButtonColors
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class TreeHeightSelectionState(
     val colors: List<ButtonColors> = listOf(
@@ -34,17 +33,21 @@ data class TreeHeightSelectionState(
     val selectedColor: ButtonColors? = null,
 )
 
+sealed class TreeHeightAction : Action {
+    data class SelectColor(val color: ButtonColors) : TreeHeightAction()
+}
+
 class TreeHeightSelectionViewModel(
     private val treeCapturer: TreeCapturer,
-) : ViewModel() {
+) : BaseViewModel<TreeHeightSelectionState, TreeHeightAction>(TreeHeightSelectionState()) {
 
-    private val _state = MutableLiveData(TreeHeightSelectionState())
-    val state: LiveData<TreeHeightSelectionState> = _state
-
-    fun selectColor(color: ButtonColors) {
-        // TODO add proper color values
-        val colorIndex = _state.value?.colors?.indexOf(color) ?: -1
-        treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, colorIndex.toString())
-        _state.value = TreeHeightSelectionState(selectedColor = color)
+    override fun handleAction(action: TreeHeightAction) {
+        when (action) {
+            is TreeHeightAction.SelectColor -> {
+                val colorIndex = currentState.colors.indexOf(action.color)
+                treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, colorIndex.toString())
+                updateState { TreeHeightSelectionState(selectedColor = action.color) }
+            }
+        }
     }
 }

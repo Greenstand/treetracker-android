@@ -15,35 +15,40 @@
  */
 package org.greenstand.android.TreeTracker.sessionnote
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class SessionNoteState(
     val note: String = "",
     val userImagePath: String = "",
 )
 
-class SessionNoteViewModel : ViewModel() {
+sealed class SessionNoteAction : Action {
+    data class UpdateNote(val note: String) : SessionNoteAction()
+    object NavigateBack : SessionNoteAction()
+    object NavigateNext : SessionNoteAction()
+}
 
-    private val _state = MutableStateFlow(SessionNoteState())
-    val state: Flow<SessionNoteState> = _state
+class SessionNoteViewModel : BaseViewModel<SessionNoteState, SessionNoteAction>(SessionNoteState()) {
 
     init {
         viewModelScope.launch {
-            _state.value = SessionNoteState(
-                userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath,
-            )
+            updateState {
+                copy(userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath)
+            }
         }
     }
 
-    fun updateNote(note: String) {
-        CaptureSetupScopeManager.getData().sessionNote = note
-        _state.value = _state.value!!.copy(
-            note = note
-        )
+    override fun handleAction(action: SessionNoteAction) {
+        when (action) {
+            is SessionNoteAction.UpdateNote -> {
+                CaptureSetupScopeManager.getData().sessionNote = action.note
+                updateState { copy(note = action.note) }
+            }
+            else -> { }
+        }
     }
 }

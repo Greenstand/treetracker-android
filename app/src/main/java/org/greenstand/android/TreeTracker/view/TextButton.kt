@@ -44,8 +44,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -71,7 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
-import org.greenstand.android.TreeTracker.models.Language
+
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -182,8 +182,8 @@ fun BoxScope.LanguageButton() {
     } else {
         null
     }
-    val language: String =
-        languageViewModel?.currentLanguage?.observeAsState(Language)?.value.toString()
+    val languageState = languageViewModel?.state?.collectAsState()
+    val language: String = languageState?.value?.currentLanguage?.toString() ?: "EN"
 
     TreeTrackerButton(
         colors = AppButtonColors.ProgressGreen,

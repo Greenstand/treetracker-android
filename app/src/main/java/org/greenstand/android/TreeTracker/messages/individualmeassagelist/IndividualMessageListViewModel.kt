@@ -15,12 +15,9 @@
  */
 package org.greenstand.android.TreeTracker.messages.individualmeassagelist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
@@ -29,9 +26,11 @@ import org.greenstand.android.TreeTracker.models.messages.Message
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import java.util.*
+import java.util.Collections
 
 data class IndividualMessageListState(
     val messages: List<Message> = Collections.emptyList(),
@@ -39,14 +38,17 @@ data class IndividualMessageListState(
     val currentUser: User? = null,
 )
 
+sealed class IndividualMessageListAction : Action {
+    data class SelectMessage(val message: Message) : IndividualMessageListAction()
+    object NavigateBack : IndividualMessageListAction()
+    object NavigateToSelected : IndividualMessageListAction()
+}
+
 class IndividualMessageListViewModel(
     private val userId: Long,
     private val userRepo: UserRepo,
     private val messagesRepo: MessagesRepo,
-) : ViewModel() {
-
-    private val _state = MutableLiveData<IndividualMessageListState>()
-    val state: LiveData<IndividualMessageListState> = _state
+) : BaseViewModel<IndividualMessageListState, IndividualMessageListAction>(IndividualMessageListState()) {
 
     init {
         viewModelScope.launch {
@@ -56,21 +58,22 @@ class IndividualMessageListViewModel(
         }
     }
 
-    fun selectMessage(message: Message) {
-        _state.value = _state.value?.copy(
-            selectedMessage = message,
-        )
+    override fun handleAction(action: IndividualMessageListAction) {
+        when (action) {
+            is IndividualMessageListAction.SelectMessage -> {
+                updateState { copy(selectedMessage = action.message) }
+            }
+            else -> { }
+        }
     }
 
     private fun updateMessages(messages: List<Message>, currentUser: User) {
-        // get list of senders to pick out one message per chat
         val externalChatMessages = messages
             .filterIsInstance<DirectMessage>()
             .filter { it.from != currentUser.wallet }
             .sortedByDescending { it.composedAt }
             .groupBy { it.from }
 
-        // Get all types of messages to show
         val chatsToShow = externalChatMessages.keys
             .map { externalChatMessages[it]!!.first() }
         val surveysToShow = messages
@@ -78,14 +81,15 @@ class IndividualMessageListViewModel(
             .filterNot { it.isComplete }
         val announcementsToShow = messages.filterIsInstance<AnnouncementMessage>()
 
-        // Merge messages together and sort by newest
         val messagesToShow = (chatsToShow + surveysToShow + announcementsToShow)
             .sortedByDescending { it.composedAt }
 
-        _state.value = IndividualMessageListState(
-            currentUser = currentUser,
-            messages = messagesToShow,
-        )
+        updateState {
+            copy(
+                currentUser = currentUser,
+                messages = messagesToShow,
+            )
+        }
     }
 }
 

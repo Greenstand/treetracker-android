@@ -15,33 +15,43 @@
  */
 package org.greenstand.android.TreeTracker.languagepicker
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+
+data class LanguagePickerState(
+    val currentLanguage: Language? = null
+)
+
+sealed class LanguagePickerAction : Action {
+    data class SetLanguage(val language: Language) : LanguagePickerAction()
+    object RefreshAppLanguage : LanguagePickerAction()
+    object NavigateNext : LanguagePickerAction()
+}
 
 class LanguagePickerViewModel(
     private val languageSwitcher: LanguageSwitcher,
-) : ViewModel() {
-
-    private val _currentLanguage = MutableLiveData(languageSwitcher.currentLanguage())
-    val currentLanguage: LiveData<Language?> = _currentLanguage
+) : BaseViewModel<LanguagePickerState, LanguagePickerAction>(LanguagePickerState(currentLanguage = languageSwitcher.currentLanguage())) {
 
     init {
         languageSwitcher.observeCurrentLanguage()
-            .onEach { _currentLanguage.value = it }
+            .onEach { updateState { copy(currentLanguage = it) } }
             .launchIn(viewModelScope)
     }
 
-    fun setLanguage(language: Language) {
-        languageSwitcher.setLanguage(language)
-    }
-
-    fun refreshAppLanguage() {
-        languageSwitcher.applyCurrentLanguage()
+    override fun handleAction(action: LanguagePickerAction) {
+        when (action) {
+            is LanguagePickerAction.SetLanguage -> {
+                languageSwitcher.setLanguage(action.language)
+            }
+            is LanguagePickerAction.RefreshAppLanguage -> {
+                languageSwitcher.applyCurrentLanguage()
+            }
+            else -> { }
+        }
     }
 }

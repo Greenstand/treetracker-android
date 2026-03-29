@@ -16,24 +16,28 @@
 package org.greenstand.android.TreeTracker.permissions
 
 import android.location.LocationManager
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class PermissionItemsState(
     val isLocationEnabled: Boolean? = null
 )
+
+sealed class PermissionAction : Action {
+    object CheckLocationEnabled : PermissionAction()
+}
+
 class PermissionViewModel(
     private val locationManager: LocationManager
-) : ViewModel() {
+) : BaseViewModel<PermissionItemsState, PermissionAction>(PermissionItemsState()) {
 
-    private val _state =
-        MutableLiveData(PermissionItemsState())
-    val state: LiveData<PermissionItemsState> = _state
-
-    fun isLocationEnabled() {
-        _state.value = _state.value?.copy(
-            isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        )
+    override fun handleAction(action: PermissionAction) {
+        when (action) {
+            is PermissionAction.CheckLocationEnabled -> {
+                updateState {
+                    copy(isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                }
+            }
+        }
     }
 }

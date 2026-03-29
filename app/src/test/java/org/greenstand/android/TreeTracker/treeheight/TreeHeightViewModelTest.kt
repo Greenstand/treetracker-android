@@ -24,7 +24,6 @@ import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.junit.Assert
 import org.junit.Before
@@ -51,9 +50,9 @@ class TreeHeightViewModelTest {
     @Test
     fun `selected color is progress green, asserts correct color added `() = runBlocking {
         val color = AppButtonColors.ProgressGreen
-        treeHeightSelectionViewModel.selectColor(color)
+        treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(color))
 
-        val state = treeHeightSelectionViewModel.state.getOrAwaitValueTest()
+        val state = treeHeightSelectionViewModel.state.value
         val result = state.colors.indexOf(state.selectedColor)
 
         verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, result.toString()) }

@@ -94,7 +94,7 @@ fun MapScreen(
             selectedMarkerId = state.selectedMarkerId,
             styleUrl = "https://tiles.openfreemap.org/styles/liberty",
             onMarkerClick = { markerId ->
-                viewModel.selectMarker(markerId)
+                viewModel.handleAction(MapAction.SelectMarker(markerId))
             }
         )
 
@@ -128,7 +128,7 @@ fun MapScreen(
                 markers = state.markers,
                 selectedMarkerId = state.selectedMarkerId,
                 onMarkerClick = { marker ->
-                    viewModel.selectMarker(marker.id)
+                    viewModel.handleAction(MapAction.SelectMarker(marker.id))
                 }
             )
         }

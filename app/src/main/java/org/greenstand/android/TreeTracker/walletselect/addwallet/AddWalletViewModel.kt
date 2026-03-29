@@ -15,35 +15,40 @@
  */
 package org.greenstand.android.TreeTracker.walletselect.addwallet
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class AddWalletState(
     val walletName: String = "",
     val userImagePath: String = "",
 )
 
-class AddWalletViewModel : ViewModel() {
+sealed class AddWalletAction : Action {
+    data class UpdateWalletName(val destinationWallet: String) : AddWalletAction()
+    object NavigateBack : AddWalletAction()
+    object NavigateNext : AddWalletAction()
+}
 
-    private val _state = MutableLiveData<AddWalletState>()
-    val state: LiveData<AddWalletState> = _state
+class AddWalletViewModel : BaseViewModel<AddWalletState, AddWalletAction>(AddWalletState()) {
 
     init {
         viewModelScope.launch {
-            _state.value = AddWalletState(
-                userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath
-            )
+            updateState {
+                copy(userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath)
+            }
         }
     }
 
-    fun updateWalletName(destinationWallet: String) {
-        CaptureSetupScopeManager.getData().destinationWallet = destinationWallet
-        _state.value = _state.value!!.copy(
-            walletName = destinationWallet
-        )
+    override fun handleAction(action: AddWalletAction) {
+        when (action) {
+            is AddWalletAction.UpdateWalletName -> {
+                CaptureSetupScopeManager.getData().destinationWallet = action.destinationWallet
+                updateState { copy(walletName = action.destinationWallet) }
+            }
+            else -> { }
+        }
     }
 }

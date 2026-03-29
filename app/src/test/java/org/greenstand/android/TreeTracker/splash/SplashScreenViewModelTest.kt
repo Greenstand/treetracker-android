@@ -16,8 +16,12 @@
 package org.greenstand.android.TreeTracker.splash
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -152,7 +156,7 @@ class SplashScreenViewModelTest {
 
     @Test
     fun `WHEN function startGPSUpdatesForSignup() is called THEN function startGpsUpdates() is executed 1 time`() = runBlocking {
-        splashScreenViewModel.startGPSUpdatesForSignup()
+        splashScreenViewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
         verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
     }
 }

@@ -15,13 +15,16 @@
  */
 package org.greenstand.android.TreeTracker.walletselect
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class WalletSelectState(
     val currentUser: User? = null,
@@ -29,10 +32,15 @@ data class WalletSelectState(
     val selectedUser: User? = null,
 )
 
-class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
+sealed class WalletSelectAction : Action {
+    data class SelectPlanter(val planterInfoId: Long) : WalletSelectAction()
+    object NavigateToUserSelect : WalletSelectAction()
+    object NavigateForward : WalletSelectAction()
+    object NavigateToAddWallet : WalletSelectAction()
+    object NavigateBack : WalletSelectAction()
+}
 
-    private val _state = MutableStateFlow(WalletSelectState())
-    val state: Flow<WalletSelectState> = _state
+class WalletSelectViewModel(private val userRepo: UserRepo) : BaseViewModel<WalletSelectState, WalletSelectAction>(WalletSelectState()) {
 
     init {
         viewModelScope.launch {
@@ -40,22 +48,24 @@ class WalletSelectViewModel(private val userRepo: UserRepo) : ViewModel() {
             userRepo.users()
                 .map { users -> users.filter { it.id != currentUser?.id } }
                 .onEach { users ->
-                    _state.value = _state.value.copy(
-                        currentUser = currentUser,
-                        alternateUsers = users
-                    )
+                    updateState {
+                        copy(currentUser = currentUser, alternateUsers = users)
+                    }
                 }
                 .launchIn(this)
         }
     }
 
-    fun selectPlanter(planterInfoId: Long) {
-        viewModelScope.launch {
-            val selectedUser = userRepo.getUserList().find { planterInfoId == it.id }
-            CaptureSetupScopeManager.getData().destinationWallet = selectedUser?.wallet
-            _state.value = _state.value.copy(
-                selectedUser = selectedUser
-            )
+    override fun handleAction(action: WalletSelectAction) {
+        when (action) {
+            is WalletSelectAction.SelectPlanter -> {
+                viewModelScope.launch {
+                    val selectedUser = userRepo.getUserList().find { action.planterInfoId == it.id }
+                    CaptureSetupScopeManager.getData().destinationWallet = selectedUser?.wallet
+                    updateState { copy(selectedUser = selectedUser) }
+                }
+            }
+            else -> { }
         }
     }
 }

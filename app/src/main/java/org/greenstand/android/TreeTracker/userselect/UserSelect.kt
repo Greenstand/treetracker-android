@@ -112,7 +112,7 @@ fun UserSelect(
                     isSelected = state.selectedUser?.id == user.id,
                     buttonColors = AppButtonColors.Default,
                     selectedColor = selectedColor,
-                    onClick = { viewModel.selectUser(user) },
+                    onClick = { viewModel.handleAction(UserSelectAction.SelectUser(user)) },
                     isNotificationEnabled = isNotificationEnabled && user.unreadMessagesAvailable
                 )
             }

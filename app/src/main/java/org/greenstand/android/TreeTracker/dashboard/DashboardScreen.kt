@@ -44,8 +44,8 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -92,16 +92,15 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val state by viewModel.state.observeAsState(DashboardState())
-    val snackBar by viewModel.snackBar.observeAsState()
+    val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
     var showDialog by remember { mutableStateOf(false) }
 
     Dashboard(
         state = state,
-        snackBar = snackBar,
+        snackBar = state.snackBar,
         showSyncReminderDialog = showDialog,
-        onSyncClicked = { viewModel.sync() },
+        onSyncClicked = { viewModel.handleAction(DashboardAction.Sync) },
         onOrgClicked = { navController.navigate(OrgRoute) },
         onCaptureClicked = {
             if (state.showTreeSyncReminderDialog) {
@@ -110,7 +109,7 @@ fun DashboardScreen(
         },
         onDialogConfirm = { navController.navigate(UserSelectRoute) },
         onMessagesClicked = {
-            viewModel.syncMessages()
+            viewModel.handleAction(DashboardAction.SyncMessages)
             navController.navigate(MessagesUserSelectRoute)
         },
         onSettingsClicked = {

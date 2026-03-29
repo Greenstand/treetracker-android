@@ -30,7 +30,6 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -77,7 +76,7 @@ class AddOrgViewModelTest {
 
         val viewModel = AddOrgViewModel(preferences)
 
-        val state = viewModel.state.getOrAwaitValueTest()
+        val state = viewModel.state.value
         assertEquals(fakeUser.photoPath, state.userImagePath)
         assertEquals("PreviousOrg", state.previousOrgName)
     }
@@ -90,9 +89,9 @@ class AddOrgViewModelTest {
 
         val viewModel = AddOrgViewModel(preferences)
 
-        viewModel.updateOrgName("NewOrg")
+        viewModel.handleAction(AddOrgAction.UpdateOrgName("NewOrg"))
 
-        val state = viewModel.state.getOrAwaitValueTest()
+        val state = viewModel.state.value
         assertEquals("NewOrg", state.orgName)
         verify { captureSetupData.organizationName = "NewOrg" }
     }
@@ -105,9 +104,9 @@ class AddOrgViewModelTest {
 
         val viewModel = AddOrgViewModel(preferences)
 
-        viewModel.applyOrgAutofill()
+        viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
 
-        val state = viewModel.state.getOrAwaitValueTest()
+        val state = viewModel.state.value
         assertEquals("AutofillOrg", state.orgName)
     }
 
@@ -119,8 +118,8 @@ class AddOrgViewModelTest {
 
         val viewModel = AddOrgViewModel(preferences)
 
-        viewModel.updateOrgName("SavedOrg")
-        viewModel.setDefaultOrg()
+        viewModel.handleAction(AddOrgAction.UpdateOrgName("SavedOrg"))
+        viewModel.handleAction(AddOrgAction.SetDefaultOrg)
 
         verify { mockEditor.putString(any(), "SavedOrg") }
         verify { mockEditor.apply() }

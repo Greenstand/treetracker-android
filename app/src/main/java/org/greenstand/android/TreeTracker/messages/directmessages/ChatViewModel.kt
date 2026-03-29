@@ -15,20 +15,19 @@
  */
 package org.greenstand.android.TreeTracker.messages
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import java.util.*
+import java.util.Collections
 
 data class ChatState(
     val from: String = "",
@@ -37,39 +36,57 @@ data class ChatState(
     val currentUser: User? = null,
 )
 
+sealed class ChatAction : Action {
+    data class UpdateDraftText(val text: String) : ChatAction()
+    object SendMessage : ChatAction()
+    object NavigateBack : ChatAction()
+}
+
 class ChatViewModel(
     private val userId: Long,
     private val otherChatIdentifier: String,
     private val userRepo: UserRepo,
     private val messagesRepo: MessagesRepo,
-) : ViewModel() {
-
-    private val _state = MutableLiveData<ChatState>()
-    val state: LiveData<ChatState> = _state
+) : BaseViewModel<ChatState, ChatAction>(ChatState()) {
 
     init {
         viewModelScope.launch {
             val currentUser = userRepo.getUser(userId)
             messagesRepo.getDirectMessages(currentUser!!.wallet, otherChatIdentifier).collect { messages ->
-                _state.value = ChatState(
-                    from = otherChatIdentifier,
-                    currentUser = currentUser,
-                    messages = messages,
-                )
+                updateState {
+                    copy(
+                        from = otherChatIdentifier,
+                        currentUser = currentUser,
+                        messages = messages,
+                    )
+                }
                 val unreadMessages = messages.filterNot { it.isRead }.map { it.id }
                 messagesRepo.markMessagesAsRead(unreadMessages)
             }
         }
     }
 
-    fun updateDraftText(text: String) {
-        _state.value = _state.value!!.copy(
-            draftText = text
-        )
+    override fun handleAction(action: ChatAction) {
+        when (action) {
+            is ChatAction.UpdateDraftText -> {
+                updateState { copy(draftText = action.text) }
+            }
+            is ChatAction.SendMessage -> {
+                viewModelScope.launch {
+                    messagesRepo.saveMessage(
+                        currentState.currentUser!!.wallet,
+                        otherChatIdentifier,
+                        currentState.draftText
+                    )
+                    updateState { copy(draftText = "") }
+                }
+            }
+            else -> { }
+        }
     }
 
     fun checkChatAuthor(index: Int, isFirstMessage: Boolean): Boolean {
-        val messages = _state.value!!.messages
+        val messages = currentState.messages
         val prevAuthor = messages.getOrNull(index - 1)?.from
         val nextAuthor = messages.getOrNull(index + 1)?.from
         val content = messages[index]
@@ -79,20 +96,7 @@ class ChatViewModel(
     }
 
     fun checkIsOtherUser(index: Int): Boolean {
-        return _state.value!!.messages[index].from == otherChatIdentifier
-    }
-
-    fun sendMessage() {
-        viewModelScope.launch {
-            messagesRepo.saveMessage(
-                _state.value!!.currentUser!!.wallet,
-                otherChatIdentifier,
-                _state.value!!.draftText
-            )
-            _state.value = _state.value!!.copy(
-                draftText = ""
-            )
-        }
+        return currentState.messages[index].from == otherChatIdentifier
     }
 }
 

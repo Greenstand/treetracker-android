@@ -38,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -61,21 +60,24 @@ fun AnnouncementScreen(
         factory = AnnouncementViewModelFactory(messageId)
     )
 ) {
-    val state by viewModel.state.collectAsState(AnnouncementState())
+    val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
 
     Announcement(
         state = state,
-        onBackClicked = { navController.popBackStack() },
-        onLinkClicked = { url -> openUrlLink(context = navController.context, url = url) },
+        onHandleAction = { action ->
+            when (action) {
+                is AnnouncementAction.NavigateBack -> navController.popBackStack()
+                is AnnouncementAction.OpenLink -> openUrlLink(context = navController.context, url = action.url)
+            }
+        },
     )
 }
 
 @Composable
 fun Announcement(
     state: AnnouncementState = AnnouncementState(),
-    onBackClicked: () -> Unit = {},
-    onLinkClicked: (String) -> Unit = {},
+    onHandleAction: (AnnouncementAction) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -93,7 +95,7 @@ fun Announcement(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = onBackClicked
+                        onClick = { onHandleAction(AnnouncementAction.NavigateBack) }
                     )
                 },
             )
@@ -106,7 +108,7 @@ fun Announcement(
                 .padding(top = 4.dp, start = 4.dp, end = 4.dp)
                 .fillMaxSize()
         ) {
-            AnnouncementContent(state = state, onLinkClicked = onLinkClicked)
+            AnnouncementContent(state = state, onHandleAction = onHandleAction)
         }
     }
 }
@@ -114,7 +116,7 @@ fun Announcement(
 @Composable
 private fun AnnouncementContent(
     state: AnnouncementState,
-    onLinkClicked: (String) -> Unit,
+    onHandleAction: (AnnouncementAction) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -154,7 +156,7 @@ private fun AnnouncementContent(
                 Modifier
                     .padding(top = 10.dp)
                     .clickable(onClick = {
-                        onLinkClicked(url)
+                        onHandleAction(AnnouncementAction.OpenLink(url))
                     }),
                 color = AppColors.Green,
                 style = TextStyle(textDecoration = TextDecoration.Underline),

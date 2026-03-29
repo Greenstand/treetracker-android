@@ -57,7 +57,6 @@ import androidx.core.content.ContextCompat.startActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -77,15 +76,7 @@ import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 @Composable
 fun CredentialEntryView(
     state: SignUpState,
-    onBackClicked: () -> Unit = {},
-    onSubmitInfo: () -> Unit = {},
-    onUpdateEmail: (String) -> Unit = {},
-    onUpdatePhone: (String) -> Unit = {},
-    onUpdateCredentialType: (Credential) -> Unit = {},
-    onCloseExistingUserDialog: () -> Unit = {},
-    onExistingUserSelected: (User) -> Unit = {},
-    onEnableAutofocus: () -> Unit = {},
-    onClosePrivacyDialog: () -> Unit = {},
+    onHandleAction: (SignupAction) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
@@ -106,7 +97,7 @@ fun CredentialEntryView(
                     modifier = Modifier.navigationBarsPadding(),
                     leftAction = {
                         ArrowButton(isLeft = true) {
-                            onBackClicked()
+                            onHandleAction(SignupAction.NavigateBack)
                         }
                     },
                     rightAction = {
@@ -114,7 +105,7 @@ fun CredentialEntryView(
                             isLeft = false,
                         ) {
                             if (state.isCredentialValid) {
-                                onSubmitInfo()
+                                onHandleAction(SignupAction.SubmitInfo)
                             } else {
                                 when (state.credential) {
                                     is Credential.Email -> {
@@ -142,8 +133,7 @@ fun CredentialEntryView(
         if (state.existingUser != null) {
             ExistingUserDialog(
                 state = state,
-                onCloseExistingUserDialog = onCloseExistingUserDialog,
-                onExistingUserSelected = onExistingUserSelected,
+                onHandleAction = onHandleAction,
             )
         }
         Column(
@@ -168,19 +158,37 @@ fun CredentialEntryView(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                PhoneCredentialButton(state, onUpdateCredentialType)
-                EmailCredentialButton(state, onUpdateCredentialType)
+                PhoneCredentialButton(state) { onHandleAction(SignupAction.UpdateCredentialType(it)) }
+                EmailCredentialButton(state) { onHandleAction(SignupAction.UpdateCredentialType(it)) }
             }
 
             when (state.credential) {
-                is Credential.Email -> EmailTextField(state, onUpdateEmail, onSubmitInfo, onEnableAutofocus, focusRequester, snackBarHostState, scope, context)
-                is Credential.Phone -> PhoneTextField(state, onUpdatePhone, onSubmitInfo, onEnableAutofocus, focusRequester, snackBarHostState, scope, context)
+                is Credential.Email -> EmailTextField(
+                    state,
+                    onUpdateEmail = { onHandleAction(SignupAction.UpdateEmail(it)) },
+                    onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
+                    onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
+                    focusRequester,
+                    snackBarHostState,
+                    scope,
+                    context,
+                )
+                is Credential.Phone -> PhoneTextField(
+                    state,
+                    onUpdatePhone = { onHandleAction(SignupAction.UpdatePhone(it)) },
+                    onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
+                    onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
+                    focusRequester,
+                    snackBarHostState,
+                    scope,
+                    context,
+                )
             }
 
             ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
         }
         if (state.showPrivacyDialog == true) {
-            PrivacyPolicyDialog(onDismiss = onClosePrivacyDialog)
+            PrivacyPolicyDialog(onDismiss = { onHandleAction(SignupAction.ClosePrivacyPolicyDialog) })
         }
     }
 }
@@ -334,13 +342,12 @@ fun <T : Credential> CredentialButton(
 @Composable
 fun ExistingUserDialog(
     state: SignUpState,
-    onCloseExistingUserDialog: () -> Unit = {},
-    onExistingUserSelected: (User) -> Unit = {},
+    onHandleAction: (SignupAction) -> Unit = {},
 ) {
     CustomDialog(
         title = stringResource(R.string.user_exists_header),
         textContent = stringResource(R.string.user_exists_message),
-        onNegativeClick = onCloseExistingUserDialog,
+        onNegativeClick = { onHandleAction(SignupAction.CloseExistingUserDialog) },
         content = {
             state.existingUser?.let { user ->
                 UserButton(
@@ -348,7 +355,7 @@ fun ExistingUserDialog(
                     isSelected = false,
                     buttonColors = AppButtonColors.Default,
                     selectedColor = Green,
-                    onClick = { onExistingUserSelected(user) }
+                    onClick = { onHandleAction(SignupAction.ExistingUserSelected(user)) }
                 )
             }
         }

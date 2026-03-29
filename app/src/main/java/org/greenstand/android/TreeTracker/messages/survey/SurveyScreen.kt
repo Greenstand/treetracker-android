@@ -30,11 +30,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +43,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -59,38 +58,37 @@ fun SurveyScreen(
     viewModel: SurveyViewModel = viewModel(factory = SurveyViewModelFactory(messageId))
 ) {
     val navController = LocalNavHostController.current
-    val state by viewModel.state.collectAsState(SurveyScreenState())
-    val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsState()
     var showToast by remember { mutableStateOf(false) }
     if (showToast) {
         ShowToastMessage(stringResId = R.string.survey_completed)
     }
 
+    LaunchedEffect(state.surveyComplete) {
+        if (state.surveyComplete) {
+            showToast = true
+            navController.popBackStack()
+        }
+    }
+
+    LaunchedEffect(state.shouldNavigateBack) {
+        if (state.shouldNavigateBack) {
+            navController.popBackStack()
+        }
+    }
+
     Survey(
         state = state,
-        onPrevClicked = {
-            if (!viewModel.goToPrevQuestion()) {
-                navController.popBackStack()
-            }
+        onHandleAction = { action ->
+            viewModel.handleAction(action)
         },
-        onNextClicked = {
-            scope.launch {
-                if (!viewModel.goToNextQuestion()) {
-                    showToast = true
-                    navController.popBackStack()
-                }
-            }
-        },
-        onAnswerSelected = { index -> viewModel.selectAnswer(index) },
     )
 }
 
 @Composable
 fun Survey(
     state: SurveyScreenState = SurveyScreenState(),
-    onPrevClicked: () -> Unit = {},
-    onNextClicked: () -> Unit = {},
-    onAnswerSelected: (Int) -> Unit = {},
+    onHandleAction: (SurveyAction) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -108,7 +106,7 @@ fun Survey(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = onPrevClicked,
+                        onClick = { onHandleAction(SurveyAction.GoToPrevQuestion) },
                     )
                 },
                 rightAction = {
@@ -116,7 +114,7 @@ fun Survey(
                         isLeft = false,
                         isEnabled = state.selectedAnswerIndex != null,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = onNextClicked,
+                        onClick = { onHandleAction(SurveyAction.GoToNextQuestion) },
                     )
                 }
             )
@@ -140,7 +138,7 @@ fun Survey(
                         AnswerItem(
                             answerText = choices[index],
                             isSelected = state.selectedAnswerIndex == index,
-                            onClick = { onAnswerSelected(index) }
+                            onClick = { onHandleAction(SurveyAction.SelectAnswer(index)) }
                         )
                     }
                 }

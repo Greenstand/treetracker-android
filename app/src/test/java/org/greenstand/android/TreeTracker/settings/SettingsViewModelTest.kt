@@ -68,7 +68,7 @@ class SettingsViewModelTest {
         coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
 
         val viewModel = SettingsViewModel(userRepo)
-        viewModel.setPrivacyDialogVisibility(true)
+        viewModel.handleAction(SettingsAction.SetPrivacyDialogVisibility(true))
 
         val state = viewModel.state.first()
         assertTrue(state.showPrivacyPolicyDialog!!)
@@ -79,7 +79,7 @@ class SettingsViewModelTest {
         coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
 
         val viewModel = SettingsViewModel(userRepo)
-        viewModel.setPrivacyDialogVisibility(false)
+        viewModel.handleAction(SettingsAction.SetPrivacyDialogVisibility(false))
 
         val state = viewModel.state.first()
         assertFalse(state.showPrivacyPolicyDialog!!)
@@ -92,7 +92,7 @@ class SettingsViewModelTest {
 
         val viewModel = SettingsViewModel(userRepo)
 
-        viewModel.logout()
+        viewModel.handleAction(SettingsAction.Logout)
 
         coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
         val state = viewModel.state.first()
@@ -104,7 +104,7 @@ class SettingsViewModelTest {
         coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
 
         val viewModel = SettingsViewModel(userRepo)
-        viewModel.updateLogoutDialogVisibility(true)
+        viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(true))
 
         val state = viewModel.state.first()
         assertTrue(state.showLogoutDialog!!)
@@ -115,7 +115,7 @@ class SettingsViewModelTest {
         coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
 
         val viewModel = SettingsViewModel(userRepo)
-        viewModel.updateLogoutDialogVisibility(false)
+        viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
 
         val state = viewModel.state.first()
         assertFalse(state.showLogoutDialog!!)

@@ -24,7 +24,6 @@ import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -49,20 +48,20 @@ class LanguagePickerViewModelTest {
 
     @Test
     fun `Current language returns current language from the language switcher`() = runBlocking {
-        val result = testSubject.currentLanguage.getOrAwaitValueTest()
+        val result = testSubject.state.value.currentLanguage
         assertEquals(result, Language.ENGLISH)
     }
 
     @Test
     fun `Verify set language calls the set language from the Language Switcher `() = runBlocking {
         val language = Language.ENGLISH
-        testSubject.setLanguage(language)
+        testSubject.handleAction(LanguagePickerAction.SetLanguage(language))
         coVerify { languageSwitcher.setLanguage(language) }
     }
 
     @Test
     fun `Verify refresh app language calls apply current language from language switcher`() = runBlocking {
-        testSubject.refreshAppLanguage()
+        testSubject.handleAction(LanguagePickerAction.RefreshAppLanguage)
         coVerify { languageSwitcher.applyCurrentLanguage() }
     }
 }

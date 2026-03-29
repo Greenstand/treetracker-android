@@ -15,8 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.capture
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -31,13 +29,14 @@ import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScop
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
-import org.greenstand.android.TreeTracker.utils.updateState
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import java.io.File
 
 data class TreeCaptureState(
-    val profilePicUrl: String,
+    val profilePicUrl: String = "",
     val isGettingLocation: Boolean = false,
     val isCreatingFakeTrees: Boolean = false,
     val isLocationAvailable: Boolean? = null,
@@ -47,6 +46,14 @@ data class TreeCaptureState(
     val imageScalingHeight: Int = 1920,
 )
 
+sealed class TreeCaptureAction : Action {
+    object CaptureLocation : TreeCaptureAction()
+    data class OnImageCaptured(val imageFile: File) : TreeCaptureAction()
+    data class UpdateBadGpsDialogState(val state: Boolean?) : TreeCaptureAction()
+    data class UpdateCaptureTutorialDialog(val show: Boolean) : TreeCaptureAction()
+    object CreateFakeTrees : TreeCaptureAction()
+}
+
 class TreeCaptureViewModel(
     profilePicUrl: String,
     private val userRepo: UserRepo,
@@ -55,18 +62,16 @@ class TreeCaptureViewModel(
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val locationDataCapturer: LocationDataCapturer,
     private val configurator: Configurator,
-) : ViewModel() {
-
-    private val _state = MutableLiveData(TreeCaptureState(profilePicUrl))
-    val state: LiveData<TreeCaptureState> = _state
+) : BaseViewModel<TreeCaptureState, TreeCaptureAction>(TreeCaptureState(profilePicUrl = profilePicUrl)) {
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            _state.updateState {
-                val enabled = configurator.getBoolean(ConfigKeys.FORCE_IMAGE_SIZE)
-                val imageHeight = configurator.getInt(ConfigKeys.IMAGE_CAPTURE_HEIGHT)
+            val enabled = configurator.getBoolean(ConfigKeys.FORCE_IMAGE_SIZE)
+            val imageHeight = configurator.getInt(ConfigKeys.IMAGE_CAPTURE_HEIGHT)
+            val firstTrack = isFirstTrack()
+            updateState {
                 copy(
-                    showCaptureTutorial = isFirstTrack(),
+                    showCaptureTutorial = firstTrack,
                     forceImageScaling = enabled,
                     imageScalingHeight = imageHeight,
                 )
@@ -74,30 +79,35 @@ class TreeCaptureViewModel(
         }
     }
 
-    suspend fun captureLocation() {
-        _state.value = _state.value?.copy(isGettingLocation = true)
-        _state.value = _state.value?.copy(isLocationAvailable = treeCapturer.pinLocation(), isGettingLocation = false)
+    override fun handleAction(action: TreeCaptureAction) {
+        when (action) {
+            is TreeCaptureAction.CaptureLocation -> {
+                viewModelScope.launch {
+                    updateState { copy(isGettingLocation = true) }
+                    val locationAvailable = treeCapturer.pinLocation()
+                    updateState { copy(isLocationAvailable = locationAvailable, isGettingLocation = false) }
+                }
+            }
+            is TreeCaptureAction.OnImageCaptured -> {
+                treeCapturer.setImage(action.imageFile)
+            }
+            is TreeCaptureAction.UpdateBadGpsDialogState -> {
+                updateState { copy(isLocationAvailable = action.state) }
+            }
+            is TreeCaptureAction.UpdateCaptureTutorialDialog -> {
+                updateState { copy(showCaptureTutorial = action.show) }
+            }
+            is TreeCaptureAction.CreateFakeTrees -> {
+                viewModelScope.launch {
+                    updateState { copy(isCreatingFakeTrees = true) }
+                    createFakeTreesUseCase.execute(CreateFakeTreesParams(50))
+                    updateState { copy(isCreatingFakeTrees = false) }
+                }
+            }
+        }
     }
 
-    fun onImageCaptured(imageFile: File) {
-        treeCapturer.setImage(imageFile)
-    }
-
-    fun updateBadGpsDialogState(state: Boolean?) {
-        _state.value = _state.value?.copy(isLocationAvailable = state)
-    }
-
-    fun updateCaptureTutorialDialog(state: Boolean) {
-        _state.value = _state.value?.copy(showCaptureTutorial = state)
-    }
-
-    suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
-
-    suspend fun createFakeTrees() {
-        _state.value = _state.value?.copy(isCreatingFakeTrees = true)
-        createFakeTreesUseCase.execute(CreateFakeTreesParams(50))
-        _state.value = _state.value?.copy(isCreatingFakeTrees = false)
-    }
+    private suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()!!.numberOfTrees < 1
 }
 
 class TreeCaptureViewModelFactory(private val profilePicUrl: String) :

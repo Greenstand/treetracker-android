@@ -30,8 +30,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -53,20 +53,23 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 @Composable
 fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(OrgPickerState())
+    val state by viewModel.state.collectAsState()
 
     OrgPicker(
         state = state,
-        onOrgSelected = { viewModel.setOrg(it) },
-        onNextClicked = { navController.popBackStack() },
+        onHandleAction = { action ->
+            when (action) {
+                is OrgPickerAction.NavigateNext -> navController.popBackStack()
+                else -> viewModel.handleAction(action)
+            }
+        },
     )
 }
 
 @Composable
 fun OrgPicker(
     state: OrgPickerState = OrgPickerState(),
-    onOrgSelected: (Org) -> Unit = {},
-    onNextClicked: () -> Unit = {},
+    onHandleAction: (OrgPickerAction) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -95,7 +98,7 @@ fun OrgPicker(
                     ArrowButton(
                         isLeft = false,
                     ) {
-                        onNextClicked()
+                        onHandleAction(OrgPickerAction.NavigateNext)
                     }
                 }
             )
@@ -112,7 +115,7 @@ fun OrgPicker(
                     org = org,
                     isSelected = org == state.currentOrg,
                     onClick = {
-                        onOrgSelected(org)
+                        onHandleAction(OrgPickerAction.SetOrg(org))
                     }
                 )
             }

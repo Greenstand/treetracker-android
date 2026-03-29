@@ -48,16 +48,16 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 @Composable
 fun DevOptionsRoot() {
     val viewModel: DevOptionsViewModel = viewModel(factory = LocalViewModelFactory.current)
-    val state by viewModel.state.collectAsState(DevOptionsState())
+    val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
 
     DevOptionsScreen(
         state = state,
-        onParamUpdated = { param, newValue ->
-            viewModel.updateParam(param, newValue)
-        },
-        onBackPressed = {
-            navController.popBackStack()
+        onHandleAction = { action ->
+            when (action) {
+                is DevOptionsAction.NavigateBack -> navController.popBackStack()
+                else -> viewModel.handleAction(action)
+            }
         },
     )
 }
@@ -65,8 +65,7 @@ fun DevOptionsRoot() {
 @Composable
 fun DevOptionsScreen(
     state: DevOptionsState,
-    onParamUpdated: (Config, Any) -> Unit,
-    onBackPressed: () -> Unit,
+    onHandleAction: (DevOptionsAction) -> Unit = {},
 ) {
     TreeTrackerTheme {
         Scaffold(
@@ -75,7 +74,7 @@ fun DevOptionsScreen(
                     modifier = Modifier.navigationBarsPadding(),
                     leftAction = {
                         ArrowButton(isLeft = true) {
-                            onBackPressed()
+                            onHandleAction(DevOptionsAction.NavigateBack)
                         }
                     }
                 )
@@ -84,7 +83,7 @@ fun DevOptionsScreen(
             LazyColumn(modifier = Modifier.statusBarsPadding().padding(it)) {
                 items(state.params) { param ->
                     ParamListItem(param) { newValue ->
-                        onParamUpdated(param, newValue)
+                        onHandleAction(DevOptionsAction.UpdateParam(param, newValue))
                     }
                 }
             }

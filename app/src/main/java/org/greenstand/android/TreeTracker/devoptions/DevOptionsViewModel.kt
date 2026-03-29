@@ -15,23 +15,23 @@
  */
 package org.greenstand.android.TreeTracker.devoptions
 
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
-import org.greenstand.android.TreeTracker.utils.updateState
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class DevOptionsState(
     val params: List<Config> = emptyList(),
 )
 
+sealed class DevOptionsAction : Action {
+    data class UpdateParam(val param: Config, val newValue: Any) : DevOptionsAction()
+    object NavigateBack : DevOptionsAction()
+}
+
 class DevOptionsViewModel(
     private val configurator: Configurator,
     private val convergenceConfiguration: ConvergenceConfiguration
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(DevOptionsState())
-    val state: Flow<DevOptionsState> = _state
+) : BaseViewModel<DevOptionsState, DevOptionsAction>(DevOptionsState()) {
 
     init {
         val updatedParams = ConfigKeys.configList.map { param ->
@@ -47,14 +47,19 @@ class DevOptionsViewModel(
                 )
             }
         }
-        _state.updateState {
-            copy(params = updatedParams)
+        updateState { copy(params = updatedParams) }
+    }
+
+    override fun handleAction(action: DevOptionsAction) {
+        when (action) {
+            is DevOptionsAction.UpdateParam -> updateParam(action.param, action.newValue)
+            else -> { }
         }
     }
 
-    fun updateParam(param: Config, newValue: Any) {
+    private fun updateParam(param: Config, newValue: Any) {
         configurator.putValue(param, newValue)
-        _state.updateState {
+        updateState {
             val updatedParamList = params.updateListItem(param) {
                 when (this) {
                     is BooleanConfig -> copy(defaultValue = newValue as Boolean)

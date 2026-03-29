@@ -55,7 +55,7 @@ fun SettingsScreen() {
     val navController = LocalNavHostController.current
     val viewModel: SettingsViewModel = viewModel(factory = LocalViewModelFactory.current)
     val context = LocalContext.current
-    val state by viewModel.state.collectAsState(SettingsState())
+    val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
         MapLibre.getInstance(context)
@@ -63,38 +63,29 @@ fun SettingsScreen() {
 
     Settings(
         state = state,
-        onProfileClicked = { navController.navigate(ProfileSelectRoute) },
-        onMapClicked = { navController.navigate(MapRoute) },
-        onPrivacyClicked = { viewModel.setPrivacyDialogVisibility(true) },
-        onPrivacyDialogDismiss = { viewModel.setPrivacyDialogVisibility(false) },
-        onLogoutClicked = { viewModel.updateLogoutDialogVisibility(true) },
-        onLogoutConfirmed = {
-            viewModel.logout()
-            navController.navigate(SignupFlowRoute) {
-                popUpTo(navController.graph.id) {
-                    inclusive = true
+        onHandleAction = { action ->
+            when (action) {
+                is SettingsAction.NavigateToProfile -> navController.navigate(ProfileSelectRoute)
+                is SettingsAction.NavigateToMap -> navController.navigate(MapRoute)
+                is SettingsAction.NavigateToDeleteAccount -> navController.navigate(DeleteProfileRoute)
+                is SettingsAction.NavigateBack -> navController.popBackStack()
+                is SettingsAction.LogoutConfirmed -> {
+                    viewModel.handleAction(SettingsAction.Logout)
+                    navController.navigate(SignupFlowRoute) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
-                launchSingleTop = true
+                else -> viewModel.handleAction(action)
             }
         },
-        onLogoutDismissed = { viewModel.updateLogoutDialogVisibility(false) },
-        onDeleteAccountClicked = { navController.navigate(DeleteProfileRoute) },
-        onBackClicked = { navController.popBackStack() },
     )
 }
 
 @Composable
 fun Settings(
     state: SettingsState = SettingsState(),
-    onProfileClicked: () -> Unit = {},
-    onMapClicked: () -> Unit = {},
-    onPrivacyClicked: () -> Unit = {},
-    onPrivacyDialogDismiss: () -> Unit = {},
-    onLogoutClicked: () -> Unit = {},
-    onLogoutConfirmed: () -> Unit = {},
-    onLogoutDismissed: () -> Unit = {},
-    onDeleteAccountClicked: () -> Unit = {},
-    onBackClicked: () -> Unit = {},
+    onHandleAction: (SettingsAction) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -117,7 +108,7 @@ fun Settings(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        onBackClicked()
+                        onHandleAction(SettingsAction.NavigateBack)
                     }
                 },
             )
@@ -137,7 +128,7 @@ fun Settings(
                     iconResId = R.drawable.account,
                     titleResId = R.string.profile_title,
                     descriptionResId = R.string.profile_description,
-                    onClick = onProfileClicked
+                    onClick = { onHandleAction(SettingsAction.NavigateToProfile) }
                 )
                 Divider(color = Color.White)
 
@@ -146,7 +137,7 @@ fun Settings(
                         iconResId = R.drawable.map_icon,
                         titleResId = R.string.map_title,
                         descriptionResId = R.string.map_description,
-                        onClick = onMapClicked
+                        onClick = { onHandleAction(SettingsAction.NavigateToMap) }
                     )
                     Divider(color = Color.White)
                 }
@@ -155,7 +146,7 @@ fun Settings(
                     iconResId = R.drawable.privacy_policy,
                     titleResId = R.string.privacy_title,
                     descriptionResId = R.string.privacy_description,
-                    onClick = onPrivacyClicked
+                    onClick = { onHandleAction(SettingsAction.SetPrivacyDialogVisibility(true)) }
                 )
                 Divider(color = Color.White)
 
@@ -163,7 +154,7 @@ fun Settings(
                     iconResId = R.drawable.logout,
                     titleResId = R.string.logout_title,
                     descriptionResId = R.string.logout_description,
-                    onClick = onLogoutClicked
+                    onClick = { onHandleAction(SettingsAction.UpdateLogoutDialogVisibility(true)) }
                 )
                 Divider(color = Color.White)
 
@@ -171,7 +162,7 @@ fun Settings(
                     iconResId = R.drawable.delete,
                     titleResId = R.string.delete_account_title,
                     descriptionResId = R.string.delete_account_description,
-                    onClick = onDeleteAccountClicked
+                    onClick = { onHandleAction(SettingsAction.NavigateToDeleteAccount) }
                 )
 
                 Text(
@@ -186,14 +177,14 @@ fun Settings(
                 )
             }
             if (state.showPrivacyPolicyDialog == true) {
-                PrivacyPolicyDialog(onDismiss = onPrivacyDialogDismiss)
+                PrivacyPolicyDialog(onDismiss = { onHandleAction(SettingsAction.SetPrivacyDialogVisibility(false)) })
             }
             if (state.showLogoutDialog == true) {
                 CustomDialog(
                     title = stringResource(R.string.logout_dialog_title),
                     textContent = stringResource(R.string.logout_dialog_message),
-                    onPositiveClick = onLogoutConfirmed,
-                    onNegativeClick = onLogoutDismissed,
+                    onPositiveClick = { onHandleAction(SettingsAction.LogoutConfirmed) },
+                    onNegativeClick = { onHandleAction(SettingsAction.UpdateLogoutDialogVisibility(false)) },
                     content = {
                         state.powerUser?.let { user ->
                             UserButton(
