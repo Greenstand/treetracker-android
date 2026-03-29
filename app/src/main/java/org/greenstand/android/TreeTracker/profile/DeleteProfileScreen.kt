@@ -15,7 +15,7 @@ import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.userselect.DeleteProfileState
 import org.greenstand.android.TreeTracker.userselect.UserSelect
-import org.greenstand.android.TreeTracker.userselect.UserSelectState
+import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors.Red
@@ -26,7 +26,7 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 fun DeleteProfileScreen() {
     val navController = LocalNavHostController.current
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
-    val state by viewModel.state.collectAsState(UserSelectState())
+    val state by viewModel.state.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -36,8 +36,8 @@ fun DeleteProfileScreen() {
             isCreateUserEnabled = true,
             isNotificationEnabled = true,
             onNavigateForward = { user ->
-                viewModel.selectUser(user)
-                viewModel.updateDeleteProfileState(DeleteProfileState.SHOWDIALOG)
+                viewModel.handleAction(UserSelectAction.SelectUser(user))
+                viewModel.handleAction(UserSelectAction.UpdateDeleteProfileState(DeleteProfileState.SHOWDIALOG))
             }
         )
 
@@ -46,10 +46,10 @@ fun DeleteProfileScreen() {
                 title = stringResource(R.string.delete_account_title),
                 textContent = stringResource(R.string.delete_account_dialog_message),
                 onPositiveClick = {
-                    viewModel.deleteUser()
+                    viewModel.handleAction(UserSelectAction.DeleteUser)
                 },
                 onNegativeClick = {
-                    viewModel.updateDeleteProfileState(DeleteProfileState.DISMISSDIALOG)
+                    viewModel.handleAction(UserSelectAction.UpdateDeleteProfileState(DeleteProfileState.DISMISSDIALOG))
                 },
                 content = {
                     state.selectedUser?.let { user ->
@@ -72,7 +72,7 @@ fun DeleteProfileScreen() {
                 title = stringResource(R.string.account_deleted),
                 textContent = stringResource(R.string.account_deleted_message),
                 onPositiveClick = {
-                    viewModel.deleteUser()
+                    viewModel.handleAction(UserSelectAction.DeleteUser)
                     if(state.selectedUser?.isPowerUser == true){
                         navController.navigate(SignupFlowRoute) {
                             popUpTo(navController.graph.id) {

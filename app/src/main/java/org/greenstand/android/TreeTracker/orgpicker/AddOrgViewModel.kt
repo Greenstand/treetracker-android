@@ -15,15 +15,14 @@
  */
 package org.greenstand.android.TreeTracker.orgpicker
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class AddOrgState(
     val orgName: String = "",
@@ -31,40 +30,46 @@ data class AddOrgState(
     val userImagePath: String = "",
 )
 
+sealed class AddOrgAction : Action {
+    data class UpdateOrgName(val orgName: String) : AddOrgAction()
+    object ApplyOrgAutofill : AddOrgAction()
+    object SetDefaultOrg : AddOrgAction()
+    object NavigateBack : AddOrgAction()
+    object NavigateNext : AddOrgAction()
+}
+
 class AddOrgViewModel(
     private val preferences: Preferences,
-) : ViewModel() {
-
-    private val _state = MutableLiveData<AddOrgState>()
-    val state: LiveData<AddOrgState> = _state
+) : BaseViewModel<AddOrgState, AddOrgAction>(AddOrgState()) {
 
     init {
         viewModelScope.launch {
-            _state.value = AddOrgState(
-                userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath,
-                previousOrgName = preferences.getString(PREV_ORG_KEY)
-            )
+            updateState {
+                copy(
+                    userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath,
+                    previousOrgName = preferences.getString(PREV_ORG_KEY)
+                )
+            }
         }
     }
 
-    fun updateOrgName(orgName: String) {
-        CaptureSetupScopeManager.getData().organizationName = orgName
-        _state.value = _state.value!!.copy(
-            orgName = orgName
-        )
-    }
-
-    fun applyOrgAutofill() {
-        _state.value = _state.value!!.copy(
-            orgName = _state.value?.previousOrgName!!
-        )
-    }
-
-    fun setDefaultOrg() {
-        if (!_state.value?.orgName.isNullOrBlank()) {
-            preferences.edit().putString(PREV_ORG_KEY, _state.value?.orgName).apply()
+    override fun handleAction(action: AddOrgAction) {
+        when (action) {
+            is AddOrgAction.UpdateOrgName -> {
+                CaptureSetupScopeManager.getData().organizationName = action.orgName
+                updateState { copy(orgName = action.orgName) }
+            }
+            is AddOrgAction.ApplyOrgAutofill -> {
+                updateState { copy(orgName = previousOrgName!!) }
+            }
+            is AddOrgAction.SetDefaultOrg -> {
+                if (!currentState.orgName.isBlank()) {
+                    preferences.edit().putString(PREV_ORG_KEY, currentState.orgName).apply()
+                }
+                CaptureSetupScopeManager.getData().organizationName = currentState.orgName
+            }
+            else -> { }
         }
-        CaptureSetupScopeManager.getData().organizationName = _state.value?.orgName
     }
 
     companion object {

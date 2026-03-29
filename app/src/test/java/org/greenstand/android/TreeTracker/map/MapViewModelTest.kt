@@ -109,7 +109,7 @@ class MapViewModelTest {
         val viewModel = MapViewModel(dao)
         viewModel.state.first { !it.isLoading }
 
-        viewModel.selectMarker("tree_42")
+        viewModel.handleAction(MapAction.SelectMarker("tree_42"))
 
         assertEquals("tree_42", viewModel.state.value.selectedMarkerId)
     }

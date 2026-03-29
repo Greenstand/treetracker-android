@@ -77,7 +77,7 @@ class WalletSelectViewModelTest {
 
         val viewModel = WalletSelectViewModel(userRepo)
 
-        viewModel.selectPlanter(targetUser.id)
+        viewModel.handleAction(WalletSelectAction.SelectPlanter(targetUser.id))
 
         val state = viewModel.state.first()
         assertNotNull(state.selectedUser)

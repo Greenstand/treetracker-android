@@ -52,11 +52,8 @@ import org.greenstand.android.TreeTracker.view.TopBarTitle
 @Composable
 fun NameEntryView(
     state: SignUpState,
-    onUpdateFirstName: (String?) -> Unit = {},
-    onUpdateLastName: (String?) -> Unit = {},
+    onHandleAction: (SignupAction) -> Unit = {},
     isFormValid: () -> Boolean = { false },
-    onGoToCredentialEntry: () -> Unit = {},
-    onLaunchCamera: () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -77,7 +74,7 @@ fun NameEntryView(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        onGoToCredentialEntry()
+                        onHandleAction(SignupAction.GoToCredentialEntry)
                     }
                 },
                 rightAction = {
@@ -85,7 +82,7 @@ fun NameEntryView(
                         isLeft = false,
                         isEnabled = isFormValid()
                     ) {
-                        onLaunchCamera()
+                        onHandleAction(SignupAction.LaunchCamera)
                     }
                 }
             )
@@ -102,7 +99,7 @@ fun NameEntryView(
             BorderedTextField(
                 value = state.firstName ?: "",
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> onUpdateFirstName(updatedName) },
+                onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateFirstName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.first_name_hint), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -127,7 +124,7 @@ fun NameEntryView(
             BorderedTextField(
                 value = state.lastName ?: "",
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> onUpdateLastName(updatedName) },
+                onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateLastName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.last_name_hint), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -137,7 +134,7 @@ fun NameEntryView(
                 keyboardActions = KeyboardActions(
                     onGo = {
                         if (!state.firstName.isNullOrBlank() && !state.lastName.isNullOrBlank()) {
-                            onLaunchCamera()
+                            onHandleAction(SignupAction.LaunchCamera)
                         }
                     }
                 )

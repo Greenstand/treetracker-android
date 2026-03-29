@@ -28,7 +28,6 @@ import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -66,7 +65,7 @@ class AddWalletViewModelTest {
 
         val viewModel = AddWalletViewModel()
 
-        val state = viewModel.state.getOrAwaitValueTest()
+        val state = viewModel.state.value
         assertEquals(fakeUser.photoPath, state.userImagePath)
     }
 
@@ -77,9 +76,9 @@ class AddWalletViewModelTest {
 
         val viewModel = AddWalletViewModel()
 
-        viewModel.updateWalletName("new-wallet-name")
+        viewModel.handleAction(AddWalletAction.UpdateWalletName("new-wallet-name"))
 
-        val state = viewModel.state.getOrAwaitValueTest()
+        val state = viewModel.state.value
         assertEquals("new-wallet-name", state.walletName)
         verify { captureSetupData.destinationWallet = "new-wallet-name" }
     }

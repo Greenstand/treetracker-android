@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -45,20 +46,21 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
-import kotlinx.coroutines.launch
 
 @Composable
 fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     val navController = LocalNavHostController.current
-    val state by viewModel.state.collectAsState(SessionNoteState())
+    val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
     SessionNote(
         state = state,
-        onNoteChanged = { viewModel.updateNote(it) },
-        onBackClicked = { CaptureSetupScopeManager.nav.navBackward(navController) },
-        onNextClicked = {
-            scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+        onHandleAction = { action ->
+            when (action) {
+                is SessionNoteAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
+                is SessionNoteAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                else -> viewModel.handleAction(action)
+            }
         },
     )
 }
@@ -66,9 +68,7 @@ fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = Loca
 @Composable
 fun SessionNote(
     state: SessionNoteState = SessionNoteState(),
-    onNoteChanged: (String) -> Unit = {},
-    onBackClicked: () -> Unit = {},
-    onNextClicked: () -> Unit = {},
+    onHandleAction: (SessionNoteAction) -> Unit = {},
 ) {
     Scaffold(
         bottomBar = {
@@ -76,14 +76,14 @@ fun SessionNote(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        onBackClicked()
+                        onHandleAction(SessionNoteAction.NavigateBack)
                     }
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
                     ) {
-                        onNextClicked()
+                        onHandleAction(SessionNoteAction.NavigateNext)
                     }
                 }
             )
@@ -97,7 +97,7 @@ fun SessionNote(
             BorderedTextField(
                 value = state.note,
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedNote -> onNoteChanged(updatedNote) },
+                onValueChange = { updatedNote -> onHandleAction(SessionNoteAction.UpdateNote(updatedNote)) },
                 placeholder = { Text(text = stringResource(id = R.string.add_note_to_session), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -106,7 +106,7 @@ fun SessionNote(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        onNextClicked()
+                        onHandleAction(SessionNoteAction.NavigateNext)
                     }
                 )
             )

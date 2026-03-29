@@ -25,9 +25,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,7 +35,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
-import org.greenstand.android.TreeTracker.models.messages.Message
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
 import org.greenstand.android.TreeTracker.navigation.ChatRoute
@@ -54,17 +53,23 @@ fun IndividualMessageListScreen(
     viewModel: IndividualMessageListViewModel = viewModel(factory = IndividualMessageListViewModelFactory(userId))
 ) {
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(IndividualMessageListState())
+    val state by viewModel.state.collectAsState()
 
     IndividualMessageList(
         state = state,
-        onBackClicked = { navController.popBackStack() },
-        onMessageSelected = { message -> viewModel.selectMessage(message) },
-        onNavigateToSelected = {
-            when (val msg = state.selectedMessage) {
-                is DirectMessage -> navController.navigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
-                is SurveyMessage -> navController.navigate(SurveyRoute(messageId = msg.id))
-                is AnnouncementMessage -> navController.navigate(AnnouncementRoute(messageId = msg.id))
+        onHandleAction = { action ->
+            when (action) {
+                is IndividualMessageListAction.NavigateBack -> {
+                    navController.popBackStack()
+                }
+                is IndividualMessageListAction.NavigateToSelected -> {
+                    when (val msg = state.selectedMessage) {
+                        is DirectMessage -> navController.navigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
+                        is SurveyMessage -> navController.navigate(SurveyRoute(messageId = msg.id))
+                        is AnnouncementMessage -> navController.navigate(AnnouncementRoute(messageId = msg.id))
+                    }
+                }
+                else -> viewModel.handleAction(action)
             }
         },
     )
@@ -74,9 +79,7 @@ fun IndividualMessageListScreen(
 @Composable
 fun IndividualMessageList(
     state: IndividualMessageListState = IndividualMessageListState(),
-    onBackClicked: () -> Unit = {},
-    onMessageSelected: (Message) -> Unit = {},
-    onNavigateToSelected: () -> Unit = {},
+    onHandleAction: (IndividualMessageListAction) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -85,7 +88,7 @@ fun IndividualMessageList(
                 leftAction = {
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
-                            onClick = onBackClicked,
+                            onClick = { onHandleAction(IndividualMessageListAction.NavigateBack) },
                             imagePath = it
                         )
                     }
@@ -100,14 +103,14 @@ fun IndividualMessageList(
                         isLeft = false,
                         isEnabled = state.selectedMessage != null,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = onNavigateToSelected
+                        onClick = { onHandleAction(IndividualMessageListAction.NavigateToSelected) }
                     )
                 },
                 leftAction = {
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.MessagePurple,
-                        onClick = onBackClicked
+                        onClick = { onHandleAction(IndividualMessageListAction.NavigateBack) }
                     )
                 }
             )
@@ -132,7 +135,7 @@ fun IndividualMessageList(
                                     icon = R.drawable.individual_message_icon,
                                     messageTypeText = stringResource(R.string.message)
                                 ) {
-                                    onMessageSelected(message)
+                                    onHandleAction(IndividualMessageListAction.SelectMessage(message))
                                 }
                             is SurveyMessage ->
                                 IndividualMessageItem(
@@ -142,7 +145,7 @@ fun IndividualMessageList(
                                     icon = R.drawable.quiz_icon,
                                     messageTypeText = stringResource(R.string.survey)
                                 ) {
-                                    onMessageSelected(message)
+                                    onHandleAction(IndividualMessageListAction.SelectMessage(message))
                                 }
                             is AnnouncementMessage ->
                                 IndividualMessageItem(
@@ -153,7 +156,7 @@ fun IndividualMessageList(
                                     messageTypeText = stringResource(R.string.announcement),
                                     iconPadding = PaddingValues(bottom = 30.dp)
                                 ) {
-                                    onMessageSelected(message)
+                                    onHandleAction(IndividualMessageListAction.SelectMessage(message))
                                 }
                             else -> throw IllegalStateException("Unsupported type: $message")
                         }

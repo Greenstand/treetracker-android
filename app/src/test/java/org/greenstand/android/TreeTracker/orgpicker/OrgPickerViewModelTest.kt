@@ -16,14 +16,15 @@
 package org.greenstand.android.TreeTracker.orgpicker
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -63,10 +64,10 @@ class OrgPickerViewModelTest {
         coEvery { orgRepo.currentOrg() } returns currentOrg
 
         // When
-        orgPickerViewModel.setOrg(FakeFileGenerator.fakeOrganizationList.first())
+        orgPickerViewModel.handleAction(OrgPickerAction.SetOrg(FakeFileGenerator.fakeOrganizationList.first()))
 
-        // Assert LiveData has correct data
-        val result = orgPickerViewModel.state.getOrAwaitValueTest().currentOrg
+        // Assert state has correct data
+        val result = orgPickerViewModel.state.value.currentOrg
         Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
     }
 }

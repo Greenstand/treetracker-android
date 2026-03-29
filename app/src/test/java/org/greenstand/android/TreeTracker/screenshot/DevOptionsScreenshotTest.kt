@@ -25,8 +25,6 @@ class DevOptionsScreenshotTest : ScreenshotTest() {
     fun dev_options_default() = snapshot {
         DevOptionsScreen(
             state = DevOptionsState(),
-            onParamUpdated = { _, _ -> },
-            onBackPressed = {},
         )
     }
 }

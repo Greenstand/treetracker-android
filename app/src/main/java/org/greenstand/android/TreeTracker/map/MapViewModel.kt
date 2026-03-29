@@ -15,16 +15,14 @@
  */
 package org.greenstand.android.TreeTracker.map
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class MapMarker(
     val latitude: Double,
@@ -42,27 +40,31 @@ data class MapState(
     val selectedMarkerId: String? = null,
 )
 
+sealed class MapAction : Action {
+    data class SelectMarker(val markerId: String) : MapAction()
+}
+
 class MapViewModel(
     private val dao: TreeTrackerDAO
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(MapState())
-    val state: StateFlow<MapState> = _state.asStateFlow()
+) : BaseViewModel<MapState, MapAction>(MapState()) {
 
     init {
         loadTrees()
     }
 
-    fun selectMarker(markerId: String) {
-        _state.value = _state.value.copy(selectedMarkerId = markerId)
+    override fun handleAction(action: MapAction) {
+        when (action) {
+            is MapAction.SelectMarker -> {
+                updateState { copy(selectedMarkerId = action.markerId) }
+            }
+        }
     }
 
     private fun loadTrees() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            updateState { copy(isLoading = true) }
 
             val trees = withContext(Dispatchers.IO) {
-                // Load both legacy tree captures and new trees
                 val allTreeEntities = dao.getAllTrees()
                 buildList {
                     addAll(
@@ -81,10 +83,9 @@ class MapViewModel(
                 }
             }
 
-            _state.value = _state.value.copy(
-                markers = trees,
-                isLoading = false
-            )
+            updateState {
+                copy(markers = trees, isLoading = false)
+            }
         }
     }
 }

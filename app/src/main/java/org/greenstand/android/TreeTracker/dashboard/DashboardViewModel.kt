@@ -15,10 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.dashboard
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.BackoffPolicy
 import androidx.work.ExistingWorkPolicy
@@ -42,6 +39,8 @@ import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.view.ConsumableSnackBar
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -51,9 +50,20 @@ data class DashboardState(
     val totalTreesToSync: Int = 0,
     val isOrgButtonEnabled: Boolean = false,
     val showUnreadMessageNotification: Boolean = false,
-    val showTreeSyncReminderDialog: Boolean = false
+    val showTreeSyncReminderDialog: Boolean = false,
+    val snackBar: ConsumableSnackBar? = null,
 ) {
     val uploadProgress: Float = if (totalTreesToSync > 0) treesRemainingToSync.toFloat() / totalTreesToSync else 0f
+}
+
+sealed class DashboardAction : Action {
+    object Sync : DashboardAction()
+    object SyncMessages : DashboardAction()
+    object NavigateToOrg : DashboardAction()
+    object NavigateToCapture : DashboardAction()
+    object NavigateToMessages : DashboardAction()
+    object NavigateToSettings : DashboardAction()
+    object ConfirmSyncReminderDialog : DashboardAction()
 }
 
 class DashboardViewModel(
@@ -65,13 +75,7 @@ class DashboardViewModel(
     private val messagesRepo: MessagesRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase,
     locationDataCapturer: LocationDataCapturer,
-) : ViewModel() {
-
-    private val _state = MutableLiveData<DashboardState>()
-    val state: LiveData<DashboardState> = _state
-
-    private val _snackBar = MutableLiveData<ConsumableSnackBar>()
-    val snackBar: LiveData<ConsumableSnackBar> = _snackBar
+) : BaseViewModel<DashboardState, DashboardAction>(DashboardState()) {
 
     private var _isSyncing: Boolean? by Delegates.observable(false) { _, _, startedSyncing ->
         startedSyncing ?: return@observable
@@ -83,7 +87,7 @@ class DashboardViewModel(
                 }
             }
         } else {
-            updateData() // this block gets executed at first due to init value as false
+            updateData()
             updateTimerJob?.cancel()
             updateTimerJob = null
         }
@@ -92,7 +96,7 @@ class DashboardViewModel(
     private var updateTimerJob: Job? = null
 
     private fun triggerSnackBar(stringRes: Int) {
-        _snackBar.value = ConsumableSnackBar(stringRes)
+        updateState { copy(snackBar = ConsumableSnackBar(stringRes)) }
     }
 
     private val syncObserver = Observer<List<WorkInfo>> { infoList ->
@@ -135,38 +139,40 @@ class DashboardViewModel(
             .observeForever(syncObserver)
     }
 
-    fun syncMessages() {
-        viewModelScope.launch {
-            if (checkForInternetUseCase.execute(Unit)) {
-                messagesRepo.syncMessages()
-            }
-        }
-    }
-
-    fun sync() {
-        viewModelScope.launch {
-            if (_isSyncing == false) {
-                if (!FeatureFlags.DEBUG_ENABLED) {
-                    val treesToSync = treesToSyncHelper.getTreeCountToSync()
-                    when (treesToSync) {
-                        0 -> triggerSnackBar(R.string.nothing_to_sync)
-                        else -> startDataSynchronization()
+    override fun handleAction(action: DashboardAction) {
+        when (action) {
+            is DashboardAction.SyncMessages -> {
+                viewModelScope.launch {
+                    if (checkForInternetUseCase.execute(Unit)) {
+                        messagesRepo.syncMessages()
                     }
-                } else {
-                    startDataSynchronization()
-                }
-                _state.value?.let { (total, synced, waiting) ->
-                    analytics.syncButtonTapped(total, synced, waiting)
-                }
-            } else {
-                updateTimerJob?.cancel()
-                updateTimerJob = null
-                workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
-
-                _state.value?.let { (total, synced, waiting) ->
-                    analytics.stopButtonTapped(total, synced, waiting)
                 }
             }
+            is DashboardAction.Sync -> {
+                viewModelScope.launch {
+                    if (_isSyncing == false) {
+                        if (!FeatureFlags.DEBUG_ENABLED) {
+                            val treesToSync = treesToSyncHelper.getTreeCountToSync()
+                            when (treesToSync) {
+                                0 -> triggerSnackBar(R.string.nothing_to_sync)
+                                else -> startDataSynchronization()
+                            }
+                        } else {
+                            startDataSynchronization()
+                        }
+                        val state = currentState
+                        analytics.syncButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
+                    } else {
+                        updateTimerJob?.cancel()
+                        updateTimerJob = null
+                        workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
+
+                        val state = currentState
+                        analytics.stopButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
+                    }
+                }
+            }
+            else -> { }
         }
     }
 
@@ -176,15 +182,20 @@ class DashboardViewModel(
             val notSyncedTreeCount = dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
             val totalTreesToSync = treesToSyncHelper.getTreeCountToSync()
 
+            val isOrgButtonEnabled = orgRepo.getOrgs().size > 1
+            val hasUnreadMessages = messagesRepo.checkForUnreadMessages()
+
             withContext(Dispatchers.Main) {
-                _state.value = DashboardState(
-                    totalTreesToSync = totalTreesToSync,
-                    treesRemainingToSync = notSyncedTreeCount,
-                    treesSynced = syncedTreeCount,
-                    isOrgButtonEnabled = orgRepo.getOrgs().size > 1,
-                    showUnreadMessageNotification = messagesRepo.checkForUnreadMessages(),
-                    showTreeSyncReminderDialog = totalTreesToSync >= 2000
-                )
+                updateState {
+                    copy(
+                        totalTreesToSync = totalTreesToSync,
+                        treesRemainingToSync = notSyncedTreeCount,
+                        treesSynced = syncedTreeCount,
+                        isOrgButtonEnabled = isOrgButtonEnabled,
+                        showUnreadMessageNotification = hasUnreadMessages,
+                        showTreeSyncReminderDialog = totalTreesToSync >= 2000
+                    )
+                }
             }
         }
     }

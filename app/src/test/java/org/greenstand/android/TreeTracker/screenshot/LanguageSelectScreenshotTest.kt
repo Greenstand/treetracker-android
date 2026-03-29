@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.screenshot
 
+import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerState
 import org.greenstand.android.TreeTracker.languagepicker.LanguageSelect
 import org.greenstand.android.TreeTracker.models.Language
 import org.junit.Test
@@ -29,7 +30,7 @@ class LanguageSelectScreenshotTest : ScreenshotTest() {
     @Test
     fun languageSelect_with_selection() = snapshot {
         LanguageSelect(
-            currentLanguage = Language.ENGLISH,
+            state = LanguagePickerState(currentLanguage = Language.ENGLISH),
         )
     }
 }

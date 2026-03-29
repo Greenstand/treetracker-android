@@ -26,8 +26,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -49,30 +49,31 @@ fun LanguageSelectScreen(
     isFromTopBar: Boolean,
     viewModel: LanguagePickerViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val currentLanguage by viewModel.currentLanguage.observeAsState()
+    val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
 
     LanguageSelect(
-        currentLanguage = currentLanguage,
-        isFromTopBar = isFromTopBar,
-        onLanguageSelected = { viewModel.setLanguage(it) },
-        onNextClicked = {
-            if (isFromTopBar) {
-                navController.popBackStack()
-            } else {
-                navController.navigate(SignupFlowRoute)
+        state = state,
+        onHandleAction = { action ->
+            when (action) {
+                is LanguagePickerAction.NavigateNext -> {
+                    if (isFromTopBar) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(SignupFlowRoute)
+                    }
+                    viewModel.handleAction(LanguagePickerAction.RefreshAppLanguage)
+                }
+                else -> viewModel.handleAction(action)
             }
-            viewModel.refreshAppLanguage()
         },
     )
 }
 
 @Composable
 fun LanguageSelect(
-    currentLanguage: Language? = null,
-    isFromTopBar: Boolean = false,
-    onLanguageSelected: (Language) -> Unit = {},
-    onNextClicked: () -> Unit = {},
+    state: LanguagePickerState = LanguagePickerState(),
+    onHandleAction: (LanguagePickerAction) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -84,9 +85,9 @@ fun LanguageSelect(
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
-                        isEnabled = currentLanguage != null
+                        isEnabled = state.currentLanguage != null
                     ) {
-                        onNextClicked()
+                        onHandleAction(LanguagePickerAction.NavigateNext)
                     }
                 }
             )
@@ -100,9 +101,9 @@ fun LanguageSelect(
             items(Language.values()) { language ->
                 LanguageButton(
                     text = language.toString(),
-                    isSelected = language == currentLanguage,
+                    isSelected = language == state.currentLanguage,
                 ) {
-                    onLanguageSelected(language)
+                    onHandleAction(LanguagePickerAction.SetLanguage(language))
                 }
             }
         }

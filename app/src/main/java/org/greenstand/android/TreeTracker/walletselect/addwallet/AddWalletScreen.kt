@@ -25,8 +25,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,15 +52,15 @@ fun AddWalletScreen(
 ) {
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
-    val state by viewModel.state.observeAsState(AddWalletState())
+    val state by viewModel.state.collectAsState()
 
     AddWallet(
         state = state,
-        onWalletNameChanged = { viewModel.updateWalletName(it) },
-        onBackClicked = { CaptureSetupScopeManager.nav.navBackward(navController) },
-        onNextClicked = {
-            scope.launch {
-                CaptureSetupScopeManager.nav.navForward(navController)
+        onHandleAction = { action ->
+            when (action) {
+                is AddWalletAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
+                is AddWalletAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                else -> viewModel.handleAction(action)
             }
         },
     )
@@ -69,9 +69,7 @@ fun AddWalletScreen(
 @Composable
 fun AddWallet(
     state: AddWalletState = AddWalletState(),
-    onWalletNameChanged: (String) -> Unit = {},
-    onBackClicked: () -> Unit = {},
-    onNextClicked: () -> Unit = {},
+    onHandleAction: (AddWalletAction) -> Unit = {},
 ) {
     Scaffold(
         modifier = Modifier,
@@ -80,7 +78,7 @@ fun AddWallet(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        onBackClicked()
+                        onHandleAction(AddWalletAction.NavigateBack)
                     }
                 },
                 rightAction = {
@@ -88,7 +86,7 @@ fun AddWallet(
                         isLeft = false,
                         isEnabled = state.walletName.isNotBlank()
                     ) {
-                        onNextClicked()
+                        onHandleAction(AddWalletAction.NavigateNext)
                     }
                 }
             )
@@ -104,7 +102,7 @@ fun AddWallet(
             BorderedTextField(
                 value = state.walletName,
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> onWalletNameChanged(updatedName) },
+                onValueChange = { updatedName -> onHandleAction(AddWalletAction.UpdateWalletName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -114,7 +112,7 @@ fun AddWallet(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        onNextClicked()
+                        onHandleAction(AddWalletAction.NavigateNext)
                     }
                 )
             )

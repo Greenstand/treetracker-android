@@ -63,15 +63,14 @@ class SurveyViewModelTest {
 
     @Test
     fun `WHEN selected answer THEN selected answer index updates with correct value`() = runBlocking {
-        testSubject.selectAnswer(1)
+        testSubject.handleAction(SurveyAction.SelectAnswer(1))
         testSubject.state.test {
             assertEquals(awaitItem().selectedAnswerIndex, 1)
         }
     }
     @Test
     fun `WHEN you go to next question ,THEN current question updates to next question`() = runBlocking {
-        val result = testSubject.goToNextQuestion()
-        Assert.assertTrue(result)
+        testSubject.handleAction(SurveyAction.GoToNextQuestion)
         testSubject.state.test {
             assertEquals(awaitItem().currentQuestion, FakeFileGenerator.fakeSurveyMessage.questions[1])
         }
@@ -79,17 +78,17 @@ class SurveyViewModelTest {
 
     @Test
     fun `WHEN you go to prev question ,THEN current question updates to previous question`() = runBlocking {
-        testSubject.goToNextQuestion()
-        testSubject.goToPrevQuestion()
+        testSubject.handleAction(SurveyAction.GoToNextQuestion)
+        testSubject.handleAction(SurveyAction.GoToPrevQuestion)
         testSubject.state.test {
             assertEquals(awaitItem().currentQuestion, FakeFileGenerator.fakeSurveyMessage.questions[0])
         }
     }
     @Test
-    fun `WHEN current question is already first, go to previous question returns false`() = runBlocking {
+    fun `WHEN current question is already first, go to previous question sets shouldNavigateBack`() = runBlocking {
         val questions = listOf(Question(prompt = "random", choices = listOf("one", "two")))
         coEvery { messagesRepo.getSurveyMessage(any()) } returns FakeFileGenerator.fakeSurveyMessage.copy(questions = questions)
-        val result = testSubject.goToPrevQuestion()
-        Assert.assertFalse(result)
+        testSubject.handleAction(SurveyAction.GoToPrevQuestion)
+        Assert.assertTrue(testSubject.state.value.shouldNavigateBack)
     }
 }

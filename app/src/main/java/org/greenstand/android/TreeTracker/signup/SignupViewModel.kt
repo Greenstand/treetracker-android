@@ -15,9 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.signup
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,8 +23,9 @@ import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 import org.greenstand.android.TreeTracker.utils.ValidationUtils
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
-// Dequeue breaks equals so state will not be updated when navigating
 data class SignUpState(
     val firstName: String? = null,
     val lastName: String? = null,
@@ -49,161 +47,166 @@ data class SignUpState(
 )
 
 sealed class Credential {
-
-    /**
-     * The actual credential value
-     */
     abstract var text: String
-
-    /**
-     * Whether or not this credential is valid
-     */
     abstract val isValid: Boolean
 
     class Email : Credential() {
-
         override var text: String = ""
-
         override val isValid: Boolean
             get() = Validation.isEmailValid(text)
     }
 
     class Phone : Credential() {
-
         override var text: String = ""
-
         override val isValid: Boolean
             get() = Validation.isValidPhoneNumber(text)
     }
 }
 
+sealed class SignupAction : Action {
+    data class UpdateFirstName(val firstName: String?) : SignupAction()
+    data class UpdateLastName(val lastName: String?) : SignupAction()
+    data class UpdateEmail(val email: String) : SignupAction()
+    data class UpdatePhone(val phone: String) : SignupAction()
+    data class UpdateCredentialType(val credential: Credential) : SignupAction()
+    object SubmitInfo : SignupAction()
+    object CloseExistingUserDialog : SignupAction()
+    data class UpdateSelfieTutorialDialog(val show: Boolean) : SignupAction()
+    object EnableAutofocus : SignupAction()
+    object GoToCredentialEntry : SignupAction()
+    object ClosePrivacyPolicyDialog : SignupAction()
+    data class SetExistingUserAsPowerUser(val id: Long) : SignupAction()
+    object NavigateBack : SignupAction()
+    object LaunchCamera : SignupAction()
+    data class ExistingUserSelected(val user: User) : SignupAction()
+}
+
 class SignupViewModel(
     private val userRepo: UserRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase
-) : ViewModel() {
-
-    private val _state = MutableLiveData(SignUpState())
-    val state: LiveData<SignUpState> = _state
+) : BaseViewModel<SignUpState, SignupAction>(SignUpState()) {
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
-            _state.value = _state.value?.copy(isInternetAvailable = result, showSelfieTutorial = isInitialSetupRequired(), isTherePowerUser = !isInitialSetupRequired())
+            val initialSetupRequired = isInitialSetupRequired()
+            updateState {
+                copy(
+                    isInternetAvailable = result,
+                    showSelfieTutorial = initialSetupRequired,
+                    isTherePowerUser = !initialSetupRequired
+                )
+            }
         }
     }
 
-    fun updateFirstName(firstName: String?) {
-        val filtered = firstName?.let { ValidationUtils.filterNameInput(it) }
-        val (isValid, error) = ValidationUtils.validateName(filtered)
-        _state.value = _state.value?.copy(
-            firstName = filtered,
-            firstNameError = if (filtered.isNullOrEmpty()) null else error
-        )
+    override fun handleAction(action: SignupAction) {
+        when (action) {
+            is SignupAction.UpdateFirstName -> {
+                val filtered = action.firstName?.let { ValidationUtils.filterNameInput(it) }
+                val (_, error) = ValidationUtils.validateName(filtered)
+                updateState {
+                    copy(
+                        firstName = filtered,
+                        firstNameError = if (filtered.isNullOrEmpty()) null else error
+                    )
+                }
+            }
+            is SignupAction.UpdateLastName -> {
+                val filtered = action.lastName?.let { ValidationUtils.filterNameInput(it) }
+                val (_, error) = ValidationUtils.validateName(filtered)
+                updateState {
+                    copy(
+                        lastName = filtered,
+                        lastNameError = if (filtered.isNullOrEmpty()) null else error
+                    )
+                }
+            }
+            is SignupAction.UpdateEmail -> {
+                updateState {
+                    copy(
+                        email = action.email.lowercase(),
+                        phone = null,
+                        isCredentialValid = action.email.contains('@')
+                    )
+                }
+            }
+            is SignupAction.UpdatePhone -> {
+                updateState {
+                    copy(
+                        phone = action.phone,
+                        email = null,
+                        isCredentialValid = Validation.isValidPhoneNumber(action.phone)
+                    )
+                }
+            }
+            is SignupAction.UpdateCredentialType -> {
+                updateState { copy(credential = action.credential) }
+            }
+            is SignupAction.SubmitInfo -> {
+                val credential = extractIdentifier(currentState)
+
+                viewModelScope.launch {
+                    if (userRepo.doesUserExists(credential)) {
+                        val existingUser = userRepo.getUserWithWallet(credential)
+                        updateState { copy(existingUser = existingUser) }
+                    } else {
+                        updateState { copy(isCredentialView = false, canGoToNextScreen = false) }
+                    }
+                }
+            }
+            is SignupAction.CloseExistingUserDialog -> {
+                updateState { copy(existingUser = null) }
+            }
+            is SignupAction.UpdateSelfieTutorialDialog -> {
+                updateState { copy(showSelfieTutorial = action.show) }
+            }
+            is SignupAction.EnableAutofocus -> {
+                updateState { copy(autofocusTextEnabled = true) }
+            }
+            is SignupAction.GoToCredentialEntry -> {
+                updateState {
+                    copy(
+                        isCredentialView = true,
+                        firstName = null,
+                        lastName = null,
+                        canGoToNextScreen = true,
+                    )
+                }
+            }
+            is SignupAction.ClosePrivacyPolicyDialog -> {
+                updateState { copy(showPrivacyDialog = false) }
+            }
+            is SignupAction.SetExistingUserAsPowerUser -> {
+                viewModelScope.launch {
+                    userRepo.setPowerUserStatus(action.id, true)
+                }
+            }
+            else -> { }
+        }
     }
 
-    fun updateLastName(lastName: String?) {
-        val filtered = lastName?.let { ValidationUtils.filterNameInput(it) }
-        val (isValid, error) = ValidationUtils.validateName(filtered)
-        _state.value = _state.value?.copy(
-            lastName = filtered,
-            lastNameError = if (filtered.isNullOrEmpty()) null else error
-        )
-    }
     fun isFormValid(): Boolean {
-        val state = _state.value ?: return false
+        val state = currentState
         val (firstNameValid, _) = ValidationUtils.validateName(state.firstName)
         val (lastNameValid, _) = ValidationUtils.validateName(state.lastName)
         return firstNameValid && lastNameValid
     }
 
-    fun setExistingUserAsPowerUser(id: Long){
-        viewModelScope.launch {
-                userRepo.setPowerUserStatus(id, true)
-        }
-    }
-
-    fun updateEmail(email: String) {
-        _state.value = _state.value?.copy(
-            email = email.lowercase(),
-            phone = null,
-            isCredentialValid = email.contains('@')
-        )
-    }
-
-    fun updatePhone(phone: String) {
-        _state.value = _state.value?.copy(
-            phone = phone,
-            email = null,
-            isCredentialValid = Validation.isValidPhoneNumber(phone)
-        )
-    }
-
-    fun updateCredentialType(updatedCredential: Credential) {
-        _state.value = _state.value?.copy(credential = updatedCredential)
-    }
-
-    /**
-     *  update _state according to user existence
-     */
-    fun submitInfo() {
-        val credential = _state.value?.let { extractIdentifier(it) }!!
-
-        viewModelScope.launch {
-            if (userRepo.doesUserExists(credential)) {
-                _state.value = _state.value?.copy(
-                    existingUser = userRepo.getUserWithWallet(credential),
-                )
-            } else {
-                goToNameEntry()
-            }
-        }
-    }
-
-    fun closeExistingUserDialog() {
-        _state.value = _state.value?.copy(
-            existingUser = null,
-        )
-    }
-
-    fun updateSelfieTutorialDialog(state: Boolean) {
-        _state.value = _state.value?.copy(showSelfieTutorial = state)
-    }
-
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
-
-    fun enableAutofocus() {
-        _state.value = _state.value?.copy(autofocusTextEnabled = true)
-    }
-
-    private fun goToNameEntry() {
-        _state.value = _state.value?.copy(
-            isCredentialView = false,
-            canGoToNextScreen = false,
-        )
-    }
-
-    fun goToCredentialEntry() {
-        _state.value = _state.value?.copy(
-            isCredentialView = true,
-            firstName = null,
-            lastName = null,
-            canGoToNextScreen = true,
-        )
-    }
 
     suspend fun createUser(photoPath: String?): User? {
         if (photoPath != null) {
-            val userId = with(_state.value ?: return null) {
-                userRepo.createUser(
-                    firstName = firstName!!,
-                    lastName = lastName!!,
-                    phone = phone,
-                    email = email,
-                    wallet = extractIdentifier(this),
-                    photoPath = photoPath,
-                    isPowerUser = userRepo.getPowerUser() == null,
-                )
-            }
+            val state = currentState
+            val userId = userRepo.createUser(
+                firstName = state.firstName!!,
+                lastName = state.lastName!!,
+                phone = state.phone,
+                email = state.email,
+                wallet = extractIdentifier(state),
+                photoPath = photoPath,
+                isPowerUser = userRepo.getPowerUser() == null,
+            )
             return userRepo.getUser(userId)
         }
         return null
@@ -214,11 +217,5 @@ class SignupViewModel(
             is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
-    }
-
-    fun closePrivacyPolicyDialog() {
-        _state.value = _state.value?.copy(
-            showPrivacyDialog = false,
-        )
     }
 }

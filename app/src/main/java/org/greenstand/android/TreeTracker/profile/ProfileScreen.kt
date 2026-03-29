@@ -25,7 +25,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,11 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectState
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModelFactory
@@ -59,31 +58,26 @@ fun ProfileScreen(
 ) {
     val viewModel: UserSelectViewModel = viewModel(factory = UserSelectViewModelFactory(userId = userId))
     val navController = LocalNavHostController.current
-    val state by viewModel.state.collectAsState(UserSelectState())
-    val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsState()
 
     val cameraLauncher = rememberLauncherForActivityResult(contract = CaptureImageContract()) { newPhotoPath ->
         if (!newPhotoPath.isNullOrEmpty()) {
             state.selectedUser?.photoPath = newPhotoPath
-            scope.launch {
-                viewModel.updateSelectedUser(photoPath = newPhotoPath)
-            }
+            viewModel.handleAction(UserSelectAction.UpdateSelectedUser(photoPath = newPhotoPath))
         }
     }
 
     Profile(
         state = state,
-        onBackClicked = { navController.popBackStack() },
-        onEditToggleClicked = { viewModel.updateEditEnabled() },
-        onPhotoClicked = { cameraLauncher.launch(true) },
-        onFirstNameChanged = { viewModel.updateSelectedUser(firstName = it) },
-        onLastNameChanged = { viewModel.updateSelectedUser(lastName = it) },
-        onEmailChanged = { viewModel.updateSelectedUser(email = it) },
-        onPhoneChanged = { viewModel.updateSelectedUser(phone = it) },
-        onSaveClicked = {
-            scope.launch {
-                viewModel.updateUserInDatabase()
-                viewModel.updateEditEnabled()
+        onHandleAction = { action ->
+            when (action) {
+                is UserSelectAction.NavigateBack -> navController.popBackStack()
+                is UserSelectAction.NavigateToPhoto -> cameraLauncher.launch(true)
+                is UserSelectAction.SaveUserToDatabase -> {
+                    viewModel.handleAction(action)
+                    viewModel.handleAction(UserSelectAction.ToggleEditMode)
+                }
+                else -> viewModel.handleAction(action)
             }
         },
     )
@@ -92,14 +86,7 @@ fun ProfileScreen(
 @Composable
 fun Profile(
     state: UserSelectState = UserSelectState(),
-    onBackClicked: () -> Unit = { },
-    onEditToggleClicked: () -> Unit = { },
-    onPhotoClicked: () -> Unit = { },
-    onFirstNameChanged: (String) -> Unit = { },
-    onLastNameChanged: (String) -> Unit = { },
-    onEmailChanged: (String) -> Unit = { },
-    onPhoneChanged: (String) -> Unit = { },
-    onSaveClicked: () -> Unit = { },
+    onHandleAction: (UserSelectAction) -> Unit = {},
 ) {
     var firstNameError by remember { mutableStateOf<String?>(null) }
     var lastNameError by remember { mutableStateOf<String?>(null) }
@@ -124,7 +111,7 @@ fun Profile(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        onBackClicked()
+                        onHandleAction(UserSelectAction.NavigateBack)
                     }
                 },
             )
@@ -156,12 +143,12 @@ fun Profile(
                             .aspectRatio(1.0f)
                             .padding(bottom = 20.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .clickable(enabled = state.editMode) { onPhotoClicked() },
+                            .clickable(enabled = state.editMode) { onHandleAction(UserSelectAction.NavigateToPhoto) },
                     )
                 }
 
                 TreeTrackerButton(
-                    onClick = onEditToggleClicked,
+                    onClick = { onHandleAction(UserSelectAction.ToggleEditMode) },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 16.dp)
@@ -181,7 +168,7 @@ fun Profile(
 
                 ProfileField(stringResource(id = R.string.first_name_hint), selectedUser.firstName, state.editMode) { newFirstName ->
                     val filtered = ValidationUtils.filterNameInput(newFirstName)
-                    onFirstNameChanged(filtered)
+                    onHandleAction(UserSelectAction.UpdateSelectedUser(firstName = filtered))
                     if (state.editMode) {
                         val (_, error) = ValidationUtils.validateName(filtered)
                         firstNameError = error
@@ -202,7 +189,7 @@ fun Profile(
                     stringResource(id = R.string.last_name_hint), selectedUser.lastName ?: "", state.editMode
                 ) { newLastName ->
                     val filtered = ValidationUtils.filterNameInput(newLastName)
-                    onLastNameChanged(filtered)
+                    onHandleAction(UserSelectAction.UpdateSelectedUser(lastName = filtered))
                     if (state.editMode) {
                         val (_, error) = ValidationUtils.validateName(filtered)
                         lastNameError = error
@@ -219,11 +206,11 @@ fun Profile(
                 }
                 if (selectedUser.wallet.contains("@")) {
                     ProfileField(stringResource(id = R.string.email_placeholder), selectedUser.wallet, state.editMode) {
-                        onEmailChanged(it)
+                        onHandleAction(UserSelectAction.UpdateSelectedUser(email = it))
                     }
                 } else {
                     ProfileField(stringResource(id = R.string.phone_placeholder), selectedUser.wallet, state.editMode) {
-                        onPhoneChanged(it)
+                        onHandleAction(UserSelectAction.UpdateSelectedUser(phone = it))
                     }
                 }
 
@@ -242,7 +229,7 @@ fun Profile(
                             if (ValidationUtils.validateName(firstName).first &&
                                 ValidationUtils.validateName(lastName).first
                             ) {
-                                onSaveClicked()
+                                onHandleAction(UserSelectAction.SaveUserToDatabase)
                             }
                         }
                     ) {
@@ -263,4 +250,3 @@ fun Profile(
         }
     }
 }
-

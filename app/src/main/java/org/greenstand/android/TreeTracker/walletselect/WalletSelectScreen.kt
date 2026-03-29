@@ -57,38 +57,40 @@ import org.greenstand.android.TreeTracker.view.UserImageButton
 fun WalletSelectScreen(
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
 ) {
-    val state by viewModel.state.collectAsState(initial = WalletSelectState())
+    val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
     val scope = rememberCoroutineScope()
 
     WalletSelect(
         state = state,
-        onUserImageClicked = {
-            CaptureSetupScopeManager.nav.navToUserSelect(navController)
-        },
-        onForwardClicked = {
-            scope.launch {
-                state.currentUser?.let {
-                    CaptureSetupScopeManager.nav.navForward(navController)
+        onHandleAction = { action ->
+            when (action) {
+                is WalletSelectAction.NavigateToUserSelect -> {
+                    CaptureSetupScopeManager.nav.navToUserSelect(navController)
                 }
+                is WalletSelectAction.NavigateForward -> {
+                    scope.launch {
+                        state.currentUser?.let {
+                            CaptureSetupScopeManager.nav.navForward(navController)
+                        }
+                    }
+                }
+                is WalletSelectAction.NavigateToAddWallet -> {
+                    navController.navigate(AddWalletRoute)
+                }
+                is WalletSelectAction.NavigateBack -> {
+                    CaptureSetupScopeManager.nav.navBackward(navController)
+                }
+                else -> viewModel.handleAction(action)
             }
         },
-        onAddWalletClicked = { navController.navigate(AddWalletRoute) },
-        onBackClicked = {
-            CaptureSetupScopeManager.nav.navBackward(navController)
-        },
-        onWalletSelected = { viewModel.selectPlanter(it) },
     )
 }
 
 @Composable
 fun WalletSelect(
     state: WalletSelectState = WalletSelectState(),
-    onUserImageClicked: () -> Unit = { },
-    onForwardClicked: () -> Unit = { },
-    onAddWalletClicked: () -> Unit = { },
-    onBackClicked: () -> Unit = { },
-    onWalletSelected: (Long) -> Unit = { },
+    onHandleAction: (WalletSelectAction) -> Unit = {},
 ) {
     Scaffold(
         modifier = Modifier,
@@ -98,7 +100,7 @@ fun WalletSelect(
                 leftAction = {
                     state.currentUser?.photoPath?.let {
                         UserImageButton(
-                            onClick = onUserImageClicked,
+                            onClick = { onHandleAction(WalletSelectAction.NavigateToUserSelect) },
                             imagePath = it
                         )
                     }
@@ -113,18 +115,18 @@ fun WalletSelect(
                         isLeft = false,
                         isEnabled = state.selectedUser != null
                     ) {
-                        onForwardClicked()
+                        onHandleAction(WalletSelectAction.NavigateForward)
                     }
                 },
                 centerAction = {
                     OrangeAddButton(
                         modifier = Modifier.align(Alignment.Center),
-                        onClick = onAddWalletClicked,
+                        onClick = { onHandleAction(WalletSelectAction.NavigateToAddWallet) },
                     )
                 },
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        onBackClicked()
+                        onHandleAction(WalletSelectAction.NavigateBack)
                     }
                 }
             )
@@ -143,14 +145,14 @@ fun WalletSelect(
             state.currentUser?.let { currentUser ->
                 item {
                     WalletItem(currentUser, state.selectedUser == currentUser) {
-                        onWalletSelected(it)
+                        onHandleAction(WalletSelectAction.SelectPlanter(it))
                     }
                 }
             }
             state.alternateUsers.let { alternateUsers ->
                 items(alternateUsers) { user ->
                     WalletItem(user, state.selectedUser == user) {
-                        onWalletSelected(it)
+                        onHandleAction(WalletSelectAction.SelectPlanter(it))
                     }
                 }
             }

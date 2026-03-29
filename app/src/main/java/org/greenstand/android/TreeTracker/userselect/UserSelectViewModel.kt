@@ -15,13 +15,10 @@
  */
 package org.greenstand.android.TreeTracker.userselect
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,6 +28,8 @@ import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.preferences.Preferences
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import java.util.Collections.emptyList
@@ -49,91 +48,91 @@ enum class DeleteProfileState(){
     ACCOUNTDELETEDANDADMINREQUESTED
 }
 
+sealed class UserSelectAction : Action {
+    data class SelectUser(val user: User) : UserSelectAction()
+    object DeleteUser : UserSelectAction()
+    object ToggleEditMode : UserSelectAction()
+    data class UpdateSelectedUser(
+        val firstName: String? = null,
+        val lastName: String? = null,
+        val phone: String? = null,
+        val email: String? = null,
+        val photoPath: String? = null
+    ) : UserSelectAction()
+    object SaveUserToDatabase : UserSelectAction()
+    data class UpdateDeleteProfileState(val deleteProfileState: DeleteProfileState) : UserSelectAction()
+    object NavigateBack : UserSelectAction()
+    object NavigateToPhoto : UserSelectAction()
+}
+
 class UserSelectViewModel(
     userId: Long?,
     private val userRepo: UserRepo,
     private val messageRepo: MessagesRepo,
     locationDataCapturer: LocationDataCapturer,
     private val prefs: Preferences,
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(UserSelectState())
-    val state: Flow<UserSelectState> = _state
+) : BaseViewModel<UserSelectState, UserSelectAction>(UserSelectState()) {
 
     init {
         CaptureSetupScopeManager.open()
         locationDataCapturer.startGpsUpdates()
         userRepo.users()
             .onEach { userList ->
-                _state.value = _state.value.copy(users = userList)
+                updateState { copy(users = userList) }
             }
             .launchIn(viewModelScope)
         if(userId != null){
             viewModelScope.launch(Dispatchers.IO) {
-                val user= userRepo.getUser(userId)
-                _state.value = _state.value.copy(
-                    selectedUser = user
-                )
-            }
-
-        }
-    }
-
-    fun selectUser(user: User) {
-        prefs.setUserId(user.id)
-        CaptureSetupScopeManager.getData().user = user
-        _state.value = _state.value.copy(
-            selectedUser = user
-        )
-    }
-    fun deleteUser(){
-        viewModelScope.launch {
-            if(userRepo.deleteUser(_state.value.selectedUser?.wallet ?: "") ){
-                _state.value = _state.value.copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDLOCALLY)
-                messageRepo.saveMessage(
-                    wallet = _state.value.selectedUser?.wallet ?: "",
-                    to = "admin",
-                    body = "Hi admin, I would like to delete my account with the wallet ${_state.value.selectedUser?.wallet} I understand that all my data will be lost."
-                )
-                messageRepo.syncMessages()
+                val user = userRepo.getUser(userId)
+                updateState { copy(selectedUser = user) }
             }
         }
     }
-    // 🔁 Toggle edit mode
-    fun updateEditEnabled() {
-        _state.value = _state.value.copy(editMode = !_state.value.editMode)
-    }
 
-    // 🧠 Update only specified fields in selectedUser
-    fun updateSelectedUser(
-        firstName: String? = null,
-        lastName: String? = null,
-        phone: String? = null,
-        email: String? = null,
-        photoPath: String? = null
-    ) {
-        val currentUser = _state.value.selectedUser ?: return
-        val updatedUser = currentUser.copy(
-            firstName = firstName ?: currentUser.firstName,
-            lastName = lastName ?: currentUser.lastName,
-            wallet = phone ?: email ?: currentUser.wallet,
-            photoPath = photoPath ?: currentUser.photoPath,
-        )
-        _state.value = _state.value.copy(selectedUser = updatedUser)
-    }
-
-    //  Save current selectedUser to database
-    fun updateUserInDatabase() {
-         val user = _state.value.selectedUser ?: return
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            userRepo.updateUser(user)
+    override fun handleAction(action: UserSelectAction) {
+        when (action) {
+            is UserSelectAction.SelectUser -> {
+                prefs.setUserId(action.user.id)
+                CaptureSetupScopeManager.getData().user = action.user
+                updateState { copy(selectedUser = action.user) }
+            }
+            is UserSelectAction.DeleteUser -> {
+                viewModelScope.launch {
+                    if(userRepo.deleteUser(currentState.selectedUser?.wallet ?: "")) {
+                        updateState { copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDLOCALLY) }
+                        messageRepo.saveMessage(
+                            wallet = currentState.selectedUser?.wallet ?: "",
+                            to = "admin",
+                            body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost."
+                        )
+                        messageRepo.syncMessages()
+                    }
+                }
+            }
+            is UserSelectAction.ToggleEditMode -> {
+                updateState { copy(editMode = !editMode) }
+            }
+            is UserSelectAction.UpdateSelectedUser -> {
+                val currentUser = currentState.selectedUser ?: return
+                val updatedUser = currentUser.copy(
+                    firstName = action.firstName ?: currentUser.firstName,
+                    lastName = action.lastName ?: currentUser.lastName,
+                    wallet = action.phone ?: action.email ?: currentUser.wallet,
+                    photoPath = action.photoPath ?: currentUser.photoPath,
+                )
+                updateState { copy(selectedUser = updatedUser) }
+            }
+            is UserSelectAction.SaveUserToDatabase -> {
+                val user = currentState.selectedUser ?: return
+                viewModelScope.launch(Dispatchers.IO) {
+                    userRepo.updateUser(user)
+                }
+            }
+            is UserSelectAction.UpdateDeleteProfileState -> {
+                updateState { copy(deleteProfileState = action.deleteProfileState) }
+            }
+            else -> { }
         }
-    }
-
-    fun updateDeleteProfileState(deleteProfileState: DeleteProfileState) {
-        _state.value= _state.value.copy(deleteProfileState = deleteProfileState)
     }
 }
 
@@ -141,6 +140,6 @@ class UserSelectViewModelFactory(private val userId: Long) :
     ViewModelProvider.Factory, KoinComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return UserSelectViewModel(userId, get(), get(),get(), get()) as T
+        return UserSelectViewModel(userId, get(), get(), get(), get()) as T
     }
 }

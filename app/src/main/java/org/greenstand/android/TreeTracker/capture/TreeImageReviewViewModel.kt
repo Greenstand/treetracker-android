@@ -15,9 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.capture
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,21 +23,31 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.FeatureResolver
 import org.greenstand.android.TreeTracker.models.organization.OrgFeature
 import org.greenstand.android.TreeTracker.navigation.RouteRegistry
-import org.greenstand.android.TreeTracker.utils.updateState
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class TreeImageReviewState(
     val treeImagePath: String? = null,
     val note: String = "",
     val isDialogOpen: Boolean = false,
-    val showReviewTutorial: Boolean? = null
+    val showReviewTutorial: Boolean? = null,
+    val canNavigateForward: Boolean = false,
 )
+
+sealed class TreeImageReviewAction : Action {
+    data class UpdateNote(val note: String) : TreeImageReviewAction()
+    object CheckIfCanNavigateForward : TreeImageReviewAction()
+    data class UpdateReviewTutorialDialog(val show: Boolean) : TreeImageReviewAction()
+    object AddNote : TreeImageReviewAction()
+    data class SetDialogState(val isOpen: Boolean) : TreeImageReviewAction()
+    object NavigateBack : TreeImageReviewAction()
+}
+
 class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
     private val userRepo: UserRepo,
     featureResolver: FeatureResolver,
-) : ViewModel() {
-    private val _state = MutableLiveData(TreeImageReviewState())
-    val state: LiveData<TreeImageReviewState> = _state
+) : BaseViewModel<TreeImageReviewState, TreeImageReviewAction>(TreeImageReviewState()) {
 
     private val forceNote = featureResolver.isCaptureFlowFeatureEnabled(
         RouteRegistry.ROUTE_TREE_IMAGE_REVIEW,
@@ -49,43 +56,43 @@ class TreeImageReviewViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            _state.value = _state.value?.copy(
-                showReviewTutorial = isFirstTrack(),
-                treeImagePath = treeCapturer.currentTree?.photoPath,
-            )
-        }
-    }
-
-    fun updateNote(note: String) {
-        _state.value = _state.value?.copy(
-            note = note,
-        )
-    }
-
-    fun checkIfCanNavigateForward(onNavigate: () -> Unit) {
-        if (forceNote && _state.value?.note?.isBlank() == true) {
-            _state.updateState {
-                copy(isDialogOpen = true)
+            val firstTrack = isFirstTrack()
+            updateState {
+                copy(
+                    showReviewTutorial = firstTrack,
+                    treeImagePath = treeCapturer.currentTree?.photoPath,
+                )
             }
-        } else {
-            onNavigate()
         }
     }
 
-    fun updateReviewTutorialDialog(state: Boolean) {
-        _state.value = _state.value?.copy(showReviewTutorial = state)
-    }
-
-    fun addNote() {
-        viewModelScope.launch {
-            treeCapturer.setNote(_state.value?.note ?: "")
-            _state.value = _state.value?.copy(isDialogOpen = false)
+    override fun handleAction(action: TreeImageReviewAction) {
+        when (action) {
+            is TreeImageReviewAction.UpdateNote -> {
+                updateState { copy(note = action.note) }
+            }
+            is TreeImageReviewAction.CheckIfCanNavigateForward -> {
+                if (forceNote && currentState.note.isBlank()) {
+                    updateState { copy(isDialogOpen = true) }
+                } else {
+                    updateState { copy(canNavigateForward = true) }
+                }
+            }
+            is TreeImageReviewAction.UpdateReviewTutorialDialog -> {
+                updateState { copy(showReviewTutorial = action.show) }
+            }
+            is TreeImageReviewAction.AddNote -> {
+                viewModelScope.launch {
+                    treeCapturer.setNote(currentState.note)
+                    updateState { copy(isDialogOpen = false) }
+                }
+            }
+            is TreeImageReviewAction.SetDialogState -> {
+                updateState { copy(isDialogOpen = action.isOpen) }
+            }
+            else -> { }
         }
     }
 
-    suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()?.numberOfTrees?.let { it < 1 } ?: true
-
-    fun setDialogState(state: Boolean) {
-        _state.value = _state.value?.copy(isDialogOpen = state)
-    }
+    private suspend fun isFirstTrack(): Boolean = userRepo.getPowerUser()?.numberOfTrees?.let { it < 1 } ?: true
 }

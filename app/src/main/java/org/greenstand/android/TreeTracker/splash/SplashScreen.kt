@@ -69,7 +69,7 @@ fun SplashScreen(
                     delay(1000)
 
                     if (viewModel.isInitialSetupRequired()) {
-                        viewModel.startGPSUpdatesForSignup()
+                        viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
                         navigateToLanguageScreen(navController)
                     } else {
                         navigateToDashboardScreen(navController)

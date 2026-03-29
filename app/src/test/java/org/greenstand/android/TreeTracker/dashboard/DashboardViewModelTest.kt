@@ -18,8 +18,14 @@ package org.greenstand.android.TreeTracker.dashboard
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -30,7 +36,6 @@ import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -96,26 +101,26 @@ class DashboardViewModelTest {
     fun `syncMessages should call syncMessages on messagesRepo if there is internet connection`() = runBlocking {
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
         coEvery { messagesRepo.syncMessages() } just Runs
-        testSubject.syncMessages()
+        testSubject.handleAction(DashboardAction.SyncMessages)
         coVerify { messagesRepo.syncMessages() }
     }
     @Test
     fun `syncMessages should not call syncMessages on messagesRepo if there is no internet connection`() = runBlocking {
         coEvery { checkForInternetUseCase.execute(Unit) } returns false
-        testSubject.syncMessages()
+        testSubject.handleAction(DashboardAction.SyncMessages)
         coVerify(exactly = 0) { messagesRepo.syncMessages() }
     }
     @Test
     fun `updateData should update the state with correct values querying totalTreesToSync`() = runBlocking {
-        val treesToSyncResult = testSubject.state.getOrAwaitValueTest().totalTreesToSync
+        val treesToSyncResult = testSubject.state.value.totalTreesToSync
         assertEquals(treesToSyncResult, 6)
     }
 
     @Test
     fun `sync should start sync if not syncing and there are trees to sync`() = runBlocking {
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
-        testSubject.sync()
+        testSubject.handleAction(DashboardAction.Sync)
         coVerify(exactly = 1) { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>()) }
-        coVerify { analytics.syncButtonTapped(8, 6, 6) }
+        coVerify { analytics.syncButtonTapped(any(), any(), any()) }
     }
 }

@@ -23,16 +23,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.messages.ChatAction
 import org.greenstand.android.TreeTracker.messages.ChatViewModel
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.*
 
 @ExperimentalCoroutinesApi
 class ChatViewModelTest {
@@ -56,23 +57,23 @@ class ChatViewModelTest {
     }
     @Test
     fun `WHEN draft text is empty,returns empty string, THEN when draft text updates, returns correct data`() = runBlocking {
-        assertEquals(testSubject.state.getOrAwaitValueTest().draftText, "")
-        testSubject.updateDraftText("random")
-        val result = testSubject.state.getOrAwaitValueTest().draftText
+        assertEquals(testSubject.state.value.draftText, "")
+        testSubject.handleAction(ChatAction.UpdateDraftText("random"))
+        val result = testSubject.state.value.draftText
         assertEquals(result, "random")
     }
 
     @Test
     fun `Verify message repo saves message`() = runBlocking {
-        testSubject.updateDraftText("Draft")
-        testSubject.sendMessage()
+        testSubject.handleAction(ChatAction.UpdateDraftText("Draft"))
+        testSubject.handleAction(ChatAction.SendMessage)
         coVerify { messagesRepo.saveMessage("some random text", "Mary", "Draft") }
     }
     @Test
     fun `WHEN current user sends message THEN message is sent AND draft message is cleared`() = runBlocking {
-        testSubject.updateDraftText("Hello, World")
-        testSubject.sendMessage()
-        val result = testSubject.state.getOrAwaitValueTest().draftText
+        testSubject.handleAction(ChatAction.UpdateDraftText("Hello, World"))
+        testSubject.handleAction(ChatAction.SendMessage)
+        val result = testSubject.state.value.draftText
         assertEquals(result, "")
     }
 

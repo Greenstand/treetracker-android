@@ -24,15 +24,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.signup.SignUpState
+import org.greenstand.android.TreeTracker.signup.SignupAction
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.CaptureButton
@@ -46,7 +46,7 @@ fun SelfieScreen() {
     val navController = LocalNavHostController.current
     val cameraControl = remember { CameraControl() }
     val viewModel = getViewModel<SignupViewModel>()
-    val state by viewModel.state.observeAsState(SignUpState())
+    val state by viewModel.state.collectAsState()
 
     Scaffold(
         topBar = {
@@ -64,7 +64,7 @@ fun SelfieScreen() {
                     InfoButton(
                         modifier = Modifier.align(Alignment.Center),
                         onClick = {
-                            viewModel.updateSelfieTutorialDialog(true)
+                            viewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(true))
                         }
                     )
                 },
@@ -101,7 +101,7 @@ fun SelfieScreen() {
             if (state.showSelfieTutorial == true) {
                 SelfieTutorial(
                     onCompleteClick = {
-                        viewModel.updateSelfieTutorialDialog(false)
+                        viewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(false))
                     }
                 )
             }

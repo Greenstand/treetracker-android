@@ -1,13 +1,11 @@
 package org.greenstand.android.TreeTracker.settings
 
-
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class SettingsState(
     val showPrivacyPolicyDialog: Boolean? = null,
@@ -16,41 +14,45 @@ data class SettingsState(
     val powerUser: User? = null
 )
 
+sealed class SettingsAction : Action {
+    data class SetPrivacyDialogVisibility(val show: Boolean) : SettingsAction()
+    object Logout : SettingsAction()
+    data class UpdateLogoutDialogVisibility(val show: Boolean) : SettingsAction()
+    object NavigateToProfile : SettingsAction()
+    object NavigateToMap : SettingsAction()
+    object NavigateToDeleteAccount : SettingsAction()
+    object NavigateBack : SettingsAction()
+    object LogoutConfirmed : SettingsAction()
+}
+
 class SettingsViewModel(
     private val userRepo: UserRepo,
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(SettingsState())
-    val state: Flow<SettingsState> = _state
+) : BaseViewModel<SettingsState, SettingsAction>(SettingsState()) {
 
     init {
         viewModelScope.launch {
-            _state.value = _state.value.copy(
-                powerUser = userRepo.getPowerUser()
-            )
+            val powerUser = userRepo.getPowerUser()
+            updateState { copy(powerUser = powerUser) }
         }
     }
 
-    fun setPrivacyDialogVisibility(show: Boolean) {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(
-                showPrivacyPolicyDialog = show
-            )
-        }
-    }
-    fun logout(){
-        viewModelScope.launch {
-            _state.value.powerUser?.let {
-                userRepo.setPowerUserStatus(it.id, false)
+    override fun handleAction(action: SettingsAction) {
+        when (action) {
+            is SettingsAction.SetPrivacyDialogVisibility -> {
+                updateState { copy(showPrivacyPolicyDialog = action.show) }
             }
-            updateLogoutDialogVisibility(false)
-        }
-    }
-    fun updateLogoutDialogVisibility(show: Boolean) {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(
-                showLogoutDialog = show
-            )
+            is SettingsAction.Logout -> {
+                viewModelScope.launch {
+                    currentState.powerUser?.let {
+                        userRepo.setPowerUserStatus(it.id, false)
+                    }
+                    handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
+                }
+            }
+            is SettingsAction.UpdateLogoutDialogVisibility -> {
+                updateState { copy(showLogoutDialog = action.show) }
+            }
+            else -> { }
         }
     }
 }

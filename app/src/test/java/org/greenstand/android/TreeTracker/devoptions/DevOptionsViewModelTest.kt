@@ -72,7 +72,7 @@ class DevOptionsViewModelTest {
         val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
 
         val booleanParam = ConfigKeys.FORCE_IMAGE_SIZE
-        viewModel.updateParam(booleanParam, true)
+        viewModel.handleAction(DevOptionsAction.UpdateParam(booleanParam, true))
 
         verify { configurator.putValue(booleanParam, true) }
 

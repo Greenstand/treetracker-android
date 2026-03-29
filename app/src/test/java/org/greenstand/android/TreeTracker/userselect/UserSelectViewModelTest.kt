@@ -99,7 +99,7 @@ class UserSelectViewModelTest {
         val viewModel = createViewModel()
         val user = FakeFileGenerator.fakeUsers.first()
 
-        viewModel.selectUser(user)
+        viewModel.handleAction(UserSelectAction.SelectUser(user))
 
         verify { preferences.setUserId(user.id) }
         verify { captureSetupData.user = user }
@@ -115,12 +115,12 @@ class UserSelectViewModelTest {
         val initialState = viewModel.state.first()
         assertFalse(initialState.editMode)
 
-        viewModel.updateEditEnabled()
+        viewModel.handleAction(UserSelectAction.ToggleEditMode)
 
         val updatedState = viewModel.state.first()
         assertTrue(updatedState.editMode)
 
-        viewModel.updateEditEnabled()
+        viewModel.handleAction(UserSelectAction.ToggleEditMode)
 
         val toggledBackState = viewModel.state.first()
         assertFalse(toggledBackState.editMode)
@@ -130,9 +130,9 @@ class UserSelectViewModelTest {
     fun `WHEN updateSelectedUser called THEN updates only provided fields`() = runTest {
         val viewModel = createViewModel()
         val user = FakeFileGenerator.fakeUsers.first()
-        viewModel.selectUser(user)
+        viewModel.handleAction(UserSelectAction.SelectUser(user))
 
-        viewModel.updateSelectedUser(firstName = "UpdatedFirst")
+        viewModel.handleAction(UserSelectAction.UpdateSelectedUser(firstName = "UpdatedFirst"))
 
         val state = viewModel.state.first()
         assertNotNull(state.selectedUser)
@@ -145,7 +145,7 @@ class UserSelectViewModelTest {
     fun `WHEN updateDeleteProfileState called THEN updates state`() = runTest {
         val viewModel = createViewModel()
 
-        viewModel.updateDeleteProfileState(DeleteProfileState.SHOWDIALOG)
+        viewModel.handleAction(UserSelectAction.UpdateDeleteProfileState(DeleteProfileState.SHOWDIALOG))
 
         val state = viewModel.state.first()
         assertEquals(DeleteProfileState.SHOWDIALOG, state.deleteProfileState)

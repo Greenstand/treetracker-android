@@ -22,7 +22,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -49,8 +48,8 @@ class PermissionViewModelTest {
     fun `verify isLocationEnabled sets the correct value in the permission Items state`() = runBlocking {
         val provider = LocationManager.GPS_PROVIDER
         coEvery { locationManager.isProviderEnabled(provider) } returns true
-        testSubject.isLocationEnabled()
-        val result = testSubject.state.getOrAwaitValueTest().isLocationEnabled!!
+        testSubject.handleAction(PermissionAction.CheckLocationEnabled)
+        val result = testSubject.state.value.isLocationEnabled!!
         assertTrue(result)
     }
 }

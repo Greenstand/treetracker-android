@@ -18,12 +18,11 @@ package org.greenstand.android.TreeTracker.messages.announcementmessage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.messages.AnnouncementMessage
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -34,26 +33,35 @@ data class AnnouncementState(
     val currentTitle: String? = null,
 )
 
+sealed class AnnouncementAction : Action {
+    object NavigateBack : AnnouncementAction()
+    data class OpenLink(val url: String) : AnnouncementAction()
+}
+
 class AnnouncementViewModel(
     private val messageId: String,
     private val messagesRepo: MessagesRepo,
-) : ViewModel() {
-    private var _state: MutableStateFlow<AnnouncementState> = MutableStateFlow(AnnouncementState())
-    val state: StateFlow<AnnouncementState> = _state.asStateFlow()
+) : BaseViewModel<AnnouncementState, AnnouncementAction>(AnnouncementState()) {
 
     private lateinit var announcement: AnnouncementMessage
 
     init {
         viewModelScope.launch {
             announcement = messagesRepo.getAnnouncementMessages(messageId)
-            _state.value = _state.value.copy(
-                from = announcement.from,
-                currentTitle = announcement.subject,
-                currentBody = announcement.body,
-                currentUrl = announcement.videoLink
-            )
+            updateState {
+                copy(
+                    from = announcement.from,
+                    currentTitle = announcement.subject,
+                    currentBody = announcement.body,
+                    currentUrl = announcement.videoLink
+                )
+            }
             messagesRepo.markMessageAsRead(messageId)
         }
+    }
+
+    override fun handleAction(action: AnnouncementAction) {
+        // No user actions for announcement screen
     }
 }
 

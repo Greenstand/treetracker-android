@@ -32,7 +32,6 @@ import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.greenstand.android.TreeTracker.utils.getOrAwaitValueTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -74,8 +73,10 @@ class TreeCaptureViewModelTest {
     fun setUp() {
         MockKAnnotations.init(this)
         coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+    }
 
-        treeCaptureViewModel = TreeCaptureViewModel(
+    private fun createViewModel(): TreeCaptureViewModel {
+        return TreeCaptureViewModel(
             profilePicUrl = profilePicUrl,
             userRepo = userRepo,
             treeCapturer = treeCapturer,
@@ -87,7 +88,7 @@ class TreeCaptureViewModelTest {
     }
 
     @Test
-    fun `WHEN numberOfTrees greater than 0 THEN firstTrack is false `() = runBlocking {
+    fun `WHEN numberOfTrees greater than 0 THEN showCaptureTutorial is false`() = runBlocking {
         coEvery { userRepo.getPowerUser() } returns User(
             id = 5,
             wallet = "",
@@ -99,12 +100,12 @@ class TreeCaptureViewModelTest {
             unreadMessagesAvailable = false
         )
 
-        val result = treeCaptureViewModel.isFirstTrack()
-        assertFalse(result)
+        treeCaptureViewModel = createViewModel()
+        assertFalse(treeCaptureViewModel.state.value.showCaptureTutorial ?: true)
     }
 
     @Test
-    fun `WHEN numberOfTrees less than 1 THEN firstTrack is true `() = runBlocking {
+    fun `WHEN numberOfTrees less than 1 THEN showCaptureTutorial is true`() = runBlocking {
         coEvery { userRepo.getPowerUser() } returns User(
             id = 5,
             wallet = "",
@@ -116,8 +117,8 @@ class TreeCaptureViewModelTest {
             unreadMessagesAvailable = false
         )
 
-        val result = treeCaptureViewModel.isFirstTrack()
-        assertTrue(result)
+        treeCaptureViewModel = createViewModel()
+        assertTrue(treeCaptureViewModel.state.value.showCaptureTutorial ?: false)
     }
 
     @Test
@@ -125,31 +126,35 @@ class TreeCaptureViewModelTest {
         runBlocking {
             coEvery { treeCapturer.pinLocation() } returns true
 
-            treeCaptureViewModel.captureLocation()
+            treeCaptureViewModel = createViewModel()
+            treeCaptureViewModel.handleAction(TreeCaptureAction.CaptureLocation)
 
             assertTrue(
-                treeCaptureViewModel.state.getOrAwaitValueTest().isLocationAvailable ?: false
+                treeCaptureViewModel.state.value.isLocationAvailable ?: false
             )
-            assertFalse(treeCaptureViewModel.state.getOrAwaitValueTest().isGettingLocation)
+            assertFalse(treeCaptureViewModel.state.value.isGettingLocation)
         }
 
     @Test
     fun `WHEN updateBadGpsDialogState true THEN isLocationAvailable state true`() = runBlocking {
-        treeCaptureViewModel.updateBadGpsDialogState(true)
-        assertTrue(treeCaptureViewModel.state.getOrAwaitValueTest().isLocationAvailable ?: false)
+        treeCaptureViewModel = createViewModel()
+        treeCaptureViewModel.handleAction(TreeCaptureAction.UpdateBadGpsDialogState(true))
+        assertTrue(treeCaptureViewModel.state.value.isLocationAvailable ?: false)
     }
 
     @Test
     fun `WHEN updateCaptureTutorialDialog true THEN showCaptureTutorial state true`() = runBlocking {
-        treeCaptureViewModel.updateCaptureTutorialDialog(true)
-        assertTrue(treeCaptureViewModel.state.getOrAwaitValueTest().showCaptureTutorial ?: false)
+        treeCaptureViewModel = createViewModel()
+        treeCaptureViewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(true))
+        assertTrue(treeCaptureViewModel.state.value.showCaptureTutorial ?: false)
     }
 
     @Test
     fun `WHEN create fake trees THEN createFakeTreesUseCase is called 1 time AND isCreatingFakeTrees state always false`() = runBlocking {
-        treeCaptureViewModel.createFakeTrees()
+        treeCaptureViewModel = createViewModel()
+        treeCaptureViewModel.handleAction(TreeCaptureAction.CreateFakeTrees)
 
         coVerify(exactly = 1) { createFakeTreesUseCase.execute(CreateFakeTreesParams(50)) }
-        assertFalse(treeCaptureViewModel.state.getOrAwaitValueTest().isCreatingFakeTrees)
+        assertFalse(treeCaptureViewModel.state.value.isCreatingFakeTrees)
     }
 }

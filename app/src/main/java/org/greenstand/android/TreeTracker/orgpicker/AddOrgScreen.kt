@@ -28,8 +28,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -50,22 +51,24 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
-import kotlinx.coroutines.launch
 
 @Composable
 fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     val navController = LocalNavHostController.current
-    val state by viewModel.state.observeAsState(AddOrgState())
+    val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
     AddOrg(
         state = state,
-        onOrgNameChanged = { viewModel.updateOrgName(it) },
-        onAutofillClicked = { viewModel.applyOrgAutofill() },
-        onBackClicked = { CaptureSetupScopeManager.nav.navBackward(navController) },
-        onNextClicked = {
-            viewModel.setDefaultOrg()
-            scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+        onHandleAction = { action ->
+            when (action) {
+                is AddOrgAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
+                is AddOrgAction.NavigateNext -> {
+                    viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+                    scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                }
+                else -> viewModel.handleAction(action)
+            }
         },
     )
 }
@@ -73,10 +76,7 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
 @Composable
 fun AddOrg(
     state: AddOrgState = AddOrgState(),
-    onOrgNameChanged: (String) -> Unit = {},
-    onAutofillClicked: () -> Unit = {},
-    onBackClicked: () -> Unit = {},
-    onNextClicked: () -> Unit = {},
+    onHandleAction: (AddOrgAction) -> Unit = {},
 ) {
     Scaffold(
         bottomBar = {
@@ -84,14 +84,14 @@ fun AddOrg(
                 modifier = Modifier.navigationBarsPadding(),
                 leftAction = {
                     ArrowButton(isLeft = true) {
-                        onBackClicked()
+                        onHandleAction(AddOrgAction.NavigateBack)
                     }
                 },
                 rightAction = {
                     ArrowButton(
                         isLeft = false,
                     ) {
-                        onNextClicked()
+                        onHandleAction(AddOrgAction.NavigateNext)
                     }
                 }
             )
@@ -106,7 +106,7 @@ fun AddOrg(
                 value = state.orgName,
                 modifier = Modifier.height(80.dp),
                 padding = PaddingValues(4.dp),
-                onValueChange = { updatedName -> onOrgNameChanged(updatedName) },
+                onValueChange = { updatedName -> onHandleAction(AddOrgAction.UpdateOrgName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -115,13 +115,13 @@ fun AddOrg(
                 ),
                 keyboardActions = KeyboardActions(
                     onGo = {
-                        onNextClicked()
+                        onHandleAction(AddOrgAction.NavigateNext)
                     }
                 )
             )
             state.previousOrgName?.let { prevOrgName ->
                 TreeTrackerButton(
-                    onClick = onAutofillClicked,
+                    onClick = { onHandleAction(AddOrgAction.ApplyOrgAutofill) },
                     modifier = Modifier
                         .padding(16.dp)
                         .size(height = 80.dp, width = 156.dp)

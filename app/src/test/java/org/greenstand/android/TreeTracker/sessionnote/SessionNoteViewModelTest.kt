@@ -23,7 +23,6 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
@@ -66,9 +65,9 @@ class SessionNoteViewModelTest {
 
         val viewModel = SessionNoteViewModel()
 
-        viewModel.updateNote("This is a test note")
+        viewModel.handleAction(SessionNoteAction.UpdateNote("This is a test note"))
 
-        val state = viewModel.state.first()
+        val state = viewModel.state.value
         assertEquals("This is a test note", state.note)
         verify { captureSetupData.sessionNote = "This is a test note" }
     }

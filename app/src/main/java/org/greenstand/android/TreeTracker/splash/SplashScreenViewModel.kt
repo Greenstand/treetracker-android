@@ -28,8 +28,18 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
+import org.greenstand.android.TreeTracker.viewmodel.Action
+import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+
+data class SplashState(
+    val isBootstrapping: Boolean = true,
+)
+
+sealed class SplashAction : Action {
+    object StartGPSUpdatesForSignup : SplashAction()
+}
 
 class SplashScreenViewModel(
     private val orgJsonString: String?,
@@ -42,7 +52,15 @@ class SplashScreenViewModel(
     private val checkForInternetUseCase: CheckForInternetUseCase,
     private val orgRepo: OrgRepo,
     private val exceptionDataCollector: ExceptionDataCollector,
-) : ViewModel() {
+) : BaseViewModel<SplashState, SplashAction>(SplashState()) {
+
+    override fun handleAction(action: SplashAction) {
+        when (action) {
+            is SplashAction.StartGPSUpdatesForSignup -> {
+                locationDataCapturer.startGpsUpdates()
+            }
+        }
+    }
 
     suspend fun bootstrap() {
         deviceConfigUpdater.saveLatestConfig()
@@ -58,9 +76,6 @@ class SplashScreenViewModel(
             exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, it.wallet)
         }
 
-        // If session was not ended properly (user/system killed app)...
-        // or we never initialized the sync count...
-        // make sure the current sync count is up to date
         if (sessionTracker.wasSessionInterrupted() || treesToSyncHelper.getTreeCountToSync() == -1) {
             withContext(Dispatchers.IO) {
                 treesToSyncHelper.refreshTreeCountToSync()
@@ -69,10 +84,6 @@ class SplashScreenViewModel(
     }
 
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
-
-    fun startGPSUpdatesForSignup() {
-        locationDataCapturer.startGpsUpdates()
-    }
 }
 
 class SplashScreenViewModelFactory(private val orgJsonString: String?) :
