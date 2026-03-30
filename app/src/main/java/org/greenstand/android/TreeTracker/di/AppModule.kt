@@ -66,6 +66,9 @@ import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationContro
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
+import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
+import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
+import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteViewModel
@@ -210,6 +213,12 @@ val appModule =
 
         single { TreeTrackerViewModelFactory() }
 
+        single { SyncProgressTracker() }
+
+        single { DebugOverlayManager() }
+
+        single { SensorDiagnosticsTracker(get(), get(), get(), get(), get()) }
+
         single { ExceptionDataCollector(get()) }
 
         factory { TimeProvider(get()) }
@@ -240,18 +249,18 @@ val appModule =
 
         factory { TreeUploader(get(), get(), get(), get(), get()) }
 
-        factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get()) }
+        factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get()) }
 
         factory { Firebase.crashlytics }
 
         scope<CaptureSetupScope> {
             scoped { CaptureSetupData(get()) }
-            scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
+            scoped { CaptureSetupNavigationController(get(), get(), get(), get(), get()) }
         }
 
         scope<CaptureFlowScope> {
             scoped { CaptureFlowData() }
-            scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get()) }
+            scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get(), get()) }
             scoped { TreeCapturer(get(), get(), get(), get(), get()) }
         }
     }

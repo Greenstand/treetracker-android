@@ -46,7 +46,9 @@ import org.maplibre.android.style.sources.GeoJsonSource
 @Composable
 fun LibreMap(
     markers: List<MapMarker>,
+    stepPoints: List<StepPoint>,
     selectedMarkerId: String?,
+    selectedSessionId: Long?,
     modifier: Modifier = Modifier,
     styleUrl: String = "https://demotiles.maplibre.org/style.json",
     onMarkerClick: (String) -> Unit = {},
@@ -110,11 +112,78 @@ fun LibreMap(
         update = { view ->
             view.getMapAsync { mapLibreMap ->
                 mapLibreMap.getStyle { style ->
-                    // Remove existing source and layer if they exist
+                    // Remove existing layers and sources
+                    style.getLayer("step-points-layer")?.let { style.removeLayer(it) }
+                    style.getSource("step-points-source")?.let { style.removeSource(it) }
                     style.getLayer("tree-markers-layer")?.let { style.removeLayer(it) }
                     style.getSource("tree-markers-source")?.let { style.removeSource(it) }
 
-                    // Add markers in bulk as GeoJSON
+                    // --- Step points layer (rendered first, underneath trees) ---
+                    if (stepPoints.isNotEmpty()) {
+                        val stepCollection =
+                            buildJsonObject {
+                                put("type", "FeatureCollection")
+                                putJsonArray("features") {
+                                    stepPoints.forEach { point ->
+                                        addJsonObject {
+                                            put("type", "Feature")
+                                            putJsonObject("geometry") {
+                                                put("type", "Point")
+                                                putJsonArray("coordinates") {
+                                                    add(kotlinx.serialization.json.JsonPrimitive(point.longitude))
+                                                    add(kotlinx.serialization.json.JsonPrimitive(point.latitude))
+                                                }
+                                            }
+                                            putJsonObject("properties") {
+                                                put("sessionId", point.sessionId)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        style.addSource(GeoJsonSource("step-points-source", stepCollection.toString()))
+
+                        val stepColorExpression =
+                            if (selectedSessionId != null) {
+                                Expression.switchCase(
+                                    Expression.eq(
+                                        Expression.get("sessionId"),
+                                        Expression.literal(selectedSessionId),
+                                    ),
+                                    Expression.literal("#42A5F5"), // highlighted blue
+                                    Expression.literal("#9E9E9E"), // dim gray
+                                )
+                            } else {
+                                Expression.literal("#9E9E9E")
+                            }
+
+                        val stepOpacityExpression =
+                            if (selectedSessionId != null) {
+                                Expression.switchCase(
+                                    Expression.eq(
+                                        Expression.get("sessionId"),
+                                        Expression.literal(selectedSessionId),
+                                    ),
+                                    Expression.literal(0.9f),
+                                    Expression.literal(0.3f),
+                                )
+                            } else {
+                                Expression.literal(0.5f)
+                            }
+
+                        val stepLayer =
+                            CircleLayer("step-points-layer", "step-points-source").apply {
+                                setProperties(
+                                    PropertyFactory.circleRadius(3.5f),
+                                    PropertyFactory.circleColor(stepColorExpression),
+                                    PropertyFactory.circleOpacity(stepOpacityExpression),
+                                )
+                            }
+                        style.addLayer(stepLayer)
+                    }
+
+                    // --- Tree markers layer (rendered on top) ---
                     if (markers.isNotEmpty()) {
                         // Create GeoJSON FeatureCollection
                         val featureCollection =

@@ -34,6 +34,19 @@ class StepCounter(
     private val stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
     private val stepCountEventListener = StepCountEventListener()
 
+    /**
+     * Whether the sensor listener is actively registered and receiving events.
+     */
+    var isListenerRegistered: Boolean = false
+        private set
+
+    /**
+     * Flag to snapshot the baseline on the first sensor event after [enable].
+     * TYPE_STEP_COUNTER reports the total steps since last reboot, so we must
+     * capture a baseline when the session starts to get a meaningful delta.
+     */
+    private var needsBaselineSnapshot = false
+
     var absoluteStepCount: Int?
         get() = preferences.getInt(ABS_STEP_COUNT)
         private set(value) = preferences.edit().putInt(ABS_STEP_COUNT, value ?: 0).apply()
@@ -53,18 +66,30 @@ class StepCounter(
         get() = (absoluteStepCount ?: 0) - (absoluteStepCountOnTreeCapture ?: 0)
 
     fun enable() {
-        Timber.d("StepCounter: enable - register listener")
-        sensorManager.registerListener(
+        if (stepCounter == null) {
+            Timber.w("StepCounter: No TYPE_STEP_COUNTER sensor available on this device")
+            isListenerRegistered = false
+            return
+        }
+        needsBaselineSnapshot = true
+        val registered = sensorManager.registerListener(
             stepCountEventListener,
             stepCounter,
             SensorManager.SENSOR_DELAY_FASTEST,
         )
+        isListenerRegistered = registered
+        if (registered) {
+            Timber.d("StepCounter: Sensor listener registered successfully")
+        } else {
+            Timber.w("StepCounter: registerListener returned false — sensor events will not fire")
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun disable() {
         Timber.d("StepCounter: disable - unregister listener")
         sensorManager.unregisterListener(stepCountEventListener)
+        isListenerRegistered = false
     }
 
     fun snapshotAbsoluteStepCountOnTreeCapture() {
@@ -82,7 +107,12 @@ class StepCounter(
         override fun onSensorChanged(event: SensorEvent?) {
             event?.let {
                 absoluteStepCount = it.values[0].toInt()
-                Timber.d("StepCounter: Step count [${it.values[0].toInt()}]")
+                if (needsBaselineSnapshot) {
+                    needsBaselineSnapshot = false
+                    snapshotAbsoluteStepCountOnTreeCapture()
+                    Timber.d("StepCounter: Baseline set to ${it.values[0].toInt()}, delta starts at 0")
+                }
+                Timber.d("StepCounter: Step count [${it.values[0].toInt()}], delta [$deltaSteps]")
             }
         }
     }

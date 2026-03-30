@@ -71,6 +71,7 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 import org.greenstand.android.TreeTracker.view.UserImageButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+import org.greenstand.android.TreeTracker.viewmodel.HandleUiEvents
 
 @ExperimentalPermissionsApi
 @Composable
@@ -87,6 +88,8 @@ fun TreeCaptureScreen(
     cameraControl.imageScaleHeight = state.imageScalingHeight
 
     PermissionRequest()
+
+    HandleUiEvents(viewModel)
 
     BackHandler(enabled = true) {
         scope.launch {
@@ -165,11 +168,6 @@ fun TreeCaptureScreen(
                     .padding(padding),
             onImageCaptured = {
                 viewModel.handleAction(TreeCaptureAction.OnImageCaptured(it))
-                if (state.isLocationAvailable == true) {
-                    scope.launch {
-                        CaptureFlowScopeManager.nav.navForward(navController)
-                    }
-                }
             },
         )
         ActionBar(

@@ -272,6 +272,9 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM location WHERE uploaded = 0")
     suspend fun getLocationData(): List<LocationEntity>
 
+    @Query("SELECT * FROM location")
+    suspend fun getAllLocations(): List<LocationEntity>
+
     @Query("UPDATE location_data SET uploaded = :isUploaded WHERE _id IN (:ids)")
     suspend fun updateLegacyLocationDataUploadStatus(
         ids: List<Long>,

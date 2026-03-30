@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
@@ -35,6 +36,7 @@ class CaptureFlowNavigationController(
     private val sessionTracker: SessionTracker,
     private val locationDataCapturer: LocationDataCapturer,
     private val treeCapturer: TreeCapturer,
+    private val deviceOrientation: DeviceOrientation,
 ) : FlowNavigationController(orgRepo.currentOrg().captureFlow) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -110,6 +112,7 @@ class CaptureFlowNavigationController(
             try {
                 sessionTracker.endSession()
                 stepCounter.disable()
+                deviceOrientation.disable()
                 withContext(Dispatchers.Main) {
                     locationDataCapturer.stopGpsUpdates()
                     locationDataCapturer.turnOffTreeCaptureMode()

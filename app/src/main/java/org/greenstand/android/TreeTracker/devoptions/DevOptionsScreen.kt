@@ -25,7 +25,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -36,14 +39,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun DevOptionsRoot() {
@@ -67,6 +75,10 @@ fun DevOptionsScreen(
     state: DevOptionsState,
     onHandleAction: (DevOptionsAction) -> Unit = {},
 ) {
+    val overlayManager: DebugOverlayManager = koinInject()
+    val showSyncOverlay by overlayManager.showSyncOverlay.collectAsState()
+    val showSensorOverlay by overlayManager.showSensorOverlay.collectAsState()
+
     TreeTrackerTheme {
         Scaffold(
             bottomBar = {
@@ -81,6 +93,35 @@ fun DevOptionsScreen(
             },
         ) {
             LazyColumn(modifier = Modifier.statusBarsPadding().padding(it)) {
+                item {
+                    Text(
+                        text = "Debug Overlays",
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = AppColors.SkyBlue,
+                    )
+                }
+                item {
+                    OverlayToggleItem(
+                        label = "Show Sync Overlay",
+                        checked = showSyncOverlay,
+                        onToggle = { overlayManager.setSyncOverlay(it) },
+                    )
+                }
+                item {
+                    OverlayToggleItem(
+                        label = "Show Sensor Overlay",
+                        checked = showSensorOverlay,
+                        onToggle = { overlayManager.setSensorOverlay(it) },
+                    )
+                }
+                item {
+                    Divider(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        color = AppColors.DeepGray,
+                    )
+                }
                 items(state.params) { param ->
                     ParamListItem(param) { newValue ->
                         onHandleAction(DevOptionsAction.UpdateParam(param, newValue))
@@ -88,6 +129,35 @@ fun DevOptionsScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun OverlayToggleItem(
+    label: String,
+    checked: Boolean,
+    onToggle: (Boolean) -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onToggle,
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = AppColors.Green,
+                    checkedTrackColor = AppColors.GreenShadow,
+                ),
+        )
     }
 }
 
