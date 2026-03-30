@@ -298,7 +298,6 @@ private fun StepSection(steps: StepState) {
     }
 }
 
-
 @Composable
 private fun SectionHeader(title: String) {
     Text(

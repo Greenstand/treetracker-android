@@ -72,11 +72,12 @@ class StepCounter(
             return
         }
         needsBaselineSnapshot = true
-        val registered = sensorManager.registerListener(
-            stepCountEventListener,
-            stepCounter,
-            SensorManager.SENSOR_DELAY_FASTEST,
-        )
+        val registered =
+            sensorManager.registerListener(
+                stepCountEventListener,
+                stepCounter,
+                SensorManager.SENSOR_DELAY_FASTEST,
+            )
         isListenerRegistered = registered
         if (registered) {
             Timber.d("StepCounter: Sensor listener registered successfully")

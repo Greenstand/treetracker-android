@@ -33,6 +33,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,9 +59,11 @@ fun DevOptionsRoot() {
     val viewModel: DevOptionsViewModel = viewModel(factory = LocalViewModelFactory.current)
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
+    val overlayManager: DebugOverlayManager = koinInject()
 
     DevOptionsScreen(
         state = state,
+        overlayManager = overlayManager,
         onHandleAction = { action ->
             when (action) {
                 is DevOptionsAction.NavigateBack -> navController.popBackStack()
@@ -73,11 +76,11 @@ fun DevOptionsRoot() {
 @Composable
 fun DevOptionsScreen(
     state: DevOptionsState,
+    overlayManager: DebugOverlayManager? = null,
     onHandleAction: (DevOptionsAction) -> Unit = {},
 ) {
-    val overlayManager: DebugOverlayManager = koinInject()
-    val showSyncOverlay by overlayManager.showSyncOverlay.collectAsState()
-    val showSensorOverlay by overlayManager.showSensorOverlay.collectAsState()
+    val showSyncOverlay by (overlayManager?.showSyncOverlay ?: MutableStateFlow(false)).collectAsState()
+    val showSensorOverlay by (overlayManager?.showSensorOverlay ?: MutableStateFlow(false)).collectAsState()
 
     TreeTrackerTheme {
         Scaffold(
@@ -106,14 +109,14 @@ fun DevOptionsScreen(
                     OverlayToggleItem(
                         label = "Show Sync Overlay",
                         checked = showSyncOverlay,
-                        onToggle = { overlayManager.setSyncOverlay(it) },
+                        onToggle = { overlayManager?.setSyncOverlay(it) },
                     )
                 }
                 item {
                     OverlayToggleItem(
                         label = "Show Sensor Overlay",
                         checked = showSensorOverlay,
-                        onToggle = { overlayManager.setSensorOverlay(it) },
+                        onToggle = { overlayManager?.setSensorOverlay(it) },
                     )
                 }
                 item {
