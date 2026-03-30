@@ -42,5 +42,9 @@ abstract class BaseViewModel<S, A : Action>(
         _events.trySend(event)
     }
 
+    protected fun navigate(route: Any) {
+        triggerEvent(NavigationEvent { navigate(route) })
+    }
+
     abstract fun handleAction(action: A)
 }
