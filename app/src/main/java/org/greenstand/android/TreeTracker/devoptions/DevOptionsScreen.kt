@@ -25,7 +25,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -36,23 +39,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
+import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun DevOptionsRoot() {
     val viewModel: DevOptionsViewModel = viewModel(factory = LocalViewModelFactory.current)
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
+    val overlayManager: DebugOverlayManager = koinInject()
 
     DevOptionsScreen(
         state = state,
+        overlayManager = overlayManager,
         onHandleAction = { action ->
             when (action) {
                 is DevOptionsAction.NavigateBack -> navController.popBackStack()
@@ -65,8 +76,12 @@ fun DevOptionsRoot() {
 @Composable
 fun DevOptionsScreen(
     state: DevOptionsState,
+    overlayManager: DebugOverlayManager? = null,
     onHandleAction: (DevOptionsAction) -> Unit = {},
 ) {
+    val showSyncOverlay by (overlayManager?.showSyncOverlay ?: MutableStateFlow(false)).collectAsState()
+    val showSensorOverlay by (overlayManager?.showSensorOverlay ?: MutableStateFlow(false)).collectAsState()
+
     TreeTrackerTheme {
         Scaffold(
             bottomBar = {
@@ -81,6 +96,35 @@ fun DevOptionsScreen(
             },
         ) {
             LazyColumn(modifier = Modifier.statusBarsPadding().padding(it)) {
+                item {
+                    Text(
+                        text = "Debug Overlays",
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = AppColors.SkyBlue,
+                    )
+                }
+                item {
+                    OverlayToggleItem(
+                        label = "Show Sync Overlay",
+                        checked = showSyncOverlay,
+                        onToggle = { overlayManager?.setSyncOverlay(it) },
+                    )
+                }
+                item {
+                    OverlayToggleItem(
+                        label = "Show Sensor Overlay",
+                        checked = showSensorOverlay,
+                        onToggle = { overlayManager?.setSensorOverlay(it) },
+                    )
+                }
+                item {
+                    Divider(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        color = AppColors.DeepGray,
+                    )
+                }
                 items(state.params) { param ->
                     ParamListItem(param) { newValue ->
                         onHandleAction(DevOptionsAction.UpdateParam(param, newValue))
@@ -88,6 +132,35 @@ fun DevOptionsScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun OverlayToggleItem(
+    label: String,
+    checked: Boolean,
+    onToggle: (Boolean) -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onToggle,
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = AppColors.Green,
+                    checkedTrackColor = AppColors.GreenShadow,
+                ),
+        )
     }
 }
 

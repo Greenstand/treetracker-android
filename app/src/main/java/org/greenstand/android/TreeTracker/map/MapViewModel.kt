@@ -20,9 +20,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
+import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+import timber.log.Timber
 
 data class MapMarker(
     val latitude: Double,
@@ -32,12 +35,21 @@ data class MapMarker(
     val note: String,
     val plantDate: Instant,
     val imagePath: String?,
+    val sessionId: Long? = null,
+)
+
+data class StepPoint(
+    val latitude: Double,
+    val longitude: Double,
+    val sessionId: Long,
 )
 
 data class MapState(
     val markers: List<MapMarker> = emptyList(),
+    val stepPoints: List<StepPoint> = emptyList(),
     val isLoading: Boolean = true,
     val selectedMarkerId: String? = null,
+    val selectedSessionId: Long? = null,
 )
 
 sealed class MapAction : Action {
@@ -49,44 +61,66 @@ sealed class MapAction : Action {
 class MapViewModel(
     private val dao: TreeTrackerDAO,
 ) : BaseViewModel<MapState, MapAction>(MapState()) {
+    private val json = Json { ignoreUnknownKeys = true }
+
     init {
-        loadTrees()
+        loadData()
     }
 
     override fun handleAction(action: MapAction) {
         when (action) {
             is MapAction.SelectMarker -> {
-                updateState { copy(selectedMarkerId = action.markerId) }
+                val marker = state.value.markers.find { it.id == action.markerId }
+                updateState {
+                    copy(
+                        selectedMarkerId = action.markerId,
+                        selectedSessionId = marker?.sessionId,
+                    )
+                }
             }
         }
     }
 
-    private fun loadTrees() {
+    private fun loadData() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
 
-            val trees =
+            val (trees, steps) =
                 withContext(Dispatchers.IO) {
-                    val allTreeEntities = dao.getAllTrees()
-                    buildList {
-                        addAll(
-                            allTreeEntities.map { tree ->
-                                MapMarker(
-                                    latitude = tree.latitude,
-                                    longitude = tree.longitude,
-                                    id = "tree_${tree.id}",
-                                    isUploaded = tree.uploaded,
-                                    note = tree.note,
-                                    plantDate = tree.createdAt,
-                                    imagePath = tree.photoPath,
+                    val treeMarkers =
+                        dao.getAllTrees().map { tree ->
+                            MapMarker(
+                                latitude = tree.latitude,
+                                longitude = tree.longitude,
+                                id = "tree_${tree.id}",
+                                isUploaded = tree.uploaded,
+                                note = tree.note,
+                                plantDate = tree.createdAt,
+                                imagePath = tree.photoPath,
+                                sessionId = tree.sessionId,
+                            )
+                        }
+
+                    val stepPoints =
+                        dao.getLocationsForTreeSessions().mapNotNull { entity ->
+                            try {
+                                val data = json.decodeFromString<LocationData>(entity.locationDataJson)
+                                StepPoint(
+                                    latitude = data.latitude,
+                                    longitude = data.longitude,
+                                    sessionId = entity.sessionId,
                                 )
-                            },
-                        )
-                    }
+                            } catch (e: Exception) {
+                                Timber.w(e, "Failed to parse location JSON")
+                                null
+                            }
+                        }
+
+                    Pair(treeMarkers, stepPoints)
                 }
 
             updateState {
-                copy(markers = trees, isLoading = false)
+                copy(markers = trees, stepPoints = steps, isLoading = false)
             }
         }
     }
