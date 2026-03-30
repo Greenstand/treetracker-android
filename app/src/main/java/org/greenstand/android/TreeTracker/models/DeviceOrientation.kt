@@ -34,6 +34,10 @@ class DeviceOrientation(
     private val rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
     fun enable() {
+        if (rotationVectorSensor == null) {
+            Timber.w("DeviceOrientation: No rotation vector sensor available on this device")
+            return
+        }
         Timber.d("DeviceOrientation - registering rotation vector sensor")
         sensorManager.registerListener(
             orientationEventListener,

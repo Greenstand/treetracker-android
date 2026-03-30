@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.navigation
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
@@ -29,6 +30,7 @@ class CaptureSetupNavigationController(
     private val stepCounter: StepCounter,
     private val sessionTracker: SessionTracker,
     private val locationDataCapturer: LocationDataCapturer,
+    private val deviceOrientation: DeviceOrientation,
 ) : FlowNavigationController(orgRepo.currentOrg().captureSetupFlow) {
     /**
      * Navigate forward in the setup flow. Suspend because completing setup
@@ -38,6 +40,7 @@ class CaptureSetupNavigationController(
         if (isAtEnd) {
             // Setup complete — start session and transition to capture flow
             stepCounter.enable()
+            deviceOrientation.enable()
             sessionTracker.startSession()
             withContext(Dispatchers.Main) {
                 locationDataCapturer.startGpsUpdates()

@@ -246,12 +246,12 @@ val appModule =
 
         scope<CaptureSetupScope> {
             scoped { CaptureSetupData(get()) }
-            scoped { CaptureSetupNavigationController(get(), get(), get(), get()) }
+            scoped { CaptureSetupNavigationController(get(), get(), get(), get(), get()) }
         }
 
         scope<CaptureFlowScope> {
             scoped { CaptureFlowData() }
-            scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get()) }
+            scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get(), get()) }
             scoped { TreeCapturer(get(), get(), get(), get(), get()) }
         }
     }
