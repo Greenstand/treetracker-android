@@ -33,10 +33,12 @@ import timber.log.Timber
 fun <S, A : Action> HandleUiEvents(viewModel: BaseViewModel<S, A>) {
     val navController = LocalNavHostController.current
     LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is NavigationEvent -> event.navigate(navController)
-                else -> Timber.w("Unhandled UiEvent: $event")
+        viewModel.events.collect { consumable ->
+            consumable.getContentIfNotConsumed()?.let { event ->
+                when (event) {
+                    is NavigationEvent -> event.navigate(navController)
+                    else -> Timber.w("Unhandled UiEvent: $event")
+                }
             }
         }
     }

@@ -29,8 +29,8 @@ abstract class BaseViewModel<S, A : Action>(
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<S> = _state.asStateFlow()
 
-    private val _events = Channel<UiEvent>(Channel.BUFFERED)
-    val events: Flow<UiEvent> = _events.receiveAsFlow()
+    private val _events = Channel<ConsumableEvent<UiEvent>>(Channel.BUFFERED)
+    val events: Flow<ConsumableEvent<UiEvent>> = _events.receiveAsFlow()
 
     protected val currentState: S get() = _state.value
 
@@ -39,7 +39,7 @@ abstract class BaseViewModel<S, A : Action>(
     }
 
     protected fun triggerEvent(event: UiEvent) {
-        _events.trySend(event)
+        _events.trySend(ConsumableEvent(event))
     }
 
     protected fun navigate(route: Any) {
