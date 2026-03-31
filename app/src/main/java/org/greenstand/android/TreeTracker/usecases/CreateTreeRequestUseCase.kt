@@ -30,7 +30,9 @@ class CreateTreeRequestUseCase(
 ) : UseCase<CreateTreeRequestParams, NewTreeRequest>() {
     override suspend fun execute(params: CreateTreeRequestParams): NewTreeRequest {
         val treeCapture = dao.getTreeCaptureById(params.treeId)
-        val planterCheckIn = dao.getPlanterCheckInById(treeCapture.planterCheckInId)
+        val planterCheckIn =
+            dao.getPlanterCheckInById(treeCapture.planterCheckInId)
+                ?: error("No Planter CheckIn")
         val planterInfo =
             dao.getPlanterInfoById(planterCheckIn.planterInfoId)
                 ?: error("No Planter Info")

@@ -195,7 +195,7 @@ class TreeTrackerDaoTest {
             val newPlanterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId)
             val id = treeTrackerDAO.insertPlanterCheckIn(newPlanterCheckIn)
             val getPlanterCheck = treeTrackerDAO.getPlanterCheckInById(id)
-            assertEquals("new", getPlanterCheck.localPhotoPath)
+            assertEquals("new", getPlanterCheck?.localPhotoPath)
         }
 
     @Test

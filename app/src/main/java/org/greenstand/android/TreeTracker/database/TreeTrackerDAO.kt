@@ -133,7 +133,7 @@ interface TreeTrackerDAO {
     suspend fun getAllPlanterCheckInsForPlanterInfoId(planterInfoId: Long): List<PlanterCheckInEntity>
 
     @Query("SELECT * FROM planter_check_in WHERE _id = :id")
-    suspend fun getPlanterCheckInById(id: Long): PlanterCheckInEntity
+    suspend fun getPlanterCheckInById(id: Long): PlanterCheckInEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlanterCheckIn(planterCheckInEntity: PlanterCheckInEntity): Long
