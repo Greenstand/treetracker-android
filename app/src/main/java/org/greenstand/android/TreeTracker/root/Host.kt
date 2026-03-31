@@ -16,11 +16,20 @@
 package org.greenstand.android.TreeTracker.root
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.overlay.DebugOverlayHost
+import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
+import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
+import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
+import org.koin.compose.koinInject
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
@@ -84,73 +93,87 @@ fun Host() {
     val navController = LocalNavHostController.current
 
     TreeTrackerTheme {
-        NavHost(navController, startDestination = SplashRoute) {
-            trackedComposable<SplashRoute>(
-                deepLinks =
-                    listOf(
-                        navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" },
-                    ),
-            ) {
-                SplashScreen(it.arguments?.getString("orgJson"))
+        Box(modifier = Modifier.fillMaxSize()) {
+            NavHost(navController, startDestination = SplashRoute) {
+                trackedComposable<SplashRoute>(
+                    deepLinks =
+                        listOf(
+                            navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" },
+                        ),
+                ) {
+                    SplashScreen(it.arguments?.getString("orgJson"))
+                }
+
+                trackedComposable<LanguageRoute> {
+                    val route = it.toRoute<LanguageRoute>()
+                    LanguageSelectScreen(route.isFromTopBar)
+                }
+
+                trackedComposable<SignupFlowRoute> { SignUpScreen() }
+                trackedComposable<DashboardRoute> { DashboardScreen() }
+                trackedComposable<OrgRoute> { OrgPickerScreen() }
+                trackedComposable<UserSelectRoute> { UserSelectScreen() }
+                trackedComposable<WalletSelectRoute> { WalletSelectScreen() }
+                trackedComposable<AddWalletRoute> { AddWalletScreen() }
+                trackedComposable<AddOrgRoute> { AddOrgScreen() }
+                trackedComposable<SelfieRoute> { SelfieScreen() }
+                trackedComposable<TreeHeightScreenRoute> { TreeHeightScreen() }
+                trackedComposable<SessionNoteRoute> { SessionNoteScreen() }
+                trackedComposable<SettingsRoute> { SettingsScreen() }
+                trackedComposable<ProfileSelectRoute> { ProfileSelectScreen() }
+                trackedComposable<DeleteProfileRoute> { DeleteProfileScreen() }
+                trackedComposable<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
+                trackedComposable<DevOptionsRoute> { DevOptionsRoot() }
+                trackedComposable<MapRoute> { MapScreen() }
+
+                trackedComposable<ProfileRoute> {
+                    val route = it.toRoute<ProfileRoute>()
+                    ProfileScreen(route.planterInfoId)
+                }
+
+                trackedComposable<IndividualMessageListRoute> {
+                    val route = it.toRoute<IndividualMessageListRoute>()
+                    IndividualMessageListScreen(route.planterInfoId)
+                }
+
+                trackedComposable<SurveyRoute> {
+                    val route = it.toRoute<SurveyRoute>()
+                    SurveyScreen(route.messageId)
+                }
+
+                trackedComposable<ImageReviewRoute> {
+                    val route = it.toRoute<ImageReviewRoute>()
+                    ImageReviewScreen(route.photoPath)
+                }
+
+                trackedComposable<TreeCaptureRoute> {
+                    val route = it.toRoute<TreeCaptureRoute>()
+                    TreeCaptureScreen(route.profilePicUrl)
+                }
+
+                trackedComposable<TreeImageReviewRoute> { TreeImageReviewScreen() }
+
+                trackedComposable<ChatRoute> {
+                    val route = it.toRoute<ChatRoute>()
+                    ChatScreen(route.planterInfoId, route.otherChatIdentifier)
+                }
+
+                trackedComposable<AnnouncementRoute> {
+                    val route = it.toRoute<AnnouncementRoute>()
+                    AnnouncementScreen(route.messageId)
+                }
             }
 
-            trackedComposable<LanguageRoute> {
-                val route = it.toRoute<LanguageRoute>()
-                LanguageSelectScreen(route.isFromTopBar)
-            }
+            if (FeatureFlags.DEBUG_ENABLED) {
+                val overlayManager: DebugOverlayManager = koinInject()
+                val syncProgressTracker: SyncProgressTracker = koinInject()
+                val sensorDiagnosticsTracker: SensorDiagnosticsTracker = koinInject()
 
-            trackedComposable<SignupFlowRoute> { SignUpScreen() }
-            trackedComposable<DashboardRoute> { DashboardScreen() }
-            trackedComposable<OrgRoute> { OrgPickerScreen() }
-            trackedComposable<UserSelectRoute> { UserSelectScreen() }
-            trackedComposable<WalletSelectRoute> { WalletSelectScreen() }
-            trackedComposable<AddWalletRoute> { AddWalletScreen() }
-            trackedComposable<AddOrgRoute> { AddOrgScreen() }
-            trackedComposable<SelfieRoute> { SelfieScreen() }
-            trackedComposable<TreeHeightScreenRoute> { TreeHeightScreen() }
-            trackedComposable<SessionNoteRoute> { SessionNoteScreen() }
-            trackedComposable<SettingsRoute> { SettingsScreen() }
-            trackedComposable<ProfileSelectRoute> { ProfileSelectScreen() }
-            trackedComposable<DeleteProfileRoute> { DeleteProfileScreen() }
-            trackedComposable<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
-            trackedComposable<DevOptionsRoute> { DevOptionsRoot() }
-            trackedComposable<MapRoute> { MapScreen() }
-
-            trackedComposable<ProfileRoute> {
-                val route = it.toRoute<ProfileRoute>()
-                ProfileScreen(route.planterInfoId)
-            }
-
-            trackedComposable<IndividualMessageListRoute> {
-                val route = it.toRoute<IndividualMessageListRoute>()
-                IndividualMessageListScreen(route.planterInfoId)
-            }
-
-            trackedComposable<SurveyRoute> {
-                val route = it.toRoute<SurveyRoute>()
-                SurveyScreen(route.messageId)
-            }
-
-            trackedComposable<ImageReviewRoute> {
-                val route = it.toRoute<ImageReviewRoute>()
-                ImageReviewScreen(route.photoPath)
-            }
-
-            trackedComposable<TreeCaptureRoute> {
-                val route = it.toRoute<TreeCaptureRoute>()
-                TreeCaptureScreen(route.profilePicUrl)
-            }
-
-            trackedComposable<TreeImageReviewRoute> { TreeImageReviewScreen() }
-
-            trackedComposable<ChatRoute> {
-                val route = it.toRoute<ChatRoute>()
-                ChatScreen(route.planterInfoId, route.otherChatIdentifier)
-            }
-
-            trackedComposable<AnnouncementRoute> {
-                val route = it.toRoute<AnnouncementRoute>()
-                AnnouncementScreen(route.messageId)
+                DebugOverlayHost(
+                    overlayManager = overlayManager,
+                    syncProgressTracker = syncProgressTracker,
+                    sensorDiagnosticsTracker = sensorDiagnosticsTracker,
+                )
             }
         }
     }

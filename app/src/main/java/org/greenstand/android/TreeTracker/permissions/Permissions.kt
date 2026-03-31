@@ -20,6 +20,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -52,14 +53,18 @@ fun PermissionRequest(
 ) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
+    val permissions =
+        buildList {
+            add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            add(Manifest.permission.ACCESS_FINE_LOCATION)
+            add(Manifest.permission.CAMERA)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                add(Manifest.permission.ACTIVITY_RECOGNITION)
+            }
+        }
     val permissionsState =
         rememberMultiplePermissionsState(
-            permissions =
-                listOf(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.CAMERA,
-                ),
+            permissions = permissions,
         )
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(

@@ -272,6 +272,16 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM location WHERE uploaded = 0")
     suspend fun getLocationData(): List<LocationEntity>
 
+    @Query(
+        "SELECT l.* FROM location l " +
+            "INNER JOIN session s ON l.session_id = s._id " +
+            "INNER JOIN tree t ON t.session_id = s._id " +
+            "GROUP BY l._id " +
+            "ORDER BY l._id DESC " +
+            "LIMIT :limit",
+    )
+    suspend fun getLocationsForTreeSessions(limit: Int = 5000): List<LocationEntity>
+
     @Query("UPDATE location_data SET uploaded = :isUploaded WHERE _id IN (:ids)")
     suspend fun updateLegacyLocationDataUploadStatus(
         ids: List<Long>,

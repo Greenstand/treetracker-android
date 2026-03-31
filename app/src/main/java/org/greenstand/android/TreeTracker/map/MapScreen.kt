@@ -91,7 +91,9 @@ fun MapScreen(
     ) {
         LibreMap(
             markers = state.markers,
+            stepPoints = state.stepPoints,
             selectedMarkerId = state.selectedMarkerId,
+            selectedSessionId = state.selectedSessionId,
             styleUrl = "https://tiles.openfreemap.org/styles/liberty",
             onMarkerClick = { markerId ->
                 viewModel.handleAction(MapAction.SelectMarker(markerId))
