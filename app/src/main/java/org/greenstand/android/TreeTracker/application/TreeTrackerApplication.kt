@@ -18,12 +18,12 @@ package org.greenstand.android.TreeTracker.application
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
-import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
 import org.greenstand.android.TreeTracker.di.networkModule
 import org.greenstand.android.TreeTracker.di.roomModule
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -50,7 +50,7 @@ class TreeTrackerApplication : Application() {
             )
         }
 
-        if (BuildConfig.DEBUG) {
+        if (FeatureFlags.DEBUG_ENABLED) {
             Timber.plant(Timber.DebugTree())
         } else {
             Timber.plant(ExceptionLogger())

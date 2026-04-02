@@ -52,6 +52,10 @@ fun SplashScreen(
             Manifest.permission.ACCESS_FINE_LOCATION,
         )
 
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        permissions.add(Manifest.permission.ACTIVITY_RECOGNITION)
+    }
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
     }

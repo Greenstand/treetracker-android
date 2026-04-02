@@ -20,6 +20,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
@@ -35,7 +36,7 @@ class RetrofitBuilder(
                     .addInterceptor(
                         HttpLoggingInterceptor().also {
                             it.setLevel(
-                                if (BuildConfig.DEBUG) {
+                                if (FeatureFlags.DEBUG_ENABLED) {
                                     HttpLoggingInterceptor.Level.BODY
                                 } else {
                                     HttpLoggingInterceptor.Level.NONE
