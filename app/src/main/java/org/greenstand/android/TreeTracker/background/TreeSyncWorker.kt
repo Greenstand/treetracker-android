@@ -26,9 +26,16 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
+import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
+import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -41,13 +48,35 @@ class TreeSyncWorker(
     private val exceptionDataCollector: ExceptionDataCollector by inject()
     private val syncDataBundleUseCase: SyncDataUseCase by inject()
     private val syncNotificationManager: SyncNotificationManager by inject()
+    private val dao: TreeTrackerDAO by inject()
+    private val treesToSyncHelper: TreesToSyncHelper by inject()
 
     override suspend fun doWork(): Result {
-        setForeground(syncNotificationManager.createForegroundInfo(applicationContext, id))
-        exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
-        val result = syncDataBundleUseCase.execute(Unit)
-        exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
-        return if (result) Result.success() else Result.failure()
+        setForeground(syncNotificationManager.createForegroundInfo(applicationContext))
+
+        val totalTreesToSync = treesToSyncHelper.getTreeCountToSync()
+
+        return coroutineScope {
+            val progressJob =
+                launch {
+                    while (true) {
+                        delay(750)
+                        val remaining =
+                            withContext(Dispatchers.IO) {
+                                dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
+                            }
+                        val uploaded = (totalTreesToSync - remaining).coerceAtLeast(0)
+                        val contentText = applicationContext.getString(R.string.uploading_trees) + " ($uploaded/$totalTreesToSync)"
+                        syncNotificationManager.updateProgress(uploaded, totalTreesToSync, contentText)
+                    }
+                }
+
+            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
+            val result = syncDataBundleUseCase.execute(Unit)
+            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
+            progressJob.cancel()
+            if (result) Result.success() else Result.failure()
+        }
     }
 
     companion object {

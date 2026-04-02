@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.background
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -23,27 +24,24 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.work.ForegroundInfo
-import androidx.work.WorkManager
 import org.greenstand.android.TreeTracker.R
-import java.util.UUID
 
 class SyncNotificationManager(
     private val notificationManagerCompat: NotificationManagerCompat,
 ) {
+    private var applicationContext: Context? = null
+
     fun createForegroundInfo(
         applicationContext: Context,
-        workerId: UUID,
     ): ForegroundInfo {
+        this.applicationContext = applicationContext
+
         // Create a Notification channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
         }
-
-        val intent =
-            WorkManager
-                .getInstance(applicationContext)
-                .createCancelPendingIntent(workerId)
 
         val builder =
             NotificationCompat
@@ -55,14 +53,35 @@ class SyncNotificationManager(
                 .setColor(
                     androidx.core.content.ContextCompat
                         .getColor(applicationContext, R.color.colorPrimary),
-                ).addAction(android.R.drawable.ic_delete, applicationContext.getString(R.string.cancel), intent)
-                .setProgress(0, 0, true)
+                ).setProgress(0, 0, true)
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ForegroundInfo(NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {
             ForegroundInfo(NOTIFICATION_ID, builder.build())
         }
+    }
+
+    // Foreground service notifications are exempt from POST_NOTIFICATIONS permission,
+    // so the MissingPermission lint warning is a false positive here.
+    @SuppressLint("MissingPermission")
+    fun updateProgress(
+        progress: Int,
+        max: Int,
+        contentText: String,
+    ) {
+        val context = applicationContext ?: return
+        val builder =
+            NotificationCompat
+                .Builder(context, SYNC_CHANNEL_ID)
+                .setSmallIcon(R.drawable.greenstand_logo)
+                .setContentTitle(context.getString(R.string.syncing))
+                .setContentText(contentText)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .setOnlyAlertOnce(true)
+                .setProgress(max, progress, false)
+        notificationManagerCompat.notify(NOTIFICATION_ID, builder.build())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
