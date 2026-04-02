@@ -1,0 +1,120 @@
+name: Beta Testing Bug (v2.2)
+description: Report a bug found during beta testing of version 2.2
+title: "Beta 2.2 Bug Report"
+labels: ["bug", "beta", "2.2"]
+body:
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version / Build Number
+      description: Enter the build number as a whole number.
+      placeholder: "e.g. 123"
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      placeholder: "e.g. Samsung Galaxy S21"
+    validations:
+      required: true
+
+  - type: input
+    id: android-version
+    attributes:
+      label: Android Version
+      placeholder: "e.g. Android 13"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior.
+      value: |
+        1. Go to '...'
+        2. Tap on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened instead.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequency
+      options:
+        - Always reproducible
+        - Intermittent
+        - Happened once
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Blocker - App crashes or data loss
+        - Major - Feature broken, no workaround
+        - Minor - Feature broken, workaround exists
+        - Cosmetic - UI/visual issue
+    validations:
+      required: true
+
+  - type: dropdown
+    id: network
+    attributes:
+      label: Network Conditions
+      options:
+        - Wi-Fi
+        - Mobile data
+        - Offline
+        - Intermittent connectivity
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Screen recordings
+      description: If applicable, add screenshots or screen recordings to help explain the problem.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "If available, attach relevant logs from the app (Settings > Share logs)."
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: "Any other context (e.g. account type, organization, number of trees captured before the issue)."
