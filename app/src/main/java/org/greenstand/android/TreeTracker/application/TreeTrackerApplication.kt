@@ -18,7 +18,6 @@ package org.greenstand.android.TreeTracker.application
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
-import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
