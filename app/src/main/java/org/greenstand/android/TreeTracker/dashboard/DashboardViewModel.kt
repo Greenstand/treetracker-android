@@ -20,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.BackoffPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkInfo.State
 import androidx.work.WorkInfo.State.SUCCEEDED
@@ -216,6 +217,7 @@ class DashboardViewModel(
         val request =
             OneTimeWorkRequestBuilder<TreeSyncWorker>()
                 .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.SECONDS)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
 
         workManager.enqueueUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID, ExistingWorkPolicy.KEEP, request)
