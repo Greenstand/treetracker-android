@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
 import org.greenstand.android.TreeTracker.navigation.MapRoute
 import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
@@ -148,7 +149,7 @@ fun Settings(
                 )
                 Divider(color = Color.White)
 
-                if (BuildConfig.DEBUG) {
+                if (FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
                     SettingsItem(
                         iconResId = R.drawable.map_icon,
                         titleResId = R.string.map_title,
@@ -164,22 +165,25 @@ fun Settings(
                     descriptionResId = R.string.privacy_description,
                     onClick = { onHandleAction(SettingsAction.SetPrivacyDialogVisibility(true)) },
                 )
-                Divider(color = Color.White)
 
-                SettingsItem(
-                    iconResId = R.drawable.logout,
-                    titleResId = R.string.logout_title,
-                    descriptionResId = R.string.logout_description,
-                    onClick = { onHandleAction(SettingsAction.UpdateLogoutDialogVisibility(true)) },
-                )
-                Divider(color = Color.White)
+                if (FeatureFlags.DEBUG_ENABLED) {
+                    Divider(color = Color.White)
 
-                SettingsItem(
-                    iconResId = R.drawable.delete,
-                    titleResId = R.string.delete_account_title,
-                    descriptionResId = R.string.delete_account_description,
-                    onClick = { onHandleAction(SettingsAction.NavigateToDeleteAccount) },
-                )
+                    SettingsItem(
+                        iconResId = R.drawable.logout,
+                        titleResId = R.string.logout_title,
+                        descriptionResId = R.string.logout_description,
+                        onClick = { onHandleAction(SettingsAction.UpdateLogoutDialogVisibility(true)) },
+                    )
+                    Divider(color = Color.White)
+
+                    SettingsItem(
+                        iconResId = R.drawable.delete,
+                        titleResId = R.string.delete_account_title,
+                        descriptionResId = R.string.delete_account_description,
+                        onClick = { onHandleAction(SettingsAction.NavigateToDeleteAccount) },
+                    )
+                }
 
                 Text(
                     text =
