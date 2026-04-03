@@ -1,0 +1,65 @@
+name: Feature
+description: A fully specced feature on the roadmap ready for implementation.
+labels: ["feature", "triage"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A brief overview of the feature and its purpose.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-stories
+    attributes:
+      label: User Stories
+      description: Who is this for and what do they need?
+      value: |
+        - As a [type of user], I want [goal] so that [reason].
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Requirements
+      description: Detailed functional requirements for this feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Conditions that must be met for this feature to be considered complete.
+      value: |
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: design
+    attributes:
+      label: Design / Mockups
+      description: Attach or link to any design assets, wireframes, or mockups.
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Notes
+      description: Implementation considerations, affected components, API changes, data model changes, etc.
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Other issues, features, or external services this depends on. Link related issues if applicable.
+
+  - type: input
+    id: target-version
+    attributes:
+      label: Target Version
+      placeholder: "e.g. 2.2"
+    validations:
+      required: true
