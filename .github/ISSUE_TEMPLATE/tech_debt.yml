@@ -1,0 +1,31 @@
+name: Tech debt
+description: Create a report to help improve the code base.
+labels: ["tech-debt", "triage"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the tech debt
+      description: A clear and concise description of what the tech debt is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact of the tech debt
+      description: "The impact this technical debt has on the application (e.g. performance, maintenance challenges) and its severity."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      description: How important is it to address this now versus later?
+      options:
+        - High - Must address soon
+        - Medium - Should address in the near future
+        - Low - Can be deferred
+    validations:
+      required: true
