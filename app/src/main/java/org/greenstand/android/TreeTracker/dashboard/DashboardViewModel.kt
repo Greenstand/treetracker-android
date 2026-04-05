@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.background.NotificationConstants
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.FeatureFlags
@@ -144,7 +145,7 @@ class DashboardViewModel(
         updateData()
         locationDataCapturer.stopGpsUpdates()
         workManager
-            .getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID)
+            .getWorkInfosForUniqueWorkLiveData(NotificationConstants.UNIQUE_WORK_ID)
             .observeForever(syncObserver)
     }
 
@@ -181,7 +182,7 @@ class DashboardViewModel(
             } else {
                 updateTimerJob?.cancel()
                 updateTimerJob = null
-                workManager.cancelUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID)
+                workManager.cancelUniqueWork(NotificationConstants.UNIQUE_WORK_ID)
 
                 val state = currentState
                 analytics.stopButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
@@ -220,10 +221,10 @@ class DashboardViewModel(
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
 
-        workManager.enqueueUniqueWork(TreeSyncWorker.UNIQUE_WORK_ID, ExistingWorkPolicy.KEEP, request)
+        workManager.enqueueUniqueWork(NotificationConstants.UNIQUE_WORK_ID, ExistingWorkPolicy.KEEP, request)
     }
 
     override fun onCleared() {
-        workManager.getWorkInfosForUniqueWorkLiveData(TreeSyncWorker.UNIQUE_WORK_ID).removeObserver(syncObserver)
+        workManager.getWorkInfosForUniqueWorkLiveData(NotificationConstants.UNIQUE_WORK_ID).removeObserver(syncObserver)
     }
 }
