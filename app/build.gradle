@@ -13,20 +13,32 @@ def loadExtraProperties(String fileName) {
     def props = new Properties()
     props.load(new FileInputStream(fileName))
     props.each { key, val ->
-        project.setProperty(key, val)
+        ext.set(key, val)
     }
 }
 
 loadExtraProperties("treetracker.keys.properties")
 
 android {
+    signingConfigs {
+        release {
+            def storeFilePath = project.hasProperty('release_store_file') ? project.property('release_store_file') : null
+            if (storeFilePath != null && !storeFilePath.toString().isEmpty()) {
+                storeFile file(storeFilePath)
+                storePassword project.property('release_store_password')
+                keyAlias project.property('release_key_alias')
+                keyPassword project.property('release_key_password')
+            }
+        }
+    }
+
     compileSdk libs.versions.compileSdk.get().toInteger()
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.targetSdk.get().toInteger()
-        versionCode 197
-        versionName "2.2.0"
+        versionCode 202
+        versionName "2.2.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
@@ -70,6 +82,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            signingConfig signingConfigs.release
             resValue "string", "app_name", "Tree Tracker"
             buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
             buildConfigField 'String', 'OBJECT_STORAGE_ENDPOINT', '"eu-central-1"'
