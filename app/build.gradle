@@ -13,7 +13,7 @@ def loadExtraProperties(String fileName) {
     def props = new Properties()
     props.load(new FileInputStream(fileName))
     props.each { key, val ->
-        project.setProperty(key, val)
+        project.ext.set(key, val)
     }
 }
 
@@ -291,6 +291,7 @@ dependencies {
     implementation libs.firebase.analytics
     implementation libs.firebase.crashlytics.ktx
     implementation libs.firebase.installations
+    implementation libs.firebase.config
 
     // Testing
     testImplementation libs.bundles.testing

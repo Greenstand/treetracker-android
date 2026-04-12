@@ -28,7 +28,9 @@ import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import timber.log.Timber
 
+// TEST DEEPLINK: app://mobile.treetracker.org/org?id=109288091&name=Kasiki%20Hai
 // TEST DEEPLINK: app://mobile.treetracker.org/org?params={"id":"109288091","version":"1","name":"Kasiki Hai","walletId":"klasdlk1-a0a23lmnzcln9o3","captureSetupFlow":[{"route":"user-select"},{"route":"session-note"}],"captureFlow":[{"route":"capture/{profilePicUrl}"},{"route":"tree-image-review/{photoPath}"},{"route":"tree-height-selection"}]}
+
 
 class OrgRepo(
     private val dao: TreeTrackerDAO,
@@ -94,24 +96,71 @@ class OrgRepo(
             "OrgRepo not initialized. Call init() before accessing currentOrg().",
         )
 
-    suspend fun addOrgFromJsonString(orgJsonString: String): Boolean =
+    suspend fun addOrgFromRemoteConfig(
+        orgId: String,
+        orgName: String,
+        configJson: String,
+    ): Boolean =
         try {
-            val orgJsonObj = Json.parseToJsonElement(orgJsonString).jsonObject
+            Timber.tag(ORG_LINK_TAG).d("Parsing Remote Config for org $orgId ('$orgName')")
+            val configObj = Json.parseToJsonElement(configJson).jsonObject
+            val walletId = configObj[OrgJsonKeys.V1.WALLET_ID]?.jsonPrimitive?.content ?: ""
+            val setupFlowJson = configObj[OrgJsonKeys.V1.CAPTURE_SETUP_FLOW]?.jsonArray
+            val captureFlowJson = configObj[OrgJsonKeys.V1.CAPTURE_FLOW]?.jsonArray
+            Timber.tag(ORG_LINK_TAG).d(
+                "Parsed config: walletId=$walletId, setupFlow=${setupFlowJson?.size ?: 0} steps, captureFlow=${captureFlowJson?.size ?: 0} steps",
+            )
             val orgEntity =
                 OrganizationEntity(
-                    id = orgJsonObj[OrgJsonKeys.V1.ID]?.jsonPrimitive?.content ?: "",
-                    version = orgJsonObj[OrgJsonKeys.V1.VERSION]?.jsonPrimitive?.content?.toIntOrNull() ?: 0,
-                    name = orgJsonObj[OrgJsonKeys.V1.NAME]?.jsonPrimitive?.content ?: "",
-                    walletId = orgJsonObj[OrgJsonKeys.V1.WALLET_ID]?.jsonPrimitive?.content ?: "",
-                    captureSetupFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_SETUP_FLOW]?.jsonArray.toString(),
-                    captureFlowJson = orgJsonObj[OrgJsonKeys.V1.CAPTURE_FLOW]?.jsonArray.toString(),
+                    id = orgId,
+                    version = configObj[OrgJsonKeys.V1.VERSION]?.jsonPrimitive?.content?.toIntOrNull() ?: 1,
+                    name = orgName,
+                    walletId = walletId,
+                    captureSetupFlowJson = setupFlowJson.toString(),
+                    captureFlowJson = captureFlowJson.toString(),
                 )
             val validatedEntity = validateOrgRoutes(orgEntity)
             dao.insertOrg(validatedEntity)
             setOrg(validatedEntity.id)
+            Timber.tag(ORG_LINK_TAG).i("Org '$orgName' ($orgId) loaded from Remote Config")
             true
         } catch (e: Exception) {
-            Timber.tag("OrgRepo").e(e, "Failed to parse org JSON, falling back to default org")
+            Timber.tag(ORG_LINK_TAG).e(e, "Failed to parse Remote Config for org $orgId, falling back to minimal org")
+            addMinimalOrg(orgId, orgName)
+        }
+
+    suspend fun addMinimalOrg(
+        orgId: String,
+        orgName: String,
+    ): Boolean =
+        try {
+            Timber.tag(ORG_LINK_TAG).d("Creating minimal org: id=$orgId, name='$orgName'")
+            val orgEntity =
+                OrganizationEntity(
+                    id = orgId,
+                    version = 1,
+                    name = orgName,
+                    walletId = "",
+                    captureSetupFlowJson =
+                        json.encodeToString(
+                            listOf(
+                                Destination(RouteRegistry.ROUTE_USER_SELECT),
+                            ),
+                        ),
+                    captureFlowJson =
+                        json.encodeToString(
+                            listOf(
+                                Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
+                                Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW),
+                            ),
+                        ),
+                )
+            dao.insertOrg(orgEntity)
+            setOrg(orgEntity.id)
+            Timber.tag(ORG_LINK_TAG).i("Minimal org '$orgName' ($orgId) created with default flows")
+            true
+        } catch (e: Exception) {
+            Timber.tag(ORG_LINK_TAG).e(e, "Failed to create minimal org for $orgId")
             false
         }
 
@@ -121,13 +170,16 @@ class OrgRepo(
         val invalidSetup = setupFlow.filter { !RouteRegistry.isValidRoute(it.route) }
         val invalidCapture = captureFlow.filter { !RouteRegistry.isValidRoute(it.route) }
         if (invalidSetup.isNotEmpty()) {
-            Timber.tag("OrgRepo").w("Unknown setup flow routes: ${invalidSetup.map { it.route }}")
+            Timber.tag(ORG_LINK_TAG).w("Dropping unknown setup flow routes: ${invalidSetup.map { it.route }}")
         }
         if (invalidCapture.isNotEmpty()) {
-            Timber.tag("OrgRepo").w("Unknown capture flow routes: ${invalidCapture.map { it.route }}")
+            Timber.tag(ORG_LINK_TAG).w("Dropping unknown capture flow routes: ${invalidCapture.map { it.route }}")
         }
         val validSetup = setupFlow.filter { RouteRegistry.isValidRoute(it.route) }
         val validCapture = captureFlow.filter { RouteRegistry.isValidRoute(it.route) }
+        Timber.tag(ORG_LINK_TAG).d(
+            "Validated routes: setupFlow=${validSetup.map { it.route }}, captureFlow=${validCapture.map { it.route }}",
+        )
         return entity.copy(
             captureSetupFlowJson = json.encodeToString(validSetup),
             captureFlowJson = json.encodeToString(validCapture),
@@ -149,6 +201,7 @@ class OrgRepo(
 
     companion object {
         const val DEFAULT_ORG_ID = "-1"
+        private const val ORG_LINK_TAG = "OrgLink"
         private val CURRENT_ORG_ID_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("current-org")
     }
 }

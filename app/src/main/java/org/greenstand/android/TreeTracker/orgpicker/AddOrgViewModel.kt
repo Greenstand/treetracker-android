@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.orgpicker
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
@@ -46,14 +47,22 @@ sealed class AddOrgAction : Action {
 
 class AddOrgViewModel(
     private val preferences: Preferences,
+    private val orgRepo: OrgRepo,
 ) : BaseViewModel<AddOrgState, AddOrgAction>(AddOrgState()) {
     init {
         viewModelScope.launch {
+            val currentOrgName =
+                orgRepo.currentOrg().name
+                    .takeIf { it.isNotBlank() && it != "Greenstand" }
             updateState {
                 copy(
                     userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath,
                     previousOrgName = preferences.getString(PREV_ORG_KEY),
+                    orgName = currentOrgName ?: "",
                 )
+            }
+            if (currentOrgName != null) {
+                CaptureSetupScopeManager.getData().organizationName = currentOrgName
             }
         }
     }
