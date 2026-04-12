@@ -19,7 +19,10 @@ import kotlinx.serialization.Serializable
 
 // No-arg routes
 
-@Serializable data object SplashRoute
+@Serializable data class SplashRoute(
+    val orgId: String? = null,
+    val orgName: String? = null,
+)
 
 @Serializable data object SignupFlowRoute
 
