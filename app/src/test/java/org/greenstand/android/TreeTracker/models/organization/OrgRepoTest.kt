@@ -189,14 +189,8 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson = """
-                {
-                    "version": "2",
-                    "walletId": "rc-wallet",
-                    "captureSetupFlow": [{"route": "user-select"}],
-                    "captureFlow": [{"route": "capture/{profilePicUrl}"}]
-                }
-            """.trimIndent()
+            val configJson =
+                """{"version":"2","walletId":"rc-wallet","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("rc-org", "Remote Org", configJson)
 
@@ -224,13 +218,8 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson = """
-                {
-                    "version": "1",
-                    "captureSetupFlow": [{"route": "user-select"}],
-                    "captureFlow": [{"route": "capture/{profilePicUrl}"}]
-                }
-            """.trimIndent()
+            val configJson =
+                """{"version":"1","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("no-wallet", "NoWallet", configJson)
 
@@ -249,14 +238,8 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson = """
-                {
-                    "version": "1",
-                    "walletId": "",
-                    "captureSetupFlow": [{"route": "user-select"}, {"route": "nonexistent-screen"}],
-                    "captureFlow": [{"route": "capture/{profilePicUrl}"}, {"route": "fake-route"}]
-                }
-            """.trimIndent()
+            val configJson =
+                """{"version":"1","walletId":"","captureSetupFlow":[{"route":"user-select"},{"route":"nonexistent-screen"}],"captureFlow":[{"route":"capture/{profilePicUrl}"},{"route":"fake-route"}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("bad-routes", "BadRoutes", configJson)
 
@@ -302,14 +285,8 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson = """
-                {
-                    "version": "1",
-                    "walletId": "w",
-                    "captureSetupFlow": [{"route": "user-select"}],
-                    "captureFlow": [{"route": "tree-image-review/{photoPath}", "features": ["forceNote"]}]
-                }
-            """.trimIndent()
+            val configJson =
+                """{"version":"1","walletId":"w","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"tree-image-review/{photoPath}","features":["forceNote"]}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("feat-org", "FeatOrg", configJson)
 

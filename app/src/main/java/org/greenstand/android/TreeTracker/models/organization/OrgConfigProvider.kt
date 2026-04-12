@@ -36,9 +36,10 @@ class OrgConfigProvider(
         Timber.tag(TAG).d("Fetching Remote Config for key: $key")
         val startTime = System.currentTimeMillis()
         return try {
-                val fetched = withTimeoutOrNull(FETCH_TIMEOUT_MS) {
-                remoteConfig.fetchAndActivate().await()
-            }
+            val fetched =
+                withTimeoutOrNull(FETCH_TIMEOUT_MS) {
+                    remoteConfig.fetchAndActivate().await()
+                }
             val elapsed = System.currentTimeMillis() - startTime
             if (fetched == null) {
                 Timber.tag(TAG).w("Remote Config fetch timed out after ${elapsed}ms for org $orgId")

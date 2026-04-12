@@ -52,7 +52,9 @@ class AddOrgViewModel(
     init {
         viewModelScope.launch {
             val currentOrgName =
-                orgRepo.currentOrg().name
+                orgRepo
+                    .currentOrg()
+                    .name
                     .takeIf { it.isNotBlank() && it != "Greenstand" }
             updateState {
                 copy(
