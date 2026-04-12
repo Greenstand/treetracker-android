@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.orgpicker
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -26,6 +27,8 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.models.organization.Org
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -48,9 +51,22 @@ class AddOrgViewModelTest {
     private lateinit var preferences: Preferences
 
     @MockK(relaxed = true)
+    private lateinit var orgRepo: OrgRepo
+
+    @MockK(relaxed = true)
     private lateinit var mockEditor: Preferences.Editor
 
     private lateinit var captureSetupData: CaptureSetupData
+
+    private val defaultOrg =
+        Org(
+            id = "-1",
+            name = "Greenstand",
+            walletId = "",
+            logoPath = "",
+            captureSetupFlow = emptyList(),
+            captureFlow = emptyList(),
+        )
 
     @Before
     fun setUp() {
@@ -60,6 +76,7 @@ class AddOrgViewModelTest {
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { preferences.edit() } returns mockEditor
         every { mockEditor.putString(any(), any()) } returns mockEditor
+        every { orgRepo.currentOrg() } returns defaultOrg
     }
 
     @After
@@ -74,7 +91,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns "PreviousOrg"
 
-            val viewModel = AddOrgViewModel(preferences)
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
 
             val state = viewModel.state.value
             assertEquals(fakeUser.photoPath, state.userImagePath)
@@ -88,7 +105,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences)
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
 
             viewModel.handleAction(AddOrgAction.UpdateOrgName("NewOrg"))
 
@@ -104,7 +121,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns "AutofillOrg"
 
-            val viewModel = AddOrgViewModel(preferences)
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
 
             viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
 
@@ -119,12 +136,69 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences)
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
 
             viewModel.handleAction(AddOrgAction.UpdateOrgName("SavedOrg"))
             viewModel.handleAction(AddOrgAction.SetDefaultOrg)
 
             verify { mockEditor.putString(any(), "SavedOrg") }
             verify { mockEditor.apply() }
+        }
+
+    // --- Org pre-fill tests ---
+
+    @Test
+    fun `WHEN current org is non-default THEN orgName is pre-filled`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns null
+            every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
+
+            assertEquals("Kasiki Hai", viewModel.state.value.orgName)
+            coVerify { captureSetupData.organizationName = "Kasiki Hai" }
+        }
+
+    @Test
+    fun `WHEN current org is Greenstand default THEN orgName is not pre-filled`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns null
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
+
+            assertEquals("", viewModel.state.value.orgName)
+            coVerify(exactly = 0) { captureSetupData.organizationName = "Greenstand" }
+        }
+
+    @Test
+    fun `WHEN current org has blank name THEN orgName is not pre-filled`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns null
+            every { orgRepo.currentOrg() } returns defaultOrg.copy(name = "")
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
+
+            assertEquals("", viewModel.state.value.orgName)
+        }
+
+    @Test
+    fun `WHEN org is pre-filled and user types over it THEN CaptureSetupData gets user value`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns null
+            every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            viewModel.handleAction(AddOrgAction.UpdateOrgName("Different Org"))
+
+            assertEquals("Different Org", viewModel.state.value.orgName)
+            verify { captureSetupData.organizationName = "Different Org" }
         }
 }

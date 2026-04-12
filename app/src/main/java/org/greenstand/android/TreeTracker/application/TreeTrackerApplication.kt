@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.application
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
+import com.google.firebase.FirebaseApp
 import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
@@ -35,7 +36,7 @@ class TreeTrackerApplication : Application() {
         appContext = applicationContext
 
         super.onCreate()
-//        FirebaseApp.initializeApp(appContext)
+        FirebaseApp.initializeApp(appContext)
 
         ObjectStorageClient.init(applicationContext)
 

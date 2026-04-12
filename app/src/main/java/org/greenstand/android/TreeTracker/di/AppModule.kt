@@ -24,6 +24,7 @@ import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
@@ -42,8 +43,8 @@ import org.greenstand.android.TreeTracker.messages.individualmeassagelist.Indivi
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
-import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionTracker
@@ -60,6 +61,7 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessageUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
@@ -102,7 +104,7 @@ val appModule =
 
         viewModel { AddWalletViewModel() }
 
-        viewModel { AddOrgViewModel(get()) }
+        viewModel { AddOrgViewModel(get(), get()) }
 
         viewModel { LanguagePickerViewModel(get()) }
 
@@ -256,6 +258,10 @@ val appModule =
         factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get()) }
 
         factory { Firebase.crashlytics }
+
+        single { FirebaseRemoteConfig.getInstance() }
+
+        single { OrgConfigProvider(get()) }
 
         scope<CaptureSetupScope> {
             scoped { CaptureSetupData(get()) }
