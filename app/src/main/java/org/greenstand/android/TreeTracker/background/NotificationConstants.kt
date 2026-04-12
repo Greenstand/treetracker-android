@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.signup
+package org.greenstand.android.TreeTracker.background
 
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+object NotificationConstants {
+    // SyncNotificationManager
+    const val SYNC_NOTIFICATION_ID = 212
+    const val SYNC_CHANNEL_ID = "org.greenstand.android.TreeTracker.background.SyncNotificationManager"
+    const val SYNC_CHANNEL_NAME = "Sync Channel"
+    const val SYNC_CHANNEL_DESCRIPTION = "Tree Syncing"
 
-class SignupViewPreviewProvider : PreviewParameterProvider<SignupViewModel> {
-    override val values: Sequence<SignupViewModel> =
-        sequenceOf(
-//        SignupViewModel(
-//            Users(
-//                LocationUpdateManager()
-//            )
-//        )
-        )
-
-    override val count: Int = values.count()
+    // TreeSyncWorker
+    const val UNIQUE_WORK_ID = "UNIQUE_WORK_ID_TREE_SYNC_WORKER"
+    const val WORKER_NOTIFICATION_ID = 1337
+    const val WORKER_CHANNEL_ID = "11"
+    const val WORKER_CHANNEL_NAME = "Work Service"
 }

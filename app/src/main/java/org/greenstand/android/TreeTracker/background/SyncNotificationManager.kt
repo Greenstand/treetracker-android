@@ -45,7 +45,7 @@ class SyncNotificationManager(
 
         val builder =
             NotificationCompat
-                .Builder(applicationContext, SYNC_CHANNEL_ID)
+                .Builder(applicationContext, NotificationConstants.SYNC_CHANNEL_ID)
                 .setSmallIcon(R.drawable.greenstand_logo)
                 .setContentTitle(applicationContext.getString(R.string.syncing))
                 .setContentText(applicationContext.getString(R.string.uploading_trees))
@@ -56,9 +56,9 @@ class SyncNotificationManager(
                 ).setProgress(0, 0, true)
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ForegroundInfo(NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+            ForegroundInfo(NotificationConstants.SYNC_NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {
-            ForegroundInfo(NOTIFICATION_ID, builder.build())
+            ForegroundInfo(NotificationConstants.SYNC_NOTIFICATION_ID, builder.build())
         }
     }
 
@@ -73,7 +73,7 @@ class SyncNotificationManager(
         val context = applicationContext ?: return
         val builder =
             NotificationCompat
-                .Builder(context, SYNC_CHANNEL_ID)
+                .Builder(context, NotificationConstants.SYNC_CHANNEL_ID)
                 .setSmallIcon(R.drawable.greenstand_logo)
                 .setContentTitle(context.getString(R.string.syncing))
                 .setContentText(contentText)
@@ -81,7 +81,7 @@ class SyncNotificationManager(
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setOnlyAlertOnce(true)
                 .setProgress(max, progress, false)
-        notificationManagerCompat.notify(NOTIFICATION_ID, builder.build())
+        notificationManagerCompat.notify(NotificationConstants.SYNC_NOTIFICATION_ID, builder.build())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -90,16 +90,9 @@ class SyncNotificationManager(
         // the NotificationChannel class is new and not in the support library
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel =
-            NotificationChannel(SYNC_CHANNEL_ID, CHANNEL_NAME, importance).apply {
-                description = CHANNEL_DESCRIPTION
+            NotificationChannel(NotificationConstants.SYNC_CHANNEL_ID, NotificationConstants.SYNC_CHANNEL_NAME, importance).apply {
+                description = NotificationConstants.SYNC_CHANNEL_DESCRIPTION
             }
         notificationManagerCompat.createNotificationChannel(channel)
-    }
-
-    companion object {
-        private const val NOTIFICATION_ID = 212
-        private const val SYNC_CHANNEL_ID = "org.greenstand.android.TreeTracker.background.SyncNotificationManager"
-        private const val CHANNEL_NAME = "Sync Channel"
-        private const val CHANNEL_DESCRIPTION = "Tree Syncing"
     }
 }

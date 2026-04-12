@@ -24,12 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.overlay.DebugOverlayHost
-import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
-import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
-import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
-import org.koin.compose.koinInject
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
@@ -44,6 +38,7 @@ import org.greenstand.android.TreeTracker.messages.MessagesUserSelectScreen
 import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementScreen
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
 import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
@@ -73,6 +68,10 @@ import org.greenstand.android.TreeTracker.navigation.WalletSelectRoute
 import org.greenstand.android.TreeTracker.navigation.trackedComposable
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
+import org.greenstand.android.TreeTracker.overlay.DebugOverlayHost
+import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
+import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
+import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
 import org.greenstand.android.TreeTracker.profile.DeleteProfileScreen
 import org.greenstand.android.TreeTracker.profile.ProfileScreen
 import org.greenstand.android.TreeTracker.profile.ProfileSelectScreen
@@ -85,23 +84,27 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectScreen
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @ExperimentalComposeApi
 @Composable
 fun Host() {
     val navController = LocalNavHostController.current
-
     TreeTrackerTheme {
         Box(modifier = Modifier.fillMaxSize()) {
-            NavHost(navController, startDestination = SplashRoute) {
+            NavHost(navController, startDestination = SplashRoute()) {
                 trackedComposable<SplashRoute>(
                     deepLinks =
                         listOf(
-                            navDeepLink { uriPattern = "app://mobile.treetracker.org/org?params={orgJson}" },
+                            navDeepLink { uriPattern = "app://mobile.treetracker.org/org?id={orgId}&name={orgName}" },
                         ),
                 ) {
-                    SplashScreen(it.arguments?.getString("orgJson"))
+                    val route = it.toRoute<SplashRoute>()
+                    SplashScreen(
+                        orgId = route.orgId,
+                        orgName = route.orgName,
+                    )
                 }
 
                 trackedComposable<LanguageRoute> {

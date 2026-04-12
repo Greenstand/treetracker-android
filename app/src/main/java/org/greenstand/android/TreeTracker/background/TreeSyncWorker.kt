@@ -79,12 +79,6 @@ class TreeSyncWorker(
         }
     }
 
-    companion object {
-        const val UNIQUE_WORK_ID = "UNIQUE_WORK_ID_TREE_SYNC_WORKER"
-        private const val NOTIFICATION_CHANNEL_ID = "11"
-        private const val NOTIFICATION_CHANNEL_NAME = "Work Service"
-    }
-
     override suspend fun getForegroundInfo(): ForegroundInfo {
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -92,8 +86,8 @@ class TreeSyncWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel =
                 NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    NOTIFICATION_CHANNEL_NAME,
+                    NotificationConstants.WORKER_CHANNEL_ID,
+                    NotificationConstants.WORKER_CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_HIGH,
                 )
             notificationManager.createNotificationChannel(channel)
@@ -102,7 +96,7 @@ class TreeSyncWorker(
         val pendingFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
         val notification =
             NotificationCompat
-                .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+                .Builder(applicationContext, NotificationConstants.WORKER_CHANNEL_ID)
                 .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), pendingFlag))
                 .setSmallIcon(R.drawable.upload_icon)
                 .setOngoing(true)
@@ -115,9 +109,9 @@ class TreeSyncWorker(
                 .setContentText(applicationContext.getString(R.string.uploading_trees))
                 .build()
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ForegroundInfo(1337, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+            ForegroundInfo(NotificationConstants.WORKER_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {
-            ForegroundInfo(1337, notification)
+            ForegroundInfo(NotificationConstants.WORKER_NOTIFICATION_ID, notification)
         }
     }
 }
