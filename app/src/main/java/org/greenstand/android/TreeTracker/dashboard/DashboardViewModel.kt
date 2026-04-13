@@ -26,8 +26,7 @@ import androidx.work.WorkInfo.State
 import androidx.work.WorkInfo.State.SUCCEEDED
 import androidx.work.WorkManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
@@ -78,7 +77,7 @@ class DashboardViewModel(
     private val dao: TreeTrackerDAO,
     private val workManager: WorkManager,
     private val analytics: Analytics,
-    private val treesToSyncHelper: TreesToSyncHelper,
+    @Suppress("unused") private val treesToSyncHelper: TreesToSyncHelper,
     private val orgRepo: OrgRepo,
     private val messagesRepo: MessagesRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase,
@@ -86,22 +85,10 @@ class DashboardViewModel(
 ) : BaseViewModel<DashboardState, DashboardAction>(DashboardState()) {
     private var _isSyncing: Boolean? by Delegates.observable(false) { _, _, startedSyncing ->
         startedSyncing ?: return@observable
-        if (startedSyncing) {
-            updateTimerJob =
-                viewModelScope.launch {
-                    while (true) {
-                        delay(750)
-                        updateData()
-                    }
-                }
-        } else {
-            updateData()
-            updateTimerJob?.cancel()
-            updateTimerJob = null
+        if (!startedSyncing) {
+            updateNonTreeData()
         }
     }
-
-    private var updateTimerJob: Job? = null
 
     private fun triggerSnackBar(stringRes: Int) {
         updateState { copy(snackBar = ConsumableSnackBar(stringRes)) }
@@ -142,7 +129,8 @@ class DashboardViewModel(
         }
 
     init {
-        updateData()
+        observeTreeCounts()
+        updateNonTreeData()
         locationDataCapturer.stopGpsUpdates()
         workManager
             .getWorkInfosForUniqueWorkLiveData(NotificationConstants.UNIQUE_WORK_ID)
@@ -169,7 +157,7 @@ class DashboardViewModel(
         viewModelScope.launch {
             if (_isSyncing == false) {
                 if (!FeatureFlags.DEBUG_ENABLED) {
-                    val treesToSync = treesToSyncHelper.getTreeCountToSync()
+                    val treesToSync = currentState.treesRemainingToSync
                     when (treesToSync) {
                         0 -> triggerSnackBar(R.string.nothing_to_sync)
                         else -> startDataSynchronization()
@@ -180,8 +168,6 @@ class DashboardViewModel(
                 val state = currentState
                 analytics.syncButtonTapped(state.totalTreesToSync, state.treesSynced, state.treesRemainingToSync)
             } else {
-                updateTimerJob?.cancel()
-                updateTimerJob = null
                 workManager.cancelUniqueWork(NotificationConstants.UNIQUE_WORK_ID)
 
                 val state = currentState
@@ -190,24 +176,41 @@ class DashboardViewModel(
         }
     }
 
-    private fun updateData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val syncedTreeCount = dao.getUploadedLegacyTreeImageCount() + dao.getUploadedTreeImageCount()
-            val notSyncedTreeCount = dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
-            val totalTreesToSync = treesToSyncHelper.getTreeCountToSync()
+    private fun observeTreeCounts() {
+        viewModelScope.launch {
+            combine(
+                dao.getUploadedLegacyTreeImageCountFlow(),
+                dao.getUploadedTreeImageCountFlow(),
+                dao.getNonUploadedLegacyTreeCaptureImageCountFlow(),
+                dao.getNonUploadedTreeImageCountFlow(),
+            ) { uploadedLegacy, uploadedNew, nonUploadedLegacy, nonUploadedNew ->
+                val synced = uploadedLegacy + uploadedNew
+                val remaining = nonUploadedLegacy + nonUploadedNew
+                synced to remaining
+            }.collect { (synced, remaining) ->
+                updateState {
+                    val total = if (_isSyncing == true) totalTreesToSync else remaining
+                    copy(
+                        treesSynced = synced,
+                        treesRemainingToSync = remaining,
+                        totalTreesToSync = total,
+                        showTreeSyncReminderDialog = remaining >= 2000,
+                    )
+                }
+            }
+        }
+    }
 
+    private fun updateNonTreeData() {
+        viewModelScope.launch(Dispatchers.IO) {
             val isOrgButtonEnabled = orgRepo.getOrgs().size > 1
             val hasUnreadMessages = messagesRepo.checkForUnreadMessages()
 
             withContext(Dispatchers.Main) {
                 updateState {
                     copy(
-                        totalTreesToSync = totalTreesToSync,
-                        treesRemainingToSync = notSyncedTreeCount,
-                        treesSynced = syncedTreeCount,
                         isOrgButtonEnabled = isOrgButtonEnabled,
                         showUnreadMessageNotification = hasUnreadMessages,
-                        showTreeSyncReminderDialog = totalTreesToSync >= 2000,
                     )
                 }
             }

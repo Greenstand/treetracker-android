@@ -157,8 +157,14 @@ interface TreeTrackerDAO {
     @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url not null")
     suspend fun getUploadedLegacyTreeImageCount(): Int
 
+    @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url not null")
+    fun getUploadedLegacyTreeImageCountFlow(): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM tree WHERE photo_url not null")
     suspend fun getUploadedTreeImageCount(): Int
+
+    @Query("SELECT COUNT(*) FROM tree WHERE photo_url not null")
+    fun getUploadedTreeImageCountFlow(): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM tree WHERE uploaded = 1")
     suspend fun getUploadedTreeCount(): Int
@@ -167,8 +173,15 @@ interface TreeTrackerDAO {
     @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url is null")
     suspend fun getNonUploadedLegacyTreeCaptureImageCount(): Int
 
+    @Transaction
+    @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url is null")
+    fun getNonUploadedLegacyTreeCaptureImageCountFlow(): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM tree WHERE photo_url is null")
     suspend fun getNonUploadedTreeImageCount(): Int
+
+    @Query("SELECT COUNT(*) FROM tree WHERE photo_url is null")
+    fun getNonUploadedTreeImageCountFlow(): Flow<Int>
 
     @Transaction
     @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 0")
@@ -201,6 +214,12 @@ interface TreeTrackerDAO {
 
     @Query("SELECT * FROM tree")
     suspend fun getAllTrees(): List<TreeEntity>
+
+    @Query("SELECT t.* FROM tree t INNER JOIN session s ON t.session_id = s._id WHERE s.origin_wallet = :wallet")
+    fun getTreesByUserWallet(wallet: String): Flow<List<TreeEntity>>
+
+    @Query("DELETE FROM tree WHERE _id = :treeId")
+    suspend fun deleteTreeById(treeId: Long)
 
     @Query("UPDATE tree_capture SET bundle_id = :bundleId WHERE _id IN (:ids)")
     suspend fun updateTreeCapturesBundleIds(
