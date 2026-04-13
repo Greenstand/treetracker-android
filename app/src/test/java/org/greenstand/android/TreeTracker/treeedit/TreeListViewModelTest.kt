@@ -132,6 +132,10 @@ class TreeListViewModelTest {
             // Emit updated list that still includes tree1
             treeFlow.emit(listOf(tree1, tree2))
             vm.state.first { it.trees.size == 2 }
-            assertEquals(tree1.id, vm.state.value.selectedTree?.id)
+            assertEquals(
+                tree1.id,
+                vm.state.value.selectedTree
+                    ?.id,
+            )
         }
 }
