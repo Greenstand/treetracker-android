@@ -83,6 +83,19 @@ fun TreeDetailScreen(treeId: Long) {
         }
     }
 
+    TreeDetail(
+        state = state,
+        onHandleAction = { viewModel.handleAction(it) },
+        onNavigateBack = { navController.popBackStack() },
+    )
+}
+
+@Composable
+fun TreeDetail(
+    state: TreeDetailState = TreeDetailState(),
+    onHandleAction: (TreeDetailAction) -> Unit = {},
+    onNavigateBack: () -> Unit = {},
+) {
     Scaffold(
         topBar = {
             ActionBar(
@@ -105,7 +118,7 @@ fun TreeDetailScreen(treeId: Long) {
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.ProgressGreen,
-                        onClick = { navController.popBackStack() },
+                        onClick = onNavigateBack,
                     )
                 },
             )
@@ -166,7 +179,7 @@ fun TreeDetailScreen(treeId: Long) {
                 )
                 OutlinedTextField(
                     value = state.editedNote,
-                    onValueChange = { viewModel.handleAction(TreeDetailAction.UpdateNote(it)) },
+                    onValueChange = { onHandleAction(TreeDetailAction.UpdateNote(it)) },
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -192,7 +205,7 @@ fun TreeDetailScreen(treeId: Long) {
                                 .fillMaxWidth()
                                 .height(48.dp),
                         colors = AppButtonColors.ProgressGreen,
-                        onClick = { viewModel.handleAction(TreeDetailAction.SaveNote) },
+                        onClick = { onHandleAction(TreeDetailAction.SaveNote) },
                     ) {
                         Text(
                             text = stringResource(R.string.tree_save_note),
@@ -210,7 +223,7 @@ fun TreeDetailScreen(treeId: Long) {
                                 .fillMaxWidth()
                                 .height(48.dp),
                         colors = AppButtonColors.DeclineRed,
-                        onClick = { viewModel.handleAction(TreeDetailAction.SetDeleteDialogVisibility(true)) },
+                        onClick = { onHandleAction(TreeDetailAction.SetDeleteDialogVisibility(true)) },
                     ) {
                         Text(
                             text = stringResource(R.string.tree_delete),
@@ -229,8 +242,8 @@ fun TreeDetailScreen(treeId: Long) {
             CustomDialog(
                 title = stringResource(R.string.tree_delete_confirm_title),
                 textContent = stringResource(R.string.tree_delete_confirm_message),
-                onPositiveClick = { viewModel.handleAction(TreeDetailAction.DeleteTree) },
-                onNegativeClick = { viewModel.handleAction(TreeDetailAction.SetDeleteDialogVisibility(false)) },
+                onPositiveClick = { onHandleAction(TreeDetailAction.DeleteTree) },
+                onNegativeClick = { onHandleAction(TreeDetailAction.SetDeleteDialogVisibility(false)) },
             )
         }
     }

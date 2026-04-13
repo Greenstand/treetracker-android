@@ -60,6 +60,27 @@ fun TreeListScreen(
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState(TreeListState())
 
+    TreeList(
+        state = state,
+        userName = userName,
+        onHandleAction = { action ->
+            when (action) {
+                is TreeListAction.SelectTree -> viewModel.handleAction(action)
+            }
+        },
+        onNavigateBack = { navController.popBackStack() },
+        onNavigateToDetail = { treeId -> navController.navigate(TreeDetailRoute(treeId = treeId)) },
+    )
+}
+
+@Composable
+fun TreeList(
+    state: TreeListState = TreeListState(),
+    userName: String = "",
+    onHandleAction: (TreeListAction) -> Unit = {},
+    onNavigateBack: () -> Unit = {},
+    onNavigateToDetail: (Long) -> Unit = {},
+) {
     Scaffold(
         topBar = {
             ActionBar(
@@ -96,7 +117,7 @@ fun TreeListScreen(
                     ArrowButton(
                         isLeft = true,
                         colors = AppButtonColors.ProgressGreen,
-                        onClick = { navController.popBackStack() },
+                        onClick = onNavigateBack,
                     )
                 },
                 rightAction = {
@@ -105,9 +126,7 @@ fun TreeListScreen(
                         isEnabled = state.selectedTree != null,
                         colors = AppButtonColors.ProgressGreen,
                         onClick = {
-                            state.selectedTree?.let {
-                                navController.navigate(TreeDetailRoute(treeId = it.id))
-                            }
+                            state.selectedTree?.let { onNavigateToDetail(it.id) }
                         },
                     )
                 },
@@ -144,7 +163,7 @@ fun TreeListScreen(
                     TreeButton(
                         tree = tree,
                         isSelected = state.selectedTree?.id == tree.id,
-                        onClick = { viewModel.handleAction(TreeListAction.SelectTree(tree)) },
+                        onClick = { onHandleAction(TreeListAction.SelectTree(tree)) },
                     )
                 }
             }
