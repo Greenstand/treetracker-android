@@ -52,7 +52,10 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.SelectableImageDetail
 
 @Composable
-fun TreeListScreen(userWallet: String, userName: String) {
+fun TreeListScreen(
+    userWallet: String,
+    userName: String,
+) {
     val viewModel: TreeListViewModel = viewModel(factory = TreeListViewModelFactory(userWallet))
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState(TreeListState())
@@ -113,9 +116,10 @@ fun TreeListScreen(userWallet: String, userName: String) {
     ) { paddingValues ->
         if (!state.isLoading && state.trees.isEmpty()) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {

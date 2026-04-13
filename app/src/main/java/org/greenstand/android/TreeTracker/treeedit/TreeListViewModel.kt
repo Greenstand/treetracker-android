@@ -33,14 +33,15 @@ data class TreeListState(
 )
 
 sealed class TreeListAction : Action {
-    data class SelectTree(val tree: TreeEntity) : TreeListAction()
+    data class SelectTree(
+        val tree: TreeEntity,
+    ) : TreeListAction()
 }
 
 class TreeListViewModel(
     private val userWallet: String,
     private val dao: TreeTrackerDAO,
 ) : BaseViewModel<TreeListState, TreeListAction>(TreeListState()) {
-
     init {
         viewModelScope.launch {
             dao.getTreesByUserWallet(userWallet).collect { trees ->
@@ -48,9 +49,10 @@ class TreeListViewModel(
                     copy(
                         trees = trees,
                         isLoading = false,
-                        selectedTree = selectedTree?.let { selected ->
-                            trees.find { it.id == selected.id }
-                        },
+                        selectedTree =
+                            selectedTree?.let { selected ->
+                                trees.find { it.id == selected.id }
+                            },
                     )
                 }
             }
@@ -68,8 +70,8 @@ class TreeListViewModel(
 
 class TreeListViewModelFactory(
     private val userWallet: String,
-) : ViewModelProvider.Factory, KoinComponent {
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        TreeListViewModel(userWallet, get()) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = TreeListViewModel(userWallet, get()) as T
 }

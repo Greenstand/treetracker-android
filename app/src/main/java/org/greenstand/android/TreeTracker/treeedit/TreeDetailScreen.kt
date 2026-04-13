@@ -113,28 +113,31 @@ fun TreeDetailScreen(treeId: Long) {
     ) { paddingValues ->
         state.tree?.let { tree ->
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 20.dp)
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 20.dp)
+                        .verticalScroll(rememberScrollState()),
             ) {
                 if (tree.photoPath != null) {
                     LocalImage(
                         imagePath = tree.photoPath!!,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .clip(RoundedCornerShape(10.dp)),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(10.dp)),
                     )
                 } else {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(AppColors.Gray),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(AppColors.Gray),
                         contentAlignment = Alignment.Center,
                     ) {
                         Image(
@@ -164,27 +167,30 @@ fun TreeDetailScreen(treeId: Long) {
                 OutlinedTextField(
                     value = state.editedNote,
                     onValueChange = { viewModel.handleAction(TreeDetailAction.UpdateNote(it)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(120.dp),
                     enabled = !tree.uploaded,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = Color.White,
-                        disabledTextColor = Color.Gray,
-                        cursorColor = AppColors.Green,
-                        focusedBorderColor = AppColors.Green,
-                        unfocusedBorderColor = Color.Gray,
-                        disabledBorderColor = Color.DarkGray,
-                    ),
+                    colors =
+                        TextFieldDefaults.outlinedTextFieldColors(
+                            textColor = Color.White,
+                            disabledTextColor = Color.Gray,
+                            cursorColor = AppColors.Green,
+                            focusedBorderColor = AppColors.Green,
+                            unfocusedBorderColor = Color.Gray,
+                            disabledBorderColor = Color.DarkGray,
+                        ),
                 )
 
                 if (!tree.uploaded) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     TreeTrackerButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
                         colors = AppButtonColors.ProgressGreen,
                         onClick = { viewModel.handleAction(TreeDetailAction.SaveNote) },
                     ) {
@@ -199,9 +205,10 @@ fun TreeDetailScreen(treeId: Long) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     TreeTrackerButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
                         colors = AppButtonColors.DeclineRed,
                         onClick = { viewModel.handleAction(TreeDetailAction.SetDeleteDialogVisibility(true)) },
                     ) {
@@ -230,7 +237,10 @@ fun TreeDetailScreen(treeId: Long) {
 }
 
 @Composable
-private fun DetailField(label: String, value: String) {
+private fun DetailField(
+    label: String,
+    value: String,
+) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             text = label,

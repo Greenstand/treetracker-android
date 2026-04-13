@@ -36,10 +36,18 @@ data class TreeDetailState(
 )
 
 sealed class TreeDetailAction : Action {
-    data class UpdateNote(val note: String) : TreeDetailAction()
+    data class UpdateNote(
+        val note: String,
+    ) : TreeDetailAction()
+
     object SaveNote : TreeDetailAction()
+
     object DeleteTree : TreeDetailAction()
-    data class SetDeleteDialogVisibility(val show: Boolean) : TreeDetailAction()
+
+    data class SetDeleteDialogVisibility(
+        val show: Boolean,
+    ) : TreeDetailAction()
+
     object NoteSavedShown : TreeDetailAction()
 }
 
@@ -48,7 +56,6 @@ class TreeDetailViewModel(
     private val dao: TreeTrackerDAO,
     private val treesToSyncHelper: TreesToSyncHelper,
 ) : BaseViewModel<TreeDetailState, TreeDetailAction>(TreeDetailState()) {
-
     init {
         viewModelScope.launch {
             val trees = dao.getTreesByIds(listOf(treeId))
@@ -95,8 +102,8 @@ class TreeDetailViewModel(
 
 class TreeDetailViewModelFactory(
     private val treeId: Long,
-) : ViewModelProvider.Factory, KoinComponent {
+) : ViewModelProvider.Factory,
+    KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        TreeDetailViewModel(treeId, get(), get()) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = TreeDetailViewModel(treeId, get(), get()) as T
 }
