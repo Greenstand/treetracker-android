@@ -46,6 +46,8 @@ sealed class SettingsAction : Action {
 
     object NavigateToDeleteAccount : SettingsAction()
 
+    object NavigateToEditTrees : SettingsAction()
+
     object NavigateBack : SettingsAction()
 
     object LogoutConfirmed : SettingsAction()

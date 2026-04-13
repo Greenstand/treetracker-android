@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +54,7 @@ import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
 import org.greenstand.android.TreeTracker.navigation.MapRoute
 import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
+import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -82,6 +84,7 @@ fun SettingsScreen() {
         onHandleAction = { action ->
             when (action) {
                 is SettingsAction.NavigateToProfile -> navController.navigate(ProfileSelectRoute)
+                is SettingsAction.NavigateToEditTrees -> navController.navigate(TreeEditUserSelectRoute)
                 is SettingsAction.NavigateToMap -> navController.navigate(MapRoute)
                 is SettingsAction.NavigateToDeleteAccount -> navController.navigate(DeleteProfileRoute)
                 is SettingsAction.NavigateBack -> navController.popBackStack()
@@ -146,6 +149,15 @@ fun Settings(
                     titleResId = R.string.profile_title,
                     descriptionResId = R.string.profile_description,
                     onClick = { onHandleAction(SettingsAction.NavigateToProfile) },
+                )
+                Divider(color = Color.White)
+
+                SettingsItem(
+                    iconResId = R.drawable.note,
+                    titleResId = R.string.edit_trees_title,
+                    descriptionResId = R.string.edit_trees_description,
+                    iconTint = Color.White,
+                    onClick = { onHandleAction(SettingsAction.NavigateToEditTrees) },
                 )
                 Divider(color = Color.White)
 
@@ -229,6 +241,7 @@ fun SettingsItem(
     iconResId: Int,
     titleResId: Int,
     descriptionResId: Int,
+    iconTint: Color? = null,
     onClick: () -> Unit,
 ) {
     Row(
@@ -243,6 +256,7 @@ fun SettingsItem(
             painter = painterResource(id = iconResId),
             contentDescription = null, // decorative element
             modifier = Modifier.size(24.dp),
+            colorFilter = iconTint?.let { ColorFilter.tint(it) },
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {

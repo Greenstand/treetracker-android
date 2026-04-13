@@ -56,6 +56,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object MapRoute
 
+@Serializable data object TreeEditUserSelectRoute
+
 // Routes with arguments
 
 @Serializable data class ProfileRoute(
@@ -93,4 +95,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable data class AnnouncementRoute(
     val messageId: String,
+)
+
+@Serializable data class TreeListRoute(
+    val userWallet: String,
+    val userName: String,
+)
+
+@Serializable data class TreeDetailRoute(
+    val treeId: Long,
 )
