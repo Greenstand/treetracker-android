@@ -28,6 +28,7 @@ import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -84,10 +85,10 @@ class DashboardViewModelTest {
     fun setup() {
         MockKAnnotations.init(this)
         coEvery { analytics.syncButtonTapped(any(), any(), any()) } just Runs
-        coEvery { dao.getUploadedLegacyTreeImageCount() } returns 3
-        coEvery { dao.getUploadedTreeImageCount() } returns 5
-        coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 2
-        coEvery { dao.getNonUploadedTreeImageCount() } returns 4
+        every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
+        every { dao.getUploadedTreeImageCountFlow() } returns flowOf(5)
+        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
+        every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(4)
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
         coEvery { messagesRepo.syncMessages() } just Runs
         coEvery { treesToSyncHelper.getTreeCountToSync() } returns 6
