@@ -32,14 +32,25 @@ class Preferences(
             }
         }
 
+    private var _userId: Long? = null
+
     init {
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+        val savedId = prefs.getLong(ACTIVE_USER_ID_KEY, -1L)
+        _userId = if (savedId != -1L) savedId else null
     }
-
-    private var _userId: Long? = null
 
     fun setUserId(userId: Long?) {
         _userId = userId
+        if (userId != null) {
+            prefs.edit().putLong(ACTIVE_USER_ID_KEY, userId).apply()
+        } else {
+            prefs.edit().remove(ACTIVE_USER_ID_KEY).apply()
+        }
+    }
+
+    companion object {
+        private const val ACTIVE_USER_ID_KEY = "greenstand/active-user-id"
     }
 
     fun getBoolean(

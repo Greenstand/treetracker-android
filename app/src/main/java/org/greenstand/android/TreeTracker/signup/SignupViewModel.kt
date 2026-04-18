@@ -20,11 +20,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.preferences.PrefKey
+import org.greenstand.android.TreeTracker.preferences.PrefKeys
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utilities.Validation
 import org.greenstand.android.TreeTracker.utils.ValidationUtils
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+import timber.log.Timber
 
 data class SignUpState(
     val firstName: String? = null,
@@ -114,8 +118,10 @@ sealed class SignupAction : Action {
 class SignupViewModel(
     private val userRepo: UserRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase,
+    private val preferences: Preferences,
 ) : BaseViewModel<SignUpState, SignupAction>(SignUpState()) {
     init {
+        restoreFormState()
         viewModelScope.launch(Dispatchers.Main) {
             val result = checkForInternetUseCase.execute(Unit)
             val initialSetupRequired = isInitialSetupRequired()
@@ -129,16 +135,60 @@ class SignupViewModel(
         }
     }
 
+    private fun restoreFormState() {
+        val firstName = preferences.getString(SIGNUP_FIRST_NAME_KEY)
+        val lastName = preferences.getString(SIGNUP_LAST_NAME_KEY)
+        val phone = preferences.getString(SIGNUP_PHONE_KEY)
+        val email = preferences.getString(SIGNUP_EMAIL_KEY)
+        if (firstName != null || lastName != null || phone != null || email != null) {
+            Timber.tag("SignupViewModel").d("Restoring form state after process death")
+            updateState {
+                copy(
+                    firstName = firstName,
+                    lastName = lastName,
+                    phone = phone,
+                    email = email,
+                    isCredentialView = firstName == null && lastName == null,
+                )
+            }
+        }
+    }
+
+    private fun saveFormState() {
+        val state = currentState
+        preferences
+            .edit()
+            .putString(SIGNUP_FIRST_NAME_KEY, state.firstName)
+            .putString(SIGNUP_LAST_NAME_KEY, state.lastName)
+            .putString(SIGNUP_PHONE_KEY, state.phone)
+            .putString(SIGNUP_EMAIL_KEY, state.email)
+            .apply()
+    }
+
+    fun clearFormState() {
+        preferences
+            .edit()
+            .remove(SIGNUP_FIRST_NAME_KEY)
+            .remove(SIGNUP_LAST_NAME_KEY)
+            .remove(SIGNUP_PHONE_KEY)
+            .remove(SIGNUP_EMAIL_KEY)
+            .apply()
+    }
+
     override fun handleAction(action: SignupAction) {
         when (action) {
-            is SignupAction.UpdateFirstName ->
+            is SignupAction.UpdateFirstName -> {
                 updateName(action.firstName) { filtered, error ->
                     copy(firstName = filtered, firstNameError = if (filtered.isNullOrEmpty()) null else error)
                 }
-            is SignupAction.UpdateLastName ->
+                saveFormState()
+            }
+            is SignupAction.UpdateLastName -> {
                 updateName(action.lastName) { filtered, error ->
                     copy(lastName = filtered, lastNameError = if (filtered.isNullOrEmpty()) null else error)
                 }
+                saveFormState()
+            }
             is SignupAction.UpdateEmail -> {
                 updateState {
                     copy(
@@ -147,6 +197,7 @@ class SignupViewModel(
                         isCredentialValid = action.email.contains('@'),
                     )
                 }
+                saveFormState()
             }
             is SignupAction.UpdatePhone -> {
                 updateState {
@@ -156,11 +207,15 @@ class SignupViewModel(
                         isCredentialValid = Validation.isValidPhoneNumber(action.phone),
                     )
                 }
+                saveFormState()
             }
             is SignupAction.UpdateCredentialType -> {
                 updateState { copy(credential = action.credential) }
             }
-            is SignupAction.SubmitInfo -> submitInfo()
+            is SignupAction.SubmitInfo -> {
+                submitInfo()
+                saveFormState()
+            }
             is SignupAction.CloseExistingUserDialog -> {
                 updateState { copy(existingUser = null) }
             }
@@ -223,21 +278,29 @@ class SignupViewModel(
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
 
     suspend fun createUser(photoPath: String?): User? {
-        if (photoPath != null) {
-            val state = currentState
-            val userId =
-                userRepo.createUser(
-                    firstName = state.firstName!!,
-                    lastName = state.lastName!!,
-                    phone = state.phone,
-                    email = state.email,
-                    wallet = extractIdentifier(state),
-                    photoPath = photoPath,
-                    isPowerUser = userRepo.getPowerUser() == null,
-                )
-            return userRepo.getUser(userId)
+        if (photoPath == null) return null
+        val state = currentState
+        val firstName = state.firstName
+        val lastName = state.lastName
+        if (firstName.isNullOrBlank() || lastName.isNullOrBlank()) {
+            Timber.tag("SignupViewModel").e(
+                "createUser called with missing form data (firstName=$firstName, lastName=$lastName). " +
+                    "This can happen after process death if state was not restored.",
+            )
+            return null
         }
-        return null
+        val userId =
+            userRepo.createUser(
+                firstName = firstName,
+                lastName = lastName,
+                phone = state.phone,
+                email = state.email,
+                wallet = extractIdentifier(state),
+                photoPath = photoPath,
+                isPowerUser = userRepo.getPowerUser() == null,
+            )
+        clearFormState()
+        return userRepo.getUser(userId)
     }
 
     private fun extractIdentifier(state: SignUpState): String =
@@ -245,4 +308,11 @@ class SignupViewModel(
             is Credential.Email -> state.email
             is Credential.Phone -> state.phone
         } ?: "DEFAULT"
+
+    companion object {
+        private val SIGNUP_FIRST_NAME_KEY = PrefKeys.SESSION + PrefKey("signup-first-name")
+        private val SIGNUP_LAST_NAME_KEY = PrefKeys.SESSION + PrefKey("signup-last-name")
+        private val SIGNUP_PHONE_KEY = PrefKeys.SESSION + PrefKey("signup-phone")
+        private val SIGNUP_EMAIL_KEY = PrefKeys.SESSION + PrefKey("signup-email")
+    }
 }

@@ -34,6 +34,7 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.Before
@@ -83,6 +84,9 @@ class SplashScreenViewModelTest {
     @MockK(relaxed = true)
     private lateinit var exceptionDataCollector: ExceptionDataCollector
 
+    @MockK(relaxed = true)
+    private lateinit var preferences: Preferences
+
     private lateinit var splashScreenViewModel: SplashScreenViewModel
 
     @Before
@@ -102,6 +106,7 @@ class SplashScreenViewModelTest {
                 orgRepo = orgRepo,
                 orgConfigProvider = orgConfigProvider,
                 exceptionDataCollector = exceptionDataCollector,
+                preferences = preferences,
             )
     }
 
@@ -187,6 +192,7 @@ class SplashScreenViewModelTest {
         orgRepo = orgRepo,
         orgConfigProvider = orgConfigProvider,
         exceptionDataCollector = exceptionDataCollector,
+        preferences = preferences,
     )
 
     @Test
