@@ -27,7 +27,9 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.Analytics
@@ -38,6 +40,7 @@ import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -84,10 +87,10 @@ class DashboardViewModelTest {
     fun setup() {
         MockKAnnotations.init(this)
         coEvery { analytics.syncButtonTapped(any(), any(), any()) } just Runs
-        coEvery { dao.getUploadedLegacyTreeImageCount() } returns 3
-        coEvery { dao.getUploadedTreeImageCount() } returns 5
-        coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 2
-        coEvery { dao.getNonUploadedTreeImageCount() } returns 4
+        every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
+        every { dao.getUploadedTreeImageCountFlow() } returns flowOf(5)
+        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
+        every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(4)
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
         coEvery { messagesRepo.syncMessages() } just Runs
         coEvery { treesToSyncHelper.getTreeCountToSync() } returns 6
@@ -139,5 +142,59 @@ class DashboardViewModelTest {
             testSubject.handleAction(DashboardAction.Sync)
             coVerify(exactly = 1) { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>()) }
             coVerify { analytics.syncButtonTapped(any(), any(), any()) }
+        }
+
+    @Test
+    fun `observeTreeCounts reacts to Flow changes`() =
+        runTest {
+            val nonUploadedFlow = MutableStateFlow(4)
+            every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
+            every { dao.getUploadedTreeImageCountFlow() } returns flowOf(5)
+            every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
+            every { dao.getNonUploadedTreeImageCountFlow() } returns nonUploadedFlow
+
+            val vm =
+                DashboardViewModel(
+                    dao = dao,
+                    workManager = workManager,
+                    analytics = analytics,
+                    treesToSyncHelper = treesToSyncHelper,
+                    orgRepo = orgRepo,
+                    messagesRepo = messagesRepo,
+                    checkForInternetUseCase = checkForInternetUseCase,
+                    locationDataCapturer = locationDataCapturer,
+                )
+            vm.state.first { it.totalTreesToSync != 0 }
+            assertEquals(6, vm.state.value.treesRemainingToSync)
+            assertEquals(8, vm.state.value.treesSynced)
+
+            // Simulate a tree being uploaded (one fewer non-uploaded)
+            nonUploadedFlow.value = 3
+            vm.state.first { it.treesRemainingToSync == 5 }
+            assertEquals(5, vm.state.value.treesRemainingToSync)
+            assertEquals(5, vm.state.value.totalTreesToSync)
+        }
+
+    @Test
+    fun `showTreeSyncReminderDialog is true when remaining trees reach threshold`() =
+        runTest {
+            every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(0)
+            every { dao.getUploadedTreeImageCountFlow() } returns flowOf(0)
+            every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(1000)
+            every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(1000)
+
+            val vm =
+                DashboardViewModel(
+                    dao = dao,
+                    workManager = workManager,
+                    analytics = analytics,
+                    treesToSyncHelper = treesToSyncHelper,
+                    orgRepo = orgRepo,
+                    messagesRepo = messagesRepo,
+                    checkForInternetUseCase = checkForInternetUseCase,
+                    locationDataCapturer = locationDataCapturer,
+                )
+            vm.state.first { it.totalTreesToSync != 0 }
+            assertTrue(vm.state.value.showTreeSyncReminderDialog)
         }
 }

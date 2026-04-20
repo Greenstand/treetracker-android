@@ -16,10 +16,13 @@
 package org.greenstand.android.TreeTracker.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,6 +53,7 @@ fun SelectableImageDetail(
     buttonColors: DepthButtonColors,
     selectedColor: Color,
     onClick: () -> Unit,
+    placeholderResId: Int? = null,
     header: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
@@ -81,9 +85,9 @@ fun SelectableImageDetail(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
-            photoPath?.let {
+            if (photoPath != null) {
                 LocalImage(
-                    imagePath = it,
+                    imagePath = photoPath,
                     contentScale = ContentScale.Crop,
                     modifier =
                         Modifier
@@ -93,6 +97,24 @@ fun SelectableImageDetail(
                             .padding(bottom = 20.dp)
                             .clip(RoundedCornerShape(10.dp)),
                 )
+            } else if (placeholderResId != null) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .aspectRatio(1.0f)
+                            .padding(bottom = 20.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(AppColors.Gray),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Image(
+                        painter = painterResource(id = placeholderResId),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(0.5f),
+                    )
+                }
             }
             header?.let { it() }
             Column(

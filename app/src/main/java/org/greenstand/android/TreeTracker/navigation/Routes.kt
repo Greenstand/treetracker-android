@@ -19,7 +19,10 @@ import kotlinx.serialization.Serializable
 
 // No-arg routes
 
-@Serializable data object SplashRoute
+@Serializable data class SplashRoute(
+    val orgId: String? = null,
+    val orgName: String? = null,
+)
 
 @Serializable data object SignupFlowRoute
 
@@ -52,6 +55,8 @@ import kotlinx.serialization.Serializable
 @Serializable data object DevOptionsRoute
 
 @Serializable data object MapRoute
+
+@Serializable data object TreeEditUserSelectRoute
 
 // Routes with arguments
 
@@ -90,4 +95,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable data class AnnouncementRoute(
     val messageId: String,
+)
+
+@Serializable data class TreeListRoute(
+    val userWallet: String,
+    val userName: String,
+)
+
+@Serializable data class TreeDetailRoute(
+    val treeId: Long,
 )
