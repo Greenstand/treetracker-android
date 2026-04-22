@@ -177,101 +177,153 @@ fun Dashboard(
         },
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().navigationBarsPadding(),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Row(
-                modifier = Modifier.weight(.3f),
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
-                    contentDescription = "",
-                    modifier =
-                        Modifier
-                            .align(CenterVertically)
-                            .padding(top = 5.dp, bottom = 10.dp, end = 10.dp)
-                            .size(width = 30.dp, height = 30.dp),
-                )
-                Text(
-                    modifier = Modifier.align(CenterVertically),
-                    text = state.treesSynced.toString(),
-                    fontWeight = FontWeight.Bold,
-                    color = CustomTheme.textColors.uploadText,
-                    style = CustomTheme.typography.large,
-                )
-            }
-
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.Top,
-            ) {
-                // Upload indicator.
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth(0.5f)
-                            .fillMaxHeight()
-                            .weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    DashboardUploadProgressBar(
-                        progress = state.uploadProgress,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Text(
-                        text = (state.treesRemainingToSync).toString(),
-                        modifier = Modifier.weight(1f),
-                        color = CustomTheme.textColors.lightText,
-                        style = CustomTheme.typography.medium,
-                    )
-                }
-                Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
-                DashBoardButton(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .weight(1f),
-                    text = stringResource(R.string.upload),
-                    colors = AppButtonColors.UploadOrange,
-                    onClick = onSyncClicked,
-                    shape = TreeTrackerButtonShape.Circle,
-                    image = painterResource(id = R.drawable.upload_icon),
-                )
-            }
-
-            DashBoardButton(
-                text = stringResource(R.string.messages),
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                        .fillMaxSize(),
-                colors = AppButtonColors.MessagePurple,
-                onClick = onMessagesClicked,
-                image = painterResource(id = R.drawable.announcement_icon),
-                showUnreadNotification = state.showUnreadMessageNotification,
+            DashboardHeader(
+                treesSynced = state.treesSynced,
             )
 
-            DashBoardButton(
-                text = stringResource(R.string.track),
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                        .fillMaxSize(),
-                colors = AppButtonColors.ProgressGreen,
-                onClick = onCaptureClicked,
-                image = painterResource(id = R.drawable.track_icon),
+            DashboardStats(
+                treesRemainingToSync = state.treesRemainingToSync,
+                uploadProgress = state.uploadProgress,
+                onSyncClicked = onSyncClicked,
+            )
+
+            SyncStatusSection(
+                showUnreadMessageNotification = state.showUnreadMessageNotification,
+                onMessagesClicked = onMessagesClicked,
+            )
+
+            DashboardActions(
+                onCaptureClicked = onCaptureClicked,
             )
         }
     }
+}
+
+@Composable
+private fun DashboardHeader(
+    treesSynced: Int,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.weight(.3f),
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
+            contentDescription = "",
+            modifier =
+                Modifier
+                    .align(CenterVertically)
+                    .padding(top = 5.dp, bottom = 10.dp, end = 10.dp)
+                    .size(width = 30.dp, height = 30.dp),
+        )
+        Text(
+            modifier = Modifier.align(CenterVertically),
+            text = treesSynced.toString(),
+            fontWeight = FontWeight.Bold,
+            color = CustomTheme.textColors.uploadText,
+            style = CustomTheme.typography.large,
+        )
+    }
+}
+
+@OptIn(ExperimentalComposeApi::class)
+@Composable
+private fun DashboardStats(
+    treesRemainingToSync: Int,
+    uploadProgress: Float,
+    onSyncClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 20.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.Top,
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth(0.5f)
+                    .fillMaxHeight()
+                    .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            DashboardUploadProgressBar(
+                progress = uploadProgress,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                text = treesRemainingToSync.toString(),
+                modifier = Modifier.weight(1f),
+                color = CustomTheme.textColors.lightText,
+                style = CustomTheme.typography.medium,
+            )
+        }
+        Spacer(modifier = Modifier.size(width = 16.dp, height = 0.dp))
+        DashBoardButton(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .weight(1f),
+            text = stringResource(R.string.upload),
+            colors = AppButtonColors.UploadOrange,
+            onClick = onSyncClicked,
+            shape = TreeTrackerButtonShape.Circle,
+            image = painterResource(id = R.drawable.upload_icon),
+        )
+    }
+}
+
+@OptIn(ExperimentalComposeApi::class)
+@Composable
+private fun SyncStatusSection(
+    showUnreadMessageNotification: Boolean,
+    onMessagesClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    DashBoardButton(
+        text = stringResource(R.string.messages),
+        modifier =
+            modifier
+                .weight(1f)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .fillMaxSize(),
+        colors = AppButtonColors.MessagePurple,
+        onClick = onMessagesClicked,
+        image = painterResource(id = R.drawable.announcement_icon),
+        showUnreadNotification = showUnreadMessageNotification,
+    )
+}
+
+@OptIn(ExperimentalComposeApi::class)
+@Composable
+private fun DashboardActions(
+    onCaptureClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    DashBoardButton(
+        text = stringResource(R.string.track),
+        modifier =
+            modifier
+                .weight(1f)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .fillMaxSize(),
+        colors = AppButtonColors.ProgressGreen,
+        onClick = onCaptureClicked,
+        image = painterResource(id = R.drawable.track_icon),
+    )
 }
 
 @Suppress("UnusedParameter")
