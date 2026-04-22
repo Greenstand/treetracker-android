@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -82,8 +83,12 @@ fun SplashScreen(
                         delay(1000)
 
                         if (viewModel.isInitialSetupRequired()) {
-                            viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
-                            navigateToLanguageScreen(navController)
+                            if (viewModel.isLanguageSelectionRequired()) {
+                                navigateToLanguageScreen(navController)
+                            } else {
+                                viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
+                                navigateToSignupScreen(navController)
+                            }
                         } else {
                             navigateToDashboardScreen(navController)
                         }
@@ -131,6 +136,13 @@ private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean =
 
 private fun navigateToLanguageScreen(navController: NavHostController) {
     navController.navigate(LanguageRoute(isFromTopBar = false)) {
+        popUpTo<SplashRoute> { inclusive = true }
+        launchSingleTop = true
+    }
+}
+
+private fun navigateToSignupScreen(navController: NavHostController) {
+    navController.navigate(SignupFlowRoute) {
         popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }
