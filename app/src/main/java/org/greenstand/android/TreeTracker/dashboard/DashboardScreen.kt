@@ -247,7 +247,7 @@ private fun DashboardStats(
         modifier =
             modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .then(Modifier.weight(1f))
                 .padding(horizontal = 20.dp, vertical = 10.dp),
         verticalAlignment = Alignment.Top,
     ) {
@@ -298,7 +298,7 @@ private fun SyncStatusSection(
         text = stringResource(R.string.messages),
         modifier =
             modifier
-                .weight(1f)
+                .then(Modifier.weight(1f))
                 .padding(horizontal = 20.dp, vertical = 10.dp)
                 .fillMaxSize(),
         colors = AppButtonColors.MessagePurple,
@@ -318,7 +318,7 @@ private fun DashboardActions(
         text = stringResource(R.string.track),
         modifier =
             modifier
-                .weight(1f)
+                .then(Modifier.weight(1f))
                 .padding(horizontal = 20.dp, vertical = 10.dp)
                 .fillMaxSize(),
         colors = AppButtonColors.ProgressGreen,
