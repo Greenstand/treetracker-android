@@ -11,3 +11,5 @@ Refactored `DashboardScreen.kt` so the large dashboard layout is composed from s
 - Extracted `SyncStatusSection` for the messages button and unread indicator
 - Extracted `DashboardActions` for the track/capture action
 - Kept `Dashboard` as the top-level composition layer so behavior and navigation wiring stay unchanged
+- Removed the extra trailing blank line at the end of `DashboardScreen.kt` so the file ends with exactly one newline
+- Added missing Compose layout import `androidx.compose.foundation.layout.weight` in `DashboardScreen.kt` to fix `:app:compileDebugKotlin` unresolved reference errors on `Modifier.weight(...)`
