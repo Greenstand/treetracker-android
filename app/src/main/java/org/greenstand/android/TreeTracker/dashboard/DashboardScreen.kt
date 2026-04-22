@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
@@ -188,12 +187,14 @@ fun Dashboard(
         ) {
             DashboardHeader(
                 treesSynced = state.treesSynced,
+                modifier = Modifier.weight(0.3f),
             )
 
             DashboardStats(
                 treesRemainingToSync = state.treesRemainingToSync,
                 uploadProgress = state.uploadProgress,
                 onSyncClicked = onSyncClicked,
+                modifier = Modifier.weight(1f),
             )
 
             SyncStatusSection(
@@ -216,7 +217,7 @@ private fun DashboardHeader(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.weight(.3f),
+        modifier = modifier,
     ) {
         Image(
             painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
@@ -249,7 +250,6 @@ private fun DashboardStats(
         modifier =
             modifier
                 .fillMaxWidth()
-                .then(Modifier.weight(1f))
                 .padding(horizontal = 20.dp, vertical = 10.dp),
         verticalAlignment = Alignment.Top,
     ) {

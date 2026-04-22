@@ -12,5 +12,5 @@ Refactored `DashboardScreen.kt` so the large dashboard layout is composed from s
 - Extracted `DashboardActions` for the track/capture action
 - Kept `Dashboard` as the top-level composition layer so behavior and navigation wiring stay unchanged
 - Removed the extra trailing blank line at the end of `DashboardScreen.kt` so the file ends with exactly one newline
-- Added missing Compose layout import `androidx.compose.foundation.layout.weight` in `DashboardScreen.kt` to fix `:app:compileDebugKotlin` unresolved reference errors on `Modifier.weight(...)`
-- Moved section weighting for `SyncStatusSection` and `DashboardActions` to the parent `Dashboard` `Column` call sites (`modifier = Modifier.weight(1f)`) and removed weight calls from inside those child composables to avoid scope-related Kotlin compile failures
+- Applied section weights (`DashboardHeader`, `DashboardStats`, `SyncStatusSection`, `DashboardActions`) at `Dashboard` `Column` call sites and removed internal child `weight(...)` usage where scope resolution could fail during Kotlin compile
+- Removed the explicit `androidx.compose.foundation.layout.weight` import to avoid resolving to internal/non-callable `weight` symbols after Compose API changes
