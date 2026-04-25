@@ -23,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.Assert.assertEquals
@@ -45,11 +46,12 @@ class SignupViewModelTest {
 
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val checkForInternetUseCase = mockk<CheckForInternetUseCase>(relaxed = true)
+    private val preferences = mockk<Preferences>(relaxed = true)
     private lateinit var signupViewModel: SignupViewModel
 
     @Before
     fun setupViewModel() {
-        signupViewModel = SignupViewModel(userRepo, checkForInternetUseCase)
+        signupViewModel = SignupViewModel(userRepo, checkForInternetUseCase, preferences)
     }
 
     // First Name

@@ -120,7 +120,7 @@ val appModule =
 
         viewModel {
             org.greenstand.android.TreeTracker.signup
-                .SignupViewModel(get(), get())
+                .SignupViewModel(get(), get(), get())
         }
 
         viewModel { WalletSelectViewModel(get()) }

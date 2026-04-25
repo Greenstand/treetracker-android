@@ -28,6 +28,7 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
@@ -56,6 +57,7 @@ class SplashScreenViewModel(
     private val orgRepo: OrgRepo,
     private val orgConfigProvider: OrgConfigProvider,
     private val exceptionDataCollector: ExceptionDataCollector,
+    private val preferences: Preferences,
 ) : BaseViewModel<SplashState, SplashAction>(SplashState()) {
     override fun handleAction(action: SplashAction) {
         when (action) {
@@ -89,6 +91,7 @@ class SplashScreenViewModel(
 
         userRepo.getPowerUser()?.let {
             exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, it.wallet)
+            preferences.setUserId(it.id)
         }
 
         if (sessionTracker.wasSessionInterrupted() || treesToSyncHelper.getTreeCountToSync() == -1) {
@@ -111,5 +114,5 @@ class SplashScreenViewModelFactory(
 ) : ViewModelProvider.Factory,
     KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgId, orgName, get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgId, orgName, get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
 }
