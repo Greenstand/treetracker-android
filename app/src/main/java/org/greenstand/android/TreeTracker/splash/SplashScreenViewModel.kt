@@ -22,6 +22,7 @@ import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
@@ -56,6 +57,7 @@ class SplashScreenViewModel(
     private val orgRepo: OrgRepo,
     private val orgConfigProvider: OrgConfigProvider,
     private val exceptionDataCollector: ExceptionDataCollector,
+    private val languageSwitcher: LanguageSwitcher,
 ) : BaseViewModel<SplashState, SplashAction>(SplashState()) {
     override fun handleAction(action: SplashAction) {
         when (action) {
@@ -100,6 +102,8 @@ class SplashScreenViewModel(
 
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
 
+    fun isLanguageSelectionRequired(): Boolean = languageSwitcher.currentLanguage() == null
+
     companion object {
         private const val ORG_LINK_TAG = "OrgLink"
     }
@@ -111,5 +115,5 @@ class SplashScreenViewModelFactory(
 ) : ViewModelProvider.Factory,
     KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgId, orgName, get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgId, orgName, get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
 }
