@@ -25,7 +25,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -36,6 +35,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class OrgRepoTest {
@@ -176,12 +176,184 @@ class OrgRepoTest {
         orgRepo.currentOrg()
     }
 
-    @Test
-    fun `WHEN addOrgFromJsonString with malformed JSON THEN returns false`() =
-        runTest {
-            orgRepo = createOrgRepo()
+    // --- addOrgFromRemoteConfig tests ---
 
-            val result = orgRepo.addOrgFromJsonString("this is not valid json{{{")
+    @Test
+    fun `WHEN addOrgFromRemoteConfig with valid JSON THEN parses all fields and inserts org`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.getOrg("rc-org") } returns createOrgEntity(id = "rc-org", name = "Remote Org", walletId = "rc-wallet")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+
+            val configJson =
+                """{"version":"2","walletId":"rc-wallet","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
+
+            val result = orgRepo.addOrgFromRemoteConfig("rc-org", "Remote Org", configJson)
+
+            assertTrue(result)
+            coVerify {
+                dao.insertOrg(
+                    match {
+                        it.id == "rc-org" &&
+                            it.name == "Remote Org" &&
+                            it.walletId == "rc-wallet" &&
+                            it.version == 2
+                    },
+                )
+            }
+        }
+
+    @Test
+    fun `WHEN addOrgFromRemoteConfig with missing walletId THEN defaults to empty`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.getOrg("no-wallet") } returns createOrgEntity(id = "no-wallet", name = "NoWallet")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+
+            val configJson =
+                """{"version":"1","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
+
+            val result = orgRepo.addOrgFromRemoteConfig("no-wallet", "NoWallet", configJson)
+
+            assertTrue(result)
+            coVerify { dao.insertOrg(match { it.walletId == "" }) }
+        }
+
+    @Test
+    fun `WHEN addOrgFromRemoteConfig with invalid routes THEN filters them out`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.getOrg("bad-routes") } returns createOrgEntity(id = "bad-routes", name = "BadRoutes")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+
+            val configJson =
+                """{"version":"1","walletId":"","captureSetupFlow":[{"route":"user-select"},{"route":"nonexistent-screen"}],"captureFlow":[{"route":"capture/{profilePicUrl}"},{"route":"fake-route"}]}"""
+
+            val result = orgRepo.addOrgFromRemoteConfig("bad-routes", "BadRoutes", configJson)
+
+            assertTrue(result)
+            coVerify {
+                dao.insertOrg(
+                    match {
+                        // Invalid routes should be stripped; only valid ones remain
+                        !it.captureSetupFlowJson.contains("nonexistent-screen") &&
+                            it.captureSetupFlowJson.contains("user-select") &&
+                            !it.captureFlowJson.contains("fake-route") &&
+                            it.captureFlowJson.contains("capture/{profilePicUrl}")
+                    },
+                )
+            }
+        }
+
+    @Test
+    fun `WHEN addOrgFromRemoteConfig with malformed JSON THEN falls back to addMinimalOrg`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.getOrg("test-id") } returns createOrgEntity(id = "test-id", name = "TestOrg")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+
+            val result = orgRepo.addOrgFromRemoteConfig("test-id", "TestOrg", "this is not valid json{{{")
+
+            // Falls back to addMinimalOrg which still inserts with the correct id/name
+            coVerify { dao.insertOrg(match { it.id == "test-id" && it.name == "TestOrg" }) }
+        }
+
+    @Test
+    fun `WHEN addOrgFromRemoteConfig with features THEN preserves feature flags`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.getOrg("feat-org") } returns createOrgEntity(id = "feat-org", name = "FeatOrg")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+
+            val configJson =
+                """{"version":"1","walletId":"w","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"tree-image-review/{photoPath}","features":["forceNote"]}]}"""
+
+            val result = orgRepo.addOrgFromRemoteConfig("feat-org", "FeatOrg", configJson)
+
+            assertTrue(result)
+            coVerify {
+                dao.insertOrg(match { it.captureFlowJson.contains("forceNote") })
+            }
+        }
+
+    // --- addMinimalOrg tests ---
+
+    @Test
+    fun `WHEN addMinimalOrg called THEN creates org with default flows and empty wallet`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.getOrg("minimal-id") } returns createOrgEntity(id = "minimal-id", name = "MinimalOrg")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+
+            val result = orgRepo.addMinimalOrg("minimal-id", "MinimalOrg")
+
+            assertTrue(result)
+            coVerify {
+                dao.insertOrg(
+                    match {
+                        it.id == "minimal-id" &&
+                            it.name == "MinimalOrg" &&
+                            it.walletId == "" &&
+                            it.captureSetupFlowJson.contains("user-select") &&
+                            it.captureFlowJson.contains("capture/{profilePicUrl}") &&
+                            it.captureFlowJson.contains("tree-image-review/{photoPath}")
+                    },
+                )
+            }
+        }
+
+    @Test
+    fun `WHEN addMinimalOrg called THEN sets org as current`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.getOrg("set-current") } returns createOrgEntity(id = "set-current", name = "SetCurrent")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+            orgRepo.addMinimalOrg("set-current", "SetCurrent")
+
+            verify { mockEditor.putString(any(), "set-current") }
+            assertEquals("SetCurrent", orgRepo.currentOrg().name)
+        }
+
+    @Test
+    fun `WHEN addMinimalOrg and dao throws THEN returns false`() =
+        runTest {
+            val defaultOrg = createOrgEntity(id = "-1", name = "Greenstand")
+            every { prefs.getString(any(), any()) } returns "-1"
+            coEvery { dao.getOrg("-1") } returns defaultOrg
+            coEvery { dao.insertOrg(match { it.id == "err-id" }) } throws RuntimeException("DB error")
+
+            orgRepo = createOrgRepo()
+            orgRepo.init()
+
+            val result = orgRepo.addMinimalOrg("err-id", "ErrOrg")
 
             assertFalse(result)
         }
