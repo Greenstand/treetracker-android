@@ -35,11 +35,15 @@ sealed class LanguagePickerAction : Action {
     object ConfirmLanguage : LanguagePickerAction()
 
     object NavigateNext : LanguagePickerAction()
+
+    object ResetNavigation : LanguagePickerAction()
 }
 
 class LanguagePickerViewModel(
     private val languageSwitcher: LanguageSwitcher,
 ) : BaseViewModel<LanguagePickerState, LanguagePickerAction>(LanguagePickerState(currentLanguage = languageSwitcher.currentLanguage())) {
+    private var hasNavigated = false
+
     init {
         languageSwitcher
             .observeCurrentLanguage()
@@ -55,7 +59,18 @@ class LanguagePickerViewModel(
             is LanguagePickerAction.ConfirmLanguage -> {
                 state.value.currentLanguage?.let { languageSwitcher.setLanguage(it) }
             }
-            else -> { }
+            is LanguagePickerAction.NavigateNext -> {
+                // handled in composable, guarded here
+            }
+            is LanguagePickerAction.ResetNavigation -> { // ← ADD
+                hasNavigated = false
+            }
         }
+    }
+
+    fun tryNavigate(): Boolean {
+        if (hasNavigated) return false
+        hasNavigated = true
+        return true
     }
 }

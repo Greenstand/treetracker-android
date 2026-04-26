@@ -53,7 +53,6 @@ fun LanguageSelectScreen(
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
 
-    //
     LaunchedEffect(Unit) {
         viewModel.handleAction(LanguagePickerAction.ResetNavigation)
     }
@@ -63,7 +62,7 @@ fun LanguageSelectScreen(
         onHandleAction = { action ->
             when (action) {
                 is LanguagePickerAction.NavigateNext -> {
-                    if(!viewModel.tryNavigate())return@LanguageSelect
+                    if (!viewModel.tryNavigate())return@LanguageSelect
                     viewModel.handleAction(LanguagePickerAction.ConfirmLanguage)
                     if (isFromTopBar) {
                         navController.popBackStack()
