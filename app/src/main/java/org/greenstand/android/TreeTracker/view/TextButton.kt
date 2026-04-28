@@ -71,7 +71,7 @@ fun BoxScope.ArrowButton(
             modifier = Modifier
                 .size(height = 45.dp, width = 45.dp),
             painter = getPainter(colors = colors, isLeft = isLeft),
-            contentDescription = null,
+            contentDescription = if (isLeft) "Navigate back" else "Navigate forward",
         )
     }
 }

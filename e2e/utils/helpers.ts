@@ -81,7 +81,9 @@ export async function tapSettingsIcon(): Promise<void> {
 }
 
 export async function tapRightArrow(): Promise<void> {
-  await tapAt(RIGHT_BTN_X, ACTION_BAR_Y);
+  const btn = await byDesc("Navigate forward");
+  await btn.waitForDisplayed({ timeout: 8000 });
+  await btn.click();
 }
 
 /**
