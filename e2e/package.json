@@ -1,0 +1,21 @@
+{
+  "name": "@greenstand/android-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "wdio run ./wdio.conf.ts",
+    "test:spec": "wdio run ./wdio.conf.ts --spec"
+  },
+  "devDependencies": {
+    "@wdio/appium-service": "^9.0.0",
+    "@wdio/cli": "^9.0.0",
+    "@wdio/cucumber-framework": "^9.0.0",
+    "@wdio/globals": "^9.0.0",
+    "@wdio/local-runner": "^9.0.0",
+    "@wdio/spec-reporter": "^9.0.0",
+    "@wdio/allure-reporter": "^9.0.0",
+    "appium": "^3.0.0-rc.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  }
+}
