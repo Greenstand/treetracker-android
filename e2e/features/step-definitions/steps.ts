@@ -7,12 +7,14 @@ import {
   waitForVisible,
   isVisible,
   tapText,
+  tapDesc,
   tapRightArrow,
   tapSettingsIcon,
   tapFirstListItem,
   tapFirstListItemAndAdvance,
   dismissSyncReminderIfPresent,
   byTextContains,
+  byClass,
   APP_PACKAGE,
 } from "../../utils/helpers";
 
@@ -99,6 +101,32 @@ When("I select the first user and advance", async () => {
 When("I select the first wallet and advance", async () => {
   await tapFirstListItemAndAdvance();
   await browser.pause(1000);
+});
+
+When("I accept the privacy policy", async () => {
+  await tapDesc("Accept Privacy Policy", 15000);
+});
+
+When("I enter phone number {string}", async (phone: string) => {
+  const field = await byClass("android.widget.EditText", 0);
+  await field.waitForDisplayed({ timeout: 8000 });
+  await field.setValue(phone);
+  try { await browser.hideKeyboard(); } catch { /* not shown */ }
+  await browser.pause(500);
+});
+
+When("I enter name {string} {string}", async (first: string, last: string) => {
+  const firstField = await byClass("android.widget.EditText", 0);
+  await firstField.waitForDisplayed({ timeout: 8000 });
+  await firstField.setValue(first);
+  const lastField = await byClass("android.widget.EditText", 1);
+  await lastField.setValue(last);
+  try { await browser.hideKeyboard(); } catch { /* not shown */ }
+  await browser.pause(500);
+});
+
+Then("I should reach the dashboard", async () => {
+  await ensureOnDashboard();
 });
 
 When("I advance through org setup", async () => {

@@ -76,6 +76,12 @@ export async function tapText(text: string, timeout = 10000): Promise<void> {
   await el.click();
 }
 
+export async function tapDesc(desc: string, timeout = 10000): Promise<void> {
+  const el = await byDesc(desc);
+  await el.waitForDisplayed({ timeout });
+  await el.click();
+}
+
 export async function tapSettingsIcon(): Promise<void> {
   await tapAt(120, TOP_BAR_Y);
 }
@@ -115,7 +121,37 @@ export async function launchFresh(): Promise<void> {
   } catch {
     // clearApp is best-effort; ignore errors
   }
+  // clearApp revokes all runtime permissions — re-grant camera so ImageCaptureActivity works
+  try {
+    await browser.execute("mobile: shell", {
+      command: `pm grant ${APP_PACKAGE} android.permission.CAMERA`,
+    });
+  } catch { /* best-effort */ }
   await browser.activateApp(APP_PACKAGE);
+  await browser.pause(1500);
+  // dismiss any system dialogs that appear on fresh launch
+  await dismissSystemDialogsIfPresent();
+}
+
+async function dismissSystemDialogsIfPresent(): Promise<void> {
+  const allowTexts = ["While using the app", "Only this time", "Allow", "OK"];
+  for (let i = 0; i < 3; i++) {
+    let dismissed = false;
+    for (const text of allowTexts) {
+      try {
+        const btn = await byText(text);
+        if (await btn.isDisplayed()) {
+          await btn.click();
+          await browser.pause(500);
+          dismissed = true;
+          break;
+        }
+      } catch {
+        // not present
+      }
+    }
+    if (!dismissed) break;
+  }
 }
 
 export async function launchWithExistingUser(): Promise<void> {
@@ -190,10 +226,18 @@ export async function ensureOnDashboard(): Promise<void> {
     await browser.pause(3000);
   }
 
+  // ── Selfie Tutorial Dialog ───────────────────────────────────────────────
+  // The tutorial thumbs-up dismiss button uses pointerInput (no accessibility click).
+  if (await isVisibleWithTimeout("Click on", 5000)) {
+    await browser.pause(1500);
+    await browser.execute("mobile: shell", { command: "input tap 540 1720" });
+    await browser.pause(800);
+  }
+
   // ── Selfie Screen ────────────────────────────────────────────────────────
   if (!await isVisible("UPLOAD")) {
     try {
-      await tapAt(540, ACTION_BAR_Y);
+      await tapDesc("Take selfie", 10000);
       await browser.pause(3000);
     } catch {
       // already past selfie screen
@@ -203,7 +247,7 @@ export async function ensureOnDashboard(): Promise<void> {
   // ── Image Review Screen ──────────────────────────────────────────────────
   if (!await isVisible("UPLOAD")) {
     try {
-      await tapAt(RIGHT_BTN_X, ACTION_BAR_Y);
+      await tapDesc("Approve selfie", 8000);
       await browser.pause(2000);
     } catch {
       // already past review screen

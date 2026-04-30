@@ -11,3 +11,11 @@ Feature: New user onboarding entry
     When I tap "ENGLISH"
     And I tap the right arrow
     Then I should see "Privacy Policy"
+    When I accept the privacy policy
+    Then I should see "PHONE"
+    When I enter phone number "1234567890"
+    And I tap the right arrow
+    Then I should see "First Name"
+    When I enter name "Test" "User"
+    And I tap the right arrow
+    Then I should reach the dashboard

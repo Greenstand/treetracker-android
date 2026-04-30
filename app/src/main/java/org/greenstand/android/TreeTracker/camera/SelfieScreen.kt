@@ -85,7 +85,8 @@ fun SelfieScreen() {
                 onClick = {
                     cameraControl.captureImage()
                 },
-                isEnabled = true
+                isEnabled = true,
+                contentDescription = "Take selfie"
             )
         }
     }
