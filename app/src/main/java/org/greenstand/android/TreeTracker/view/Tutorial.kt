@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -239,9 +241,13 @@ fun TutorialDialog(
                 ApprovalButton(
                     modifier = Modifier
                         .size(40.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .align(Alignment.CenterHorizontally)
+                        .semantics {
+                            onClick(action = { onCompleteClick(); true })
+                        },
                     onClick = onCompleteClick,
-                    approval = true
+                    approval = true,
+                    contentDescription = "Dismiss tutorial"
                 )
             }
         }

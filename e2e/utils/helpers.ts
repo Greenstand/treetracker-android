@@ -227,10 +227,8 @@ export async function ensureOnDashboard(): Promise<void> {
   }
 
   // ── Selfie Tutorial Dialog ───────────────────────────────────────────────
-  // The tutorial thumbs-up dismiss button uses pointerInput (no accessibility click).
   if (await isVisibleWithTimeout("Click on", 5000)) {
-    await browser.pause(1500);
-    await browser.execute("mobile: shell", { command: "input tap 540 1720" });
+    await tapDesc("Dismiss tutorial", 8000);
     await browser.pause(800);
   }
 
