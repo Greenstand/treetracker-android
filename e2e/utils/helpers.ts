@@ -1,6 +1,6 @@
 import { $, browser } from "@wdio/globals";
 
-export const APP_PACKAGE = "org.greenstand.android.TreeTracker.debug";
+export const APP_PACKAGE = "org.greenstand.android.TreeTracker.dev";
 
 // ─── Screen Layout Constants ──────────────────────────────────────────────────
 // Physical screen: 1080 × 2400 px, density 420 dpi, gesture navigation.

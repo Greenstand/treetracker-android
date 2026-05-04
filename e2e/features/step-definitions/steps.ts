@@ -126,7 +126,12 @@ When("I enter phone number {string}", async (phone: string) => {
 });
 
 When("I accept the tree capture", async () => {
-  await tapDesc("Approve tree", 10000);
+  // The review tutorial overlay may still be up — dismiss it (idempotent)
+  // before targeting the Approve button.
+  try {
+    await tapDesc("Dismiss tutorial", 3000);
+  } catch { /* tutorial not present */ }
+  await tapDesc("Approve tree", 15000);
 });
 
 Then("I should be back on the capture screen", async () => {
@@ -145,14 +150,14 @@ When("I take a tree capture", async () => {
 });
 
 Then("I should see the tree image review screen", async () => {
-  // TreeImageReviewScreen may render a one-shot review tutorial on first reach;
-  // dismiss it via contentDescription (the visible tutorial text is multi-line
-  // and varies, but the dismiss button is consistent).
-  try {
-    await tapDesc("Dismiss tutorial", 8000);
-  } catch { /* tutorial not present */ }
-  // The "Note" button renders all-caps via theme styling.
+  // Wait for the screen to render first (NOTE button is unique to this screen,
+  // theme-styled all-caps), then dismiss the one-shot review tutorial if it is
+  // still up. The tutorial may render slightly after NOTE — racing dismiss
+  // against waitForVisible can miss it on slow emulators.
   await waitForVisible("NOTE", 15000);
+  try {
+    await tapDesc("Dismiss tutorial", 5000);
+  } catch { /* tutorial already gone or never appeared */ }
 });
 
 When("I enter organization {string}", async (orgName: string) => {
