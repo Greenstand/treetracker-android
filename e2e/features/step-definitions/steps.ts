@@ -59,16 +59,14 @@ Then("I should see the messages screen", async () => {
 });
 
 Then("I should see the capture screen", async () => {
-  // TreeCaptureScreen renders a one-shot tutorial dialog ("Click on ... to
-  // snap your tree") on first reach — its presence uniquely identifies this
-  // screen. The "Tracking in progress" overlay only appears while GPS converges,
-  // which on an emulator may finish before we can observe it, so we don't rely
-  // on it.
-  await waitForVisible("Click on", 15000);
-  await tapDesc("Dismiss tutorial", 8000);
-  if (await isVisible("Organization")) {
-    throw new Error("Tutorial dismissed but still on AddOrg screen — did not advance to TreeCapture");
-  }
+  // Dismiss the one-shot capture tutorial if it appears (only on first reach
+  // per app install — subsequent visits skip it). Anchor on the unique capture
+  // button afterwards, which is the only contentDescription specific to this
+  // screen.
+  try {
+    await tapDesc("Dismiss tutorial", 5000);
+  } catch { /* tutorial already dismissed in a prior session */ }
+  await (await byDesc("Take tree photo")).waitForDisplayed({ timeout: 15000 });
 });
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
@@ -79,6 +77,11 @@ When("I tap {string}", async (text: string) => {
 
 When("I tap the right arrow", async () => {
   await tapRightArrow();
+  await browser.pause(1000);
+});
+
+When("I tap the back arrow", async () => {
+  await tapDesc("Navigate back", 8000);
   await browser.pause(1000);
 });
 
@@ -120,6 +123,17 @@ When("I enter phone number {string}", async (phone: string) => {
   await field.setValue(phone);
   try { await browser.hideKeyboard(); } catch { /* not shown */ }
   await browser.pause(500);
+});
+
+When("I accept the tree capture", async () => {
+  await tapDesc("Approve tree", 10000);
+});
+
+Then("I should be back on the capture screen", async () => {
+  // After approval, navigation pops back to TreeCaptureScreen — its capture
+  // button is the unique anchor (Dashboard / UserSelect / WalletSelect / AddOrg
+  // none expose this contentDescription).
+  await (await byDesc("Take tree photo")).waitForDisplayed({ timeout: 15000 });
 });
 
 When("I take a tree capture", async () => {

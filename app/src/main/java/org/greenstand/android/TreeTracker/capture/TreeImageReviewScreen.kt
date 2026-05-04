@@ -59,7 +59,8 @@ fun TreeImageReviewScreen(
                     onClick = {
                         navController.popBackStack()
                     },
-                    approval = false
+                    approval = false,
+                    contentDescription = "Reject tree",
                 )
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
@@ -69,7 +70,8 @@ fun TreeImageReviewScreen(
                             navController.popBackStack()
                         }
                     },
-                    approval = true
+                    approval = true,
+                    contentDescription = "Approve tree",
                 )
                 Image(
                     modifier = Modifier
