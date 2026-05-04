@@ -15,4 +15,7 @@ Feature: Capture setup flow
     And I should be back on the capture screen
     And I tap the back arrow
     And I should reach the dashboard
-    Then the ready-to-upload count is greater than 0
+    And the ready-to-upload count is greater than 0
+    When I upload the captures
+    Then the ready-to-upload count becomes 0
+    And the uploaded count becomes 1

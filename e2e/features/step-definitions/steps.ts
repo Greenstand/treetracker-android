@@ -177,6 +177,31 @@ Then("I should reach the dashboard", async () => {
   await ensureOnDashboard();
 });
 
+When("I upload the captures", async () => {
+  await tapText("UPLOAD");
+});
+
+Then("the ready-to-upload count becomes 0", async () => {
+  // The "Trees ready to upload" Text node displays treesRemainingToSync.
+  // Poll its rendered text until the sync completes (count flips to "0").
+  await browser.waitUntil(async () => {
+    const el = await byDesc("Trees ready to upload");
+    if (!(await el.isDisplayed())) return false;
+    const txt = await el.getText();
+    return txt === "0";
+  }, { timeout: 60000, interval: 1500, timeoutMsg: "ready-to-upload count never reached 0" });
+});
+
+Then("the uploaded count becomes 1", async () => {
+  // The "Trees uploaded" Text node displays treesSynced.
+  await browser.waitUntil(async () => {
+    const el = await byDesc("Trees uploaded");
+    if (!(await el.isDisplayed())) return false;
+    const txt = await el.getText();
+    return txt === "1";
+  }, { timeout: 60000, interval: 1500, timeoutMsg: "uploaded count never reached 1" });
+});
+
 Then("the ready-to-upload count is greater than 0", async () => {
   // DashboardScreen renders treesRemainingToSync as plain text. After one
   // tree capture in this run, the count is exactly "1" (signup clears data).
