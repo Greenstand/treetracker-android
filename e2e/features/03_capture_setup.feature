@@ -14,4 +14,5 @@ Feature: Capture setup flow
     And I accept the tree capture
     And I should be back on the capture screen
     And I tap the back arrow
-    Then I should reach the dashboard
+    And I should reach the dashboard
+    Then the ready-to-upload count is greater than 0

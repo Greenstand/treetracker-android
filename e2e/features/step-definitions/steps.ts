@@ -177,6 +177,14 @@ Then("I should reach the dashboard", async () => {
   await ensureOnDashboard();
 });
 
+Then("the ready-to-upload count is greater than 0", async () => {
+  // DashboardScreen renders treesRemainingToSync as plain text. After one
+  // tree capture in this run, the count is exactly "1" (signup clears data).
+  // byText is exact-match, so this won't collide with multi-digit text
+  // elsewhere on the screen.
+  await waitForVisible("1", 10000);
+});
+
 When("I advance through org setup", async () => {
   await waitForVisible("Organization", 8000);
   await tapRightArrow();
