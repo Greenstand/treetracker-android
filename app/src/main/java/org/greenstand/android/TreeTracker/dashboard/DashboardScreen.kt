@@ -130,8 +130,13 @@ fun DashboardScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     DashboardUploadProgressBar(
-                        progress = (state.treesRemainingToSync)
-                            .toFloat() / (state.totalTreesToSync),
+                        // 0/0 produces Float.NaN, which propagates through
+                        // progressSemantics(...) and crashes Compose's accessibility
+                        // delegate ("Cannot round NaN value") on a fresh dashboard
+                        // with no trees yet — kills the app the moment Appium reads
+                        // the UI tree.
+                        progress = if (state.totalTreesToSync == 0) 0f
+                                   else state.treesRemainingToSync.toFloat() / state.totalTreesToSync,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
