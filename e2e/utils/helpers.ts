@@ -142,6 +142,15 @@ export async function launchFresh(): Promise<void> {
       });
     } catch { /* best-effort */ }
   }
+  // Seed an emulator GPS fix so TreeCaptureScreen's location-gated UI (capture
+  // button enable, navigation to ImageReview) progresses on test devices.
+  try {
+    await browser.execute("mobile: setGeolocation", {
+      latitude: 37.422,
+      longitude: -122.084,
+      altitude: 0,
+    });
+  } catch { /* best-effort — emulator may already have a location */ }
   await browser.activateApp(APP_PACKAGE);
   await browser.pause(1500);
   // dismiss any system dialogs that appear on fresh launch

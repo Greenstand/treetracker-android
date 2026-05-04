@@ -16,6 +16,7 @@ import {
   dismissSyncReminderIfPresent,
   byTextContains,
   byClass,
+  byDesc,
   APP_PACKAGE,
 } from "../../utils/helpers";
 
@@ -119,6 +120,25 @@ When("I enter phone number {string}", async (phone: string) => {
   await field.setValue(phone);
   try { await browser.hideKeyboard(); } catch { /* not shown */ }
   await browser.pause(500);
+});
+
+When("I take a tree capture", async () => {
+  // Wait for the location-gated capture button to become enabled and tap it.
+  const btn = await byDesc("Take tree photo");
+  await btn.waitForDisplayed({ timeout: 30000 });
+  await btn.waitForEnabled({ timeout: 30000 });
+  await btn.click();
+});
+
+Then("I should see the tree image review screen", async () => {
+  // TreeImageReviewScreen may render a one-shot review tutorial on first reach;
+  // dismiss it via contentDescription (the visible tutorial text is multi-line
+  // and varies, but the dismiss button is consistent).
+  try {
+    await tapDesc("Dismiss tutorial", 8000);
+  } catch { /* tutorial not present */ }
+  // The "Note" button renders all-caps via theme styling.
+  await waitForVisible("NOTE", 15000);
 });
 
 When("I enter organization {string}", async (orgName: string) => {
