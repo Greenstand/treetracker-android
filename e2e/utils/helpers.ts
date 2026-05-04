@@ -121,19 +121,26 @@ export async function launchFresh(): Promise<void> {
   } catch {
     // clearApp is best-effort; ignore errors
   }
-  // clearApp revokes all runtime permissions — re-grant camera so ImageCaptureActivity works
-  try {
-    await browser.execute("mobile: shell", {
-      command: `pm grant ${APP_PACKAGE} android.permission.CAMERA`,
-    });
-  } catch { /* best-effort */ }
+  // clearApp revokes all runtime permissions — re-grant camera + location so the
+  // selfie capture activity and any GPS-gated screens don't hang on a system dialog.
+  for (const perm of [
+    "android.permission.CAMERA",
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.ACCESS_COARSE_LOCATION",
+  ]) {
+    try {
+      await browser.execute("mobile: shell", {
+        command: `pm grant ${APP_PACKAGE} ${perm}`,
+      });
+    } catch { /* best-effort */ }
+  }
   await browser.activateApp(APP_PACKAGE);
   await browser.pause(1500);
   // dismiss any system dialogs that appear on fresh launch
   await dismissSystemDialogsIfPresent();
 }
 
-async function dismissSystemDialogsIfPresent(): Promise<void> {
+export async function dismissSystemDialogsIfPresent(): Promise<void> {
   const allowTexts = ["While using the app", "Only this time", "Allow", "OK"];
   for (let i = 0; i < 3; i++) {
     let dismissed = false;
@@ -226,31 +233,33 @@ export async function ensureOnDashboard(): Promise<void> {
     await browser.pause(3000);
   }
 
+  // A camera-permission dialog can render between name-entry and selfie capture
+  // even after `pm grant` because the app may probe permissions before the grant lands.
+  await dismissSystemDialogsIfPresent();
+
   // ── Selfie Tutorial Dialog ───────────────────────────────────────────────
-  if (await isVisibleWithTimeout("Click on", 5000)) {
+  if (await isVisibleWithTimeout("Click on", 8000)) {
     await tapDesc("Dismiss tutorial", 8000);
-    await browser.pause(800);
+    // Wait for the next anchor (capture button) instead of a fixed pause.
+    await (await byDesc("Take selfie")).waitForDisplayed({ timeout: 15000 });
   }
 
   // ── Selfie Screen ────────────────────────────────────────────────────────
-  if (!await isVisible("UPLOAD")) {
-    try {
-      await tapDesc("Take selfie", 10000);
-      await browser.pause(3000);
-    } catch {
-      // already past selfie screen
-    }
+  if (!(await isVisible("UPLOAD"))) {
+    const takeSelfie = await byDesc("Take selfie");
+    await takeSelfie.waitForDisplayed({ timeout: 15000 });
+    await takeSelfie.click();
+    // Wait until the review screen renders (Approve appears) — guarantees the
+    // capture-then-transition completed, regardless of camera latency.
+    await (await byDesc("Approve selfie")).waitForDisplayed({ timeout: 20000 });
   }
 
   // ── Image Review Screen ──────────────────────────────────────────────────
-  if (!await isVisible("UPLOAD")) {
-    try {
-      await tapDesc("Approve selfie", 8000);
-      await browser.pause(2000);
-    } catch {
-      // already past review screen
-    }
+  if (!(await isVisible("UPLOAD"))) {
+    const approve = await byDesc("Approve selfie");
+    await approve.waitForDisplayed({ timeout: 8000 });
+    await approve.click();
   }
 
-  await waitForVisible("UPLOAD", 25000);
+  await waitForVisible("UPLOAD", 30000);
 }
