@@ -13,7 +13,7 @@ export const config: any = {
       "appium:deviceName": process.env.DEVICE_NAME || "emulator-5554",
       "appium:app": process.env.APK_PATH,
       "appium:automationName": "UiAutomator2",
-      "appium:appPackage": "org.greenstand.android.TreeTracker.debug",
+      "appium:appPackage": "org.greenstand.android.TreeTracker.dev",
       "appium:appActivity":
         "org.greenstand.android.TreeTracker.activities.TreeTrackerActivity",
       "appium:autoGrantPermissions": true,
