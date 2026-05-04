@@ -94,9 +94,17 @@ export async function tapRightArrow(): Promise<void> {
 
 /**
  * Tap the first list item (user/wallet card).
- * Used in MessagesUserSelect — card tap auto-navigates (no right arrow needed).
+ * Prefers an element-based tap when an anchor text is provided — robust against
+ * grid-vs-list layout differences. Falls back to a coordinate tap otherwise.
  */
-export async function tapFirstListItem(timeout = 12000): Promise<void> {
+export async function tapFirstListItem(anchorText?: string, timeout = 12000): Promise<void> {
+  if (anchorText) {
+    const el = await byText(anchorText);
+    await el.waitForDisplayed({ timeout });
+    await el.click();
+    await browser.pause(600);
+    return;
+  }
   await browser.pause(1500);
   await tapAt(540, LIST_FIRST_Y);
   await browser.pause(800);
@@ -107,8 +115,8 @@ export async function tapFirstListItem(timeout = 12000): Promise<void> {
  * Used in UserSelect (2.1.3): tapping a user card selects it;
  * right arrow advances to WalletSelect.
  */
-export async function tapFirstListItemAndAdvance(timeout = 12000): Promise<void> {
-  await tapFirstListItem(timeout);
+export async function tapFirstListItemAndAdvance(anchorText?: string, timeout = 12000): Promise<void> {
+  await tapFirstListItem(anchorText, timeout);
   await tapRightArrow();
 }
 
@@ -162,7 +170,12 @@ export async function dismissSystemDialogsIfPresent(): Promise<void> {
 }
 
 export async function launchWithExistingUser(): Promise<void> {
+  // Terminate + reactivate so each scenario starts from the Dashboard root,
+  // not whatever screen the prior scenario ended on. With noReset:true, app
+  // data persists, so the cold start auto-skips onboarding.
+  await browser.terminateApp(APP_PACKAGE);
   await browser.activateApp(APP_PACKAGE);
+  await browser.pause(1500);
   await ensureOnDashboard();
 }
 

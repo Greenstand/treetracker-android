@@ -6,6 +6,7 @@ import {
   ensureOnDashboard,
   waitForVisible,
   isVisible,
+  isVisibleWithTimeout,
   tapText,
   tapDesc,
   tapRightArrow,
@@ -40,21 +41,16 @@ Then("I should see text containing {string}", async (text: string) => {
 });
 
 Then("I should see the user select screen", async () => {
-  // UserSelectScreen shows a LazyColumn of user cards — detect by waiting
-  // for any visible user card text or the screen to settle
-  await browser.pause(2000);
-  const onUserSelect = !(await isVisible("UPLOAD")) && !(await isVisible("TRACK"));
-  if (!onUserSelect) throw new Error("Not on user select screen");
+  // The test user signs up with first name "Test User"; UserSelect is the first
+  // post-Dashboard screen that renders that name in its grid.
+  await waitForVisible("Test User", 12000);
 });
 
 Then("I should see the wallet select screen", async () => {
-  // WalletSelectScreen has no title text — detect by absence of known screens
-  await browser.pause(2000);
-  const onWallet =
-    !(await isVisible("UPLOAD")) &&
-    !(await isVisible("Organization")) &&
-    !(await isVisible("TRACK"));
-  if (!onWallet) throw new Error("Not on wallet select screen");
+  // WalletSelect re-renders the user via UserButton, so "Test User" is still visible.
+  // Combined with TRACK no longer visible, this uniquely identifies WalletSelect.
+  await waitForVisible("Test User", 12000);
+  if (await isVisible("TRACK")) throw new Error("Still on Dashboard, not WalletSelect");
 });
 
 Then("I should see the messages screen", async () => {
@@ -62,7 +58,16 @@ Then("I should see the messages screen", async () => {
 });
 
 Then("I should see the capture screen", async () => {
-  await waitForVisible("Tracking in progress", 20000);
+  // TreeCaptureScreen renders a one-shot tutorial dialog ("Click on ... to
+  // snap your tree") on first reach — its presence uniquely identifies this
+  // screen. The "Tracking in progress" overlay only appears while GPS converges,
+  // which on an emulator may finish before we can observe it, so we don't rely
+  // on it.
+  await waitForVisible("Click on", 15000);
+  await tapDesc("Dismiss tutorial", 8000);
+  if (await isVisible("Organization")) {
+    throw new Error("Tutorial dismissed but still on AddOrg screen — did not advance to TreeCapture");
+  }
 });
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
@@ -86,20 +91,21 @@ When("I open Settings", async () => {
 });
 
 When("I select the first user", async () => {
-  await tapFirstListItem();
+  await tapFirstListItem("Test User");
 });
 
 When("I select the first user and advance", async () => {
-  await tapFirstListItemAndAdvance();
+  await tapFirstListItemAndAdvance("Test User");
   await browser.pause(1000);
 });
 
 /**
  * In 2.1.3, after UserSelect → WalletSelect, user taps a wallet card
- * then taps the right arrow to advance to AddOrg.
+ * then taps the right arrow to advance to AddOrg. The wallet item still
+ * shows the user's first name ("Test User"), so the same anchor works.
  */
 When("I select the first wallet and advance", async () => {
-  await tapFirstListItemAndAdvance();
+  await tapFirstListItemAndAdvance("Test User");
   await browser.pause(1000);
 });
 
@@ -111,6 +117,14 @@ When("I enter phone number {string}", async (phone: string) => {
   const field = await byClass("android.widget.EditText", 0);
   await field.waitForDisplayed({ timeout: 8000 });
   await field.setValue(phone);
+  try { await browser.hideKeyboard(); } catch { /* not shown */ }
+  await browser.pause(500);
+});
+
+When("I enter organization {string}", async (orgName: string) => {
+  const field = await byClass("android.widget.EditText", 0);
+  await field.waitForDisplayed({ timeout: 8000 });
+  await field.setValue(orgName);
   try { await browser.hideKeyboard(); } catch { /* not shown */ }
   await browser.pause(500);
 });
