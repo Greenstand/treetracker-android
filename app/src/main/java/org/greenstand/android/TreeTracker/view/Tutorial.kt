@@ -40,6 +40,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -272,9 +274,13 @@ fun TutorialDialog(
                     modifier =
                         Modifier
                             .size(40.dp)
-                            .align(Alignment.CenterHorizontally),
+                            .align(Alignment.CenterHorizontally)
+                            .semantics {
+                                onClick(action = { onCompleteClick(); true })
+                            },
                     onClick = onCompleteClick,
                     approval = true,
+                    contentDescription = "Dismiss tutorial",
                 )
             }
         },

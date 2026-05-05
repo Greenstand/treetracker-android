@@ -80,10 +80,12 @@ fun ImageReview(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = onRejectClicked,
                     approval = false,
+                    contentDescription = "Retake photo",
                 )
                 ApprovalButton(
                     onClick = onApproveClicked,
                     approval = true,
+                    contentDescription = "Approve selfie",
                 )
             }
         },

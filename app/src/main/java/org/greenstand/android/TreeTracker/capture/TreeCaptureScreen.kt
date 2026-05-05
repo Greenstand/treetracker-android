@@ -125,6 +125,7 @@ fun TreeCaptureScreen(
                             scope.launch { cameraControl.captureImage() }
                         },
                         isEnabled = !state.isGettingLocation,
+                        contentDescription = "Take tree photo",
                     )
                 },
                 rightAction = {

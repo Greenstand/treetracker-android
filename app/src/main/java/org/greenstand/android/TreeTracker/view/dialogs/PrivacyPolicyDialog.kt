@@ -99,6 +99,7 @@ fun PrivacyPolicyDialog(
                     .align(Alignment.Companion.CenterHorizontally),
             onClick = onDismiss,
             approval = true,
+            contentDescription = "Accept Privacy Policy",
         )
     }
 }

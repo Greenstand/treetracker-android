@@ -75,6 +75,7 @@ fun SelfieScreen() {
                             cameraControl.captureImage()
                         },
                         isEnabled = true,
+                        contentDescription = "Take selfie",
                     )
                 },
             )
