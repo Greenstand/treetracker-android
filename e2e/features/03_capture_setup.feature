@@ -11,6 +11,7 @@ Feature: Capture setup flow
     And I should see the capture screen
     And I take a tree capture
     And I should see the tree image review screen
+    And I add a unique note to the tree capture
     And I accept the tree capture
     And I should be back on the capture screen
     And I tap the back arrow
@@ -19,3 +20,4 @@ Feature: Capture setup flow
     When I upload the captures
     Then the ready-to-upload count becomes 0
     And the uploaded count becomes 1
+    And the admin panel verify page shows our note

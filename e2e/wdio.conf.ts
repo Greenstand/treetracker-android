@@ -66,7 +66,9 @@ export const config: any = {
     source: true,
     strict: false,
     tags: process.env.WDIO_TAGS || "not @skip",
-    timeout: 90000,
+    // Per-step timeout. Long because `the admin panel verify page shows our note`
+    // polls /verify for up to 360s while the backend ingest pipeline catches up.
+    timeout: 420000,
     ignoreUndefinedDefinitions: false,
   },
 };

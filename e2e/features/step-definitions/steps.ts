@@ -1,4 +1,4 @@
-import { Given, When, Then } from "@wdio/cucumber-framework";
+import { Before, AfterAll, Given, When, Then } from "@wdio/cucumber-framework";
 import { browser } from "@wdio/globals";
 import {
   launchFresh,
@@ -19,6 +19,20 @@ import {
   byDesc,
   APP_PACKAGE,
 } from "../../utils/helpers";
+import { verifyCaptureOnAdmin, stopChromedriver } from "../../utils/admin";
+
+// ─── Scenario state (cucumber World) ──────────────────────────────────────────
+
+// Per-scenario fingerprint stamped into the captured tree's note. Generated in
+// a Before hook so each scenario gets a fresh, unique value.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+Before(function (this: any) {
+  this.fingerprint = `e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+});
+
+AfterAll(async function () {
+  await stopChromedriver();
+});
 
 // ─── App Launch ───────────────────────────────────────────────────────────────
 
@@ -123,6 +137,30 @@ When("I enter phone number {string}", async (phone: string) => {
   await field.setValue(phone);
   try { await browser.hideKeyboard(); } catch { /* not shown */ }
   await browser.pause(500);
+});
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+When("I add a unique note to the tree capture", async function (this: any) {
+  // Open the note dialog (NOTE button is text-styled all-caps).
+  await tapText("NOTE");
+  // Wait for the dialog title; the input below it is the only EditText now.
+  await waitForVisible("Add note to tree", 8000);
+  const noteField = await byClass("android.widget.EditText", 0);
+  await noteField.waitForDisplayed({ timeout: 5000 });
+  await noteField.setValue(this.fingerprint);
+  try { await browser.hideKeyboard(); } catch { /* not shown */ }
+  await browser.pause(300);
+  await tapDesc("Save note", 8000);
+  // Wait for the dialog to close before proceeding.
+  await browser.waitUntil(
+    async () => !(await isVisible("Add note to tree")),
+    { timeout: 8000, interval: 500, timeoutMsg: "note dialog never closed" }
+  );
+});
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+Then("the admin panel verify page shows our note", async function (this: any) {
+  await verifyCaptureOnAdmin(this.fingerprint);
 });
 
 When("I accept the tree capture", async () => {

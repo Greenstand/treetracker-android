@@ -116,6 +116,8 @@ fun NoteDialog(state: TreeImageReviewState, viewModel: TreeImageReviewViewModel)
         },
         onNegativeClick = {
             viewModel.setDialogState(false)
-        }
+        },
+        confirmContentDescription = "Save note",
+        dismissContentDescription = "Cancel note",
     )
 }
