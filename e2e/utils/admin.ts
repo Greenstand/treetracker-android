@@ -100,47 +100,36 @@ export async function verifyCaptureOnAdmin(fingerprint: string): Promise<void> {
     // ── /verify ────────────────────────────────────────────────────────────
     await driver.url("https://dev-admin.treetracker.org/verify");
 
-    // The just-uploaded capture takes time to propagate through the backend.
-    // Poll: refresh the list, click the first capture's "second button" (the
-    // detail-view trigger), check the detail panel for our fingerprint. If the
-    // first capture isn't ours yet, close the panel and retry.
+    // The just-uploaded capture takes time to propagate through the backend
+    // (up to ~5 min). Poll: refresh /verify, click the FIRST "Capture details"
+    // icon button (its tooltip = aria-label is "Capture details"), then check
+    // the detail panel for our fingerprint. If the first row's detail isn't
+    // ours, refresh and retry — eventually our newer capture rises to the top.
+    const detailButtonSelector = '[aria-label="Capture details"]';
+
     await driver.waitUntil(
       async () => {
-        // Wait for at least one tree-image row to render before clicking.
-        const cards = await driver.$$('img[src*="treetracker"]');
-        if (cards.length === 0) {
+        // Wait for the page to render with at least one detail button.
+        const buttons = await driver.$$(detailButtonSelector);
+        if (buttons.length === 0) {
           await driver.refresh();
           return false;
         }
 
-        const opened = await driver.execute(() => {
-          const imgs = Array.from(document.querySelectorAll("img"));
-          const treeImg = imgs.find(i =>
-            (i.getAttribute("src") || "").includes("treetracker")
-          ) as HTMLImageElement | undefined;
-          if (!treeImg) return false;
-          let card: HTMLElement | null = treeImg;
-          for (let i = 0; i < 8 && card; i++) {
-            const buttons = card.querySelectorAll("button");
-            if (buttons.length >= 2) {
-              (buttons[1] as HTMLButtonElement).click();
-              return true;
-            }
-            card = card.parentElement;
-          }
+        // Click the first one (topmost capture in default sort = most recent).
+        try {
+          await buttons[0].click();
+        } catch {
+          await driver.refresh();
           return false;
-        });
+        }
 
-        if (!opened) return false;
-
-        // Give the detail panel a beat to render its async content.
+        // Detail panel is async; wait briefly for content to render.
         await driver.pause(1500);
         const src = await driver.getPageSource();
         if (src.includes(fingerprint)) return true;
 
-        // Not ours — close any open detail panel and retry on a fresh list.
-        // The Material UI close/back arrow is typically near top-right of the
-        // panel; pressing Escape is the most reliable cross-version close.
+        // Not ours — close the panel and retry on a fresh list.
         try {
           await driver.keys(["Escape"]);
         } catch { /* best-effort */ }
@@ -148,8 +137,8 @@ export async function verifyCaptureOnAdmin(fingerprint: string): Promise<void> {
         return false;
       },
       {
-        // The backend ingest pipeline (S3 → admin /verify) can take up to ~5 min
-        // in dev. 360s gives a safety margin above that worst case.
+        // Backend ingest (S3 → admin /verify) takes up to ~5 min. 360s gives
+        // a safety margin above that worst case.
         timeout: 360000,
         interval: 5000,
         timeoutMsg: `fingerprint "${fingerprint}" never appeared at the top of /verify within 360s`,
