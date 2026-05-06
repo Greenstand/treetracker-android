@@ -29,6 +29,8 @@ import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
 import org.greenstand.android.TreeTracker.overlay.SyncStep
+import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
@@ -41,6 +43,8 @@ class SyncDataUseCase(
     private val deviceConfigUploader: DeviceConfigUploader,
     private val messagesRepo: MessagesRepo,
     private val syncProgressTracker: SyncProgressTracker,
+    private val orgConfigProvider: OrgConfigProvider,
+    private val orgRepo: OrgRepo,
 ) : UseCase<Unit, Boolean>() {
     private val TAG = "SyncDataUseCase"
 
@@ -57,6 +61,15 @@ class SyncDataUseCase(
 
                 executeTrackedStep(SyncStep.MESSAGES, "Message Sync") {
                     messagesRepo.syncMessages()
+                    val currentOrg = orgRepo.currentOrg()
+                    if (currentOrg.id != OrgRepo.DEFAULT_ORG_ID) {
+                        val configJson = orgConfigProvider.fetchOrgConfig(currentOrg.id)
+                        Timber.tag("OrgConfigProvider").d("Fetched config for org ${currentOrg.id}")
+                        if (configJson != null) {
+                            orgRepo.addOrgFromRemoteConfig(currentOrg.id, currentOrg.name, configJson)
+                            Timber.tag("OrgRepo").i("AddOrgFromRemoteConfig completed ${currentOrg.name}, ${currentOrg.id}, $configJson")
+                        }
+                    }
                 }
 
                 executeTrackedStep(SyncStep.DEVICE_CONFIG, "Device Config Upload") {
