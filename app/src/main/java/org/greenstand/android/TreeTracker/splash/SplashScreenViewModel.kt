@@ -91,7 +91,6 @@ class SplashScreenViewModel(
                     Timber.tag(ORG_LINK_TAG).i("Add Org From Remote Config ${currentOrg.id}")
                     markInitialOrgSyncComplete()
                     Timber.tag(ORG_LINK_TAG).i("Mark Initial Org Sync Complete ${currentOrg.id}")
-
                 }
             }
         }

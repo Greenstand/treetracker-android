@@ -41,8 +41,7 @@ class OrgRepo(
     private val ORG_CONFIG_SYNCED_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("org-config-synced")
 
     // In OrgRepo.kt
-    fun hasCompletedInitialOrgSync(): Boolean =
-        prefs.getBoolean(ORG_CONFIG_SYNCED_KEY, false)
+    fun hasCompletedInitialOrgSync(): Boolean = prefs.getBoolean(ORG_CONFIG_SYNCED_KEY, false)
 
     fun markInitialOrgSyncComplete() {
         prefs.edit().putBoolean(ORG_CONFIG_SYNCED_KEY, true).commit()

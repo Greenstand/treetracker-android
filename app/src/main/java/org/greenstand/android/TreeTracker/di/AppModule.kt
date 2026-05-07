@@ -255,7 +255,7 @@ val appModule =
 
         factory { TreeUploader(get(), get(), get(), get(), get()) }
 
-        factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get(), get(), get() ) }
+        factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
         factory { Firebase.crashlytics }
 
