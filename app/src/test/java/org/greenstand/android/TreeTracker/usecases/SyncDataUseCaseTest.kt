@@ -38,6 +38,9 @@ import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
 import org.greenstand.android.TreeTracker.overlay.SyncStep
+import org.greenstand.android.TreeTracker.models.organization.Org
+import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -77,6 +80,12 @@ class SyncDataUseCaseTest {
     @MockK(relaxed = true)
     private lateinit var syncProgressTracker: SyncProgressTracker
 
+    @MockK(relaxed = true)
+    private lateinit var orgConfigProvider: OrgConfigProvider
+
+    @MockK(relaxed = true)
+    private lateinit var orgRepo: OrgRepo
+
     private lateinit var syncDataUseCase: SyncDataUseCase
 
     @Before
@@ -86,6 +95,10 @@ class SyncDataUseCaseTest {
         val mockInstallations = mockk<FirebaseInstallations>()
         every { FirebaseInstallations.getInstance() } returns mockInstallations
         every { mockInstallations.id } returns Tasks.forResult("test-instance-id")
+
+        val mockOrg = mockk<Org>(relaxed = true)
+        every { mockOrg.id } returns OrgRepo.DEFAULT_ORG_ID
+        every { orgRepo.currentOrg() } returns mockOrg
 
         syncDataUseCase =
             SyncDataUseCase(
@@ -97,6 +110,8 @@ class SyncDataUseCaseTest {
                 deviceConfigUploader = deviceConfigUploader,
                 messagesRepo = messagesRepo,
                 syncProgressTracker = syncProgressTracker,
+                orgConfigProvider = orgConfigProvider,
+                orgRepo = orgRepo,
             )
     }
 

@@ -88,6 +88,13 @@ class SplashScreenViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        // Default behavior to maintain existing test expectations: 
+        // Assume sync is already complete so the "refresh" logic doesn't trigger unexpectedly.
+        every { orgRepo.hasCompletedInitialOrgSync() } returns true
+        every { orgRepo.currentOrg() } returns io.mockk.mockk {
+            every { id } returns OrgRepo.DEFAULT_ORG_ID
+        }
+
         splashScreenViewModel =
             SplashScreenViewModel(
                 orgId = orgId,
