@@ -7,6 +7,10 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.Snackbar
@@ -71,7 +75,7 @@ fun BoxScope.ArrowButton(
             modifier = Modifier
                 .size(height = 45.dp, width = 45.dp),
             painter = getPainter(colors = colors, isLeft = isLeft),
-            contentDescription = null,
+            contentDescription = if (isLeft) "Navigate back" else "Navigate forward",
         )
     }
 }
@@ -107,14 +111,22 @@ fun ApprovalButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     approval: Boolean,
+    contentDescription: String? = null,
 ) {
     val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
     val image =
         if (approval) painterResource(id = R.drawable.thumbs_up_green) else painterResource(id = R.drawable.thumbs_down_red)
+    val semanticsModifier = if (contentDescription != null)
+        Modifier.semantics(mergeDescendants = true) {
+            this.contentDescription = contentDescription
+            this.role = Role.Button
+        }
+    else Modifier
     DepthButton(
         colors = color,
         modifier = modifier
-            .size(height = 60.dp, width = 60.dp),
+            .size(height = 60.dp, width = 60.dp)
+            .then(semanticsModifier),
         onClick = onClick,
     ) {
         Image(
@@ -166,6 +178,8 @@ fun CustomDialog(
     onNegativeClick: (() -> Unit)? = null,
     textInputValue: String = "",
     onTextInputValueChange: ((String) -> Unit)? = null,
+    confirmContentDescription: String? = null,
+    dismissContentDescription: String? = null,
 ) {
     AlertDialog(
         onDismissRequest = { },
@@ -245,7 +259,8 @@ fun CustomDialog(
                             .padding(end = 24.dp)
                             .size(40.dp),
                         onClick = it,
-                        approval = false
+                        approval = false,
+                        contentDescription = dismissContentDescription,
                     )
                 }
 
@@ -254,7 +269,8 @@ fun CustomDialog(
                         modifier = Modifier
                             .size(40.dp),
                         onClick = it,
-                        approval = true
+                        approval = true,
+                        contentDescription = confirmContentDescription,
                     )
                 }
             }
@@ -640,10 +656,17 @@ fun OrangeAddButton(
 fun CaptureButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    isEnabled: Boolean
+    isEnabled: Boolean,
+    contentDescription: String? = null,
 ) {
+    val semanticsModifier = if (contentDescription != null)
+        Modifier.semantics(mergeDescendants = true) {
+            this.contentDescription = contentDescription
+            this.role = Role.Button
+        }
+    else Modifier
     DepthButton(
-        modifier = modifier.size(70.dp),
+        modifier = modifier.size(70.dp).then(semanticsModifier),
         isEnabled = isEnabled,
         colors = AppButtonColors.ProgressGreen,
         onClick = onClick,

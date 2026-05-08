@@ -375,7 +375,8 @@ fun PrivacyPolicyDialog(
             onClick = {
                 viewModel.closePrivacyPolicyDialog()
             },
-            approval = true
+            approval = true,
+            contentDescription = "Accept Privacy Policy"
         )
     }
 }

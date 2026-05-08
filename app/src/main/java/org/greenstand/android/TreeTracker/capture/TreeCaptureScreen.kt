@@ -110,6 +110,7 @@ fun TreeCaptureScreen(
                             }
                         },
                         isEnabled = !state.isGettingLocation,
+                        contentDescription = "Take tree photo",
                     )
                 },
                 rightAction = {

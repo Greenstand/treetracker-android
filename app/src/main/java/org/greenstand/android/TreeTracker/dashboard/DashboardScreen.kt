@@ -37,6 +37,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -105,7 +107,9 @@ fun DashboardScreen(
                         .size(width = 30.dp, height = 30.dp)
                 )
                 Text(
-                    modifier = Modifier.align(CenterVertically),
+                    modifier = Modifier
+                        .align(CenterVertically)
+                        .semantics { contentDescription = "Trees uploaded" },
                     text = state.treesSynced.toString(),
                     fontWeight = FontWeight.Bold,
                     color = CustomTheme.textColors.uploadText,
@@ -130,13 +134,20 @@ fun DashboardScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     DashboardUploadProgressBar(
-                        progress = (state.treesRemainingToSync)
-                            .toFloat() / (state.totalTreesToSync),
+                        // 0/0 produces Float.NaN, which propagates through
+                        // progressSemantics(...) and crashes Compose's accessibility
+                        // delegate ("Cannot round NaN value") on a fresh dashboard
+                        // with no trees yet — kills the app the moment Appium reads
+                        // the UI tree.
+                        progress = if (state.totalTreesToSync == 0) 0f
+                                   else state.treesRemainingToSync.toFloat() / state.totalTreesToSync,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
                         text = (state.treesRemainingToSync).toString(),
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .semantics { contentDescription = "Trees ready to upload" },
                         color = CustomTheme.textColors.lightText,
                         style = CustomTheme.typography.medium,
                     )

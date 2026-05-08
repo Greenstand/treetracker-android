@@ -38,7 +38,8 @@ fun ImageReviewScreen(photoPath: String) {
                             popUpTo(NavRoute.Selfie.route) { inclusive = true }
                         }
                     },
-                    approval = false
+                    approval = false,
+                    contentDescription = "Retake photo"
                 )
                 ApprovalButton(
                     onClick = {
@@ -48,7 +49,8 @@ fun ImageReviewScreen(photoPath: String) {
                         activity.setResult(AppCompatActivity.RESULT_OK, data)
                         activity.finish()
                     },
-                    approval = true
+                    approval = true,
+                    contentDescription = "Approve selfie"
                 )
             }
         }
