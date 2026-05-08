@@ -21,9 +21,7 @@ import androidx.multidex.MultiDex
 import com.google.firebase.FirebaseApp
 import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.di.appModule
-import org.greenstand.android.TreeTracker.di.networkModule
-import org.greenstand.android.TreeTracker.di.roomModule
+import org.greenstand.android.TreeTracker.di.appModules
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -44,11 +42,7 @@ class TreeTrackerApplication : Application() {
 //            androidLogger()
             androidLogger(Level.NONE)
             androidContext(applicationContext)
-            modules(
-                appModule,
-                roomModule,
-                networkModule,
-            )
+            modules(appModules)
         }
 
         if (FeatureFlags.DEBUG_ENABLED) {
