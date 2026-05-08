@@ -121,7 +121,7 @@ fun AddOrg(
                         },
                     ),
             )
-            state.previousOrgName?.let { prevOrgName ->
+            state.previousOrgName?.takeIf { it != state.orgName }?.let { prevOrgName ->
                 TreeTrackerButton(
                     onClick = { onHandleAction(AddOrgAction.ApplyOrgAutofill) },
                     modifier =
