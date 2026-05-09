@@ -162,7 +162,7 @@ class AddOrgViewModelTest {
         }
 
     @Test
-    fun `WHEN current org is Greenstand default THEN orgName is not pre-filled`() =
+    fun `WHEN current org is Greenstand default and no previous org saved THEN orgName is not pre-filled`() =
         runTest {
             val fakeUser = FakeFileGenerator.fakeUsers.first()
             every { captureSetupData.user } returns fakeUser
@@ -172,6 +172,33 @@ class AddOrgViewModelTest {
 
             assertEquals("", viewModel.state.value.orgName)
             coVerify(exactly = 0) { captureSetupData.organizationName = "Greenstand" }
+        }
+
+    @Test
+    fun `WHEN current org is Greenstand default and previous org saved THEN orgName is pre-filled from prefs`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns "EcoRestore"
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
+
+            assertEquals("EcoRestore", viewModel.state.value.orgName)
+            coVerify { captureSetupData.organizationName = "EcoRestore" }
+        }
+
+    @Test
+    fun `WHEN current org is non-default THEN it takes priority over saved previous org`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { preferences.getString(any(), any()) } returns "EcoRestore"
+            every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo)
+
+            assertEquals("Kasiki Hai", viewModel.state.value.orgName)
+            coVerify { captureSetupData.organizationName = "Kasiki Hai" }
         }
 
     @Test

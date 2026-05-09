@@ -56,15 +56,17 @@ class AddOrgViewModel(
                     .currentOrg()
                     .name
                     .takeIf { it.isNotBlank() && it != "Greenstand" }
+            val prevOrgName = preferences.getString(PREV_ORG_KEY)
+            val resolvedOrgName = currentOrgName ?: prevOrgName
             updateState {
                 copy(
                     userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath,
-                    previousOrgName = preferences.getString(PREV_ORG_KEY),
-                    orgName = currentOrgName ?: "",
+                    previousOrgName = prevOrgName,
+                    orgName = resolvedOrgName ?: "",
                 )
             }
-            if (currentOrgName != null) {
-                CaptureSetupScopeManager.getData().organizationName = currentOrgName
+            if (resolvedOrgName != null) {
+                CaptureSetupScopeManager.getData().organizationName = resolvedOrgName
             }
         }
     }
