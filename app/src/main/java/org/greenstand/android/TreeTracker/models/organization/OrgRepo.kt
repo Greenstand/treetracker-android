@@ -38,6 +38,19 @@ class OrgRepo(
 ) {
     private var currentOrg: Org? = null
 
+    private val ORG_CONFIG_SYNCED_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("org-config-synced")
+
+    // In OrgRepo.kt
+    fun hasCompletedInitialOrgSync(): Boolean = prefs.getBoolean(ORG_CONFIG_SYNCED_KEY, false)
+
+    fun markInitialOrgSyncComplete() {
+        prefs.edit().putBoolean(ORG_CONFIG_SYNCED_KEY, true).commit()
+    }
+
+    fun resetInitialOrgSync() {
+        prefs.edit().putBoolean(ORG_CONFIG_SYNCED_KEY, false).commit()
+    }
+
     suspend fun init() {
         dao.insertOrg(defaultOrgEntity())
         val currentOrgId = prefs.getString(CURRENT_ORG_ID_KEY, DEFAULT_ORG_ID)
@@ -122,6 +135,10 @@ class OrgRepo(
             dao.insertOrg(validatedEntity)
             setOrg(validatedEntity.id)
             Timber.tag(ORG_LINK_TAG).i("Org '$orgName' ($orgId) loaded from Remote Config")
+            resetInitialOrgSync()
+            Timber.tag(ORG_LINK_TAG).i("Org config sync reset")
+            addMinimalOrg(orgId, orgName)
+            Timber.tag(ORG_LINK_TAG).i("Minimal org '$orgName' ($orgId) added with default flows")
             true
         } catch (e: Exception) {
             Timber.tag(ORG_LINK_TAG).e(e, "Failed to parse Remote Config for org $orgId, falling back to minimal org")
