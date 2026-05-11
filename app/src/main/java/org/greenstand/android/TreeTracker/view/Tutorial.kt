@@ -197,7 +197,7 @@ fun TreeCaptureReview() {
                         .wrapContentHeight(),
                 contentAlignment = Center,
             ) {
-                ApprovalButton(onClick = { /*TODO*/ }, approval = true)
+                ApprovalButton(onClick = {  }, approval = true)
                 Image(
                     modifier = Modifier.padding(top = 30.dp),
                     painter = painterResource(id = R.drawable.touch_gesture),
@@ -230,7 +230,7 @@ fun TreeCaptureReview() {
                         .wrapContentHeight(),
                 contentAlignment = Center,
             ) {
-                ApprovalButton(onClick = { /*TODO*/ }, approval = false)
+                ApprovalButton(onClick = {  }, approval = false)
                 Image(
                     modifier = Modifier.padding(top = 30.dp),
                     painter = painterResource(id = R.drawable.touch_gesture),
