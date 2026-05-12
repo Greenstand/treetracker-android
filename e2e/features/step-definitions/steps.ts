@@ -236,13 +236,17 @@ Then("the ready-to-upload count becomes 0", async () => {
 });
 
 Then("the uploaded count becomes 1", async () => {
-  // The "Trees uploaded" Text node displays treesSynced.
+  // The "Trees uploaded" Text node displays treesSynced. Check >= 1 rather
+  // than == 1: with noReset:true between 03-only re-runs (launchWithExistingUser
+  // does not clearApp), the synced count accumulates across runs. The semantic
+  // we care about is that this upload added a tree.
   await browser.waitUntil(async () => {
     const el = await byDesc("Trees uploaded");
     if (!(await el.isDisplayed())) return false;
     const txt = await el.getText();
-    return txt === "1";
-  }, { timeout: 60000, interval: 1500, timeoutMsg: "uploaded count never reached 1" });
+    const n = parseInt(txt, 10);
+    return !isNaN(n) && n >= 1;
+  }, { timeout: 60000, interval: 1500, timeoutMsg: "uploaded count never reached >= 1" });
 });
 
 Then("the ready-to-upload count is greater than 0", async () => {

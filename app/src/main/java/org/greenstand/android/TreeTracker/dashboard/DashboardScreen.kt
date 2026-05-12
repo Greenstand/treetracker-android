@@ -186,6 +186,9 @@ fun Dashboard(
             Row(
                 modifier = Modifier.weight(.3f),
             ) {
+                // stringResource must be resolved in a @Composable scope; the
+                // Modifier.semantics lambda is not @Composable so we capture it here.
+                val uploadedDesc = stringResource(R.string.accessibility_trees_uploaded)
                 Image(
                     painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
                     contentDescription = "",
@@ -199,7 +202,7 @@ fun Dashboard(
                     modifier =
                         Modifier
                             .align(CenterVertically)
-                            .semantics { contentDescription = "Trees uploaded" },
+                            .semantics { contentDescription = uploadedDesc },
                     text = state.treesSynced.toString(),
                     fontWeight = FontWeight.Bold,
                     color = CustomTheme.textColors.uploadText,
@@ -225,6 +228,7 @@ fun Dashboard(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
+                    val readyDesc = stringResource(R.string.accessibility_trees_ready_to_upload)
                     DashboardUploadProgressBar(
                         progress = state.uploadProgress,
                         modifier = Modifier.weight(1f),
@@ -234,7 +238,7 @@ fun Dashboard(
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .semantics { contentDescription = "Trees ready to upload" },
+                                .semantics { contentDescription = readyDesc },
                         color = CustomTheme.textColors.lightText,
                         style = CustomTheme.typography.medium,
                     )

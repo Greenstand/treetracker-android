@@ -29,7 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.navigation.SelfieRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
@@ -80,12 +82,12 @@ fun ImageReview(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = onRejectClicked,
                     approval = false,
-                    contentDescription = "Retake photo",
+                    contentDescription = stringResource(R.string.accessibility_retake_photo),
                 )
                 ApprovalButton(
                     onClick = onApproveClicked,
                     approval = true,
-                    contentDescription = "Approve selfie",
+                    contentDescription = stringResource(R.string.accessibility_approve_selfie),
                 )
             }
         },

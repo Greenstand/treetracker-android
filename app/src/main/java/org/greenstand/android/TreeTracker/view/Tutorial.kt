@@ -280,7 +280,7 @@ fun TutorialDialog(
                             },
                     onClick = onCompleteClick,
                     approval = true,
-                    contentDescription = "Dismiss tutorial",
+                    contentDescription = stringResource(R.string.accessibility_dismiss_tutorial),
                 )
             }
         },

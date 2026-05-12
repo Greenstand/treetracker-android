@@ -65,6 +65,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -101,7 +102,10 @@ fun BoxScope.ArrowButton(
                 Modifier
                     .size(height = 45.dp, width = 45.dp),
             painter = getPainter(colors = colors, isLeft = isLeft),
-            contentDescription = if (isLeft) "Navigate back" else "Navigate forward",
+            contentDescription =
+                stringResource(
+                    if (isLeft) R.string.accessibility_navigate_back else R.string.accessibility_navigate_forward,
+                ),
         )
     }
 }
