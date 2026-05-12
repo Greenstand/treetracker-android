@@ -65,6 +65,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -97,7 +102,10 @@ fun BoxScope.ArrowButton(
                 Modifier
                     .size(height = 45.dp, width = 45.dp),
             painter = getPainter(colors = colors, isLeft = isLeft),
-            contentDescription = null,
+            contentDescription =
+                stringResource(
+                    if (isLeft) R.string.accessibility_navigate_back else R.string.accessibility_navigate_forward,
+                ),
         )
     }
 }
@@ -144,6 +152,7 @@ fun ApprovalButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     approval: Boolean,
+    contentDescription: String? = null,
 ) {
     val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
     val image =
@@ -157,7 +166,7 @@ fun ApprovalButton(
     ) {
         Image(
             painter = image,
-            contentDescription = null,
+            contentDescription = contentDescription,
         )
     }
 }
@@ -384,9 +393,19 @@ fun CaptureButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     isEnabled: Boolean,
+    contentDescription: String? = null,
 ) {
+    val semanticsModifier =
+        if (contentDescription != null) {
+            Modifier.semantics(mergeDescendants = true) {
+                this.contentDescription = contentDescription
+                this.role = Role.Button
+            }
+        } else {
+            Modifier
+        }
     TreeTrackerButton(
-        modifier = modifier.size(70.dp),
+        modifier = modifier.size(70.dp).then(semanticsModifier),
         isEnabled = isEnabled,
         colors = AppButtonColors.ProgressGreen,
         onClick = onClick,

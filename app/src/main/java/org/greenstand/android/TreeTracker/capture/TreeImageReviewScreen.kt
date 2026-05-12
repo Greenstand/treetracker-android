@@ -109,11 +109,13 @@ fun TreeImageReview(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = { onHandleAction(TreeImageReviewAction.NavigateBack) },
                     approval = false,
+                    contentDescription = stringResource(R.string.accessibility_reject_tree),
                 )
                 ApprovalButton(
                     modifier = Modifier.padding(end = 24.dp),
                     onClick = { onHandleAction(TreeImageReviewAction.CheckIfCanNavigateForward) },
                     approval = true,
+                    contentDescription = stringResource(R.string.accessibility_approve_tree),
                 )
                 InfoButton(
                     modifier =
@@ -156,5 +158,7 @@ fun NoteDialog(
         onTextInputValueChange = { text -> onHandleAction(TreeImageReviewAction.UpdateNote(text)) },
         onPositiveClick = { onHandleAction(TreeImageReviewAction.AddNote) },
         onNegativeClick = { onHandleAction(TreeImageReviewAction.SetDialogState(false)) },
+        confirmContentDescription = stringResource(R.string.accessibility_save_note),
+        dismissContentDescription = stringResource(R.string.accessibility_cancel_note),
     )
 }

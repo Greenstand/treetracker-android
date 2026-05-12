@@ -29,7 +29,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.signup.SignupAction
@@ -75,6 +77,7 @@ fun SelfieScreen() {
                             cameraControl.captureImage()
                         },
                         isEnabled = true,
+                        contentDescription = stringResource(R.string.accessibility_take_selfie),
                     )
                 },
             )
