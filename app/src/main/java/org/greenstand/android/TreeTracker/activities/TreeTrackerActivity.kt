@@ -21,7 +21,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.ExperimentalComposeApi
-import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.root.Root
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -32,13 +31,10 @@ import org.koin.android.ext.android.inject
 class TreeTrackerActivity : AppCompatActivity() {
     private val viewModelFactory: TreeTrackerViewModelFactory by inject()
     private val gpsUtils: GpsUtils by inject()
-    private val languageSwitcher: LanguageSwitcher by inject()
 
     @OptIn(ExperimentalComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        languageSwitcher.applyCurrentLanguage()
 
         enableEdgeToEdge(
             statusBarStyle =

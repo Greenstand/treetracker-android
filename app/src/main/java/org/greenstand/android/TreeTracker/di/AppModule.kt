@@ -237,7 +237,7 @@ val appModule =
 
         factory { DeviceConfigUploader(get(), get(), get()) }
 
-        single { LanguageSwitcher(get()) }
+        factory { LanguageSwitcher(get()) }
 
         factory { UploadImageUseCase(get()) }
 
