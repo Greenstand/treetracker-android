@@ -45,6 +45,7 @@ import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.utilities.navigateSafely
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -76,7 +77,7 @@ fun WalletSelectScreen(
                     }
                 }
                 is WalletSelectAction.NavigateToAddWallet -> {
-                    navController.navigate(AddWalletRoute)
+                    navController.navigateSafely(AddWalletRoute)
                 }
                 is WalletSelectAction.NavigateBack -> {
                     CaptureSetupScopeManager.nav.navBackward(navController)

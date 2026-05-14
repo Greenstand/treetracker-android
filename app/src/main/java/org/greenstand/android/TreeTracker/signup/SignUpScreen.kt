@@ -28,6 +28,8 @@ import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
 
 @Composable
 fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -40,7 +42,7 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
             scope.launch {
                 viewModel.createUser(photoPath)?.let { user ->
                     if (user.isPowerUser) {
-                        navController.navigate(DashboardRoute) {
+                        navController.navigateSafely(DashboardRoute) {
                             popUpTo<LanguageRoute> { inclusive = true }
                             launchSingleTop = true
                         }
@@ -56,13 +58,13 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is SignupAction.NavigateBack -> navController.popBackStack()
+                is SignupAction.NavigateBack -> navController.popBackStackSafely()
                 is SignupAction.LaunchCamera -> cameraLauncher.launch(true)
                 is SignupAction.ExistingUserSelected -> {
                     val user = action.user
                     if (state.isTherePowerUser == false) {
                         viewModel.handleAction(SignupAction.SetExistingUserAsPowerUser(user.id))
-                        navController.navigate(DashboardRoute) {
+                        navController.navigateSafely(DashboardRoute) {
                             popUpTo<LanguageRoute> { inclusive = true }
                             launchSingleTop = true
                         }

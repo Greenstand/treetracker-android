@@ -58,6 +58,8 @@ import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -83,14 +85,14 @@ fun SettingsScreen() {
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is SettingsAction.NavigateToProfile -> navController.navigate(ProfileSelectRoute)
-                is SettingsAction.NavigateToEditTrees -> navController.navigate(TreeEditUserSelectRoute)
-                is SettingsAction.NavigateToMap -> navController.navigate(MapRoute)
-                is SettingsAction.NavigateToDeleteAccount -> navController.navigate(DeleteProfileRoute)
-                is SettingsAction.NavigateBack -> navController.popBackStack()
+                is SettingsAction.NavigateToProfile -> navController.navigateSafely(ProfileSelectRoute)
+                is SettingsAction.NavigateToEditTrees -> navController.navigateSafely(TreeEditUserSelectRoute)
+                is SettingsAction.NavigateToMap -> navController.navigateSafely(MapRoute)
+                is SettingsAction.NavigateToDeleteAccount -> navController.navigateSafely(DeleteProfileRoute)
+                is SettingsAction.NavigateBack -> navController.popBackStackSafely()
                 is SettingsAction.LogoutConfirmed -> {
                     viewModel.handleAction(SettingsAction.Logout)
-                    navController.navigate(SignupFlowRoute) {
+                    navController.navigateSafely(SignupFlowRoute) {
                         popUpTo(navController.graph.id) { inclusive = true }
                         launchSingleTop = true
                     }

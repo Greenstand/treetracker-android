@@ -44,6 +44,7 @@ import org.greenstand.android.TreeTracker.permissions.PermissionAction
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @ExperimentalPermissionsApi
@@ -93,11 +94,11 @@ fun PermissionRequest(
                             title = stringResource(R.string.accept_camera_permission_header),
                             textContent = stringResource(R.string.accept_camera_permission_message),
                             onNegativeClick = {
-                                navController.popBackStack()
+                                navController.popBackStackSafely()
                             },
                             onPositiveClick = {
                                 perm.launchPermissionRequest()
-                                navController.popBackStack()
+                                navController.popBackStackSafely()
                             },
                         )
                     }
@@ -152,11 +153,11 @@ fun LocationRationaleDialog(
         title = stringResource(R.string.accept_location_permission_header),
         textContent = stringResource(R.string.accept_location_permission_message),
         onNegativeClick = {
-            navController.popBackStack()
+            navController.popBackStackSafely()
         },
         onPositiveClick = {
             perm.launchPermissionRequest()
-            navController.popBackStack()
+            navController.popBackStackSafely()
         },
     )
 }
@@ -176,7 +177,7 @@ fun PermissionDeniedPermanentlyDialog(navController: NavHostController) {
         title = stringResource(R.string.open_settings_header),
         textContent = stringResource(R.string.open_settings_message),
         onNegativeClick = {
-            navController.popBackStack()
+            navController.popBackStackSafely()
         },
         onPositiveClick = {
             val intent =
