@@ -44,6 +44,7 @@ import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.AppColors
 import timber.log.Timber
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun SplashScreen(
@@ -130,14 +131,14 @@ private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean =
         result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
 
 private fun navigateToLanguageScreen(navController: NavHostController) {
-    navController.navigate(LanguageRoute(isFromTopBar = false)) {
+    navController.throttledNavigate(LanguageRoute(isFromTopBar = false)) {
         popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }
 }
 
 private fun navigateToDashboardScreen(navController: NavHostController) {
-    navController.navigate(DashboardRoute) {
+    navController.throttledNavigate(DashboardRoute) {
         popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }

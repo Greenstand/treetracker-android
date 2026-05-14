@@ -40,6 +40,8 @@ import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
 import org.greenstand.android.TreeTracker.navigation.ChatRoute
 import org.greenstand.android.TreeTracker.navigation.SurveyRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -60,13 +62,13 @@ fun IndividualMessageListScreen(
         onHandleAction = { action ->
             when (action) {
                 is IndividualMessageListAction.NavigateBack -> {
-                    navController.popBackStack()
+                    navController.throttledPopBackStack()
                 }
                 is IndividualMessageListAction.NavigateToSelected -> {
                     when (val msg = state.selectedMessage) {
-                        is DirectMessage -> navController.navigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
-                        is SurveyMessage -> navController.navigate(SurveyRoute(messageId = msg.id))
-                        is AnnouncementMessage -> navController.navigate(AnnouncementRoute(messageId = msg.id))
+                        is DirectMessage -> navController.throttledNavigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
+                        is SurveyMessage -> navController.throttledNavigate(SurveyRoute(messageId = msg.id))
+                        is AnnouncementMessage -> navController.throttledNavigate(AnnouncementRoute(messageId = msg.id))
                     }
                 }
                 else -> viewModel.handleAction(action)

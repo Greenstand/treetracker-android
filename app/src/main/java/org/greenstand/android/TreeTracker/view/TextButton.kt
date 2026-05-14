@@ -75,6 +75,7 @@ import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun BoxScope.ArrowButton(
@@ -207,7 +208,7 @@ fun BoxScope.LanguageButton() {
                 .align(Alignment.Center)
                 .size(width = 100.dp, 60.dp),
         onClick = {
-            navController.navigate(LanguageRoute())
+            navController.throttledNavigate(LanguageRoute())
         },
     ) {
         Text(

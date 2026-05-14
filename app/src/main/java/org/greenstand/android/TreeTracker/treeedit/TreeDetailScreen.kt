@@ -54,6 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -72,7 +73,7 @@ fun TreeDetailScreen(treeId: Long) {
 
     LaunchedEffect(state.isDeleted) {
         if (state.isDeleted) {
-            navController.popBackStack()
+            navController.throttledPopBackStack()
         }
     }
 
@@ -86,7 +87,7 @@ fun TreeDetailScreen(treeId: Long) {
     TreeDetail(
         state = state,
         onHandleAction = { viewModel.handleAction(it) },
-        onNavigateBack = { navController.popBackStack() },
+        onNavigateBack = { navController.throttledPopBackStack() },
     )
 }
 

@@ -36,6 +36,8 @@ import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -66,7 +68,7 @@ fun UserSelect(
                     if (isCreateUserEnabled) {
                         OrangeAddButton(
                             modifier = Modifier.align(Alignment.Center),
-                            onClick = { navController.navigate(SignupFlowRoute) },
+                            onClick = { navController.throttledNavigate(SignupFlowRoute) },
                         )
                     }
                 },
@@ -88,12 +90,12 @@ fun UserSelect(
                         colors = navigationButtonColors,
                         onClick = {
                             if (!isFromSettings) {
-                                navController.navigate(DashboardRoute) {
+                                navController.throttledNavigate(DashboardRoute) {
                                     popUpTo<DashboardRoute> { inclusive = true }
                                     launchSingleTop = true
                                 }
                             } else {
-                                navController.popBackStack()
+                                navController.throttledPopBackStack()
                             }
                         },
                     )

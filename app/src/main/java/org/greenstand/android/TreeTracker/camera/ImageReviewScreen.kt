@@ -35,6 +35,7 @@ import org.greenstand.android.TreeTracker.navigation.SelfieRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.LocalImage
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun ImageReviewScreen(photoPath: String) {
@@ -44,7 +45,7 @@ fun ImageReviewScreen(photoPath: String) {
     ImageReview(
         photoPath = photoPath,
         onRejectClicked = {
-            navController.navigate(SelfieRoute) {
+            navController.throttledNavigate(SelfieRoute) {
                 launchSingleTop = true
                 popUpTo<SelfieRoute> { inclusive = true }
             }
