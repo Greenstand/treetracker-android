@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import org.greenstand.android.TreeTracker.navigation.TreeListRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.userselect.UserSelect
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 
@@ -33,7 +33,7 @@ fun TreeEditUserSelectScreen() {
         isFromSettings = true,
         selectedColor = AppColors.Green,
         onNavigateForward = { user ->
-            navController.navigateSafely(TreeListRoute(userWallet = user.wallet, userName = "${user.firstName} ${user.lastName}"))
+            navController.throttledNavigate(TreeListRoute(userWallet = user.wallet, userName = "${user.firstName} ${user.lastName}"))
         },
     )
 }

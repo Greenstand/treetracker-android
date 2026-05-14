@@ -45,8 +45,8 @@ import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.navigation.TreeDetailRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -70,8 +70,8 @@ fun TreeListScreen(
                 is TreeListAction.SelectTree -> viewModel.handleAction(action)
             }
         },
-        onNavigateBack = { navController.popBackStackSafely() },
-        onNavigateToDetail = { treeId -> navController.navigateSafely(TreeDetailRoute(treeId = treeId)) },
+        onNavigateBack = { navController.throttledPopBackStack() },
+        onNavigateToDetail = { treeId -> navController.throttledNavigate(TreeDetailRoute(treeId = treeId)) },
     )
 }
 

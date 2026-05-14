@@ -53,7 +53,7 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.koin.compose.koinInject
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 
 @Composable
 fun DevOptionsRoot() {
@@ -67,7 +67,7 @@ fun DevOptionsRoot() {
         overlayManager = overlayManager,
         onHandleAction = { action ->
             when (action) {
-                is DevOptionsAction.NavigateBack -> navController.popBackStackSafely()
+                is DevOptionsAction.NavigateBack -> navController.throttledPopBackStack()
                 else -> viewModel.handleAction(action)
             }
         },

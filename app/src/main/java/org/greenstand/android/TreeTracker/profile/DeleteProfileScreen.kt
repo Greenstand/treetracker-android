@@ -32,7 +32,7 @@ import org.greenstand.android.TreeTracker.userselect.DeleteProfileState
 import org.greenstand.android.TreeTracker.userselect.UserSelect
 import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors.Red
 import org.greenstand.android.TreeTracker.view.UserButton
@@ -89,14 +89,14 @@ fun DeleteProfileScreen() {
                 onPositiveClick = {
                     viewModel.handleAction(UserSelectAction.DeleteUser)
                     if (state.selectedUser?.isPowerUser == true) {
-                        navController.navigateSafely(SignupFlowRoute) {
+                        navController.throttledNavigate(SignupFlowRoute) {
                             popUpTo(navController.graph.id) {
                                 inclusive = true
                             }
                             launchSingleTop = true
                         }
                     } else {
-                        navController.navigateSafely(SettingsRoute) {
+                        navController.throttledNavigate(SettingsRoute) {
                             popUpTo<SettingsRoute> { inclusive = true }
                             launchSingleTop = true
                         }

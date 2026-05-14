@@ -46,7 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -68,13 +68,13 @@ fun SurveyScreen(
     LaunchedEffect(state.surveyComplete) {
         if (state.surveyComplete) {
             showToast = true
-            navController.popBackStackSafely()
+            navController.throttledPopBackStack()
         }
     }
 
     LaunchedEffect(state.shouldNavigateBack) {
         if (state.shouldNavigateBack) {
-            navController.popBackStackSafely()
+            navController.throttledPopBackStack()
         }
     }
 

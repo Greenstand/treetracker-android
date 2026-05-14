@@ -21,7 +21,7 @@ import androidx.navigation.NavOptionsBuilder
 private var lastNavigationTime = 0L
 private const val NAVIGATION_THROTTLE_MS = 500L
 
-fun NavController.navigateSafely(
+fun NavController.throttledNavigate(
     route: Any,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
@@ -32,7 +32,7 @@ fun NavController.navigateSafely(
     }
 }
 
-fun NavController.popBackStackSafely(): Boolean {
+fun NavController.throttledPopBackStack(): Boolean {
     val now = System.currentTimeMillis()
     if (now - lastNavigationTime >= NAVIGATION_THROTTLE_MS) {
         lastNavigationTime = now

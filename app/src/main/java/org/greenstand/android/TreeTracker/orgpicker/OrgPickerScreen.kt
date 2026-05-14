@@ -44,7 +44,7 @@ import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -60,7 +60,7 @@ fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalVie
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is OrgPickerAction.NavigateNext -> navController.popBackStackSafely()
+                is OrgPickerAction.NavigateNext -> navController.throttledPopBackStack()
                 else -> viewModel.handleAction(action)
             }
         },

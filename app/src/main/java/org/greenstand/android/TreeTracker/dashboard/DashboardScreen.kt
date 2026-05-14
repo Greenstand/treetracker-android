@@ -87,7 +87,7 @@ import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun DashboardScreen(
@@ -102,21 +102,21 @@ fun DashboardScreen(
         snackBar = state.snackBar,
         showSyncReminderDialog = showDialog,
         onSyncClicked = { viewModel.handleAction(DashboardAction.Sync) },
-        onOrgClicked = { navController.navigateSafely(OrgRoute) },
+        onOrgClicked = { navController.throttledNavigate(OrgRoute) },
         onCaptureClicked = {
             if (state.showTreeSyncReminderDialog) {
                 showDialog = true
             } else {
-                navController.navigateSafely(UserSelectRoute)
+                navController.throttledNavigate(UserSelectRoute)
             }
         },
-        onDialogConfirm = { navController.navigateSafely(UserSelectRoute) },
+        onDialogConfirm = { navController.throttledNavigate(UserSelectRoute) },
         onMessagesClicked = {
             viewModel.handleAction(DashboardAction.SyncMessages)
-            navController.navigateSafely(MessagesUserSelectRoute)
+            navController.throttledNavigate(MessagesUserSelectRoute)
         },
         onSettingsClicked = {
-            navController.navigateSafely(SettingsRoute)
+            navController.throttledNavigate(SettingsRoute)
         },
     )
 }

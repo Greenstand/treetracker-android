@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import org.greenstand.android.TreeTracker.navigation.ProfileRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.userselect.UserSelect
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 
 @Composable
@@ -30,7 +30,7 @@ fun ProfileSelectScreen() {
         isCreateUserEnabled = true,
         isNotificationEnabled = true,
         onNavigateForward = { user ->
-            navController.navigateSafely(ProfileRoute(planterInfoId = user.id))
+            navController.throttledNavigate(ProfileRoute(planterInfoId = user.id))
         },
     )
 }

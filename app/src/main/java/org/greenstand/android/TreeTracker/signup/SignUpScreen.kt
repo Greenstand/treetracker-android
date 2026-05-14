@@ -28,8 +28,8 @@ import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 
 @Composable
 fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -42,7 +42,7 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
             scope.launch {
                 viewModel.createUser(photoPath)?.let { user ->
                     if (user.isPowerUser) {
-                        navController.navigateSafely(DashboardRoute) {
+                        navController.throttledNavigate(DashboardRoute) {
                             popUpTo<LanguageRoute> { inclusive = true }
                             launchSingleTop = true
                         }
@@ -58,13 +58,13 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is SignupAction.NavigateBack -> navController.popBackStackSafely()
+                is SignupAction.NavigateBack -> navController.throttledPopBackStack()
                 is SignupAction.LaunchCamera -> cameraLauncher.launch(true)
                 is SignupAction.ExistingUserSelected -> {
                     val user = action.user
                     if (state.isTherePowerUser == false) {
                         viewModel.handleAction(SignupAction.SetExistingUserAsPowerUser(user.id))
-                        navController.navigateSafely(DashboardRoute) {
+                        navController.throttledNavigate(DashboardRoute) {
                             popUpTo<LanguageRoute> { inclusive = true }
                             launchSingleTop = true
                         }

@@ -43,8 +43,8 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 
 @Composable
 fun LanguageSelectScreen(
@@ -61,9 +61,9 @@ fun LanguageSelectScreen(
                 is LanguagePickerAction.NavigateNext -> {
                     viewModel.handleAction(LanguagePickerAction.ConfirmLanguage)
                     if (isFromTopBar) {
-                        navController.popBackStackSafely()
+                        navController.throttledPopBackStack()
                     } else {
-                        navController.navigateSafely(SignupFlowRoute)
+                        navController.throttledNavigate(SignupFlowRoute)
                     }
                 }
                 else -> viewModel.handleAction(action)

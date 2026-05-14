@@ -40,7 +40,7 @@ import org.greenstand.android.TreeTracker.view.InfoButton
 import org.greenstand.android.TreeTracker.view.SelfieTutorial
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.koin.androidx.compose.getViewModel
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun SelfieScreen() {
@@ -90,7 +90,7 @@ fun SelfieScreen() {
                     .padding(padding)
                     .aspectRatio(1.0f),
             onImageCaptured = {
-                navController.navigateSafely(ImageReviewRoute(photoPath = it.path))
+                navController.throttledNavigate(ImageReviewRoute(photoPath = it.path))
             },
         )
         Box(

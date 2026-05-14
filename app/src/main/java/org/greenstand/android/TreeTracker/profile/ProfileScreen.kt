@@ -58,7 +58,7 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectState
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModelFactory
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.utils.ValidationUtils
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -88,7 +88,7 @@ fun ProfileScreen(
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is UserSelectAction.NavigateBack -> navController.popBackStackSafely()
+                is UserSelectAction.NavigateBack -> navController.throttledPopBackStack()
                 is UserSelectAction.NavigateToPhoto -> cameraLauncher.launch(true)
                 is UserSelectAction.SaveUserToDatabase -> {
                     viewModel.handleAction(action)

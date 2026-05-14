@@ -24,8 +24,8 @@ import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
-import org.greenstand.android.TreeTracker.utilities.popBackStackSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 
 class CaptureSetupNavigationController(
     orgRepo: OrgRepo,
@@ -50,7 +50,7 @@ class CaptureSetupNavigationController(
 
             val userPhotoPath = CaptureSetupScopeManager.getData().user?.photoPath ?: ""
             withContext(Dispatchers.Main) {
-                navController.navigateSafely(TreeCaptureRoute(profilePicUrl = userPhotoPath))
+                navController.throttledNavigate(TreeCaptureRoute(profilePicUrl = userPhotoPath))
             }
             CaptureSetupScopeManager.close()
         } else {
@@ -60,19 +60,19 @@ class CaptureSetupNavigationController(
                 resolveNoArgDestination(destination)
                     ?: error("Unknown setup flow destination: ${destination.route}")
             withContext(Dispatchers.Main) {
-                navController.navigateSafely(route)
+                navController.throttledNavigate(route)
             }
         }
     }
 
     fun navBackward(navController: NavHostController) {
         decrementIndex()
-        navController.popBackStackSafely()
+        navController.throttledPopBackStack()
     }
 
     fun navToUserSelect(navController: NavHostController) {
         resetIndex()
-        navController.navigateSafely(UserSelectRoute) {
+        navController.throttledNavigate(UserSelectRoute) {
             popUpTo<DashboardRoute>()
             launchSingleTop = true
         }
@@ -95,7 +95,7 @@ class CaptureSetupNavigationController(
             resolveNoArgDestination(destination)
                 ?: error("Unknown setup flow destination: ${destination.route}")
         withContext(Dispatchers.Main) {
-            navController.navigateSafely(route) {
+            navController.throttledNavigate(route) {
                 popUpTo<SignupFlowRoute> { inclusive = true }
                 launchSingleTop = true
             }

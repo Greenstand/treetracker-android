@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import org.greenstand.android.TreeTracker.navigation.IndividualMessageListRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.userselect.UserSelect
-import org.greenstand.android.TreeTracker.utilities.navigateSafely
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 
@@ -32,7 +32,7 @@ fun MessagesUserSelectScreen() {
         isNotificationEnabled = true,
         selectedColor = AppColors.Purple,
         onNavigateForward = { user ->
-            navController.navigateSafely(IndividualMessageListRoute(planterInfoId = user.id))
+            navController.throttledNavigate(IndividualMessageListRoute(planterInfoId = user.id))
         },
     )
 }
