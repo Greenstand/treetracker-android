@@ -61,8 +61,11 @@ import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.navigation.SurveyRoute
 import org.greenstand.android.TreeTracker.navigation.TreeCaptureRoute
+import org.greenstand.android.TreeTracker.navigation.TreeDetailRoute
+import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.TreeHeightScreenRoute
 import org.greenstand.android.TreeTracker.navigation.TreeImageReviewRoute
+import org.greenstand.android.TreeTracker.navigation.TreeListRoute
 import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.WalletSelectRoute
 import org.greenstand.android.TreeTracker.navigation.trackedComposable
@@ -79,6 +82,9 @@ import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
 import org.greenstand.android.TreeTracker.settings.SettingsScreen
 import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.splash.SplashScreen
+import org.greenstand.android.TreeTracker.treeedit.TreeDetailScreen
+import org.greenstand.android.TreeTracker.treeedit.TreeEditUserSelectScreen
+import org.greenstand.android.TreeTracker.treeedit.TreeListScreen
 import org.greenstand.android.TreeTracker.treeheight.TreeHeightScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
@@ -128,6 +134,18 @@ fun Host() {
                 trackedComposable<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
                 trackedComposable<DevOptionsRoute> { DevOptionsRoot() }
                 trackedComposable<MapRoute> { MapScreen() }
+
+                trackedComposable<TreeEditUserSelectRoute> { TreeEditUserSelectScreen() }
+
+                trackedComposable<TreeListRoute> {
+                    val route = it.toRoute<TreeListRoute>()
+                    TreeListScreen(userWallet = route.userWallet, userName = route.userName)
+                }
+
+                trackedComposable<TreeDetailRoute> {
+                    val route = it.toRoute<TreeDetailRoute>()
+                    TreeDetailScreen(treeId = route.treeId)
+                }
 
                 trackedComposable<ProfileRoute> {
                     val route = it.toRoute<ProfileRoute>()
