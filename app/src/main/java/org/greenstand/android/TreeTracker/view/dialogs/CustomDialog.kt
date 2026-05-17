@@ -66,6 +66,8 @@ fun CustomDialog(
     onNegativeClick: (() -> Unit)? = null,
     textInputValue: String = "",
     onTextInputValueChange: ((String) -> Unit)? = null,
+    confirmContentDescription: String? = null,
+    dismissContentDescription: String? = null,
 ) {
     AlertDialog(
         onDismissRequest = { },
@@ -153,6 +155,7 @@ fun CustomDialog(
                                 .size(40.dp),
                         onClick = it,
                         approval = false,
+                        contentDescription = dismissContentDescription,
                     )
                 }
 
@@ -163,6 +166,7 @@ fun CustomDialog(
                                 .size(40.dp),
                         onClick = it,
                         approval = true,
+                        contentDescription = confirmContentDescription,
                     )
                 }
             }

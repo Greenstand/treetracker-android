@@ -52,6 +52,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -184,6 +186,9 @@ fun Dashboard(
             Row(
                 modifier = Modifier.weight(.3f),
             ) {
+                // stringResource must be resolved in a @Composable scope; the
+                // Modifier.semantics lambda is not @Composable so we capture it here.
+                val uploadedDesc = stringResource(R.string.accessibility_trees_uploaded)
                 Image(
                     painter = painterResource(id = R.drawable.yellow_leafs_placeholder),
                     contentDescription = "",
@@ -194,7 +199,10 @@ fun Dashboard(
                             .size(width = 30.dp, height = 30.dp),
                 )
                 Text(
-                    modifier = Modifier.align(CenterVertically),
+                    modifier =
+                        Modifier
+                            .align(CenterVertically)
+                            .semantics { contentDescription = uploadedDesc },
                     text = state.treesSynced.toString(),
                     fontWeight = FontWeight.Bold,
                     color = CustomTheme.textColors.uploadText,
@@ -220,13 +228,17 @@ fun Dashboard(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
+                    val readyDesc = stringResource(R.string.accessibility_trees_ready_to_upload)
                     DashboardUploadProgressBar(
                         progress = state.uploadProgress,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
                         text = (state.treesRemainingToSync).toString(),
-                        modifier = Modifier.weight(1f),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .semantics { contentDescription = readyDesc },
                         color = CustomTheme.textColors.lightText,
                         style = CustomTheme.typography.medium,
                     )

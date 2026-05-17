@@ -125,6 +125,7 @@ fun TreeCaptureScreen(
                             scope.launch { cameraControl.captureImage() }
                         },
                         isEnabled = !state.isGettingLocation,
+                        contentDescription = stringResource(R.string.accessibility_take_tree_photo),
                     )
                 },
                 rightAction = {
