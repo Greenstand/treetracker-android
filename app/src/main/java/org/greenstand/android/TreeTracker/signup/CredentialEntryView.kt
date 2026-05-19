@@ -120,7 +120,6 @@ fun CredentialEntryView(
     }
 }
 
-
 @Composable
 private fun CredentialBottomBar(
     state: SignUpState,
@@ -143,17 +142,17 @@ private fun CredentialBottomBar(
                 if (state.isCredentialValid) {
                     onHandleAction(SignupAction.SubmitInfo)
                 } else {
-                    val errorRes = when (state.credential) {
-                        is Credential.Email -> R.string.email_validation_error
-                        is Credential.Phone -> R.string.phone_validation_error
-                    }
+                    val errorRes =
+                        when (state.credential) {
+                            is Credential.Email -> R.string.email_validation_error
+                            is Credential.Phone -> R.string.phone_validation_error
+                        }
                     scope.launch { snackBarHostState.showSnackbar(context.getString(errorRes)) }
                 }
             }
         },
     )
 }
-
 
 @Composable
 private fun CredentialFormContent(
@@ -165,19 +164,21 @@ private fun CredentialFormContent(
     onHandleAction: (SignupAction) -> Unit,
 ) {
     val navigateToWebPage: () -> Unit = {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(Constants.TREE_TRACKER_URL)
-        }
+        val intent =
+            Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(Constants.TREE_TRACKER_URL)
+            }
         startActivity(context, intent, null)
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.6f)
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.6f)
+                .verticalScroll(rememberScrollState()),
     ) {
         CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
 
@@ -205,9 +206,10 @@ private fun CredentialTypeSelector(
     onUpdateCredentialType: (Credential) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .padding(top = 10.dp)
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .padding(top = 10.dp)
+                .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
     ) {
         PhoneCredentialButton(state) { onUpdateCredentialType(it) }
@@ -225,29 +227,30 @@ private fun CredentialTextField(
     onHandleAction: (SignupAction) -> Unit,
 ) {
     when (state.credential) {
-        is Credential.Email -> EmailTextField(
-            state = state,
-            onUpdateEmail = { onHandleAction(SignupAction.UpdateEmail(it)) },
-            onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
-            onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
-            focusRequester = focusRequester,
-            snackBarHostState = snackBarHostState,
-            scope = scope,
-            context = context,
-        )
-        is Credential.Phone -> PhoneTextField(
-            state = state,
-            onUpdatePhone = { onHandleAction(SignupAction.UpdatePhone(it)) },
-            onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
-            onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
-            focusRequester = focusRequester,
-            snackBarHostState = snackBarHostState,
-            scope = scope,
-            context = context,
-        )
+        is Credential.Email ->
+            EmailTextField(
+                state = state,
+                onUpdateEmail = { onHandleAction(SignupAction.UpdateEmail(it)) },
+                onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
+                onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
+                focusRequester = focusRequester,
+                snackBarHostState = snackBarHostState,
+                scope = scope,
+                context = context,
+            )
+        is Credential.Phone ->
+            PhoneTextField(
+                state = state,
+                onUpdatePhone = { onHandleAction(SignupAction.UpdatePhone(it)) },
+                onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
+                onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
+                focusRequester = focusRequester,
+                snackBarHostState = snackBarHostState,
+                scope = scope,
+                context = context,
+            )
     }
 }
-
 
 @Composable
 private fun CredentialBorderedTextField(
@@ -267,12 +270,13 @@ private fun CredentialBorderedTextField(
         padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
         onValueChange = onValueChange,
         placeholder = { Text(text = stringResource(id = placeholderRes), color = Color.White) },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            imeAction = ImeAction.Go,
-            autoCorrect = autoCorrect,
-            capitalization = capitalization,
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = ImeAction.Go,
+                autoCorrect = autoCorrect,
+                capitalization = capitalization,
+            ),
         keyboardActions = KeyboardActions(onGo = { onImeGo() }),
         onFocusChanged = onFocusChanged,
         focusRequester = focusRequester,
@@ -384,9 +388,10 @@ fun ViewWebMapText(
     if (isVisible) {
         Text(
             text = stringResource(id = R.string.viewLiveWebMap),
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .clickable(onClick = onClick),
+            modifier =
+                Modifier
+                    .padding(top = 10.dp)
+                    .clickable(onClick = onClick),
             color = Color.White,
             style = TextStyle(textDecoration = TextDecoration.Underline),
         )
@@ -401,9 +406,10 @@ fun <T : Credential> CredentialButton(
     onClick: () -> Unit,
 ) {
     TreeTrackerButton(
-        modifier = Modifier
-            .padding(end = 12.dp)
-            .size(120.dp, 50.dp),
+        modifier =
+            Modifier
+                .padding(end = 12.dp)
+                .size(120.dp, 50.dp),
         onClick = onClick,
         colors = AppButtonColors.ProgressGreen,
         isSelected = credentialType.isInstance(credential),
