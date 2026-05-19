@@ -92,156 +92,192 @@ fun CredentialEntryView(
             )
         },
         bottomBar = {
-            if (state.showPrivacyDialog == false) {
-                ActionBar(
-                    modifier = Modifier.navigationBarsPadding(),
-                    leftAction = {
-                        ArrowButton(isLeft = true) {
-                            onHandleAction(SignupAction.NavigateBack)
-                        }
-                    },
-                    rightAction = {
-                        ArrowButton(
-                            isLeft = false,
-                        ) {
-                            if (state.isCredentialValid) {
-                                onHandleAction(SignupAction.SubmitInfo)
-                            } else {
-                                when (state.credential) {
-                                    is Credential.Email -> {
-                                        scope.launch {
-                                            snackBarHostState.showSnackbar(
-                                                message = context.getString(R.string.email_validation_error),
-                                            )
-                                        }
-                                    }
-                                    is Credential.Phone -> {
-                                        scope.launch {
-                                            snackBarHostState.showSnackbar(
-                                                message = context.getString(R.string.phone_validation_error),
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                )
-            }
+            CredentialBottomBar(
+                state = state,
+                snackBarHostState = snackBarHostState,
+                scope = scope,
+                context = context,
+                onHandleAction = onHandleAction,
+            )
         },
     ) {
         if (state.existingUser != null) {
-            ExistingUserDialog(
-                state = state,
-                onHandleAction = onHandleAction,
-            )
+            ExistingUserDialog(state = state, onHandleAction = onHandleAction)
         }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.6f)
-                    .verticalScroll(rememberScrollState()),
-        ) {
-            val navigateToWebPage: () -> Unit = {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(Constants.TREE_TRACKER_URL)
-                startActivity(context, intent, null)
-            }
 
-            CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
+        CredentialFormContent(
+            state = state,
+            focusRequester = focusRequester,
+            snackBarHostState = snackBarHostState,
+            scope = scope,
+            context = context,
+            onHandleAction = onHandleAction,
+        )
 
-            Row(
-                modifier =
-                    Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                PhoneCredentialButton(state) { onHandleAction(SignupAction.UpdateCredentialType(it)) }
-                EmailCredentialButton(state) { onHandleAction(SignupAction.UpdateCredentialType(it)) }
-            }
-
-            when (state.credential) {
-                is Credential.Email ->
-                    EmailTextField(
-                        state,
-                        onUpdateEmail = { onHandleAction(SignupAction.UpdateEmail(it)) },
-                        onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
-                        onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
-                        focusRequester,
-                        snackBarHostState,
-                        scope,
-                        context,
-                    )
-                is Credential.Phone ->
-                    PhoneTextField(
-                        state,
-                        onUpdatePhone = { onHandleAction(SignupAction.UpdatePhone(it)) },
-                        onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
-                        onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
-                        focusRequester,
-                        snackBarHostState,
-                        scope,
-                        context,
-                    )
-            }
-
-            ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
-        }
         if (state.showPrivacyDialog == true) {
             PrivacyPolicyDialog(onDismiss = { onHandleAction(SignupAction.ClosePrivacyPolicyDialog) })
         }
     }
 }
 
+
 @Composable
-fun EmailCredentialButton(
+private fun CredentialBottomBar(
     state: SignUpState,
-    onUpdateCredentialType: (Credential) -> Unit,
+    snackBarHostState: SnackbarHostState,
+    scope: CoroutineScope,
+    context: Context,
+    onHandleAction: (SignupAction) -> Unit,
 ) {
-    CredentialButton(
-        credential = state.credential,
-        credentialType = Credential.Email::class.java,
-        placeholderTextRes = R.string.email_placeholder,
-        onClick = {
-            onUpdateCredentialType(Credential.Email())
+    if (state.showPrivacyDialog == true) return
+
+    ActionBar(
+        modifier = Modifier.navigationBarsPadding(),
+        leftAction = {
+            ArrowButton(isLeft = true) {
+                onHandleAction(SignupAction.NavigateBack)
+            }
+        },
+        rightAction = {
+            ArrowButton(isLeft = false) {
+                if (state.isCredentialValid) {
+                    onHandleAction(SignupAction.SubmitInfo)
+                } else {
+                    val errorRes = when (state.credential) {
+                        is Credential.Email -> R.string.email_validation_error
+                        is Credential.Phone -> R.string.phone_validation_error
+                    }
+                    scope.launch { snackBarHostState.showSnackbar(context.getString(errorRes)) }
+                }
+            }
         },
     )
 }
 
+
 @Composable
-fun PhoneCredentialButton(
+private fun CredentialFormContent(
     state: SignUpState,
-    onUpdateCredentialType: (Credential) -> Unit,
+    focusRequester: FocusRequester,
+    snackBarHostState: SnackbarHostState,
+    scope: CoroutineScope,
+    context: Context,
+    onHandleAction: (SignupAction) -> Unit,
 ) {
-    CredentialButton(
-        credential = state.credential,
-        credentialType = Credential.Phone::class.java,
-        placeholderTextRes = R.string.phone_placeholder,
-        onClick = {
-            onUpdateCredentialType(Credential.Phone())
-        },
-    )
+    val navigateToWebPage: () -> Unit = {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(Constants.TREE_TRACKER_URL)
+        }
+        startActivity(context, intent, null)
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.6f)
+            .verticalScroll(rememberScrollState()),
+    ) {
+        CustomSnackbar(snackbarHostState = snackBarHostState, backGroundColor = AppColors.Red)
+
+        CredentialTypeSelector(
+            state = state,
+            onUpdateCredentialType = { onHandleAction(SignupAction.UpdateCredentialType(it)) },
+        )
+
+        CredentialTextField(
+            state = state,
+            focusRequester = focusRequester,
+            snackBarHostState = snackBarHostState,
+            scope = scope,
+            context = context,
+            onHandleAction = onHandleAction,
+        )
+
+        ViewWebMapText(isVisible = state.isInternetAvailable, onClick = navigateToWebPage)
+    }
 }
 
 @Composable
-fun ViewWebMapText(
-    isVisible: Boolean,
-    onClick: () -> Unit,
+private fun CredentialTypeSelector(
+    state: SignUpState,
+    onUpdateCredentialType: (Credential) -> Unit,
 ) {
-    if (isVisible) {
-        Text(
-            text = stringResource(id = R.string.viewLiveWebMap),
-            Modifier
-                .padding(top = 10.dp)
-                .clickable(onClick = onClick),
-            color = Color.White,
-            style = TextStyle(textDecoration = TextDecoration.Underline),
+    Row(
+        modifier = Modifier
+            .padding(top = 10.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        PhoneCredentialButton(state) { onUpdateCredentialType(it) }
+        EmailCredentialButton(state) { onUpdateCredentialType(it) }
+    }
+}
+
+@Composable
+private fun CredentialTextField(
+    state: SignUpState,
+    focusRequester: FocusRequester,
+    snackBarHostState: SnackbarHostState,
+    scope: CoroutineScope,
+    context: Context,
+    onHandleAction: (SignupAction) -> Unit,
+) {
+    when (state.credential) {
+        is Credential.Email -> EmailTextField(
+            state = state,
+            onUpdateEmail = { onHandleAction(SignupAction.UpdateEmail(it)) },
+            onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
+            onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
+            focusRequester = focusRequester,
+            snackBarHostState = snackBarHostState,
+            scope = scope,
+            context = context,
+        )
+        is Credential.Phone -> PhoneTextField(
+            state = state,
+            onUpdatePhone = { onHandleAction(SignupAction.UpdatePhone(it)) },
+            onSubmitInfo = { onHandleAction(SignupAction.SubmitInfo) },
+            onEnableAutofocus = { onHandleAction(SignupAction.EnableAutofocus) },
+            focusRequester = focusRequester,
+            snackBarHostState = snackBarHostState,
+            scope = scope,
+            context = context,
         )
     }
+}
+
+
+@Composable
+private fun CredentialBorderedTextField(
+    value: String,
+    placeholderRes: Int,
+    keyboardType: KeyboardType,
+    capitalization: KeyboardCapitalization,
+    autoCorrect: Boolean,
+    focusRequester: FocusRequester,
+    autofocusEnabled: Boolean,
+    onValueChange: (String) -> Unit,
+    onFocusChanged: (androidx.compose.ui.focus.FocusState) -> Unit,
+    onImeGo: () -> Unit,
+) {
+    BorderedTextField(
+        value = value,
+        padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
+        onValueChange = onValueChange,
+        placeholder = { Text(text = stringResource(id = placeholderRes), color = Color.White) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Go,
+            autoCorrect = autoCorrect,
+            capitalization = capitalization,
+        ),
+        keyboardActions = KeyboardActions(onGo = { onImeGo() }),
+        onFocusChanged = onFocusChanged,
+        focusRequester = focusRequester,
+        autofocusEnabled = autofocusEnabled,
+    )
 }
 
 @Composable
@@ -256,36 +292,26 @@ private fun EmailTextField(
     context: Context,
 ) {
     val focusManager = LocalFocusManager.current
-    BorderedTextField(
+    CredentialBorderedTextField(
         value = state.email ?: "",
-        padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
-        onValueChange = { updatedEmail -> onUpdateEmail(updatedEmail) },
-        placeholder = { Text(text = stringResource(id = R.string.email_placeholder), color = Color.White) },
-        keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Go,
-                autoCorrect = false,
-                capitalization = KeyboardCapitalization.None,
-            ),
-        keyboardActions =
-            KeyboardActions(
-                onGo = {
-                    focusManager.clearFocus()
-                    if (state.isCredentialValid) {
-                        onSubmitInfo()
-                    } else {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = context.getString(R.string.email_validation_error),
-                            )
-                        }
-                    }
-                },
-            ),
-        onFocusChanged = { if (it.isFocused) onEnableAutofocus() },
+        placeholderRes = R.string.email_placeholder,
+        keyboardType = KeyboardType.Email,
+        capitalization = KeyboardCapitalization.None,
+        autoCorrect = false,
         focusRequester = focusRequester,
         autofocusEnabled = state.autofocusTextEnabled,
+        onValueChange = onUpdateEmail,
+        onFocusChanged = { if (it.isFocused) onEnableAutofocus() },
+        onImeGo = {
+            focusManager.clearFocus()
+            if (state.isCredentialValid) {
+                onSubmitInfo()
+            } else {
+                scope.launch {
+                    snackBarHostState.showSnackbar(context.getString(R.string.email_validation_error))
+                }
+            }
+        },
     )
 }
 
@@ -301,35 +327,70 @@ private fun PhoneTextField(
     context: Context,
 ) {
     val focusManager = LocalFocusManager.current
-    BorderedTextField(
+    CredentialBorderedTextField(
         value = state.phone ?: "",
-        padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
-        onValueChange = { updatedPhone -> onUpdatePhone(updatedPhone) },
-        placeholder = { Text(text = stringResource(id = R.string.phone_placeholder), color = Color.White) },
-        keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Go,
-            ),
-        keyboardActions =
-            KeyboardActions(
-                onGo = {
-                    focusManager.clearFocus()
-                    if (state.isCredentialValid) {
-                        onSubmitInfo()
-                    } else {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = context.getString(R.string.phone_validation_error),
-                            )
-                        }
-                    }
-                },
-            ),
-        onFocusChanged = { if (it.isFocused) onEnableAutofocus() },
+        placeholderRes = R.string.phone_placeholder,
+        keyboardType = KeyboardType.Phone,
+        capitalization = KeyboardCapitalization.None,
+        autoCorrect = true,
         focusRequester = focusRequester,
         autofocusEnabled = state.autofocusTextEnabled,
+        onValueChange = onUpdatePhone,
+        onFocusChanged = { if (it.isFocused) onEnableAutofocus() },
+        onImeGo = {
+            focusManager.clearFocus()
+            if (state.isCredentialValid) {
+                onSubmitInfo()
+            } else {
+                scope.launch {
+                    snackBarHostState.showSnackbar(context.getString(R.string.phone_validation_error))
+                }
+            }
+        },
     )
+}
+
+@Composable
+fun EmailCredentialButton(
+    state: SignUpState,
+    onUpdateCredentialType: (Credential) -> Unit,
+) {
+    CredentialButton(
+        credential = state.credential,
+        credentialType = Credential.Email::class.java,
+        placeholderTextRes = R.string.email_placeholder,
+        onClick = { onUpdateCredentialType(Credential.Email()) },
+    )
+}
+
+@Composable
+fun PhoneCredentialButton(
+    state: SignUpState,
+    onUpdateCredentialType: (Credential) -> Unit,
+) {
+    CredentialButton(
+        credential = state.credential,
+        credentialType = Credential.Phone::class.java,
+        placeholderTextRes = R.string.phone_placeholder,
+        onClick = { onUpdateCredentialType(Credential.Phone()) },
+    )
+}
+
+@Composable
+fun ViewWebMapText(
+    isVisible: Boolean,
+    onClick: () -> Unit,
+) {
+    if (isVisible) {
+        Text(
+            text = stringResource(id = R.string.viewLiveWebMap),
+            modifier = Modifier
+                .padding(top = 10.dp)
+                .clickable(onClick = onClick),
+            color = Color.White,
+            style = TextStyle(textDecoration = TextDecoration.Underline),
+        )
+    }
 }
 
 @Composable
@@ -340,10 +401,9 @@ fun <T : Credential> CredentialButton(
     onClick: () -> Unit,
 ) {
     TreeTrackerButton(
-        modifier =
-            Modifier
-                .padding(end = 12.dp)
-                .size(120.dp, 50.dp),
+        modifier = Modifier
+            .padding(end = 12.dp)
+            .size(120.dp, 50.dp),
         onClick = onClick,
         colors = AppButtonColors.ProgressGreen,
         isSelected = credentialType.isInstance(credential),
