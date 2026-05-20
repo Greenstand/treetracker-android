@@ -43,8 +43,6 @@ class SyncDataUseCase(
     private val deviceConfigUploader: DeviceConfigUploader,
     private val messagesRepo: MessagesRepo,
     private val syncProgressTracker: SyncProgressTracker,
-    private val orgConfigProvider: OrgConfigProvider,
-    private val orgRepo: OrgRepo,
 ) : UseCase<Unit, Boolean>() {
     private val TAG = "SyncDataUseCase"
 
