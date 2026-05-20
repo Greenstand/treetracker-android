@@ -135,10 +135,6 @@ class OrgRepo(
             dao.insertOrg(validatedEntity)
             setOrg(validatedEntity.id)
             Timber.tag(ORG_LINK_TAG).i("Org '$orgName' ($orgId) loaded from Remote Config")
-            resetInitialOrgSync()
-            Timber.tag(ORG_LINK_TAG).i("Org config sync reset")
-            addMinimalOrg(orgId, orgName)
-            Timber.tag(ORG_LINK_TAG).i("Minimal org '$orgName' ($orgId) added with default flows")
             true
         } catch (e: Exception) {
             Timber.tag(ORG_LINK_TAG).e(e, "Failed to parse Remote Config for org $orgId, falling back to minimal org")
