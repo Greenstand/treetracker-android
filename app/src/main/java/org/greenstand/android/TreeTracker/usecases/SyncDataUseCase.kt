@@ -61,15 +61,6 @@ class SyncDataUseCase(
 
                 executeTrackedStep(SyncStep.MESSAGES, "Message Sync") {
                     messagesRepo.syncMessages()
-                    val currentOrg = orgRepo.currentOrg()
-                    if (currentOrg.id != OrgRepo.DEFAULT_ORG_ID) {
-                        val configJson = orgConfigProvider.fetchOrgConfig(currentOrg.id)
-                        Timber.tag("OrgConfigProvider").d("Fetched config for org ${currentOrg.id}")
-                        if (configJson != null) {
-                            orgRepo.addOrgFromRemoteConfig(currentOrg.id, currentOrg.name, configJson)
-                            Timber.tag("OrgRepo").i("AddOrgFromRemoteConfig completed ${currentOrg.name}, ${currentOrg.id}, $configJson")
-                        }
-                    }
                 }
 
                 executeTrackedStep(SyncStep.DEVICE_CONFIG, "Device Config Upload") {
