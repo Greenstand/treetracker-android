@@ -80,8 +80,7 @@ class SplashScreenViewModel(
                     orgRepo.addOrgFromRemoteConfig(currentOrg.id, currentOrg.name, configJson)
                     orgRepo.markInitialOrgSyncComplete()
                 }
-            }
-            else if (configJson != null) {
+            } else if (configJson != null) {
                 Timber.tag(ORG_LINK_TAG).i("Remote Config found for org $orgId, applying full config")
                 orgRepo.addOrgFromRemoteConfig(orgId, orgName ?: "", configJson)
             } else {
