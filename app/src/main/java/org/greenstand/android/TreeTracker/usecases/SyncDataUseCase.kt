@@ -29,8 +29,6 @@ import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
 import org.greenstand.android.TreeTracker.overlay.SyncStep
-import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
-import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
