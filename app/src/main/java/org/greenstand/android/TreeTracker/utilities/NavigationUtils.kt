@@ -32,7 +32,6 @@ fun NavController.throttledNavigate(
     if (now - last >= NAVIGATION_THROTTLE_MS && currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
         lastNavigationTimes[this] = now
         navigate(route, builder)
-
     }
 }
 
@@ -42,7 +41,6 @@ fun NavController.throttledPopBackStack(): Boolean {
     if (now - last >= NAVIGATION_THROTTLE_MS && currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
         lastNavigationTimes[this] = now
         return popBackStack()
-
     }
     return false
 }
