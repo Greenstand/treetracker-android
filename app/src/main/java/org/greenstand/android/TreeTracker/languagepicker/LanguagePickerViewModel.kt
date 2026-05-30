@@ -50,11 +50,10 @@ class LanguagePickerViewModel(
     override fun handleAction(action: LanguagePickerAction) {
         when (action) {
             is LanguagePickerAction.SetLanguage -> {
+                languageSwitcher.setLanguage(action.language)
                 updateState { copy(currentLanguage = action.language) }
             }
-            is LanguagePickerAction.ConfirmLanguage -> {
-                state.value.currentLanguage?.let { languageSwitcher.setLanguage(it) }
-            }
+            is LanguagePickerAction.ConfirmLanguage -> { }
             else -> { }
         }
     }
