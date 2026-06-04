@@ -18,28 +18,27 @@ package org.greenstand.android.TreeTracker.utilities
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavOptionsBuilder
-import java.util.WeakHashMap
 
 private const val NAVIGATION_THROTTLE_MS = 300L
-private val lastNavigationTimes = WeakHashMap<NavController, Long>()
+
+@Volatile
+private var lastNavigationTime = 0L
 
 fun NavController.throttledNavigate(
     route: Any,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
     val now = System.currentTimeMillis()
-    val last = lastNavigationTimes[this] ?: 0L
-    if (now - last >= NAVIGATION_THROTTLE_MS && currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-        lastNavigationTimes[this] = now
+    if (now - lastNavigationTime >= NAVIGATION_THROTTLE_MS && currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+        lastNavigationTime = now
         navigate(route, builder)
     }
 }
 
 fun NavController.throttledPopBackStack(): Boolean {
     val now = System.currentTimeMillis()
-    val last = lastNavigationTimes[this] ?: 0L
-    if (now - last >= NAVIGATION_THROTTLE_MS && currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-        lastNavigationTimes[this] = now
+    if (now - lastNavigationTime >= NAVIGATION_THROTTLE_MS && currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+        lastNavigationTime = now
         return popBackStack()
     }
     return false
