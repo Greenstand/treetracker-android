@@ -28,6 +28,8 @@ import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import timber.log.Timber
 
 class CaptureFlowNavigationController(
@@ -63,7 +65,7 @@ class CaptureFlowNavigationController(
         val destination = navPath[currentNavPathIndex]
         val route = resolveDestinationRoute(destination)
         withContext(Dispatchers.Main) {
-            navController.navigate(route)
+            navController.throttledNavigate(route)
         }
     }
 
@@ -72,12 +74,12 @@ class CaptureFlowNavigationController(
             goToDashboard(navController)
             return
         }
-        navController.popBackStack()
+        navController.throttledPopBackStack()
     }
 
     fun goToDashboard(navController: NavHostController) {
         endSession()
-        navController.navigate(DashboardRoute) {
+        navController.throttledNavigate(DashboardRoute) {
             popUpTo<DashboardRoute> { inclusive = true }
             launchSingleTop = true
         }
@@ -85,7 +87,7 @@ class CaptureFlowNavigationController(
 
     fun goToUserSelect(navController: NavHostController) {
         endSession()
-        navController.navigate(UserSelectRoute) {
+        navController.throttledNavigate(UserSelectRoute) {
             popUpTo<DashboardRoute> { inclusive = true }
             launchSingleTop = true
         }

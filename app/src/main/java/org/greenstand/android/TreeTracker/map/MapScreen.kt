@@ -69,6 +69,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.maplibre.android.MapLibre
 import java.io.File
@@ -112,7 +113,7 @@ fun MapScreen(
             color = Color.White,
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = { navController.throttledPopBackStack() },
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

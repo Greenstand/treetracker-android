@@ -58,6 +58,8 @@ import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -83,14 +85,14 @@ fun SettingsScreen() {
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is SettingsAction.NavigateToProfile -> navController.navigate(ProfileSelectRoute)
-                is SettingsAction.NavigateToEditTrees -> navController.navigate(TreeEditUserSelectRoute)
-                is SettingsAction.NavigateToMap -> navController.navigate(MapRoute)
-                is SettingsAction.NavigateToDeleteAccount -> navController.navigate(DeleteProfileRoute)
-                is SettingsAction.NavigateBack -> navController.popBackStack()
+                is SettingsAction.NavigateToProfile -> navController.throttledNavigate(ProfileSelectRoute)
+                is SettingsAction.NavigateToEditTrees -> navController.throttledNavigate(TreeEditUserSelectRoute)
+                is SettingsAction.NavigateToMap -> navController.throttledNavigate(MapRoute)
+                is SettingsAction.NavigateToDeleteAccount -> navController.throttledNavigate(DeleteProfileRoute)
+                is SettingsAction.NavigateBack -> navController.throttledPopBackStack()
                 is SettingsAction.LogoutConfirmed -> {
                     viewModel.handleAction(SettingsAction.Logout)
-                    navController.navigate(SignupFlowRoute) {
+                    navController.throttledNavigate(SignupFlowRoute) {
                         popUpTo(navController.graph.id) { inclusive = true }
                         launchSingleTop = true
                     }
