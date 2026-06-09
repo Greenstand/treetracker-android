@@ -25,13 +25,18 @@ import androidx.compose.ui.res.stringResource
  * [Context]. Resolved to a `String` on the UI side by the consuming Composable.
  */
 sealed interface TextRef {
-    data class Plain(val value: String) : TextRef
+    data class Plain(
+        val value: String,
+    ) : TextRef
 
     data class Res(
         @param:StringRes val id: Int,
         val args: List<Any> = emptyList(),
     ) : TextRef {
-        constructor(@StringRes id: Int, vararg args: Any) : this(id, args.toList())
+        constructor(
+            @StringRes id: Int,
+            vararg args: Any,
+        ) : this(id, args.toList())
     }
 
     companion object {
