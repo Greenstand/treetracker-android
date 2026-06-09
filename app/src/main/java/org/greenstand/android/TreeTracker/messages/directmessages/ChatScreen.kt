@@ -58,6 +58,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -85,7 +86,7 @@ fun ChatScreen(
 
     Chat(
         state = state,
-        onBackClicked = { navController.popBackStack() },
+        onBackClicked = { navController.throttledPopBackStack() },
         onDraftTextChanged = { text -> viewModel.handleAction(ChatAction.UpdateDraftText(text)) },
         onSendClicked = { viewModel.handleAction(ChatAction.SendMessage) },
         checkIsOtherUser = { index -> viewModel.checkIsOtherUser(index) },

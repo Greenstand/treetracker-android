@@ -48,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.messages.OtherChatIcon
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -68,7 +69,7 @@ fun AnnouncementScreen(
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is AnnouncementAction.NavigateBack -> navController.popBackStack()
+                is AnnouncementAction.NavigateBack -> navController.throttledPopBackStack()
                 is AnnouncementAction.OpenLink -> openUrlLink(context = navController.context, url = action.url)
             }
         },
