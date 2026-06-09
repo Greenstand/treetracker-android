@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.treeedit
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -44,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,25 +60,19 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @Composable
 fun TreeDetailScreen(treeId: Long) {
     val viewModel: TreeDetailViewModel = viewModel(factory = TreeDetailViewModelFactory(treeId))
     val navController = LocalNavHostController.current
-    val context = LocalContext.current
     val state by viewModel.state.collectAsState(TreeDetailState())
-    val noteSavedMessage = stringResource(R.string.tree_note_saved)
+
+    HandleUIEvents(viewModel)
 
     LaunchedEffect(state.isDeleted) {
         if (state.isDeleted) {
             navController.throttledPopBackStack()
-        }
-    }
-
-    LaunchedEffect(state.noteSaved) {
-        if (state.noteSaved) {
-            Toast.makeText(context, noteSavedMessage, Toast.LENGTH_SHORT).show()
-            viewModel.handleAction(TreeDetailAction.NoteSavedShown)
         }
     }
 

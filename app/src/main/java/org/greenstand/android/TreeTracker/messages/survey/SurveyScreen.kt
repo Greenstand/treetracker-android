@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.messages.survey
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,17 +32,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
@@ -52,6 +45,7 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @Composable
 fun SurveyScreen(
@@ -60,14 +54,11 @@ fun SurveyScreen(
 ) {
     val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
-    var showToast by remember { mutableStateOf(false) }
-    if (showToast) {
-        ShowToastMessage(stringResId = R.string.survey_completed)
-    }
+
+    HandleUIEvents(viewModel)
 
     LaunchedEffect(state.surveyComplete) {
         if (state.surveyComplete) {
-            showToast = true
             navController.throttledPopBackStack()
         }
     }
@@ -199,9 +190,3 @@ fun AnswerItem(
     }
 }
 
-@Composable
-fun ShowToastMessage(stringResId: Int) {
-    val context = LocalContext.current
-    val message = stringResource(id = stringResId)
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}

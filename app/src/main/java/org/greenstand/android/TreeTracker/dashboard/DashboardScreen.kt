@@ -32,18 +32,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +53,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,7 +60,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
@@ -80,13 +73,12 @@ import org.greenstand.android.TreeTracker.utils.PreviewDependencies
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
-import org.greenstand.android.TreeTracker.view.AppColors.Green
-import org.greenstand.android.TreeTracker.view.ConsumableSnackBar
 import org.greenstand.android.TreeTracker.view.LanguageButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
@@ -97,9 +89,10 @@ fun DashboardScreen(
     val navController = LocalNavHostController.current
     var showDialog by remember { mutableStateOf(false) }
 
+    HandleUIEvents(viewModel)
+
     Dashboard(
         state = state,
-        snackBar = state.snackBar,
         showSyncReminderDialog = showDialog,
         onSyncClicked = { viewModel.handleAction(DashboardAction.Sync) },
         onOrgClicked = { navController.throttledNavigate(OrgRoute) },
@@ -125,7 +118,6 @@ fun DashboardScreen(
 @Composable
 fun Dashboard(
     state: DashboardState,
-    snackBar: ConsumableSnackBar? = null,
     showSyncReminderDialog: Boolean = false,
     onSyncClicked: () -> Unit = { },
     onOrgClicked: () -> Unit = { },
@@ -142,39 +134,9 @@ fun Dashboard(
         )
     }
 
-    val context = LocalContext.current
-    val scaffoldState = rememberScaffoldState()
-
-    LaunchedEffect(snackBar) {
-        snackBar?.show(context, scaffoldState)
-    }
-
     Scaffold(
         topBar = {
             DashboardTopBar(state, onSettingsClicked, onOrgClicked)
-        },
-        scaffoldState = scaffoldState,
-        snackbarHost = {
-            SnackbarHost(
-                hostState = it,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .wrapContentHeight(Alignment.Bottom),
-            ) { snackBarData ->
-                val backgroundColor = Green
-
-                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
-                    Snackbar(
-                        contentColor = CustomTheme.textColors.darkText,
-                        backgroundColor = backgroundColor,
-                        modifier = Modifier.align(Alignment.BottomStart),
-                    ) {
-                        Text(text = snackBarData.message, fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(vertical = 15.dp))
-                    }
-                }
-            }
         },
     ) { padding ->
         Column(
