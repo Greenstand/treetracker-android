@@ -22,14 +22,20 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.Question
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
+import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
+import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -103,5 +109,25 @@ class SurveyViewModelTest {
 
             val event = testSubject.events.first().getContentIfNotConsumed()
             assertEquals(PopBackStackEvent, event)
+        }
+
+    @Test
+    fun `WHEN last question answered THEN saves answers, emits survey-completed snackbar and pops back`() =
+        runTest {
+            val questions = listOf(Question(prompt = "only one", choices = listOf("a", "b")))
+            coEvery { messagesRepo.getSurveyMessage(any()) } returns FakeFileGenerator.fakeSurveyMessage.copy(questions = questions)
+            testSubject = SurveyViewModel(messageId, messagesRepo, userRepo)
+            testSubject.handleAction(SurveyAction.SelectAnswer(0))
+            testSubject.handleAction(SurveyAction.GoToNextQuestion)
+
+            val emitted =
+                testSubject.events
+                    .take(2)
+                    .toList()
+                    .mapNotNull { it.getContentIfNotConsumed() }
+            val snackbar = emitted.filterIsInstance<ShowSnackbar>().single()
+            assertEquals(TextRef.Res(R.string.survey_completed), snackbar.message)
+            assertTrue(emitted.any { it is PopBackStackEvent })
+            coVerify { messagesRepo.saveSurveyAnswers(messageId, listOf("a")) }
         }
 }
