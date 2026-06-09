@@ -35,7 +35,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -50,9 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -65,21 +62,14 @@ import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 @Composable
 fun TreeDetailScreen(treeId: Long) {
     val viewModel: TreeDetailViewModel = viewModel(factory = TreeDetailViewModelFactory(treeId))
-    val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState(TreeDetailState())
 
     HandleUIEvents(viewModel)
 
-    LaunchedEffect(state.isDeleted) {
-        if (state.isDeleted) {
-            navController.throttledPopBackStack()
-        }
-    }
-
     TreeDetail(
         state = state,
-        onHandleAction = { viewModel.handleAction(it) },
-        onNavigateBack = { navController.throttledPopBackStack() },
+        onHandleAction = viewModel::handleAction,
+        onNavigateBack = { viewModel.handleAction(TreeDetailAction.NavigateBack) },
     )
 }
 

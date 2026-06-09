@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.viewmodel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import timber.log.Timber
 
 /**
@@ -25,7 +26,7 @@ import timber.log.Timber
  *
  * Built-in handling:
  * - [NavigationEvent] → invokes the lambda with the current [NavHostController].
- * - [NavigateUpEvent] → `navController.navigateUp()`.
+ * - [PopBackStackEvent] → `navController.throttledPopBackStack()`.
  * - [ShowSnackbar]    → forwarded to the app-wide [SnackbarController].
  *
  * Custom handling: pass [onEvent] to intercept any event. Return `true` to mark the event
@@ -50,7 +51,7 @@ fun <S, A : Action> HandleUIEvents(
 
             when (event) {
                 is NavigationEvent -> event.navigate(navController)
-                is NavigateUpEvent -> navController.navigateUp()
+                is PopBackStackEvent -> navController.throttledPopBackStack()
                 is ShowSnackbar -> snackbarController.show(event)
                 else -> Timber.w("Unhandled UiEvent: $event")
             }

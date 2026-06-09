@@ -60,7 +60,7 @@ class OrgPickerViewModel(
                     updateState { copy(currentOrg = currentOrg) }
                 }
             }
-            else -> { }
+            is OrgPickerAction.NavigateNext -> popBackStack()
         }
     }
 }

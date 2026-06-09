@@ -21,13 +21,14 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.Question
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.junit.Assert
+import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -93,11 +94,14 @@ class SurveyViewModelTest {
         }
 
     @Test
-    fun `WHEN current question is already first, go to previous question sets shouldNavigateBack`() =
+    fun `WHEN current question is already first, go to previous question emits pop-back event`() =
         runTest {
             val questions = listOf(Question(prompt = "random", choices = listOf("one", "two")))
             coEvery { messagesRepo.getSurveyMessage(any()) } returns FakeFileGenerator.fakeSurveyMessage.copy(questions = questions)
+            testSubject = SurveyViewModel(messageId, messagesRepo, userRepo)
             testSubject.handleAction(SurveyAction.GoToPrevQuestion)
-            Assert.assertTrue(testSubject.state.value.shouldNavigateBack)
+
+            val event = testSubject.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
         }
 }

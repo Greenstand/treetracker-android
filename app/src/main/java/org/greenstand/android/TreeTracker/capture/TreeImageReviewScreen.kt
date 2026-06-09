@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,8 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ApprovalButton
@@ -47,29 +44,19 @@ import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @Composable
 fun TreeImageReviewScreen(
     viewModel: TreeImageReviewViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
-    LaunchedEffect(state.canNavigateForward) {
-        if (state.canNavigateForward) {
-            CaptureFlowScopeManager.nav.navForward(navController)
-        }
-    }
+
+    HandleUIEvents(viewModel)
 
     TreeImageReview(
         state = state,
-        onHandleAction = { action ->
-            when (action) {
-                is TreeImageReviewAction.NavigateBack -> {
-                    CaptureFlowScopeManager.nav.navBackward(navController)
-                }
-                else -> viewModel.handleAction(action)
-            }
-        },
+        onHandleAction = viewModel::handleAction,
     )
 }
 

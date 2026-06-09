@@ -34,7 +34,6 @@ data class TreeDetailState(
     val tree: TreeEntity? = null,
     val editedNote: String = "",
     val showDeleteConfirmation: Boolean = false,
-    val isDeleted: Boolean = false,
 )
 
 sealed class TreeDetailAction : Action {
@@ -49,6 +48,8 @@ sealed class TreeDetailAction : Action {
     data class SetDeleteDialogVisibility(
         val show: Boolean,
     ) : TreeDetailAction()
+
+    object NavigateBack : TreeDetailAction()
 }
 
 class TreeDetailViewModel(
@@ -88,12 +89,13 @@ class TreeDetailViewModel(
                     }
                     dao.deleteTreeById(treeId)
                     treesToSyncHelper.refreshTreeCountToSync()
-                    updateState { copy(isDeleted = true) }
+                    popBackStack()
                 }
             }
             is TreeDetailAction.SetDeleteDialogVisibility -> {
                 updateState { copy(showDeleteConfirmation = action.show) }
             }
+            is TreeDetailAction.NavigateBack -> popBackStack()
         }
     }
 }

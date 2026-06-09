@@ -30,6 +30,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
+import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
 import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import org.junit.Assert.assertEquals
@@ -128,15 +129,16 @@ class TreeDetailViewModelTest {
         }
 
     @Test
-    fun `DeleteTree calls DAO delete and refreshes sync helper`() =
+    fun `DeleteTree calls DAO delete, refreshes sync helper, and emits pop-back event`() =
         runTest {
             coEvery { dao.deleteTreeById(42) } just Runs
             coEvery { treesToSyncHelper.refreshTreeCountToSync() } just Runs
             val vm = createViewModel()
             vm.state.first { it.tree != null }
             vm.handleAction(TreeDetailAction.DeleteTree)
-            vm.state.first { it.isDeleted }
-            assertTrue(vm.state.value.isDeleted)
+
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
             coVerify { dao.deleteTreeById(42) }
             coVerify { treesToSyncHelper.refreshTreeCountToSync() }
         }
@@ -150,8 +152,20 @@ class TreeDetailViewModelTest {
             val vm = createViewModel(tree = uploadedTree)
             vm.state.first { it.tree != null }
             vm.handleAction(TreeDetailAction.DeleteTree)
-            vm.state.first { it.isDeleted }
-            assertTrue(vm.state.value.isDeleted)
+
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
             coVerify { dao.deleteTreeById(42) }
+        }
+
+    @Test
+    fun `NavigateBack emits pop-back event`() =
+        runTest {
+            val vm = createViewModel()
+            vm.state.first { it.tree != null }
+            vm.handleAction(TreeDetailAction.NavigateBack)
+
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
         }
 }

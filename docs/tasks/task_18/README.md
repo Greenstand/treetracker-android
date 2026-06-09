@@ -31,7 +31,7 @@ ViewModel side                       Composable side
 ─────────────────                    ─────────────────
 sendEvent(ShowSnackbar(...))         HandleUIEvents(viewModel)            ← screen root
 sendEvent(NavigationEvent { ... })        ↓
-sendEvent(NavigateUpEvent)           routes Navigate / NavigateUp / ShowSnackbar
+sendEvent(PopBackStackEvent)         routes Navigate / PopBackStack / ShowSnackbar
                                           ↓
                                      LocalSnackbarController.current      ← provided at Root
                                           ↓
@@ -41,7 +41,7 @@ sendEvent(NavigateUpEvent)           routes Navigate / NavigateUp / ShowSnackbar
 Key shape:
 
 - **`UiEvent`** — sealed marker interface. Built-in subtypes: `NavigationEvent`,
-  `NavigateUpEvent`, `ShowSnackbar`. Features may add their own subtypes and intercept
+  `PopBackStackEvent`, `ShowSnackbar`. Features may add their own subtypes and intercept
   them via the optional `onEvent` parameter of `HandleUIEvents`.
 - **`TextRef`** — localization-agnostic text reference (`Plain(String)` /
   `Res(@StringRes Int, vararg args)`). Lets ViewModels emit events without holding a
@@ -63,7 +63,7 @@ Key shape:
 - `app/.../viewmodel/TextRef.kt` (new) — `TextRef` sealed interface + `@Composable` resolver
   + `Context.resolve(TextRef)`.
 - `app/.../viewmodel/UiEvents.kt` (refactored) — sealed `UiEvent` interface; built-in
-  `NavigationEvent`, `NavigateUpEvent`, `ShowSnackbar`. `ConsumableEvent` keeps the
+  `NavigationEvent`, `PopBackStackEvent`, `ShowSnackbar`. `ConsumableEvent` keeps the
   atomic-consume semantics.
 - `app/.../viewmodel/BaseViewModel.kt` (refactored) — `Channel` replaced with
   `MutableSharedFlow(replay = 5, extraBufferCapacity = 16)`; `triggerEvent` renamed to

@@ -50,16 +50,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
-import org.greenstand.android.TreeTracker.navigation.MapRoute
-import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
-import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
-import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -68,14 +60,16 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 import org.maplibre.android.MapLibre
 
 @Composable
 fun SettingsScreen() {
-    val navController = LocalNavHostController.current
     val viewModel: SettingsViewModel = viewModel(factory = LocalViewModelFactory.current)
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
+
+    HandleUIEvents(viewModel)
 
     LaunchedEffect(Unit) {
         MapLibre.getInstance(context)
@@ -83,23 +77,7 @@ fun SettingsScreen() {
 
     Settings(
         state = state,
-        onHandleAction = { action ->
-            when (action) {
-                is SettingsAction.NavigateToProfile -> navController.throttledNavigate(ProfileSelectRoute)
-                is SettingsAction.NavigateToEditTrees -> navController.throttledNavigate(TreeEditUserSelectRoute)
-                is SettingsAction.NavigateToMap -> navController.throttledNavigate(MapRoute)
-                is SettingsAction.NavigateToDeleteAccount -> navController.throttledNavigate(DeleteProfileRoute)
-                is SettingsAction.NavigateBack -> navController.throttledPopBackStack()
-                is SettingsAction.LogoutConfirmed -> {
-                    viewModel.handleAction(SettingsAction.Logout)
-                    navController.throttledNavigate(SignupFlowRoute) {
-                        popUpTo(navController.graph.id) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-                else -> viewModel.handleAction(action)
-            }
-        },
+        onHandleAction = viewModel::handleAction,
     )
 }
 

@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,13 +47,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.messages.OtherChatIcon
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @Composable
 fun AnnouncementScreen(
@@ -63,14 +63,16 @@ fun AnnouncementScreen(
         ),
 ) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val context = LocalContext.current
+
+    HandleUIEvents(viewModel)
 
     Announcement(
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is AnnouncementAction.NavigateBack -> navController.throttledPopBackStack()
-                is AnnouncementAction.OpenLink -> openUrlLink(context = navController.context, url = action.url)
+                is AnnouncementAction.OpenLink -> openUrlLink(context = context, url = action.url)
+                else -> viewModel.handleAction(action)
             }
         },
     )
