@@ -39,9 +39,10 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
-import org.greenstand.android.TreeTracker.view.ConsumableSnackBar
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
+import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -52,7 +53,6 @@ data class DashboardState(
     val isOrgButtonEnabled: Boolean = false,
     val showUnreadMessageNotification: Boolean = false,
     val showTreeSyncReminderDialog: Boolean = false,
-    val snackBar: ConsumableSnackBar? = null,
 ) {
     val uploadProgress: Float = if (totalTreesToSync > 0) treesRemainingToSync.toFloat() / totalTreesToSync else 0f
 }
@@ -91,7 +91,7 @@ class DashboardViewModel(
     }
 
     private fun triggerSnackBar(stringRes: Int) {
-        updateState { copy(snackBar = ConsumableSnackBar(stringRes)) }
+        sendEvent(ShowSnackbar(TextRef.Res(stringRes)))
     }
 
     private val syncObserver =
