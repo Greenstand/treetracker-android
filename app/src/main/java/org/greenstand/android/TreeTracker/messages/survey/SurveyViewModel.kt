@@ -35,8 +35,6 @@ data class SurveyScreenState(
     val userImagePath: String? = null,
     val currentQuestion: Question? = null,
     val selectedAnswerIndex: Int? = null,
-    val surveyComplete: Boolean = false,
-    val shouldNavigateBack: Boolean = false,
 )
 
 sealed class SurveyAction : Action {
@@ -96,7 +94,7 @@ class SurveyViewModel(
                         }.requireNoNulls()
                 messagesRepo.saveSurveyAnswers(messageId, answerStrings)
                 sendEvent(ShowSnackbar(TextRef.Res(R.string.survey_completed)))
-                updateState { copy(surveyComplete = true) }
+                popBackStack()
                 return@launch
             }
             currentQuestionIndex++
@@ -111,7 +109,7 @@ class SurveyViewModel(
 
     private fun goToPrevQuestion() {
         if (currentQuestionIndex == 0) {
-            updateState { copy(shouldNavigateBack = true) }
+            popBackStack()
             return
         }
         currentQuestionIndex--

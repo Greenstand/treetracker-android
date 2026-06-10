@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * (e.g. from `init`) are still delivered; [ConsumableEvent] makes sure the replay
  * doesn't fire the event twice.
  *
- * Built-in subtypes ([NavigationEvent], [NavigateUpEvent], [ShowSnackbar]) are handled
+ * Built-in subtypes ([NavigationEvent], [PopBackStackEvent], [ShowSnackbar]) are handled
  * automatically by [HandleUIEvents]. Feature-specific events implement this interface
  * and are intercepted via the optional `onEvent` parameter.
  */
@@ -44,8 +44,8 @@ class NavigationEvent(
     val navigate: suspend NavHostController.() -> Unit,
 ) : UiEvent
 
-/** Pop the back stack one step. */
-data object NavigateUpEvent : UiEvent
+/** Pop the back stack one step. Dispatched via `throttledPopBackStack` for debouncing. */
+data object PopBackStackEvent : UiEvent
 
 /**
  * Show a snackbar through the global [SnackbarController]. The [message] is held as a

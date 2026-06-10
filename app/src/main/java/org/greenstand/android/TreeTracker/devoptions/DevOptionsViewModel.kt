@@ -60,7 +60,7 @@ class DevOptionsViewModel(
     override fun handleAction(action: DevOptionsAction) {
         when (action) {
             is DevOptionsAction.UpdateParam -> updateParam(action.param, action.newValue)
-            else -> { }
+            is DevOptionsAction.NavigateBack -> popBackStack()
         }
     }
 

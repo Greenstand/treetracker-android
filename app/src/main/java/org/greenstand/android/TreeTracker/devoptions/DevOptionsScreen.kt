@@ -46,31 +46,26 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 import org.koin.compose.koinInject
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 
 @Composable
 fun DevOptionsRoot() {
     val viewModel: DevOptionsViewModel = viewModel(factory = LocalViewModelFactory.current)
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
     val overlayManager: DebugOverlayManager = koinInject()
+
+    HandleUIEvents(viewModel)
 
     DevOptionsScreen(
         state = state,
         overlayManager = overlayManager,
-        onHandleAction = { action ->
-            when (action) {
-                is DevOptionsAction.NavigateBack -> navController.throttledPopBackStack()
-                else -> viewModel.handleAction(action)
-            }
-        },
+        onHandleAction = viewModel::handleAction,
     )
 }
 

@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,9 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -52,28 +49,13 @@ fun SurveyScreen(
     messageId: String,
     viewModel: SurveyViewModel = viewModel(factory = SurveyViewModelFactory(messageId)),
 ) {
-    val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
 
     HandleUIEvents(viewModel)
 
-    LaunchedEffect(state.surveyComplete) {
-        if (state.surveyComplete) {
-            navController.throttledPopBackStack()
-        }
-    }
-
-    LaunchedEffect(state.shouldNavigateBack) {
-        if (state.shouldNavigateBack) {
-            navController.throttledPopBackStack()
-        }
-    }
-
     Survey(
         state = state,
-        onHandleAction = { action ->
-            viewModel.handleAction(action)
-        },
+        onHandleAction = viewModel::handleAction,
     )
 }
 

@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
+import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -83,5 +84,19 @@ class DevOptionsViewModelTest {
                     .filterIsInstance<BooleanConfig>()
                     .find { it.key == booleanParam.key }
             assertTrue(updatedParam!!.defaultValue)
+        }
+
+    @Test
+    fun `WHEN NavigateBack action THEN emits PopBackStackEvent`() =
+        runTest {
+            every { configurator.getBoolean(any()) } returns false
+            every { configurator.getInt(any()) } returns 100
+            every { configurator.getFloat(any()) } returns 0.5f
+
+            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+            viewModel.handleAction(DevOptionsAction.NavigateBack)
+
+            val event = viewModel.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
         }
 }

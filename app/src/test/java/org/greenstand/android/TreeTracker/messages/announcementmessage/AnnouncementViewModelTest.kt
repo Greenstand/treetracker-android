@@ -21,10 +21,12 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator.fakeAnnouncementMessage
+import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -90,5 +92,14 @@ class AnnouncementViewModelTest {
     fun `verify message repo marks message as read`() =
         runTest {
             coVerify { messagesRepo.markMessageAsRead(messageId) }
+        }
+
+    @Test
+    fun `WHEN NavigateBack action THEN emits PopBackStackEvent`() =
+        runTest {
+            announcementViewModel.handleAction(AnnouncementAction.NavigateBack)
+
+            val event = announcementViewModel.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
         }
 }
