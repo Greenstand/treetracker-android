@@ -15,34 +15,56 @@
  */
 package org.greenstand.android.TreeTracker.viewmodel
 
+import androidx.compose.material.SnackbarDuration
 import androidx.navigation.NavHostController
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Base interface for one-shot UI events emitted by ViewModels.
- * Unlike state, events are consumed exactly once and not replayed on recomposition.
+ *
+ * Unlike `state`, events are consumed exactly once. The replay buffer on
+ * [BaseViewModel.events] ensures events emitted before the first collector subscribes
+ * (e.g. from `init`) are still delivered; [ConsumableEvent] makes sure the replay
+ * doesn't fire the event twice.
+ *
+ * Built-in subtypes ([NavigationEvent], [PopBackStackEvent], [ShowSnackbar]) are handled
+ * automatically by [HandleUIEvents]. Feature-specific events implement this interface
+ * and are intercepted via the optional `onEvent` parameter.
  */
 interface UiEvent
 
 /**
- * A navigation event carrying a suspend lambda that receives [NavHostController] as receiver.
- * This allows any navigation operation (navigate, popBackStack, etc.) including suspend calls
- * like [CaptureFlowNavigationController.navForward].
+ * A navigation event carrying a suspend lambda that receives the [NavHostController].
+ * Allows any navigation operation (navigate, popBackStack, deep navigation flows) and
+ * supports suspend calls like `CaptureFlowNavigationController.navForward`.
  *
- * Not a data class because lambda fields produce meaningless equals/hashCode.
+ * Not a `data class` because lambda fields produce meaningless equals/hashCode.
  */
 class NavigationEvent(
     val navigate: suspend NavHostController.() -> Unit,
 ) : UiEvent
 
+/** Pop the back stack one step. Dispatched via `throttledPopBackStack` for debouncing. */
+data object PopBackStackEvent : UiEvent
+
+/**
+ * Show a snackbar through the global [SnackbarController]. The [message] is held as a
+ * [TextRef] so the ViewModel does not need a [android.content.Context].
+ */
+data class ShowSnackbar(
+    val message: TextRef,
+    val duration: SnackbarDuration = SnackbarDuration.Short,
+    val actionLabel: TextRef? = null,
+    val onAction: (() -> Unit)? = null,
+) : UiEvent
+
 /**
  * Thread-safe wrapper ensuring a [UiEvent] is consumed at most once.
  *
- * Events buffered in a [Channel] can outlive the collector that was meant to
- * handle them (e.g. rotation, back-navigation to a screen whose ViewModel
- * survived). Wrapping every event in [ConsumableEvent] guarantees that even
- * if a stale event is delivered to a new collector, [getContentIfNotConsumed]
- * returns `null` after the first access.
+ * Because [BaseViewModel.events] uses a `replay` buffer, a single emitted event can be
+ * delivered to multiple collectors (e.g. after rotation) or replayed to a new collector
+ * after the screen is recreated. Wrapping the event in [ConsumableEvent] guarantees that
+ * only the first call to [getContentIfNotConsumed] returns the event.
  */
 class ConsumableEvent<out T : UiEvent>(
     private val content: T,

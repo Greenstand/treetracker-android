@@ -19,11 +19,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
+import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -31,8 +34,6 @@ data class TreeDetailState(
     val tree: TreeEntity? = null,
     val editedNote: String = "",
     val showDeleteConfirmation: Boolean = false,
-    val isDeleted: Boolean = false,
-    val noteSaved: Boolean = false,
 )
 
 sealed class TreeDetailAction : Action {
@@ -48,7 +49,7 @@ sealed class TreeDetailAction : Action {
         val show: Boolean,
     ) : TreeDetailAction()
 
-    object NoteSavedShown : TreeDetailAction()
+    object NavigateBack : TreeDetailAction()
 }
 
 class TreeDetailViewModel(
@@ -75,12 +76,10 @@ class TreeDetailViewModel(
                     currentState.tree?.let { tree ->
                         tree.note = currentState.editedNote
                         dao.updateTree(tree)
-                        updateState { copy(tree = tree, noteSaved = true) }
+                        updateState { copy(tree = tree) }
+                        sendEvent(ShowSnackbar(TextRef.Res(R.string.tree_note_saved)))
                     }
                 }
-            }
-            is TreeDetailAction.NoteSavedShown -> {
-                updateState { copy(noteSaved = false) }
             }
             is TreeDetailAction.DeleteTree -> {
                 viewModelScope.launch {
@@ -90,12 +89,13 @@ class TreeDetailViewModel(
                     }
                     dao.deleteTreeById(treeId)
                     treesToSyncHelper.refreshTreeCountToSync()
-                    updateState { copy(isDeleted = true) }
+                    popBackStack()
                 }
             }
             is TreeDetailAction.SetDeleteDialogVisibility -> {
                 updateState { copy(showDeleteConfirmation = action.show) }
             }
+            is TreeDetailAction.NavigateBack -> popBackStack()
         }
     }
 }

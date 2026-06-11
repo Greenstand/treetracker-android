@@ -20,10 +20,12 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
+import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -69,5 +71,14 @@ class OrgPickerViewModelTest {
             // Assert state has correct data
             val result = orgPickerViewModel.state.value.currentOrg
             Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
+        }
+
+    @Test
+    fun `WHEN NavigateNext action THEN emits PopBackStackEvent`() =
+        runTest {
+            orgPickerViewModel.handleAction(OrgPickerAction.NavigateNext)
+
+            val event = orgPickerViewModel.events.first().getContentIfNotConsumed()
+            Assert.assertEquals(PopBackStackEvent, event)
         }
 }

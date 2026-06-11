@@ -71,7 +71,7 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 import org.greenstand.android.TreeTracker.view.UserImageButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
-import org.greenstand.android.TreeTracker.viewmodel.HandleUiEvents
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @ExperimentalPermissionsApi
 @Composable
@@ -89,7 +89,7 @@ fun TreeCaptureScreen(
 
     PermissionRequest()
 
-    HandleUiEvents(viewModel)
+    HandleUIEvents(viewModel)
 
     BackHandler(enabled = true) {
         scope.launch {

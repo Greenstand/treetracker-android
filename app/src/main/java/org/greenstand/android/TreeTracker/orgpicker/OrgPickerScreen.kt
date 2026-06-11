@@ -41,29 +41,24 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.organization.Org
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
-    val navController = LocalNavHostController.current
     val state by viewModel.state.collectAsState()
+
+    HandleUIEvents(viewModel)
 
     OrgPicker(
         state = state,
-        onHandleAction = { action ->
-            when (action) {
-                is OrgPickerAction.NavigateNext -> navController.throttledPopBackStack()
-                else -> viewModel.handleAction(action)
-            }
-        },
+        onHandleAction = viewModel::handleAction,
     )
 }
 
