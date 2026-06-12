@@ -72,7 +72,15 @@ class SplashScreenViewModel(
         if (!orgId.isNullOrBlank()) {
             Timber.tag(ORG_LINK_TAG).i("Deeplink received: orgId=$orgId, orgName=$orgName")
             val configJson = orgConfigProvider.fetchOrgConfig(orgId)
-            if (configJson != null) {
+            // Non-deeplink launch: refresh current org config if we haven't yet
+            val currentOrg = orgRepo.currentOrg()
+            if (currentOrg.id != OrgRepo.DEFAULT_ORG_ID && !orgRepo.hasCompletedInitialOrgSync()) {
+                Timber.tag(ORG_LINK_TAG).d("Fetching Remote Config for org ${currentOrg.id}")
+                if (configJson != null) {
+                    orgRepo.addOrgFromRemoteConfig(currentOrg.id, currentOrg.name, configJson)
+                    orgRepo.markInitialOrgSyncComplete()
+                }
+            } else if (configJson != null) {
                 Timber.tag(ORG_LINK_TAG).i("Remote Config found for org $orgId, applying full config")
                 orgRepo.addOrgFromRemoteConfig(orgId, orgName ?: "", configJson)
             } else {
