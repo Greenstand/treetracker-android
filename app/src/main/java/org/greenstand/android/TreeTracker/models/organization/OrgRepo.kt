@@ -49,6 +49,21 @@ class OrgRepo(
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
+    /**
+     * Re-hydrate [currentOrg] from persisted state if it is missing.
+     *
+     * [currentOrg] lives only in memory, so it is lost on process death. When the OS
+     * restores the app into a deep screen (e.g. mid capture-setup flow) the splash
+     * screen — and therefore [init] — is bypassed, leaving [currentOrg] null. Calling
+     * this before the capture-setup flow is used reloads the org from the DB/prefs so
+     * [currentOrg] does not throw. No-op when already initialized.
+     */
+    suspend fun ensureInitialized() {
+        if (currentOrg == null) {
+            init()
+        }
+    }
+
     private fun defaultOrgEntity() =
         OrganizationEntity(
             id = DEFAULT_ORG_ID,
