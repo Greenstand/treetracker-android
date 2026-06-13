@@ -117,7 +117,7 @@ class SplashScreenViewModelTest {
             splashScreenViewModel.bootstrap()
 
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
-            coVerify(exactly = 1) { orgRepo.init() }
+            coVerify(exactly = 1) { orgRepo.ensureInitialized() }
             coVerify(exactly = 1) { messagesRepo.syncMessages() }
             coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
             coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
@@ -134,7 +134,7 @@ class SplashScreenViewModelTest {
             splashScreenViewModel.bootstrap()
 
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
-            coVerify(exactly = 1) { orgRepo.init() }
+            coVerify(exactly = 1) { orgRepo.ensureInitialized() }
             coVerify(exactly = 0) { orgRepo.addOrgFromRemoteConfig(any(), any(), any()) }
             coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
             coVerify(exactly = 0) { messagesRepo.syncMessages() }
