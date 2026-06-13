@@ -29,7 +29,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -38,11 +41,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.splash.Splash
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.viewmodel.LocalSnackbarController
 import org.greenstand.android.TreeTracker.viewmodel.SnackbarController
 import org.greenstand.android.TreeTracker.viewmodel.resolve
+import org.koin.compose.koinInject
 
 val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error { "No active ViewModel factory found!" } }
 val LocalNavHostController = compositionLocalOf<NavHostController> { error { "No NavHostController found!" } }
@@ -54,6 +60,17 @@ fun Root(viewModelFactory: TreeTrackerViewModelFactory) {
     val snackbarController = remember { SnackbarController() }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+
+    // OrgRepo holds its current org only in memory, so it is lost on process death.
+    // When the OS restores the app into a deep screen the splash screen — and therefore
+    // OrgRepo.init() — is bypassed, and any screen that reads currentOrg() would crash.
+    // Re-hydrate it once per process before rendering the (possibly restored) back stack.
+    val orgRepo = koinInject<OrgRepo>()
+    var isOrgReady by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        orgRepo.ensureInitialized()
+        isOrgReady = true
+    }
 
     LaunchedEffect(snackbarController) {
         snackbarController.events.collect { event ->
@@ -76,7 +93,11 @@ fun Root(viewModelFactory: TreeTrackerViewModelFactory) {
         LocalSnackbarController provides snackbarController,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Host()
+            if (isOrgReady) {
+                Host()
+            } else {
+                Splash()
+            }
 
             SnackbarHost(
                 hostState = snackbarHostState,
