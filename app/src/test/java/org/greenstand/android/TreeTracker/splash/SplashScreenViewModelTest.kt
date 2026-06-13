@@ -111,7 +111,7 @@ class SplashScreenViewModelTest {
             splashScreenViewModel.bootstrap()
 
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
-            coVerify(exactly = 1) { orgRepo.init() }
+            coVerify(exactly = 1) { orgRepo.ensureInitialized() }
             coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some string") }
             coVerify(exactly = 1) { messagesRepo.syncMessages() }
             coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
@@ -131,7 +131,7 @@ class SplashScreenViewModelTest {
             splashScreenViewModel.bootstrap()
 
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
-            coVerify(exactly = 1) { orgRepo.init() }
+            coVerify(exactly = 1) { orgRepo.ensureInitialized() }
             coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some stirng") }
             coVerify(exactly = 0) { messagesRepo.syncMessages() }
             coVerify(exactly = 0) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
