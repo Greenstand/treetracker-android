@@ -21,6 +21,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
+import org.greenstand.android.TreeTracker.database.dao.LocationDAO
+import org.greenstand.android.TreeTracker.database.dao.OrganizationDAO
+import org.greenstand.android.TreeTracker.database.dao.PlanterDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
+import org.greenstand.android.TreeTracker.database.dao.UserDAO
 import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
@@ -56,6 +63,13 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEnti
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun treeDao(): TreeDAO
+    abstract fun userDao(): UserDAO
+    abstract fun sessionDao(): SessionDAO
+    abstract fun organizationDao(): OrganizationDAO
+    abstract fun deviceConfigDao(): DeviceConfigDAO
+    abstract fun planterDao(): PlanterDAO
+    abstract fun locationDao(): LocationDAO
     abstract fun treeTrackerDao(): TreeTrackerDAO
 
     companion object {
@@ -64,18 +78,16 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
-                    INSTANCE =
-                        Room
-                            .databaseBuilder(
-                                context.applicationContext,
-                                AppDatabase::class.java,
-                                DB_NAME,
-                            ).addMigrations(
-                                MIGRATION_3_4,
-                                MIGRATION_4_5,
-                                MIGRATION_5_6,
-                                MIGRATION_6_7,
-                            ).build()
+                    INSTANCE = Room.databaseBuilder(
+                            context.applicationContext,
+                            AppDatabase::class.java,
+                            DB_NAME,
+                        ).addMigrations(
+                            MIGRATION_3_4,
+                            MIGRATION_4_5,
+                            MIGRATION_5_6,
+                            MIGRATION_6_7,
+                        ).build()
                 }
             }
             return INSTANCE!!
