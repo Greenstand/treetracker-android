@@ -64,12 +64,19 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEnti
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun treeDao(): TreeDAO
+
     abstract fun userDao(): UserDAO
+
     abstract fun sessionDao(): SessionDAO
+
     abstract fun organizationDao(): OrganizationDAO
+
     abstract fun deviceConfigDao(): DeviceConfigDAO
+
     abstract fun planterDao(): PlanterDAO
+
     abstract fun locationDao(): LocationDAO
+
     abstract fun treeTrackerDao(): TreeTrackerDAO
 
     companion object {
@@ -78,16 +85,18 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(
-                            context.applicationContext,
-                            AppDatabase::class.java,
-                            DB_NAME,
-                        ).addMigrations(
-                            MIGRATION_3_4,
-                            MIGRATION_4_5,
-                            MIGRATION_5_6,
-                            MIGRATION_6_7,
-                        ).build()
+                    INSTANCE =
+                        Room
+                            .databaseBuilder(
+                                context.applicationContext,
+                                AppDatabase::class.java,
+                                DB_NAME,
+                            ).addMigrations(
+                                MIGRATION_3_4,
+                                MIGRATION_4_5,
+                                MIGRATION_5_6,
+                                MIGRATION_6_7,
+                            ).build()
                 }
             }
             return INSTANCE!!

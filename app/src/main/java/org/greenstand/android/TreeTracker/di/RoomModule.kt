@@ -19,27 +19,28 @@ import org.greenstand.android.TreeTracker.database.AppDatabase
 import org.greenstand.android.TreeTracker.models.messages.database.MessageDatabase
 import org.koin.dsl.module
 
-val roomModule = module {
+val roomModule =
+    module {
 
-    single { AppDatabase.getInstance(get()) }
+        single { AppDatabase.getInstance(get()) }
 
-    single { AppDatabase.getInstance(get()).treeDao() }
+        single { AppDatabase.getInstance(get()).treeDao() }
 
-    single { AppDatabase.getInstance(get()).userDao() }
+        single { AppDatabase.getInstance(get()).userDao() }
 
-    single { AppDatabase.getInstance(get()).sessionDao() }
+        single { AppDatabase.getInstance(get()).sessionDao() }
 
-    single { AppDatabase.getInstance(get()).organizationDao() }
+        single { AppDatabase.getInstance(get()).organizationDao() }
 
-    single { AppDatabase.getInstance(get()).deviceConfigDao() }
+        single { AppDatabase.getInstance(get()).deviceConfigDao() }
 
-    single { AppDatabase.getInstance(get()).planterDao() }
+        single { AppDatabase.getInstance(get()).planterDao() }
 
-    single { AppDatabase.getInstance(get()).locationDao() }
+        single { AppDatabase.getInstance(get()).locationDao() }
 
-    single { AppDatabase.getInstance(get()).treeTrackerDao() }
+        single { AppDatabase.getInstance(get()).treeTrackerDao() }
 
-    single { MessageDatabase.getInstance(get()) }
+        single { MessageDatabase.getInstance(get()) }
 
-    single { MessageDatabase.getInstance(get()).messagesDao() }
-}
+        single { MessageDatabase.getInstance(get()).messagesDao() }
+    }
