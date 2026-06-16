@@ -11,13 +11,12 @@ narrows change impact, and matches the existing `entity/` and `legacy/entity/` l
 Split `TreeTrackerDAO` (~385 lines) into focused Room DAOs:
 
 1. `TreeDAO` — current `tree` table
-2. `TreeCaptureDAO` — legacy `tree_capture` and `tree_attribute` tables
-3. `UserDAO` — `user`
-4. `SessionDAO` — `session`
-5. `OrganizationDAO` — `organization`
-6. `DeviceConfigDAO` — `device_config`
-7. `PlanterDAO` — legacy `planter_info` and `planter_check_in`
-8. `LocationDAO` — `location` and legacy `location_data`
+2. `UserDAO` — `user`
+3. `SessionDAO` — `session`
+4. `OrganizationDAO` — `organization`
+5. `DeviceConfigDAO` — `device_config`
+6. `PlanterDAO` — legacy `planter_info` and `planter_check_in`
+7. `LocationDAO` — `location` and legacy `location_data`
 
 Update AppDatabase and RoomModule to expose and wire the new DAOs.
 
