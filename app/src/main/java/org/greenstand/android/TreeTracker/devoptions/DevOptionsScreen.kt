@@ -166,21 +166,26 @@ private fun ParamListItem(
     onClicked: (Any) -> Unit,
 ) {
     when (config) {
-        is BooleanConfig ->
+        is BooleanConfig -> {
             BooleanParamListItem(
                 config = config,
                 onClicked = { onClicked(it) },
             )
-        is IntConfig ->
+        }
+
+        is IntConfig -> {
             IntParamListItem(
                 config = config,
                 onTextUpdated = { onClicked(it) },
             )
-        is FloatConfig ->
+        }
+
+        is FloatConfig -> {
             FloatParamListItem(
                 config = config,
                 onTextUpdated = { onClicked(it) },
             )
+        }
     }
 }
 

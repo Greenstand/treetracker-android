@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,6 +48,7 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.SharedKeyboardOptions
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
@@ -62,12 +61,18 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is AddOrgAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
+                is AddOrgAction.NavigateBack -> {
+                    CaptureSetupScopeManager.nav.navBackward(navController)
+                }
+
                 is AddOrgAction.NavigateNext -> {
                     viewModel.handleAction(AddOrgAction.SetDefaultOrg)
                     scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
                 }
-                else -> viewModel.handleAction(action)
+
+                else -> {
+                    viewModel.handleAction(action)
+                }
             }
         },
     )
@@ -98,7 +103,10 @@ fun AddOrg(
         },
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(it),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(120.dp))
@@ -109,10 +117,8 @@ fun AddOrg(
                 onValueChange = { updatedName -> onHandleAction(AddOrgAction.UpdateOrgName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.organization), color = Color.White) },
                 keyboardOptions =
-                    KeyboardOptions(
+                    SharedKeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Go,
-                        autoCorrect = false,
                     ),
                 keyboardActions =
                     KeyboardActions(

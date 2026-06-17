@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -47,6 +46,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.SharedKeyboardOptions
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
@@ -103,10 +103,9 @@ fun NameEntryView(
                 onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateFirstName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.first_name_hint), color = Color.White) },
                 keyboardOptions =
-                    KeyboardOptions(
+                    SharedKeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next,
-                        autoCorrect = false,
                     ),
                 keyboardActions =
                     KeyboardActions(
@@ -130,10 +129,8 @@ fun NameEntryView(
                 onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateLastName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.last_name_hint), color = Color.White) },
                 keyboardOptions =
-                    KeyboardOptions(
+                    SharedKeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Go,
-                        autoCorrect = false,
                     ),
                 keyboardActions =
                     KeyboardActions(
