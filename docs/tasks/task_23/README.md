@@ -19,4 +19,3 @@ distinct button variants and support classes into focused files.
 - `git diff --check` - passes.
 - Touched Kotlin/docs files checked for lines over the configured 120-character limit - passes.
 - `./gradlew :app:compileDebugKotlin` - blocked because no Java Runtime is available in this environment.
->>>>>>> cc9dc067... refactor: split TextButton.kt into multiple focused files for better organization
