@@ -30,12 +30,10 @@ class DepthButtonColors(
     val disabledColor: Color,
 ) : ButtonColors {
     @Composable
-    override fun backgroundColor(enabled: Boolean): State<Color> =
-        rememberUpdatedState(if (enabled) shadowColor else disabledShadowColor)
+    override fun backgroundColor(enabled: Boolean): State<Color> = rememberUpdatedState(if (enabled) shadowColor else disabledShadowColor)
 
     @Composable
-    override fun contentColor(enabled: Boolean): State<Color> =
-        rememberUpdatedState(if (enabled) color else disabledColor)
+    override fun contentColor(enabled: Boolean): State<Color> = rememberUpdatedState(if (enabled) color else disabledColor)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

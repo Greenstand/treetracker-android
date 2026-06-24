@@ -104,12 +104,12 @@ fun TreeTrackerButton(
         val contentColor by colors.contentColor(isEnabled)
         val shadowColor by colors.backgroundColor(isEnabled)
 
-        var width = maxWidth
+        var width = this@BoxWithConstraints.maxWidth
         var clipShape = MaterialTheme.shapes.small
         var circleStartOffset = 0.dp
         if (shape == TreeTrackerButtonShape.Circle) {
             clipShape = CircleShape
-            width = maxWidth - depth.dp
+            width = this@BoxWithConstraints.maxWidth - depth.dp
             circleStartOffset = depth.dp
         }
 
