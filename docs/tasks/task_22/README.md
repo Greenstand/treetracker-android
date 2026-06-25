@@ -15,3 +15,4 @@ capitalization for the GreenStand brand.
 ## Verification
 
 - `./gradlew.bat :app:mergeDebugResources` passes.
+- `./gradlew.bat :app:verifyRoborazziDebug --tests "org.greenstand.android.TreeTracker.screenshot.SettingsScreenshotTest"` passes.
