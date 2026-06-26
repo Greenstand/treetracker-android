@@ -119,7 +119,7 @@ class SplashScreenViewModelTest {
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
             coVerify(exactly = 1) { orgRepo.ensureInitialized() }
             coVerify(exactly = 1) { messagesRepo.syncMessages() }
-            coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
+            coVerify(exactly = 1) { exceptionDataCollector.set(CrashKey.POWER_USER_WALLET, user.wallet) }
             coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
         }
 

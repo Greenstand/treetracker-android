@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models.setupflow
 
+import org.greenstand.android.TreeTracker.analytics.CrashKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.models.user.User
 
@@ -23,25 +24,25 @@ class CaptureSetupData(
 ) {
     var user: User? = null
         set(value) {
-            exceptionDataCollector.set(ExceptionDataCollector.USER_WALLET, value?.wallet)
+            exceptionDataCollector.set(CrashKey.USER_WALLET, value?.wallet)
             field = value
         }
 
     var destinationWallet: String? = null
         set(value) {
-            exceptionDataCollector.set(ExceptionDataCollector.DESTINATION_WALLET, value)
+            exceptionDataCollector.set(CrashKey.DESTINATION_WALLET, value)
             field = value
         }
 
     var sessionNote: String? = null
         set(value) {
-            exceptionDataCollector.set(ExceptionDataCollector.SESSION_NOTE, value)
+            exceptionDataCollector.set(CrashKey.SESSION_NOTE, value)
             field = value
         }
 
     var organizationName: String? = null
         set(value) {
-            exceptionDataCollector.set(ExceptionDataCollector.ORG_NAME, value)
+            exceptionDataCollector.set(CrashKey.ORG_NAME, value)
             field = value
         }
 }

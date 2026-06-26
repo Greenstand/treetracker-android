@@ -34,47 +34,39 @@ class ExceptionDataCollector(
             lastRoute = currentRoute
             currentRoute = route
         }
-        set(ROUTE, route)
-        set(LAST_ROUTE, lastRoute)
+        set(CrashKey.ROUTE, route)
+        set(CrashKey.LAST_ROUTE, lastRoute)
     }
 
     fun set(
-        key: String,
+        key: CrashKey,
         value: String?,
     ) {
         value ?: return
 
-        if (key == USER_WALLET || key == POWER_USER_WALLET) {
+        if (key == CrashKey.USER_WALLET || key == CrashKey.POWER_USER_WALLET) {
             firebaseCrashlytics.setUserId(value)
-            firebaseCrashlytics.setCustomKey(key, value)
+            firebaseCrashlytics.setCustomKey(key.toString, value)
         } else {
-            firebaseCrashlytics.setCustomKey(key, value)
+            firebaseCrashlytics.setCustomKey(key.toString, value)
         }
     }
 
     fun set(
-        key: String,
+        key: CrashKey,
         value: Boolean,
     ) {
-        firebaseCrashlytics.setCustomKey(key, value)
+        firebaseCrashlytics.setCustomKey(key.toString, value)
     }
 
-    fun clear(key: String) {
-        if (key == USER_WALLET || key == POWER_USER_WALLET) {
+    fun clear(key: CrashKey) {
+        if (key == CrashKey.USER_WALLET || key == CrashKey.POWER_USER_WALLET) {
             firebaseCrashlytics.setUserId("")
         }
-        firebaseCrashlytics.setCustomKey(key, "")
+        firebaseCrashlytics.setCustomKey(key.toString, "")
     }
 
-    companion object {
-        const val IS_SYNCING = "is_syncing"
-        const val USER_WALLET = "user_wallet"
-        const val POWER_USER_WALLET = "power_user_wallet"
-        const val DESTINATION_WALLET = "destination_wallet"
-        const val SESSION_NOTE = "session_note"
-        const val ORG_NAME = "organization_name"
-        const val IS_IN_SESSION = "is_in_session"
-        private const val LAST_ROUTE = "last_route"
-        private const val ROUTE = "route"
+    private fun String.toCrashKey(): CrashKey {
+        return CrashKey.entries.find { it.toString == this } ?: throw IllegalArgumentException("No CrashKey found for key: $this")
     }
 }

@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.analytics.CrashKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
@@ -91,7 +92,7 @@ class SplashScreenViewModel(
         }
 
         userRepo.getPowerUser()?.let {
-            exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, it.wallet)
+            exceptionDataCollector.set(CrashKey.POWER_USER_WALLET, it.wallet)
         }
 
         if (sessionTracker.wasSessionInterrupted() || treesToSyncHelper.getTreeCountToSync() == -1) {

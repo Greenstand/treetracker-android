@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
+import org.greenstand.android.TreeTracker.analytics.CrashKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -71,9 +72,9 @@ class TreeSyncWorker(
                     }
                 }
 
-            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
+            exceptionDataCollector.set(CrashKey.IS_SYNCING, true)
             val result = syncDataBundleUseCase.execute(Unit)
-            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
+            exceptionDataCollector.set(CrashKey.IS_SYNCING, false)
             progressJob.cancel()
             if (result) Result.success() else Result.failure()
         }
