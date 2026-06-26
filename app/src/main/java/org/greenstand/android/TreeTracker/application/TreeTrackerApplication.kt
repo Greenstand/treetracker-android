@@ -51,7 +51,7 @@ class TreeTrackerApplication : Application() {
             )
         }
 
-        if (FeatureFlags.DEBUG_ENABLED) {
+        if (FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
             Timber.plant(Timber.DebugTree())
         } else {
             Timber.plant(ExceptionLogger())

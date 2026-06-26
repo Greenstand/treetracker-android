@@ -81,6 +81,9 @@ android {
             buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${prod_treetracker_client_id}\""
             buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${prod_treetracker_client_secret}\""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            firebaseCrashlytics {
+                mappingFileUploadEnabled = true
+            }
         }
 
 
@@ -97,6 +100,10 @@ android {
             buildConfigField 'String', 'API_GATEWAY', '"https://prod-k8s.treetracker.org"'
             buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${prod_treetracker_client_id}\""
             buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${prod_treetracker_client_secret}\""
+            minifyEnabled = true
+            firebaseCrashlytics {
+                mappingFileUploadEnabled = false
+            }
         }
 
         debug {
@@ -110,6 +117,10 @@ android {
             buildConfigField 'String', 'API_GATEWAY', '"https://dev-k8s.treetracker.org"'
             buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${test_treetracker_client_id}\""
             buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${test_treetracker_client_secret}\""
+            minifyEnabled = true
+            firebaseCrashlytics {
+                mappingFileUploadEnabled = false
+            }
         }
 
         beta {
@@ -125,6 +136,10 @@ android {
             buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${test_treetracker_client_secret}\""
             signingConfig signingConfigs.debug
             debuggable true
+            minifyEnabled = true
+            firebaseCrashlytics {
+                mappingFileUploadEnabled = false
+            }
         }
 
         dev {
@@ -138,7 +153,10 @@ android {
             buildConfigField 'String', 'API_GATEWAY', '"https://dev-k8s.treetracker.org"'
             buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${dev_treetracker_client_id}\""
             buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${dev_treetracker_client_secret}\""
-
+            minifyEnabled = true
+            firebaseCrashlytics {
+                mappingFileUploadEnabled = false
+            }
         }
     }
 
