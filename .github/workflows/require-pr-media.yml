@@ -68,7 +68,7 @@ jobs:
             // --- Work out what is missing ----------------------------------
             const missing = [];
             if (!hasVideo) {
-              missing.push('a **🎥 screen recording / video** demonstrating the change');
+              missing.push('a **🎥 screen recording / video** demonstrating the change — **a video is required even when there are no UI changes**, to show that the parts of the app affected by this change still work');
             }
             if (!isNonUi && !hasScreenshot) {
               missing.push('a **🖼️ screenshot** of the UI change (or mark the PR as `non-ui` if there is no UI change)');
@@ -94,8 +94,8 @@ jobs:
                 'This check re-runs automatically when you edit the description.',
                 '',
                 isNonUi
-                  ? '_This PR is marked as non-UI, so a screenshot is not required — but a video still is._'
-                  : '_If this change has no user-visible effect, tick the "no user-visible / UI effect" box in the description (or ask a maintainer to add the `non-ui` label) to skip the screenshot requirement._',
+                  ? '_This PR is marked as non-UI, so a screenshot is not required — **but a video is still required**, showing that the parts of the app affected by this change still work correctly._'
+                  : '_If this change has no user-visible effect, tick the "no user-visible / UI effect" box in the description (or ask a maintainer to add the `non-ui` label) to skip the screenshot requirement. **A video is still required even with no UI changes**, to show that the affected parts of the app still work._',
               ].join('\n');
             }
 
