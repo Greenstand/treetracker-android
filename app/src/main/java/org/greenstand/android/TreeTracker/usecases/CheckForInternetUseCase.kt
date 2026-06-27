@@ -17,18 +17,22 @@ package org.greenstand.android.TreeTracker.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.lang.Exception
+import org.greenstand.android.TreeTracker.analytics.CrashKey
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 
 /**
  *  checks if the internet is available on the user's device
  */
-class CheckForInternetUseCase : UseCase<Unit, Boolean>() {
+class CheckForInternetUseCase(private val exceptionDataCollector: ExceptionDataCollector) : UseCase<Unit, Boolean>() {
     override suspend fun execute(params: Unit): Boolean =
         withContext(Dispatchers.IO) {
             try {
                 val command = "ping -c 1 google.com"
-                Runtime.getRuntime().exec(command).waitFor() == 0
+                val isOnline = Runtime.getRuntime().exec(command).waitFor() == 0
+                exceptionDataCollector.set(CrashKey.IS_ONLINE, true)
+                isOnline
             } catch (e: Exception) {
+                exceptionDataCollector.set(CrashKey.IS_ONLINE, false)
                 false
             }
         }

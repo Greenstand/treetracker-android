@@ -66,6 +66,7 @@ class TreeSyncWorker(
                             withContext(Dispatchers.IO) {
                                 dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
                             }
+                        exceptionDataCollector.set(CrashKey.PENDING_UPLOAD_COUNT, remaining.toString())
                         val uploaded = (totalTreesToSync - remaining).coerceAtLeast(0)
                         val contentText = applicationContext.getString(R.string.uploading_trees) + " ($uploaded/$totalTreesToSync)"
                         syncNotificationManager.updateProgress(uploaded, totalTreesToSync, contentText)

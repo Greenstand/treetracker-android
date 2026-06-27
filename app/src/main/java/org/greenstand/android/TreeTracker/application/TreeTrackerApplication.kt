@@ -19,12 +19,16 @@ import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
 import com.google.firebase.FirebaseApp
+import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.analytics.CrashKey
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
 import org.greenstand.android.TreeTracker.di.networkModule
 import org.greenstand.android.TreeTracker.di.roomModule
 import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -56,6 +60,9 @@ class TreeTrackerApplication : Application() {
         } else {
             Timber.plant(ExceptionLogger())
         }
+        val exceptionDataCollector: ExceptionDataCollector by inject()
+        exceptionDataCollector.set(CrashKey.APP_VERSION, BuildConfig.VERSION_NAME)
+        exceptionDataCollector.set(CrashKey.BUILD_TYPE, BuildConfig.BUILD_TYPE)
     }
 
     override fun attachBaseContext(base: Context) {

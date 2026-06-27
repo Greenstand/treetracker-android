@@ -71,6 +71,7 @@ class SessionTracker(
                 set(CrashKey.USER_WALLET, sessionEntity.originWallet)
                 set(CrashKey.SESSION_NOTE, sessionEntity.note)
                 set(CrashKey.IS_IN_SESSION, true)
+                set(CrashKey.CAPTURE_SESSION_UUID, sessionEntity.uuid)
             }
         }
     }
@@ -89,10 +90,14 @@ class SessionTracker(
             }
         }
 
-        exceptionDataCollector.clear(CrashKey.ORG_NAME)
-        exceptionDataCollector.clear(CrashKey.DESTINATION_WALLET)
-        exceptionDataCollector.clear(CrashKey.SESSION_NOTE)
-        exceptionDataCollector.set(CrashKey.IS_IN_SESSION, false)
+        exceptionDataCollector.apply {
+            clear(CrashKey.ORG_NAME)
+            clear(CrashKey.DESTINATION_WALLET)
+            clear(CrashKey.SESSION_NOTE)
+            clear(CrashKey.CAPTURE_SESSION_UUID)
+            clear(CrashKey.PENDING_UPLOAD_COUNT)
+            set(CrashKey.IS_IN_SESSION, false)
+        }
     }
 
     fun wasSessionInterrupted(): Boolean =

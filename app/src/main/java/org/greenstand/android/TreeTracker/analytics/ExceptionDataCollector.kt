@@ -65,8 +65,4 @@ class ExceptionDataCollector(
         }
         firebaseCrashlytics.setCustomKey(key.toString, "")
     }
-
-    private fun String.toCrashKey(): CrashKey {
-        return CrashKey.entries.find { it.toString == this } ?: throw IllegalArgumentException("No CrashKey found for key: $this")
-    }
 }
