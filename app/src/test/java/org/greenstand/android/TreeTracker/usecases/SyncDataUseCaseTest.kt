@@ -30,6 +30,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
@@ -77,6 +78,8 @@ class SyncDataUseCaseTest {
     @MockK(relaxed = true)
     private lateinit var syncProgressTracker: SyncProgressTracker
 
+    @MockK(relaxed = true)
+    private lateinit var exceptionDataCollector: ExceptionDataCollector
     private lateinit var syncDataUseCase: SyncDataUseCase
 
     @Before
@@ -97,6 +100,7 @@ class SyncDataUseCaseTest {
                 deviceConfigUploader = deviceConfigUploader,
                 messagesRepo = messagesRepo,
                 syncProgressTracker = syncProgressTracker,
+                exceptionDataCollector = exceptionDataCollector
             )
     }
 
