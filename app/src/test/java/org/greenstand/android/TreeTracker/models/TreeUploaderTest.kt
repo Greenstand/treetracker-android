@@ -93,7 +93,7 @@ class TreeUploaderTest {
                 createTreeRequestUseCase = createTreeRequestUseCase,
                 dao = dao,
                 json = json,
-                exceptionDataCollector = exceptionDataCollector
+                exceptionDataCollector = exceptionDataCollector,
             )
     }
 

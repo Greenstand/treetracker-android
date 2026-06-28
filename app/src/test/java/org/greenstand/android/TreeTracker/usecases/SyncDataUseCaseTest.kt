@@ -100,7 +100,7 @@ class SyncDataUseCaseTest {
                 deviceConfigUploader = deviceConfigUploader,
                 messagesRepo = messagesRepo,
                 syncProgressTracker = syncProgressTracker,
-                exceptionDataCollector = exceptionDataCollector
+                exceptionDataCollector = exceptionDataCollector,
             )
     }
 

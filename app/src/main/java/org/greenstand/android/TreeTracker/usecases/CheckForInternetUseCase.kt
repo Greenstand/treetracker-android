@@ -23,7 +23,9 @@ import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 /**
  *  checks if the internet is available on the user's device
  */
-class CheckForInternetUseCase(private val exceptionDataCollector: ExceptionDataCollector) : UseCase<Unit, Boolean>() {
+class CheckForInternetUseCase(
+    private val exceptionDataCollector: ExceptionDataCollector,
+) : UseCase<Unit, Boolean>() {
     override suspend fun execute(params: Unit): Boolean =
         withContext(Dispatchers.IO) {
             try {

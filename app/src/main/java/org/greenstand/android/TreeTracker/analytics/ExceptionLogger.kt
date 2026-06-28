@@ -42,7 +42,10 @@ class ExceptionLogger : Timber.Tree() {
         throwable: Throwable?,
     ) {
         when (priority) {
-            Log.INFO -> Firebase.crashlytics.log("[$tag]: $message")
+            Log.INFO -> {
+                Firebase.crashlytics.log("[$tag]: $message")
+            }
+
             Log.ERROR -> {
                 Firebase.crashlytics.log("[$tag]: $message")
                 if (throwable != null) {
@@ -50,8 +53,13 @@ class ExceptionLogger : Timber.Tree() {
                 }
             }
 
-            Log.ASSERT -> Firebase.crashlytics.log("[$tag]: $message")
-            Log.VERBOSE, Log.DEBUG -> return
+            Log.ASSERT -> {
+                Firebase.crashlytics.log("[$tag]: $message")
+            }
+
+            Log.VERBOSE, Log.DEBUG -> {
+                return
+            }
         }
     }
 }

@@ -102,7 +102,7 @@ class SessionTracker(
 
     fun wasSessionInterrupted(): Boolean =
         _currentSessionId == null &&
-                preferences.getLong(SESSION_ID_KEY) != -1L
+            preferences.getLong(SESSION_ID_KEY) != -1L
 
     companion object {
         // Session key is used to keep track of session ID after app is killed. If the app is killed

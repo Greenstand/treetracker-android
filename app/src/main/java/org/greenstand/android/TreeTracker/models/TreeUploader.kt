@@ -44,7 +44,7 @@ class TreeUploader(
     private val createTreeRequestUseCase: CreateTreeRequestUseCase,
     private val dao: TreeTrackerDAO,
     private val json: Json,
-    private val exceptionDataCollector: ExceptionDataCollector
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
     fun log(msg: String) = Timber.tag("TreeUploader").d(msg)
 
