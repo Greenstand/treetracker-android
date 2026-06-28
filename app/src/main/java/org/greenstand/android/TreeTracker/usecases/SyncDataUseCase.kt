@@ -95,7 +95,7 @@ class SyncDataUseCase(
                 exceptionDataCollector.set(CrashKey.LAST_SYNC_TIMESTAMP, Clock.System.now().toString())
             }
         } catch (e: Exception) {
-            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            Timber.tag(TAG).e(e, "Sync failed")
             syncProgressTracker.endSync(error = e.localizedMessage)
             exceptionDataCollector.set(CrashKey.LAST_SYNC_TIMESTAMP, Clock.System.now().toString())
             return false
@@ -166,7 +166,7 @@ class SyncDataUseCase(
                 coroutineContext.cancel()
             }
         } catch (e: Exception) {
-            Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            Timber.tag(TAG).e(e, "$tag step failed")
             throw e
         }
     }

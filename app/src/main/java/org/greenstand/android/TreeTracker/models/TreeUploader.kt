@@ -90,7 +90,7 @@ class TreeUploader(
                     coroutineContext.cancel()
                 }
             } catch (e: Exception) {
-                Timber.e("NewTree upload failed")
+                Timber.tag("TreeUploader").e(e, "Bundle upload failed for ${treeIdBundle.size} trees")
             }
         }
         log("Completed upload for ${treeIds.size} trees")
