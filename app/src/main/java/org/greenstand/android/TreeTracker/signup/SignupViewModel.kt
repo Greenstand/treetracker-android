@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.signup
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
@@ -116,7 +115,7 @@ class SignupViewModel(
     private val checkForInternetUseCase: CheckForInternetUseCase,
 ) : BaseViewModel<SignUpState, SignupAction>(SignUpState()) {
     init {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             val result = checkForInternetUseCase.execute(Unit)
             val initialSetupRequired = isInitialSetupRequired()
             updateState {
