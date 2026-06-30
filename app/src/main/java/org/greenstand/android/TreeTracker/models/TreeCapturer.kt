@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import kotlinx.coroutines.CancellationException
 import org.greenstand.android.TreeTracker.models.location.Convergence
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
@@ -96,6 +97,8 @@ class TreeCapturer(
         return try {
             createTreeUseCase.execute(tree)
             true
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Timber.tag("TreeCapturer").e(e, "Failed to save tree")
             false

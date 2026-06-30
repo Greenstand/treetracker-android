@@ -33,6 +33,7 @@ import org.greenstand.android.TreeTracker.models.messages.network.responses.Quer
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.utils.runInParallel
+import retrofit2.HttpException
 import timber.log.Timber
 import java.util.*
 
@@ -145,17 +146,25 @@ class MessagesRepo(
                 } catch (e: CancellationException) {
                     // rethrow cancellation exception
                     throw e
+                } catch (e: HttpException) {
+                    if (e.code() != 404) {
+                        Timber.e(e, "Failed to fetch messages for wallet: $wallet")
+                    }
                 } catch (e: Exception) {
-                    if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
-                        // 404 indicates the user has never had messages before
-                        continue
-                    } else {
-                        Timber.e(e)
+                    if (e.localizedMessage != Constants.LOCAL_MSG_ERROR_HTTP404) {
+                        Timber.e(e, "Failed to fetch messages for wallet: $wallet")
                     }
                 }
             }
 
-            messageUploader.uploadMessages()
+            try {
+                messageUploader.uploadMessages()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to upload messages")
+                throw e
+            }
         }
 
     private suspend fun fetchMessagesForWallet(wallet: String) =
