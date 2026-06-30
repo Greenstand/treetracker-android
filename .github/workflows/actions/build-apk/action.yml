@@ -13,10 +13,27 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Validate production and release signing secrets
+      if: inputs.decode_keystore == 'true'
+      shell: bash
+      run: |
+        missing=()
+        [ -n "${S3_PRODUCTION_IDENTITY_POOL_ID}" ] || missing+=("S3_PRODUCTION_IDENTITY_POOL_ID")
+        [ -n "${PROD_TREETRACKER_CLIENT_ID}" ] || missing+=("PROD_TREETRACKER_CLIENT_ID")
+        [ -n "${PROD_TREETRACKER_CLIENT_SECRET}" ] || missing+=("PROD_TREETRACKER_CLIENT_SECRET")
+        [ -n "${KEYSTORE_FILE}" ] || missing+=("KEYSTORE_FILE")
+        [ -n "${KEYSTORE_PASSWORD}" ] || missing+=("KEYSTORE_PASSWORD")
+        [ -n "${KEY_ALIAS}" ] || missing+=("KEY_ALIAS")
+        [ -n "${KEY_PASSWORD}" ] || missing+=("KEY_PASSWORD")
+        if [ ${#missing[@]} -gt 0 ]; then
+          echo "Missing required production release secrets: ${missing[*]}"
+          exit 1
+        fi
+
     - name: Decode keystore (for release builds)
       if: inputs.decode_keystore == 'true'
       shell: bash
-      run: echo "${{ env.KEYSTORE_FILE }}" | base64 -d > keystore.jks
+      run: echo "${KEYSTORE_FILE}" | base64 --decode > keystore.jks
 
     - name: Make gradlew executable
       shell: bash
