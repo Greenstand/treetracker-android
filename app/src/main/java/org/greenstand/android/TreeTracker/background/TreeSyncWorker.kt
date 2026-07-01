@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
+import org.greenstand.android.TreeTracker.analytics.CrashKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -65,15 +66,16 @@ class TreeSyncWorker(
                             withContext(Dispatchers.IO) {
                                 dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
                             }
+                        exceptionDataCollector.set(CrashKey.PENDING_UPLOAD_COUNT, remaining.toString())
                         val uploaded = (totalTreesToSync - remaining).coerceAtLeast(0)
                         val contentText = applicationContext.getString(R.string.uploading_trees) + " ($uploaded/$totalTreesToSync)"
                         syncNotificationManager.updateProgress(uploaded, totalTreesToSync, contentText)
                     }
                 }
 
-            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
+            exceptionDataCollector.set(CrashKey.IS_SYNCING, true)
             val result = syncDataBundleUseCase.execute(Unit)
-            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
+            exceptionDataCollector.set(CrashKey.IS_SYNCING, false)
             progressJob.cancel()
             if (result) Result.success() else Result.failure()
         }

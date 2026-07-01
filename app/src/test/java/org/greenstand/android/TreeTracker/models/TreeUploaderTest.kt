@@ -29,6 +29,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -68,6 +69,9 @@ class TreeUploaderTest {
     @MockK(relaxed = true)
     private lateinit var dao: TreeTrackerDAO
 
+    @MockK(relaxed = true)
+    private lateinit var exceptionDataCollector: ExceptionDataCollector
+
     private val json =
         Json {
             explicitNulls = true
@@ -89,6 +93,7 @@ class TreeUploaderTest {
                 createTreeRequestUseCase = createTreeRequestUseCase,
                 dao = dao,
                 json = json,
+                exceptionDataCollector = exceptionDataCollector,
             )
     }
 

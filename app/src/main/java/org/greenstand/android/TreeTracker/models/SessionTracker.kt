@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.models
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.analytics.CrashKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -65,11 +66,12 @@ class SessionTracker(
 
             preferences.edit().putLong(SESSION_ID_KEY, _currentSessionId ?: -1).commit()
             exceptionDataCollector.apply {
-                set(ExceptionDataCollector.ORG_NAME, sessionEntity.organization)
-                set(ExceptionDataCollector.DESTINATION_WALLET, sessionEntity.destinationWallet)
-                set(ExceptionDataCollector.USER_WALLET, sessionEntity.originWallet)
-                set(ExceptionDataCollector.SESSION_NOTE, sessionEntity.note)
-                set(ExceptionDataCollector.IS_IN_SESSION, true)
+                set(CrashKey.ORG_NAME, sessionEntity.organization)
+                set(CrashKey.DESTINATION_WALLET, sessionEntity.destinationWallet)
+                set(CrashKey.USER_WALLET, sessionEntity.originWallet)
+                set(CrashKey.SESSION_NOTE, sessionEntity.note)
+                set(CrashKey.IS_IN_SESSION, true)
+                set(CrashKey.CAPTURE_SESSION_UUID, sessionEntity.uuid)
             }
         }
     }
@@ -88,10 +90,14 @@ class SessionTracker(
             }
         }
 
-        exceptionDataCollector.clear(ExceptionDataCollector.ORG_NAME)
-        exceptionDataCollector.clear(ExceptionDataCollector.DESTINATION_WALLET)
-        exceptionDataCollector.clear(ExceptionDataCollector.SESSION_NOTE)
-        exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, false)
+        exceptionDataCollector.apply {
+            clear(CrashKey.ORG_NAME)
+            clear(CrashKey.DESTINATION_WALLET)
+            clear(CrashKey.SESSION_NOTE)
+            clear(CrashKey.CAPTURE_SESSION_UUID)
+            clear(CrashKey.PENDING_UPLOAD_COUNT)
+            set(CrashKey.IS_IN_SESSION, false)
+        }
     }
 
     fun wasSessionInterrupted(): Boolean =
