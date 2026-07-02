@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
@@ -48,7 +47,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
@@ -67,6 +65,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.CustomSnackbar
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.SharedKeyboardOptions
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.UserButton
@@ -227,7 +226,7 @@ private fun CredentialTextField(
     onHandleAction: (SignupAction) -> Unit,
 ) {
     when (state.credential) {
-        is Credential.Email ->
+        is Credential.Email -> {
             EmailTextField(
                 state = state,
                 onUpdateEmail = { onHandleAction(SignupAction.UpdateEmail(it)) },
@@ -238,7 +237,9 @@ private fun CredentialTextField(
                 scope = scope,
                 context = context,
             )
-        is Credential.Phone ->
+        }
+
+        is Credential.Phone -> {
             PhoneTextField(
                 state = state,
                 onUpdatePhone = { onHandleAction(SignupAction.UpdatePhone(it)) },
@@ -249,6 +250,7 @@ private fun CredentialTextField(
                 scope = scope,
                 context = context,
             )
+        }
     }
 }
 
@@ -271,11 +273,10 @@ private fun CredentialBorderedTextField(
         onValueChange = onValueChange,
         placeholder = { Text(text = stringResource(id = placeholderRes), color = Color.White) },
         keyboardOptions =
-            KeyboardOptions(
+            SharedKeyboardOptions.Default.copy(
                 keyboardType = keyboardType,
-                imeAction = ImeAction.Go,
-                autoCorrect = autoCorrect,
                 capitalization = capitalization,
+                autoCorrectEnabled = autoCorrect,
             ),
         keyboardActions = KeyboardActions(onGo = { onImeGo() }),
         onFocusChanged = onFocusChanged,
