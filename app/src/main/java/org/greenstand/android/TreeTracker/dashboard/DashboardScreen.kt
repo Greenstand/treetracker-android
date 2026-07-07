@@ -66,7 +66,7 @@ import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.OrgRoute
 import org.greenstand.android.TreeTracker.navigation.SettingsRoute
 import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utils.PreviewDependencies
@@ -79,14 +79,13 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     var showDialog by remember { mutableStateOf(false) }
 
     HandleUIEvents(viewModel)
@@ -95,21 +94,21 @@ fun DashboardScreen(
         state = state,
         showSyncReminderDialog = showDialog,
         onSyncClicked = { viewModel.handleAction(DashboardAction.Sync) },
-        onOrgClicked = { navController.throttledNavigate(OrgRoute) },
+        onOrgClicked = { navigator.throttledNavigate(OrgRoute) },
         onCaptureClicked = {
             if (state.showTreeSyncReminderDialog) {
                 showDialog = true
             } else {
-                navController.throttledNavigate(UserSelectRoute)
+                navigator.throttledNavigate(UserSelectRoute)
             }
         },
-        onDialogConfirm = { navController.throttledNavigate(UserSelectRoute) },
+        onDialogConfirm = { navigator.throttledNavigate(UserSelectRoute) },
         onMessagesClicked = {
             viewModel.handleAction(DashboardAction.SyncMessages)
-            navController.throttledNavigate(MessagesUserSelectRoute)
+            navigator.throttledNavigate(MessagesUserSelectRoute)
         },
         onSettingsClicked = {
-            navController.throttledNavigate(SettingsRoute)
+            navigator.throttledNavigate(SettingsRoute)
         },
     )
 }

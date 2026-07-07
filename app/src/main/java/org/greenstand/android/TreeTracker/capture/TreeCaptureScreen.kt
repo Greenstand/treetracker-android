@@ -58,7 +58,7 @@ import org.greenstand.android.TreeTracker.camera.CameraControl
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.PermissionRequest
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -80,7 +80,7 @@ fun TreeCaptureScreen(
 ) {
     val viewModel: TreeCaptureViewModel = viewModel(factory = TreeCaptureViewModelFactory(profilePicUrl))
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val cameraControl = remember { CameraControl() }
     val scope = rememberCoroutineScope()
 
@@ -93,7 +93,7 @@ fun TreeCaptureScreen(
 
     BackHandler(enabled = true) {
         scope.launch {
-            CaptureFlowScopeManager.nav.goToDashboard(navController)
+            CaptureFlowScopeManager.nav.goToDashboard(navigator)
         }
     }
 
@@ -110,7 +110,7 @@ fun TreeCaptureScreen(
                         isLeft = true,
                         onClick = {
                             scope.launch {
-                                CaptureFlowScopeManager.nav.goToDashboard(navController)
+                                CaptureFlowScopeManager.nav.goToDashboard(navigator)
                             }
                         },
                     )
@@ -147,7 +147,7 @@ fun TreeCaptureScreen(
                     viewModel.handleAction(TreeCaptureAction.UpdateBadGpsDialogState(null))
                 },
                 onNegativeClick = {
-                    CaptureFlowScopeManager.nav.goToDashboard(navController)
+                    CaptureFlowScopeManager.nav.goToDashboard(navigator)
                 },
             )
         }
@@ -176,7 +176,7 @@ fun TreeCaptureScreen(
                 UserImageButton(
                     onClick = {
                         scope.launch {
-                            CaptureFlowScopeManager.nav.goToUserSelect(navController)
+                            CaptureFlowScopeManager.nav.goToUserSelect(navigator)
                         }
                     },
                     imagePath = state.profilePicUrl,

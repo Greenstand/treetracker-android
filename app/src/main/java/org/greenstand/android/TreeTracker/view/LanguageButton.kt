@@ -28,14 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun BoxScope.LanguageButton() {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     // Avoid creating a viewmodel if we're in Preview Mode.
     // Viewmodels are large, we do not want to load them in the preview
     val languageViewModel: LanguagePickerViewModel? =
@@ -54,7 +53,7 @@ fun BoxScope.LanguageButton() {
                 .align(Alignment.Center)
                 .size(width = 100.dp, 60.dp),
         onClick = {
-            navController.throttledNavigate(LanguageRoute())
+            navigator.throttledNavigate(LanguageRoute())
         },
     ) {
         Text(

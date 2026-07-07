@@ -17,12 +17,16 @@ package org.greenstand.android.TreeTracker.screenshot
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
 import com.github.takahirom.roborazzi.captureRoboImage
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.Navigator
+import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.junit.Rule
@@ -54,9 +58,9 @@ abstract class ScreenshotTest {
 
 @Composable
 private fun ScreenshotTestDependencies(content: @Composable () -> Unit) {
-    val navController = rememberNavController()
+    val navigator = remember { Navigator(mutableStateListOf<NavKey>(SplashRoute())) }
     CompositionLocalProvider(
-        LocalNavHostController provides navController,
+        LocalNavigator provides navigator,
         LocalInspectionMode provides true,
     ) {
         CustomTheme {

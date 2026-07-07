@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.navigation
 
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
@@ -24,8 +23,6 @@ import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 
 class CaptureSetupNavigationController(
     orgRepo: OrgRepo,
@@ -38,7 +35,7 @@ class CaptureSetupNavigationController(
      * Navigate forward in the setup flow. Suspend because completing setup
      * requires starting a session (DB write) before navigating to capture.
      */
-    suspend fun navForward(navController: NavHostController) {
+    suspend fun navForward(navigator: Navigator) {
         if (isAtEnd) {
             // Setup complete — start session and transition to capture flow
             stepCounter.enable()
@@ -50,7 +47,7 @@ class CaptureSetupNavigationController(
 
             val userPhotoPath = CaptureSetupScopeManager.getData().user?.photoPath ?: ""
             withContext(Dispatchers.Main) {
-                navController.throttledNavigate(TreeCaptureRoute(profilePicUrl = userPhotoPath))
+                navigator.throttledNavigate(TreeCaptureRoute(profilePicUrl = userPhotoPath))
             }
             CaptureSetupScopeManager.close()
         } else {
@@ -60,19 +57,19 @@ class CaptureSetupNavigationController(
                 resolveNoArgDestination(destination)
                     ?: error("Unknown setup flow destination: ${destination.route}")
             withContext(Dispatchers.Main) {
-                navController.throttledNavigate(route)
+                navigator.throttledNavigate(route)
             }
         }
     }
 
-    fun navBackward(navController: NavHostController) {
+    fun navBackward(navigator: Navigator) {
         decrementIndex()
-        navController.throttledPopBackStack()
+        navigator.throttledPopBackStack()
     }
 
-    fun navToUserSelect(navController: NavHostController) {
+    fun navToUserSelect(navigator: Navigator) {
         resetIndex()
-        navController.throttledNavigate(UserSelectRoute) {
+        navigator.throttledNavigate(UserSelectRoute) {
             popUpTo<DashboardRoute>()
             launchSingleTop = true
         }
@@ -82,12 +79,12 @@ class CaptureSetupNavigationController(
      * Navigate forward after a new user was created from the signup flow.
      * Includes bounds checking to prevent IndexOutOfBoundsException.
      */
-    suspend fun navFromNewUserCreation(navController: NavHostController) {
+    suspend fun navFromNewUserCreation(navigator: Navigator) {
         incrementIndex()
         if (currentNavPathIndex >= navPath.size) {
             // Signup was the last step — treat as setup complete
             currentNavPathIndex = navPath.size - 1
-            navForward(navController)
+            navForward(navigator)
             return
         }
         val destination = navPath[currentNavPathIndex]
@@ -95,7 +92,7 @@ class CaptureSetupNavigationController(
             resolveNoArgDestination(destination)
                 ?: error("Unknown setup flow destination: ${destination.route}")
         withContext(Dispatchers.Main) {
-            navController.throttledNavigate(route) {
+            navigator.throttledNavigate(route) {
                 popUpTo<SignupFlowRoute> { inclusive = true }
                 launchSingleTop = true
             }

@@ -17,22 +17,21 @@ package org.greenstand.android.TreeTracker.messages
 
 import androidx.compose.runtime.Composable
 import org.greenstand.android.TreeTracker.navigation.IndividualMessageListRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.userselect.UserSelect
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 
 @Composable
 fun MessagesUserSelectScreen() {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     UserSelect(
         navigationButtonColors = AppButtonColors.MessagePurple,
         isCreateUserEnabled = false,
         isNotificationEnabled = true,
         selectedColor = AppColors.Purple,
         onNavigateForward = { user ->
-            navController.throttledNavigate(IndividualMessageListRoute(planterInfoId = user.id))
+            navigator.throttledNavigate(IndividualMessageListRoute(planterInfoId = user.id))
         },
     )
 }

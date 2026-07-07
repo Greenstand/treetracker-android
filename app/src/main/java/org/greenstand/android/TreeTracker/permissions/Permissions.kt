@@ -33,7 +33,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import org.greenstand.android.TreeTracker.navigation.Navigator
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -42,9 +42,8 @@ import com.google.accompanist.permissions.shouldShowRationale
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.permissions.PermissionAction
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @ExperimentalPermissionsApi
@@ -52,7 +51,7 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 fun PermissionRequest(
     viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val permissions =
         buildList {
@@ -94,16 +93,16 @@ fun PermissionRequest(
                             title = stringResource(R.string.accept_camera_permission_header),
                             textContent = stringResource(R.string.accept_camera_permission_message),
                             onNegativeClick = {
-                                navController.throttledPopBackStack()
+                                navigator.throttledPopBackStack()
                             },
                             onPositiveClick = {
                                 perm.launchPermissionRequest()
-                                navController.throttledPopBackStack()
+                                navigator.throttledPopBackStack()
                             },
                         )
                     }
                     else -> {
-                        PermissionDeniedPermanentlyDialog(navController)
+                        PermissionDeniedPermanentlyDialog(navigator)
                     }
                 }
             }
@@ -116,10 +115,10 @@ fun PermissionRequest(
                         }
                     }
                     perm.status.shouldShowRationale -> {
-                        LocationRationaleDialog(navController = navController, perm = perm)
+                        LocationRationaleDialog(navigator = navigator, perm = perm)
                     }
                     else -> {
-                        PermissionDeniedPermanentlyDialog(navController)
+                        PermissionDeniedPermanentlyDialog(navigator)
                     }
                 }
             }
@@ -132,10 +131,10 @@ fun PermissionRequest(
                         }
                     }
                     perm.status.shouldShowRationale -> {
-                        LocationRationaleDialog(navController = navController, perm = perm)
+                        LocationRationaleDialog(navigator = navigator, perm = perm)
                     }
                     else -> {
-                        PermissionDeniedPermanentlyDialog(navController)
+                        PermissionDeniedPermanentlyDialog(navigator)
                     }
                 }
             }
@@ -146,18 +145,18 @@ fun PermissionRequest(
 @ExperimentalPermissionsApi
 @Composable
 fun LocationRationaleDialog(
-    navController: NavHostController,
+    navigator: Navigator,
     perm: PermissionState,
 ) {
     CustomDialog(
         title = stringResource(R.string.accept_location_permission_header),
         textContent = stringResource(R.string.accept_location_permission_message),
         onNegativeClick = {
-            navController.throttledPopBackStack()
+            navigator.throttledPopBackStack()
         },
         onPositiveClick = {
             perm.launchPermissionRequest()
-            navController.throttledPopBackStack()
+            navigator.throttledPopBackStack()
         },
     )
 }
@@ -170,14 +169,14 @@ fun enableLocation() {
 }
 
 @Composable
-fun PermissionDeniedPermanentlyDialog(navController: NavHostController) {
+fun PermissionDeniedPermanentlyDialog(navigator: Navigator) {
     val activity: Context = LocalContext.current as Activity
 
     CustomDialog(
         title = stringResource(R.string.open_settings_header),
         textContent = stringResource(R.string.open_settings_message),
         onNegativeClick = {
-            navController.throttledPopBackStack()
+            navigator.throttledPopBackStack()
         },
         onPositiveClick = {
             val intent =

@@ -22,6 +22,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.ExperimentalComposeApi
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
+import org.greenstand.android.TreeTracker.navigation.parseStartRoute
 import org.greenstand.android.TreeTracker.root.Root
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.GpsUtils
@@ -47,10 +48,12 @@ class TreeTrackerActivity : AppCompatActivity() {
                 ),
         )
 
+        val startRoute = parseStartRoute(intent)
+
         setContent {
             CustomTheme {
                 if (gpsUtils.hasGPSDevice()) {
-                    Root(viewModelFactory)
+                    Root(viewModelFactory, startRoute)
                 } else {
                     NoGPSDeviceDialog(onPositiveClick = { finishAndRemoveTask() })
                 }

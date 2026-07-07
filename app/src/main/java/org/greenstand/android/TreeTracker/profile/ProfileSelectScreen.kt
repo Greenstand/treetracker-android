@@ -17,20 +17,19 @@ package org.greenstand.android.TreeTracker.profile
 
 import androidx.compose.runtime.Composable
 import org.greenstand.android.TreeTracker.navigation.ProfileRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.userselect.UserSelect
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 
 @Composable
 fun ProfileSelectScreen() {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     UserSelect(
         navigationButtonColors = AppButtonColors.ProgressGreen,
         isCreateUserEnabled = true,
         isNotificationEnabled = true,
         onNavigateForward = { user ->
-            navController.throttledNavigate(ProfileRoute(planterInfoId = user.id))
+            navigator.throttledNavigate(ProfileRoute(planterInfoId = user.id))
         },
     )
 }

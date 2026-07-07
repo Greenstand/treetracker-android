@@ -23,16 +23,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
+import org.greenstand.android.TreeTracker.navigation.FastFadeIn
+import org.greenstand.android.TreeTracker.navigation.FastFadeOut
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.navigation.SelfieRoute
-import org.greenstand.android.TreeTracker.navigation.trackedComposable
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
@@ -66,19 +73,31 @@ class ImageCaptureActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val navController = rememberNavController()
+            val backStack = rememberNavBackStack(SelfieRoute)
+            val navigator = remember(backStack) { Navigator(backStack) }
 
             CompositionLocalProvider(
-                LocalNavHostController provides navController,
+                LocalNavigator provides navigator,
             ) {
                 TreeTrackerTheme {
-                    NavHost(navController, startDestination = SelfieRoute) {
-                        trackedComposable<SelfieRoute> { SelfieScreen() }
-                        trackedComposable<ImageReviewRoute> {
-                            val route = it.toRoute<ImageReviewRoute>()
-                            ImageReviewScreen(route.photoPath)
-                        }
-                    }
+                    NavDisplay(
+                        backStack = backStack,
+                        onBack = { navigator.popBackStack() },
+                        entryDecorators =
+                            listOf(
+                                rememberSaveableStateHolderNavEntryDecorator(),
+                                rememberViewModelStoreNavEntryDecorator(),
+                                rememberScreenTrackingNavEntryDecorator(),
+                            ),
+                        transitionSpec = { FastFadeIn togetherWith FastFadeOut },
+                        popTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
+                        predictivePopTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
+                        entryProvider =
+                            entryProvider {
+                                entry<SelfieRoute> { SelfieScreen() }
+                                entry<ImageReviewRoute> { route -> ImageReviewScreen(route.photoPath) }
+                            },
+                    )
                 }
             }
         }

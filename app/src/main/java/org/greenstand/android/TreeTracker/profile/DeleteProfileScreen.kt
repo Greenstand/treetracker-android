@@ -26,13 +26,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.SettingsRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.userselect.DeleteProfileState
 import org.greenstand.android.TreeTracker.userselect.UserSelect
 import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors.Red
 import org.greenstand.android.TreeTracker.view.UserButton
@@ -40,7 +39,7 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
 fun DeleteProfileScreen() {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
     val state by viewModel.state.collectAsState()
     Box(
@@ -89,14 +88,12 @@ fun DeleteProfileScreen() {
                 onPositiveClick = {
                     viewModel.handleAction(UserSelectAction.DeleteUser)
                     if (state.selectedUser?.isPowerUser == true) {
-                        navController.throttledNavigate(SignupFlowRoute) {
-                            popUpTo(navController.graph.id) {
-                                inclusive = true
-                            }
+                        navigator.throttledNavigate(SignupFlowRoute) {
+                            popUpToRoot()
                             launchSingleTop = true
                         }
                     } else {
-                        navController.throttledNavigate(SettingsRoute) {
+                        navigator.throttledNavigate(SettingsRoute) {
                             popUpTo<SettingsRoute> { inclusive = true }
                             launchSingleTop = true
                         }

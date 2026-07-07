@@ -38,10 +38,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.splash.Splash
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -51,12 +50,13 @@ import org.greenstand.android.TreeTracker.viewmodel.resolve
 import org.koin.compose.koinInject
 
 val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error { "No active ViewModel factory found!" } }
-val LocalNavHostController = compositionLocalOf<NavHostController> { error { "No NavHostController found!" } }
 
 @ExperimentalComposeApi
 @Composable
-fun Root(viewModelFactory: TreeTrackerViewModelFactory) {
-    val navController = rememberNavController()
+fun Root(
+    viewModelFactory: TreeTrackerViewModelFactory,
+    startRoute: SplashRoute = SplashRoute(),
+) {
     val snackbarController = remember { SnackbarController() }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -89,12 +89,11 @@ fun Root(viewModelFactory: TreeTrackerViewModelFactory) {
 
     CompositionLocalProvider(
         LocalViewModelFactory provides viewModelFactory,
-        LocalNavHostController provides navController,
         LocalSnackbarController provides snackbarController,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (isOrgReady) {
-                Host()
+                Host(startRoute)
             } else {
                 Splash()
             }

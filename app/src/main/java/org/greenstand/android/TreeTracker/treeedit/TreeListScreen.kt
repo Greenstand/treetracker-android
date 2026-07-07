@@ -43,10 +43,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.navigation.TreeDetailRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -59,7 +57,7 @@ fun TreeListScreen(
     userName: String,
 ) {
     val viewModel: TreeListViewModel = viewModel(factory = TreeListViewModelFactory(userWallet))
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState(TreeListState())
 
     TreeList(
@@ -70,8 +68,8 @@ fun TreeListScreen(
                 is TreeListAction.SelectTree -> viewModel.handleAction(action)
             }
         },
-        onNavigateBack = { navController.throttledPopBackStack() },
-        onNavigateToDetail = { treeId -> navController.throttledNavigate(TreeDetailRoute(treeId = treeId)) },
+        onNavigateBack = { navigator.throttledPopBackStack() },
+        onNavigateToDetail = { treeId -> navigator.throttledNavigate(TreeDetailRoute(treeId = treeId)) },
     )
 }
 

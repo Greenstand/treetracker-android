@@ -16,14 +16,14 @@
 package org.greenstand.android.TreeTracker.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavOptionsBuilder
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
+import org.greenstand.android.TreeTracker.navigation.NavOptions
 
 /**
  * Base ViewModel that exposes:
@@ -64,17 +64,17 @@ abstract class BaseViewModel<S, A : Action>(
     protected fun triggerEvent(event: UiEvent) = sendEvent(event)
 
     /** Emit a navigation event to [route], debounced via `throttledNavigate`. */
-    protected fun navigate(route: Any) {
+    protected fun navigate(route: NavKey) {
         sendEvent(NavigationEvent { throttledNavigate(route) })
     }
 
     /**
-     * Emit a navigation event to [route] with [NavOptionsBuilder] (popUpTo, launchSingleTop, …),
+     * Emit a navigation event to [route] with [NavOptions] (popUpTo, launchSingleTop, …),
      * debounced via `throttledNavigate`.
      */
     protected fun navigate(
-        route: Any,
-        builder: NavOptionsBuilder.() -> Unit,
+        route: NavKey,
+        builder: NavOptions.() -> Unit,
     ) {
         sendEvent(NavigationEvent { throttledNavigate(route, builder) })
     }

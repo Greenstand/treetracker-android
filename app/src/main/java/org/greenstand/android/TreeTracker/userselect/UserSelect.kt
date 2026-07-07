@@ -34,10 +34,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -57,7 +55,7 @@ fun UserSelect(
     onNavigateForward: (User) -> Unit,
 ) {
     val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState(UserSelectState())
 
     Scaffold(
@@ -68,7 +66,7 @@ fun UserSelect(
                     if (isCreateUserEnabled) {
                         OrangeAddButton(
                             modifier = Modifier.align(Alignment.Center),
-                            onClick = { navController.throttledNavigate(SignupFlowRoute) },
+                            onClick = { navigator.throttledNavigate(SignupFlowRoute) },
                         )
                     }
                 },
@@ -90,12 +88,12 @@ fun UserSelect(
                         colors = navigationButtonColors,
                         onClick = {
                             if (!isFromSettings) {
-                                navController.throttledNavigate(DashboardRoute) {
+                                navigator.throttledNavigate(DashboardRoute) {
                                     popUpTo<DashboardRoute> { inclusive = true }
                                     launchSingleTop = true
                                 }
                             } else {
-                                navController.throttledPopBackStack()
+                                navigator.throttledPopBackStack()
                             }
                         },
                     )

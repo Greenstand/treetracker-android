@@ -32,20 +32,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.navigation.SelfieRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.LocalImage
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 
 @Composable
 fun ImageReviewScreen(photoPath: String) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val activity = LocalContext.current as Activity
 
     ImageReview(
         photoPath = photoPath,
         onRejectClicked = {
-            navController.throttledNavigate(SelfieRoute) {
+            navigator.throttledNavigate(SelfieRoute) {
                 launchSingleTop = true
                 popUpTo<SelfieRoute> { inclusive = true }
             }

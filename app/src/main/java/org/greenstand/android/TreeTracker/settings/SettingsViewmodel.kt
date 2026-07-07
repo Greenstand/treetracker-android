@@ -24,10 +24,8 @@ import org.greenstand.android.TreeTracker.navigation.MapRoute
 import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
-import org.greenstand.android.TreeTracker.viewmodel.NavigationEvent
 
 data class SettingsState(
     val showPrivacyPolicyDialog: Boolean? = null,
@@ -93,14 +91,10 @@ class SettingsViewModel(
             is SettingsAction.NavigateBack -> popBackStack()
             is SettingsAction.LogoutConfirmed -> {
                 handleAction(SettingsAction.Logout)
-                sendEvent(
-                    NavigationEvent {
-                        throttledNavigate(SignupFlowRoute) {
-                            popUpTo(graph.id) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    },
-                )
+                navigate(SignupFlowRoute) {
+                    popUpToRoot()
+                    launchSingleTop = true
+                }
             }
         }
     }

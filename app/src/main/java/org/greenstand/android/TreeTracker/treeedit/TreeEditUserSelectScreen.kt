@@ -17,15 +17,14 @@ package org.greenstand.android.TreeTracker.treeedit
 
 import androidx.compose.runtime.Composable
 import org.greenstand.android.TreeTracker.navigation.TreeListRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.userselect.UserSelect
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 
 @Composable
 fun TreeEditUserSelectScreen() {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     UserSelect(
         navigationButtonColors = AppButtonColors.ProgressGreen,
         isCreateUserEnabled = false,
@@ -33,7 +32,7 @@ fun TreeEditUserSelectScreen() {
         isFromSettings = true,
         selectedColor = AppColors.Green,
         onNavigateForward = { user ->
-            navController.throttledNavigate(TreeListRoute(userWallet = user.wallet, userName = "${user.firstName} ${user.lastName}"))
+            navigator.throttledNavigate(TreeListRoute(userWallet = user.wallet, userName = "${user.firstName} ${user.lastName}"))
         },
     )
 }

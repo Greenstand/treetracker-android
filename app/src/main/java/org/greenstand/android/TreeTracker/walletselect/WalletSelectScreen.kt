@@ -43,9 +43,8 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -59,7 +58,7 @@ fun WalletSelectScreen(
     viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
     WalletSelect(
@@ -67,20 +66,20 @@ fun WalletSelectScreen(
         onHandleAction = { action ->
             when (action) {
                 is WalletSelectAction.NavigateToUserSelect -> {
-                    CaptureSetupScopeManager.nav.navToUserSelect(navController)
+                    CaptureSetupScopeManager.nav.navToUserSelect(navigator)
                 }
                 is WalletSelectAction.NavigateForward -> {
                     scope.launch {
                         state.currentUser?.let {
-                            CaptureSetupScopeManager.nav.navForward(navController)
+                            CaptureSetupScopeManager.nav.navForward(navigator)
                         }
                     }
                 }
                 is WalletSelectAction.NavigateToAddWallet -> {
-                    navController.throttledNavigate(AddWalletRoute)
+                    navigator.throttledNavigate(AddWalletRoute)
                 }
                 is WalletSelectAction.NavigateBack -> {
-                    CaptureSetupScopeManager.nav.navBackward(navController)
+                    CaptureSetupScopeManager.nav.navBackward(navigator)
                 }
                 else -> viewModel.handleAction(action)
             }

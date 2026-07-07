@@ -44,7 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -54,7 +54,7 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
 fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -62,10 +62,10 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is AddOrgAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
+                is AddOrgAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
                 is AddOrgAction.NavigateNext -> {
                     viewModel.handleAction(AddOrgAction.SetDefaultOrg)
-                    scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                    scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                 }
                 else -> viewModel.handleAction(action)
             }

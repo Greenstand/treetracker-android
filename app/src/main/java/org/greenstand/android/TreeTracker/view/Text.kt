@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.navigation.DevOptionsRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 
 @OptIn(ExperimentalUnitApi::class)
 object TextStyles {
@@ -49,7 +49,7 @@ object TextStyles {
 
 @Composable
 fun BoxScope.TopBarTitle() {
-    val nav = LocalNavHostController.current
+    val nav = LocalNavigator.current
     Image(
         painter = painterResource(id = R.drawable.greenstand_logo),
         contentDescription = "Treetracker icon",

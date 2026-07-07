@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -43,8 +43,6 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 
 @Composable
 fun LanguageSelectScreen(
@@ -52,7 +50,7 @@ fun LanguageSelectScreen(
     viewModel: LanguagePickerViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
 
     LanguageSelect(
         state = state,
@@ -61,9 +59,9 @@ fun LanguageSelectScreen(
                 is LanguagePickerAction.NavigateNext -> {
                     viewModel.handleAction(LanguagePickerAction.ConfirmLanguage)
                     if (isFromTopBar) {
-                        navController.throttledPopBackStack()
+                        navigator.throttledPopBackStack()
                     } else {
-                        navController.throttledNavigate(SignupFlowRoute)
+                        navigator.throttledNavigate(SignupFlowRoute)
                     }
                 }
                 else -> viewModel.handleAction(action)

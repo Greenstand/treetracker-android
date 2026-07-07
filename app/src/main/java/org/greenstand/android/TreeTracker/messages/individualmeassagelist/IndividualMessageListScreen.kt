@@ -39,9 +39,7 @@ import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
 import org.greenstand.android.TreeTracker.navigation.ChatRoute
 import org.greenstand.android.TreeTracker.navigation.SurveyRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
-import org.greenstand.android.TreeTracker.utilities.throttledNavigate
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -54,7 +52,7 @@ fun IndividualMessageListScreen(
     userId: Long,
     viewModel: IndividualMessageListViewModel = viewModel(factory = IndividualMessageListViewModelFactory(userId)),
 ) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
 
     IndividualMessageList(
@@ -62,13 +60,13 @@ fun IndividualMessageListScreen(
         onHandleAction = { action ->
             when (action) {
                 is IndividualMessageListAction.NavigateBack -> {
-                    navController.throttledPopBackStack()
+                    navigator.throttledPopBackStack()
                 }
                 is IndividualMessageListAction.NavigateToSelected -> {
                     when (val msg = state.selectedMessage) {
-                        is DirectMessage -> navController.throttledNavigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
-                        is SurveyMessage -> navController.throttledNavigate(SurveyRoute(messageId = msg.id))
-                        is AnnouncementMessage -> navController.throttledNavigate(AnnouncementRoute(messageId = msg.id))
+                        is DirectMessage -> navigator.throttledNavigate(ChatRoute(planterInfoId = userId, otherChatIdentifier = msg.from))
+                        is SurveyMessage -> navigator.throttledNavigate(SurveyRoute(messageId = msg.id))
+                        is AnnouncementMessage -> navigator.throttledNavigate(AnnouncementRoute(messageId = msg.id))
                     }
                 }
                 else -> viewModel.handleAction(action)

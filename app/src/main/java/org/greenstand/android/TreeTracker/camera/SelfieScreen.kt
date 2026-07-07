@@ -31,7 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.signup.SignupAction
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -43,7 +43,7 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SelfieScreen() {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val cameraControl = remember { CameraControl() }
     val viewModel = getViewModel<SignupViewModel>()
     val state by viewModel.state.collectAsState()
@@ -89,7 +89,7 @@ fun SelfieScreen() {
                     .padding(padding)
                     .aspectRatio(1.0f),
             onImageCaptured = {
-                navController.navigate(ImageReviewRoute(photoPath = it.path))
+                navigator.navigate(ImageReviewRoute(photoPath = it.path))
             },
         )
         Box(

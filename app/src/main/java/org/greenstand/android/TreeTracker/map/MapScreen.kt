@@ -66,10 +66,9 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.greenstand.android.TreeTracker.utilities.throttledPopBackStack
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.maplibre.android.MapLibre
 import java.io.File
@@ -79,7 +78,7 @@ import java.time.format.DateTimeFormatter
 fun MapScreen(
     viewModel: MapViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
 
@@ -113,7 +112,7 @@ fun MapScreen(
             color = Color.White,
         ) {
             IconButton(
-                onClick = { navController.throttledPopBackStack() },
+                onClick = { navigator.throttledPopBackStack() },
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

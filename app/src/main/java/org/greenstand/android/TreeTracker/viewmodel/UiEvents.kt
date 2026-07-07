@@ -16,8 +16,8 @@
 package org.greenstand.android.TreeTracker.viewmodel
 
 import androidx.compose.material.SnackbarDuration
-import androidx.navigation.NavHostController
 import java.util.concurrent.atomic.AtomicBoolean
+import org.greenstand.android.TreeTracker.navigation.Navigator
 
 /**
  * Base interface for one-shot UI events emitted by ViewModels.
@@ -34,14 +34,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 interface UiEvent
 
 /**
- * A navigation event carrying a suspend lambda that receives the [NavHostController].
+ * A navigation event carrying a suspend lambda that receives the [Navigator].
  * Allows any navigation operation (navigate, popBackStack, deep navigation flows) and
  * supports suspend calls like `CaptureFlowNavigationController.navForward`.
  *
  * Not a `data class` because lambda fields produce meaningless equals/hashCode.
  */
 class NavigationEvent(
-    val navigate: suspend NavHostController.() -> Unit,
+    val navigate: suspend Navigator.() -> Unit,
 ) : UiEvent
 
 /** Pop the back stack one step. Dispatched via `throttledPopBackStack` for debouncing. */
