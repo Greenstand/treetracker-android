@@ -26,7 +26,8 @@ androidxWork = "2.9.1"
 compose = "1.10.5"
 # material-icons-extended stopped shipping with the main Compose version at 1.7.8
 composeIconsExtended = "1.7.8"
-composeActivity = "1.11.0"
+# 1.12+ required: ComponentActivity provides the NavigationEventDispatcherOwner that Navigation 3's back handling needs
+composeActivity = "1.12.0"
 navigation3 = "1.1.1"
 lifecycleNavigation3 = "2.10.0"
 accompanist = "0.36.0"

@@ -46,6 +46,18 @@ existing navigation behavior.
 - Removed `androidx-navigation-compose` from the version catalog; zero
   `androidx.navigation.` imports remain.
 
+## Emulator smoke test findings
+
+- `NavDisplay` crashed on launch with "No NavigationEventDispatcher was
+  provided": Navigation 3's back handling needs a `NavigationEventDispatcherOwner`.
+  Fixed by bumping `androidx.activity` to 1.12.0 (where `ComponentActivity`
+  implements the owner) and planting the view-tree owner manually in
+  `TreeTrackerActivity` — `AppCompatActivity.setContentView` (appcompat 1.7.x)
+  predates navigationevent and only plants the four older view-tree owners.
+- Verified on a Pixel 7 API 35 emulator: cold start, splash auto-navigation,
+  signup-flow back handling, and deep-link cold start
+  (`OrgLink: Deeplink received: orgId=..., orgName=...`) all work; no crashes.
+
 ## Behavior notes
 
 - `launchSingleTop` is implemented as replace-top: a match with different
