@@ -18,6 +18,8 @@ package org.greenstand.android.TreeTracker.models
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.mapNotNull
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
@@ -46,6 +48,9 @@ enum class Language(
 class LanguageSwitcher(
     private val prefs: Preferences,
 ) {
+    private val _languageChangeComplete = MutableStateFlow(false)
+    val languageChangeComplete = _languageChangeComplete.asStateFlow()
+
     fun applyCurrentLanguage() {
         val language = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")
         language?.also { setLanguage(it) }
@@ -56,6 +61,7 @@ class LanguageSwitcher(
         AppCompatDelegate.setApplicationLocales(
             LocaleListCompat.forLanguageTags(language.locale.toLanguageTag()),
         )
+        _languageChangeComplete.value = true
     }
 
     fun currentLanguage(): Language? = Language.fromString(prefs.getString(LANGUAGE_PREF_KEY) ?: "")

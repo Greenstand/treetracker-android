@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.splash.Splash
@@ -66,9 +67,11 @@ fun Root(viewModelFactory: TreeTrackerViewModelFactory) {
     // OrgRepo.init() — is bypassed, and any screen that reads currentOrg() would crash.
     // Re-hydrate it once per process before rendering the (possibly restored) back stack.
     val orgRepo = koinInject<OrgRepo>()
+    val languageSwitcher = koinInject<LanguageSwitcher>()
     var isOrgReady by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         orgRepo.ensureInitialized()
+        languageSwitcher.applyCurrentLanguage()
         isOrgReady = true
     }
 

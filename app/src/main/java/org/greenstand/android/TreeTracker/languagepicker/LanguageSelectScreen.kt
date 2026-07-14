@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,7 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.Language
+import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
+import org.koin.compose.koinInject
 import org.greenstand.android.TreeTracker.root.LocalNavHostController
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -53,6 +56,18 @@ fun LanguageSelectScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val navController = LocalNavHostController.current
+    val languageSwitcher = koinInject<LanguageSwitcher>()
+    val languageChangeComplete by languageSwitcher.languageChangeComplete.collectAsState()
+
+    LaunchedEffect(languageChangeComplete) {
+        if (languageChangeComplete) {
+            if (isFromTopBar) {
+                navController.throttledPopBackStack()
+            } else {
+                navController.throttledNavigate(SignupFlowRoute)
+            }
+        }
+    }
 
     LanguageSelect(
         state = state,
@@ -60,11 +75,6 @@ fun LanguageSelectScreen(
             when (action) {
                 is LanguagePickerAction.NavigateNext -> {
                     viewModel.handleAction(LanguagePickerAction.ConfirmLanguage)
-                    if (isFromTopBar) {
-                        navController.throttledPopBackStack()
-                    } else {
-                        navController.throttledNavigate(SignupFlowRoute)
-                    }
                 }
                 else -> viewModel.handleAction(action)
             }
