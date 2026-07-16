@@ -30,7 +30,7 @@ import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.koin.compose.koinInject
 
-private const val TRANSITION_DURATION_MS = 500
+private const val TRANSITION_DURATION_MS = 300
 
 val FastFadeIn: EnterTransition = fadeIn(animationSpec = tween(TRANSITION_DURATION_MS))
 val FastFadeOut: ExitTransition = fadeOut(animationSpec = tween(TRANSITION_DURATION_MS))
