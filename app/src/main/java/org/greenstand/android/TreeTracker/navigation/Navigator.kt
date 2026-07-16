@@ -68,20 +68,48 @@ class NavOptions {
  * (a `NavBackStack` in production, any `MutableList` in tests) and `NavDisplay`
  * renders whatever it contains.
  *
- * The `throttled*` variants debounce rapid successive calls (double taps, replayed
- * events) with a [NAVIGATION_THROTTLE_MS] quiet window after every successful stack
- * mutation. This replaces Nav2's "only navigate while RESUMED" guard; the second half
- * of that guard (dropping events from screens no longer on top) lives in
- * `HandleUIEvents` via [LocalNavEntryContentKey].
+ * ## Double-tap protection
+ *
+ * The `throttled*` variants exist to stop a screen firing the same navigation twice
+ * (e.g. a rapid double-tap on a button while the screen is still fading out). How they
+ * decide to drop a call depends on whether the navigator is bound to an [origin] screen:
+ *
+ * - **Origin-scoped** (the production path — every screen gets one via
+ *   `rememberScreenTrackingNavEntryDecorator`, keyed by its entry's contentKey): a
+ *   throttled call is allowed only while [origin] is still the top of the back stack.
+ *   The first tap navigates away, so the origin is no longer on top and any further
+ *   tap from that same screen is dropped — while a first tap from *each* screen always
+ *   passes. This is what lets a user move through many screens as fast as they like yet
+ *   never double-navigate from one screen. It reimplements Nav2's "only navigate while
+ *   the current entry is RESUMED" guard without a wall-clock timer.
+ * - **Unscoped** ([origin] is null — tests, or any host not inside a `NavDisplay`
+ *   entry): falls back to a [NAVIGATION_THROTTLE_MS] time-based debounce after every
+ *   successful stack mutation.
+ *
+ * Non-throttled [navigate]/[popBackStack]/[popBackStackTo] are never gated; they are for
+ * programmatic, single-shot transitions (splash auto-advance, flow controllers, …).
+ *
+ * @param origin the contentKey of the entry this navigator is bound to, or null for an
+ *   unscoped navigator. Set indirectly via [scopedTo].
  */
 class Navigator(
     val backStack: MutableList<NavKey>,
     private val clock: () -> Long = SystemClock::elapsedRealtime,
+    private val origin: Any? = null,
 ) {
     // Start outside the throttle window so the first navigation is never dropped.
     private var lastMutationTime = clock() - NAVIGATION_THROTTLE_MS
 
     val topKey: NavKey? get() = backStack.lastOrNull()
+
+    /**
+     * Returns a view of this navigator bound to [originContentKey] (the contentKey of the
+     * entry the caller is composed in), sharing the same [backStack]. Throttled operations
+     * on the returned navigator are dropped unless [originContentKey] is still the top of
+     * the stack — i.e. you can only navigate *away from* a screen while that screen is on
+     * top. See the class doc for the rationale.
+     */
+    fun scopedTo(originContentKey: Any?): Navigator = Navigator(backStack, clock, originContentKey)
 
     /** Push [route], honoring [NavOptions] (popUpTo / popUpToRoot / launchSingleTop). */
     fun navigate(
@@ -136,7 +164,7 @@ class Navigator(
         return true
     }
 
-    /** [navigate], dropped silently while inside the throttle window. */
+    /** [navigate], dropped silently when this screen may not navigate (see class doc). */
     fun throttledNavigate(
         route: NavKey,
         builder: NavOptions.() -> Unit = {},
@@ -145,13 +173,22 @@ class Navigator(
         navigate(route, builder)
     }
 
-    /** [popBackStack], dropped silently while inside the throttle window. */
+    /** [popBackStack], dropped silently when this screen may not navigate (see class doc). */
     fun throttledPopBackStack(): Boolean {
         if (isThrottled()) return false
         return popBackStack()
     }
 
-    private fun isThrottled(): Boolean = clock() - lastMutationTime < NAVIGATION_THROTTLE_MS
+    /**
+     * Whether a throttled call should be dropped. Origin-scoped navigators gate on
+     * "is my screen still on top?"; unscoped navigators fall back to a time debounce.
+     */
+    private fun isThrottled(): Boolean =
+        if (origin != null) {
+            origin != topKey?.toString()
+        } else {
+            clock() - lastMutationTime < NAVIGATION_THROTTLE_MS
+        }
 
     private fun trimTo(keepCount: Int) {
         while (backStack.size > keepCount) {

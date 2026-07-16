@@ -197,4 +197,67 @@ class NavigatorTest {
         navigateSettled(DashboardRoute)
         assertEquals(DashboardRoute, navigator.topKey)
     }
+
+    // --- Origin-scoped throttling (per-screen, no wall-clock gate) ---
+
+    @Test
+    fun `scoped navigator navigates while its origin is on top`() {
+        val nav = fakeNavigator(DashboardRoute)
+        val dashboard = nav.scopedTo(DashboardRoute.toString())
+
+        dashboard.throttledNavigate(SettingsRoute)
+
+        assertEquals(listOf(DashboardRoute, SettingsRoute), nav.backStack)
+    }
+
+    @Test
+    fun `scoped navigator drops a second navigation from the same screen (double-tap)`() {
+        val nav = fakeNavigator(DashboardRoute)
+        val dashboard = nav.scopedTo(DashboardRoute.toString())
+
+        // Both taps come from Dashboard's button. The first navigates away; by the second
+        // tap Dashboard is no longer on top, so it is dropped — no duplicate destination.
+        dashboard.throttledNavigate(SettingsRoute)
+        dashboard.throttledNavigate(MapRoute)
+
+        assertEquals(listOf(DashboardRoute, SettingsRoute), nav.backStack)
+    }
+
+    @Test
+    fun `scoped navigators from different screens all navigate with no time gap`() {
+        val nav = fakeNavigator(DashboardRoute)
+
+        // Rapidly stepping through a flow: each screen fires its own scoped navigator once.
+        // No clock is advanced anywhere — cross-screen navigation is never time-throttled.
+        nav.scopedTo(DashboardRoute.toString()).throttledNavigate(UserSelectRoute)
+        nav.scopedTo(UserSelectRoute.toString()).throttledNavigate(WalletSelectRoute)
+        nav.scopedTo(WalletSelectRoute.toString()).throttledNavigate(AddWalletRoute)
+
+        assertEquals(
+            listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddWalletRoute),
+            nav.backStack,
+        )
+    }
+
+    @Test
+    fun `scoped throttledPopBackStack drops a second back from the same screen`() {
+        val nav = fakeNavigator(DashboardRoute, SettingsRoute)
+        val settings = nav.scopedTo(SettingsRoute.toString())
+
+        assertTrue(settings.throttledPopBackStack())
+        assertFalse(settings.throttledPopBackStack())
+
+        assertEquals(listOf<Any>(DashboardRoute), nav.backStack)
+    }
+
+    @Test
+    fun `scoped navigator with an arg route matches on the full contentKey`() {
+        val capture = TreeCaptureRoute("pic")
+        val nav = fakeNavigator(DashboardRoute, capture)
+        val scoped = nav.scopedTo(capture.toString())
+
+        scoped.throttledNavigate(TreeHeightScreenRoute)
+
+        assertEquals(listOf(DashboardRoute, capture, TreeHeightScreenRoute), nav.backStack)
+    }
 }

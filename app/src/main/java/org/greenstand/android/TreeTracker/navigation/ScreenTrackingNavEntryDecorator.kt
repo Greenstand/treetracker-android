@@ -44,8 +44,13 @@ val LocalNavEntryContentKey = compositionLocalOf<Any?> { null }
 
 /**
  * Decorates every entry with Crashlytics screen tracking (replacing Nav2's
- * `trackedComposable` wrapper) and provides [LocalNavEntryContentKey] to the
- * entry's content.
+ * `trackedComposable` wrapper), provides [LocalNavEntryContentKey], and re-provides
+ * [LocalNavigator] as an [Navigator.scopedTo] view bound to this entry.
+ *
+ * The scoped navigator is what gives each screen its own double-tap protection: a
+ * throttled navigation only fires while this entry is the top of the stack, so rapid
+ * taps across different screens all succeed while a repeated tap on one screen is
+ * dropped. See [Navigator] for details.
  *
  * The screen name is derived from the entry's contentKey, which defaults to the
  * route's `toString()`. All routes are `data object`s or `data class`es, so this
@@ -61,7 +66,15 @@ fun rememberScreenTrackingNavEntryDecorator(): NavEntryDecorator<NavKey> {
             LaunchedEffect(screenName) {
                 exceptionDataCollector.setScreen(screenName)
             }
-            CompositionLocalProvider(LocalNavEntryContentKey provides entry.contentKey) {
+            val baseNavigator = LocalNavigator.current
+            val scopedNavigator =
+                remember(baseNavigator, entry.contentKey) {
+                    baseNavigator.scopedTo(entry.contentKey)
+                }
+            CompositionLocalProvider(
+                LocalNavEntryContentKey provides entry.contentKey,
+                LocalNavigator provides scopedNavigator,
+            ) {
                 entry.Content()
             }
         }
