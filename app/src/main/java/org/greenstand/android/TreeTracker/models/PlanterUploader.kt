@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -44,11 +45,18 @@ class PlanterUploader(
 ) {
     suspend fun upload(instanceId: String) {
         withContext(Dispatchers.IO) {
-            uploadLegacyPlanterImages()
-            uploadUserImages()
-            uploadPlanterInfo(instanceId)
-            uploadUsers()
-            deleteLocalImagesThatWereUploaded()
+            try {
+                uploadLegacyPlanterImages()
+                uploadUserImages()
+                uploadPlanterInfo(instanceId)
+                uploadUsers()
+                deleteLocalImagesThatWereUploaded()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.tag(TAG).e(e, "Failed to upload planter data")
+                throw e
+            }
         }
     }
 
@@ -59,17 +67,23 @@ class PlanterUploader(
                 .filter { it.photoUrl == null && it.localPhotoPath != null }
                 .map { planterCheckIn ->
                     async {
-                        val imageUrl =
-                            uploadImageUseCase.execute(
-                                UploadImageParams(
-                                    imagePath = planterCheckIn.localPhotoPath!!,
-                                    lat = planterCheckIn.latitude,
-                                    long = planterCheckIn.longitude,
-                                ),
-                            )
-                        imageUrl?.let {
-                            planterCheckIn.photoUrl = imageUrl
-                            dao.updatePlanterCheckIn(planterCheckIn)
+                        try {
+                            val imageUrl =
+                                uploadImageUseCase.execute(
+                                    UploadImageParams(
+                                        imagePath = planterCheckIn.localPhotoPath!!,
+                                        lat = planterCheckIn.latitude,
+                                        long = planterCheckIn.longitude,
+                                    ),
+                                )
+                            imageUrl?.let {
+                                planterCheckIn.photoUrl = imageUrl
+                                dao.updatePlanterCheckIn(planterCheckIn)
+                            }
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            Timber.tag(TAG).e(e, "Failed to upload legacy planter image: ${planterCheckIn.localPhotoPath}")
                         }
                     }
                 }.forEach { it.await() }
@@ -83,17 +97,23 @@ class PlanterUploader(
                 .filter { it.photoUrl == null }
                 .map { user ->
                     async {
-                        val imageUrl =
-                            uploadImageUseCase.execute(
-                                UploadImageParams(
-                                    imagePath = user.photoPath,
-                                    lat = user.latitude,
-                                    long = user.longitude,
-                                ),
-                            )
-                        imageUrl?.let {
-                            user.photoUrl = imageUrl
-                            dao.updateUser(user)
+                        try {
+                            val imageUrl =
+                                uploadImageUseCase.execute(
+                                    UploadImageParams(
+                                        imagePath = user.photoPath,
+                                        lat = user.latitude,
+                                        long = user.longitude,
+                                    ),
+                                )
+                            imageUrl?.let {
+                                user.photoUrl = imageUrl
+                                dao.updateUser(user)
+                            }
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            Timber.tag(TAG).e(e, "Failed to upload user image: ${user.photoPath}")
                         }
                     }
                 }.forEach { it.await() }
@@ -112,7 +132,7 @@ class PlanterUploader(
         }
         val registrationRequests =
             planterInfoToUpload
-                .map { planterInfo ->
+                .mapNotNull { planterInfo ->
                     // Find the image this user first took during registration
                     // This image is the oldest image for PlanterCheckIn
                     val registrationPhotoUrl =
@@ -120,7 +140,11 @@ class PlanterUploader(
                             .getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
                             .minByOrNull { it.createdAt }
                             ?.photoUrl
-                            ?: ""
+
+                    if (registrationPhotoUrl == null) {
+                        Timber.tag(TAG).w("Skipping planter info upload for ${planterInfo.id}: no photoUrl")
+                        return@mapNotNull null
+                    }
 
                     RegistrationRequest(
                         planterIdentifier = planterInfo.identifier,
@@ -135,6 +159,8 @@ class PlanterUploader(
                         imageUrl = registrationPhotoUrl,
                     )
                 }
+
+        if (registrationRequests.isEmpty()) return
 
         val jsonBundle =
             json.encodeToString(UploadBundle.createV1(registrations = registrationRequests, instanceId = instanceId))
@@ -162,7 +188,12 @@ class PlanterUploader(
 
         val walletRegistrations =
             usersToUpload
-                .map { user ->
+                .mapNotNull { user ->
+                    val photoUrl = user.photoUrl
+                    if (photoUrl == null) {
+                        Timber.tag(TAG).w("Skipping user upload for ${user.uuid}: no photoUrl")
+                        return@mapNotNull null
+                    }
                     WalletRegistrationRequest(
                         registrationId = user.uuid,
                         wallet = user.wallet,
@@ -172,10 +203,12 @@ class PlanterUploader(
                         email = user.email,
                         lat = user.latitude,
                         lon = user.longitude,
-                        imageUrl = user.photoUrl!!,
+                        imageUrl = photoUrl,
                         createdAt = user.createdAt.toString(),
                     )
                 }
+
+        if (walletRegistrations.isEmpty()) return
 
         val jsonBundle =
             json.encodeToString(UploadBundle.createV2(walletRegistration = walletRegistrations))

@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.navigation
 
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -51,11 +52,14 @@ class CaptureFlowNavigationController(
 
         // If navigating past last screen, save tree then loop back to capture
         if (currentNavPathIndex >= navPath.size) {
-            resetIndex()
             val saved = treeCapturer.saveTree()
             if (!saved) {
-                Timber.tag("CaptureFlowNav").w("Tree save failed or no tree to save")
+                Timber.tag("CaptureFlowNav").e("Tree save failed - data may be lost if screen is exited")
+                // Decrement index to allow retry on the same screen
+                decrementIndex()
+                return
             }
+            resetIndex()
             withContext(Dispatchers.Main) {
                 navController.popBackStack<TreeCaptureRoute>(inclusive = false)
             }
@@ -119,6 +123,8 @@ class CaptureFlowNavigationController(
                     locationDataCapturer.stopGpsUpdates()
                     locationDataCapturer.turnOffTreeCaptureMode()
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Timber.tag("CaptureFlowNav").e(e, "Error ending session")
             }

@@ -26,6 +26,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -39,6 +40,7 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 
 class TreeSyncWorker(
     context: Context,
@@ -59,23 +61,35 @@ class TreeSyncWorker(
         return coroutineScope {
             val progressJob =
                 launch {
-                    while (true) {
-                        delay(750)
-                        val remaining =
-                            withContext(Dispatchers.IO) {
-                                dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
-                            }
-                        val uploaded = (totalTreesToSync - remaining).coerceAtLeast(0)
-                        val contentText = applicationContext.getString(R.string.uploading_trees) + " ($uploaded/$totalTreesToSync)"
-                        syncNotificationManager.updateProgress(uploaded, totalTreesToSync, contentText)
+                    try {
+                        while (true) {
+                            delay(750)
+                            val remaining =
+                                withContext(Dispatchers.IO) {
+                                    dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
+                                }
+                            val uploaded = (totalTreesToSync - remaining).coerceAtLeast(0)
+                            val contentText = applicationContext.getString(R.string.uploading_trees) + " ($uploaded/$totalTreesToSync)"
+                            syncNotificationManager.updateProgress(uploaded, totalTreesToSync, contentText)
+                        }
+                    } catch (e: CancellationException) {
+                        // Expected on completion
                     }
                 }
 
-            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
-            val result = syncDataBundleUseCase.execute(Unit)
-            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
-            progressJob.cancel()
-            if (result) Result.success() else Result.failure()
+            try {
+                exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
+                val result = syncDataBundleUseCase.execute(Unit)
+                if (result) Result.success() else Result.failure()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.e(e, "TreeSyncWorker failed unexpectedly")
+                Result.failure()
+            } finally {
+                exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
+                progressJob.cancel()
+            }
         }
     }
 

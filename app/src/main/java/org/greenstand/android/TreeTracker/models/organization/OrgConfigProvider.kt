@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.models.organization
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
@@ -56,6 +57,8 @@ class OrgConfigProvider(
                 Timber.tag(TAG).d("Remote Config value found for key: $key (${configValue.length} chars)")
                 configValue
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             val elapsed = System.currentTimeMillis() - startTime
             Timber.tag(TAG).e(e, "Remote Config fetch failed after ${elapsed}ms for org $orgId")

@@ -15,10 +15,10 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.ensureActive
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
@@ -75,21 +75,27 @@ class TreeUploader(
         onHandleUpload: suspend (List<Long>) -> Unit,
     ) {
         log("Uploading ${treeIds.size} trees")
-        treeIds.windowed(size = TREE_BUNDLE_SIZE, step = TREE_BUNDLE_SIZE, partialWindows = true).onEach { treeIdBundle ->
+        var firstError: Exception? = null
+
+        treeIds.windowed(size = TREE_BUNDLE_SIZE, step = TREE_BUNDLE_SIZE, partialWindows = true).forEach { treeIdBundle ->
             try {
-                if (coroutineContext.isActive) {
-                    coroutineScope {
-                        log("Starting bulk upload for ${treeIdBundle.size} trees")
-                        onHandleUpload(treeIdBundle)
-                        log("Completed bulk upload for ${treeIdBundle.size} trees")
-                    }
-                } else {
-                    coroutineContext.cancel()
+                coroutineContext.ensureActive()
+                coroutineScope {
+                    log("Starting bulk upload for ${treeIdBundle.size} trees")
+                    onHandleUpload(treeIdBundle)
+                    log("Completed bulk upload for ${treeIdBundle.size} trees")
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                Timber.e("NewTree upload failed")
+                Timber.e(e, "Bulk tree upload failed for bundle: $treeIdBundle")
+                if (firstError == null) {
+                    firstError = e
+                }
             }
         }
+
+        firstError?.let { throw it }
         log("Completed upload for ${treeIds.size} trees")
     }
 

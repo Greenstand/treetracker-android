@@ -15,9 +15,10 @@
  */
 package org.greenstand.android.TreeTracker.usecases
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.lang.Exception
+import timber.log.Timber
 
 /**
  *  checks if the internet is available on the user's device
@@ -28,7 +29,10 @@ class CheckForInternetUseCase : UseCase<Unit, Boolean>() {
             try {
                 val command = "ping -c 1 google.com"
                 Runtime.getRuntime().exec(command).waitFor() == 0
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
+                Timber.tag("InternetCheck").e(e, "Failed to check for internet connection")
                 false
             }
         }

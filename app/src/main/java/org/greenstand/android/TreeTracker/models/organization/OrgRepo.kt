@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models.organization
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -130,14 +131,16 @@ class OrgRepo(
                     version = configObj[OrgJsonKeys.V1.VERSION]?.jsonPrimitive?.content?.toIntOrNull() ?: 1,
                     name = orgName,
                     walletId = walletId,
-                    captureSetupFlowJson = setupFlowJson.toString(),
-                    captureFlowJson = captureFlowJson.toString(),
+                    captureSetupFlowJson = setupFlowJson?.let { it.toString() } ?: "[]",
+                    captureFlowJson = captureFlowJson?.let { it.toString() } ?: "[]",
                 )
             val validatedEntity = validateOrgRoutes(orgEntity)
             dao.insertOrg(validatedEntity)
             setOrg(validatedEntity.id)
             Timber.tag(ORG_LINK_TAG).i("Org '$orgName' ($orgId) loaded from Remote Config")
             true
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Timber.tag(ORG_LINK_TAG).e(e, "Failed to parse Remote Config for org $orgId, falling back to minimal org")
             addMinimalOrg(orgId, orgName)
@@ -173,6 +176,8 @@ class OrgRepo(
             setOrg(orgEntity.id)
             Timber.tag(ORG_LINK_TAG).i("Minimal org '$orgName' ($orgId) created with default flows")
             true
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Timber.tag(ORG_LINK_TAG).e(e, "Failed to create minimal org for $orgId")
             false

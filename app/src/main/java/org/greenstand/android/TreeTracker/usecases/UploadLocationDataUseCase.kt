@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.amazonaws.AmazonClientException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
@@ -47,8 +48,14 @@ class UploadLocationDataUseCase(
                         .map { (sessionId, entities) ->
                             val locationRequests =
                                 entities
-                                    .map { json.decodeFromString<LocationData>(it.locationDataJson) }
-                                    .map {
+                                    .mapNotNull {
+                                        try {
+                                            json.decodeFromString<LocationData>(it.locationDataJson)
+                                        } catch (e: Exception) {
+                                            Timber.e(e, "Failed to decode location data for entity ${it.id}")
+                                            null
+                                        }
+                                    }.map {
                                         LocationRequest(
                                             accuracy = it.accuracy,
                                             latitude = it.latitude,
@@ -59,14 +66,23 @@ class UploadLocationDataUseCase(
                             return@map sessionId to locationRequests
                         }
 
-                val sessionEntities = sessionIdToLocations.map { dao.getSessionById(it.key) }
                 val trackRequests =
-                    sessionIdToLocationRequests.map { (sessionId, locationList) ->
+                    sessionIdToLocationRequests.mapNotNull { (sessionId, locationList) ->
+                        val sessionEntity = dao.getSessionById(sessionId)
+                        if (sessionEntity == null) {
+                            Timber.w("Skipping location upload for session $sessionId: session not found in DB")
+                            return@mapNotNull null
+                        }
                         TracksRequest(
-                            sessionId = sessionEntities.find { it.id == sessionId }!!.uuid,
+                            sessionId = sessionEntity.uuid,
                             locations = locationList,
                         )
                     }
+
+                if (trackRequests.isEmpty()) {
+                    Timber.d("No valid track requests to upload")
+                    return@withContext
+                }
 
                 val dataBundle =
                     json.encodeToString(
@@ -84,18 +100,13 @@ class UploadLocationDataUseCase(
 
                 Timber.tag("Location Upload").d("Completed uploading ${locationEntities.size} V2 GPS locations")
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (ace: AmazonClientException) {
-            Timber.e(
-                "Caught an AmazonClientException, which " +
-                    "means the client encountered " +
-                    "an internal error while trying to " +
-                    "communicate with S3, " +
-                    "such as not being able to access the network.",
-            )
-            Timber.e("Error Message: ${ace.message}")
+            Timber.e(ace, "AmazonClientException encountered while communicating with S3")
             return false
         } catch (e: Exception) {
-            Timber.e("Location upload error: ${e.message}")
+            Timber.e(e, "Location upload error")
             return false
         }
         return true

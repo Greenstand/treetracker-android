@@ -16,9 +16,9 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.google.firebase.installations.FirebaseInstallations
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -46,61 +46,94 @@ class SyncDataUseCase(
 
     override suspend fun execute(params: Unit): Boolean {
         syncProgressTracker.startSync()
+        var overallSuccess = true
+
         try {
             withContext(Dispatchers.IO) {
                 val instanceId =
                     try {
                         FirebaseInstallations.getInstance().id.await()
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
+                        Timber.tag(TAG).e(e, "Failed to get Firebase instance ID")
                         ""
                     }
 
-                executeTrackedStep(SyncStep.MESSAGES, "Message Sync") {
-                    messagesRepo.syncMessages()
+                if (!executeTrackedStep(SyncStep.MESSAGES) {
+                        messagesRepo.syncMessages()
+                    }
+                ) {
+                    overallSuccess = false
                 }
 
-                executeTrackedStep(SyncStep.DEVICE_CONFIG, "Device Config Upload") {
-                    deviceConfigUploader.upload(instanceId)
+                if (!executeTrackedStep(SyncStep.DEVICE_CONFIG) {
+                        deviceConfigUploader.upload(instanceId)
+                    }
+                ) {
+                    overallSuccess = false
                 }
 
-                executeTrackedStep(SyncStep.USERS, "User Upload") {
-                    planterUploader.upload(instanceId)
+                if (!executeTrackedStep(SyncStep.USERS) {
+                        planterUploader.upload(instanceId)
+                    }
+                ) {
+                    overallSuccess = false
                 }
 
-                executeTrackedStep(SyncStep.SESSIONS, "Session Upload") {
-                    sessionUploader.upload()
+                if (!executeTrackedStep(SyncStep.SESSIONS) {
+                        sessionUploader.upload()
+                    }
+                ) {
+                    overallSuccess = false
                 }
 
-                treeUpload(
-                    syncStep = SyncStep.LEGACY_TREES,
-                    onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
-                    onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
-                )
+                if (!treeUpload(
+                        syncStep = SyncStep.LEGACY_TREES,
+                        onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
+                        onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
+                    )
+                ) {
+                    overallSuccess = false
+                }
 
-                treeUpload(
-                    syncStep = SyncStep.TREES,
-                    onGetTreeIds = { dao.getAllTreeIdsToUpload() },
-                    onUpload = { treeUploader.uploadTrees(it) },
-                )
+                if (!treeUpload(
+                        syncStep = SyncStep.TREES,
+                        onGetTreeIds = { dao.getAllTreeIdsToUpload() },
+                        onUpload = { treeUploader.uploadTrees(it) },
+                    )
+                ) {
+                    overallSuccess = false
+                }
 
-                executeTrackedStep(SyncStep.LOCATIONS, "Location Upload") {
-                    uploadLocationDataUseCase.execute(Unit)
+                if (!executeTrackedStep(SyncStep.LOCATIONS) {
+                        uploadLocationDataUseCase.execute(Unit)
+                    }
+                ) {
+                    overallSuccess = false
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            Timber.tag(TAG).e(e, "Error occurred during syncing data")
             syncProgressTracker.endSync(error = e.localizedMessage)
             return false
         }
-        syncProgressTracker.endSync()
-        return true
+
+        if (overallSuccess) {
+            syncProgressTracker.endSync()
+        } else {
+            syncProgressTracker.endSync(error = "One or more sync steps failed")
+        }
+        return overallSuccess
     }
 
     private suspend fun treeUpload(
         syncStep: SyncStep,
         onGetTreeIds: suspend () -> List<Long>,
         onUpload: suspend (List<Long>) -> Unit,
-    ) {
+    ): Boolean {
         syncProgressTracker.startStep(syncStep)
         try {
             var treeIds = onGetTreeIds()
@@ -108,58 +141,65 @@ class SyncDataUseCase(
             var uploadedSoFar = 0
             syncProgressTracker.updateStepProgress(syncStep, 0, totalTrees)
 
-            while (treeIds.isNotEmpty() && coroutineContext.isActive) {
-                executeIfContextActive("Tree Upload") {
-                    onUpload(treeIds)
+            while (treeIds.isNotEmpty()) {
+                coroutineContext.ensureActive()
+                try {
+                    executeIfContextActive {
+                        onUpload(treeIds)
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    // Log and let the loop handle it or break
+                    Timber.tag(TAG).e(e, "Tree upload batch failed")
+                    // We don't throw here to allow progress tracker to mark failure and continue if needed,
+                    // but since this is a while loop on IDs, we might get stuck if we don't break.
+                    syncProgressTracker.failStep(syncStep, e.localizedMessage)
+                    return false
                 }
+
                 uploadedSoFar += treeIds.size
                 syncProgressTracker.updateStepProgress(syncStep, uploadedSoFar, totalTrees)
 
                 val remainingIds = onGetTreeIds()
-                if (!treeIds.containsAll(remainingIds)) {
-                    treeIds = remainingIds
-                } else {
-                    if (remainingIds.isNotEmpty()) {
-                        Timber.tag(TAG).e("Remaining trees failed to upload, ending tree sync...")
-                    }
-                    break
+                if (remainingIds.isNotEmpty() && treeIds.containsAll(remainingIds)) {
+                    Timber.tag(TAG).e("Remaining trees failed to upload, ending tree sync...")
+                    syncProgressTracker.failStep(syncStep, "Remaining trees failed to upload")
+                    return false
                 }
+                treeIds = remainingIds
             }
             syncProgressTracker.completeStep(syncStep)
+            return true
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             syncProgressTracker.failStep(syncStep, e.localizedMessage)
-            throw e
+            return false
         }
     }
 
     private suspend fun executeTrackedStep(
         syncStep: SyncStep,
-        tag: String,
         action: suspend () -> Unit,
-    ) {
+    ): Boolean {
         syncProgressTracker.startStep(syncStep)
-        try {
-            executeIfContextActive(tag, action)
+        return try {
+            executeIfContextActive(action)
             syncProgressTracker.completeStep(syncStep)
+            true
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             syncProgressTracker.failStep(syncStep, e.localizedMessage)
-            throw e
+            false
         }
     }
 
     private suspend fun executeIfContextActive(
-        tag: String,
         action: suspend () -> Unit,
     ) {
-        try {
-            if (coroutineContext.isActive) {
-                action()
-            } else {
-                coroutineContext.cancel()
-            }
-        } catch (e: Exception) {
-            Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
-            throw e
-        }
+        coroutineContext.ensureActive()
+        action()
     }
 }
