@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,6 +44,7 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.SharedKeyboardOptions
 
 @Composable
 fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -90,7 +89,10 @@ fun SessionNote(
         },
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(it),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(120.dp))
@@ -100,10 +102,8 @@ fun SessionNote(
                 onValueChange = { updatedNote -> onHandleAction(SessionNoteAction.UpdateNote(updatedNote)) },
                 placeholder = { Text(text = stringResource(id = R.string.add_note_to_session), color = Color.White) },
                 keyboardOptions =
-                    KeyboardOptions(
+                    SharedKeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Go,
-                        autoCorrect = false,
                     ),
                 keyboardActions =
                     KeyboardActions(
