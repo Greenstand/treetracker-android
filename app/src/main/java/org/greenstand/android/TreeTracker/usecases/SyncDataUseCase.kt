@@ -21,6 +21,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import org.greenstand.android.TreeTracker.analytics.CrashKey
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
@@ -41,6 +44,7 @@ class SyncDataUseCase(
     private val deviceConfigUploader: DeviceConfigUploader,
     private val messagesRepo: MessagesRepo,
     private val syncProgressTracker: SyncProgressTracker,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) : UseCase<Unit, Boolean>() {
     private val TAG = "SyncDataUseCase"
 
@@ -54,6 +58,7 @@ class SyncDataUseCase(
                     } catch (e: Exception) {
                         ""
                     }
+                exceptionDataCollector.set(CrashKey.INSTALLATION_ID, instanceId)
 
                 executeTrackedStep(SyncStep.MESSAGES, "Message Sync") {
                     messagesRepo.syncMessages()
@@ -86,10 +91,13 @@ class SyncDataUseCase(
                 executeTrackedStep(SyncStep.LOCATIONS, "Location Upload") {
                     uploadLocationDataUseCase.execute(Unit)
                 }
+
+                exceptionDataCollector.set(CrashKey.LAST_SYNC_TIMESTAMP, Clock.System.now().toString())
             }
         } catch (e: Exception) {
-            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            Timber.tag(TAG).e(e, "Sync failed")
             syncProgressTracker.endSync(error = e.localizedMessage)
+            exceptionDataCollector.set(CrashKey.LAST_SYNC_TIMESTAMP, Clock.System.now().toString())
             return false
         }
         syncProgressTracker.endSync()
@@ -158,7 +166,7 @@ class SyncDataUseCase(
                 coroutineContext.cancel()
             }
         } catch (e: Exception) {
-            Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            Timber.tag(TAG).e(e, "$tag step failed")
             throw e
         }
     }

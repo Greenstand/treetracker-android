@@ -249,13 +249,13 @@ val appModule =
 
         factory { CreateFakeTreesUseCase(get(), get(), get(), get(), get(), get(), get()) }
 
-        factory { CheckForInternetUseCase() }
+        factory { CheckForInternetUseCase(get()) }
 
         factory { CreateTreeRequestUseCase(get()) }
 
-        factory { TreeUploader(get(), get(), get(), get(), get()) }
+        factory { TreeUploader(get(), get(), get(), get(), get(), get()) }
 
-        factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get()) }
+        factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
         factory { Firebase.crashlytics }
 

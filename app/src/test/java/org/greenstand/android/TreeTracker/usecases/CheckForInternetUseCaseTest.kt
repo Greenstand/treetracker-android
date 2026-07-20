@@ -18,11 +18,13 @@ package org.greenstand.android.TreeTracker.usecases
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -37,12 +39,14 @@ class CheckForInternetUseCaseTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @MockK(relaxed = true)
+    private lateinit var exceptionDataCollector: ExceptionDataCollector
     private lateinit var checkForInternetUseCase: CheckForInternetUseCase
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        checkForInternetUseCase = CheckForInternetUseCase()
+        checkForInternetUseCase = CheckForInternetUseCase(exceptionDataCollector)
     }
 
     @After

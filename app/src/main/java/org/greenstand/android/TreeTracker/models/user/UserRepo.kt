@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
+import org.greenstand.android.TreeTracker.analytics.CrashKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
@@ -27,7 +28,7 @@ import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 class UserRepo(
     private val locationUpdateManager: LocationUpdateManager,
@@ -100,7 +101,7 @@ class UserRepo(
                 )
 
             if (isPowerUser) {
-                exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, wallet)
+                exceptionDataCollector.set(CrashKey.POWER_USER_WALLET, wallet)
             }
 
             dao.insertUser(entity).also {
