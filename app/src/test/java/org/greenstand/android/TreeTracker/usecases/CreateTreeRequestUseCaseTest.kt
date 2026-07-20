@@ -25,7 +25,8 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.PlanterDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
@@ -46,7 +47,10 @@ class CreateTreeRequestUseCaseTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeCaptureDao: TreeDAO
+
+    @MockK(relaxed = true)
+    private lateinit var planterDao: PlanterDAO
 
     private lateinit var createTreeRequestUseCase: CreateTreeRequestUseCase
 
@@ -55,7 +59,7 @@ class CreateTreeRequestUseCaseTest {
         MockKAnnotations.init(this)
         mockkObject(DeviceUtils)
         every { DeviceUtils.deviceId } returns "test-device-id"
-        createTreeRequestUseCase = CreateTreeRequestUseCase(dao = dao)
+        createTreeRequestUseCase = CreateTreeRequestUseCase(treeCaptureDao = treeCaptureDao, planterDao = planterDao)
     }
 
     @After
@@ -74,10 +78,10 @@ class CreateTreeRequestUseCaseTest {
                     TreeAttributeEntity(key = "color", value = "green", treeCaptureId = 10L),
                 )
 
-            coEvery { dao.getTreeCaptureById(10L) } returns treeCapture
-            coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
-            coEvery { dao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns planterInfo
-            coEvery { dao.getTreeAttributeByTreeCaptureId(10L) } returns attributes
+            coEvery { treeCaptureDao.getTreeCaptureById(10L) } returns treeCapture
+            coEvery { planterDao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
+            coEvery { planterDao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns planterInfo
+            coEvery { treeCaptureDao.getTreeAttributeByTreeCaptureId(10L) } returns attributes
 
             val params = CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg")
             val result = createTreeRequestUseCase.execute(params)
@@ -104,9 +108,9 @@ class CreateTreeRequestUseCaseTest {
             val treeCapture = FakeFileGenerator.fakeTreeCapture.copy().also { it.id = 10L }
             val planterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy().also { it.id = treeCapture.planterCheckInId }
 
-            coEvery { dao.getTreeCaptureById(10L) } returns treeCapture
-            coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
-            coEvery { dao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns null
+            coEvery { treeCaptureDao.getTreeCaptureById(10L) } returns treeCapture
+            coEvery { planterDao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
+            coEvery { planterDao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns null
 
             val params = CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg")
 

@@ -24,7 +24,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.LocationDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.junit.Before
 import org.junit.Rule
@@ -42,7 +43,10 @@ class MapViewModelTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
+
+    @MockK(relaxed = true)
+    private lateinit var locationDao: LocationDAO
 
     @Before
     fun setUp() {
@@ -78,9 +82,9 @@ class MapViewModelTest {
                     createdAt = Instant.fromEpochMilliseconds(2000000),
                 ).apply { id = 2L }
 
-            coEvery { dao.getAllTrees() } returns listOf(treeEntity1, treeEntity2)
+            coEvery { treeDao.getAllTrees() } returns listOf(treeEntity1, treeEntity2)
 
-            val viewModel = MapViewModel(dao)
+            val viewModel = MapViewModel(treeDao = treeDao, locationDao = locationDao)
 
             val state = viewModel.state.first { !it.isLoading }
             assertEquals(2, state.markers.size)
@@ -97,9 +101,9 @@ class MapViewModelTest {
     @Test
     fun `WHEN init with empty tree list THEN markers are empty`() =
         runTest {
-            coEvery { dao.getAllTrees() } returns emptyList()
+            coEvery { treeDao.getAllTrees() } returns emptyList()
 
-            val viewModel = MapViewModel(dao)
+            val viewModel = MapViewModel(treeDao = treeDao, locationDao = locationDao)
 
             val state = viewModel.state.first { !it.isLoading }
             assertTrue(state.markers.isEmpty())
@@ -108,9 +112,9 @@ class MapViewModelTest {
     @Test
     fun `WHEN selectMarker called THEN selectedMarkerId updates in state`() =
         runTest {
-            coEvery { dao.getAllTrees() } returns emptyList()
+            coEvery { treeDao.getAllTrees() } returns emptyList()
 
-            val viewModel = MapViewModel(dao)
+            val viewModel = MapViewModel(treeDao = treeDao, locationDao = locationDao)
             viewModel.state.first { !it.isLoading }
 
             viewModel.handleAction(MapAction.SelectMarker("tree_42"))

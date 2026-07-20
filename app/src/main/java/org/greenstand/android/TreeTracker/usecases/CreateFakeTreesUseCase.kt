@@ -18,7 +18,7 @@ package org.greenstand.android.TreeTracker.usecases
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.PlanterDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
 import org.greenstand.android.TreeTracker.models.FeatureFlags
@@ -38,7 +38,7 @@ class CreateFakeTreesUseCase(
     private val sessionTracker: SessionTracker,
     private val context: Context,
     private val createTreeUseCase: CreateTreeUseCase,
-    private val dao: TreeTrackerDAO,
+    private val planterDao: PlanterDAO,
     private val locationUpdateManager: LocationUpdateManager,
     private val createLegacyTreeUseCase: CreateLegacyTreeUseCase,
     private val timeProvider: TimeProvider,
@@ -151,8 +151,8 @@ class CreateFakeTreesUseCase(
                     recordUuid = UUID.randomUUID().toString(),
                 )
 
-            val id = dao.insertPlanterInfo(entity)
-            dao.getPlanterInfoById(id)!!
+            val id = planterDao.insertPlanterInfo(entity)
+            planterDao.getPlanterInfoById(id)!!
         }
 
     suspend fun createLegacyCheckIn(
@@ -176,7 +176,7 @@ class CreateFakeTreesUseCase(
                 photoUrl = null,
             )
 
-        dao.insertPlanterCheckIn(planterCheckInEntity)
+        planterDao.insertPlanterCheckIn(planterCheckInEntity)
     }
 
     suspend fun createLegacyTree(planterInfoId: Long) {

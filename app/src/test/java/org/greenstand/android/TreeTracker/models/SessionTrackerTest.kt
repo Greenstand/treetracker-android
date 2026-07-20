@@ -30,7 +30,9 @@ import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
+import org.greenstand.android.TreeTracker.database.dao.UserDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
@@ -56,7 +58,13 @@ class SessionTrackerTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var sessionDao: SessionDAO
+
+    @MockK(relaxed = true)
+    private lateinit var deviceConfigDao: DeviceConfigDAO
+
+    @MockK(relaxed = true)
+    private lateinit var userDao: UserDAO
 
     @MockK(relaxed = true)
     private lateinit var treesToSyncHelper: TreesToSyncHelper
@@ -85,7 +93,9 @@ class SessionTrackerTest {
 
         sessionTracker =
             SessionTracker(
-                dao = dao,
+                sessionDao = sessionDao,
+                deviceConfigDao = deviceConfigDao,
+                userDao = userDao,
                 treesToSyncHelper = treesToSyncHelper,
                 preferences = preferences,
                 timeProvider = timeProvider,
@@ -99,8 +109,8 @@ class SessionTrackerTest {
         runTest {
             sessionTracker.endSession()
 
-            coVerify(exactly = 0) { dao.getSessionById(any()) }
-            coVerify(exactly = 0) { dao.updateSession(any()) }
+            coVerify(exactly = 0) { sessionDao.getSessionById(any()) }
+            coVerify(exactly = 0) { sessionDao.updateSession(any()) }
         }
 
     @Test
@@ -141,9 +151,9 @@ class SessionTrackerTest {
         val org = Org(id = "123", name = currentOrgName, walletId = "wallet-123", logoPath = "", captureSetupFlow = emptyList(), captureFlow = emptyList())
         every { orgRepo.currentOrg() } returns org
 
-        coEvery { dao.getUserById(fakeUser.id) } returns FakeFileGenerator.fakeUserEntity
-        coEvery { dao.getLatestDeviceConfig() } returns FakeFileGenerator.fakeDeviceConfig
-        coEvery { dao.insertSession(any()) } returns 1L
+        coEvery { userDao.getUserById(fakeUser.id) } returns FakeFileGenerator.fakeUserEntity
+        coEvery { deviceConfigDao.getLatestDeviceConfig() } returns FakeFileGenerator.fakeDeviceConfig
+        coEvery { sessionDao.insertSession(any()) } returns 1L
     }
 
     @After
@@ -162,7 +172,7 @@ class SessionTrackerTest {
             sessionTracker.startSession()
 
             val slot = slot<SessionEntity>()
-            coVerify { dao.insertSession(capture(slot)) }
+            coVerify { sessionDao.insertSession(capture(slot)) }
             assertEquals("Kasiki Hai", slot.captured.organization)
         }
 
@@ -174,7 +184,7 @@ class SessionTrackerTest {
             sessionTracker.startSession()
 
             val slot = slot<SessionEntity>()
-            coVerify { dao.insertSession(capture(slot)) }
+            coVerify { sessionDao.insertSession(capture(slot)) }
             assertEquals("User Typed Org", slot.captured.organization)
         }
 }

@@ -21,7 +21,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
@@ -54,12 +54,12 @@ sealed class TreeDetailAction : Action {
 
 class TreeDetailViewModel(
     private val treeId: Long,
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
     private val treesToSyncHelper: TreesToSyncHelper,
 ) : BaseViewModel<TreeDetailState, TreeDetailAction>(TreeDetailState()) {
     init {
         viewModelScope.launch {
-            val trees = dao.getTreesByIds(listOf(treeId))
+            val trees = treeDao.getTreesByIds(listOf(treeId))
             trees.firstOrNull()?.let { tree ->
                 updateState { copy(tree = tree, editedNote = tree.note) }
             }
@@ -75,7 +75,7 @@ class TreeDetailViewModel(
                 viewModelScope.launch {
                     currentState.tree?.let { tree ->
                         tree.note = currentState.editedNote
-                        dao.updateTree(tree)
+                        treeDao.updateTree(tree)
                         updateState { copy(tree = tree) }
                         sendEvent(ShowSnackbar(TextRef.Res(R.string.tree_note_saved)))
                     }
@@ -87,7 +87,7 @@ class TreeDetailViewModel(
                         val file = java.io.File(path)
                         if (file.exists()) file.delete()
                     }
-                    dao.deleteTreeById(treeId)
+                    treeDao.deleteTreeById(treeId)
                     treesToSyncHelper.refreshTreeCountToSync()
                     popBackStack()
                 }

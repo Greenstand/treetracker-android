@@ -24,7 +24,8 @@ import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.TreeCaptureRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestParams
@@ -40,7 +41,8 @@ class TreeUploader(
     private val uploadImageUseCase: UploadImageUseCase,
     private val objectStorageClient: ObjectStorageClient,
     private val createTreeRequestUseCase: CreateTreeRequestUseCase,
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
+    private val sessionDao: SessionDAO,
     private val json: Json,
 ) {
     fun log(msg: String) = Timber.tag("TreeUploader").d(msg)
@@ -50,23 +52,23 @@ class TreeUploader(
         instanceId: String,
     ) {
         windowedTreeUpload(treeIds) { treeIdBundle ->
-            val legacyTrees = dao.getTreeCapturesByIds(treeIdBundle)
+            val legacyTrees = treeDao.getTreeCapturesByIds(treeIdBundle)
             uploadLegacyTreeImages(legacyTrees)
             uploadLegacyTreeBundles(legacyTrees, instanceId)
 
             deleteLocalImages(legacyTrees.map { it.localPhotoPath })
-            dao.removeTreeCapturesLocalImagePaths(legacyTrees.map { it.id })
+            treeDao.removeTreeCapturesLocalImagePaths(legacyTrees.map { it.id })
         }
     }
 
     suspend fun uploadTrees(treeIds: List<Long>) {
         windowedTreeUpload(treeIds) { treeIdBundle ->
-            val trees = dao.getTreesByIds(treeIdBundle)
+            val trees = treeDao.getTreesByIds(treeIdBundle)
             uploadTreeImages(trees)
             uploadTreeBundles(trees)
 
             deleteLocalImages(trees.map { it.photoPath })
-            dao.removeTreesLocalImagePaths(trees.map { it.id })
+            treeDao.removeTreesLocalImagePaths(trees.map { it.id })
         }
     }
 
@@ -111,7 +113,7 @@ class TreeUploader(
 
                         // Update local tree data with image Url
                         tree.photoUrl = imageUrl
-                        dao.updateTreeCapture(tree)
+                        treeDao.updateTreeCapture(tree)
                     }
                 }.forEach { it.await() }
         }
@@ -136,7 +138,7 @@ class TreeUploader(
 
                         // Update local tree data with image Url
                         tree.photoUrl = imageUrl
-                        dao.updateTree(tree)
+                        treeDao.updateTree(tree)
                     }
                 }.forEach { it.await() }
         }
@@ -166,9 +168,9 @@ class TreeUploader(
         val bundleId = jsonBundle.md5()
 
         // Update the trees in DB with the bundleId
-        dao.updateTreeCapturesBundleIds(trees.map { it.id }, bundleId)
+        treeDao.updateTreeCapturesBundleIds(trees.map { it.id }, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
+        treeDao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
         log("Bundle Tree Upload Completed")
     }
 
@@ -177,7 +179,7 @@ class TreeUploader(
         // Create a request object for each tree
         val treeRequestList =
             trees.map { tree ->
-                val sessionUuid = dao.getSessionById(tree.sessionId).uuid
+                val sessionUuid = sessionDao.getSessionById(tree.sessionId).uuid
                 TreeCaptureRequest(
                     sessionId = sessionUuid,
                     treeId = tree.uuid,
@@ -199,9 +201,9 @@ class TreeUploader(
         val bundleId = "${jsonBundle.md5()}_captures"
 
         // Update the trees in DB with the bundleId
-        dao.updateTreesBundleIds(trees.map { it.id }, bundleId)
+        treeDao.updateTreesBundleIds(trees.map { it.id }, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        dao.updateTreesUploadStatus(trees.map { it.id }, true)
+        treeDao.updateTreesUploadStatus(trees.map { it.id }, true)
         log("Bundle Tree Upload Completed")
     }
 

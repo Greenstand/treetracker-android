@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.LocationDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
@@ -59,7 +60,8 @@ sealed class MapAction : Action {
 }
 
 class MapViewModel(
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
+    private val locationDao: LocationDAO,
 ) : BaseViewModel<MapState, MapAction>(MapState()) {
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -88,7 +90,7 @@ class MapViewModel(
             val (trees, steps) =
                 withContext(Dispatchers.IO) {
                     val treeMarkers =
-                        dao.getAllTrees().map { tree ->
+                        treeDao.getAllTrees().map { tree ->
                             MapMarker(
                                 latitude = tree.latitude,
                                 longitude = tree.longitude,
@@ -102,7 +104,7 @@ class MapViewModel(
                         }
 
                     val stepPoints =
-                        dao.getLocationsForTreeSessions().mapNotNull { entity ->
+                        locationDao.getLocationsForTreeSessions().mapNotNull { entity ->
                             try {
                                 val data = json.decodeFromString<LocationData>(entity.locationDataJson)
                                 StepPoint(

@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
@@ -59,7 +59,7 @@ class DashboardViewModelTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
 
     @MockK(relaxed = true)
     private lateinit var workManager: WorkManager
@@ -87,10 +87,10 @@ class DashboardViewModelTest {
     fun setup() {
         MockKAnnotations.init(this)
         coEvery { analytics.syncButtonTapped(any(), any(), any()) } just Runs
-        every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
-        every { dao.getUploadedTreeImageCountFlow() } returns flowOf(5)
-        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
-        every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(4)
+        every { treeDao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
+        every { treeDao.getUploadedTreeImageCountFlow() } returns flowOf(5)
+        every { treeDao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
+        every { treeDao.getNonUploadedTreeImageCountFlow() } returns flowOf(4)
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
         coEvery { messagesRepo.syncMessages() } just Runs
         coEvery { treesToSyncHelper.getTreeCountToSync() } returns 6
@@ -99,7 +99,7 @@ class DashboardViewModelTest {
         every { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>()) } returns mockk()
         testSubject =
             DashboardViewModel(
-                dao = dao,
+                treeDao = treeDao,
                 workManager = workManager,
                 analytics = analytics,
                 treesToSyncHelper = treesToSyncHelper,
@@ -148,14 +148,14 @@ class DashboardViewModelTest {
     fun `observeTreeCounts reacts to Flow changes`() =
         runTest {
             val nonUploadedFlow = MutableStateFlow(4)
-            every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
-            every { dao.getUploadedTreeImageCountFlow() } returns flowOf(5)
-            every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
-            every { dao.getNonUploadedTreeImageCountFlow() } returns nonUploadedFlow
+            every { treeDao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
+            every { treeDao.getUploadedTreeImageCountFlow() } returns flowOf(5)
+            every { treeDao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
+            every { treeDao.getNonUploadedTreeImageCountFlow() } returns nonUploadedFlow
 
             val vm =
                 DashboardViewModel(
-                    dao = dao,
+                    treeDao = treeDao,
                     workManager = workManager,
                     analytics = analytics,
                     treesToSyncHelper = treesToSyncHelper,
@@ -178,14 +178,14 @@ class DashboardViewModelTest {
     @Test
     fun `showTreeSyncReminderDialog is true when remaining trees reach threshold`() =
         runTest {
-            every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(0)
-            every { dao.getUploadedTreeImageCountFlow() } returns flowOf(0)
-            every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(1000)
-            every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(1000)
+            every { treeDao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(0)
+            every { treeDao.getUploadedTreeImageCountFlow() } returns flowOf(0)
+            every { treeDao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(1000)
+            every { treeDao.getNonUploadedTreeImageCountFlow() } returns flowOf(1000)
 
             val vm =
                 DashboardViewModel(
-                    dao = dao,
+                    treeDao = treeDao,
                     workManager = workManager,
                     analytics = analytics,
                     treesToSyncHelper = treesToSyncHelper,

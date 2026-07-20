@@ -27,7 +27,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.junit.Before
@@ -45,7 +45,7 @@ class CreateTreeUseCaseTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
 
     @MockK(relaxed = true)
     private lateinit var analytics: Analytics
@@ -70,7 +70,7 @@ class CreateTreeUseCaseTest {
         MockKAnnotations.init(this)
         createTreeUseCase =
             CreateTreeUseCase(
-                dao = dao,
+                treeDao = treeDao,
                 analytics = analytics,
                 timeProvider = timeProvider,
             )
@@ -81,12 +81,12 @@ class CreateTreeUseCaseTest {
         runTest {
             val fakeTime = Instant.fromEpochMilliseconds(1000000L)
             every { timeProvider.currentTime() } returns fakeTime
-            coEvery { dao.insertTree(any()) } returns 55L
+            coEvery { treeDao.insertTree(any()) } returns 55L
 
             val result = createTreeUseCase.execute(fakeTree)
 
             assertEquals(55L, result)
-            coVerify { dao.insertTree(any()) }
+            coVerify { treeDao.insertTree(any()) }
         }
 
     @Test
@@ -94,7 +94,7 @@ class CreateTreeUseCaseTest {
         runTest {
             val fakeTime = Instant.fromEpochMilliseconds(1000000L)
             every { timeProvider.currentTime() } returns fakeTime
-            coEvery { dao.insertTree(any()) } returns 1L
+            coEvery { treeDao.insertTree(any()) } returns 1L
 
             createTreeUseCase.execute(fakeTree)
 
@@ -106,13 +106,13 @@ class CreateTreeUseCaseTest {
         runTest {
             val fakeTime = Instant.fromEpochMilliseconds(5555555L)
             every { timeProvider.currentTime() } returns fakeTime
-            coEvery { dao.insertTree(any()) } returns 1L
+            coEvery { treeDao.insertTree(any()) } returns 1L
 
             createTreeUseCase.execute(fakeTree)
 
             verify { timeProvider.currentTime() }
             coVerify {
-                dao.insertTree(match { it.createdAt == fakeTime })
+                treeDao.insertTree(match { it.createdAt == fakeTime })
             }
         }
 }

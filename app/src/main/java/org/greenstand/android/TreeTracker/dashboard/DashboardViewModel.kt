@@ -33,7 +33,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.background.NotificationConstants
 import org.greenstand.android.TreeTracker.background.TreeSyncWorker
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
@@ -74,7 +74,7 @@ sealed class DashboardAction : Action {
 }
 
 class DashboardViewModel(
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
     private val workManager: WorkManager,
     private val analytics: Analytics,
     @Suppress("unused") private val treesToSyncHelper: TreesToSyncHelper,
@@ -179,10 +179,10 @@ class DashboardViewModel(
     private fun observeTreeCounts() {
         viewModelScope.launch {
             combine(
-                dao.getUploadedLegacyTreeImageCountFlow(),
-                dao.getUploadedTreeImageCountFlow(),
-                dao.getNonUploadedLegacyTreeCaptureImageCountFlow(),
-                dao.getNonUploadedTreeImageCountFlow(),
+                treeDao.getUploadedLegacyTreeImageCountFlow(),
+                treeDao.getUploadedTreeImageCountFlow(),
+                treeDao.getNonUploadedLegacyTreeCaptureImageCountFlow(),
+                treeDao.getNonUploadedTreeImageCountFlow(),
             ) { uploadedLegacy, uploadedNew, nonUploadedLegacy, nonUploadedNew ->
                 val synced = uploadedLegacy + uploadedNew
                 val remaining = nonUploadedLegacy + nonUploadedNew

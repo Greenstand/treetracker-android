@@ -29,7 +29,8 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
 import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
@@ -47,7 +48,10 @@ class SessionUploaderTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var sessionDao: SessionDAO
+
+    @MockK(relaxed = true)
+    private lateinit var deviceConfigDao: DeviceConfigDAO
 
     @MockK(relaxed = true)
     private lateinit var objectStorageClient: ObjectStorageClient
@@ -68,7 +72,8 @@ class SessionUploaderTest {
         every { DeviceUtils.deviceId } returns "test-device-id"
         sessionUploader =
             SessionUploader(
-                dao = dao,
+                sessionDao = sessionDao,
+                deviceConfigDao = deviceConfigDao,
                 objectStorageClient = objectStorageClient,
                 json = json,
             )
@@ -104,15 +109,15 @@ class SessionUploaderTest {
                     loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
                 ).apply { id = 10L }
 
-            coEvery { dao.getSessionsToUpload() } returns listOf(sessionEntity)
-            coEvery { dao.getDeviceConfigById(10L) } returns deviceConfigEntity
+            coEvery { sessionDao.getSessionsToUpload() } returns listOf(sessionEntity)
+            coEvery { deviceConfigDao.getDeviceConfigById(10L) } returns deviceConfigEntity
 
             sessionUploader.upload()
 
-            coVerify(exactly = 1) { dao.getDeviceConfigById(10L) }
+            coVerify(exactly = 1) { deviceConfigDao.getDeviceConfigById(10L) }
             coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
-            coVerify(exactly = 1) { dao.updateSessionUploadStatus(listOf(1L), true) }
-            coVerify(exactly = 1) { dao.updateSessionBundleIds(listOf(1L), any()) }
+            coVerify(exactly = 1) { sessionDao.updateSessionUploadStatus(listOf(1L), true) }
+            coVerify(exactly = 1) { sessionDao.updateSessionBundleIds(listOf(1L), any()) }
         }
 
     @Test
@@ -140,11 +145,11 @@ class SessionUploaderTest {
                     loggedAt = Instant.parse("2023-06-15T10:00:00Z"),
                 ).apply { id = 20L }
 
-            coEvery { dao.getSessionsToUpload() } returns listOf(sessionEntity)
-            coEvery { dao.getDeviceConfigById(20L) } returns deviceConfigEntity
+            coEvery { sessionDao.getSessionsToUpload() } returns listOf(sessionEntity)
+            coEvery { deviceConfigDao.getDeviceConfigById(20L) } returns deviceConfigEntity
 
             sessionUploader.upload()
 
-            coVerify(exactly = 1) { dao.getDeviceConfigById(20L) }
+            coVerify(exactly = 1) { deviceConfigDao.getDeviceConfigById(20L) }
         }
 }

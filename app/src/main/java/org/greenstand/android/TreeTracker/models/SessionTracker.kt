@@ -19,7 +19,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
+import org.greenstand.android.TreeTracker.database.dao.UserDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
@@ -30,7 +32,9 @@ import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import java.util.UUID
 
 class SessionTracker(
-    private val dao: TreeTrackerDAO,
+    private val sessionDao: SessionDAO,
+    private val userDao: UserDAO,
+    private val deviceConfigDao: DeviceConfigDAO,
     private val treesToSyncHelper: TreesToSyncHelper,
     private val preferences: Preferences,
     private val timeProvider: TimeProvider,
@@ -46,7 +50,7 @@ class SessionTracker(
         endSession()
 
         withContext(Dispatchers.IO) {
-            val userEntity = dao.getUserById(captureSetupData.user!!.id) ?: error("Could not find user of id ${captureSetupData.user!!.id}")
+            val userEntity = userDao.getUserById(captureSetupData.user!!.id) ?: error("Could not find user of id ${captureSetupData.user!!.id}")
 
             val sessionEntity =
                 SessionEntity(
@@ -57,11 +61,11 @@ class SessionTracker(
                     startTime = timeProvider.currentTime(),
                     isUploaded = false,
                     organization = captureSetupData.organizationName ?: orgRepo.currentOrg().name,
-                    deviceConfigId = dao.getLatestDeviceConfig()!!.id,
+                    deviceConfigId = deviceConfigDao.getLatestDeviceConfig()!!.id,
                     note = captureSetupData.sessionNote,
                 )
 
-            _currentSessionId = dao.insertSession(sessionEntity)
+            _currentSessionId = sessionDao.insertSession(sessionEntity)
 
             preferences.edit().putLong(SESSION_ID_KEY, _currentSessionId ?: -1).commit()
             exceptionDataCollector.apply {
@@ -76,9 +80,9 @@ class SessionTracker(
 
     suspend fun endSession() {
         _currentSessionId?.let { id ->
-            val session = dao.getSessionById(id)
+            val session = sessionDao.getSessionById(id)
             session.endTime = timeProvider.currentTime()
-            dao.updateSession(session)
+            sessionDao.updateSession(session)
 
             _currentSessionId = null
 

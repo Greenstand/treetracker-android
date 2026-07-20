@@ -27,7 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.OrganizationDAO
 import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.junit.Before
@@ -46,7 +46,7 @@ class OrgRepoTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var dao: OrganizationDAO
 
     @MockK(relaxed = true)
     private lateinit var prefs: Preferences
@@ -189,8 +189,7 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson =
-                """{"version":"2","walletId":"rc-wallet","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
+            val configJson = """{"version":"2","walletId":"rc-wallet","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("rc-org", "Remote Org", configJson)
 
@@ -198,10 +197,7 @@ class OrgRepoTest {
             coVerify {
                 dao.insertOrg(
                     match {
-                        it.id == "rc-org" &&
-                            it.name == "Remote Org" &&
-                            it.walletId == "rc-wallet" &&
-                            it.version == 2
+                        it.id == "rc-org" && it.name == "Remote Org" && it.walletId == "rc-wallet" && it.version == 2
                     },
                 )
             }
@@ -218,8 +214,7 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson =
-                """{"version":"1","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
+            val configJson = """{"version":"1","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"capture/{profilePicUrl}"}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("no-wallet", "NoWallet", configJson)
 
@@ -238,8 +233,7 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson =
-                """{"version":"1","walletId":"","captureSetupFlow":[{"route":"user-select"},{"route":"nonexistent-screen"}],"captureFlow":[{"route":"capture/{profilePicUrl}"},{"route":"fake-route"}]}"""
+            val configJson = """{"version":"1","walletId":"","captureSetupFlow":[{"route":"user-select"},{"route":"nonexistent-screen"}],"captureFlow":[{"route":"capture/{profilePicUrl}"},{"route":"fake-route"}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("bad-routes", "BadRoutes", configJson)
 
@@ -248,10 +242,7 @@ class OrgRepoTest {
                 dao.insertOrg(
                     match {
                         // Invalid routes should be stripped; only valid ones remain
-                        !it.captureSetupFlowJson.contains("nonexistent-screen") &&
-                            it.captureSetupFlowJson.contains("user-select") &&
-                            !it.captureFlowJson.contains("fake-route") &&
-                            it.captureFlowJson.contains("capture/{profilePicUrl}")
+                        !it.captureSetupFlowJson.contains("nonexistent-screen") && it.captureSetupFlowJson.contains("user-select") && !it.captureFlowJson.contains("fake-route") && it.captureFlowJson.contains("capture/{profilePicUrl}")
                     },
                 )
             }
@@ -268,7 +259,7 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val result = orgRepo.addOrgFromRemoteConfig("test-id", "TestOrg", "this is not valid json{{{")
+            orgRepo.addOrgFromRemoteConfig("test-id", "TestOrg", "this is not valid json{{{")
 
             // Falls back to addMinimalOrg which still inserts with the correct id/name
             coVerify { dao.insertOrg(match { it.id == "test-id" && it.name == "TestOrg" }) }
@@ -285,8 +276,7 @@ class OrgRepoTest {
             orgRepo = createOrgRepo()
             orgRepo.init()
 
-            val configJson =
-                """{"version":"1","walletId":"w","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"tree-image-review/{photoPath}","features":["forceNote"]}]}"""
+            val configJson = """{"version":"1","walletId":"w","captureSetupFlow":[{"route":"user-select"}],"captureFlow":[{"route":"tree-image-review/{photoPath}","features":["forceNote"]}]}"""
 
             val result = orgRepo.addOrgFromRemoteConfig("feat-org", "FeatOrg", configJson)
 
@@ -315,12 +305,7 @@ class OrgRepoTest {
             coVerify {
                 dao.insertOrg(
                     match {
-                        it.id == "minimal-id" &&
-                            it.name == "MinimalOrg" &&
-                            it.walletId == "" &&
-                            it.captureSetupFlowJson.contains("user-select") &&
-                            it.captureFlowJson.contains("capture/{profilePicUrl}") &&
-                            it.captureFlowJson.contains("tree-image-review/{photoPath}")
+                        it.id == "minimal-id" && it.name == "MinimalOrg" && it.walletId == "" && it.captureSetupFlowJson.contains("user-select") && it.captureFlowJson.contains("capture/{profilePicUrl}") && it.captureFlowJson.contains("tree-image-review/{photoPath}")
                     },
                 )
             }

@@ -21,42 +21,43 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
+import org.greenstand.android.TreeTracker.database.dao.UserDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 class UserRepo(
     private val locationUpdateManager: LocationUpdateManager,
-    private val dao: TreeTrackerDAO,
+    private val userDao: UserDAO,
+    private val sessionDao: SessionDAO,
+    private val treeDao: TreeDAO,
     private val analytics: Analytics,
     private val timeProvider: TimeProvider,
     private val messagesDao: MessagesDAO,
     private val exceptionDataCollector: ExceptionDataCollector,
 ) {
-    fun users(): Flow<List<User>> =
-        dao
-            .getAllUsers()
-            .map { userEntities -> userEntities.mapNotNull { createUser(it) } }
+    fun users(): Flow<List<User>> = userDao.getAllUsers().map { userEntities -> userEntities.mapNotNull { createUser(it) } }
 
-    suspend fun getUserList(): List<User> = dao.getAllUsersList().mapNotNull { createUser(it) }
+    suspend fun getUserList(): List<User> = userDao.getAllUsersList().mapNotNull { createUser(it) }
 
-    suspend fun getUser(userId: Long): User? = createUser(dao.getUserById(userId))
+    suspend fun getUser(userId: Long): User? = createUser(userDao.getUserById(userId))
 
-    suspend fun getUserWithWallet(wallet: String): User? = createUser(dao.getUserByWallet(wallet))
+    suspend fun getUserWithWallet(wallet: String): User? = createUser(userDao.getUserByWallet(wallet))
 
     suspend fun deleteUser(wallet: String): Boolean {
-        val deletedRows = dao.deleteUserByWallet(wallet)
+        val deletedRows = userDao.deleteUserByWallet(wallet)
         return deletedRows > 0
     }
 
     suspend fun checkForUnreadMessagesPerUser(wallet: String): Boolean = messagesDao.getUnreadMessageCountForWallet(wallet) >= 1
 
     suspend fun getPowerUser(): User? {
-        val userEntity = dao.getPowerUser() ?: return null
+        val userEntity = userDao.getPowerUser() ?: return null
         return createUser(userEntity)
     }
 
@@ -65,7 +66,7 @@ class UserRepo(
         isPowerUser: Boolean,
     ) {
         if (!isPowerUser || getPowerUser() == null) {
-            dao.updatePowerUserStatus(userId, isPowerUser)
+            userDao.updatePowerUserStatus(userId, isPowerUser)
         }
     }
 
@@ -103,7 +104,7 @@ class UserRepo(
                 exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, wallet)
             }
 
-            dao.insertUser(entity).also {
+            userDao.insertUser(entity).also {
                 analytics.userInfoCreated(
                     phone = phone.orEmpty(),
                     email = email.orEmpty(),
@@ -117,10 +118,10 @@ class UserRepo(
         userEntity ?: return null
 
         val treeCount =
-            dao
+            sessionDao
                 .getSessionsByUserWallet(userEntity.wallet)
                 .map {
-                    dao.getTreeCountFromSessionId(it.id)
+                    treeDao.getTreeCountFromSessionId(it.id)
                 }.sum()
 
         return User(
@@ -136,7 +137,7 @@ class UserRepo(
     }
 
     suspend fun updateUser(user: User) {
-        val userEntity = dao.getUserById(user.id) ?: return
+        val userEntity = userDao.getUserById(user.id) ?: return
         val updated =
             userEntity
                 .copy(
@@ -147,6 +148,6 @@ class UserRepo(
                     photoPath = user.photoPath,
                     uploaded = false,
                 ).also { it.id = user.id }
-        dao.updateUser(updated)
+        userDao.updateUser(updated)
     }
 }

@@ -35,7 +35,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -48,7 +48,7 @@ class TreeSyncWorker(
     private val exceptionDataCollector: ExceptionDataCollector by inject()
     private val syncDataBundleUseCase: SyncDataUseCase by inject()
     private val syncNotificationManager: SyncNotificationManager by inject()
-    private val dao: TreeTrackerDAO by inject()
+    private val treeDao: TreeDAO by inject()
     private val treesToSyncHelper: TreesToSyncHelper by inject()
 
     override suspend fun doWork(): Result {
@@ -63,7 +63,7 @@ class TreeSyncWorker(
                         delay(750)
                         val remaining =
                             withContext(Dispatchers.IO) {
-                                dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
+                                treeDao.getNonUploadedLegacyTreeCaptureImageCount() + treeDao.getNonUploadedTreeImageCount()
                             }
                         val uploaded = (totalTreesToSync - remaining).coerceAtLeast(0)
                         val contentText = applicationContext.getString(R.string.uploading_trees) + " ($uploaded/$totalTreesToSync)"

@@ -24,13 +24,15 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.LocationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.TracksRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.LocationDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 
 class UploadLocationDataUseCase(
-    private val dao: TreeTrackerDAO,
+    private val locationDAO: LocationDAO,
+    private val sessionDao: SessionDAO,
     private val json: Json,
 ) : UseCase<Unit, Boolean>() {
     private val storageClient = ObjectStorageClient.instance()
@@ -40,7 +42,7 @@ class UploadLocationDataUseCase(
             Timber.d("Processing tree location data")
             withContext(Dispatchers.IO) {
                 // V2
-                val locationEntities = dao.getLocationData()
+                val locationEntities = locationDAO.getLocationData()
                 val sessionIdToLocations = locationEntities.groupBy { it.sessionId }
                 val sessionIdToLocationRequests =
                     sessionIdToLocations
@@ -59,7 +61,7 @@ class UploadLocationDataUseCase(
                             return@map sessionId to locationRequests
                         }
 
-                val sessionEntities = sessionIdToLocations.map { dao.getSessionById(it.key) }
+                val sessionEntities = sessionIdToLocations.map { sessionDao.getSessionById(it.key) }
                 val trackRequests =
                     sessionIdToLocationRequests.map { (sessionId, locationList) ->
                         TracksRequest(
@@ -79,8 +81,8 @@ class UploadLocationDataUseCase(
                     "${dataBundle.md5()}_tracks",
                 )
 
-                dao.updateLocationDataUploadStatus(locationEntities.map { it.id }, true)
-                dao.purgeUploadedLocations()
+                locationDAO.updateLocationDataUploadStatus(locationEntities.map { it.id }, true)
+                locationDAO.purgeUploadedLocations()
 
                 Timber.tag("Location Upload").d("Completed uploading ${locationEntities.size} V2 GPS locations")
             }
