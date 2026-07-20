@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.capture
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
@@ -67,7 +66,7 @@ class TreeImageReviewViewModel(
         )
 
     init {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             val firstTrack = isFirstTrack()
             updateState {
                 copy(

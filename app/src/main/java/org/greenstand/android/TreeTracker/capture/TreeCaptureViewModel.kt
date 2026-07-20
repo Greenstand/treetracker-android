@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
@@ -76,7 +75,7 @@ class TreeCaptureViewModel(
     private var pinLocationDeferred: CompletableDeferred<Boolean>? = null
 
     init {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             val enabled = configurator.getBoolean(ConfigKeys.FORCE_IMAGE_SIZE)
             val imageHeight = configurator.getInt(ConfigKeys.IMAGE_CAPTURE_HEIGHT)
             val firstTrack = isFirstTrack()
