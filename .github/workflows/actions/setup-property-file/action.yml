@@ -35,3 +35,9 @@ runs:
         echo "treetracker_client_secret=${TREETRACKER_CLIENT_SECRET}" >> treetracker.keys.properties
         echo "prod_treetracker_client_id=${PROD_TREETRACKER_CLIENT_ID}" >> treetracker.keys.properties
         echo "prod_treetracker_client_secret=${PROD_TREETRACKER_CLIENT_SECRET}" >> treetracker.keys.properties
+        if [ -n "${KEYSTORE_FILE}" ]; then
+          echo "release_store_file=../keystore.jks" >> treetracker.keys.properties
+          echo "release_store_password=${KEYSTORE_PASSWORD}" >> treetracker.keys.properties
+          echo "release_key_alias=${KEY_ALIAS}" >> treetracker.keys.properties
+          echo "release_key_password=${KEY_PASSWORD}" >> treetracker.keys.properties
+        fi
