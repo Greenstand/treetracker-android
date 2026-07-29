@@ -16,10 +16,12 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.amazonaws.AmazonClientException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import timber.log.Timber
+import java.io.IOException
 
 data class UploadImageParams(
     val imagePath: String,
@@ -29,21 +31,23 @@ data class UploadImageParams(
 
 class UploadImageUseCase(
     private val doSpaces: ObjectStorageClient,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) : UseCase<UploadImageParams, String?>() {
     override suspend fun execute(params: UploadImageParams): String? =
         try {
             withContext(Dispatchers.IO) {
                 doSpaces.put(params.imagePath, params.lat, params.long)
             }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: IOException) {
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_NETWORK, e, "Network failure during image upload")
+            null
         } catch (ace: AmazonClientException) {
-            Timber.e(
-                "Caught an AmazonClientException, which " +
-                    "means the client encountered " +
-                    "an internal error while trying to " +
-                    "communicate with S3, " +
-                    "such as not being able to access the network.",
-            )
-            Timber.e("Error Message: ${ace.message}")
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_SERVER, ace, "Storage server failure during image upload")
+            null
+        } catch (e: Exception) {
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_UNKNOWN, e, "Unexpected failure during image upload")
             null
         }
 }

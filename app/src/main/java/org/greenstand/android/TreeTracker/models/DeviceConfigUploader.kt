@@ -15,50 +15,72 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import com.amazonaws.AmazonClientException
+import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.DeviceConfigRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.utilities.md5
+import java.io.IOException
 
 class DeviceConfigUploader(
     private val dao: TreeTrackerDAO,
     private val objectStorageClient: ObjectStorageClient,
     private val json: Json,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
     suspend fun upload(instanceId: String) {
-        val deviceConfigsToUpload = dao.getDeviceConfigsToUpload()
+        try {
+            val deviceConfigsToUpload = dao.getDeviceConfigsToUpload()
 
-        if (deviceConfigsToUpload.isEmpty()) {
-            return
-        }
-
-        val deviceConfigRequests =
-            deviceConfigsToUpload.map { config ->
-                DeviceConfigRequest(
-                    id = config.uuid,
-                    appVersion = config.appVersion,
-                    appBuild = config.appBuild,
-                    osVersion = config.osVersion,
-                    sdkVersion = config.sdkVersion,
-                    loggedAt = config.loggedAt.toString(),
-                    instanceId = instanceId,
-                )
+            if (deviceConfigsToUpload.isEmpty()) {
+                return
             }
 
-        val jsonBundle =
-            json.encodeToString(
-                UploadBundle.createV2(
-                    deviceConfigs = deviceConfigRequests,
-                ),
-            )
-        val bundleId = jsonBundle.md5() + "_deviceConfigs"
-        val deviceConfigIds = deviceConfigsToUpload.map { it.id }
+            val deviceConfigRequests =
+                deviceConfigsToUpload.map { config ->
+                    DeviceConfigRequest(
+                        id = config.uuid,
+                        appVersion = config.appVersion,
+                        appBuild = config.appBuild,
+                        osVersion = config.osVersion,
+                        sdkVersion = config.sdkVersion,
+                        loggedAt = config.loggedAt.toString(),
+                        instanceId = instanceId,
+                    )
+                }
 
-        dao.updateDeviceConfigBundleIds(deviceConfigIds, bundleId)
-        objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        dao.updateDeviceConfigUploadStatus(deviceConfigIds, true)
+            val jsonBundle =
+                json.encodeToString(
+                    UploadBundle.createV2(
+                        deviceConfigs = deviceConfigRequests,
+                    ),
+                )
+            val bundleId = jsonBundle.md5() + "_deviceConfigs"
+            val deviceConfigIds = deviceConfigsToUpload.map { it.id }
+
+            dao.updateDeviceConfigBundleIds(deviceConfigIds, bundleId)
+            objectStorageClient.uploadBundle(jsonBundle, bundleId)
+            dao.updateDeviceConfigUploadStatus(deviceConfigIds, true)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: SerializationException) {
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_PARSING, e, "Serialization failure during device config upload")
+            throw e
+        } catch (e: Exception) {
+            val (failureType, message) =
+                when (e) {
+                    is IOException -> ExceptionDataCollector.TYPE_NETWORK to "Network failure during device config upload"
+                    is AmazonClientException -> ExceptionDataCollector.TYPE_SERVER to "Storage server failure during device config upload"
+                    else -> ExceptionDataCollector.TYPE_UNKNOWN to "Unexpected failure during device config upload"
+                }
+            exceptionDataCollector.recordFailure(failureType, e, message)
+            throw e
+        }
     }
 }

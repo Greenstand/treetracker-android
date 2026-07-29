@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.google.firebase.installations.FirebaseInstallations
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
@@ -87,8 +88,12 @@ class SyncDataUseCase(
                     uploadLocationDataUseCase.execute(Unit)
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            // Underlying uploaders already recorded the failure type; just log here so we don't
+            // double-count the same failure as unknown.
+            Timber.tag(TAG).e(e, "Error occurred during syncing data")
             syncProgressTracker.endSync(error = e.localizedMessage)
             return false
         }
@@ -158,7 +163,8 @@ class SyncDataUseCase(
                 coroutineContext.cancel()
             }
         } catch (e: Exception) {
-            Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            // Underling uploaders set the FAILURE_TYPE already, so we just log here
+            Timber.tag(TAG).e(e, "$tag failed")
             throw e
         }
     }

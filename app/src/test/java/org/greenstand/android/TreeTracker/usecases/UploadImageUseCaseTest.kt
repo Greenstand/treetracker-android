@@ -23,6 +23,7 @@ import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.junit.Before
 import org.junit.Rule
@@ -41,12 +42,15 @@ class UploadImageUseCaseTest {
     @MockK(relaxed = true)
     private lateinit var objectStorageClient: ObjectStorageClient
 
+    @MockK(relaxed = true)
+    private lateinit var exceptionDataCollector: ExceptionDataCollector
+
     private lateinit var uploadImageUseCase: UploadImageUseCase
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        uploadImageUseCase = UploadImageUseCase(doSpaces = objectStorageClient)
+        uploadImageUseCase = UploadImageUseCase(doSpaces = objectStorageClient, exceptionDataCollector = exceptionDataCollector)
     }
 
     @Test

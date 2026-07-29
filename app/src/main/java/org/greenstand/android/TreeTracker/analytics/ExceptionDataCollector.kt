@@ -16,9 +16,11 @@
 package org.greenstand.android.TreeTracker.analytics
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import timber.log.Timber
 
 class ExceptionDataCollector(
     private val firebaseCrashlytics: FirebaseCrashlytics,
+    private val analytics: Analytics,
 ) {
     private var currentRoute: String? = null
     private var lastRoute: String? = null
@@ -59,6 +61,32 @@ class ExceptionDataCollector(
         firebaseCrashlytics.setCustomKey(key, value)
     }
 
+    // Synchronized so a concurrent failure on another thread can't overwrite FAILURE_TYPE between
+    // the setCustomKey call and Timber.e's (synchronous) forwarding to Crashlytics.recordException.
+    // FAILURE_TYPE is cleared again immediately after so it doesn't linger and get misattached to
+    // an unrelated crash reported later in the same app session.
+    //
+    // Also logs an Analytics event: Crashlytics groups recorded exceptions into issues by stack
+    // trace, so the same failureType thrown from different call sites ends up spread across many
+    // issues with no single aggregate count. The Analytics event gives a native, queryable count
+    // of occurrences per failureType for answering "how often does each failure type happen".
+    @Synchronized
+    fun recordFailure(
+        failureType: String,
+        throwable: Throwable,
+        message: String,
+        tag: String? = null,
+    ) {
+        set(FAILURE_TYPE, failureType)
+        if (tag != null) {
+            Timber.tag(tag).e(throwable, message)
+        } else {
+            Timber.e(throwable, message)
+        }
+        clear(FAILURE_TYPE)
+        analytics.uploadFailure(failureType)
+    }
+
     fun clear(key: String) {
         if (key == USER_WALLET || key == POWER_USER_WALLET) {
             firebaseCrashlytics.setUserId("")
@@ -74,7 +102,14 @@ class ExceptionDataCollector(
         const val SESSION_NOTE = "session_note"
         const val ORG_NAME = "organization_name"
         const val IS_IN_SESSION = "is_in_session"
+        const val FAILURE_TYPE = "failure_type"
         private const val LAST_ROUTE = "last_route"
         private const val ROUTE = "route"
+
+        // Failure Types
+        const val TYPE_NETWORK = "network_failure"
+        const val TYPE_PARSING = "parsing_failure"
+        const val TYPE_SERVER = "server_failure"
+        const val TYPE_UNKNOWN = "unknown_failure"
     }
 }

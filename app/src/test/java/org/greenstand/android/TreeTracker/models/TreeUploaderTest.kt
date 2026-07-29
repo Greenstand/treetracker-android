@@ -27,8 +27,10 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -45,6 +47,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.IOException
+import kotlin.test.assertFailsWith
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -68,6 +72,9 @@ class TreeUploaderTest {
     @MockK(relaxed = true)
     private lateinit var dao: TreeTrackerDAO
 
+    @MockK(relaxed = true)
+    private lateinit var exceptionDataCollector: ExceptionDataCollector
+
     private val json =
         Json {
             explicitNulls = true
@@ -89,6 +96,7 @@ class TreeUploaderTest {
                 createTreeRequestUseCase = createTreeRequestUseCase,
                 dao = dao,
                 json = json,
+                exceptionDataCollector = exceptionDataCollector,
             )
     }
 
@@ -132,6 +140,42 @@ class TreeUploaderTest {
             coVerify(exactly = 1) { uploadImageUseCase.execute(any()) }
             coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
             coVerify(exactly = 1) { dao.updateTreesUploadStatus(listOf(1L), true) }
+        }
+
+    @Test
+    fun `WHEN upload fails due to network THEN logs network failure type`() =
+        runTest {
+            coEvery { dao.getTreesByIds(any()) } throws IOException("No internet")
+
+            assertFailsWith<IOException> {
+                treeUploader.uploadTrees(listOf(1L))
+            }
+
+            coVerify {
+                exceptionDataCollector.recordFailure(
+                    ExceptionDataCollector.TYPE_NETWORK,
+                    any(),
+                    any(),
+                )
+            }
+        }
+
+    @Test
+    fun `WHEN upload fails due to parsing THEN logs parsing failure type`() =
+        runTest {
+            coEvery { dao.getTreesByIds(any()) } throws SerializationException("JSON error")
+
+            assertFailsWith<SerializationException> {
+                treeUploader.uploadTrees(listOf(1L))
+            }
+
+            coVerify {
+                exceptionDataCollector.recordFailure(
+                    ExceptionDataCollector.TYPE_PARSING,
+                    any(),
+                    any(),
+                )
+            }
         }
 
     @Test

@@ -26,4 +26,5 @@ object AnalyticEvents {
     const val TREE_COLOR_ADDED = "tree_color_added"
     const val USER_ENTERED_EMAIL_PHONE = "user_enter_email_phone"
     const val USER_ENTERED_DETAILS = "user_entered_details"
+    const val UPLOAD_FAILURE = "upload_failure"
 }

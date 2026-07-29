@@ -16,10 +16,13 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.amazonaws.AmazonClientException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.LocationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.TracksRequest
@@ -28,10 +31,12 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
+import java.io.IOException
 
 class UploadLocationDataUseCase(
     private val dao: TreeTrackerDAO,
     private val json: Json,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) : UseCase<Unit, Boolean>() {
     private val storageClient = ObjectStorageClient.instance()
 
@@ -84,18 +89,19 @@ class UploadLocationDataUseCase(
 
                 Timber.tag("Location Upload").d("Completed uploading ${locationEntities.size} V2 GPS locations")
             }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: SerializationException) {
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_PARSING, e, "Serialization failure during location data upload")
+            return false
         } catch (ace: AmazonClientException) {
-            Timber.e(
-                "Caught an AmazonClientException, which " +
-                    "means the client encountered " +
-                    "an internal error while trying to " +
-                    "communicate with S3, " +
-                    "such as not being able to access the network.",
-            )
-            Timber.e("Error Message: ${ace.message}")
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_SERVER, ace, "Storage server failure during location data upload")
+            return false
+        } catch (e: IOException) {
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_NETWORK, e, "Network failure during location data upload")
             return false
         } catch (e: Exception) {
-            Timber.e("Location upload error: ${e.message}")
+            exceptionDataCollector.recordFailure(ExceptionDataCollector.TYPE_UNKNOWN, e, "Unexpected location upload error")
             return false
         }
         return true

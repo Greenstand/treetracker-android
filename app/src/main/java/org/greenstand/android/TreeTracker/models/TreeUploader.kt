@@ -15,12 +15,15 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import com.amazonaws.AmazonClientException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.ensureActive
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.TreeCaptureRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
@@ -34,6 +37,7 @@ import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
 class TreeUploader(
@@ -42,6 +46,7 @@ class TreeUploader(
     private val createTreeRequestUseCase: CreateTreeRequestUseCase,
     private val dao: TreeTrackerDAO,
     private val json: Json,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
     fun log(msg: String) = Timber.tag("TreeUploader").d(msg)
 
@@ -75,21 +80,52 @@ class TreeUploader(
         onHandleUpload: suspend (List<Long>) -> Unit,
     ) {
         log("Uploading ${treeIds.size} trees")
-        treeIds.windowed(size = TREE_BUNDLE_SIZE, step = TREE_BUNDLE_SIZE, partialWindows = true).onEach { treeIdBundle ->
+        var firstError: Exception? = null
+
+        treeIds.windowed(size = TREE_BUNDLE_SIZE, step = TREE_BUNDLE_SIZE, partialWindows = true).forEach { treeIdBundle ->
             try {
-                if (coroutineContext.isActive) {
-                    coroutineScope {
-                        log("Starting bulk upload for ${treeIdBundle.size} trees")
-                        onHandleUpload(treeIdBundle)
-                        log("Completed bulk upload for ${treeIdBundle.size} trees")
-                    }
-                } else {
-                    coroutineContext.cancel()
+                coroutineContext.ensureActive()
+                coroutineScope {
+                    log("Starting bulk upload for ${treeIdBundle.size} trees")
+                    onHandleUpload(treeIdBundle)
+                    log("Completed bulk upload for ${treeIdBundle.size} trees")
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: SerializationException) {
+                exceptionDataCollector.recordFailure(
+                    ExceptionDataCollector.TYPE_PARSING,
+                    e,
+                    "NewTree upload failed: Parsing failure for bundle $treeIdBundle",
+                )
+                if (firstError == null) firstError = e
+            } catch (e: IOException) {
+                exceptionDataCollector.recordFailure(
+                    ExceptionDataCollector.TYPE_NETWORK,
+                    e,
+                    "NewTree upload failed: Network failure for bundle $treeIdBundle",
+                )
+                if (firstError == null) firstError = e
+            } catch (e: AmazonClientException) {
+                exceptionDataCollector.recordFailure(
+                    ExceptionDataCollector.TYPE_SERVER,
+                    e,
+                    "NewTree upload failed: Storage server failure for bundle $treeIdBundle",
+                )
+                if (firstError == null) firstError = e
             } catch (e: Exception) {
-                Timber.e("NewTree upload failed")
+                exceptionDataCollector.recordFailure(
+                    ExceptionDataCollector.TYPE_UNKNOWN,
+                    e,
+                    "NewTree upload failed: Unexpected failure for bundle $treeIdBundle",
+                )
+                if (firstError == null) {
+                    firstError = e
+                }
             }
         }
+
+        firstError?.let { throw it }
         log("Completed upload for ${treeIds.size} trees")
     }
 
@@ -107,11 +143,14 @@ class TreeUploader(
                                     lat = tree.latitude,
                                     long = tree.longitude,
                                 ),
-                            ) ?: error("No imageUrl")
+                            )
 
-                        // Update local tree data with image Url
-                        tree.photoUrl = imageUrl
-                        dao.updateTreeCapture(tree)
+                        // UploadImageUseCase already recorded the failure type; just skip this
+                        // tree's photo rather than raising a second, miscategorized exception.
+                        imageUrl?.let {
+                            tree.photoUrl = it
+                            dao.updateTreeCapture(tree)
+                        }
                     }
                 }.forEach { it.await() }
         }
@@ -132,11 +171,14 @@ class TreeUploader(
                                     lat = tree.latitude,
                                     long = tree.longitude,
                                 ),
-                            ) ?: error("No imageUrl")
+                            )
 
-                        // Update local tree data with image Url
-                        tree.photoUrl = imageUrl
-                        dao.updateTree(tree)
+                        // UploadImageUseCase already recorded the failure type; just skip this
+                        // tree's photo rather than raising a second, miscategorized exception.
+                        imageUrl?.let {
+                            tree.photoUrl = it
+                            dao.updateTree(tree)
+                        }
                     }
                 }.forEach { it.await() }
         }
@@ -155,7 +197,7 @@ class TreeUploader(
                 createTreeRequestUseCase.execute(
                     CreateTreeRequestParams(
                         tree.id,
-                        tree.photoUrl!!,
+                        tree.photoUrl ?: "",
                     ),
                 )
             }

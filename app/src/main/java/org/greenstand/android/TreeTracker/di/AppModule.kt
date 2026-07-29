@@ -174,7 +174,7 @@ val appModule =
 
         single { MessagesRepo(get(), get(), get(), get(), get()) }
 
-        factory { MessageUploader(get(), get(), get()) }
+        factory { MessageUploader(get(), get(), get(), get()) }
 
         single { LocationUpdateManager(get(), get(), get()) }
 
@@ -225,23 +225,23 @@ val appModule =
 
         single { SensorDiagnosticsTracker(get(), get(), get(), get(), get()) }
 
-        single { ExceptionDataCollector(get()) }
+        single { ExceptionDataCollector(get(), get()) }
 
         factory { TimeProvider(get()) }
 
         factory { TreesToSyncHelper(get(), get()) }
 
-        factory { PlanterUploader(get(), get(), get(), get()) }
+        factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
-        factory { SessionUploader(get(), get(), get()) }
+        factory { SessionUploader(get(), get(), get(), get()) }
 
-        factory { DeviceConfigUploader(get(), get(), get()) }
+        factory { DeviceConfigUploader(get(), get(), get(), get()) }
 
         factory { LanguageSwitcher(get()) }
 
-        factory { UploadImageUseCase(get()) }
+        factory { UploadImageUseCase(get(), get()) }
 
-        factory { UploadLocationDataUseCase(get(), get()) }
+        factory { UploadLocationDataUseCase(get(), get(), get()) }
 
         factory { CreateTreeUseCase(get(), get(), get()) }
 
@@ -253,7 +253,7 @@ val appModule =
 
         factory { CreateTreeRequestUseCase(get()) }
 
-        factory { TreeUploader(get(), get(), get(), get(), get()) }
+        factory { TreeUploader(get(), get(), get(), get(), get(), get()) }
 
         factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get()) }
 
