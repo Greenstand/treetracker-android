@@ -27,6 +27,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -98,6 +99,7 @@ class SyncDataUseCaseTest {
                 messagesRepo = messagesRepo,
                 syncProgressTracker = syncProgressTracker,
             )
+        coEvery { messagesRepo.syncMessages() } returns true
     }
 
     @After
@@ -139,6 +141,57 @@ class SyncDataUseCaseTest {
             val result = syncDataUseCase.execute(Unit)
 
             assertFalse(result)
+        }
+
+    @Test
+    fun `WHEN message sync fails THEN users, sessions, trees and locations still upload`() =
+        runTest {
+            coEvery { messagesRepo.syncMessages() } throws RuntimeException("S3 unavailable")
+            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { dao.getAllTreeIdsToUpload() } returnsMany listOf(listOf(1L), emptyList())
+
+            val result = syncDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            verify { syncProgressTracker.failStep(SyncStep.MESSAGES, "Message Sync failed: S3 unavailable") }
+            coVerify { deviceConfigUploader.upload(any()) }
+            coVerify { planterUploader.upload(any()) }
+            coVerify { sessionUploader.upload() }
+            coVerify { treeUploader.uploadTrees(listOf(1L)) }
+            coVerify { uploadLocationDataUseCase.execute(Unit) }
+            verify { syncProgressTracker.endSync(error = "Messages failed to upload") }
+        }
+
+    @Test
+    fun `WHEN queued messages fail to upload THEN trees still upload and sync returns false`() =
+        runTest {
+            coEvery { messagesRepo.syncMessages() } returns false
+            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { dao.getAllTreeIdsToUpload() } returnsMany listOf(listOf(1L), emptyList())
+
+            val result = syncDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            verify { syncProgressTracker.failStep(SyncStep.MESSAGES, "Message Sync failed") }
+            coVerify { deviceConfigUploader.upload(any()) }
+            coVerify { planterUploader.upload(any()) }
+            coVerify { sessionUploader.upload() }
+            coVerify { treeUploader.uploadTrees(listOf(1L)) }
+            verify { syncProgressTracker.completeStep(SyncStep.TREES) }
+            coVerify { uploadLocationDataUseCase.execute(Unit) }
+            verify { syncProgressTracker.endSync(error = "Messages failed to upload") }
+        }
+
+    @Test
+    fun `WHEN the sync is cancelled during message sync THEN the messages step is marked cancelled`() =
+        runTest {
+            coEvery { messagesRepo.syncMessages() } throws CancellationException("stopped")
+
+            val result = syncDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            verify { syncProgressTracker.failStep(SyncStep.MESSAGES, "Message Sync cancelled") }
+            coVerify(exactly = 0) { deviceConfigUploader.upload(any()) }
         }
 
     @Test
