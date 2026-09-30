@@ -66,8 +66,8 @@ class TreesToSyncHelperTest {
     @Test
     fun `WHEN refreshTreeCountToSync called THEN sums legacy and new tree counts and stores in prefs`() =
         runTest {
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 5
-            coEvery { dao.getNonUploadedTreeImageCount() } returns 10
+            coEvery { dao.getNonUploadedTreeCaptureCount() } returns 5
+            coEvery { dao.getNonUploadedTreeCount() } returns 10
 
             treesToSyncHelper.refreshTreeCountToSync()
 

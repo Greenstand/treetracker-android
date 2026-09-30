@@ -288,6 +288,46 @@ class TreeTrackerDaoTest {
             assertEquals(1, size)
         }
 
+    @Test
+    fun `tree with uploaded image but no uploaded bundle still counts as not uploaded`() =
+        runTest {
+            val deviceConfigId = treeTrackerDAO.insertDeviceConfig(FakeFileGenerator.fakeDeviceConfig)
+            val sessionId = treeTrackerDAO.insertSession(FakeFileGenerator.fakeSession.copy(deviceConfigId = deviceConfigId))
+            val tree = FakeFileGenerator.fakeTree.first().copy(sessionId = sessionId)
+            // Image uploaded, bundle upload failed
+            treeTrackerDAO.insertTree(tree.copy(uuid = "image-only", photoUrl = "https://image", uploaded = false))
+            treeTrackerDAO.insertTree(tree.copy(uuid = "fully-uploaded", photoUrl = "https://image", uploaded = true))
+            treeTrackerDAO.insertTree(tree.copy(uuid = "nothing-uploaded", photoUrl = null, uploaded = false))
+
+            assertEquals(2, treeTrackerDAO.getNonUploadedTreeCount())
+            assertEquals(2, treeTrackerDAO.getNonUploadedTreeCountFlow().first())
+            assertEquals(1, treeTrackerDAO.getUploadedTreeCountFlow().first())
+            // TreeDAO carries the same queries
+            assertEquals(2, database.treeDao().getNonUploadedTreeCount())
+            assertEquals(2, database.treeDao().getNonUploadedTreeCountFlow().first())
+            assertEquals(1, database.treeDao().getUploadedTreeCountFlow().first())
+        }
+
+    @Test
+    fun `legacy tree with uploaded image but no uploaded bundle still counts as not uploaded`() =
+        runTest {
+            val planterInfoId = treeTrackerDAO.insertPlanterInfo(FakeFileGenerator.fakePlanterInfo)
+            val planterCheckInId =
+                treeTrackerDAO.insertPlanterCheckIn(
+                    FakeFileGenerator.fakePlanterCheckInEntity.copy(planterInfoId = planterInfoId),
+                )
+            val treeCapture = FakeFileGenerator.fakeTreeCapture.copy(planterCheckInId = planterCheckInId)
+            treeTrackerDAO.insertTreeCapture(treeCapture.copy(uuid = "image-only", photoUrl = "https://image", uploaded = false))
+            treeTrackerDAO.insertTreeCapture(treeCapture.copy(uuid = "fully-uploaded", photoUrl = "https://image", uploaded = true))
+
+            assertEquals(1, treeTrackerDAO.getNonUploadedTreeCaptureCount())
+            assertEquals(1, treeTrackerDAO.getNonUploadedTreeCaptureCountFlow().first())
+            assertEquals(1, treeTrackerDAO.getUploadedTreeCaptureCountFlow().first())
+            assertEquals(1, database.treeDao().getNonUploadedTreeCaptureCount())
+            assertEquals(1, database.treeDao().getNonUploadedTreeCaptureCountFlow().first())
+            assertEquals(1, database.treeDao().getUploadedTreeCaptureCountFlow().first())
+        }
+
     @After
     @Throws(IOException::class)
     fun tearDown() {
