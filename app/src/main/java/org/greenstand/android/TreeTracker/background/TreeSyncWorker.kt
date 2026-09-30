@@ -54,6 +54,9 @@ class TreeSyncWorker(
     override suspend fun doWork(): Result {
         setForeground(syncNotificationManager.createForegroundInfo(applicationContext))
 
+        // The stored count is only refreshed at a few points (session end, tree delete), so it can be stale,
+        // e.g. right after an app update changed how it's counted. Recount before using it as the total.
+        treesToSyncHelper.refreshTreeCountToSync()
         val totalTreesToSync = treesToSyncHelper.getTreeCountToSync()
 
         return coroutineScope {
@@ -63,7 +66,7 @@ class TreeSyncWorker(
                         delay(750)
                         val remaining =
                             withContext(Dispatchers.IO) {
-                                dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
+                                dao.getNonUploadedTreeCaptureCount() + dao.getNonUploadedTreeCount()
                             }
                         val uploaded = (totalTreesToSync - remaining).coerceAtLeast(0)
                         val contentText = applicationContext.getString(R.string.uploading_trees) + " ($uploaded/$totalTreesToSync)"
