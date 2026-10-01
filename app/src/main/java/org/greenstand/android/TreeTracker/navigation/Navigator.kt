@@ -17,7 +17,12 @@ package org.greenstand.android.TreeTracker.navigation
 
 import android.os.SystemClock
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 
 val LocalNavigator = compositionLocalOf<Navigator> { error("No Navigator found!") }
@@ -89,18 +94,44 @@ class NavOptions {
  * Non-throttled [navigate]/[popBackStack]/[popBackStackTo] are never gated; they are for
  * programmatic, single-shot transitions (splash auto-advance, flow controllers, …).
  *
+ * ## Entry identity
+ *
+ * Navigation 3 keys an entry's ViewModels and saved state by its contentKey, which defaults to
+ * the route's `toString()`. Popping a route and pushing it again in one navigation would then
+ * keep the old entry (and its ViewModel, whose `init` doesn't run again), where Navigation 2
+ * created a new one. So every [navigate] gives the pushed route a new id from [entryIds], and
+ * NavDisplay must build its entries through [withEntryContentKeys] so the contentKey is
+ * [contentKeyOf] (`Route` for initial entries, `Route#id` for pushed ones). Popping back keeps
+ * the existing entry, as does a [NavOptions.launchSingleTop] onto the same route.
+ *
  * @param origin the contentKey of the entry this navigator is bound to, or null for an
  *   unscoped navigator. Set indirectly via [scopedTo].
+ * @param entryIds the per-push ids; hosts keep it in `rememberSaveable` with [NavEntryIds.Saver]
+ *   so contentKeys survive process death along with the back stack.
  */
 class Navigator(
     val backStack: MutableList<NavKey>,
     private val clock: () -> Long = SystemClock::elapsedRealtime,
     private val origin: Any? = null,
+    private val entryIds: NavEntryIds = NavEntryIds(),
 ) {
     // Start outside the throttle window so the first navigation is never dropped.
     private var lastMutationTime = clock() - NAVIGATION_THROTTLE_MS
 
     val topKey: NavKey? get() = backStack.lastOrNull()
+
+    /** The contentKey NavDisplay uses for the top entry. */
+    val topContentKey: Any? get() = topKey?.let(::contentKeyOf)
+
+    /** The contentKey for [key]'s entry on the back stack. See "Entry identity" above. */
+    fun contentKeyOf(key: NavKey): Any = entryIds.contentKeyOf(key)
+
+    /** Wraps [entryProvider] so every entry's contentKey is [contentKeyOf]. Use it for NavDisplay. */
+    fun withEntryContentKeys(entryProvider: (NavKey) -> NavEntry<NavKey>): (NavKey) -> NavEntry<NavKey> =
+        { key ->
+            val entry = entryProvider(key)
+            NavEntry(key, contentKey = contentKeyOf(key), metadata = entry.metadata) { entry.Content() }
+        }
 
     /**
      * Returns a view of this navigator bound to [originContentKey] (the contentKey of the
@@ -109,7 +140,7 @@ class Navigator(
      * the stack — i.e. you can only navigate *away from* a screen while that screen is on
      * top. See the class doc for the rationale.
      */
-    fun scopedTo(originContentKey: Any?): Navigator = Navigator(backStack, clock, originContentKey)
+    fun scopedTo(originContentKey: Any?): Navigator = Navigator(backStack, clock, originContentKey, entryIds)
 
     /** Push [route], honoring [NavOptions] (popUpTo / popUpToRoot / launchSingleTop). */
     fun navigate(
@@ -118,6 +149,7 @@ class Navigator(
     ) {
         val options = NavOptions().apply(builder)
         mutate {
+            val stackBefore = backStack.toList()
             val matcher = options.popUpToMatcher
             when {
                 options.popUpToRootRequested -> backStack.clear()
@@ -129,10 +161,20 @@ class Navigator(
                 }
             }
             val top = backStack.lastOrNull()
+            val keepsExistingEntry: Boolean
             if (options.launchSingleTop && top != null && top::class == route::class) {
+                keepsExistingEntry = top == route
                 backStack[backStack.lastIndex] = route
             } else {
+                keepsExistingEntry = false
                 backStack.add(route)
+            }
+            // A new entry needs a new id, unless the stack is unchanged: NavDisplay only rebuilds
+            // its entries when backStack.toList() changes, so a new id there would desync
+            // [topContentKey]. Compare copies, because NavBackStack and SnapshotStateList don't
+            // implement content equality.
+            if (!keepsExistingEntry && backStack.toList() != stackBefore) {
+                entryIds.assignNewId(route)
             }
         }
     }
@@ -185,7 +227,7 @@ class Navigator(
      */
     private fun isThrottled(): Boolean =
         if (origin != null) {
-            origin != topKey?.toString()
+            origin != topContentKey
         } else {
             clock() - lastMutationTime < NAVIGATION_THROTTLE_MS
         }
@@ -198,11 +240,49 @@ class Navigator(
 
     /** Applies multi-step stack changes atomically so they land in a single frame. */
     private fun mutate(block: () -> Unit) {
-        Snapshot.withMutableSnapshot(block)
+        Snapshot.withMutableSnapshot {
+            block()
+            entryIds.retainOnly(backStack)
+        }
         lastMutationTime = clock()
     }
 
     private companion object {
         const val NAVIGATION_THROTTLE_MS = 300L
+    }
+}
+
+/**
+ * Per-push ids for back stack entries (see "Entry identity" on [Navigator]). Only routes
+ * currently on the back stack keep an id, so this stays as small as the stack.
+ */
+class NavEntryIds(
+    private val ids: SnapshotStateMap<String, Int> = mutableStateMapOf(),
+    private var nextId: Int = 1,
+) {
+    fun contentKeyOf(key: NavKey): String {
+        val route = key.toString()
+        return ids[route]?.let { "$route#$it" } ?: route
+    }
+
+    internal fun assignNewId(key: NavKey) {
+        ids[key.toString()] = nextId++
+    }
+
+    internal fun retainOnly(backStack: List<NavKey>) {
+        val routes = backStack.mapTo(HashSet()) { it.toString() }
+        ids.keys.filterNot { it in routes }.forEach { ids.remove(it) }
+    }
+
+    companion object {
+        val Saver: Saver<NavEntryIds, Any> =
+            listSaver(
+                save = { listOf(it.nextId, HashMap(it.ids)) },
+                restore = { saved ->
+                    @Suppress("UNCHECKED_CAST")
+                    val ids = saved[1] as Map<String, Int>
+                    NavEntryIds(mutableStateMapOf<String, Int>().apply { putAll(ids) }, saved[0] as Int)
+                },
+            )
     }
 }
