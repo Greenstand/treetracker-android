@@ -92,7 +92,7 @@ class DashboardViewModelTest {
         every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
         every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(4)
         coEvery { checkForInternetUseCase.execute(Unit) } returns true
-        coEvery { messagesRepo.syncMessages() } just Runs
+        coEvery { messagesRepo.syncMessages() } returns true
         coEvery { treesToSyncHelper.getTreeCountToSync() } returns 6
         coEvery { orgRepo.getOrgs() } returns FakeFileGenerator.fakeOrganizationList
         coEvery { messagesRepo.checkForUnreadMessages() } returns false
@@ -114,7 +114,7 @@ class DashboardViewModelTest {
     fun `syncMessages should call syncMessages on messagesRepo if there is internet connection`() =
         runTest {
             coEvery { checkForInternetUseCase.execute(Unit) } returns true
-            coEvery { messagesRepo.syncMessages() } just Runs
+            coEvery { messagesRepo.syncMessages() } returns true
             testSubject.handleAction(DashboardAction.SyncMessages)
             coVerify { messagesRepo.syncMessages() }
         }
