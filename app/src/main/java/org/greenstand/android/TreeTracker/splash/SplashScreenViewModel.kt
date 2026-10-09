@@ -26,6 +26,8 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgLink
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
@@ -55,6 +57,7 @@ class SplashScreenViewModel(
     private val checkForInternetUseCase: CheckForInternetUseCase,
     private val orgRepo: OrgRepo,
     private val orgConfigProvider: OrgConfigProvider,
+    private val installReferrerOrgProvider: InstallReferrerOrgProvider,
     private val exceptionDataCollector: ExceptionDataCollector,
 ) : BaseViewModel<SplashState, SplashAction>(SplashState()) {
     override fun handleAction(action: SplashAction) {
@@ -72,15 +75,15 @@ class SplashScreenViewModel(
         // normally a no-op; ensureInitialized() (not init()) avoids a redundant
         // reload and stays correct if the gate is ever bypassed.
         orgRepo.ensureInitialized()
-        if (!orgId.isNullOrBlank()) {
-            Timber.tag(ORG_LINK_TAG).i("Deeplink received: orgId=$orgId, orgName=$orgName")
-            val configJson = orgConfigProvider.fetchOrgConfig(orgId)
+        val link = linkedOrg()
+        if (link != null) {
+            val configJson = orgConfigProvider.fetchOrgConfig(link.id)
             if (configJson != null) {
-                Timber.tag(ORG_LINK_TAG).i("Remote Config found for org $orgId, applying full config")
-                orgRepo.addOrgFromRemoteConfig(orgId, orgName ?: "", configJson)
+                Timber.tag(ORG_LINK_TAG).i("Remote Config found for org ${link.id}, applying full config")
+                orgRepo.addOrgFromRemoteConfig(link.id, link.name, configJson)
             } else {
-                Timber.tag(ORG_LINK_TAG).i("No Remote Config for org $orgId, creating minimal org with defaults")
-                orgRepo.addMinimalOrg(orgId, orgName ?: "")
+                Timber.tag(ORG_LINK_TAG).i("No Remote Config for org ${link.id}, creating minimal org with defaults")
+                orgRepo.addMinimalOrg(link.id, link.name)
             }
         } else {
             Timber.tag(ORG_LINK_TAG).d("No org deeplink, using existing org")
@@ -101,6 +104,14 @@ class SplashScreenViewModel(
         }
     }
 
+    private suspend fun linkedOrg(): OrgLink? {
+        if (!orgId.isNullOrBlank()) {
+            Timber.tag(ORG_LINK_TAG).i("Deeplink received: orgId=$orgId, orgName=$orgName")
+            return OrgLink(orgId, orgName.orEmpty())
+        }
+        return installReferrerOrgProvider.consume()
+    }
+
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
 
     companion object {
@@ -114,5 +125,5 @@ class SplashScreenViewModelFactory(
 ) : ViewModelProvider.Factory,
     KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgId, orgName, get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgId, orgName, get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
 }
