@@ -26,13 +26,13 @@ import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 
 @Composable
 fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
     val cameraLauncher =
@@ -40,13 +40,13 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
             scope.launch {
                 viewModel.createUser(photoPath)?.let { user ->
                     if (user.isPowerUser) {
-                        navController.navigate(DashboardRoute) {
+                        navigator.navigate(DashboardRoute) {
                             popUpTo<LanguageRoute> { inclusive = true }
                             launchSingleTop = true
                         }
                     } else {
                         CaptureSetupScopeManager.getData().user = user
-                        scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navController) }
+                        scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navigator) }
                     }
                 }
             }
@@ -56,19 +56,19 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is SignupAction.NavigateBack -> navController.popBackStack()
+                is SignupAction.NavigateBack -> navigator.popBackStack()
                 is SignupAction.LaunchCamera -> cameraLauncher.launch(true)
                 is SignupAction.ExistingUserSelected -> {
                     val user = action.user
                     if (state.isTherePowerUser == false) {
                         viewModel.handleAction(SignupAction.SetExistingUserAsPowerUser(user.id))
-                        navController.navigate(DashboardRoute) {
+                        navigator.navigate(DashboardRoute) {
                             popUpTo<LanguageRoute> { inclusive = true }
                             launchSingleTop = true
                         }
                     } else {
                         CaptureSetupScopeManager.getData().user = user
-                        scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navController) }
+                        scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navigator) }
                     }
                 }
                 else -> viewModel.handleAction(action)

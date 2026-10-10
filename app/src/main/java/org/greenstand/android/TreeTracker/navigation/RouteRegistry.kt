@@ -15,6 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.navigation
 
+import androidx.navigation3.runtime.NavKey
+
 /**
  * Maps route identifiers (from org config JSON) to type-safe route objects.
  * Org config stores route patterns as strings in the database. This registry provides
@@ -38,7 +40,7 @@ object RouteRegistry {
     private const val ALIAS_TREE_CAPTURE = "tree-capture"
     private const val ALIAS_TREE_IMAGE_REVIEW = "image-review"
 
-    private val noArgRoutes: Map<String, Any> =
+    private val noArgRoutes: Map<String, NavKey> =
         mapOf(
             ROUTE_USER_SELECT to UserSelectRoute,
             ROUTE_WALLET_SELECT to WalletSelectRoute,
@@ -67,7 +69,7 @@ object RouteRegistry {
      * Resolves a route string to a no-arg typed route object.
      * Returns null if the route requires arguments or is unknown.
      */
-    fun resolveNoArgRoute(routeString: String): Any? {
+    fun resolveNoArgRoute(routeString: String): NavKey? {
         // Try direct match first, then alias resolution
         return noArgRoutes[routeString]
             ?: aliasMap[routeString]?.let { noArgRoutes[it] }

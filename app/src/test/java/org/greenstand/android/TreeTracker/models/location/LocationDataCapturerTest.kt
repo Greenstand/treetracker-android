@@ -22,10 +22,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
@@ -40,6 +44,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 class LocationDataCapturerTest {
     private lateinit var locationDataCapturer: LocationDataCapturer
@@ -95,6 +101,32 @@ class LocationDataCapturerTest {
 
         verify { liveData.observeForever(any<Observer<Location?>>()) }
     }
+
+    @Test
+    fun `WHEN GPS updates stop THEN pending location inserts are cancelled`() =
+        runTest {
+            val locationsLiveData = MutableLiveData<Location?>()
+            val insertCompleted = CountDownLatch(1)
+            every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
+            every { sessionTracker.currentSessionId } returns 1L
+            every { timeProvider.currentTime() } returns Instant.fromEpochMilliseconds(1000)
+            coEvery { treeTrackerDAO.insertLocationData(any()) } coAnswers {
+                delay(500)
+                insertCompleted.countDown()
+                1L
+            }
+
+            locationDataCapturer.startGpsUpdates()
+            val location = mockk<Location>(relaxed = true)
+            every { location.latitude } returns 1.0
+            every { location.longitude } returns 2.0
+            every { location.accuracy } returns 3f
+
+            locationsLiveData.value = location
+            locationDataCapturer.stopGpsUpdates()
+
+            assertFalse(insertCompleted.await(1, TimeUnit.SECONDS))
+        }
 
     @Test
     fun turnOnTreeCaptureMode() {

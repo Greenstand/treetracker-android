@@ -43,7 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -54,7 +54,7 @@ import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 @Composable
 fun TreeHeightScreen() {
     val viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current)
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -92,7 +92,7 @@ fun TreeHeightScreen() {
                         onClick = {
                             state.selectedColor?.let {
                                 scope.launch {
-                                    CaptureFlowScopeManager.nav.navForward(navController)
+                                    CaptureFlowScopeManager.nav.navForward(navigator)
                                 }
                             }
                         },

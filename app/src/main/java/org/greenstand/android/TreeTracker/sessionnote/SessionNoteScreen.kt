@@ -41,7 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -49,7 +49,7 @@ import org.greenstand.android.TreeTracker.view.BorderedTextField
 
 @Composable
 fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = LocalViewModelFactory.current)) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -57,8 +57,8 @@ fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = Loca
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is SessionNoteAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
-                is SessionNoteAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                is SessionNoteAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
+                is SessionNoteAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                 else -> viewModel.handleAction(action)
             }
         },

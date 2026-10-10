@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectState
@@ -72,7 +72,7 @@ fun ProfileScreen(
     userId: Long,
 ) {
     val viewModel: UserSelectViewModel = viewModel(factory = UserSelectViewModelFactory(userId = userId))
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
 
     val cameraLauncher =
@@ -87,7 +87,7 @@ fun ProfileScreen(
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is UserSelectAction.NavigateBack -> navController.popBackStack()
+                is UserSelectAction.NavigateBack -> navigator.throttledPopBackStack()
                 is UserSelectAction.NavigateToPhoto -> cameraLauncher.launch(true)
                 is UserSelectAction.SaveUserToDatabase -> {
                     viewModel.handleAction(action)

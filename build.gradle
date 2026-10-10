@@ -27,25 +27,7 @@ buildscript {
     }
 }
 
-allprojects {
-    apply plugin : "org.jlleitschuh.gradle.ktlint"
-    ktlint {
-        android.set(true)
-        verbose.set(true)
-        filter {
-            exclude { element -> element.file.path.contains("generated/") }
-        }
-    }
-    repositories {
-        google()
-        mavenCentral()
-        maven {
-            url = "https://maven.google.com" // Google's Maven repository
-        }
-        maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
-        maven { url = 'https://jitpack.io' }
-    }
-
+subprojects {
     ext {
         // Keys properties - these still need to be loaded from treetracker.keys.properties
         s3_production_identity_pool_id = "configure in treetracker.keys.properties"
@@ -60,9 +42,15 @@ allprojects {
         treetracker_client_id = "configure in treetracker.keys.properties"
         treetracker_client_secret = "configure in treetracker.keys.properties"
     }
-}
 
-subprojects {
+    apply plugin : 'org.jlleitschuh.gradle.ktlint'
+    ktlint {
+        android.set(true)
+        verbose.set(true)
+        filter {
+            exclude { element -> element.file.path.contains("generated/") }
+        }
+    }
     apply plugin : "io.gitlab.arturbosch.detekt"
     detekt {
         config = files("${project.rootDir}/detekt.yml")

@@ -16,14 +16,17 @@
 package org.greenstand.android.TreeTracker.capture
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.FeatureResolver
+import org.greenstand.android.TreeTracker.viewmodel.NavigationEvent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -86,5 +89,53 @@ class TreeImageReviewViewModelTest {
             testSubject.handleAction(TreeImageReviewAction.SetDialogState(isDialogOpen))
             val expected = testSubject.state.value.isDialogOpen
             assertTrue(expected)
+        }
+
+    @Test
+    fun `CheckIfCanNavigateForward without forceNote emits NavigationEvent`() =
+        runTest {
+            // featureResolver defaults to false (relaxed mock) → forceNote = false
+            testSubject.handleAction(TreeImageReviewAction.CheckIfCanNavigateForward)
+
+            val event = testSubject.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent)
+        }
+
+    @Test
+    fun `CheckIfCanNavigateForward with forceNote and blank note opens dialog and emits no event`() =
+        runTest {
+            every {
+                featureResolver.isCaptureFlowFeatureEnabled(any(), any())
+            } returns true
+            val vm = TreeImageReviewViewModel(treeCapturer, userRepo, featureResolver)
+
+            vm.handleAction(TreeImageReviewAction.CheckIfCanNavigateForward)
+
+            assertTrue(vm.state.value.isDialogOpen)
+        }
+
+    @Test
+    fun `CheckIfCanNavigateForward with forceNote and non-blank note emits NavigationEvent`() =
+        runTest {
+            every {
+                featureResolver.isCaptureFlowFeatureEnabled(any(), any())
+            } returns true
+            val vm = TreeImageReviewViewModel(treeCapturer, userRepo, featureResolver)
+
+            vm.handleAction(TreeImageReviewAction.UpdateNote("a note"))
+            vm.handleAction(TreeImageReviewAction.CheckIfCanNavigateForward)
+
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent)
+            assertFalse(vm.state.value.isDialogOpen)
+        }
+
+    @Test
+    fun `NavigateBack emits NavigationEvent`() =
+        runTest {
+            testSubject.handleAction(TreeImageReviewAction.NavigateBack)
+
+            val event = testSubject.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent)
         }
 }

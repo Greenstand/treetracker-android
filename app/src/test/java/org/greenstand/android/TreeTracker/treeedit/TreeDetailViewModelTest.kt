@@ -26,9 +26,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
+import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
+import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
+import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -99,28 +103,18 @@ class TreeDetailViewModelTest {
         }
 
     @Test
-    fun `SaveNote updates tree in DAO and sets noteSaved flag`() =
+    fun `SaveNote updates tree in DAO and emits noteSaved snackbar`() =
         runTest {
             coEvery { dao.updateTree(any()) } just Runs
             val vm = createViewModel()
             vm.state.first { it.tree != null }
             vm.handleAction(TreeDetailAction.UpdateNote("Updated note"))
             vm.handleAction(TreeDetailAction.SaveNote)
-            vm.state.first { it.noteSaved }
-            assertTrue(vm.state.value.noteSaved)
-            coVerify { dao.updateTree(match { it.note == "Updated note" }) }
-        }
 
-    @Test
-    fun `NoteSavedShown clears noteSaved flag`() =
-        runTest {
-            coEvery { dao.updateTree(any()) } just Runs
-            val vm = createViewModel()
-            vm.state.first { it.tree != null }
-            vm.handleAction(TreeDetailAction.SaveNote)
-            vm.state.first { it.noteSaved }
-            vm.handleAction(TreeDetailAction.NoteSavedShown)
-            assertFalse(vm.state.value.noteSaved)
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertTrue(event is ShowSnackbar)
+            assertEquals(TextRef.Res(R.string.tree_note_saved), (event as ShowSnackbar).message)
+            coVerify { dao.updateTree(match { it.note == "Updated note" }) }
         }
 
     @Test
@@ -135,15 +129,16 @@ class TreeDetailViewModelTest {
         }
 
     @Test
-    fun `DeleteTree calls DAO delete and refreshes sync helper`() =
+    fun `DeleteTree calls DAO delete, refreshes sync helper, and emits pop-back event`() =
         runTest {
             coEvery { dao.deleteTreeById(42) } just Runs
             coEvery { treesToSyncHelper.refreshTreeCountToSync() } just Runs
             val vm = createViewModel()
             vm.state.first { it.tree != null }
             vm.handleAction(TreeDetailAction.DeleteTree)
-            vm.state.first { it.isDeleted }
-            assertTrue(vm.state.value.isDeleted)
+
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
             coVerify { dao.deleteTreeById(42) }
             coVerify { treesToSyncHelper.refreshTreeCountToSync() }
         }
@@ -157,8 +152,20 @@ class TreeDetailViewModelTest {
             val vm = createViewModel(tree = uploadedTree)
             vm.state.first { it.tree != null }
             vm.handleAction(TreeDetailAction.DeleteTree)
-            vm.state.first { it.isDeleted }
-            assertTrue(vm.state.value.isDeleted)
+
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
             coVerify { dao.deleteTreeById(42) }
+        }
+
+    @Test
+    fun `NavigateBack emits pop-back event`() =
+        runTest {
+            val vm = createViewModel()
+            vm.state.first { it.tree != null }
+            vm.handleAction(TreeDetailAction.NavigateBack)
+
+            val event = vm.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
         }
 }

@@ -19,6 +19,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
+import org.greenstand.android.TreeTracker.navigation.MapRoute
+import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
+import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
@@ -79,7 +84,18 @@ class SettingsViewModel(
             is SettingsAction.UpdateLogoutDialogVisibility -> {
                 updateState { copy(showLogoutDialog = action.show) }
             }
-            else -> { }
+            is SettingsAction.NavigateToProfile -> navigate(ProfileSelectRoute)
+            is SettingsAction.NavigateToEditTrees -> navigate(TreeEditUserSelectRoute)
+            is SettingsAction.NavigateToMap -> navigate(MapRoute)
+            is SettingsAction.NavigateToDeleteAccount -> navigate(DeleteProfileRoute)
+            is SettingsAction.NavigateBack -> popBackStack()
+            is SettingsAction.LogoutConfirmed -> {
+                handleAction(SettingsAction.Logout)
+                navigate(SignupFlowRoute) {
+                    popUpToRoot()
+                    launchSingleTop = true
+                }
+            }
         }
     }
 }

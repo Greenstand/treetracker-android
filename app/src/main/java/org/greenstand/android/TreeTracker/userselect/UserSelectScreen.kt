@@ -19,19 +19,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 
 @Composable
 fun UserSelectScreen() {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
     UserSelect(
         navigationButtonColors = AppButtonColors.ProgressGreen,
         isCreateUserEnabled = true,
         isNotificationEnabled = true,
         onNavigateForward = {
-            scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+            scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
         },
     )
 }

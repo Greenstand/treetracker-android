@@ -68,7 +68,10 @@ class SplashScreenViewModel(
     suspend fun bootstrap() {
         deviceConfigUpdater.saveLatestConfig()
 
-        orgRepo.init()
+        // The Root gate hydrates OrgRepo before this screen composes, so this is
+        // normally a no-op; ensureInitialized() (not init()) avoids a redundant
+        // reload and stays correct if the gate is ever bypassed.
+        orgRepo.ensureInitialized()
         if (!orgId.isNullOrBlank()) {
             Timber.tag(ORG_LINK_TAG).i("Deeplink received: orgId=$orgId, orgName=$orgName")
             val configJson = orgConfigProvider.fetchOrgConfig(orgId)

@@ -20,18 +20,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.organization.FeatureResolver
 import org.greenstand.android.TreeTracker.models.organization.OrgFeature
 import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+import org.greenstand.android.TreeTracker.viewmodel.NavigationEvent
 
 data class TreeImageReviewState(
     val treeImagePath: String? = null,
     val note: String = "",
     val isDialogOpen: Boolean = false,
     val showReviewTutorial: Boolean? = null,
-    val canNavigateForward: Boolean = false,
 )
 
 sealed class TreeImageReviewAction : Action {
@@ -86,7 +87,7 @@ class TreeImageReviewViewModel(
                 if (forceNote && currentState.note.isBlank()) {
                     updateState { copy(isDialogOpen = true) }
                 } else {
-                    updateState { copy(canNavigateForward = true) }
+                    sendEvent(NavigationEvent { CaptureFlowScopeManager.nav.navForward(this) })
                 }
             }
             is TreeImageReviewAction.UpdateReviewTutorialDialog -> {
@@ -101,7 +102,9 @@ class TreeImageReviewViewModel(
             is TreeImageReviewAction.SetDialogState -> {
                 updateState { copy(isDialogOpen = action.isOpen) }
             }
-            else -> { }
+            is TreeImageReviewAction.NavigateBack -> {
+                sendEvent(NavigationEvent { CaptureFlowScopeManager.nav.navBackward(this) })
+            }
         }
     }
 

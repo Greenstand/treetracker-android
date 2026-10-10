@@ -1,0 +1,129 @@
+name: Require PR media
+
+# Ensures every PR includes a screen recording / video, and a screenshot for UI
+# changes. Posts a friendly comment tagging the author when something is missing,
+# and fails a status check so the PR cannot be merged until it is fixed.
+#
+# Escape hatch: apply the `non-ui` label (or tick the "no user-visible / UI effect"
+# box in the PR description) to skip the screenshot requirement. A video is still
+# required even for non-UI changes.
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize, labeled, unlabeled]
+
+# pull_request_target runs in the base-repo context so we can comment on PRs from
+# forks. We only read the PR body/labels and post a comment — no untrusted code is
+# checked out or executed.
+permissions:
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: require-pr-media-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check-media:
+    name: Check for screenshot & video
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const MARKER = '<!-- require-pr-media -->';
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const author = pr.user.login;
+
+            // --- Detect a screenshot (an embedded image) --------------------
+            const hasScreenshot =
+              /!\[[^\]]*\]\([^)]+\)/.test(body) ||   // ![alt](url) markdown image
+              /<img\b[^>]*>/i.test(body);            // <img ...> html
+
+            // Strip embedded images so their URLs are not mistaken for a video.
+            const withoutImages = body
+              .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+              .replace(/<img\b[^>]*>/gi, ' ');
+
+            // --- Detect a video --------------------------------------------
+            const hasVideo =
+              /\.(mp4|mov|webm|m4v|avi|mkv)\b/i.test(withoutImages) ||       // file extension
+              /<video[\s>]/i.test(withoutImages) ||                          // <video> html
+              // A GitHub-hosted attachment that is NOT an embedded image is treated
+              // as a video (GitHub renders uploaded videos as a bare attachment URL).
+              /https?:\/\/(?:github\.com\/user-attachments\/assets|user-images\.githubusercontent\.com)\/\S+/i.test(withoutImages) ||
+              // Common external video hosts.
+              /https?:\/\/(?:www\.)?(?:youtube\.com|youtu\.be|loom\.com|vimeo\.com|streamable\.com|drive\.google\.com)\/\S+/i.test(withoutImages);
+
+            // --- Is this a non-UI change? ----------------------------------
+            const labels = (pr.labels || []).map(l => l.name.toLowerCase());
+            const nonUiLabel = labels.some(n =>
+              ['non-ui', 'no-ui', 'no-ui-change', 'non-ui-change'].includes(n));
+            const nonUiCheckbox =
+              /- \[x\][^\n]*no user-visible/i.test(body) ||
+              /- \[x\][^\n]*no\b[^\n]*ui\b/i.test(body);
+            const isNonUi = nonUiLabel || nonUiCheckbox;
+
+            // --- Work out what is missing ----------------------------------
+            const missing = [];
+            if (!hasVideo) {
+              missing.push('a **🎥 screen recording / video** demonstrating the change — **a video is required even when there are no UI changes**, to show that the parts of the app affected by this change still work');
+            }
+            if (!isNonUi && !hasScreenshot) {
+              missing.push('a **🖼️ screenshot** of the UI change (or mark the PR as `non-ui` if there is no UI change)');
+            }
+
+            // --- Compose the comment ---------------------------------------
+            let commentBody;
+            if (missing.length === 0) {
+              commentBody = [
+                MARKER,
+                `✅ Thanks @${author} — required media detected. Nothing more needed here!`,
+              ].join('\n');
+            } else {
+              commentBody = [
+                MARKER,
+                `👋 Hi @${author}, thanks for the contribution!`,
+                '',
+                'Before this PR can be reviewed and merged, please add:',
+                '',
+                ...missing.map(m => `- ${m}`),
+                '',
+                'Just drag-and-drop the file(s) into the PR description and GitHub will upload them. ' +
+                'This check re-runs automatically when you edit the description.',
+                '',
+                isNonUi
+                  ? '_This PR is marked as non-UI, so a screenshot is not required — **but a video is still required**, showing that the parts of the app affected by this change still work correctly._'
+                  : '_If this change has no user-visible effect, tick the "no user-visible / UI effect" box in the description (or ask a maintainer to add the `non-ui` label) to skip the screenshot requirement. **A video is still required even with no UI changes**, to show that the affected parts of the app still work._',
+              ].join('\n');
+            }
+
+            // --- Upsert the comment (avoid spamming on every edit) ---------
+            const { owner, repo } = context.repo;
+            const issue_number = pr.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100,
+            });
+            const existing = comments.find(c => (c.body || '').includes(MARKER));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body: commentBody,
+              });
+            } else if (missing.length > 0) {
+              // Only create a brand-new comment when there is something to ask for.
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body: commentBody,
+              });
+            }
+
+            // --- Fail the check if media is missing ------------------------
+            if (missing.length > 0) {
+              core.setFailed(
+                'Missing required PR media: ' +
+                missing.map(m => m.replace(/\*\*/g, '').replace(/[🎥🖼️]/g, '').trim()).join('; '),
+              );
+            } else {
+              core.info('All required PR media present.');
+            }

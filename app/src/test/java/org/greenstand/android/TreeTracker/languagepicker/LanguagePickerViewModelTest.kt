@@ -54,19 +54,42 @@ class LanguagePickerViewModelTest {
         }
 
     @Test
-    fun `Verify set language updates state without applying`() =
+    fun `Verify set language updates state and applies selected language`() =
         runTest {
             val language = Language.SWAHILI
             testSubject.handleAction(LanguagePickerAction.SetLanguage(language))
             assertEquals(Language.SWAHILI, testSubject.state.value.currentLanguage)
+            coVerify(exactly = 1) { languageSwitcher.setLanguage(language) }
+        }
+
+    @Test
+    fun `Verify confirm language does not reapply selected language`() =
+        runTest {
+            testSubject.handleAction(LanguagePickerAction.SetLanguage(Language.SWAHILI))
+            testSubject.handleAction(LanguagePickerAction.ConfirmLanguage)
+            coVerify(exactly = 1) { languageSwitcher.setLanguage(any()) }
+            coVerify(exactly = 1) { languageSwitcher.setLanguage(Language.SWAHILI) }
+        }
+
+    @Test
+    fun `Verify confirm language does nothing when no language is selected`() =
+        runTest {
+            // Reset to no language selected
+            coEvery { languageSwitcher.currentLanguage() } returns null
+            testSubject = LanguagePickerViewModel(languageSwitcher)
+
+            testSubject.handleAction(LanguagePickerAction.ConfirmLanguage)
+
             coVerify(exactly = 0) { languageSwitcher.setLanguage(any()) }
         }
 
     @Test
-    fun `Verify confirm language calls set language from language switcher`() =
+    fun `Verify NavigateNext is a no-op in ViewModel`() =
         runTest {
-            testSubject.handleAction(LanguagePickerAction.SetLanguage(Language.SWAHILI))
-            testSubject.handleAction(LanguagePickerAction.ConfirmLanguage)
-            coVerify { languageSwitcher.setLanguage(Language.SWAHILI) }
+            testSubject.handleAction(LanguagePickerAction.NavigateNext)
+
+            // State unchanged, no language applied
+            assertEquals(Language.ENGLISH, testSubject.state.value.currentLanguage)
+            coVerify(exactly = 0) { languageSwitcher.setLanguage(any()) }
         }
 }

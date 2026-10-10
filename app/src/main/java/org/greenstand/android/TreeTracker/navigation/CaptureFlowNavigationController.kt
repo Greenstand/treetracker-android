@@ -15,7 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.navigation
 
-import androidx.navigation.NavHostController
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -44,7 +44,7 @@ class CaptureFlowNavigationController(
      * Navigate forward in the capture flow. Suspend because at the end of the flow
      * it must save the tree to the database before looping back to capture.
      */
-    suspend fun navForward(navController: NavHostController) {
+    suspend fun navForward(navigator: Navigator) {
         incrementIndex()
 
         // If navigating past last screen, save tree then loop back to capture
@@ -55,7 +55,7 @@ class CaptureFlowNavigationController(
                 Timber.tag("CaptureFlowNav").w("Tree save failed or no tree to save")
             }
             withContext(Dispatchers.Main) {
-                navController.popBackStack<TreeCaptureRoute>(inclusive = false)
+                navigator.popBackStackTo<TreeCaptureRoute>()
             }
             return
         }
@@ -63,35 +63,35 @@ class CaptureFlowNavigationController(
         val destination = navPath[currentNavPathIndex]
         val route = resolveDestinationRoute(destination)
         withContext(Dispatchers.Main) {
-            navController.navigate(route)
+            navigator.throttledNavigate(route)
         }
     }
 
-    fun navBackward(navController: NavHostController) {
+    fun navBackward(navigator: Navigator) {
         if (!decrementIndex()) {
-            goToDashboard(navController)
+            goToDashboard(navigator)
             return
         }
-        navController.popBackStack()
+        navigator.throttledPopBackStack()
     }
 
-    fun goToDashboard(navController: NavHostController) {
+    fun goToDashboard(navigator: Navigator) {
         endSession()
-        navController.navigate(DashboardRoute) {
+        navigator.throttledNavigate(DashboardRoute) {
             popUpTo<DashboardRoute> { inclusive = true }
             launchSingleTop = true
         }
     }
 
-    fun goToUserSelect(navController: NavHostController) {
+    fun goToUserSelect(navigator: Navigator) {
         endSession()
-        navController.navigate(UserSelectRoute) {
+        navigator.throttledNavigate(UserSelectRoute) {
             popUpTo<DashboardRoute> { inclusive = true }
             launchSingleTop = true
         }
     }
 
-    private fun resolveDestinationRoute(destination: org.greenstand.android.TreeTracker.models.organization.Destination): Any {
+    private fun resolveDestinationRoute(destination: org.greenstand.android.TreeTracker.models.organization.Destination): NavKey {
         resolveNoArgDestination(destination)?.let { return it }
 
         val normalized = RouteRegistry.normalize(destination.route)

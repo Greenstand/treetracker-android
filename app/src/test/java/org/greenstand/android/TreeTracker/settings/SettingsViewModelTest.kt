@@ -23,9 +23,17 @@ import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
+import org.greenstand.android.TreeTracker.navigation.SettingsRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
+import org.greenstand.android.TreeTracker.utils.fakeNavigator
+import org.greenstand.android.TreeTracker.viewmodel.NavigationEvent
+import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -124,5 +132,114 @@ class SettingsViewModelTest {
 
             val state = viewModel.state.first()
             assertFalse(state.showLogoutDialog!!)
+        }
+
+    @Test
+    fun `WHEN NavigateToProfile action THEN emits NavigationEvent`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.NavigateToProfile)
+
+            val event = viewModel.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
+        }
+
+    @Test
+    fun `WHEN NavigateToEditTrees action THEN emits NavigationEvent`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.NavigateToEditTrees)
+
+            val event = viewModel.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
+        }
+
+    @Test
+    fun `WHEN NavigateToMap action THEN emits NavigationEvent`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.NavigateToMap)
+
+            val event = viewModel.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
+        }
+
+    @Test
+    fun `WHEN NavigateToDeleteAccount action THEN emits NavigationEvent`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.NavigateToDeleteAccount)
+
+            val event = viewModel.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
+        }
+
+    @Test
+    fun `WHEN NavigateBack action THEN emits PopBackStackEvent`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.NavigateBack)
+
+            val event = viewModel.events.first().getContentIfNotConsumed()
+            assertEquals(PopBackStackEvent, event)
+        }
+
+    @Test
+    fun `WHEN LogoutConfirmed action THEN logs out and emits NavigationEvent`() =
+        runTest {
+            val powerUser = FakeFileGenerator.fakeUsers.first()
+            coEvery { userRepo.getPowerUser() } returns powerUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.LogoutConfirmed)
+
+            coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+            val event = viewModel.events.first().getContentIfNotConsumed()
+            assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
+        }
+
+    @Test
+    fun `WHEN NavigateToProfile action THEN navigator lands on ProfileSelectRoute`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+            val navigator = fakeNavigator(DashboardRoute, SettingsRoute)
+
+            viewModel.handleAction(SettingsAction.NavigateToProfile)
+
+            val event = viewModel.events.first().getContentIfNotConsumed() as NavigationEvent
+            event.navigate(navigator)
+
+            assertEquals(
+                listOf(DashboardRoute, SettingsRoute, ProfileSelectRoute),
+                navigator.backStack,
+            )
+        }
+
+    @Test
+    fun `WHEN LogoutConfirmed action THEN navigator clears stack to SignupFlowRoute`() =
+        runTest {
+            val powerUser = FakeFileGenerator.fakeUsers.first()
+            coEvery { userRepo.getPowerUser() } returns powerUser
+            val viewModel = SettingsViewModel(userRepo)
+            val navigator = fakeNavigator(DashboardRoute, SettingsRoute)
+
+            viewModel.handleAction(SettingsAction.LogoutConfirmed)
+
+            val event = viewModel.events.first().getContentIfNotConsumed() as NavigationEvent
+            event.navigate(navigator)
+
+            // popUpToRoot() + launchSingleTop leaves SignupFlowRoute as the only entry.
+            assertEquals(listOf<NavKey>(SignupFlowRoute), navigator.backStack)
         }
 }

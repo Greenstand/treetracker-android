@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -81,11 +81,11 @@ fun ChatScreen(
         ),
 ) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
 
     Chat(
         state = state,
-        onBackClicked = { navController.popBackStack() },
+        onBackClicked = { navigator.throttledPopBackStack() },
         onDraftTextChanged = { text -> viewModel.handleAction(ChatAction.UpdateDraftText(text)) },
         onSendClicked = { viewModel.handleAction(ChatAction.SendMessage) },
         checkIsOtherUser = { index -> viewModel.checkIsOtherUser(index) },

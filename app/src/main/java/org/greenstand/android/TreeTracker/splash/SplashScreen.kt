@@ -33,7 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import org.greenstand.android.TreeTracker.navigation.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.BuildConfig
@@ -41,7 +41,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.view.AppColors
 import timber.log.Timber
 
@@ -50,7 +50,7 @@ fun SplashScreen(
     orgId: String?,
     orgName: String? = null,
     viewModel: SplashScreenViewModel = viewModel(factory = SplashScreenViewModelFactory(orgId, orgName)),
-    navController: NavHostController = LocalNavHostController.current,
+    navigator: Navigator = LocalNavigator.current,
 ) {
     val permissions =
         mutableListOf(
@@ -83,9 +83,9 @@ fun SplashScreen(
 
                         if (viewModel.isInitialSetupRequired()) {
                             viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
-                            navigateToLanguageScreen(navController)
+                            navigateToLanguageScreen(navigator)
                         } else {
-                            navigateToDashboardScreen(navController)
+                            navigateToDashboardScreen(navigator)
                         }
                     }
                 }
@@ -129,15 +129,15 @@ private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean =
     result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
         result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
 
-private fun navigateToLanguageScreen(navController: NavHostController) {
-    navController.navigate(LanguageRoute(isFromTopBar = false)) {
+private fun navigateToLanguageScreen(navigator: Navigator) {
+    navigator.navigate(LanguageRoute(isFromTopBar = false)) {
         popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }
 }
 
-private fun navigateToDashboardScreen(navController: NavHostController) {
-    navController.navigate(DashboardRoute) {
+private fun navigateToDashboardScreen(navigator: Navigator) {
+    navigator.navigate(DashboardRoute) {
         popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }

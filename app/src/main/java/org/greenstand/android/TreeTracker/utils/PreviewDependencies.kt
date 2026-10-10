@@ -17,17 +17,21 @@ package org.greenstand.android.TreeTracker.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.navigation.compose.rememberNavController
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.navigation3.runtime.NavKey
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.Navigator
+import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 
 @Composable
 fun PreviewDependencies(content: @Composable () -> Unit) {
-    val navController = rememberNavController()
+    val navigator = remember { Navigator(mutableStateListOf<NavKey>(SplashRoute())) }
 
     CompositionLocalProvider(
-        LocalNavHostController provides navController,
+        LocalNavigator provides navigator,
     ) {
         CustomTheme {
             TreeTrackerTheme {

@@ -21,7 +21,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.navigationevent.setViewTreeNavigationEventDispatcherOwner
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
+import org.greenstand.android.TreeTracker.navigation.parseStartRoute
 import org.greenstand.android.TreeTracker.root.Root
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.GpsUtils
@@ -47,14 +49,21 @@ class TreeTrackerActivity : AppCompatActivity() {
                 ),
         )
 
+        val startRoute = parseStartRoute(intent)
+
         setContent {
             CustomTheme {
                 if (gpsUtils.hasGPSDevice()) {
-                    Root(viewModelFactory)
+                    Root(viewModelFactory, startRoute)
                 } else {
                     NoGPSDeviceDialog(onPositiveClick = { finishAndRemoveTask() })
                 }
             }
         }
+
+        // AppCompatActivity's setContentView plants only the pre-navigationevent view-tree
+        // owners, so Navigation 3's NavDisplay back handling cannot find the dispatcher.
+        // Plant it ourselves; ComponentActivity (activity 1.12+) is the owner.
+        window.decorView.setViewTreeNavigationEventDispatcherOwner(this)
     }
 }
