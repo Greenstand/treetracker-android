@@ -39,9 +39,8 @@ class InstallReferrerOrgTest {
         vararg results: InstallReferrerResult,
         calls: MutableList<Int> = mutableListOf(),
     ) = InstallReferrerOrgProvider(
-        context = ApplicationProvider.getApplicationContext(),
         prefs = prefs,
-        fetch = {
+        dataSource = {
             val index = calls.size
             calls.add(index)
             results[index.coerceAtMost(results.lastIndex)]
@@ -50,52 +49,52 @@ class InstallReferrerOrgTest {
 
     @Test
     fun `null referrer yields no org`() {
-        assertNull(parseOrgLink(null))
+        assertNull(InstallReferrerOrgProvider.parseOrgLink(null))
     }
 
     @Test
     fun `blank referrer yields no org`() {
-        assertNull(parseOrgLink("   "))
+        assertNull(InstallReferrerOrgProvider.parseOrgLink("   "))
     }
 
     @Test
     fun `organic install referrer yields no org`() {
-        assertNull(parseOrgLink("utm_source=google-play&utm_medium=organic"))
+        assertNull(InstallReferrerOrgProvider.parseOrgLink("utm_source=google-play&utm_medium=organic"))
     }
 
     @Test
     fun `referrer without org id yields no org`() {
-        assertNull(parseOrgLink("org_name=Acme"))
+        assertNull(InstallReferrerOrgProvider.parseOrgLink("org_name=Acme"))
     }
 
     @Test
     fun `referrer maps org id and name`() {
-        assertEquals(OrgLink("42", "Acme"), parseOrgLink("org_id=42&org_name=Acme"))
+        assertEquals(OrgLink("42", "Acme"), InstallReferrerOrgProvider.parseOrgLink("org_id=42&org_name=Acme"))
     }
 
     @Test
     fun `referrer decodes an encoded org name`() {
-        assertEquals(OrgLink("42", "Acme Trees"), parseOrgLink("org_id=42&org_name=Acme%20Trees"))
+        assertEquals(OrgLink("42", "Acme Trees"), InstallReferrerOrgProvider.parseOrgLink("org_id=42&org_name=Acme%20Trees"))
     }
 
     @Test
     fun `org name keeps ampersands and equals signs`() {
-        assertEquals(OrgLink("9", "A&B=C Trees"), parseOrgLink("org_id=9&org_name=A%26B%3DC%20Trees"))
+        assertEquals(OrgLink("9", "A&B=C Trees"), InstallReferrerOrgProvider.parseOrgLink("org_id=9&org_name=A%26B%3DC%20Trees"))
     }
 
     @Test
     fun `missing org name falls back to empty`() {
-        assertEquals(OrgLink("42", ""), parseOrgLink("org_id=42"))
+        assertEquals(OrgLink("42", ""), InstallReferrerOrgProvider.parseOrgLink("org_id=42"))
     }
 
     @Test
     fun `blank org id yields no org`() {
-        assertNull(parseOrgLink("org_id=&org_name=Acme"))
+        assertNull(InstallReferrerOrgProvider.parseOrgLink("org_id=&org_name=Acme"))
     }
 
     @Test
     fun `extra campaign params are ignored`() {
-        assertEquals(OrgLink("42", "Acme"), parseOrgLink("utm_source=share&org_id=42&org_name=Acme&utm_medium=link"))
+        assertEquals(OrgLink("42", "Acme"), InstallReferrerOrgProvider.parseOrgLink("utm_source=share&org_id=42&org_name=Acme&utm_medium=link"))
     }
 
     @Test
