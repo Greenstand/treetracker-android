@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.google.firebase.installations.FirebaseInstallations
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
@@ -90,10 +89,11 @@ class SyncDataUseCase(
                     uploadLocationDataUseCase.execute(Unit)
                 }
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
-            logSyncError(e, "Error occurred during syncing data")
+            // Failures the uploaders already recorded are not reported again here.
+            if (!exceptionDataCollector.wasRecorded(e)) {
+                Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            }
             syncProgressTracker.endSync(error = e.localizedMessage)
             return false
         }
@@ -163,21 +163,10 @@ class SyncDataUseCase(
                 coroutineContext.cancel()
             }
         } catch (e: Exception) {
-            logSyncError(e, "$tag failed")
+            if (!exceptionDataCollector.wasRecorded(e)) {
+                Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            }
             throw e
-        }
-    }
-
-    // Timber errors are forwarded to Crashlytics. The uploaders already reported the failures they
-    // recorded, so only report here what nothing upstream did, once per failure instead of once per layer.
-    private fun logSyncError(
-        e: Exception,
-        message: String,
-    ) {
-        if (exceptionDataCollector.wasRecorded(e)) {
-            Timber.tag(TAG).d(e, message)
-        } else {
-            Timber.tag(TAG).e(e, message)
         }
     }
 }

@@ -71,16 +71,10 @@ class TreeSyncWorker(
                     }
                 }
 
-            exceptionDataCollector.clear(ExceptionDataCollector.FAILURE_TYPE)
             exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
-            val result =
-                try {
-                    syncDataBundleUseCase.execute(Unit)
-                } finally {
-                    // Also runs when the sync is cancelled, otherwise is_syncing would stay true.
-                    exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
-                    progressJob.cancel()
-                }
+            val result = syncDataBundleUseCase.execute(Unit)
+            exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
+            progressJob.cancel()
             if (result) Result.success() else Result.failure()
         }
     }

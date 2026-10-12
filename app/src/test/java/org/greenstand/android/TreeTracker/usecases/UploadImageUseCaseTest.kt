@@ -20,6 +20,7 @@ import com.amazonaws.AmazonClientException
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -86,5 +87,6 @@ class UploadImageUseCaseTest {
             val result = uploadImageUseCase.execute(params)
 
             assertNull(result)
+            verify(exactly = 1) { exceptionDataCollector.recordFailure(match { it is AmazonClientException }, any(), any()) }
         }
 }

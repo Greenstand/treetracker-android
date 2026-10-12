@@ -20,10 +20,10 @@ import com.amazonaws.AmazonServiceException
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.SerializationException
 import org.junit.Test
 import java.io.IOException
-import java.net.ConnectException
 import java.net.UnknownHostException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -43,13 +43,6 @@ class ExceptionDataCollectorTest {
     fun `WHEN AmazonClientException is caused by an IOException THEN network failure`() {
         // This is what the AWS SDK throws when S3 can't be reached.
         val e = AmazonClientException("Unable to execute HTTP request", UnknownHostException("s3.amazonaws.com"))
-
-        assertEquals(ExceptionDataCollector.TYPE_NETWORK, ExceptionDataCollector.classify(e))
-    }
-
-    @Test
-    fun `WHEN AmazonClientException has an IOException deeper in the cause chain THEN network failure`() {
-        val e = AmazonClientException("Unable to execute HTTP request", RuntimeException("wrapped", ConnectException("refused")))
 
         assertEquals(ExceptionDataCollector.TYPE_NETWORK, ExceptionDataCollector.classify(e))
     }
@@ -100,5 +93,16 @@ class ExceptionDataCollectorTest {
 
         assertTrue(collector.wasRecorded(recorded))
         assertFalse(collector.wasRecorded(other))
+    }
+
+    @Test
+    fun `WHEN a sync is cancelled THEN nothing is recorded`() {
+        val cancelled = CancellationException("cancelled")
+
+        collector.recordFailure(cancelled, "Upload failed")
+
+        verify(exactly = 0) { analytics.uploadFailure(any()) }
+        verify(exactly = 0) { crashlytics.setCustomKey(ExceptionDataCollector.FAILURE_TYPE, any<String>()) }
+        assertFalse(collector.wasRecorded(cancelled))
     }
 }

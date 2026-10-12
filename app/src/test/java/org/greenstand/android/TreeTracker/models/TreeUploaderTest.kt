@@ -221,8 +221,8 @@ class TreeUploaderTest {
             coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
             coVerify(exactly = 0) { dao.updateTreesUploadStatus(any(), any()) }
             coVerify(exactly = 0) { dao.removeTreesLocalImagePaths(any()) }
-            // The failure was already recorded by UploadImageUseCase, so it must not be counted twice.
-            coVerify(exactly = 0) { exceptionDataCollector.recordFailure(any(), any(), any()) }
+            // The held-back bundle is reported once (the photo failure itself is reported by UploadImageUseCase).
+            coVerify(exactly = 1) { exceptionDataCollector.recordFailure(match { it is IllegalStateException }, any(), any()) }
         }
 
     @Test
@@ -248,7 +248,7 @@ class TreeUploaderTest {
             coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
             coVerify(exactly = 0) { dao.updateTreeCapturesUploadStatus(any(), any()) }
             coVerify(exactly = 0) { dao.removeTreeCapturesLocalImagePaths(any()) }
-            coVerify(exactly = 0) { exceptionDataCollector.recordFailure(any(), any(), any()) }
+            coVerify(exactly = 1) { exceptionDataCollector.recordFailure(match { it is IllegalStateException }, any(), any()) }
         }
 
     @Test

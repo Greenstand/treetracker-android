@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -53,8 +52,6 @@ class PlanterUploader(
                 uploadPlanterInfo(instanceId)
                 uploadUsers()
                 deleteLocalImagesThatWereUploaded()
-            } catch (e: CancellationException) {
-                throw e
             } catch (e: Exception) {
                 exceptionDataCollector.recordFailure(e, "Planter upload failed", TAG)
                 throw e

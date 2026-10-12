@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.models.messages
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.encodeToString
@@ -44,8 +43,6 @@ class MessageUploader(
                     .map { async { uploadMessageBundle(it) } }
                     .onEach { it.await() }
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             exceptionDataCollector.recordFailure(e, "Message upload failed")
             throw e

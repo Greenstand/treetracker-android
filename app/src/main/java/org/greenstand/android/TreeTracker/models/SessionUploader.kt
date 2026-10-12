@@ -15,7 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
@@ -59,8 +58,6 @@ class SessionUploader(
             dao.updateSessionBundleIds(sessionIds, bundleId)
             objectStorageClient.uploadBundle(jsonBundle, bundleId)
             dao.updateSessionUploadStatus(sessionIds, true)
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             exceptionDataCollector.recordFailure(e, "Session upload failed")
             throw e

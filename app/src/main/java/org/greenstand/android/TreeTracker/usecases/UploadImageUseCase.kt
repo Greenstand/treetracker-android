@@ -15,11 +15,12 @@
  */
 package org.greenstand.android.TreeTracker.usecases
 
-import kotlinx.coroutines.CancellationException
+import com.amazonaws.AmazonClientException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
+import timber.log.Timber
 
 data class UploadImageParams(
     val imagePath: String,
@@ -36,10 +37,16 @@ class UploadImageUseCase(
             withContext(Dispatchers.IO) {
                 doSpaces.put(params.imagePath, params.lat, params.long)
             }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            exceptionDataCollector.recordFailure(e, "Image upload failed")
+        } catch (ace: AmazonClientException) {
+            Timber.e(
+                "Caught an AmazonClientException, which " +
+                    "means the client encountered " +
+                    "an internal error while trying to " +
+                    "communicate with S3, " +
+                    "such as not being able to access the network.",
+            )
+            Timber.e("Error Message: ${ace.message}")
+            exceptionDataCollector.recordFailure(ace, "Image upload failed")
             null
         }
 }

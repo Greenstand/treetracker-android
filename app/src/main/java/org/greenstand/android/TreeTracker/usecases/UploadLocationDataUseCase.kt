@@ -15,7 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.usecases
 
-import kotlinx.coroutines.CancellationException
+import com.amazonaws.AmazonClientException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
@@ -86,9 +86,19 @@ class UploadLocationDataUseCase(
 
                 Timber.tag("Location Upload").d("Completed uploading ${locationEntities.size} V2 GPS locations")
             }
-        } catch (e: CancellationException) {
-            throw e
+        } catch (ace: AmazonClientException) {
+            Timber.e(
+                "Caught an AmazonClientException, which " +
+                    "means the client encountered " +
+                    "an internal error while trying to " +
+                    "communicate with S3, " +
+                    "such as not being able to access the network.",
+            )
+            Timber.e("Error Message: ${ace.message}")
+            exceptionDataCollector.recordFailure(ace, "Location data upload failed")
+            return false
         } catch (e: Exception) {
+            Timber.e("Location upload error: ${e.message}")
             exceptionDataCollector.recordFailure(e, "Location data upload failed")
             return false
         }

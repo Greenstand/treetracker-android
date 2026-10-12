@@ -15,10 +15,10 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
@@ -36,14 +36,6 @@ import org.greenstand.android.TreeTracker.utilities.md5
 import timber.log.Timber
 import java.io.File
 import kotlin.coroutines.coroutineContext
-
-/**
- * A tree's photo could not be uploaded. Thrown so the tree's bundle is held back and retried on the
- * next sync, instead of sending the tree without a photo and marking it as uploaded.
- */
-private class ImageUploadFailedException(
-    message: String,
-) : Exception(message)
 
 class TreeUploader(
     private val uploadImageUseCase: UploadImageUseCase,
@@ -85,26 +77,22 @@ class TreeUploader(
         onHandleUpload: suspend (List<Long>) -> Unit,
     ) {
         log("Uploading ${treeIds.size} trees")
-
-        treeIds.windowed(size = TREE_BUNDLE_SIZE, step = TREE_BUNDLE_SIZE, partialWindows = true).forEach { treeIdBundle ->
+        treeIds.windowed(size = TREE_BUNDLE_SIZE, step = TREE_BUNDLE_SIZE, partialWindows = true).onEach { treeIdBundle ->
             try {
-                coroutineContext.ensureActive()
-                coroutineScope {
-                    log("Starting bulk upload for ${treeIdBundle.size} trees")
-                    onHandleUpload(treeIdBundle)
-                    log("Completed bulk upload for ${treeIdBundle.size} trees")
+                if (coroutineContext.isActive) {
+                    coroutineScope {
+                        log("Starting bulk upload for ${treeIdBundle.size} trees")
+                        onHandleUpload(treeIdBundle)
+                        log("Completed bulk upload for ${treeIdBundle.size} trees")
+                    }
+                } else {
+                    coroutineContext.cancel()
                 }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: ImageUploadFailedException) {
-                // UploadImageUseCase already recorded this failure, so don't count it twice.
-                log("Bundle $treeIdBundle held back: ${e.message}")
             } catch (e: Exception) {
-                // A failed bundle must not stop the remaining ones. Its trees stay pending for the next sync.
+                Timber.e("NewTree upload failed")
                 exceptionDataCollector.recordFailure(e, "Tree upload failed for bundle $treeIdBundle")
             }
         }
-
         log("Completed upload for ${treeIds.size} trees")
     }
 
@@ -122,7 +110,7 @@ class TreeUploader(
                                     lat = tree.latitude,
                                     long = tree.longitude,
                                 ),
-                            ) ?: throw ImageUploadFailedException("No imageUrl for tree ${tree.uuid}")
+                            ) ?: error("No imageUrl")
 
                         // Update local tree data with image Url
                         tree.photoUrl = imageUrl
@@ -147,7 +135,7 @@ class TreeUploader(
                                     lat = tree.latitude,
                                     long = tree.longitude,
                                 ),
-                            ) ?: throw ImageUploadFailedException("No imageUrl for tree ${tree.uuid}")
+                            ) ?: error("No imageUrl")
 
                         // Update local tree data with image Url
                         tree.photoUrl = imageUrl

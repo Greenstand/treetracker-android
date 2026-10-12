@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.analytics
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.SerializationException
 import timber.log.Timber
 import java.io.IOException
@@ -31,7 +32,6 @@ class ExceptionDataCollector(
     private var currentRoute: String? = null
     private var lastRoute: String? = null
 
-    // Weak so recorded exceptions can still be garbage collected.
     private val recordedFailures: MutableSet<Throwable> =
         Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Throwable, Boolean>()))
 
@@ -71,24 +71,20 @@ class ExceptionDataCollector(
         firebaseCrashlytics.setCustomKey(key, value)
     }
 
-    /**
-     * Reports an upload failure: logs it (Timber forwards errors to Crashlytics in release
-     * builds) and sends an Analytics event with the failure type.
-     *
-     * The Analytics event is the reliable per-type count. Crashlytics groups issues by stack
-     * trace, so the same type thrown from different call sites is spread across many issues.
-     */
     fun recordFailure(
         throwable: Throwable,
         message: String,
         tag: String? = null,
     ) {
+        // A cancelled sync is not an upload failure.
+        if (throwable is CancellationException) return
+
         val failureType = classify(throwable)
         recordedFailures.add(throwable)
 
         // Crashlytics reads custom keys when it writes the event on a background thread, not when
         // recordException is called, so clearing the key here would record an empty value. The
-        // key therefore holds the most recent upload failure type until the next sync resets it.
+        // key therefore holds the most recent upload failure type until the next failure replaces it.
         set(FAILURE_TYPE, failureType)
 
         if (tag != null) {
@@ -96,10 +92,10 @@ class ExceptionDataCollector(
         } else {
             Timber.e(throwable, "[$failureType] $message")
         }
+        // Crashlytics groups issues by stack trace, so this event is the reliable per-type count.
         analytics.uploadFailure(failureType)
     }
 
-    /** True if [throwable] already went through [recordFailure], so callers can avoid re-reporting it. */
     fun wasRecorded(throwable: Throwable): Boolean = throwable in recordedFailures
 
     fun clear(key: String) {
@@ -127,19 +123,13 @@ class ExceptionDataCollector(
         const val TYPE_SERVER = "server_failure"
         const val TYPE_UNKNOWN = "unknown_failure"
 
-        private const val MAX_CAUSE_DEPTH = 10
-
         fun classify(throwable: Throwable): String =
             when {
                 throwable is SerializationException -> TYPE_PARSING
-                // Only AmazonServiceException means the server responded with an error.
                 throwable is AmazonServiceException -> TYPE_SERVER
-                // The AWS SDK wraps connection failures (UnknownHostException, ConnectException, ...)
-                // in a plain AmazonClientException, so the cause has to be checked.
-                throwable is IOException || (throwable is AmazonClientException && throwable.hasIoCause()) -> TYPE_NETWORK
+                // The AWS SDK wraps connection failures (UnknownHostException, ...) in AmazonClientException.
+                throwable is IOException || (throwable is AmazonClientException && throwable.cause is IOException) -> TYPE_NETWORK
                 else -> TYPE_UNKNOWN
             }
-
-        private fun Throwable.hasIoCause(): Boolean = generateSequence(cause) { it.cause }.take(MAX_CAUSE_DEPTH).any { it is IOException }
     }
 }
