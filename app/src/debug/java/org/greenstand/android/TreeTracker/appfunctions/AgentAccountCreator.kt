@@ -16,6 +16,8 @@
 package org.greenstand.android.TreeTracker.appfunctions
 
 import android.content.Context
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import kotlin.random.Random
@@ -38,28 +40,33 @@ class AgentAccountCreator(
     ): AgentAccount {
         val details = AgentInput.accountDetails(firstName, lastName, phone, email)
 
-        val wallet = details.email ?: details.phone ?: generateUnusedPhone()
-        require(!userRepo.doesUserExists(wallet)) { "An account with wallet '$wallet' already exists." }
+        // Agents can call this several times at once. One at a time, the wallet and admin checks
+        // below still hold when the account is saved, so there is never a second admin or a
+        // duplicate wallet.
+        return creationLock.withLock {
+            val wallet = details.email ?: details.phone ?: generateUnusedPhone()
+            require(!userRepo.doesUserExists(wallet)) { "An account with wallet '$wallet' already exists." }
 
-        val isPowerUser = userRepo.getPowerUser() == null
-        val userId =
-            userRepo.createUser(
+            val isPowerUser = userRepo.getPowerUser() == null
+            val userId =
+                userRepo.createUser(
+                    firstName = details.firstName,
+                    lastName = details.lastName,
+                    phone = if (details.email == null) wallet else null,
+                    email = details.email,
+                    wallet = wallet,
+                    photoPath = ImageUtils.createTestImageFile(context).absolutePath,
+                    isPowerUser = isPowerUser,
+                )
+
+            AgentAccount(
+                userId = userId,
+                wallet = wallet,
                 firstName = details.firstName,
                 lastName = details.lastName,
-                phone = if (details.email == null) wallet else null,
-                email = details.email,
-                wallet = wallet,
-                photoPath = ImageUtils.createTestImageFile(context).absolutePath,
                 isPowerUser = isPowerUser,
             )
-
-        return AgentAccount(
-            userId = userId,
-            wallet = wallet,
-            firstName = details.firstName,
-            lastName = details.lastName,
-            isPowerUser = isPowerUser,
-        )
+        }
     }
 
     private suspend fun generateUnusedPhone(): String {
@@ -72,5 +79,8 @@ class AgentAccountCreator(
 
     companion object {
         private const val MAX_PHONE_ATTEMPTS = 10
+
+        // Shared by every instance: the AppFunctions library builds a new one for each call
+        private val creationLock = Mutex()
     }
 }

@@ -92,6 +92,8 @@ about 80 m of the location.
 
 ## Behaviour to plan around
 
+- **Parallel `createAccount` calls are safe.** They run one at a time, so only the first on a
+  clean install becomes admin, and a wallet passed twice fails the second time.
 - **Relaunch to see the data.** Screens that are already open don't reload, so run `$FN launch`
   after creating accounts or trees.
 - **Sessions.** With no capture session running, `captureTrees` saves the trees in a new session

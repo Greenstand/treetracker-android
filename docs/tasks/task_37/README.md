@@ -131,3 +131,17 @@ Not changed: `runAgentFunction` reports any `IllegalArgumentException` as an inv
 Only the error code differs from an unknown error, and the message is the same. Testing the
 wrapper needs `Bundle` (so Robolectric), which isn't worth it for a debug tool.
 
+## Final review: simultaneous createAccount calls
+
+`createAccount` checked "does this wallet exist" and "is there an admin yet", then saved the
+account. Simultaneous calls all passed the checks before any of them saved. The wallet column
+isn't unique, and `insertUser` replaces on conflict, so nothing below stopped it. On an Android
+17 emulator, six simultaneous calls on a clean install made **six admins**, and the same phone sent
+twice was saved twice.
+
+The check-then-save now runs under a `Mutex` in `AgentAccountCreator`'s companion object. It has
+to be static, because the AppFunctions library builds a new instance for each call. With the fix,
+three runs of the same device test each gave 1 admin, and the duplicate phone was saved once (the
+second call gets "already exists"). Two new tests use a fake repository that suspends on every
+call, so calls interleave. Both failed before the fix.
+

@@ -23,8 +23,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.yield
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.After
@@ -145,4 +148,65 @@ class AgentAccountCreatorTest {
             assertFailsWith<IllegalArgumentException> { creator.createAccount(null, null, null, "not-an-email") }
             coVerify(exactly = 0) { userRepo.createUser(any(), any(), any(), any(), any(), any(), any()) }
         }
+
+    @Test
+    fun `WHEN two accounts are created at the same time THEN only the first becomes admin`() =
+        runTest {
+            val saved = fakeRepoThatSuspends()
+
+            val first = async { creator.createAccount("Ada", null, "5550000001", null) }
+            val second = async { creator.createAccount("Sam", null, "5550000002", null) }
+            val accounts = listOf(first.await(), second.await())
+
+            assertEquals(listOf(true, false), accounts.map { it.isPowerUser })
+            assertEquals(1, saved.count { it.isPowerUser })
+            assertEquals(2, saved.size)
+        }
+
+    @Test
+    fun `WHEN the same wallet is created twice at the same time THEN only one account is saved`() =
+        runTest {
+            val saved = fakeRepoThatSuspends()
+
+            val first = async { runCatching { creator.createAccount("Ada", null, "5550000001", null) } }
+            val second = async { runCatching { creator.createAccount("Ada", null, "5550000001", null) } }
+            val results = listOf(first.await(), second.await())
+
+            assertEquals(1, results.count { it.isSuccess })
+            assertTrue(results.single { it.isFailure }.exceptionOrNull() is IllegalArgumentException)
+            assertEquals(listOf("5550000001"), saved.map { it.wallet })
+        }
+
+    /**
+     * A user table whose every call suspends, so two createAccount calls interleave the way they
+     * do on a device. Returns the saved users.
+     */
+    private fun fakeRepoThatSuspends(): MutableList<User> {
+        val saved = mutableListOf<User>()
+        coEvery { userRepo.doesUserExists(any()) } coAnswers {
+            yield()
+            saved.any { it.wallet == firstArg<String>() }
+        }
+        coEvery { userRepo.getPowerUser() } coAnswers {
+            yield()
+            saved.firstOrNull { it.isPowerUser }
+        }
+        coEvery { userRepo.createUser(any(), any(), any(), any(), any(), any(), any()) } coAnswers {
+            yield()
+            val id = saved.size + 1L
+            saved +=
+                User(
+                    id = id,
+                    wallet = arg(4),
+                    numberOfTrees = 0,
+                    firstName = arg(0),
+                    lastName = arg(1),
+                    photoPath = arg(5),
+                    isPowerUser = arg(6),
+                    unreadMessagesAvailable = false,
+                )
+            id
+        }
+        return saved
+    }
 }

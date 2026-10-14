@@ -65,7 +65,8 @@ are trimmed. The selfie is the test image. Returns `userId`, `wallet`, `firstNam
 and `isPowerUser`.
 
 The first account becomes the admin (power user). Later calls add more accounts, as the "add
-user" flow does. Creating an account whose wallet already exists fails.
+user" flow does. Creating an account whose wallet already exists fails. Calls run one at a time,
+so parallel calls are safe: only one becomes admin, and a repeated wallet is saved once.
 
 ## captureTrees
 
