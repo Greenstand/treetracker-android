@@ -19,10 +19,11 @@ Usage: app_fn.sh [-s <serial>] <command> [json]
   launch                    Force-stop and relaunch the app so it shows new data.
   devices                   Show connected devices and which one the script would use.
 
-Device: -s <serial> or ANDROID_SERIAL chooses one. Otherwise the script picks among Android 17+
-(API 37) devices with a debug or dev build installed: emulators first, then the newest Android.
-The choice is stable, so repeated calls land on the same device. reset never picks a physical
-device on its own, since it clears app data: pass -s for that.
+Device: -s <serial> or ANDROID_SERIAL chooses one. Otherwise the script picks an emulator on
+Android 17+ (API 37) with a debug or dev build installed, the newest Android first. The choice is
+stable, so repeated calls land on the same device. Physical devices are only used when named, and
+reset on one needs -s (not just ANDROID_SERIAL), since it clears the app's data. With a named
+device, reset and launch work on any Android version.
 Env: TT_PACKAGE overrides the package (default: the installed debug build, else dev).
 EOF
 }
@@ -69,14 +70,14 @@ device_table() {
   done
 }
 
-# Serials that can run the functions (API 37+ with the build installed), best first: emulators,
-# then newest API, then by serial. Every command ranks the same way, so separate calls (reset,
-# createAccount, launch) land on the same device.
+# Emulators that can run the functions (API 37+ with the build installed), best first: newest
+# API, then by serial. Physical devices are never picked automatically. Every command ranks the
+# same way, so separate calls (reset, createAccount, launch) land on the same device.
 rank_devices() {
   echo "$TABLE" |
-    awk -v min="$MIN_SDK" '$3 != "-" && $2 + 0 >= min { print ($1 ~ /^emulator-/ ? 0 : 1), -$2, $1 }' |
-    sort -k1,1n -k2,2n -k3,3 |
-    awk '{ print $3 }'
+    awk -v min="$MIN_SDK" '$1 ~ /^emulator-/ && $3 != "-" && $2 + 0 >= min { print -$2, $1 }' |
+    sort -k1,1n -k2,2 |
+    awk '{ print $2 }'
 }
 
 print_table() {
@@ -91,30 +92,29 @@ print_table() {
 
 # Sets ANDROID_SERIAL (unless -s or the environment already did) and PACKAGE.
 #   $1: "sdk" when the command calls the functions, so the device must be API 37+
-#   $2: "emulator-only" when the command clears data, so it must not auto-pick a physical device
+#   $2: "clears-data" when the command wipes app data, so a physical device must be named with -s
 choose_device() {
-  local requirement=$1 auto_pick=${2:-any} picked
+  local requirement=$1 effect=${2:-} picked
   if [ -z "${ANDROID_SERIAL:-}" ]; then
     TABLE=$(device_table)
     [ -n "$TABLE" ] || die "no device connected."
     picked=$(rank_devices | awk 'NR == 1')
     if [ -z "$picked" ]; then
-      echo "app_fn: no connected device has a debug or dev build on Android 17+ (API $MIN_SDK):" >&2
+      echo "app_fn: no emulator has a debug or dev build on Android 17+ (API $MIN_SDK):" >&2
       print_table >&2
       echo "Install one with: ANDROID_SERIAL=<serial> ./gradlew :app:installDebug" >&2
+      echo "Physical devices are only used when named with -s <serial>." >&2
       exit 1
     fi
-    case "$picked" in
-      emulator-*) ;;
-      *)
-        [ "$auto_pick" != emulator-only ] ||
-          die "$picked is a physical device and this clears its app data. Pass -s $picked to confirm."
-        ;;
-    esac
     export ANDROID_SERIAL=$picked
     if [ "$(echo "$TABLE" | wc -l | tr -d ' ')" -gt 1 ]; then
       echo "app_fn: using $picked. Pass -s <serial> to use another (see: app_fn.sh devices)." >&2
     fi
+  elif [ "$effect" = clears-data ] && [ "$SERIAL_FROM_FLAG" != yes ]; then
+    case "$ANDROID_SERIAL" in
+      emulator-*) ;;
+      *) die "ANDROID_SERIAL is $ANDROID_SERIAL, a physical device, and reset clears its app data. Pass -s $ANDROID_SERIAL to confirm." ;;
+    esac
   fi
   [ "$requirement" != sdk ] || check_sdk
   PACKAGE=$(resolve_package)
@@ -136,16 +136,14 @@ resolve_package() {
 }
 
 call_function() {
-  local name=$1 json=$2 output
-  case "$json" in
-    *"'"*) die "the JSON can't contain an apostrophe: the device shell would split it." ;;
-  esac
-  # The device shell parses the arguments again, so the JSON travels inside single quotes
-  local status=0
+  local name=$1 json=$2 output quoted status=0
+  # The device shell parses the arguments again, so the JSON travels inside single quotes, with
+  # each ' in it written as '\''
+  quoted=$(printf '%s' "$json" | sed "s/'/'\\\\''/g")
   output=$(adb_ shell cmd app_function execute-app-function \
     --package "$PACKAGE" \
     --function "$FUNCTIONS_CLASS#$name" \
-    --parameters "'$json'" \
+    --parameters "'$quoted'" \
     --brief-yaml 2>&1) || status=$?
   echo "$output"
   case "$output" in
@@ -180,11 +178,13 @@ for entries in data.values():
 '
 }
 
+SERIAL_FROM_FLAG=no
 while [ $# -gt 0 ]; do
   case "$1" in
     -s)
       [ $# -ge 2 ] || die "-s needs a device serial."
       export ANDROID_SERIAL=$2
+      SERIAL_FROM_FLAG=yes
       shift 2
       ;;
     *) break ;;
@@ -212,7 +212,7 @@ case "$command" in
     list_functions
     ;;
   reset)
-    choose_device any-sdk emulator-only
+    choose_device any-sdk clears-data
     adb_ shell pm clear "$PACKAGE" >/dev/null
     for permission in $PERMISSIONS; do
       adb_ shell pm grant "$PACKAGE" "android.permission.$permission" 2>/dev/null || true
@@ -230,7 +230,8 @@ case "$command" in
     [ -n "$TABLE" ] || die "no device connected."
     picked=${ANDROID_SERIAL:-$(rank_devices | awk 'NR == 1')}
     print_table "$picked"
-    [ -n "$picked" ] || echo "No device can run the functions: they need a debug or dev build on API $MIN_SDK+."
+    [ -n "$picked" ] ||
+      echo "No emulator can run the functions (they need a debug or dev build on API $MIN_SDK+). Name a physical device with -s."
     ;;
   *)
     usage

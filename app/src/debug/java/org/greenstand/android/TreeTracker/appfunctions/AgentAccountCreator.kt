@@ -45,9 +45,9 @@ class AgentAccountCreator(
         requireValidName("firstName", first)
         requireValidName("lastName", last)
 
-        // Sign-up lowercases emails before they become the wallet
+        // Sign-up lowercases emails before they become the wallet, and only checks for an @
         val normalizedEmail = email?.lowercase()
-        normalizedEmail?.let { require(Validation.isEmailValid(it)) { "email '$it' is not a valid email address." } }
+        normalizedEmail?.let { require('@' in it) { "email '$it' must contain an @." } }
         phone?.let { require(Validation.isValidPhoneNumber(it)) { "phone '$it' must be 7 to 15 digits." } }
 
         val wallet = normalizedEmail ?: phone ?: generateUnusedPhone()

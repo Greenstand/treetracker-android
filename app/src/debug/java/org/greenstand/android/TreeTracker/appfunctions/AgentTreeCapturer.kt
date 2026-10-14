@@ -22,6 +22,8 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
@@ -39,9 +41,10 @@ import java.util.UUID
  * Saves trees with the bundled test image, skipping the camera, GPS convergence and review
  * screens.
  *
- * With no capture session running, it starts one for the account, saves the trees and ends it,
- * as if the planter had tracked them and left the capture flow. If a session is already running
- * (the app is in the capture flow), the trees are added to it and it is left open.
+ * With no capture session running, it saves the trees in a new session for the account and ends
+ * it, as if the planter had tracked them and left the capture flow. That session never becomes
+ * the app's current one, so a capture flow started meanwhile is unaffected. If a session is
+ * already running (the app is in the capture flow), the trees are added to it and it is left open.
  *
  * Bad input throws [IllegalArgumentException] with a message meant for the calling agent.
  */
@@ -74,7 +77,7 @@ class AgentTreeCapturer(
         val activeSessionId = sessionTracker.currentSessionId
         if (activeSessionId != null) {
             val sessionWallet = dao.getSessionById(activeSessionId).originWallet
-            require(wallet == null || wallet == sessionWallet) {
+            require(wallet == null || wallet.equals(sessionWallet, ignoreCase = true)) {
                 "A capture session for '$sessionWallet' is in progress. Omit wallet to add trees to it, " +
                     "or leave the capture flow first."
             }
@@ -85,7 +88,8 @@ class AgentTreeCapturer(
 
         val user =
             if (wallet != null) {
-                requireNotNull(userRepo.getUserWithWallet(wallet)) {
+                // Email wallets are saved lowercased
+                requireNotNull(userRepo.getUserWithWallet(wallet) ?: userRepo.getUserWithWallet(wallet.lowercase())) {
                     "No account with wallet '$wallet'. Call createAccount first."
                 }
             } else {
@@ -96,14 +100,16 @@ class AgentTreeCapturer(
         deviceConfigUpdater.saveLatestConfig()
         orgRepo.ensureInitialized()
 
-        sessionTracker.startSession(userId = user.id, organizationName = null, sessionNote = null)
-        val sessionId = checkNotNull(sessionTracker.currentSessionId) { "Session failed to start." }
+        val sessionId = sessionTracker.createSession(userId = user.id, organizationName = null, sessionNote = null).id
         val treeUuids =
             try {
                 saveTrees(sessionId, count, center, note)
             } finally {
-                // Also refreshes the count of trees waiting to sync
-                sessionTracker.endSession()
+                // Close the session even when the call is cancelled, or it stays open for good
+                withContext(NonCancellable) {
+                    sessionTracker.closeSession(sessionId)
+                    treesToSyncHelper.refreshTreeCountToSync()
+                }
             }
         return AgentCapturedTrees(sessionId, user.wallet, treeUuids.size, treeUuids)
     }
@@ -115,10 +121,7 @@ class AgentTreeCapturer(
         note: String?,
     ): List<String> =
         List(count) {
-            val (treeLatitude, treeLongitude) =
-                center
-                    ?.let { (lat, lon) -> LocationUtils.generateRandomLocationInRadius(lat, lon, TREE_SPREAD_MILES) }
-                    ?: (0.0 to 0.0)
+            val (treeLatitude, treeLongitude) = center?.let { spreadAround(it) } ?: (0.0 to 0.0)
             val tree =
                 Tree(
                     treeUuid = UUID.randomUUID(),
@@ -133,6 +136,16 @@ class AgentTreeCapturer(
             createTreeUseCase.execute(tree)
             tree.treeUuid.toString()
         }
+
+    /**
+     * A random point near [center]. Clamped and wrapped, because near a pole or the antimeridian
+     * the spread can leave the valid range.
+     */
+    private fun spreadAround(center: Pair<Double, Double>): Pair<Double, Double> {
+        val (latitude, longitude) = LocationUtils.generateRandomLocationInRadius(center.first, center.second, TREE_SPREAD_MILES)
+        val wrappedLongitude = ((longitude + 180.0) % 360.0 + 360.0) % 360.0 - 180.0
+        return latitude.coerceIn(-90.0, 90.0) to wrappedLongitude
+    }
 
     /** Latitude to longitude, or null when there is no location to use. */
     private fun captureCenter(

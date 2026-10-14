@@ -23,19 +23,21 @@ Debug builds only. Usage is in [Agent App Functions](../../testing/agent-app-fun
   - `AgentAccountCreator`: creates the user through `UserRepo.createUser` with sign-up's
     validation, the test image as the selfie, and power user set when there is none yet.
   - `AgentTreeCapturer`: saves trees through `CreateTreeUseCase`. With no session running it
-    starts one through `SessionTracker`, saves the trees and ends it. If one is running it adds
-    the trees to it. It also runs the splash screen's device config and org setup, since the app
-    may never have been opened.
+    saves them in a session from `SessionTracker.createSession` and closes it under
+    `NonCancellable`. That session never becomes the current one, so the UI's capture flow and
+    the agent can't end each other's sessions. If a session is running, the trees join it. It
+    also runs the splash screen's device config and org setup, since the app may never have been
+    opened.
   - `AgentResults`: the `@AppFunctionSerializable` return types.
 - The `dev` build type also compiles `src/debug/java`, since it is the recommended local build.
-- `SessionTracker.startSession(userId, organizationName, sessionNote)`: new overload so a session
-  can start without the capture setup scope. `startSession()` now delegates to it, with no
-  behavior change.
+- `SessionTracker.createSession(userId, organizationName, sessionNote)` saves a session without
+  making it current, and `closeSession(sessionId)` ends one specific session. `startSession()`
+  and `endSession()` now use them, with no behavior change.
 - `.claude/skills/agent-app-functions/`: a Claude skill that tells agents when and how to use the
   functions. Its `scripts/app_fn.sh` picks a device when several are connected (Android 17+
-  with the build installed, emulators first, never a physical phone for `reset` without `-s`). It
-  finds the debug or dev package, quotes the JSON, and adds `reset` (clean install), `launch`
-  (relaunch) and `devices` commands.
+  emulators with the build installed; physical devices only when named, and `reset` on one only
+  with `-s`). It finds the debug or dev package, escapes the JSON for the device shell, and adds
+  `reset` (clean install), `launch` (relaunch) and `devices` commands.
 
 ## Decisions
 
@@ -61,5 +63,25 @@ On an Android 17.2 emulator (`Test_Device_A`) with the debug build:
 - Bad input returns clear errors (duplicate wallet, invalid name or phone, both phone and email,
   count out of range, unknown wallet, latitude without longitude).
 
-Unit tests: `AgentAccountCreatorTest` and `AgentTreeCapturerTest` (in `src/testDebug`) and a new
-`SessionTrackerTest` case.
+Unit tests: `AgentAccountCreatorTest` and `AgentTreeCapturerTest` (in `src/testDebug`) and new
+`SessionTrackerTest` cases.
+
+## Review follow-ups
+
+A subagent review found these, now fixed:
+
+- A cancelled `captureTrees` left its session open, because closing it ran in the cancelled
+  coroutine. Closing now runs under `NonCancellable`, with a test that fails without it.
+- `captureTrees` ended whatever session was current, so it could end a session the UI started
+  during a long save, and the next photo would crash. Agent sessions are now never current (see
+  `createSession`/`closeSession` above).
+- `app_fn.sh` could auto-pick a physical phone, and an exported `ANDROID_SERIAL` skipped the
+  `reset` guard. Auto-pick is now emulators only, and `reset` on a phone needs `-s`.
+- Email validation was stricter than sign-up's (which only checks for an `@`), and `captureTrees`
+  didn't match an email wallet in another case. Both now behave like sign-up.
+- Trees placed near a pole or the antimeridian could get invalid coordinates. They are now
+  clamped and wrapped.
+- The "no account" test was reaching the wrong branch, and the location test didn't check the
+  tree count. Both are fixed, and there are new tests for setup order, cancellation and email
+  case.
+- The script now escapes apostrophes instead of refusing them, since names like O'Brien are valid.

@@ -106,6 +106,14 @@ class AgentAccountCreatorTest {
         }
 
     @Test
+    fun `WHEN an email contains an @ THEN it is accepted, as sign-up does`() =
+        runTest {
+            val account = creator.createAccount(null, null, phone = null, email = "qa+1@example.com")
+
+            assertEquals("qa+1@example.com", account.wallet)
+        }
+
+    @Test
     fun `WHEN the wallet is taken THEN it fails without creating a user`() =
         runTest {
             coEvery { userRepo.doesUserExists("5551234567") } returns true

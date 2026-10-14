@@ -29,7 +29,7 @@ It also handles the package, the API check and the quoting, and adds `reset`, `l
 
 The device shell parses the arguments a second time, so wrap the JSON in `\'` ... `\'` as below.
 Without that, the device shell strips the JSON's double quotes and the call fails with a
-`JSONException`. Avoid apostrophes in values.
+`JSONException`. Avoid apostrophes in values with this form (the script escapes them for you).
 
 ```bash
 adb shell cmd app_function execute-app-function \
@@ -80,7 +80,9 @@ in the background, so when the app isn't open and no location is passed, trees g
 Returns `sessionId`, `wallet`, `treeCount` and `treeUuids`.
 
 - **No capture session running** (the usual case): the trees go in a new session for the account,
-  which is ended straight away, as if the planter had tracked them and left the capture flow.
+  which is ended straight away, as if the planter had tracked them and left the capture flow. The
+  session never becomes the app's current one, so a capture flow started meanwhile is unaffected,
+  and it is ended even if the call is cancelled.
 - **Session running** (the app is on a capture screen): the trees are added to that session and it
   stays open. Passing a `wallet` other than the session's fails.
 

@@ -57,12 +57,12 @@ $FN launch                          # relaunch: dashboard with 20 trees to uploa
 `$FN list` prints each function with its parameter descriptions. Results print as YAML. On bad
 input the script prints the app's message and exits 1.
 
-**Device choice.** With several devices connected, the script only considers Android 17+ devices
-that have a debug or dev build installed. It prefers emulators, then the newest Android, then the
-lowest serial. The ranking is stable, so `reset`, `createAccount` and `launch` all land on the same
-device, and each call prints which one it used. Pass `-s <serial>` (or set `ANDROID_SERIAL`) to
-choose. `reset` won't pick a physical phone by itself, because it clears the app's data; it asks
-for `-s <serial>` instead.
+**Device choice.** With several devices connected, the script picks an emulator on Android 17+
+with a debug or dev build installed, the newest Android first, then the lowest serial. The ranking
+is stable, so `reset`, `createAccount` and `launch` all land on the same device, and each call
+prints which one it used. Physical devices are never picked automatically, so test data doesn't
+end up on someone's phone. To use one, name it with `-s <serial>` or `ANDROID_SERIAL`. For
+`reset`, which clears the app's data, a physical device must be named with `-s`.
 
 ## Parameters
 
@@ -93,17 +93,17 @@ about 80 m of the location.
 
 - **Relaunch to see the data.** Screens that are already open don't reload, so run `$FN launch`
   after creating accounts or trees.
-- **Sessions.** With no capture session running, `captureTrees` starts one for the account, saves
-  the trees and ends it, as if the planter had left the capture flow. If the app is on a capture
-  screen, the trees join that open session and it stays open. A `wallet` other than that
-  session's fails.
+- **Sessions.** With no capture session running, `captureTrees` saves the trees in a new session
+  for the account and ends it, as if the planter had left the capture flow. That session never
+  becomes the app's current one, so it can't interfere with a capture flow the UI starts
+  meanwhile. It is ended even if the call is cancelled. If the app is on a capture screen, the
+  trees join that open session and it stays open. A `wallet` other than that session's fails.
 - **Pass a location when the map matters.** Without one, trees go at the device's last location,
   but only while the app is open in the foreground. Android hides location from background apps,
   so after `reset` or before `launch` the trees land at 0, 0. Passing `latitude` and `longitude`
   always works.
 - **The trees are real local data.** The next sync uploads them to the build's non-production
   backend. Keep the device offline (airplane mode) if test trees shouldn't leave it.
-- **No apostrophes in values.** The device shell would split the JSON, so the script refuses them.
 - Trees get step counts of 0 and no rotation matrix or DBH. Selfies and tree photos are all the
   same test image.
 

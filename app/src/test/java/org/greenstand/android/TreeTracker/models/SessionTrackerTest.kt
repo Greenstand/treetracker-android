@@ -128,12 +128,13 @@ class SessionTrackerTest {
     private fun setupStartSessionMocks(
         organizationName: String? = null,
         currentOrgName: String = "Kasiki Hai",
+        sessionNote: String? = null,
     ) {
         val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
         val fakeUser = FakeFileGenerator.fakeUsers.first()
         every { captureSetupData.user } returns fakeUser
         every { captureSetupData.organizationName } returns organizationName
-        every { captureSetupData.sessionNote } returns null
+        every { captureSetupData.sessionNote } returns sessionNote
 
         mockkObject(CaptureSetupScopeManager)
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
@@ -179,22 +180,51 @@ class SessionTrackerTest {
         }
 
     @Test
-    fun `WHEN started with a user id THEN session uses it without the capture setup scope`() =
+    fun `WHEN startSession THEN the capture setup note is saved and the session becomes current`() =
         runTest {
-            val fakeUser = FakeFileGenerator.fakeUsers.first()
-            val org = Org(id = "123", name = "Kasiki Hai", walletId = "wallet-123", logoPath = "", captureSetupFlow = emptyList(), captureFlow = emptyList())
-            every { orgRepo.currentOrg() } returns org
-            coEvery { dao.getUserById(fakeUser.id) } returns FakeFileGenerator.fakeUserEntity
-            coEvery { dao.getLatestDeviceConfig() } returns FakeFileGenerator.fakeDeviceConfig
-            coEvery { dao.insertSession(any()) } returns 9L
+            setupStartSessionMocks(sessionNote = "a note")
 
-            sessionTracker.startSession(userId = fakeUser.id, organizationName = null, sessionNote = "a note")
+            sessionTracker.startSession()
 
             val slot = slot<SessionEntity>()
             coVerify { dao.insertSession(capture(slot)) }
-            assertEquals(FakeFileGenerator.fakeUserEntity.wallet, slot.captured.originWallet)
-            assertEquals("Kasiki Hai", slot.captured.organization)
             assertEquals("a note", slot.captured.note)
-            assertEquals(9L, sessionTracker.currentSessionId)
+            assertEquals(1L, sessionTracker.currentSessionId)
+        }
+
+    @Test
+    fun `WHEN createSession THEN it is saved without becoming the current session`() =
+        runTest {
+            setupStartSessionMocks(currentOrgName = "Kasiki Hai")
+            coEvery { dao.insertSession(any()) } returns 9L
+
+            val session =
+                sessionTracker.createSession(
+                    userId = FakeFileGenerator.fakeUsers.first().id,
+                    organizationName = null,
+                    sessionNote = "a note",
+                )
+
+            assertEquals(9L, session.id)
+            assertEquals(FakeFileGenerator.fakeUserEntity.wallet, session.originWallet)
+            assertEquals("Kasiki Hai", session.organization)
+            assertEquals("a note", session.note)
+            assertEquals(null, sessionTracker.currentSessionId)
+            coVerify(exactly = 0) { preferences.edit() }
+        }
+
+    @Test
+    fun `WHEN closeSession THEN only that session is ended and the current one is kept`() =
+        runTest {
+            setupStartSessionMocks()
+            sessionTracker.startSession()
+            val detached = mockk<SessionEntity>(relaxed = true)
+            coEvery { dao.getSessionById(9L) } returns detached
+
+            sessionTracker.closeSession(9L)
+
+            coVerify { dao.updateSession(detached) }
+            coVerify(exactly = 0) { dao.getSessionById(1L) }
+            assertEquals(1L, sessionTracker.currentSessionId)
         }
 }
