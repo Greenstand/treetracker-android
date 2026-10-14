@@ -32,8 +32,10 @@ Debug builds only. Usage is in [Agent App Functions](../../testing/agent-app-fun
   can start without the capture setup scope. `startSession()` now delegates to it, with no
   behavior change.
 - `.claude/skills/agent-app-functions/`: a Claude skill that tells agents when and how to use the
-  functions. Its `scripts/app_fn.sh` checks the device and API level, finds the debug or dev
-  package, quotes the JSON, and adds `reset` (clean install) and `launch` (relaunch) commands.
+  functions. Its `scripts/app_fn.sh` picks a device when several are connected (Android 17+
+  with the build installed, emulators first, never a physical phone for `reset` without `-s`). It
+  finds the debug or dev package, quotes the JSON, and adds `reset` (clean install), `launch`
+  (relaunch) and `devices` commands.
 
 ## Decisions
 

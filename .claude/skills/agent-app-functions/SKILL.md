@@ -35,17 +35,19 @@ about them.
   `emulator -avd <name>`. If there isn't one, ask the person before downloading a system image,
   since it's several GB. Otherwise fall back to driving the UI.
 - **Use a device you're allowed to wipe.** `reset` clears all app data. Don't run it on someone's
-  everyday emulator or phone without asking.
+  everyday emulator or phone without asking. Before you `-s` a device for `reset`, run
+  `$FN devices` to check what's installed on it.
 
 ## Quick start
 
-`scripts/app_fn.sh` wraps the adb calls. It finds the installed debug or dev package and checks
-the API level. It also handles the quoting that makes a hand-written adb command fail.
+`scripts/app_fn.sh` wraps the adb calls. It picks the device, finds the installed debug or dev
+package and checks the API level. It also handles the quoting that makes a hand-written adb
+command fail.
 
 ```bash
 FN=.claude/skills/agent-app-functions/scripts/app_fn.sh
-export ANDROID_SERIAL=emulator-5554   # required when several devices are connected
 
+$FN devices                         # which device the script will use, and why
 $FN reset                           # clean install: clear app data, re-grant permissions
 $FN createAccount                   # admin account "Test User", random 555 phone
 $FN captureTrees '{"count": 20}'    # 20 trees for the admin
@@ -54,6 +56,13 @@ $FN launch                          # relaunch: dashboard with 20 trees to uploa
 
 `$FN list` prints each function with its parameter descriptions. Results print as YAML. On bad
 input the script prints the app's message and exits 1.
+
+**Device choice.** With several devices connected, the script only considers Android 17+ devices
+that have a debug or dev build installed. It prefers emulators, then the newest Android, then the
+lowest serial. The ranking is stable, so `reset`, `createAccount` and `launch` all land on the same
+device, and each call prints which one it used. Pass `-s <serial>` (or set `ANDROID_SERIAL`) to
+choose. `reset` won't pick a physical phone by itself, because it clears the app's data; it asks
+for `-s <serial>` instead.
 
 ## Parameters
 

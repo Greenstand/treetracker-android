@@ -23,8 +23,9 @@ The app does not need to be running. The system starts it to run the function.
 ## Calling a function
 
 Agents should use the `agent-app-functions` skill (`.claude/skills/agent-app-functions/`). Its
-`scripts/app_fn.sh` handles the package, the API check and the quoting, and adds `reset` and
-`launch` commands. To call adb directly, read on.
+`scripts/app_fn.sh` picks a suitable device when several are connected (or takes `-s <serial>`).
+It also handles the package, the API check and the quoting, and adds `reset`, `launch` and
+`devices` commands. To call adb directly, read on.
 
 The device shell parses the arguments a second time, so wrap the JSON in `\'` ... `\'` as below.
 Without that, the device shell strips the JSON's double quotes and the call fails with a
