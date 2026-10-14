@@ -63,7 +63,7 @@ class AgentAppFunctions : KoinComponent {
      * @param wallet Wallet (phone or email) of the account capturing the trees. Defaults to the
      *   device admin.
      * @param latitude Latitude to place the trees around. Pass with longitude. Defaults to the
-     *   device's location, or 0 if it has none.
+     *   device's location while the app is open, otherwise 0.
      * @param longitude Longitude to place the trees around. Pass with latitude.
      * @param note Note saved on every tree.
      * @return The saved trees.

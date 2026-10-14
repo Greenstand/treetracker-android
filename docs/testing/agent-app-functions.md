@@ -22,6 +22,10 @@ The app does not need to be running. The system starts it to run the function.
 
 ## Calling a function
 
+Agents should use the `agent-app-functions` skill (`.claude/skills/agent-app-functions/`). Its
+`scripts/app_fn.sh` handles the package, the API check and the quoting, and adds `reset` and
+`launch` commands. To call adb directly, read on.
+
 The device shell parses the arguments a second time, so wrap the JSON in `\'` ... `\'` as below.
 Without that, the device shell strips the JSON's double quotes and the call fails with a
 `JSONException`. Avoid apostrophes in values.
@@ -67,11 +71,12 @@ user" flow does. Creating an account whose wallet already exists fails.
 | --- | --- | --- |
 | `count` | Int, 1 to 500 | Required |
 | `wallet` | String | The admin account |
-| `latitude`, `longitude` | Double, pass both | The device's location, or 0, 0 if it has none |
+| `latitude`, `longitude` | Double, pass both | The device's location while the app is open, otherwise 0, 0 |
 | `note` | String | Empty |
 
-Trees land at random points within about 80 m of the location. Returns `sessionId`, `wallet`,
-`treeCount` and `treeUuids`.
+Trees land at random points within about 80 m of the location. Android hides location from apps
+in the background, so when the app isn't open and no location is passed, trees go at 0, 0.
+Returns `sessionId`, `wallet`, `treeCount` and `treeUuids`.
 
 - **No capture session running** (the usual case): the trees go in a new session for the account,
   which is ended straight away, as if the planter had tracked them and left the capture flow.
