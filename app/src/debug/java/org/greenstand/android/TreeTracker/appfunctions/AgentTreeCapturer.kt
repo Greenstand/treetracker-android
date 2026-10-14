@@ -67,17 +67,13 @@ class AgentTreeCapturer(
         longitude: Double?,
         note: String?,
     ): AgentCapturedTrees {
-        require(count in 1..MAX_TREES) { "count must be between 1 and $MAX_TREES, was $count." }
-        require((latitude == null) == (longitude == null)) { "Pass both latitude and longitude, or neither." }
-        latitude?.let { require(it in -90.0..90.0) { "latitude must be between -90 and 90, was $it." } }
-        longitude?.let { require(it in -180.0..180.0) { "longitude must be between -180 and 180, was $it." } }
-
-        val center = captureCenter(latitude, longitude)
+        AgentInput.requireTreeCount(count)
+        val center = AgentInput.treeCenter(latitude, longitude) ?: deviceLocation()
 
         val activeSessionId = sessionTracker.currentSessionId
         if (activeSessionId != null) {
             val sessionWallet = dao.getSessionById(activeSessionId).originWallet
-            require(wallet == null || wallet.equals(sessionWallet, ignoreCase = true)) {
+            require(wallet == null || wallet.trim().equals(sessionWallet, ignoreCase = true)) {
                 "A capture session for '$sessionWallet' is in progress. Omit wallet to add trees to it, " +
                     "or leave the capture flow first."
             }
@@ -88,8 +84,7 @@ class AgentTreeCapturer(
 
         val user =
             if (wallet != null) {
-                // Email wallets are saved lowercased
-                requireNotNull(userRepo.getUserWithWallet(wallet) ?: userRepo.getUserWithWallet(wallet.lowercase())) {
+                requireNotNull(AgentInput.walletLookups(wallet).firstNotNullOfOrNull { userRepo.getUserWithWallet(it) }) {
                     "No account with wallet '$wallet'. Call createAccount first."
                 }
             } else {
@@ -137,22 +132,14 @@ class AgentTreeCapturer(
             tree.treeUuid.toString()
         }
 
-    /**
-     * A random point near [center]. Clamped and wrapped, because near a pole or the antimeridian
-     * the spread can leave the valid range.
-     */
+    /** A random point near [center], kept in range near a pole or the antimeridian. */
     private fun spreadAround(center: Pair<Double, Double>): Pair<Double, Double> {
         val (latitude, longitude) = LocationUtils.generateRandomLocationInRadius(center.first, center.second, TREE_SPREAD_MILES)
-        val wrappedLongitude = ((longitude + 180.0) % 360.0 + 360.0) % 360.0 - 180.0
-        return latitude.coerceIn(-90.0, 90.0) to wrappedLongitude
+        return AgentInput.normalizeCoordinates(latitude, longitude)
     }
 
-    /** Latitude to longitude, or null when there is no location to use. */
-    private fun captureCenter(
-        latitude: Double?,
-        longitude: Double?,
-    ): Pair<Double, Double>? {
-        if (latitude != null && longitude != null) return latitude to longitude
+    /** The device's latitude and longitude, or null when it has none the app can see. */
+    private fun deviceLocation(): Pair<Double, Double>? {
         val location = locationUpdateManager.currentLocation ?: lastKnownLocation()
         return location?.let { it.latitude to it.longitude }
     }
@@ -170,8 +157,6 @@ class AgentTreeCapturer(
     }
 
     companion object {
-        const val MAX_TREES = 500
-
         // Trees land at random points within this radius of the center, so they don't stack on the map
         private const val TREE_SPREAD_MILES = 0.05
     }

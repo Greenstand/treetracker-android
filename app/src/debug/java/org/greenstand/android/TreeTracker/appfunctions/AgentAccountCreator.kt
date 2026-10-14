@@ -18,8 +18,6 @@ package org.greenstand.android.TreeTracker.appfunctions
 import android.content.Context
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
-import org.greenstand.android.TreeTracker.utilities.Validation
-import org.greenstand.android.TreeTracker.utils.ValidationUtils
 import kotlin.random.Random
 
 /**
@@ -38,28 +36,18 @@ class AgentAccountCreator(
         phone: String?,
         email: String?,
     ): AgentAccount {
-        require(phone == null || email == null) { "Pass a phone or an email, not both." }
+        val details = AgentInput.accountDetails(firstName, lastName, phone, email)
 
-        val first = firstName ?: DEFAULT_FIRST_NAME
-        val last = lastName ?: DEFAULT_LAST_NAME
-        requireValidName("firstName", first)
-        requireValidName("lastName", last)
-
-        // Sign-up lowercases emails before they become the wallet, and only checks for an @
-        val normalizedEmail = email?.lowercase()
-        normalizedEmail?.let { require('@' in it) { "email '$it' must contain an @." } }
-        phone?.let { require(Validation.isValidPhoneNumber(it)) { "phone '$it' must be 7 to 15 digits." } }
-
-        val wallet = normalizedEmail ?: phone ?: generateUnusedPhone()
+        val wallet = details.email ?: details.phone ?: generateUnusedPhone()
         require(!userRepo.doesUserExists(wallet)) { "An account with wallet '$wallet' already exists." }
 
         val isPowerUser = userRepo.getPowerUser() == null
         val userId =
             userRepo.createUser(
-                firstName = first,
-                lastName = last,
-                phone = if (normalizedEmail == null) wallet else null,
-                email = normalizedEmail,
+                firstName = details.firstName,
+                lastName = details.lastName,
+                phone = if (details.email == null) wallet else null,
+                email = details.email,
                 wallet = wallet,
                 photoPath = ImageUtils.createTestImageFile(context).absolutePath,
                 isPowerUser = isPowerUser,
@@ -68,18 +56,10 @@ class AgentAccountCreator(
         return AgentAccount(
             userId = userId,
             wallet = wallet,
-            firstName = first,
-            lastName = last,
+            firstName = details.firstName,
+            lastName = details.lastName,
             isPowerUser = isPowerUser,
         )
-    }
-
-    private fun requireValidName(
-        field: String,
-        name: String,
-    ) {
-        val (isValid, error) = ValidationUtils.validateName(name)
-        require(isValid) { "$field '$name' is invalid: $error" }
     }
 
     private suspend fun generateUnusedPhone(): String {
@@ -91,8 +71,6 @@ class AgentAccountCreator(
     }
 
     companion object {
-        const val DEFAULT_FIRST_NAME = "Test"
-        const val DEFAULT_LAST_NAME = "User"
         private const val MAX_PHONE_ATTEMPTS = 10
     }
 }

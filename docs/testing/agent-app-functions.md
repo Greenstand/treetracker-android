@@ -117,8 +117,12 @@ The app opens on the dashboard with 20 trees waiting to upload.
 
 - `app/src/debug/java/.../appfunctions/AgentAppFunctions.kt` declares the functions. The
   AppFunctions compiler (KSP) generates the function index and the XML the system reads.
-- `AgentAccountCreator` and `AgentTreeCapturer` hold the logic. Their tests are in
-  `app/src/testDebug`.
+- `AgentInput` checks and normalizes the arguments, by the sign-up and capture rules.
+  `AgentAccountCreator` and `AgentTreeCapturer` do the work. Their tests are in
+  `app/src/testDebug` (`AgentInputTest` is table-driven, with about 125 cases).
+- `.claude/skills/agent-app-functions/scripts/test_app_fn.sh` tests the script with a fake `adb`.
+  It covers reading adb output, ranking devices, quoting JSON for the device shell, detecting
+  errors and formatting the function list.
 - The library's own manifest declares the service, so there is no manifest entry to maintain.
 - The library is pinned to `1.0.0-alpha08`, the last version that builds with AGP 8.x and
   compileSdk 36. From alpha09 it needs AGP 9.1 and compileSdk 37, and later versions change the

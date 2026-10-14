@@ -275,7 +275,7 @@ class AgentTreeCapturerTest {
         runTest {
             assertFailsWith<IllegalArgumentException> { capturer.captureTrees(0, null, null, null, null) }
             assertFailsWith<IllegalArgumentException> {
-                capturer.captureTrees(AgentTreeCapturer.MAX_TREES + 1, null, null, null, null)
+                capturer.captureTrees(AgentInput.MAX_TREES + 1, null, null, null, null)
             }
             assertFailsWith<IllegalArgumentException> { capturer.captureTrees(1, null, 10.0, null, null) }
             assertFailsWith<IllegalArgumentException> { capturer.captureTrees(1, null, 91.0, 0.0, null) }

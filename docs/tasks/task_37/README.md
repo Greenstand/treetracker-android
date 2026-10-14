@@ -85,3 +85,25 @@ A subagent review found these, now fixed:
   tree count. Both are fixed, and there are new tests for setup order, cancellation and email
   case.
 - The script now escapes apostrophes instead of refusing them, since names like O'Brien are valid.
+
+## Second review pass: parsing tests
+
+- Argument checking moved into `AgentInput`, which has no side effects. `AgentInputTest` is
+  table-driven (JUnit `Parameterized`), with about 125 cases: names (Unicode, apostrophes,
+  hyphens, length limits, digits and symbols), phones, emails, phone and email together, wallet
+  lookups, tree counts, coordinates (bounds, NaN, infinity) and wrapping (fixed cases plus a
+  10,000-point randomized sweep). Names, phones and emails are now trimmed.
+- `app_fn.sh` keeps its commands in `main`, so `test_app_fn.sh` can load its functions. Its 111
+  checks use a fake `adb` and cover:
+  - reading `adb devices` and `getprop`/`pm` output (CRLF, daemon noise, unauthorized and offline
+    devices, test APKs, similar package names);
+  - device ranking;
+  - JSON quoting, as a round trip through `sh` (apostrophes, `$()`, backticks, globs, quote
+    break-outs);
+  - error detection;
+  - the `list` formatter, against real device output.
+  Breaking the escaping, the error matching, the emulator-only rule or the `reset` guard each
+  makes it fail.
+- Fixed while writing these: any output containing "Exception", such as an account named
+  "Exception", was reported as a failure. Now only the device's error lines count. The `list`
+  output also drops empty descriptions instead of printing blank lines.

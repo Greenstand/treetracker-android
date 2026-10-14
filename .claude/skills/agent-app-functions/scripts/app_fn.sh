@@ -135,31 +135,44 @@ resolve_package() {
   echo "$package"
 }
 
+# adb joins its arguments and the device shell parses them again, so the JSON has to arrive as
+# one single-quoted word: wrapped in single quotes, with each ' in it written as '\''
+quote_for_device_shell() {
+  printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"
+}
+
+# The shell command reports some failures only as text, so check its output as well as its status
+is_error_output() {
+  printf '%s\n' "$1" | grep -qE '^(Error executing app function|Exception):'
+}
+
 call_function() {
-  local name=$1 json=$2 output quoted status=0
-  # The device shell parses the arguments again, so the JSON travels inside single quotes, with
-  # each ' in it written as '\''
-  quoted=$(printf '%s' "$json" | sed "s/'/'\\\\''/g")
+  local name=$1 json=$2 output status=0
   output=$(adb_ shell cmd app_function execute-app-function \
     --package "$PACKAGE" \
     --function "$FUNCTIONS_CLASS#$name" \
-    --parameters "'$quoted'" \
+    --parameters "$(quote_for_device_shell "$json")" \
     --brief-yaml 2>&1) || status=$?
   echo "$output"
-  case "$output" in
-    *"Error executing"* | *Exception*) exit 1 ;;
-  esac
+  if is_error_output "$output"; then
+    exit 1
+  fi
   [ "$status" -eq 0 ] || exit "$status"
 }
 
 list_functions() {
   local raw
   raw=$(adb_ shell cmd app_function list-app-functions --package "$PACKAGE")
-  if ! command -v python3 >/dev/null 2>&1; then
+  if command -v python3 >/dev/null 2>&1; then
+    echo "$raw" | format_function_list
+  else
     echo "$raw"
-    return
   fi
-  echo "$raw" | python3 -c '
+}
+
+# Turns list-app-functions JSON (on stdin) into one block per function with its parameters
+format_function_list() {
+  python3 -c '
 import json, sys
 data = json.load(sys.stdin)
 for entries in data.values():
@@ -168,73 +181,83 @@ for entries in data.values():
             if not isinstance(meta, dict) or "functionId" not in meta:
                 continue
             print(meta["functionId"][0].split("#")[-1])
-            print("  " + " ".join(meta.get("description", [""])[0].split()))
+            description = " ".join(meta.get("description", [""])[0].split())
+            if description:
+                print("  " + description)
             for param in meta.get("parameters", []):
-                name = param["name"][0]
-                required = "required" if param["isRequired"][0] else "optional"
-                description = param.get("description", [""])[0]
-                print(f"  - {name} ({required}): {description}")
+                line = "  - " + param["name"][0]
+                line += " (required)" if param["isRequired"][0] else " (optional)"
+                param_description = " ".join(param.get("description", [""])[0].split())
+                if param_description:
+                    line += ": " + param_description
+                print(line)
             print()
 '
 }
 
-SERIAL_FROM_FLAG=no
-while [ $# -gt 0 ]; do
-  case "$1" in
-    -s)
-      [ $# -ge 2 ] || die "-s needs a device serial."
-      export ANDROID_SERIAL=$2
-      SERIAL_FROM_FLAG=yes
-      shift 2
-      ;;
-    *) break ;;
-  esac
-done
-[ $# -ge 1 ] || {
-  usage
-  exit 1
-}
-ADB=$(find_adb)
-command=$1
-default_json='{}'
-TABLE=""
-
-case "$command" in
-  -h | --help | help)
-    usage
-    ;;
-  createAccount | captureTrees)
-    choose_device sdk
-    call_function "$command" "${2:-$default_json}"
-    ;;
-  list)
-    choose_device sdk
-    list_functions
-    ;;
-  reset)
-    choose_device any-sdk clears-data
-    adb_ shell pm clear "$PACKAGE" >/dev/null
-    for permission in $PERMISSIONS; do
-      adb_ shell pm grant "$PACKAGE" "android.permission.$permission" 2>/dev/null || true
-    done
-    echo "Cleared $PACKAGE and granted its runtime permissions."
-    ;;
-  launch)
-    choose_device any-sdk
-    adb_ shell am force-stop "$PACKAGE"
-    adb_ shell monkey -p "$PACKAGE" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
-    echo "Launched $PACKAGE."
-    ;;
-  devices)
-    TABLE=$(device_table)
-    [ -n "$TABLE" ] || die "no device connected."
-    picked=${ANDROID_SERIAL:-$(rank_devices | awk 'NR == 1')}
-    print_table "$picked"
-    [ -n "$picked" ] ||
-      echo "No emulator can run the functions (they need a debug or dev build on API $MIN_SDK+). Name a physical device with -s."
-    ;;
-  *)
+main() {
+  SERIAL_FROM_FLAG=no
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -s)
+        [ $# -ge 2 ] || die "-s needs a device serial."
+        export ANDROID_SERIAL=$2
+        SERIAL_FROM_FLAG=yes
+        shift 2
+        ;;
+      *) break ;;
+    esac
+  done
+  [ $# -ge 1 ] || {
     usage
     exit 1
-    ;;
-esac
+  }
+  ADB=$(find_adb)
+  local command=$1 default_json='{}' picked
+  TABLE=""
+
+  case "$command" in
+    -h | --help | help)
+      usage
+      ;;
+    createAccount | captureTrees)
+      choose_device sdk
+      call_function "$command" "${2:-$default_json}"
+      ;;
+    list)
+      choose_device sdk
+      list_functions
+      ;;
+    reset)
+      choose_device any-sdk clears-data
+      adb_ shell pm clear "$PACKAGE" >/dev/null
+      for permission in $PERMISSIONS; do
+        adb_ shell pm grant "$PACKAGE" "android.permission.$permission" 2>/dev/null || true
+      done
+      echo "Cleared $PACKAGE and granted its runtime permissions."
+      ;;
+    launch)
+      choose_device any-sdk
+      adb_ shell am force-stop "$PACKAGE"
+      adb_ shell monkey -p "$PACKAGE" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
+      echo "Launched $PACKAGE."
+      ;;
+    devices)
+      TABLE=$(device_table)
+      [ -n "$TABLE" ] || die "no device connected."
+      picked=${ANDROID_SERIAL:-$(rank_devices | awk 'NR == 1')}
+      print_table "$picked"
+      [ -n "$picked" ] ||
+        echo "No emulator can run the functions (they need a debug or dev build on API $MIN_SDK+). Name a physical device with -s."
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+}
+
+# Run only when executed, so the tests can source the functions
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  main "$@"
+fi

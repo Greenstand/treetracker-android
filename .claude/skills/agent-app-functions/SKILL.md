@@ -123,7 +123,18 @@ causing a `JSONException`. Use `org.greenstand.android.TreeTracker.dev` for dev 
 
 ## Changing the functions
 
-The code is in `app/src/debug/java/org/greenstand/android/TreeTracker/appfunctions/`, with tests
-in `app/src/testDebug/`. The full guide is `docs/testing/agent-app-functions.md`. If you add or
-change a function, update that guide, this skill and `scripts/app_fn.sh` too. The library is
+The code is in `app/src/debug/java/org/greenstand/android/TreeTracker/appfunctions/`. Argument
+checking lives in `AgentInput`. The full guide is `docs/testing/agent-app-functions.md`. If you add
+or change a function, update that guide, this skill and `scripts/app_fn.sh` too. The library is
 pinned to `1.0.0-alpha08`, because later versions need AGP 9.1 and compileSdk 37.
+
+Run both test suites after a change. Neither needs a device:
+
+```bash
+./gradlew :app:testDebugUnitTest --tests "org.greenstand.android.TreeTracker.appfunctions.*"
+bash .claude/skills/agent-app-functions/scripts/test_app_fn.sh
+```
+
+The script's tests use a fake `adb`. `scripts/testdata/list-app-functions.json` is real
+`list-app-functions` output. If you change a function's KDoc, re-capture it from a device and
+regenerate `list-app-functions.expected.txt`.
