@@ -17,7 +17,7 @@ package org.greenstand.android.TreeTracker.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
 import org.greenstand.android.TreeTracker.models.Tree
@@ -30,7 +30,7 @@ data class CreateLegacyTreeParams(
 )
 
 class CreateLegacyTreeUseCase(
-    private val dao: TreeTrackerDAO,
+    private val treeCaptureDao: TreeDAO,
     private val timeProvider: TimeProvider,
 ) : UseCase<CreateLegacyTreeParams, Long>() {
     override suspend fun execute(params: CreateLegacyTreeParams): Long =
@@ -54,6 +54,6 @@ class CreateLegacyTreeUseCase(
                         TreeAttributeEntity(it.key, it.value, -1)
                     }.toList()
             Timber.d("Inserting TreeCapture entity $entity")
-            dao.insertTreeWithAttributes(entity, attributeEntitites)
+            treeCaptureDao.insertTreeWithAttributes(entity, attributeEntitites)
         }
 }

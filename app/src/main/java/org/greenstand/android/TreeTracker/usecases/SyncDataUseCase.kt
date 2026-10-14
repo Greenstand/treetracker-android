@@ -21,7 +21,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionUploader
@@ -35,7 +35,7 @@ import kotlin.coroutines.coroutineContext
 class SyncDataUseCase(
     private val treeUploader: TreeUploader,
     private val uploadLocationDataUseCase: UploadLocationDataUseCase,
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
     private val planterUploader: PlanterUploader,
     private val sessionUploader: SessionUploader,
     private val deviceConfigUploader: DeviceConfigUploader,
@@ -73,13 +73,13 @@ class SyncDataUseCase(
 
                 treeUpload(
                     syncStep = SyncStep.LEGACY_TREES,
-                    onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
+                    onGetTreeIds = { treeDao.getAllTreeCaptureIdsToUpload() },
                     onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
                 )
 
                 treeUpload(
                     syncStep = SyncStep.TREES,
-                    onGetTreeIds = { dao.getAllTreeIdsToUpload() },
+                    onGetTreeIds = { treeDao.getAllTreeIdsToUpload() },
                     onUpload = { treeUploader.uploadTrees(it) },
                 )
 

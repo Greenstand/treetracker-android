@@ -25,7 +25,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.junit.Before
 import org.junit.Rule
@@ -44,7 +44,7 @@ class TreesToSyncHelperTest {
     private lateinit var preferences: Preferences
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
 
     private lateinit var treesToSyncHelper: TreesToSyncHelper
 
@@ -59,15 +59,15 @@ class TreesToSyncHelperTest {
         treesToSyncHelper =
             TreesToSyncHelper(
                 preferences = preferences,
-                dao = dao,
+                treeDao = treeDao,
             )
     }
 
     @Test
     fun `WHEN refreshTreeCountToSync called THEN sums legacy and new tree counts and stores in prefs`() =
         runTest {
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 5
-            coEvery { dao.getNonUploadedTreeImageCount() } returns 10
+            coEvery { treeDao.getNonUploadedLegacyTreeCaptureImageCount() } returns 5
+            coEvery { treeDao.getNonUploadedTreeImageCount() } returns 10
 
             treesToSyncHelper.refreshTreeCountToSync()
 

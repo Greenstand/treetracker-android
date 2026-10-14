@@ -29,7 +29,8 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.PlanterDAO
+import org.greenstand.android.TreeTracker.database.dao.UserDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterCheckInEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEntity
@@ -54,7 +55,10 @@ class PlanterUploaderTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var planterDao: PlanterDAO
+
+    @MockK(relaxed = true)
+    private lateinit var userDao: UserDAO
 
     @MockK(relaxed = true)
     private lateinit var uploadImageUseCase: UploadImageUseCase
@@ -78,7 +82,8 @@ class PlanterUploaderTest {
         every { DeviceUtils.deviceId } returns "test-device-id"
         planterUploader =
             PlanterUploader(
-                dao = dao,
+                planterDao = planterDao,
+                userDao = userDao,
                 uploadImageUseCase = uploadImageUseCase,
                 json = json,
                 objectStorageClient = objectStorageClient,
@@ -133,17 +138,17 @@ class PlanterUploaderTest {
                     createdAt = System.currentTimeMillis(),
                 ).apply { id = 1L }
 
-            coEvery { dao.getAllUsersToUpload() } returns listOf(userEntity)
+            coEvery { userDao.getAllUsersToUpload() } returns listOf(userEntity)
             coEvery { uploadImageUseCase.execute(any()) } returns "https://uploaded.url/user.jpg"
-            coEvery { dao.getAllPlanterInfoToUpload() } returns listOf(planterInfo)
-            coEvery { dao.getAllPlanterCheckInsForPlanterInfoId(1L) } returns listOf(planterCheckIn)
-            coEvery { dao.getPlanterCheckInsToUpload() } returns listOf(planterCheckIn)
+            coEvery { planterDao.getAllPlanterInfoToUpload() } returns listOf(planterInfo)
+            coEvery { planterDao.getAllPlanterCheckInsForPlanterInfoId(1L) } returns listOf(planterCheckIn)
+            coEvery { planterDao.getPlanterCheckInsToUpload() } returns listOf(planterCheckIn)
 
             planterUploader.upload("instance-123")
 
             coVerify(atLeast = 1) { uploadImageUseCase.execute(any()) }
             coVerify(atLeast = 1) { objectStorageClient.uploadBundle(any(), any()) }
-            coVerify(exactly = 1) { dao.updateUserUploadStatus(listOf(1L), true) }
+            coVerify(exactly = 1) { userDao.updateUserUploadStatus(listOf(1L), true) }
         }
 
     @Test
@@ -165,9 +170,9 @@ class PlanterUploaderTest {
                     powerUser = false,
                 ).apply { id = 2L }
 
-            coEvery { dao.getAllUsersToUpload() } returns listOf(userWithPhoto)
-            coEvery { dao.getAllPlanterInfoToUpload() } returns emptyList()
-            coEvery { dao.getPlanterCheckInsToUpload() } returns emptyList()
+            coEvery { userDao.getAllUsersToUpload() } returns listOf(userWithPhoto)
+            coEvery { planterDao.getAllPlanterInfoToUpload() } returns emptyList()
+            coEvery { planterDao.getPlanterCheckInsToUpload() } returns emptyList()
 
             planterUploader.upload("instance-123")
 

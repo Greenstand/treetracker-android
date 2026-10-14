@@ -26,7 +26,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.junit.Before
@@ -44,7 +44,7 @@ class CreateLegacyTreeUseCaseTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
 
     @MockK(relaxed = true)
     private lateinit var timeProvider: TimeProvider
@@ -66,7 +66,7 @@ class CreateLegacyTreeUseCaseTest {
         MockKAnnotations.init(this)
         createLegacyTreeUseCase =
             CreateLegacyTreeUseCase(
-                dao = dao,
+                treeCaptureDao = treeDao,
                 timeProvider = timeProvider,
             )
     }
@@ -76,7 +76,7 @@ class CreateLegacyTreeUseCaseTest {
         runTest {
             val fakeTime = Instant.fromEpochMilliseconds(5000000L)
             every { timeProvider.currentTime() } returns fakeTime
-            coEvery { dao.insertTreeWithAttributes(any(), any()) } returns 77L
+            coEvery { treeDao.insertTreeWithAttributes(any(), any()) } returns 77L
 
             val params =
                 CreateLegacyTreeParams(
@@ -88,7 +88,7 @@ class CreateLegacyTreeUseCaseTest {
 
             assertEquals(77L, result)
             coVerify {
-                dao.insertTreeWithAttributes(
+                treeDao.insertTreeWithAttributes(
                     match { entity ->
                         entity.uuid == "550e8400-e29b-41d4-a716-446655440000" &&
                             entity.planterCheckInId == 42L &&
@@ -110,7 +110,7 @@ class CreateLegacyTreeUseCaseTest {
         runTest {
             val fakeTime = Instant.fromEpochMilliseconds(9999000L)
             every { timeProvider.currentTime() } returns fakeTime
-            coEvery { dao.insertTreeWithAttributes(any(), any()) } returns 1L
+            coEvery { treeDao.insertTreeWithAttributes(any(), any()) } returns 1L
 
             val params =
                 CreateLegacyTreeParams(
@@ -122,7 +122,7 @@ class CreateLegacyTreeUseCaseTest {
 
             verify { timeProvider.currentTime() }
             coVerify {
-                dao.insertTreeWithAttributes(
+                treeDao.insertTreeWithAttributes(
                     match { it.createAt == fakeTime.epochSeconds },
                     any(),
                 )

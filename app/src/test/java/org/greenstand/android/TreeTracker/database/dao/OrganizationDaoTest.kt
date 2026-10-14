@@ -1,0 +1,76 @@
+/*
+ * Copyright 2023 Treetracker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.greenstand.android.TreeTracker.database.dao
+
+import android.content.Context
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import org.greenstand.android.TreeTracker.database.AppDatabase
+import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import java.io.IOException
+
+@ExperimentalCoroutinesApi
+@RunWith(RobolectricTestRunner::class)
+@Config(manifest = Config.NONE)
+public class OrganizationDaoTest {
+    private lateinit var organizationDao: OrganizationDAO
+    private lateinit var database: AppDatabase
+
+    @Before
+    fun createDb() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        database =
+            Room
+                .inMemoryDatabaseBuilder(
+                    context,
+                    AppDatabase::class.java,
+                ).build()
+        organizationDao = database.organizationDao()
+    }
+
+    @Test
+    fun `insert org to App Database, returns valid org when querying id and name`() =
+        runTest {
+            organizationDao.insertOrg(FakeFileGenerator.fakeOrg.first())
+            val organization = organizationDao.getOrg("new")
+            assertEquals(organization?.id, FakeFileGenerator.fakeOrg.first().id)
+            assertEquals(FakeFileGenerator.fakeOrg.first().name, organization?.name)
+        }
+
+    @Test
+    @Throws(Exception::class)
+    fun `saving org to App Database, returns valid data querying name`() =
+        runTest {
+            organizationDao.insertOrg(FakeFileGenerator.fakeOrg.first())
+            val organization = organizationDao.getOrg("new")
+            assertEquals("GreenStand", organization?.name)
+        }
+
+    @After
+    @Throws(IOException::class)
+    fun tearDown() {
+        database.close()
+    }
+}

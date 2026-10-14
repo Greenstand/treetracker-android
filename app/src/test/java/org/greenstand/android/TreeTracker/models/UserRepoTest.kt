@@ -27,7 +27,9 @@ import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
+import org.greenstand.android.TreeTracker.database.dao.UserDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
@@ -56,7 +58,13 @@ class UserRepoTest {
     private lateinit var locationUpdateManager: LocationUpdateManager
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var userDao: UserDAO
+
+    @MockK(relaxed = true)
+    private lateinit var sessionDao: SessionDAO
+
+    @MockK(relaxed = true)
+    private lateinit var treeDao: TreeDAO
 
     @MockK(relaxed = true)
     private lateinit var analytics: Analytics
@@ -78,7 +86,9 @@ class UserRepoTest {
         userRepo =
             UserRepo(
                 locationUpdateManager = locationUpdateManager,
-                dao = dao,
+                userDao = userDao,
+                sessionDao = sessionDao,
+                treeDao = treeDao,
                 analytics = analytics,
                 timeProvider = timeProvider,
                 messagesDao = messagesDao,
@@ -119,9 +129,9 @@ class UserRepoTest {
         sessions: List<SessionEntity>,
         treeCounts: List<Int>,
     ) {
-        coEvery { dao.getSessionsByUserWallet(wallet) } returns sessions
+        coEvery { sessionDao.getSessionsByUserWallet(wallet) } returns sessions
         sessions.forEachIndexed { index, session ->
-            coEvery { dao.getTreeCountFromSessionId(session.id) } returns treeCounts[index]
+            coEvery { treeDao.getTreeCountFromSessionId(session.id) } returns treeCounts[index]
         }
     }
 
@@ -131,7 +141,7 @@ class UserRepoTest {
             val entity1 = createFakeUserEntity(id = 1L, wallet = "wallet1", firstName = "Alice", lastName = "Smith")
             val entity2 = createFakeUserEntity(id = 2L, wallet = "wallet2", firstName = "Bob", lastName = "Jones")
 
-            coEvery { dao.getAllUsersList() } returns listOf(entity1, entity2)
+            coEvery { userDao.getAllUsersList() } returns listOf(entity1, entity2)
             stubSessionsAndTreeCount("wallet1", emptyList(), emptyList())
             stubSessionsAndTreeCount("wallet2", emptyList(), emptyList())
             coEvery { messagesDao.getUnreadMessageCountForWallet(any()) } returns 0
@@ -147,7 +157,7 @@ class UserRepoTest {
     fun `WHEN getUser called with valid ID THEN returns User`() =
         runTest {
             val entity = createFakeUserEntity(id = 10L, wallet = "w10")
-            coEvery { dao.getUserById(10L) } returns entity
+            coEvery { userDao.getUserById(10L) } returns entity
             stubSessionsAndTreeCount("w10", emptyList(), emptyList())
             coEvery { messagesDao.getUnreadMessageCountForWallet("w10") } returns 0
 
@@ -160,7 +170,7 @@ class UserRepoTest {
     @Test
     fun `WHEN getUser called with nonexistent ID THEN returns null`() =
         runTest {
-            coEvery { dao.getUserById(999L) } returns null
+            coEvery { userDao.getUserById(999L) } returns null
 
             val result = userRepo.getUser(999L)
 
@@ -171,7 +181,7 @@ class UserRepoTest {
     fun `WHEN getUserWithWallet called THEN returns user`() =
         runTest {
             val entity = createFakeUserEntity(id = 5L, wallet = "my-wallet")
-            coEvery { dao.getUserByWallet("my-wallet") } returns entity
+            coEvery { userDao.getUserByWallet("my-wallet") } returns entity
             stubSessionsAndTreeCount("my-wallet", emptyList(), emptyList())
             coEvery { messagesDao.getUnreadMessageCountForWallet("my-wallet") } returns 0
 
@@ -184,7 +194,7 @@ class UserRepoTest {
     @Test
     fun `WHEN deleteUser with rows deleted greater than 0 THEN returns true`() =
         runTest {
-            coEvery { dao.deleteUserByWallet("wallet-to-delete") } returns 1
+            coEvery { userDao.deleteUserByWallet("wallet-to-delete") } returns 1
 
             val result = userRepo.deleteUser("wallet-to-delete")
 
@@ -194,7 +204,7 @@ class UserRepoTest {
     @Test
     fun `WHEN deleteUser with 0 rows deleted THEN returns false`() =
         runTest {
-            coEvery { dao.deleteUserByWallet("nonexistent") } returns 0
+            coEvery { userDao.deleteUserByWallet("nonexistent") } returns 0
 
             val result = userRepo.deleteUser("nonexistent")
 
@@ -225,7 +235,7 @@ class UserRepoTest {
     fun `WHEN getPowerUser and user exists THEN returns user`() =
         runTest {
             val entity = createFakeUserEntity(id = 7L, wallet = "power-wallet", powerUser = true)
-            coEvery { dao.getPowerUser() } returns entity
+            coEvery { userDao.getPowerUser() } returns entity
             stubSessionsAndTreeCount("power-wallet", emptyList(), emptyList())
             coEvery { messagesDao.getUnreadMessageCountForWallet("power-wallet") } returns 0
 
@@ -238,7 +248,7 @@ class UserRepoTest {
     @Test
     fun `WHEN getPowerUser and no power user exists THEN returns null`() =
         runTest {
-            coEvery { dao.getPowerUser() } returns null
+            coEvery { userDao.getPowerUser() } returns null
 
             val result = userRepo.getPowerUser()
 
@@ -249,7 +259,7 @@ class UserRepoTest {
     fun `WHEN createUser called THEN inserts entity and calls analytics`() =
         runTest {
             every { timeProvider.currentTime() } returns Instant.fromEpochMilliseconds(1000L)
-            coEvery { dao.insertUser(any()) } returns 42L
+            coEvery { userDao.insertUser(any()) } returns 42L
 
             val result =
                 userRepo.createUser(
@@ -263,7 +273,7 @@ class UserRepoTest {
                 )
 
             assertEquals(42L, result)
-            coVerify { dao.insertUser(any()) }
+            coVerify { userDao.insertUser(any()) }
             coVerify { analytics.userInfoCreated(phone = "123", email = "test@test.com") }
         }
 
@@ -271,7 +281,7 @@ class UserRepoTest {
     fun `WHEN doesUserExists with existing user THEN returns true`() =
         runTest {
             val entity = createFakeUserEntity(id = 1L, wallet = "existing-wallet")
-            coEvery { dao.getUserByWallet("existing-wallet") } returns entity
+            coEvery { userDao.getUserByWallet("existing-wallet") } returns entity
             stubSessionsAndTreeCount("existing-wallet", emptyList(), emptyList())
             coEvery { messagesDao.getUnreadMessageCountForWallet("existing-wallet") } returns 0
 
@@ -283,7 +293,7 @@ class UserRepoTest {
     @Test
     fun `WHEN doesUserExists with nonexistent user THEN returns false`() =
         runTest {
-            coEvery { dao.getUserByWallet("missing") } returns null
+            coEvery { userDao.getUserByWallet("missing") } returns null
 
             val result = userRepo.doesUserExists("missing")
 
@@ -294,7 +304,7 @@ class UserRepoTest {
     fun `WHEN updateUser with existing user THEN updates entity via DAO`() =
         runTest {
             val existingEntity = createFakeUserEntity(id = 20L, wallet = "update-wallet")
-            coEvery { dao.getUserById(20L) } returns existingEntity
+            coEvery { userDao.getUserById(20L) } returns existingEntity
 
             val user =
                 User(
@@ -310,13 +320,13 @@ class UserRepoTest {
 
             userRepo.updateUser(user)
 
-            coVerify { dao.updateUser(any()) }
+            coVerify { userDao.updateUser(any()) }
         }
 
     @Test
     fun `WHEN updateUser with nonexistent user THEN no-ops`() =
         runTest {
-            coEvery { dao.getUserById(999L) } returns null
+            coEvery { userDao.getUserById(999L) } returns null
 
             val user =
                 User(
@@ -332,7 +342,7 @@ class UserRepoTest {
 
             userRepo.updateUser(user)
 
-            coVerify(exactly = 0) { dao.updateUser(any()) }
+            coVerify(exactly = 0) { userDao.updateUser(any()) }
         }
 
     @Test
@@ -342,10 +352,10 @@ class UserRepoTest {
             val session1 = FakeFileGenerator.fakeSession.copy(originWallet = "count-wallet").also { it.id = 1L }
             val session2 = FakeFileGenerator.fakeSessionWithEndTime.copy(originWallet = "count-wallet").also { it.id = 2L }
 
-            coEvery { dao.getUserById(3L) } returns entity
-            coEvery { dao.getSessionsByUserWallet("count-wallet") } returns listOf(session1, session2)
-            coEvery { dao.getTreeCountFromSessionId(1L) } returns 5
-            coEvery { dao.getTreeCountFromSessionId(2L) } returns 3
+            coEvery { userDao.getUserById(3L) } returns entity
+            coEvery { sessionDao.getSessionsByUserWallet("count-wallet") } returns listOf(session1, session2)
+            coEvery { treeDao.getTreeCountFromSessionId(1L) } returns 5
+            coEvery { treeDao.getTreeCountFromSessionId(2L) } returns 3
             coEvery { messagesDao.getUnreadMessageCountForWallet("count-wallet") } returns 0
 
             val result = userRepo.getUser(3L)

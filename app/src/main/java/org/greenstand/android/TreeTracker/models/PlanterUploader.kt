@@ -25,7 +25,8 @@ import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.api.models.requests.WalletRegistrationRequest
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.PlanterDAO
+import org.greenstand.android.TreeTracker.database.dao.UserDAO
 import org.greenstand.android.TreeTracker.usecases.UploadImageParams
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.utilities.md5
@@ -37,7 +38,8 @@ import java.io.File
  * Deletes local photos once they are uploaded
  */
 class PlanterUploader(
-    private val dao: TreeTrackerDAO,
+    private val planterDao: PlanterDAO,
+    private val userDao: UserDAO,
     private val uploadImageUseCase: UploadImageUseCase,
     private val json: Json,
     private val objectStorageClient: ObjectStorageClient,
@@ -54,7 +56,7 @@ class PlanterUploader(
 
     private suspend fun uploadLegacyPlanterImages() {
         coroutineScope {
-            dao
+            planterDao
                 .getPlanterCheckInsToUpload()
                 .filter { it.photoUrl == null && it.localPhotoPath != null }
                 .map { planterCheckIn ->
@@ -69,7 +71,7 @@ class PlanterUploader(
                             )
                         imageUrl?.let {
                             planterCheckIn.photoUrl = imageUrl
-                            dao.updatePlanterCheckIn(planterCheckIn)
+                            planterDao.updatePlanterCheckIn(planterCheckIn)
                         }
                     }
                 }.forEach { it.await() }
@@ -78,7 +80,7 @@ class PlanterUploader(
 
     private suspend fun uploadUserImages() {
         coroutineScope {
-            dao
+            userDao
                 .getAllUsersToUpload()
                 .filter { it.photoUrl == null }
                 .map { user ->
@@ -93,7 +95,7 @@ class PlanterUploader(
                             )
                         imageUrl?.let {
                             user.photoUrl = imageUrl
-                            dao.updateUser(user)
+                            userDao.updateUser(user)
                         }
                     }
                 }.forEach { it.await() }
@@ -101,7 +103,7 @@ class PlanterUploader(
     }
 
     private suspend fun uploadPlanterInfo(instanceId: String) {
-        val planterInfoToUpload = dao.getAllPlanterInfoToUpload()
+        val planterInfoToUpload = planterDao.getAllPlanterInfoToUpload()
 
         Timber
             .tag(TAG)
@@ -116,7 +118,7 @@ class PlanterUploader(
                     // Find the image this user first took during registration
                     // This image is the oldest image for PlanterCheckIn
                     val registrationPhotoUrl =
-                        dao
+                        planterDao
                             .getAllPlanterCheckInsForPlanterInfoId(planterInfo.id)
                             .minByOrNull { it.createdAt }
                             ?.photoUrl
@@ -142,15 +144,15 @@ class PlanterUploader(
         val planterInfoIds = planterInfoToUpload.map { it.id }
 
         // Update the trees in DB with the bundleId
-        dao.updatePlanterInfoBundleIds(planterInfoIds, bundleId)
+        planterDao.updatePlanterInfoBundleIds(planterInfoIds, bundleId)
 
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
 
-        dao.updatePlanterInfoUploadStatus(planterInfoIds, true)
+        planterDao.updatePlanterInfoUploadStatus(planterInfoIds, true)
     }
 
     private suspend fun uploadUsers() {
-        val usersToUpload = dao.getAllUsersToUpload()
+        val usersToUpload = userDao.getAllUsersToUpload()
 
         Timber
             .tag(TAG)
@@ -183,17 +185,17 @@ class PlanterUploader(
         val userIds = usersToUpload.map { it.id }
 
         // Update the trees in DB with the bundleId
-        dao.updateUserBundleIds(userIds, bundleId)
+        userDao.updateUserBundleIds(userIds, bundleId)
 
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
 
-        dao.updateUserUploadStatus(userIds, true)
+        userDao.updateUserUploadStatus(userIds, true)
     }
 
     private suspend fun deleteLocalImagesThatWereUploaded() {
         // Delete all local image files for registrations except for the currently logged in users photo...
         val loggedOutPlanterCheckIns =
-            dao
+            planterDao
                 .getPlanterCheckInsToUpload()
                 .filter {
                     it.localPhotoPath != null && it.photoUrl != null
@@ -208,7 +210,7 @@ class PlanterUploader(
                 }
             }
 
-        dao.removePlanterCheckInLocalImagePaths(loggedOutPlanterCheckIns.map { it.id })
+        planterDao.removePlanterCheckInLocalImagePaths(loggedOutPlanterCheckIns.map { it.id })
     }
 
     companion object {

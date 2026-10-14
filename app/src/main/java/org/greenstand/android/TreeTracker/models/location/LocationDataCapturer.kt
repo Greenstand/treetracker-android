@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.LocationDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.ConvergenceStatus
@@ -42,7 +42,7 @@ import kotlin.properties.Delegates
 
 class LocationDataCapturer(
     private val locationUpdateManager: LocationUpdateManager,
-    private val treeTrackerDAO: TreeTrackerDAO,
+    private val locationDao: LocationDAO,
     private val convergenceConfiguration: ConvergenceConfiguration,
     private val json: Json,
     private val sessionTracker: SessionTracker,
@@ -138,7 +138,7 @@ class LocationDataCapturer(
                             )
                         val jsonValue = json.encodeToString(locationData)
                         Timber.d("Inserting new location data $jsonValue")
-                        treeTrackerDAO.insertLocationData(
+                        locationDao.insertLocationData(
                             LocationEntity(
                                 locationDataJson = jsonValue,
                                 sessionId = currentSessionId,

@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
@@ -40,11 +40,11 @@ sealed class TreeListAction : Action {
 
 class TreeListViewModel(
     private val userWallet: String,
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
 ) : BaseViewModel<TreeListState, TreeListAction>(TreeListState()) {
     init {
         viewModelScope.launch {
-            dao.getTreesByUserWallet(userWallet).collect { trees ->
+            treeDao.getTreesByUserWallet(userWallet).collect { trees ->
                 updateState {
                     copy(
                         trees = trees,

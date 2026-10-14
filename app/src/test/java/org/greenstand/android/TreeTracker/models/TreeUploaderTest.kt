@@ -31,7 +31,8 @@ import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
@@ -66,7 +67,10 @@ class TreeUploaderTest {
     private lateinit var createTreeRequestUseCase: CreateTreeRequestUseCase
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
+
+    @MockK(relaxed = true)
+    private lateinit var sessionDao: SessionDAO
 
     private val json =
         Json {
@@ -87,7 +91,8 @@ class TreeUploaderTest {
                 uploadImageUseCase = uploadImageUseCase,
                 objectStorageClient = objectStorageClient,
                 createTreeRequestUseCase = createTreeRequestUseCase,
-                dao = dao,
+                treeDao = treeDao,
+                sessionDao = sessionDao,
                 json = json,
             )
     }
@@ -123,15 +128,15 @@ class TreeUploaderTest {
                     isUploaded = false,
                 ).apply { id = 1L }
 
-            coEvery { dao.getTreesByIds(listOf(1L)) } returns listOf(treeEntity)
+            coEvery { treeDao.getTreesByIds(listOf(1L)) } returns listOf(treeEntity)
             coEvery { uploadImageUseCase.execute(any()) } returns "https://uploaded.url/photo.jpg"
-            coEvery { dao.getSessionById(1L) } returns sessionEntity
+            coEvery { sessionDao.getSessionById(1L) } returns sessionEntity
 
             treeUploader.uploadTrees(listOf(1L))
 
             coVerify(exactly = 1) { uploadImageUseCase.execute(any()) }
             coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
-            coVerify(exactly = 1) { dao.updateTreesUploadStatus(listOf(1L), true) }
+            coVerify(exactly = 1) { treeDao.updateTreesUploadStatus(listOf(1L), true) }
         }
 
     @Test
@@ -160,8 +165,8 @@ class TreeUploaderTest {
                     isUploaded = false,
                 ).apply { id = 1L }
 
-            coEvery { dao.getTreesByIds(listOf(1L)) } returns listOf(treeEntity)
-            coEvery { dao.getSessionById(1L) } returns sessionEntity
+            coEvery { treeDao.getTreesByIds(listOf(1L)) } returns listOf(treeEntity)
+            coEvery { sessionDao.getSessionById(1L) } returns sessionEntity
 
             treeUploader.uploadTrees(listOf(1L))
 
@@ -187,7 +192,7 @@ class TreeUploaderTest {
 
             val newTreeRequest = mockk<NewTreeRequest>(relaxed = true)
 
-            coEvery { dao.getTreeCapturesByIds(listOf(1L)) } returns listOf(legacyTree)
+            coEvery { treeDao.getTreeCapturesByIds(listOf(1L)) } returns listOf(legacyTree)
             coEvery { uploadImageUseCase.execute(any()) } returns "https://uploaded.url/legacy.jpg"
             coEvery { createTreeRequestUseCase.execute(any()) } returns newTreeRequest
 
@@ -195,6 +200,6 @@ class TreeUploaderTest {
 
             coVerify(exactly = 1) { uploadImageUseCase.execute(any()) }
             coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
-            coVerify(exactly = 1) { dao.updateTreeCapturesUploadStatus(listOf(1L), true) }
+            coVerify(exactly = 1) { treeDao.updateTreeCapturesUploadStatus(listOf(1L), true) }
         }
 }

@@ -137,9 +137,9 @@ val appModule =
 
         viewModel { SettingsViewModel(get()) }
 
-        viewModel { MapViewModel(get()) }
+        viewModel { MapViewModel(get(), get()) }
 
-        single { UserRepo(get(), get(), get(), get(), get(), get()) }
+        single { UserRepo(get(), get(), get(), get(), get(), get(), get(), get()) }
 
         factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
@@ -199,7 +199,7 @@ val appModule =
             ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
         }
 
-        single { SessionTracker(get(), get(), get(), get(), get(), get()) }
+        single { SessionTracker(get(), get(), get(), get(), get(), get(), get(), get()) }
 
         single { StepCounter(get(), get()) }
 
@@ -231,9 +231,9 @@ val appModule =
 
         factory { TreesToSyncHelper(get(), get()) }
 
-        factory { PlanterUploader(get(), get(), get(), get()) }
+        factory { PlanterUploader(get(), get(), get(), get(), get()) }
 
-        factory { SessionUploader(get(), get(), get()) }
+        factory { SessionUploader(get(), get(), get(), get()) }
 
         factory { DeviceConfigUploader(get(), get(), get()) }
 
@@ -241,7 +241,7 @@ val appModule =
 
         factory { UploadImageUseCase(get()) }
 
-        factory { UploadLocationDataUseCase(get(), get()) }
+        factory { UploadLocationDataUseCase(get(), get(), get()) }
 
         factory { CreateTreeUseCase(get(), get(), get()) }
 
@@ -251,9 +251,9 @@ val appModule =
 
         factory { CheckForInternetUseCase() }
 
-        factory { CreateTreeRequestUseCase(get()) }
+        factory { CreateTreeRequestUseCase(get(), get()) }
 
-        factory { TreeUploader(get(), get(), get(), get(), get()) }
+        factory { TreeUploader(get(), get(), get(), get(), get(), get()) }
 
         factory { SyncDataUseCase(get(), get(), get(), get(), get(), get(), get(), get()) }
 

@@ -31,7 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.LocationDAO
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.LocationDataConfig
 import org.greenstand.android.TreeTracker.models.SessionTracker
@@ -64,7 +64,7 @@ class LocationDataCapturerTest {
     private lateinit var preferences: Preferences
 
     @MockK(relaxed = true)
-    private lateinit var treeTrackerDAO: TreeTrackerDAO
+    private lateinit var locationDao: LocationDAO
 
     @MockK(relaxed = true)
     private lateinit var sessionTracker: SessionTracker
@@ -80,7 +80,7 @@ class LocationDataCapturerTest {
         locationDataCapturer =
             LocationDataCapturer(
                 locationUpdateManager,
-                treeTrackerDAO,
+                locationDao,
                 convergenceConfiguration,
                 Json {
                     explicitNulls = true
@@ -110,7 +110,7 @@ class LocationDataCapturerTest {
             every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
             every { sessionTracker.currentSessionId } returns 1L
             every { timeProvider.currentTime() } returns Instant.fromEpochMilliseconds(1000)
-            coEvery { treeTrackerDAO.insertLocationData(any()) } coAnswers {
+            coEvery { locationDao.insertLocationData(any()) } coAnswers {
                 delay(500)
                 insertCompleted.countDown()
                 1L

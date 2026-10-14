@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -40,7 +40,7 @@ class TreeListViewModelTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
 
     private val tree1 =
         TreeEntity(
@@ -76,8 +76,8 @@ class TreeListViewModelTest {
     @Test
     fun `init loads trees from DAO and sets isLoading to false`() =
         runTest {
-            every { dao.getTreesByUserWallet("wallet-1") } returns flowOf(listOf(tree1, tree2))
-            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            every { treeDao.getTreesByUserWallet("wallet-1") } returns flowOf(listOf(tree1, tree2))
+            val vm = TreeListViewModel(userWallet = "wallet-1", treeDao = treeDao)
             vm.state.first { !it.isLoading }
             assertEquals(2, vm.state.value.trees.size)
             assertFalse(vm.state.value.isLoading)
@@ -86,8 +86,8 @@ class TreeListViewModelTest {
     @Test
     fun `init with no trees sets empty list`() =
         runTest {
-            every { dao.getTreesByUserWallet("wallet-1") } returns flowOf(emptyList())
-            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            every { treeDao.getTreesByUserWallet("wallet-1") } returns flowOf(emptyList())
+            val vm = TreeListViewModel(userWallet = "wallet-1", treeDao = treeDao)
             vm.state.first { !it.isLoading }
             assertEquals(0, vm.state.value.trees.size)
             assertFalse(vm.state.value.isLoading)
@@ -96,8 +96,8 @@ class TreeListViewModelTest {
     @Test
     fun `SelectTree updates selectedTree in state`() =
         runTest {
-            every { dao.getTreesByUserWallet("wallet-1") } returns flowOf(listOf(tree1, tree2))
-            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            every { treeDao.getTreesByUserWallet("wallet-1") } returns flowOf(listOf(tree1, tree2))
+            val vm = TreeListViewModel(userWallet = "wallet-1", treeDao = treeDao)
             vm.state.first { !it.isLoading }
             vm.handleAction(TreeListAction.SelectTree(tree1))
             assertEquals(tree1, vm.state.value.selectedTree)
@@ -107,9 +107,9 @@ class TreeListViewModelTest {
     fun `selectedTree is cleared when it disappears from tree list`() =
         runTest {
             val treeFlow = MutableSharedFlow<List<TreeEntity>>(replay = 1)
-            every { dao.getTreesByUserWallet("wallet-1") } returns treeFlow
+            every { treeDao.getTreesByUserWallet("wallet-1") } returns treeFlow
             treeFlow.emit(listOf(tree1, tree2))
-            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            val vm = TreeListViewModel(userWallet = "wallet-1", treeDao = treeDao)
             vm.state.first { !it.isLoading }
             vm.handleAction(TreeListAction.SelectTree(tree1))
             assertEquals(tree1, vm.state.value.selectedTree)
@@ -123,9 +123,9 @@ class TreeListViewModelTest {
     fun `selectedTree persists when it remains in updated tree list`() =
         runTest {
             val treeFlow = MutableSharedFlow<List<TreeEntity>>(replay = 1)
-            every { dao.getTreesByUserWallet("wallet-1") } returns treeFlow
+            every { treeDao.getTreesByUserWallet("wallet-1") } returns treeFlow
             treeFlow.emit(listOf(tree1, tree2))
-            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            val vm = TreeListViewModel(userWallet = "wallet-1", treeDao = treeDao)
             vm.state.first { !it.isLoading }
             vm.handleAction(TreeListAction.SelectTree(tree1))
             assertEquals(tree1, vm.state.value.selectedTree)

@@ -20,16 +20,18 @@ import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.SessionRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
+import org.greenstand.android.TreeTracker.database.dao.SessionDAO
 import org.greenstand.android.TreeTracker.utilities.md5
 
 class SessionUploader(
-    private val dao: TreeTrackerDAO,
+    private val sessionDao: SessionDAO,
+    private val deviceConfigDao: DeviceConfigDAO,
     private val objectStorageClient: ObjectStorageClient,
     private val json: Json,
 ) {
     suspend fun upload() {
-        val sessionsToUpload = dao.getSessionsToUpload()
+        val sessionsToUpload = sessionDao.getSessionsToUpload()
 
         val sessionRequests =
             sessionsToUpload.map { session ->
@@ -38,7 +40,7 @@ class SessionUploader(
                     originUserId = session.originUserId,
                     targetWallet = session.destinationWallet,
                     organization = session.organization ?: "",
-                    deviceConfigId = dao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid,
+                    deviceConfigId = deviceConfigDao.getDeviceConfigById(session.deviceConfigId!!)!!.uuid,
                 )
             }
 
@@ -52,8 +54,8 @@ class SessionUploader(
         val sessionIds = sessionsToUpload.map { it.id }
 
         // Update the trees in DB with the bundleId
-        dao.updateSessionBundleIds(sessionIds, bundleId)
+        sessionDao.updateSessionBundleIds(sessionIds, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        dao.updateSessionUploadStatus(sessionIds, true)
+        sessionDao.updateSessionUploadStatus(sessionIds, true)
     }
 }

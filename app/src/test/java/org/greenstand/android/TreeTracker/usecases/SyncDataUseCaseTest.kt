@@ -30,7 +30,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionUploader
@@ -60,7 +60,7 @@ class SyncDataUseCaseTest {
     private lateinit var uploadLocationDataUseCase: UploadLocationDataUseCase
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var treeDao: TreeDAO
 
     @MockK(relaxed = true)
     private lateinit var planterUploader: PlanterUploader
@@ -91,7 +91,7 @@ class SyncDataUseCaseTest {
             SyncDataUseCase(
                 treeUploader = treeUploader,
                 uploadLocationDataUseCase = uploadLocationDataUseCase,
-                dao = dao,
+                treeDao = treeDao,
                 planterUploader = planterUploader,
                 sessionUploader = sessionUploader,
                 deviceConfigUploader = deviceConfigUploader,
@@ -108,8 +108,8 @@ class SyncDataUseCaseTest {
     @Test
     fun `WHEN all steps succeed THEN returns true`() =
         runTest {
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
-            coEvery { dao.getAllTreeIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeIdsToUpload() } returns emptyList()
 
             val result = syncDataUseCase.execute(Unit)
 
@@ -119,8 +119,8 @@ class SyncDataUseCaseTest {
     @Test
     fun `WHEN all steps succeed THEN calls each uploader in order`() =
         runTest {
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
-            coEvery { dao.getAllTreeIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeIdsToUpload() } returns emptyList()
 
             syncDataUseCase.execute(Unit)
 
@@ -144,8 +144,8 @@ class SyncDataUseCaseTest {
     @Test
     fun `WHEN tree upload fails THEN returns false`() =
         runTest {
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
-            coEvery { dao.getAllTreeIdsToUpload() } returns listOf(1L, 2L)
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeIdsToUpload() } returns listOf(1L, 2L)
             coEvery { treeUploader.uploadTrees(any()) } throws RuntimeException("Upload failed")
 
             val result = syncDataUseCase.execute(Unit)
@@ -156,8 +156,8 @@ class SyncDataUseCaseTest {
     @Test
     fun `WHEN sync succeeds THEN starts and ends sync on progress tracker`() =
         runTest {
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
-            coEvery { dao.getAllTreeIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeIdsToUpload() } returns emptyList()
 
             syncDataUseCase.execute(Unit)
 
@@ -180,8 +180,8 @@ class SyncDataUseCaseTest {
     fun `WHEN sync has trees to upload THEN uploads them`() =
         runTest {
             val treeIds = listOf(1L, 2L, 3L)
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
-            coEvery { dao.getAllTreeIdsToUpload() } returnsMany listOf(treeIds, emptyList())
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeIdsToUpload() } returnsMany listOf(treeIds, emptyList())
 
             syncDataUseCase.execute(Unit)
 
@@ -192,8 +192,8 @@ class SyncDataUseCaseTest {
     fun `WHEN sync has legacy trees to upload THEN uploads them`() =
         runTest {
             val legacyTreeIds = listOf(10L, 20L)
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returnsMany listOf(legacyTreeIds, emptyList())
-            coEvery { dao.getAllTreeIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returnsMany listOf(legacyTreeIds, emptyList())
+            coEvery { treeDao.getAllTreeIdsToUpload() } returns emptyList()
 
             syncDataUseCase.execute(Unit)
 
@@ -207,8 +207,8 @@ class SyncDataUseCaseTest {
             every { FirebaseInstallations.getInstance() } returns mockInstallations
             every { mockInstallations.id } returns Tasks.forException(RuntimeException("Firebase unavailable"))
 
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
-            coEvery { dao.getAllTreeIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeIdsToUpload() } returns emptyList()
 
             val result = syncDataUseCase.execute(Unit)
 
@@ -219,8 +219,8 @@ class SyncDataUseCaseTest {
     @Test
     fun `WHEN sync succeeds THEN tracks each step`() =
         runTest {
-            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
-            coEvery { dao.getAllTreeIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { treeDao.getAllTreeIdsToUpload() } returns emptyList()
 
             syncDataUseCase.execute(Unit)
 

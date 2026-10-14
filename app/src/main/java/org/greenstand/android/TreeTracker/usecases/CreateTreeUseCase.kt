@@ -18,14 +18,14 @@ package org.greenstand.android.TreeTracker.usecases
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.analytics.Analytics
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import timber.log.Timber
 
 class CreateTreeUseCase(
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
     private val analytics: Analytics,
     private val timeProvider: TimeProvider,
 ) : UseCase<Tree, Long>() {
@@ -46,6 +46,6 @@ class CreateTreeUseCase(
 
             Timber.d("Inserting TreeCapture entity $entity")
             analytics.treePlanted()
-            dao.insertTree(entity)
+            treeDao.insertTree(entity)
         }
 }

@@ -15,17 +15,17 @@
  */
 package org.greenstand.android.TreeTracker.dashboard
 
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.TreeDAO
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 
 class TreesToSyncHelper(
     private val preferences: Preferences,
-    private val dao: TreeTrackerDAO,
+    private val treeDao: TreeDAO,
 ) {
     suspend fun refreshTreeCountToSync() {
-        val treesToSync = dao.getNonUploadedLegacyTreeCaptureImageCount() + dao.getNonUploadedTreeImageCount()
+        val treesToSync = treeDao.getNonUploadedLegacyTreeCaptureImageCount() + treeDao.getNonUploadedTreeImageCount()
         preferences.edit().putInt(TREES_TO_SYNC_KEY, treesToSync).commit()
     }
 

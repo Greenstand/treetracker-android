@@ -80,8 +80,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun locationDao(): LocationDAO
 
-    abstract fun treeTrackerDao(): TreeTrackerDAO
-
     companion object {
         private var INSTANCE: AppDatabase? = null
 
