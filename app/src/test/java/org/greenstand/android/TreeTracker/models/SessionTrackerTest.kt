@@ -177,4 +177,24 @@ class SessionTrackerTest {
             coVerify { dao.insertSession(capture(slot)) }
             assertEquals("User Typed Org", slot.captured.organization)
         }
+
+    @Test
+    fun `WHEN started with a user id THEN session uses it without the capture setup scope`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            val org = Org(id = "123", name = "Kasiki Hai", walletId = "wallet-123", logoPath = "", captureSetupFlow = emptyList(), captureFlow = emptyList())
+            every { orgRepo.currentOrg() } returns org
+            coEvery { dao.getUserById(fakeUser.id) } returns FakeFileGenerator.fakeUserEntity
+            coEvery { dao.getLatestDeviceConfig() } returns FakeFileGenerator.fakeDeviceConfig
+            coEvery { dao.insertSession(any()) } returns 9L
+
+            sessionTracker.startSession(userId = fakeUser.id, organizationName = null, sessionNote = "a note")
+
+            val slot = slot<SessionEntity>()
+            coVerify { dao.insertSession(capture(slot)) }
+            assertEquals(FakeFileGenerator.fakeUserEntity.wallet, slot.captured.originWallet)
+            assertEquals("Kasiki Hai", slot.captured.organization)
+            assertEquals("a note", slot.captured.note)
+            assertEquals(9L, sessionTracker.currentSessionId)
+        }
 }

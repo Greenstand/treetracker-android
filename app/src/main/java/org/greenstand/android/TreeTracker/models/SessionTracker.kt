@@ -43,10 +43,26 @@ class SessionTracker(
 
     suspend fun startSession() {
         val captureSetupData = CaptureSetupScopeManager.getData()
+        startSession(
+            userId = captureSetupData.user!!.id,
+            organizationName = captureSetupData.organizationName,
+            sessionNote = captureSetupData.sessionNote,
+        )
+    }
+
+    /**
+     * Starts a session for [userId] without going through the capture setup flow.
+     * [organizationName] falls back to the current org when null.
+     */
+    suspend fun startSession(
+        userId: Long,
+        organizationName: String?,
+        sessionNote: String?,
+    ) {
         endSession()
 
         withContext(Dispatchers.IO) {
-            val userEntity = dao.getUserById(captureSetupData.user!!.id) ?: error("Could not find user of id ${captureSetupData.user!!.id}")
+            val userEntity = dao.getUserById(userId) ?: error("Could not find user of id $userId")
 
             val sessionEntity =
                 SessionEntity(
@@ -56,9 +72,9 @@ class SessionTracker(
                     destinationWallet = userEntity.wallet ?: orgRepo.currentOrg().walletId,
                     startTime = timeProvider.currentTime(),
                     isUploaded = false,
-                    organization = captureSetupData.organizationName ?: orgRepo.currentOrg().name,
+                    organization = organizationName ?: orgRepo.currentOrg().name,
                     deviceConfigId = dao.getLatestDeviceConfig()!!.id,
-                    note = captureSetupData.sessionNote,
+                    note = sessionNote,
                 )
 
             _currentSessionId = dao.insertSession(sessionEntity)
