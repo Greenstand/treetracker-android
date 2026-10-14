@@ -61,8 +61,9 @@ input the script prints the app's message and exits 1.
 with a debug or dev build installed, the newest Android first, then the lowest serial. The ranking
 is stable, so `reset`, `createAccount` and `launch` all land on the same device, and each call
 prints which one it used. Physical devices are never picked automatically, so test data doesn't
-end up on someone's phone. To use one, name it with `-s <serial>` or `ANDROID_SERIAL`. For
-`reset`, which clears the app's data, a physical device must be named with `-s`.
+end up on someone's phone. To use one, name it with `-s <serial>` or `ANDROID_SERIAL`. Because
+`reset` clears the app's data, it is stricter: a physical device must be named with `-s`, and when
+several emulators qualify it asks you to pick one with `-s` instead of choosing.
 
 ## Parameters
 
@@ -70,7 +71,7 @@ end up on someone's phone. To use one, name it with `-s <serial>` or `ANDROID_SE
 
 | Parameter | Default | Rules |
 | --- | --- | --- |
-| `firstName`, `lastName` | `Test`, `User` | At least 2 characters, letters only, like sign-up |
+| `firstName`, `lastName` | `Test`, `User` | At least 2 characters of letters, spaces, hyphens and apostrophes, like sign-up |
 | `phone` | Random unused `555xxxxxxx` | 7 to 15 digits |
 | `email` | Not set | Pass phone or email, not both. Lowercased, like sign-up |
 
@@ -82,7 +83,7 @@ It returns `userId`, `wallet` (the phone or email you sign in with), `firstName`
 | Parameter | Default | Rules |
 | --- | --- | --- |
 | `count` | Required | 1 to 500 |
-| `wallet` | The admin | Must be an existing account |
+| `wallet` | The admin, or the open session's account | Must be an existing account |
 | `latitude`, `longitude` | Device location while the app is open, else 0, 0 | Pass both, with a decimal point (`10.0`, not `10`) |
 | `note` | Empty | Saved on every tree |
 
@@ -103,7 +104,9 @@ about 80 m of the location.
   so after `reset` or before `launch` the trees land at 0, 0. Passing `latitude` and `longitude`
   always works.
 - **The trees are real local data.** The next sync uploads them to the build's non-production
-  backend. Keep the device offline (airplane mode) if test trees shouldn't leave it.
+  backend. Keep the device offline (airplane mode) if test trees shouldn't leave it. Like the UI,
+  the functions also log Firebase Analytics events (tree planted, user created with its phone or
+  email), so use made-up phones and emails.
 - Trees get step counts of 0 and no rotation matrix or DBH. Selfies and tree photos are all the
   same test image.
 

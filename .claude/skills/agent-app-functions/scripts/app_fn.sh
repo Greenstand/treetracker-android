@@ -21,10 +21,11 @@ Usage: app_fn.sh [-s <serial>] <command> [json]
 
 Device: -s <serial> or ANDROID_SERIAL chooses one. Otherwise the script picks an emulator on
 Android 17+ (API 37) with a debug or dev build installed, the newest Android first. The choice is
-stable, so repeated calls land on the same device. Physical devices are only used when named, and
-reset on one needs -s (not just ANDROID_SERIAL), since it clears the app's data. With a named
-device, reset and launch work on any Android version.
-Env: TT_PACKAGE overrides the package (default: the installed debug build, else dev).
+stable, so repeated calls land on the same device. Physical devices are only used when named.
+Because reset clears the app's data, it needs -s (not just ANDROID_SERIAL) for a physical device,
+and won't pick between several emulators by itself. With a named device, reset and launch work on
+any Android version.
+Env: TT_PACKAGE picks a debug or dev package (default: the installed debug build, else dev).
 EOF
 }
 
@@ -51,7 +52,7 @@ adb_() { "$ADB" "$@"; }
 pick_package() {
   local installed=$1 candidate
   for candidate in ${TT_PACKAGE:-$APP_ID.debug $APP_ID.dev}; do
-    if echo "$installed" | grep -qx "package:$candidate"; then
+    if echo "$installed" | grep -qxF "package:$candidate"; then
       echo "$candidate"
       return 0
     fi
@@ -104,6 +105,11 @@ choose_device() {
       print_table >&2
       echo "Install one with: ANDROID_SERIAL=<serial> ./gradlew :app:installDebug" >&2
       echo "Physical devices are only used when named with -s <serial>." >&2
+      exit 1
+    fi
+    if [ "$effect" = clears-data ] && [ "$(rank_devices | wc -l | tr -d ' ')" -gt 1 ]; then
+      echo "app_fn: several emulators could be reset, and reset clears the app's data. Pick one with -s:" >&2
+      print_table >&2
       exit 1
     fi
     export ANDROID_SERIAL=$picked
@@ -200,7 +206,7 @@ main() {
   while [ $# -gt 0 ]; do
     case "$1" in
       -s)
-        [ $# -ge 2 ] || die "-s needs a device serial."
+        [ $# -ge 2 ] && [ -n "$2" ] || die "-s needs a device serial."
         export ANDROID_SERIAL=$2
         SERIAL_FROM_FLAG=yes
         shift 2
@@ -212,6 +218,10 @@ main() {
     usage
     exit 1
   }
+  case "${TT_PACKAGE:-}" in
+    "" | *.debug | *.dev) ;;
+    *) die "TT_PACKAGE must be a debug or dev build (ending in .debug or .dev), not $TT_PACKAGE." ;;
+  esac
   ADB=$(find_adb)
   local command=$1 default_json='{}' picked
   TABLE=""

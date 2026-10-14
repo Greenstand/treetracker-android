@@ -35,8 +35,9 @@ class AgentAppFunctions : KoinComponent {
      * The first account on a device becomes its admin, which skips the first-run setup flow on
      * the next launch. Later calls add more accounts. Restart the app to see a new account.
      *
-     * @param firstName First name, at least 2 letters. Defaults to "Test".
-     * @param lastName Last name, at least 2 letters. Defaults to "User".
+     * @param firstName First name: at least 2 characters of letters, spaces, hyphens and
+     *   apostrophes. Defaults to "Test".
+     * @param lastName Last name, by the same rules. Defaults to "User".
      * @param phone Phone number of 7 to 15 digits to sign in with. Leave out phone and email to
      *   get a random unused phone number.
      * @param email Email to sign in with, instead of phone.
@@ -61,7 +62,7 @@ class AgentAppFunctions : KoinComponent {
      *
      * @param count Number of trees to save, 1 to 500.
      * @param wallet Wallet (phone or email) of the account capturing the trees. Defaults to the
-     *   device admin.
+     *   device admin, or to the open capture session's account.
      * @param latitude Latitude to place the trees around. Pass with longitude. Defaults to the
      *   device's location while the app is open, otherwise 0.
      * @param longitude Longitude to place the trees around. Pass with latitude.

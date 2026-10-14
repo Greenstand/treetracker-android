@@ -107,3 +107,27 @@ A subagent review found these, now fixed:
 - Fixed while writing these: any output containing "Exception", such as an account named
   "Exception", was reported as a failure. Now only the device's error lines count. The `list`
   output also drops empty descriptions instead of printing blank lines.
+
+## Second review follow-ups
+
+A second subagent review found no code blockers. These are now fixed:
+
+- `closeSession`'s end time and the start-then-end path of `SessionTracker` weren't tested. They
+  are now, and removing the end time makes two tests fail.
+- `captureTrees` creates its session under `NonCancellable` too, so a cancellation during the
+  insert can't leave a session with no id to close. There is a test that holds the insert at a
+  gate while the call is cancelled.
+- `app_fn.sh`:
+  - `TT_PACKAGE` must end in `.debug` or `.dev`, so `reset` can't clear a release or beta app.
+  - Package names are matched literally (`grep -F`).
+  - `reset` won't choose between several qualifying emulators.
+  - `-s ""` is rejected.
+  - 14 new checks cover these rules.
+- Docs and KDoc: the name rules (letters, spaces, hyphens and apostrophes), `wallet`'s default when
+  a capture session is open, and a note that the functions log the same Firebase Analytics events
+  as the UI. The `list` fixture was re-captured from a device.
+
+Not changed: `runAgentFunction` reports any `IllegalArgumentException` as an invalid argument.
+Only the error code differs from an unknown error, and the message is the same. Testing the
+wrapper needs `Bundle` (so Robolectric), which isn't worth it for a debug tool.
+

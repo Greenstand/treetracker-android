@@ -95,7 +95,11 @@ class AgentTreeCapturer(
         deviceConfigUpdater.saveLatestConfig()
         orgRepo.ensureInitialized()
 
-        val sessionId = sessionTracker.createSession(userId = user.id, organizationName = null, sessionNote = null).id
+        // NonCancellable: if the call were cancelled mid-insert, the saved session would have no id to close
+        val sessionId =
+            withContext(NonCancellable) {
+                sessionTracker.createSession(userId = user.id, organizationName = null, sessionNote = null).id
+            }
         val treeUuids =
             try {
                 saveTrees(sessionId, count, center, note)

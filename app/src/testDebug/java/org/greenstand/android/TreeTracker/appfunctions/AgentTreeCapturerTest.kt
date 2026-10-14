@@ -27,6 +27,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -254,6 +255,25 @@ class AgentTreeCapturerTest {
             job.cancelAndJoin()
 
             assertEquals(NEW_SESSION_ID, closedSessionId)
+        }
+
+    @Test
+    fun `WHEN the call is cancelled while the session is being created THEN it is still closed`() =
+        runTest {
+            val insertDone = CompletableDeferred<Unit>()
+            coEvery { sessionTracker.createSession(any(), any(), any()) } coAnswers {
+                // await() throws in a cancelled coroutine, so creation only finishes if it is NonCancellable
+                insertDone.await()
+                sessionFor(powerUser.wallet).apply { id = NEW_SESSION_ID }
+            }
+
+            val job = launch { capturer.captureTrees(3, wallet = null, latitude = null, longitude = null, note = null) }
+            runCurrent()
+            job.cancel()
+            insertDone.complete(Unit)
+            job.join()
+
+            coVerify { sessionTracker.closeSession(NEW_SESSION_ID) }
         }
 
     @Test

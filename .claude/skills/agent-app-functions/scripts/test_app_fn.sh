@@ -135,12 +135,13 @@ NOISE=0
 EXEC_OUTPUT="androidAppfunctionsReturnValue:"
 EXEC_STATUS=0
 LIST_FILE=/dev/null
+TT=""
 run() {
   : >"$WORK/log"
   OUT=$(env -u ANDROID_SERIAL -u TT_PACKAGE PATH="$WORK/bin:$PATH" FAKE_LOG="$WORK/log" \
     FAKE_DEVICES="$DEVICES" FAKE_CRLF="$CRLF" FAKE_NOISE="$NOISE" \
     FAKE_EXEC_OUTPUT="$EXEC_OUTPUT" FAKE_EXEC_STATUS="$EXEC_STATUS" FAKE_LIST_FILE="$LIST_FILE" \
-    ${SERIAL_ENV:+ANDROID_SERIAL=$SERIAL_ENV} bash "$SCRIPT" "$@" 2>&1)
+    ${SERIAL_ENV:+ANDROID_SERIAL=$SERIAL_ENV} ${TT:+TT_PACKAGE=$TT} bash "$SCRIPT" "$@" 2>&1)
   STATUS=$?
 }
 
@@ -165,8 +166,11 @@ check "similar name is not the app" "" "$(pick_package "package:${DEBUG}ger")"
 check "release build has no functions" "" "$(pick_package "package:$P")"
 check "beta build has no functions" "" "$(pick_package "package:$P.test")"
 check "nothing installed" "" "$(pick_package "")"
-check "TT_PACKAGE installed" "com.example.app" "$(TT_PACKAGE=com.example.app pick_package "package:com.example.app")"
-check "TT_PACKAGE not installed" "" "$(TT_PACKAGE=com.example.app pick_package "package:$DEBUG")"
+check "TT_PACKAGE installed" "com.example.app.debug" "$(TT_PACKAGE=com.example.app.debug pick_package "package:com.example.app.debug")"
+check "TT_PACKAGE not installed" "" "$(TT_PACKAGE=com.example.app.debug pick_package "package:$DEBUG")"
+check "TT_PACKAGE dev wins over installed debug" "$DEV" "$(TT_PACKAGE=$DEV pick_package "package:$DEBUG
+package:$DEV")"
+check "dots match only dots" "" "$(pick_package "package:orgXgreenstandXandroidXTreeTracker.debug")"
 
 echo "rank_devices"
 rank() { TABLE=$1 rank_devices | tr '\n' ' ' | sed 's/ $//'; }
@@ -367,6 +371,35 @@ CRLF=0
 NOISE=0
 run -s emulator-9999 createAccount
 check "-s unknown device fails" 1 "$STATUS"
+
+echo "reset safety"
+DEVICES="emulator-5554:device:37:$DEBUG emulator-5556:device:37:$DEBUG"
+SERIAL_ENV=""
+run reset
+check "two suitable emulators: reset refuses" 1 "$STATUS"
+check_contains "and asks for -s" "several emulators could be reset" "$OUT"
+check "and clears nothing" "" "$(grep 'pm clear' "$WORK/log")"
+run -s emulator-5556 reset
+check "-s picks which emulator to reset" "emulator-5556 pm clear $DEBUG" "$(grep 'pm clear' "$WORK/log")"
+run createAccount
+check "non-destructive calls still auto-pick" 0 "$STATUS"
+DEVICES="emulator-5554:device:37:$P,$DEBUG"
+TT=$P
+run reset
+check "TT_PACKAGE release build: refused" 1 "$STATUS"
+check_contains "TT_PACKAGE message" "TT_PACKAGE must be a debug or dev build" "$OUT"
+check "TT_PACKAGE release build: nothing cleared" "" "$(grep 'pm clear' "$WORK/log")"
+TT=$P.test
+run createAccount
+check "TT_PACKAGE beta build: refused" 1 "$STATUS"
+DEVICES="emulator-5554:device:37:$DEBUG,$DEV"
+TT=$DEV
+run reset
+check "TT_PACKAGE dev build: used" "emulator-5554 pm clear $DEV" "$(grep 'pm clear' "$WORK/log")"
+TT=""
+run -s "" createAccount
+check "-s with an empty serial" 1 "$STATUS"
+check_contains "-s empty message" "-s needs a device serial" "$OUT"
 
 echo "arguments"
 DEVICES="emulator-5554:device:37:$DEBUG"

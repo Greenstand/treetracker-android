@@ -59,8 +59,9 @@ Pass `{}` when you want every default. To see the functions and their parameter 
 | `phone` | String, 7 to 15 digits | A random unused `555xxxxxxx` number |
 | `email` | String | Not set. Pass phone or email, not both |
 
-Names follow the sign-up rules: at least 2 characters, letters only. Emails are lowercased, as
-sign-up does. The selfie is the test image. Returns `userId`, `wallet`, `firstName`, `lastName`
+Names follow the sign-up rules: at least 2 characters of letters, spaces, hyphens and
+apostrophes. Emails are lowercased and only need an `@`, as in sign-up. Names, phones and emails
+are trimmed. The selfie is the test image. Returns `userId`, `wallet`, `firstName`, `lastName`
 and `isPowerUser`.
 
 The first account becomes the admin (power user). Later calls add more accounts, as the "add
@@ -71,7 +72,7 @@ user" flow does. Creating an account whose wallet already exists fails.
 | Parameter | Type | Default |
 | --- | --- | --- |
 | `count` | Int, 1 to 500 | Required |
-| `wallet` | String | The admin account |
+| `wallet` | String | The admin account, or the open capture session's account |
 | `latitude`, `longitude` | Double, pass both | The device's location while the app is open, otherwise 0, 0 |
 | `note` | String | Empty |
 
@@ -96,6 +97,8 @@ Returns `sessionId`, `wallet`, `treeCount` and `treeUuids`.
   launch. Re-grant them with `adb shell pm grant <package> android.permission.CAMERA` (and
   `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `ACTIVITY_RECOGNITION`, `POST_NOTIFICATIONS`).
 - Bad input returns `AppFunctionException ... (code 1001)` with a message that says what to fix.
+- **Analytics.** Like the UI, the functions log Firebase Analytics events (tree planted, user
+  created with its phone or email), so use made-up phones and emails.
 
 ## Clean install to trees in a few seconds
 
