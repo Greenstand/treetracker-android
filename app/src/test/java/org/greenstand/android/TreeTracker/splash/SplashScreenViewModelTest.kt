@@ -25,6 +25,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.analytics.CrashKey
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
@@ -119,7 +120,7 @@ class SplashScreenViewModelTest {
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
             coVerify(exactly = 1) { orgRepo.ensureInitialized() }
             coVerify(exactly = 1) { messagesRepo.syncMessages() }
-            coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
+            coVerify(exactly = 1) { exceptionDataCollector.set(CrashKey.POWER_USER_WALLET, user.wallet) }
             coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
         }
 

@@ -36,14 +36,7 @@ class UploadImageUseCase(
                 doSpaces.put(params.imagePath, params.lat, params.long)
             }
         } catch (ace: AmazonClientException) {
-            Timber.e(
-                "Caught an AmazonClientException, which " +
-                    "means the client encountered " +
-                    "an internal error while trying to " +
-                    "communicate with S3, " +
-                    "such as not being able to access the network.",
-            )
-            Timber.e("Error Message: ${ace.message}")
+            Timber.tag("UploadImage").e(ace, "S3 upload failed for ${params.imagePath}")
             null
         }
 }
