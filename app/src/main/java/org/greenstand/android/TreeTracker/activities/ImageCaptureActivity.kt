@@ -26,6 +26,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -37,6 +38,7 @@ import org.greenstand.android.TreeTracker.navigation.FastFadeIn
 import org.greenstand.android.TreeTracker.navigation.FastFadeOut
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.NavEntryIds
 import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.navigation.SelfieRoute
 import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
@@ -74,7 +76,8 @@ class ImageCaptureActivity : ComponentActivity() {
 
         setContent {
             val backStack = rememberNavBackStack(SelfieRoute)
-            val navigator = remember(backStack) { Navigator(backStack) }
+            val entryIds = rememberSaveable(saver = NavEntryIds.Saver) { NavEntryIds() }
+            val navigator = remember(backStack) { Navigator(backStack, entryIds = entryIds) }
 
             CompositionLocalProvider(
                 LocalNavigator provides navigator,
@@ -93,10 +96,12 @@ class ImageCaptureActivity : ComponentActivity() {
                         popTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
                         predictivePopTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
                         entryProvider =
-                            entryProvider {
-                                entry<SelfieRoute> { SelfieScreen() }
-                                entry<ImageReviewRoute> { route -> ImageReviewScreen(route.photoPath) }
-                            },
+                            navigator.withEntryContentKeys(
+                                entryProvider {
+                                    entry<SelfieRoute> { SelfieScreen() }
+                                    entry<ImageReviewRoute> { route -> ImageReviewScreen(route.photoPath) }
+                                },
+                            ),
                     )
                 }
             }
