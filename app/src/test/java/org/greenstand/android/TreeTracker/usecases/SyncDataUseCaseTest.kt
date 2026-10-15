@@ -189,6 +189,52 @@ class SyncDataUseCaseTest {
         }
 
     @Test
+    fun `WHEN some trees are left after upload THEN still uploads locations and returns false`() =
+        runTest {
+            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            // Tree 2 is still pending after the upload pass
+            coEvery { dao.getAllTreeIdsToUpload() } returnsMany listOf(listOf(1L, 2L, 3L), listOf(2L))
+
+            val result = syncDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            coVerify(exactly = 1) { treeUploader.uploadTrees(listOf(1L, 2L, 3L)) }
+            verify { syncProgressTracker.failStep(SyncStep.TREES, any()) }
+            verify(exactly = 0) { syncProgressTracker.completeStep(SyncStep.TREES) }
+            coVerify { uploadLocationDataUseCase.execute(Unit) }
+            verify { syncProgressTracker.endSync(error = "Some trees failed to upload") }
+        }
+
+    @Test
+    fun `WHEN legacy trees are left THEN the new trees step still runs`() =
+        runTest {
+            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns listOf(10L)
+            coEvery { dao.getAllTreeIdsToUpload() } returnsMany listOf(listOf(1L), emptyList())
+
+            val result = syncDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            verify { syncProgressTracker.failStep(SyncStep.LEGACY_TREES, any()) }
+            coVerify(exactly = 1) { treeUploader.uploadTrees(listOf(1L)) }
+            verify { syncProgressTracker.completeStep(SyncStep.TREES) }
+        }
+
+    @Test
+    fun `WHEN trees are captured during sync and one keeps failing THEN uploads the new ones and returns false`() =
+        runTest {
+            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            // Tree 2 keeps failing; tree 3 is captured while the first pass runs
+            coEvery { dao.getAllTreeIdsToUpload() } returnsMany listOf(listOf(1L, 2L), listOf(2L, 3L), listOf(2L))
+
+            val result = syncDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            coVerify(exactly = 1) { treeUploader.uploadTrees(listOf(1L, 2L)) }
+            coVerify(exactly = 1) { treeUploader.uploadTrees(listOf(2L, 3L)) }
+            verify { syncProgressTracker.failStep(SyncStep.TREES, "1 trees failed to upload") }
+        }
+
+    @Test
     fun `WHEN sync has legacy trees to upload THEN uploads them`() =
         runTest {
             val legacyTreeIds = listOf(10L, 20L)
