@@ -55,6 +55,10 @@ cameraxExt = "1.4.1"
 # Dependency Injection
 koin = "3.5.6"
 
+# AppFunctions (debug-only agent tooling)
+# alpha09+ needs AGP 9.1 and compileSdk 37
+appfunctions = "1.0.0-alpha08"
+
 # Logging
 timber = "5.0.1"
 
@@ -144,6 +148,11 @@ androidx-camera-extensions = { module = "androidx.camera:camera-extensions", ver
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+
+# AppFunctions
+androidx-appfunctions = { module = "androidx.appfunctions:appfunctions", version.ref = "appfunctions" }
+androidx-appfunctions-service = { module = "androidx.appfunctions:appfunctions-service", version.ref = "appfunctions" }
+androidx-appfunctions-compiler = { module = "androidx.appfunctions:appfunctions-compiler", version.ref = "appfunctions" }
 
 # Logging
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }

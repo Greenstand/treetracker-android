@@ -43,6 +43,7 @@ For every unit of work, create a task folder in `docs/tasks/` named `task_{id}` 
 ### Testing And Release
 
 - [Testing](docs/testing/testing.md)
+- [Agent App Functions](docs/testing/agent-app-functions.md)
 - [App Distribution Testing](docs/testing/app-distribution-testing.md)
 - [Releases](docs/release/releases.md)
 
