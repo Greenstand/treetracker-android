@@ -16,8 +16,10 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.google.firebase.installations.FirebaseInstallations
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -46,50 +48,57 @@ class SyncDataUseCase(
 
     override suspend fun execute(params: Unit): Boolean {
         syncProgressTracker.startSync()
-        try {
-            withContext(Dispatchers.IO) {
-                val instanceId =
-                    try {
-                        FirebaseInstallations.getInstance().id.await()
-                    } catch (e: Exception) {
-                        ""
+        val messagesSynced =
+            try {
+                withContext(Dispatchers.IO) {
+                    val instanceId =
+                        try {
+                            FirebaseInstallations.getInstance().id.await()
+                        } catch (e: Exception) {
+                            ""
+                        }
+
+                    // Messages must not block tree data: a failure here is reported, not thrown.
+                    val messagesUploaded = executeNonFatalStep(SyncStep.MESSAGES, "Message Sync") { messagesRepo.syncMessages() }
+
+                    executeTrackedStep(SyncStep.DEVICE_CONFIG, "Device Config Upload") {
+                        deviceConfigUploader.upload(instanceId)
                     }
 
-                executeTrackedStep(SyncStep.MESSAGES, "Message Sync") {
-                    messagesRepo.syncMessages()
+                    executeTrackedStep(SyncStep.USERS, "User Upload") {
+                        planterUploader.upload(instanceId)
+                    }
+
+                    executeTrackedStep(SyncStep.SESSIONS, "Session Upload") {
+                        sessionUploader.upload()
+                    }
+
+                    treeUpload(
+                        syncStep = SyncStep.LEGACY_TREES,
+                        onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
+                        onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
+                    )
+
+                    treeUpload(
+                        syncStep = SyncStep.TREES,
+                        onGetTreeIds = { dao.getAllTreeIdsToUpload() },
+                        onUpload = { treeUploader.uploadTrees(it) },
+                    )
+
+                    executeTrackedStep(SyncStep.LOCATIONS, "Location Upload") {
+                        uploadLocationDataUseCase.execute(Unit)
+                    }
+
+                    messagesUploaded
                 }
-
-                executeTrackedStep(SyncStep.DEVICE_CONFIG, "Device Config Upload") {
-                    deviceConfigUploader.upload(instanceId)
-                }
-
-                executeTrackedStep(SyncStep.USERS, "User Upload") {
-                    planterUploader.upload(instanceId)
-                }
-
-                executeTrackedStep(SyncStep.SESSIONS, "Session Upload") {
-                    sessionUploader.upload()
-                }
-
-                treeUpload(
-                    syncStep = SyncStep.LEGACY_TREES,
-                    onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
-                    onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
-                )
-
-                treeUpload(
-                    syncStep = SyncStep.TREES,
-                    onGetTreeIds = { dao.getAllTreeIdsToUpload() },
-                    onUpload = { treeUploader.uploadTrees(it) },
-                )
-
-                executeTrackedStep(SyncStep.LOCATIONS, "Location Upload") {
-                    uploadLocationDataUseCase.execute(Unit)
-                }
+            } catch (e: Exception) {
+                Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+                syncProgressTracker.endSync(error = e.localizedMessage)
+                return false
             }
-        } catch (e: Exception) {
-            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
-            syncProgressTracker.endSync(error = e.localizedMessage)
+        if (!messagesSynced) {
+            // Report the failed message upload instead of success; the messages stay queued.
+            syncProgressTracker.endSync(error = "Messages failed to upload")
             return false
         }
         syncProgressTracker.endSync()
@@ -144,6 +153,33 @@ class SyncDataUseCase(
         } catch (e: Exception) {
             syncProgressTracker.failStep(syncStep, e.localizedMessage)
             throw e
+        }
+    }
+
+    /** Like [executeTrackedStep], but a failure (exception or false) is reported and returned instead of thrown. */
+    private suspend fun executeNonFatalStep(
+        syncStep: SyncStep,
+        tag: String,
+        action: suspend () -> Boolean,
+    ): Boolean {
+        syncProgressTracker.startStep(syncStep)
+        try {
+            var result = false
+            executeIfContextActive(tag) { result = action() }
+            // executeIfContextActive skips the action and cancels when the sync was stopped
+            coroutineContext.ensureActive()
+            if (result) {
+                syncProgressTracker.completeStep(syncStep)
+            } else {
+                syncProgressTracker.failStep(syncStep, "$tag failed")
+            }
+            return result
+        } catch (e: CancellationException) {
+            syncProgressTracker.failStep(syncStep, "$tag cancelled")
+            throw e
+        } catch (e: Exception) {
+            syncProgressTracker.failStep(syncStep, "$tag failed: ${e.localizedMessage}")
+            return false
         }
     }
 

@@ -16,10 +16,12 @@
 package org.greenstand.android.TreeTracker.models.messages
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.amazonaws.AmazonClientException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
@@ -39,6 +41,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MessagesRepoTest {
@@ -218,6 +223,57 @@ class MessagesRepoTest {
             surveyId = messageResponse.survey?.id,
             isSurveyComplete = messageResponse.survey?.let { false },
         )
+
+    @Test
+    fun `WHEN uploading queued messages fails THEN syncMessages returns false instead of throwing`() =
+        runTest {
+            coEvery { userRepo.getUserList() } returns emptyList()
+            coEvery { messageUploader.uploadMessages() } throws AmazonClientException("Unable to execute HTTP request")
+
+            assertFalse(messagesRepo.syncMessages())
+        }
+
+    @Test
+    fun `WHEN queued messages upload THEN syncMessages returns true`() =
+        runTest {
+            coEvery { userRepo.getUserList() } returns emptyList()
+            coEvery { messageUploader.uploadMessages() } returns Unit
+
+            assertTrue(messagesRepo.syncMessages())
+        }
+
+    @Test
+    fun `WHEN fetching messages fails THEN queued messages are still uploaded`() =
+        runTest {
+            coEvery { userRepo.getUserList() } returns userList.take(1)
+            coEvery { messagesDAO.getLatestSyncTimeForWallet(any()) } returns lastTimeMessageSynced
+            coEvery {
+                apiService.getMessages(wallet = any(), lastSyncTime = any(), offset = any(), limit = any())
+            } throws RuntimeException("HTTP 500")
+            coEvery { messageUploader.uploadMessages() } returns Unit
+
+            assertTrue(messagesRepo.syncMessages())
+            coVerify(exactly = 1) { messageUploader.uploadMessages() }
+        }
+
+    @Test
+    fun `WHEN loading users fails THEN syncMessages does not throw and still uploads queued messages`() =
+        runTest {
+            coEvery { userRepo.getUserList() } throws IllegalStateException("database is locked")
+            coEvery { messageUploader.uploadMessages() } returns Unit
+
+            assertTrue(messagesRepo.syncMessages())
+            coVerify(exactly = 1) { messageUploader.uploadMessages() }
+        }
+
+    @Test
+    fun `WHEN syncMessages is cancelled during upload THEN cancellation propagates`() =
+        runTest {
+            coEvery { userRepo.getUserList() } returns emptyList()
+            coEvery { messageUploader.uploadMessages() } throws CancellationException("stopped")
+
+            assertFailsWith<CancellationException> { messagesRepo.syncMessages() }
+        }
 
     @Test
     fun `markMessageAsRead delegates to DAO`() =
