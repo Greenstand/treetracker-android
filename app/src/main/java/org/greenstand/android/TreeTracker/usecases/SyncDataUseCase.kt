@@ -21,6 +21,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
 import org.greenstand.android.TreeTracker.models.PlanterUploader
@@ -41,6 +42,7 @@ class SyncDataUseCase(
     private val deviceConfigUploader: DeviceConfigUploader,
     private val messagesRepo: MessagesRepo,
     private val syncProgressTracker: SyncProgressTracker,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) : UseCase<Unit, Boolean>() {
     private val TAG = "SyncDataUseCase"
 
@@ -88,7 +90,10 @@ class SyncDataUseCase(
                 }
             }
         } catch (e: Exception) {
-            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            // Failures the uploaders already recorded are not reported again here.
+            if (!exceptionDataCollector.wasRecorded(e)) {
+                Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+            }
             syncProgressTracker.endSync(error = e.localizedMessage)
             return false
         }
@@ -158,7 +163,9 @@ class SyncDataUseCase(
                 coroutineContext.cancel()
             }
         } catch (e: Exception) {
-            Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            if (!exceptionDataCollector.wasRecorded(e)) {
+                Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
+            }
             throw e
         }
     }
