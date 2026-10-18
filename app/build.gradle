@@ -142,6 +142,14 @@ android {
         }
     }
 
+    // The agent AppFunctions live in src/debug so release, beta and prerelease never ship them.
+    // dev is also a local development build, so it compiles the same sources.
+    sourceSets {
+        dev {
+            java.srcDir 'src/debug/java'
+        }
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -214,6 +222,8 @@ afterEvaluate {
 
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
+    // Generates the app-wide AppFunctions index; only debug and dev run the AppFunctions compiler
+    arg("appfunctions:aggregateAppFunctions", "true")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
@@ -285,6 +295,14 @@ dependencies {
     implementation libs.firebase.crashlytics.ktx
     implementation libs.firebase.installations
     implementation libs.firebase.config
+
+    // AppFunctions: debug and dev only, see docs/testing/agent-app-functions.md
+    debugImplementation libs.androidx.appfunctions
+    debugImplementation libs.androidx.appfunctions.service
+    devImplementation libs.androidx.appfunctions
+    devImplementation libs.androidx.appfunctions.service
+    kspDebug libs.androidx.appfunctions.compiler
+    kspDev libs.androidx.appfunctions.compiler
 
     // Play Install Referrer
     implementation libs.install.referrer

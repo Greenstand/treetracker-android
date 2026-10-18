@@ -25,8 +25,10 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkObject
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
@@ -75,13 +77,15 @@ class SessionTrackerTest {
 
     private lateinit var sessionTracker: SessionTracker
 
+    private lateinit var editor: Preferences.Editor
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
 
-        val mockEditor = mockk<Preferences.Editor>(relaxed = true)
-        every { preferences.edit() } returns mockEditor
-        every { mockEditor.putLong(any(), any()) } returns mockEditor
+        editor = mockk(relaxed = true)
+        every { preferences.edit() } returns editor
+        every { editor.putLong(any(), any()) } returns editor
 
         sessionTracker =
             SessionTracker(
@@ -128,12 +132,13 @@ class SessionTrackerTest {
     private fun setupStartSessionMocks(
         organizationName: String? = null,
         currentOrgName: String = "Kasiki Hai",
+        sessionNote: String? = null,
     ) {
         val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
         val fakeUser = FakeFileGenerator.fakeUsers.first()
         every { captureSetupData.user } returns fakeUser
         every { captureSetupData.organizationName } returns organizationName
-        every { captureSetupData.sessionNote } returns null
+        every { captureSetupData.sessionNote } returns sessionNote
 
         mockkObject(CaptureSetupScopeManager)
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
@@ -177,4 +182,90 @@ class SessionTrackerTest {
             coVerify { dao.insertSession(capture(slot)) }
             assertEquals("User Typed Org", slot.captured.organization)
         }
+
+    @Test
+    fun `WHEN startSession THEN the capture setup note is saved and the session becomes current`() =
+        runTest {
+            setupStartSessionMocks(sessionNote = "a note")
+
+            sessionTracker.startSession()
+
+            val slot = slot<SessionEntity>()
+            coVerify { dao.insertSession(capture(slot)) }
+            assertEquals("a note", slot.captured.note)
+            assertEquals(1L, sessionTracker.currentSessionId)
+        }
+
+    @Test
+    fun `WHEN createSession THEN it is saved without becoming the current session`() =
+        runTest {
+            setupStartSessionMocks(currentOrgName = "Kasiki Hai")
+            coEvery { dao.insertSession(any()) } returns 9L
+
+            val session =
+                sessionTracker.createSession(
+                    userId = FakeFileGenerator.fakeUsers.first().id,
+                    organizationName = null,
+                    sessionNote = "a note",
+                )
+
+            assertEquals(9L, session.id)
+            assertEquals(FakeFileGenerator.fakeUserEntity.wallet, session.originWallet)
+            assertEquals("Kasiki Hai", session.organization)
+            assertEquals("a note", session.note)
+            assertEquals(null, sessionTracker.currentSessionId)
+            coVerify(exactly = 0) { preferences.edit() }
+        }
+
+    @Test
+    fun `WHEN closeSession THEN only that session gets an end time and the current one is kept`() =
+        runTest {
+            setupStartSessionMocks()
+            sessionTracker.startSession()
+            val detached = savedSession()
+            coEvery { dao.getSessionById(9L) } returns detached
+            every { timeProvider.currentTime() } returns NOW
+
+            sessionTracker.closeSession(9L)
+
+            assertEquals(NOW, detached.endTime)
+            coVerify { dao.updateSession(detached) }
+            coVerify(exactly = 0) { dao.getSessionById(1L) }
+            assertEquals(1L, sessionTracker.currentSessionId)
+        }
+
+    @Test
+    fun `WHEN endSession after startSession THEN the session is ended and nothing is current`() =
+        runTest {
+            setupStartSessionMocks()
+            sessionTracker.startSession()
+            val started = savedSession()
+            coEvery { dao.getSessionById(1L) } returns started
+            every { timeProvider.currentTime() } returns NOW
+
+            sessionTracker.endSession()
+
+            assertEquals(NOW, started.endTime)
+            coVerify { dao.updateSession(started) }
+            assertEquals(null, sessionTracker.currentSessionId)
+            verify { editor.putLong(SessionTracker.SESSION_ID_KEY, 1L) }
+            verify { editor.putLong(SessionTracker.SESSION_ID_KEY, -1L) }
+            coVerify { treesToSyncHelper.refreshTreeCountToSync() }
+            verify { exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, false) }
+        }
+
+    private fun savedSession() =
+        SessionEntity(
+            uuid = "session-uuid",
+            originUserId = "user-uuid",
+            originWallet = "wallet",
+            destinationWallet = "wallet",
+            startTime = Instant.fromEpochMilliseconds(0),
+            organization = "Greenstand",
+            isUploaded = false,
+        )
+
+    companion object {
+        private val NOW = Instant.fromEpochMilliseconds(1_700_000_000_000)
+    }
 }

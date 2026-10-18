@@ -1,0 +1,541 @@
+{
+  "org.greenstand.android.TreeTracker.debug": [
+    {
+      "AppFunctionStaticMetadata-org.greenstand.android.TreeTracker.debug": {
+        "serviceName": [
+          "androidx.appfunctions.service.PlatformAppFunctionService"
+        ],
+        "description": [
+          "Creates a planter account without the sign-up screens, using a test image as the selfie.\n The first account on a device becomes its admin, which skips the first-run setup flow on\n the next launch. Later calls add more accounts. Restart the app to see a new account."
+        ],
+        "accessLevel": [
+          "androidTrusted"
+        ],
+        "response": [
+          {
+            "description": [
+              "The created account."
+            ],
+            "valueType": [
+              {
+                "dataTypeReference": [
+                  "org.greenstand.android.TreeTracker.appfunctions.AgentAccount"
+                ],
+                "type": [
+                  11
+                ],
+                "isNullable": [
+                  false
+                ]
+              }
+            ]
+          }
+        ],
+        "enabledByDefault": [
+          true
+        ],
+        "functionId": [
+          "org.greenstand.android.TreeTracker.appfunctions.AgentAppFunctions#createAccount"
+        ],
+        "packageNameHash": [
+          -1489851249
+        ],
+        "scope": [
+          "global"
+        ],
+        "parameters": [
+          {
+            "description": [
+              "First name: at least 2 characters of letters, spaces, hyphens and apostrophes. Defaults to \"Test\"."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "firstName"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  8
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "description": [
+              "Last name, by the same rules. Defaults to \"User\"."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "lastName"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  8
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "description": [
+              "Phone number of 7 to 15 digits to sign in with. Leave out phone and email to get a random unused phone number."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "phone"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  8
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "description": [
+              "Email to sign in with, instead of phone."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "email"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  8
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          }
+        ],
+        "mobileApplicationQualifiedId": [
+          "android$apps-db\/apps#org.greenstand.android.TreeTracker.debug"
+        ],
+        "packageName": [
+          "org.greenstand.android.TreeTracker.debug"
+        ]
+      },
+      "AppFunctionRuntimeMetadata-org.greenstand.android.TreeTracker.debug": {
+        "AppFunctionRuntimeMetadata-org.greenstand.android.TreeTracker.debug": {
+          "appFunctionStaticMetadataQualifiedId": [
+            "android$apps-db\/app_functions#org.greenstand.android.TreeTracker.debug\/org.greenstand.android.TreeTracker.appfunctions.AgentAppFunctions\\#createAccount"
+          ],
+          "functionId": [
+            "org.greenstand.android.TreeTracker.appfunctions.AgentAppFunctions#createAccount"
+          ],
+          "packageName": [
+            "org.greenstand.android.TreeTracker.debug"
+          ]
+        }
+      }
+    },
+    {
+      "AppFunctionStaticMetadata-org.greenstand.android.TreeTracker.debug": {
+        "serviceName": [
+          "androidx.appfunctions.service.PlatformAppFunctionService"
+        ],
+        "description": [
+          "Saves trees as if the planter captured them, using a test image and skipping the camera\n and GPS wait. With no capture session running, the trees go in a new session that is\n ended straight away. If the app is in the capture flow, they are added to that session."
+        ],
+        "accessLevel": [
+          "androidTrusted"
+        ],
+        "response": [
+          {
+            "description": [
+              "The saved trees."
+            ],
+            "valueType": [
+              {
+                "dataTypeReference": [
+                  "org.greenstand.android.TreeTracker.appfunctions.AgentCapturedTrees"
+                ],
+                "type": [
+                  11
+                ],
+                "isNullable": [
+                  false
+                ]
+              }
+            ]
+          }
+        ],
+        "enabledByDefault": [
+          true
+        ],
+        "functionId": [
+          "org.greenstand.android.TreeTracker.appfunctions.AgentAppFunctions#captureTrees"
+        ],
+        "packageNameHash": [
+          -1489851249
+        ],
+        "scope": [
+          "global"
+        ],
+        "parameters": [
+          {
+            "description": [
+              "Number of trees to save, 1 to 500."
+            ],
+            "isRequired": [
+              true
+            ],
+            "name": [
+              "count"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  7
+                ],
+                "isNullable": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "description": [
+              "Wallet (phone or email) of the account capturing the trees. Defaults to the device admin, or to the open capture session's account."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "wallet"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  8
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "description": [
+              "Latitude to place the trees around. Pass with longitude. Defaults to the device's location while the app is open, otherwise 0."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "latitude"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  4
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "description": [
+              "Longitude to place the trees around. Pass with latitude."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "longitude"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  4
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "description": [
+              "Note saved on every tree."
+            ],
+            "isRequired": [
+              false
+            ],
+            "name": [
+              "note"
+            ],
+            "dataTypeMetadata": [
+              {
+                "type": [
+                  8
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          }
+        ],
+        "mobileApplicationQualifiedId": [
+          "android$apps-db\/apps#org.greenstand.android.TreeTracker.debug"
+        ],
+        "packageName": [
+          "org.greenstand.android.TreeTracker.debug"
+        ]
+      },
+      "AppFunctionRuntimeMetadata-org.greenstand.android.TreeTracker.debug": {
+        "AppFunctionRuntimeMetadata-org.greenstand.android.TreeTracker.debug": {
+          "appFunctionStaticMetadataQualifiedId": [
+            "android$apps-db\/app_functions#org.greenstand.android.TreeTracker.debug\/org.greenstand.android.TreeTracker.appfunctions.AgentAppFunctions\\#captureTrees"
+          ],
+          "functionId": [
+            "org.greenstand.android.TreeTracker.appfunctions.AgentAppFunctions#captureTrees"
+          ],
+          "packageName": [
+            "org.greenstand.android.TreeTracker.debug"
+          ]
+        }
+      }
+    },
+    {
+      "AppFunctionComponentMetadataDocument-org.greenstand.android.TreeTracker.debug": {
+        "dataTypes": [
+          {
+            "name": [
+              "org.greenstand.android.TreeTracker.appfunctions.AgentAccount"
+            ],
+            "dataTypeMetadata": [
+              {
+                "description": [
+                  "An account created by an agent.\n\n @property userId Local database id of the user.\n @property wallet The phone number or email the account signs in with.\n @property firstName The account's first name.\n @property lastName The account's last name.\n @property isPowerUser True for the device admin. The first account on a device is the admin,\n   and its existence is what skips the first-run setup flow."
+                ],
+                "properties": [
+                  {
+                    "name": [
+                      "userId"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          6
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": [
+                      "wallet"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          8
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": [
+                      "firstName"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          8
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": [
+                      "lastName"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          8
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": [
+                      "isPowerUser"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          1
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "required": [
+                  "userId",
+                  "wallet",
+                  "firstName",
+                  "lastName",
+                  "isPowerUser"
+                ],
+                "objectQualifiedName": [
+                  "org.greenstand.android.TreeTracker.appfunctions.AgentAccount"
+                ],
+                "type": [
+                  3
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "name": [
+              "org.greenstand.android.TreeTracker.appfunctions.AgentCapturedTrees"
+            ],
+            "dataTypeMetadata": [
+              {
+                "description": [
+                  "Trees saved by an agent.\n\n @property sessionId Local database id of the session the trees were saved in.\n @property wallet Wallet of the account the trees were captured by.\n @property treeCount Number of trees saved.\n @property treeUuids UUIDs of the saved trees."
+                ],
+                "properties": [
+                  {
+                    "name": [
+                      "sessionId"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          6
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": [
+                      "wallet"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          8
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": [
+                      "treeCount"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          7
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": [
+                      "treeUuids"
+                    ],
+                    "dataTypeMetadata": [
+                      {
+                        "type": [
+                          10
+                        ],
+                        "itemType": [
+                          {
+                            "type": [
+                              8
+                            ],
+                            "isNullable": [
+                              false
+                            ]
+                          }
+                        ],
+                        "isNullable": [
+                          false
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "required": [
+                  "sessionId",
+                  "wallet",
+                  "treeCount",
+                  "treeUuids"
+                ],
+                "objectQualifiedName": [
+                  "org.greenstand.android.TreeTracker.appfunctions.AgentCapturedTrees"
+                ],
+                "type": [
+                  3
+                ],
+                "isNullable": [
+                  true
+                ]
+              }
+            ]
+          }
+        ],
+        "mobileApplicationQualifiedId": [
+          "android$apps-db\/apps#org.greenstand.android.TreeTracker.debug"
+        ],
+        "packageName": [
+          "org.greenstand.android.TreeTracker.debug"
+        ]
+      }
+    }
+  ]
+}

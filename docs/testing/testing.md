@@ -18,5 +18,6 @@ Run a single test class:
 
 ## Related QA Docs
 
+- [Agent App Functions](agent-app-functions.md): debug-only adb hooks that create accounts and trees
 - [App Distribution Testing](app-distribution-testing.md)
 - [Releases](../release/releases.md)
