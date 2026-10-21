@@ -32,7 +32,9 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgLink
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
@@ -83,11 +85,15 @@ class SplashScreenViewModelTest {
     @MockK(relaxed = true)
     private lateinit var exceptionDataCollector: ExceptionDataCollector
 
+    @MockK(relaxed = true)
+    private lateinit var installReferrerOrgProvider: InstallReferrerOrgProvider
+
     private lateinit var splashScreenViewModel: SplashScreenViewModel
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        coEvery { installReferrerOrgProvider.consume() } returns null
         splashScreenViewModel =
             SplashScreenViewModel(
                 orgId = orgId,
@@ -101,6 +107,7 @@ class SplashScreenViewModelTest {
                 checkForInternetUseCase = checkForInternetUseCase,
                 orgRepo = orgRepo,
                 orgConfigProvider = orgConfigProvider,
+                installReferrerOrgProvider = installReferrerOrgProvider,
                 exceptionDataCollector = exceptionDataCollector,
             )
     }
@@ -186,6 +193,7 @@ class SplashScreenViewModelTest {
         checkForInternetUseCase = checkForInternetUseCase,
         orgRepo = orgRepo,
         orgConfigProvider = orgConfigProvider,
+        installReferrerOrgProvider = installReferrerOrgProvider,
         exceptionDataCollector = exceptionDataCollector,
     )
 
@@ -251,5 +259,28 @@ class SplashScreenViewModelTest {
             coVerify(exactly = 0) { orgConfigProvider.fetchOrgConfig(any()) }
             coVerify(exactly = 0) { orgRepo.addOrgFromRemoteConfig(any(), any(), any()) }
             coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN no deeplink but install referrer has an org THEN binds that org`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = null, name = null)
+            coEvery { installReferrerOrgProvider.consume() } returns OrgLink("42", "Acme")
+            coEvery { orgConfigProvider.fetchOrgConfig("42") } returns null
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { orgRepo.addMinimalOrg("42", "Acme") }
+        }
+
+    @Test
+    fun `WHEN the deeplink carries an org THEN the install referrer is not read`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "123", name = "TestOrg")
+            coEvery { orgConfigProvider.fetchOrgConfig("123") } returns null
+
+            vm.bootstrap()
+
+            coVerify(exactly = 0) { installReferrerOrgProvider.consume() }
         }
 }
