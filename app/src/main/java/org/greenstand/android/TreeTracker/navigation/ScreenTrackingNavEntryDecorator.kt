@@ -38,7 +38,7 @@ val FastFadeOut: ExitTransition = fadeOut(animationSpec = tween(TRANSITION_DURAT
 /**
  * The [androidx.navigation3.runtime.NavEntry.contentKey] of the entry hosting the current
  * composition, or null outside of a `NavDisplay` entry. `HandleUIEvents` compares it against
- * `Navigator.topKey` to drop navigation events replayed from screens that are no longer on top.
+ * `Navigator.topContentKey` to drop navigation events replayed from screens that are no longer on top.
  */
 val LocalNavEntryContentKey = compositionLocalOf<Any?> { null }
 
@@ -52,17 +52,21 @@ val LocalNavEntryContentKey = compositionLocalOf<Any?> { null }
  * taps across different screens all succeed while a repeated tap on one screen is
  * dropped. See [Navigator] for details.
  *
- * The screen name is derived from the entry's contentKey, which defaults to the
- * route's `toString()`. All routes are `data object`s or `data class`es, so this
- * yields `RouteName` or `RouteName(arg=...)` — matching the `T::class.simpleName`
- * value reported before the Navigation 3 migration.
+ * The screen name is derived from the entry's contentKey ([Navigator.contentKeyOf]): the
+ * route's `toString()`, plus `#id` for pushed entries. All routes are `data object`s or
+ * `data class`es, so stripping arguments and the id yields `RouteName` — matching the
+ * `T::class.simpleName` value reported before the Navigation 3 migration.
  */
 @Composable
 fun rememberScreenTrackingNavEntryDecorator(): NavEntryDecorator<NavKey> {
     val exceptionDataCollector = koinInject<ExceptionDataCollector>()
     return remember(exceptionDataCollector) {
         NavEntryDecorator<NavKey> { entry ->
-            val screenName = entry.contentKey.toString().substringBefore('(')
+            val screenName =
+                entry.contentKey
+                    .toString()
+                    .substringBefore('(')
+                    .substringBefore('#')
             LaunchedEffect(screenName) {
                 exceptionDataCollector.setScreen(screenName)
             }
