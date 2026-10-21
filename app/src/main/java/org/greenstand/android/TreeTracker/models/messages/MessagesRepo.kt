@@ -134,11 +134,25 @@ class MessagesRepo(
     suspend fun getSurveyMessage(id: String): SurveyMessage = convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as SurveyMessage
 
     /**
-     * When uploading trees, messages will be synced locally by this method
+     * Fetches new messages for every user, then uploads queued outgoing messages.
+     *
+     * Exceptions are logged, not thrown (only cancellation propagates): this is called from UI
+     * coroutine scopes (splash, dashboard, delete profile) where an exception would crash the app.
+     * Returns false if queued messages could not be uploaded; they stay queued for the next sync.
+     * Fetch errors are logged and don't affect the result.
      */
-    suspend fun syncMessages() =
+    suspend fun syncMessages(): Boolean =
         withContext(Dispatchers.IO) {
-            for (wallet in userRepo.getUserList().map { it.wallet }) {
+            val wallets =
+                try {
+                    userRepo.getUserList().map { it.wallet }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Timber.e(e, "Could not load users to fetch messages for")
+                    emptyList()
+                }
+            for (wallet in wallets) {
                 try {
                     ensureActive()
                     fetchMessagesForWallet(wallet)
@@ -155,7 +169,15 @@ class MessagesRepo(
                 }
             }
 
-            messageUploader.uploadMessages()
+            try {
+                messageUploader.uploadMessages()
+                true
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.e(e, "Message upload failed")
+                false
+            }
         }
 
     private suspend fun fetchMessagesForWallet(wallet: String) =
