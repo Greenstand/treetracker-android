@@ -21,6 +21,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.RegistrationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
@@ -41,14 +42,20 @@ class PlanterUploader(
     private val uploadImageUseCase: UploadImageUseCase,
     private val json: Json,
     private val objectStorageClient: ObjectStorageClient,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
     suspend fun upload(instanceId: String) {
         withContext(Dispatchers.IO) {
-            uploadLegacyPlanterImages()
-            uploadUserImages()
-            uploadPlanterInfo(instanceId)
-            uploadUsers()
-            deleteLocalImagesThatWereUploaded()
+            try {
+                uploadLegacyPlanterImages()
+                uploadUserImages()
+                uploadPlanterInfo(instanceId)
+                uploadUsers()
+                deleteLocalImagesThatWereUploaded()
+            } catch (e: Exception) {
+                exceptionDataCollector.recordFailure(e, "Planter upload failed", TAG)
+                throw e
+            }
         }
     }
 

@@ -25,6 +25,7 @@ import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.NOTE_ADDED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.STOP_BUTTON_CLICKED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.SYNC_BUTTON_CLICKED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.TREE_PLANTED
+import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.UPLOAD_FAILURE
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_CHECK_IN
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_DETAILS
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.USER_ENTERED_EMAIL_PHONE
@@ -146,5 +147,13 @@ class Analytics(
                 putDouble("long", long)
             }
         firebaseAnalytics.logEvent(MARKER_CLICKED, bundle)
+    }
+
+    fun uploadFailure(failureType: String) {
+        val bundle =
+            Bundle().apply {
+                putString("failure_type", failureType)
+            }
+        firebaseAnalytics.logEvent(UPLOAD_FAILURE, bundle)
     }
 }
