@@ -15,7 +15,9 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
@@ -52,10 +54,13 @@ class TreeUploader(
         windowedTreeUpload(treeIds) { treeIdBundle ->
             val legacyTrees = dao.getTreeCapturesByIds(treeIdBundle)
             uploadLegacyTreeImages(legacyTrees)
-            uploadLegacyTreeBundles(legacyTrees, instanceId)
 
-            deleteLocalImages(legacyTrees.map { it.localPhotoPath })
-            dao.removeTreeCapturesLocalImagePaths(legacyTrees.map { it.id })
+            // Only bundle trees whose image made it to storage. The rest stay pending for the next sync.
+            val uploadedTrees = uploadLegacyTreeBundles(legacyTrees.filter { it.photoUrl != null }, instanceId)
+            if (uploadedTrees.isEmpty()) return@windowedTreeUpload
+
+            deleteLocalImages(uploadedTrees.map { it.localPhotoPath })
+            dao.removeTreeCapturesLocalImagePaths(uploadedTrees.map { it.id })
         }
     }
 
@@ -63,10 +68,13 @@ class TreeUploader(
         windowedTreeUpload(treeIds) { treeIdBundle ->
             val trees = dao.getTreesByIds(treeIdBundle)
             uploadTreeImages(trees)
-            uploadTreeBundles(trees)
 
-            deleteLocalImages(trees.map { it.photoPath })
-            dao.removeTreesLocalImagePaths(trees.map { it.id })
+            // Only bundle trees whose image made it to storage. The rest stay pending for the next sync.
+            val uploadedTrees = uploadTreeBundles(trees.filter { it.photoUrl != null })
+            if (uploadedTrees.isEmpty()) return@windowedTreeUpload
+
+            deleteLocalImages(uploadedTrees.map { it.photoPath })
+            dao.removeTreesLocalImagePaths(uploadedTrees.map { it.id })
         }
     }
 
@@ -86,8 +94,10 @@ class TreeUploader(
                 } else {
                     coroutineContext.cancel()
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                Timber.e("NewTree upload failed")
+                Timber.e(e, "NewTree upload failed")
             }
         }
         log("Completed upload for ${treeIds.size} trees")
@@ -101,19 +111,14 @@ class TreeUploader(
                 .map { tree ->
                     async {
                         val imageUrl =
-                            uploadImageUseCase.execute(
-                                UploadImageParams(
-                                    imagePath = tree.localPhotoPath!!,
-                                    lat = tree.latitude,
-                                    long = tree.longitude,
-                                ),
-                            ) ?: error("No imageUrl")
+                            uploadTreeImage(tree.id, tree.localPhotoPath, tree.latitude, tree.longitude)
+                                ?: return@async
 
                         // Update local tree data with image Url
                         tree.photoUrl = imageUrl
                         dao.updateTreeCapture(tree)
                     }
-                }.forEach { it.await() }
+                }.awaitAll()
         }
         log("Tree Image Upload Completed")
     }
@@ -126,32 +131,58 @@ class TreeUploader(
                 .map { tree ->
                     async {
                         val imageUrl =
-                            uploadImageUseCase.execute(
-                                UploadImageParams(
-                                    imagePath = tree.photoPath!!,
-                                    lat = tree.latitude,
-                                    long = tree.longitude,
-                                ),
-                            ) ?: error("No imageUrl")
+                            uploadTreeImage(tree.id, tree.photoPath, tree.latitude, tree.longitude)
+                                ?: return@async
 
                         // Update local tree data with image Url
                         tree.photoUrl = imageUrl
                         dao.updateTree(tree)
                     }
-                }.forEach { it.await() }
+                }.awaitAll()
         }
 
         log("Tree Image Upload Completed")
     }
 
+    /**
+     * Uploads one tree's image and returns its URL, or null if it could not be uploaded.
+     * Failures are contained to this tree so a single missing or failed image can't block
+     * the rest of its bundle; the tree keeps a null photoUrl and is retried on the next sync.
+     */
+    private suspend fun uploadTreeImage(
+        treeId: Long,
+        imagePath: String?,
+        lat: Double,
+        long: Double,
+    ): String? {
+        if (imagePath == null) {
+            Timber.e("Tree $treeId has no local image to upload")
+            return null
+        }
+        val imageUrl =
+            try {
+                uploadImageUseCase.execute(UploadImageParams(imagePath = imagePath, lat = lat, long = long))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.e(e, "Image upload failed for tree $treeId")
+                return null
+            }
+        if (imageUrl == null) {
+            Timber.e("Image upload failed for tree $treeId")
+        }
+        return imageUrl
+    }
+
+    /** Uploads one bundle for [trees] and returns the trees it contains. */
     private suspend fun uploadLegacyTreeBundles(
         trees: List<TreeCaptureEntity>,
         instanceId: String,
-    ) {
+    ): List<TreeCaptureEntity> {
         log("Uploading Tree Bundle...")
         // Create a request object for each tree
-        val treeRequestList =
-            trees.map { tree ->
+        val requests =
+            buildTreeRequests(trees, { it.id }) { tree ->
                 createTreeRequestUseCase.execute(
                     CreateTreeRequestParams(
                         tree.id,
@@ -159,24 +190,28 @@ class TreeUploader(
                     ),
                 )
             }
+        if (requests.isEmpty()) return emptyList()
+        val bundledTrees = requests.map { it.first }
 
-        val jsonBundle = json.encodeToString(UploadBundle.createV1(newTreeRequests = treeRequestList, instanceId = instanceId))
+        val jsonBundle = json.encodeToString(UploadBundle.createV1(newTreeRequests = requests.map { it.second }, instanceId = instanceId))
 
         // Create a hash ID to reference this upload bundle later
         val bundleId = jsonBundle.md5()
 
         // Update the trees in DB with the bundleId
-        dao.updateTreeCapturesBundleIds(trees.map { it.id }, bundleId)
+        dao.updateTreeCapturesBundleIds(bundledTrees.map { it.id }, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
+        dao.updateTreeCapturesUploadStatus(bundledTrees.map { it.id }, true)
         log("Bundle Tree Upload Completed")
+        return bundledTrees
     }
 
-    private suspend fun uploadTreeBundles(trees: List<TreeEntity>) {
+    /** Uploads one bundle for [trees] and returns the trees it contains. */
+    private suspend fun uploadTreeBundles(trees: List<TreeEntity>): List<TreeEntity> {
         log("Uploading Tree Bundle...")
         // Create a request object for each tree
-        val treeRequestList =
-            trees.map { tree ->
+        val requests =
+            buildTreeRequests(trees, { it.id }) { tree ->
                 val sessionUuid = dao.getSessionById(tree.sessionId).uuid
                 TreeCaptureRequest(
                     sessionId = sessionUuid,
@@ -192,18 +227,42 @@ class TreeUploader(
                     extraAttributes = null, // gson.toJson(tree.extraAttributes)  extra attributes disabled
                 )
             }
+        if (requests.isEmpty()) return emptyList()
+        val bundledTrees = requests.map { it.first }
 
-        val jsonBundle = json.encodeToString(UploadBundle.createV2(treeCaptures = treeRequestList))
+        val jsonBundle = json.encodeToString(UploadBundle.createV2(treeCaptures = requests.map { it.second }))
 
         // Create a hash ID to reference this upload bundle later
         val bundleId = "${jsonBundle.md5()}_captures"
 
         // Update the trees in DB with the bundleId
-        dao.updateTreesBundleIds(trees.map { it.id }, bundleId)
+        dao.updateTreesBundleIds(bundledTrees.map { it.id }, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
-        dao.updateTreesUploadStatus(trees.map { it.id }, true)
+        dao.updateTreesUploadStatus(bundledTrees.map { it.id }, true)
         log("Bundle Tree Upload Completed")
+        return bundledTrees
     }
+
+    /**
+     * Builds the upload request for each tree. A tree whose request can't be built (e.g. its
+     * planter check-in or session row is missing) is logged and left out, so it can't block the
+     * rest of the bundle; it stays pending and is retried on the next sync.
+     */
+    private suspend fun <T, R> buildTreeRequests(
+        trees: List<T>,
+        treeId: (T) -> Long,
+        buildRequest: suspend (T) -> R,
+    ): List<Pair<T, R>> =
+        trees.mapNotNull { tree ->
+            try {
+                tree to buildRequest(tree)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Timber.e(e, "Could not build the upload request for tree ${treeId(tree)}")
+                null
+            }
+        }
 
     private fun deleteLocalImages(photoPaths: List<String?>) {
         log("Deleting local image files for uploaded...")
