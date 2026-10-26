@@ -21,6 +21,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.TreeCaptureRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
@@ -42,6 +43,7 @@ class TreeUploader(
     private val createTreeRequestUseCase: CreateTreeRequestUseCase,
     private val dao: TreeTrackerDAO,
     private val json: Json,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
     fun log(msg: String) = Timber.tag("TreeUploader").d(msg)
 
@@ -88,6 +90,7 @@ class TreeUploader(
                 }
             } catch (e: Exception) {
                 Timber.e("NewTree upload failed")
+                exceptionDataCollector.recordFailure(e, "Tree upload failed for bundle $treeIdBundle")
             }
         }
         log("Completed upload for ${treeIds.size} trees")

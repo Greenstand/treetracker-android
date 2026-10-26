@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.usecases
 import com.amazonaws.AmazonClientException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import timber.log.Timber
 
@@ -29,6 +30,7 @@ data class UploadImageParams(
 
 class UploadImageUseCase(
     private val doSpaces: ObjectStorageClient,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) : UseCase<UploadImageParams, String?>() {
     override suspend fun execute(params: UploadImageParams): String? =
         try {
@@ -44,6 +46,7 @@ class UploadImageUseCase(
                     "such as not being able to access the network.",
             )
             Timber.e("Error Message: ${ace.message}")
+            exceptionDataCollector.recordFailure(ace, "Image upload failed")
             null
         }
 }

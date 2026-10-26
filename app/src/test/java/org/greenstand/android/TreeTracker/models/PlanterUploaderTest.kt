@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.UserEntity
@@ -62,6 +63,9 @@ class PlanterUploaderTest {
     @MockK(relaxed = true)
     private lateinit var objectStorageClient: ObjectStorageClient
 
+    @MockK(relaxed = true)
+    private lateinit var exceptionDataCollector: ExceptionDataCollector
+
     private val json =
         Json {
             explicitNulls = true
@@ -82,6 +86,7 @@ class PlanterUploaderTest {
                 uploadImageUseCase = uploadImageUseCase,
                 json = json,
                 objectStorageClient = objectStorageClient,
+                exceptionDataCollector = exceptionDataCollector,
             )
     }
 

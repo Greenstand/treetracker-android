@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.LocationRequest
 import org.greenstand.android.TreeTracker.api.models.requests.TracksRequest
@@ -32,6 +33,7 @@ import timber.log.Timber
 class UploadLocationDataUseCase(
     private val dao: TreeTrackerDAO,
     private val json: Json,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) : UseCase<Unit, Boolean>() {
     private val storageClient = ObjectStorageClient.instance()
 
@@ -93,9 +95,11 @@ class UploadLocationDataUseCase(
                     "such as not being able to access the network.",
             )
             Timber.e("Error Message: ${ace.message}")
+            exceptionDataCollector.recordFailure(ace, "Location data upload failed")
             return false
         } catch (e: Exception) {
             Timber.e("Location upload error: ${e.message}")
+            exceptionDataCollector.recordFailure(e, "Location data upload failed")
             return false
         }
         return true

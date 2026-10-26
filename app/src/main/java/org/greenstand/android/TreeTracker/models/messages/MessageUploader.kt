@@ -19,6 +19,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
 import org.greenstand.android.TreeTracker.models.messages.database.DatabaseConverters
@@ -30,15 +31,21 @@ class MessageUploader(
     private val objectStorageClient: ObjectStorageClient,
     private val messagesDAO: MessagesDAO,
     private val json: Json,
+    private val exceptionDataCollector: ExceptionDataCollector,
 ) {
     @OptIn(ExperimentalTime::class)
     suspend fun uploadMessages() {
-        coroutineScope {
-            messagesDAO
-                .getMessageIdsToUpload()
-                .windowed(LIMIT, LIMIT, true)
-                .map { async { uploadMessageBundle(it) } }
-                .onEach { it.await() }
+        try {
+            coroutineScope {
+                messagesDAO
+                    .getMessageIdsToUpload()
+                    .windowed(LIMIT, LIMIT, true)
+                    .map { async { uploadMessageBundle(it) } }
+                    .onEach { it.await() }
+            }
+        } catch (e: Exception) {
+            exceptionDataCollector.recordFailure(e, "Message upload failed")
+            throw e
         }
     }
 
