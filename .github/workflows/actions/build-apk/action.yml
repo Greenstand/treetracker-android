@@ -9,6 +9,10 @@ inputs:
     description: 'Whether to decode keystore for signing'
     required: false
     default: 'false'
+outputs:
+  version_code:
+    description: 'The version code the APK was built with'
+    value: ${{ steps.version.outputs.version_code }}
 
 runs:
   using: 'composite'
@@ -22,8 +26,23 @@ runs:
       shell: bash
       run: chmod +x ./gradlew
 
+    # The version code is the number of commits on the branch being built. It goes up with
+    # every merge to master, so nothing has to commit a version bump (master only accepts PRs).
+    # Needs the full history: check out with fetch-depth: 0.
+    - name: Compute version code
+      id: version
+      shell: bash
+      run: |
+        if [ "$(git rev-parse --is-shallow-repository)" = "true" ]; then
+          echo "Shallow clone: check out with fetch-depth: 0 so the commit count is right." >&2
+          exit 1
+        fi
+        VERSION_CODE=$(git rev-list --count HEAD)
+        echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+        echo "Version code: $VERSION_CODE"
+
     - name: Build APK
       shell: bash
       run: |
         VARIANT=$(echo "${{ inputs.build_variant }}" | sed 's/\b\(.\)/\u\1/')
-        ./gradlew clean assemble${VARIANT}
+        ./gradlew clean assemble${VARIANT} -Ptreetracker.versionCode=${{ steps.version.outputs.version_code }}
