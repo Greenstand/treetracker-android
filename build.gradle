@@ -51,9 +51,9 @@ subprojects {
             exclude { element -> element.file.path.contains("generated/") }
         }
     }
-    apply plugin : "io.gitlab.arturbosch.detekt"
+    apply plugin : "dev.detekt"
     detekt {
-        config = files("${project.rootDir}/detekt.yml")
+        config.setFrom(files("${project.rootDir}/detekt.yml"))
         parallel = true
         buildUponDefaultConfig = true
     }
