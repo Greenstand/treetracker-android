@@ -42,4 +42,13 @@ Since December 2025, a repository ruleset ("Master") requires a pull request for
 - `assembleBeta -Ptreetracker.versionCode=2031`: the APK has `versionCode='2031'` (checked with
   `aapt2 dump badging`). `assembleDebug` without the property: `versionCode='197'`.
 - All workflow and action YAML parses.
-- End to end: run "Deploy to Firebase Beta" from `master` after this merges.
+- End to end: "Deploy to Firebase Beta" run
+  [#20](https://github.com/Greenstand/treetracker-android/actions/runs/40372339020), from this
+  branch to the `debug` group, passed. It computed version code 2032 (`master` plus this commit),
+  built in 3m 34s on JDK 25, and Firebase reported "uploaded new release 2.2.0 (2032)" and
+  "distributed to testers/groups successfully". Nothing was pushed to any branch.
+
+## Follow-ups seen in the run
+
+GitHub flagged `actions/setup-java@v4` and other Node 20 actions as deprecated (Node 24 is forced
+for now). Moving to `setup-java@v5` and current major versions of the other actions is separate work.
