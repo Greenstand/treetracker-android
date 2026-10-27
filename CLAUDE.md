@@ -39,6 +39,7 @@ For every unit of work, create a task folder in `docs/tasks/` named `task_{id}` 
 - [User Login Logic](docs/engineering/user-login-logic.md)
 - [Preferences and PrefKeys](docs/engineering/preferences-and-prefkeys.md)
 - [Kotlin Migration](docs/engineering/kotlin-migration.md)
+- [KMP and CMP Migration Plan](docs/engineering/kmp-cmp-migration.md)
 
 ### Testing And Release
 
