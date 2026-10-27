@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
@@ -59,6 +60,7 @@ import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.navigation.MapRoute
 import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
+import org.greenstand.android.TreeTracker.navigation.NavEntryIds
 import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.navigation.OrgRoute
 import org.greenstand.android.TreeTracker.navigation.ProfileRoute
@@ -108,7 +110,8 @@ fun Host(startRoute: SplashRoute = SplashRoute()) {
     // Persists across configuration changes and process death; on restore, the
     // saved stack wins over startRoute — same as Nav2's restored NavController state.
     val backStack = rememberNavBackStack(startRoute)
-    val navigator = remember(backStack) { Navigator(backStack) }
+    val entryIds = rememberSaveable(saver = NavEntryIds.Saver) { NavEntryIds() }
+    val navigator = remember(backStack) { Navigator(backStack, entryIds = entryIds) }
     TreeTrackerTheme {
         CompositionLocalProvider(LocalNavigator provides navigator) {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -125,61 +128,63 @@ fun Host(startRoute: SplashRoute = SplashRoute()) {
                     popTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
                     predictivePopTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
                     entryProvider =
-                        entryProvider {
-                            entry<SplashRoute> { route ->
-                                SplashScreen(
-                                    orgId = route.orgId,
-                                    orgName = route.orgName,
-                                )
-                            }
+                        navigator.withEntryContentKeys(
+                            entryProvider {
+                                entry<SplashRoute> { route ->
+                                    SplashScreen(
+                                        orgId = route.orgId,
+                                        orgName = route.orgName,
+                                    )
+                                }
 
-                            entry<LanguageRoute> { route -> LanguageSelectScreen(route.isFromTopBar) }
+                                entry<LanguageRoute> { route -> LanguageSelectScreen(route.isFromTopBar) }
 
-                            entry<SignupFlowRoute> { SignUpScreen() }
-                            entry<DashboardRoute> { DashboardScreen() }
-                            entry<OrgRoute> { OrgPickerScreen() }
-                            entry<UserSelectRoute> { UserSelectScreen() }
-                            entry<WalletSelectRoute> { WalletSelectScreen() }
-                            entry<AddWalletRoute> { AddWalletScreen() }
-                            entry<AddOrgRoute> { AddOrgScreen() }
-                            entry<SelfieRoute> { SelfieScreen() }
-                            entry<TreeHeightScreenRoute> { TreeHeightScreen() }
-                            entry<SessionNoteRoute> { SessionNoteScreen() }
-                            entry<SettingsRoute> { SettingsScreen() }
-                            entry<ProfileSelectRoute> { ProfileSelectScreen() }
-                            entry<DeleteProfileRoute> { DeleteProfileScreen() }
-                            entry<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
-                            entry<DevOptionsRoute> { DevOptionsRoot() }
-                            entry<MapRoute> { MapScreen() }
+                                entry<SignupFlowRoute> { SignUpScreen() }
+                                entry<DashboardRoute> { DashboardScreen() }
+                                entry<OrgRoute> { OrgPickerScreen() }
+                                entry<UserSelectRoute> { UserSelectScreen() }
+                                entry<WalletSelectRoute> { WalletSelectScreen() }
+                                entry<AddWalletRoute> { AddWalletScreen() }
+                                entry<AddOrgRoute> { AddOrgScreen() }
+                                entry<SelfieRoute> { SelfieScreen() }
+                                entry<TreeHeightScreenRoute> { TreeHeightScreen() }
+                                entry<SessionNoteRoute> { SessionNoteScreen() }
+                                entry<SettingsRoute> { SettingsScreen() }
+                                entry<ProfileSelectRoute> { ProfileSelectScreen() }
+                                entry<DeleteProfileRoute> { DeleteProfileScreen() }
+                                entry<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
+                                entry<DevOptionsRoute> { DevOptionsRoot() }
+                                entry<MapRoute> { MapScreen() }
 
-                            entry<TreeEditUserSelectRoute> { TreeEditUserSelectScreen() }
+                                entry<TreeEditUserSelectRoute> { TreeEditUserSelectScreen() }
 
-                            entry<TreeListRoute> { route ->
-                                TreeListScreen(userWallet = route.userWallet, userName = route.userName)
-                            }
+                                entry<TreeListRoute> { route ->
+                                    TreeListScreen(userWallet = route.userWallet, userName = route.userName)
+                                }
 
-                            entry<TreeDetailRoute> { route -> TreeDetailScreen(treeId = route.treeId) }
+                                entry<TreeDetailRoute> { route -> TreeDetailScreen(treeId = route.treeId) }
 
-                            entry<ProfileRoute> { route -> ProfileScreen(route.planterInfoId) }
+                                entry<ProfileRoute> { route -> ProfileScreen(route.planterInfoId) }
 
-                            entry<IndividualMessageListRoute> { route ->
-                                IndividualMessageListScreen(route.planterInfoId)
-                            }
+                                entry<IndividualMessageListRoute> { route ->
+                                    IndividualMessageListScreen(route.planterInfoId)
+                                }
 
-                            entry<SurveyRoute> { route -> SurveyScreen(route.messageId) }
+                                entry<SurveyRoute> { route -> SurveyScreen(route.messageId) }
 
-                            entry<ImageReviewRoute> { route -> ImageReviewScreen(route.photoPath) }
+                                entry<ImageReviewRoute> { route -> ImageReviewScreen(route.photoPath) }
 
-                            entry<TreeCaptureRoute> { route -> TreeCaptureScreen(route.profilePicUrl) }
+                                entry<TreeCaptureRoute> { route -> TreeCaptureScreen(route.profilePicUrl) }
 
-                            entry<TreeImageReviewRoute> { TreeImageReviewScreen() }
+                                entry<TreeImageReviewRoute> { TreeImageReviewScreen() }
 
-                            entry<ChatRoute> { route ->
-                                ChatScreen(route.planterInfoId, route.otherChatIdentifier)
-                            }
+                                entry<ChatRoute> { route ->
+                                    ChatScreen(route.planterInfoId, route.otherChatIdentifier)
+                                }
 
-                            entry<AnnouncementRoute> { route -> AnnouncementScreen(route.messageId) }
-                        },
+                                entry<AnnouncementRoute> { route -> AnnouncementScreen(route.messageId) }
+                            },
+                        ),
                 )
 
                 if (FeatureFlags.DEBUG_ENABLED) {
