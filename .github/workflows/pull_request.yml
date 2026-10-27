@@ -2,7 +2,8 @@ name: Treetracker Android App CI PR
 
 on:
   pull_request:
-    branches: [ master, release* ]
+    # No branch filter, so PRs in a stack (based on another PR's branch) get CI too.
+    branches: [ "**" ]
 
 jobs:
   code-analysis:
