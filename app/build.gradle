@@ -25,9 +25,10 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.targetSdk.get().toInteger()
-        // CI sets this from the branch's commit count (see .github/workflows/actions/build-apk).
-        // The number here is only used for local builds.
-        versionCode = providers.gradleProperty("treetracker.versionCode").map { it.toInteger() }.getOrElse(197)
+        // Release builds use baseVersionCode as is. Other CI builds add the workflow's run number
+        // (see .github/workflows/actions/build-apk), without committing anything.
+        def baseVersionCode = 197
+        versionCode = baseVersionCode + providers.gradleProperty("treetracker.versionCodeOffset").map { it.toInteger() }.getOrElse(0)
         versionName "2.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

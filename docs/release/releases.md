@@ -2,13 +2,17 @@
 
 ## Version codes
 
-CI builds (the Firebase beta and Play Store workflows) set `versionCode` to the number of commits
-on the branch being built (`git rev-list --count HEAD`). Every merge to `master` adds one, so codes
-always go up, and CI never commits a version bump (`master` only accepts pull requests). Building
-the same commit twice gives the same code. The `versionCode` in `app/build.gradle` is only used for
-local builds.
+`app/build.gradle` has `baseVersionCode` (currently 197). CI never commits a version bump
+(`master` only accepts pull requests). Instead, the number is set for each build:
 
-To raise `versionName`, edit it in `app/build.gradle` in a normal PR.
+- **Release builds** use `baseVersionCode` as is. To release, raise it in a normal PR.
+- **Every other CI build** (beta, dev, debug, prerelease) uses `baseVersionCode` plus the
+  workflow's run number. For example, beta run #21 builds 197 + 21 = 218. The number exists only
+  in that build.
+- **Local builds** use `baseVersionCode`.
+
+Raising `baseVersionCode` for a release also raises every later CI build, so betas stay above the
+release. To change `versionName`, edit it in `app/build.gradle` in a normal PR.
 
 ## Legacy release notes
 

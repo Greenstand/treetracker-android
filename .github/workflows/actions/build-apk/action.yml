@@ -26,23 +26,25 @@ runs:
       shell: bash
       run: chmod +x ./gradlew
 
-    # The version code is the number of commits on the branch being built. It goes up with
-    # every merge to master, so nothing has to commit a version bump (master only accepts PRs).
-    # Needs the full history: check out with fetch-depth: 0.
+    # Version code: baseVersionCode from app/build.gradle, plus this workflow's run number for
+    # every variant except release. Nothing is committed (master only accepts PRs), so the
+    # number exists only in this build. Release builds keep the committed number.
     - name: Compute version code
       id: version
       shell: bash
       run: |
-        if [ "$(git rev-parse --is-shallow-repository)" = "true" ]; then
-          echo "Shallow clone: check out with fetch-depth: 0 so the commit count is right." >&2
+        BASE=$(grep -oP 'def baseVersionCode = \K\d+' app/build.gradle)
+        if [ -z "$BASE" ]; then
+          echo "Couldn't find 'def baseVersionCode = <number>' in app/build.gradle." >&2
           exit 1
         fi
-        VERSION_CODE=$(git rev-list --count HEAD)
-        echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
-        echo "Version code: $VERSION_CODE"
+        if [ "${{ inputs.build_variant }}" = "release" ]; then OFFSET=0; else OFFSET=${{ github.run_number }}; fi
+        echo "offset=$OFFSET" >> "$GITHUB_OUTPUT"
+        echo "version_code=$((BASE + OFFSET))" >> "$GITHUB_OUTPUT"
+        echo "Version code: $((BASE + OFFSET)) (base $BASE + run number offset $OFFSET)"
 
     - name: Build APK
       shell: bash
       run: |
         VARIANT=$(echo "${{ inputs.build_variant }}" | sed 's/\b\(.\)/\u\1/')
-        ./gradlew clean assemble${VARIANT} -Ptreetracker.versionCode=${{ steps.version.outputs.version_code }}
+        ./gradlew clean assemble${VARIANT} -Ptreetracker.versionCodeOffset=${{ steps.version.outputs.offset }}
