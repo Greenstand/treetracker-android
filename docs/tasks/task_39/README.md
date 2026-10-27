@@ -48,6 +48,11 @@ Since December 2025, a repository ruleset ("Master") requires a pull request for
 - The action's `grep -oP 'def baseVersionCode = \K\d+'` pattern finds 197 (checked with Perl,
   which uses the same regex syntax).
 - All workflow and action YAML parses.
+- End to end: "Deploy to Firebase Beta" run
+  [#21](https://github.com/Greenstand/treetracker-android/actions/runs/40432469777), from this
+  branch to the `debug` group, passed. It logged `Version code: 218 (base 197 + run number offset
+  21)`, built in 4m 34s on JDK 25, and Firebase reported "uploaded new release 2.2.0 (218)" and
+  "distributed to testers/groups successfully".
 - End to end, with the earlier commit-count version: "Deploy to Firebase Beta" run
   [#20](https://github.com/Greenstand/treetracker-android/actions/runs/40372339020), from this
   branch to the `debug` group, passed. It computed version code 2032 (`master` plus this commit),
