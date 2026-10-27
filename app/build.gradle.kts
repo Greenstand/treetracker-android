@@ -1,0 +1,345 @@
+import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.firebase.crashlytics")
+    id("io.github.takahirom.roborazzi")
+}
+
+// API keys and identity pools come from treetracker.keys.properties (CI writes a dummy one).
+// Any key missing from the file falls back to a placeholder.
+val keys =
+    Properties().apply {
+        rootProject.file("treetracker.keys.properties").inputStream().use { load(it) }
+    }
+
+fun key(name: String): String = keys.getProperty(name) ?: "configure in treetracker.keys.properties"
+
+fun quoted(value: String) = "\"$value\""
+
+android {
+    compileSdk =
+        libs.versions.compileSdk
+            .get()
+            .toInt()
+    defaultConfig {
+        applicationId = "org.greenstand.android.TreeTracker"
+        minSdk =
+            libs.versions.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.targetSdk
+                .get()
+                .toInt()
+        // Release builds use baseVersionCode as is. Other CI builds add the workflow's run number
+        // (see .github/workflows/actions/build-apk), without committing anything.
+        val baseVersionCode = 197
+        versionCode =
+            baseVersionCode +
+            providers.gradleProperty("treetracker.versionCodeOffset").map { it.toInt() }.getOrElse(0)
+        versionName = "2.2.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
+        buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_production_identity_pool_id")))
+        buildConfigField("String", "OBJECT_STORAGE_IDENTITY_REGION", "\"eu-central-1\"")
+        buildConfigField("String", "OBJECT_STORAGE_ENDPOINT", "\"eu-central-1\"")
+        buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-production-images\"")
+        buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-production-batch-uploads\"")
+        buildConfigField("String", "API_GATEWAY", "\"https://dev-k8s.treetracker.org\"")
+        buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("prod_treetracker_client_id")))
+        buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("prod_treetracker_client_secret")))
+        buildConfigField("Boolean", "TREE_HEIGHT_FEATURE_ENABLED", "false")
+        buildConfigField("Boolean", "TREE_NOTE_FEATURE_ENABLED", "true")
+        buildConfigField("Boolean", "TREE_DBH_FEATURE_ENABLED", "false")
+        buildConfigField("Boolean", "AUTOMATIC_SIGN_OUT_FEATURE_ENABLED", "true")
+        buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
+        buildConfigField("Boolean", "USE_AWS_S3", "false")
+        buildConfigField("Boolean", "ORG_LINK", "false")
+    }
+
+    buildFeatures {
+        compose = true
+        viewBinding = true
+        buildConfig = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            resValue("string", "app_name", "Tree Tracker")
+            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_production_identity_pool_id")))
+            buildConfigField("String", "OBJECT_STORAGE_ENDPOINT", "\"eu-central-1\"")
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-production-images\"")
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-production-batch-uploads\"")
+            buildConfigField("Boolean", "USE_AWS_S3", "true")
+            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
+            buildConfigField("String", "API_GATEWAY", "\"https://prod-k8s.treetracker.org\"")
+            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("prod_treetracker_client_id")))
+            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("prod_treetracker_client_secret")))
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+
+        create("prerelease") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".prerelease"
+            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_production_identity_pool_id")))
+            buildConfigField("String", "OBJECT_STORAGE_ENDPOINT", "\"eu-central-1\"")
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-production-images\"")
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-production-batch-uploads\"")
+            buildConfigField("Boolean", "USE_AWS_S3", "true")
+            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
+            resValue("string", "app_name", "Tree Tracker Prerelease")
+            buildConfigField("String", "API_GATEWAY", "\"https://prod-k8s.treetracker.org\"")
+            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("prod_treetracker_client_id")))
+            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("prod_treetracker_client_secret")))
+        }
+
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            resValue("string", "app_name", "Tree Tracker(debug)")
+            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_test_identity_pool_id")))
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-test-images\"")
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-test-batch-uploads\"")
+            buildConfigField("Boolean", "USE_AWS_S3", "true")
+            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "true")
+            buildConfigField("String", "API_GATEWAY", "\"https://dev-k8s.treetracker.org\"")
+            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("test_treetracker_client_id")))
+            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("test_treetracker_client_secret")))
+        }
+
+        create("beta") {
+            applicationIdSuffix = ".test"
+            resValue("string", "app_name", "Tree Tracker(test)")
+            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_test_identity_pool_id")))
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-test-images\"")
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-test-batch-uploads\"")
+            buildConfigField("Boolean", "USE_AWS_S3", "true")
+            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
+            buildConfigField("String", "API_GATEWAY", "\"https://test-k8s.treetracker.org\"")
+            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("test_treetracker_client_id")))
+            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("test_treetracker_client_secret")))
+            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = true
+        }
+
+        create("dev") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "Tree Tracker(dev)")
+            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_dev_identity_pool_id")))
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-dev-images\"")
+            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-dev-batch-uploads\"")
+            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "true")
+            buildConfigField("String", "API_GATEWAY", "\"https://dev-k8s.treetracker.org\"")
+            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("dev_treetracker_client_id")))
+            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("dev_treetracker_client_secret")))
+        }
+    }
+
+    // The agent AppFunctions live in src/debug so release, beta and prerelease never ship them.
+    // dev is also a local development build, so it compiles the same sources.
+    sourceSets {
+        getByName("dev") {
+            java.srcDir("src/debug/java")
+        }
+    }
+
+    packaging {
+        resources.excludes +=
+            setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/io.netty.versions.properties",
+                "META-INF/INDEX.LIST",
+            )
+    }
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = true
+    }
+    namespace = "org.greenstand.android.TreeTracker"
+
+    // includeAndroidResources is only needed for screenshot tests (Compose theme loads
+    // fonts from R.font.*). Enabling it globally causes Robolectric to fully initialize
+    // TreeTrackerApplication, which starts Koin and breaks existing unit tests.
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources =
+                gradle.startParameter.taskNames.any { it.lowercase().contains("roborazzi") }
+        }
+    }
+}
+
+// Screenshot tests and regular unit tests are isolated from each other:
+// - `./gradlew test` runs only regular unit tests (excludes screenshot/)
+// - `./gradlew verifyRoborazziDebug` runs only screenshot tests (includes screenshot/ only)
+// This prevents Koin DI conflicts between the two test suites.
+val isRoborazziRun = gradle.startParameter.taskNames.any { it.lowercase().contains("roborazzi") }
+tasks.withType<Test>().configureEach {
+    if (isRoborazziRun) {
+        include("**/screenshot/**")
+    } else {
+        exclude("**/screenshot/**")
+    }
+}
+
+// Roborazzi golden images are stored in src/test/snapshots/ and committed to git.
+// The plugin always reads/writes build/outputs/roborazzi/, so we sync manually.
+val snapshotsDir = file("src/test/snapshots")
+val roborazziOutputDir =
+    layout.buildDirectory
+        .dir("outputs/roborazzi")
+        .get()
+        .asFile
+
+afterEvaluate {
+    tasks.matching { it.name.matches(Regex("test.*UnitTest")) }.configureEach {
+        doFirst {
+            if (snapshotsDir.exists()) {
+                copy {
+                    from(snapshotsDir)
+                    into(roborazziOutputDir)
+                }
+            }
+        }
+        doLast {
+            if (roborazziOutputDir.exists()) {
+                copy {
+                    from(roborazziOutputDir)
+                    include("*.png")
+                    exclude("*_actual.*", "*_compare.*", "*_delta.*")
+                    into(snapshotsDir)
+                }
+            }
+        }
+    }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    // Generates the app-wide AppFunctions index; only debug and dev run the AppFunctions compiler
+    arg("appfunctions:aggregateAppFunctions", "true")
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+    }
+}
+
+dependencies {
+    // AWS S3 SDK
+    // Note: android s3 sdk does not support transfer acceleration
+    implementation(libs.aws.android.sdk.core)
+    implementation(libs.aws.android.sdk.s3)
+
+    // Koin dependencies
+    implementation(libs.bundles.koin)
+    testImplementation(libs.koin.test)
+
+    // AndroidX Core
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.multidex)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.work.runtime.ktx)
+
+    // Compose
+    implementation(libs.bundles.compose)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.androidx.compose.material.icons.extended)
+
+    // MapLibre
+    implementation(libs.maplibre.android.sdk)
+
+    // Image Loading
+    implementation(libs.coil.compose)
+
+    // Kotlin
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // Database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Networking
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.retrofit)
+    implementation(libs.okhttp.logging.interceptor)
+
+    // CameraX
+    implementation(libs.bundles.camerax)
+
+    // Logging
+    api(libs.timber)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.installations)
+    implementation(libs.firebase.config)
+
+    // AppFunctions: debug and dev only, see docs/testing/agent-app-functions.md
+    "debugImplementation"(libs.androidx.appfunctions)
+    "debugImplementation"(libs.androidx.appfunctions.service)
+    "devImplementation"(libs.androidx.appfunctions)
+    "devImplementation"(libs.androidx.appfunctions.service)
+    "kspDebug"(libs.androidx.appfunctions.compiler)
+    "kspDev"(libs.androidx.appfunctions.compiler)
+
+    // Play Install Referrer
+    implementation(libs.install.referrer)
+
+    // Testing
+    testImplementation(libs.bundles.testing)
+    testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.arch.core.testing)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.turbine)
+    testImplementation(libs.turbine)
+
+    // Screenshot testing
+    testImplementation(libs.bundles.roborazzi)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+configurations.all {
+    resolutionStrategy {
+        preferProjectModules()
+    }
+}
+
+apply(plugin = "com.google.gms.google-services")
