@@ -53,6 +53,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        resValues = true
     }
 
     buildTypes {
@@ -68,7 +69,7 @@ android {
             buildConfigField("String", "API_GATEWAY", "\"https://prod-k8s.treetracker.org\"")
             buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("prod_treetracker_client_id")))
             buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("prod_treetracker_client_secret")))
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
 
         create("prerelease") {
@@ -132,7 +133,8 @@ android {
     // dev is also a local development build, so it compiles the same sources.
     sourceSets {
         getByName("dev") {
-            java.srcDir("src/debug/java")
+            // AGP 9's built-in Kotlin only compiles the kotlin source directories.
+            kotlin.directories.add("src/debug/java")
         }
     }
 

@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * Settings every Android module shares: SDK levels, Java 11 with desugaring, and the Kotlin JVM
  * target. App and library plugins both call this.
  */
-internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, *, *, *, *, *>) {
+internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
         compileSdk = libs.version("compileSdk").toInt()
-        defaultConfig {
-            minSdk = libs.version("minSdk").toInt()
-        }
-        compileOptions {
+        defaultConfig.minSdk = libs.version("minSdk").toInt()
+        compileOptions.apply {
             sourceCompatibility = JavaVersion.VERSION_11
             targetCompatibility = JavaVersion.VERSION_11
             isCoreLibraryDesugaringEnabled = true
