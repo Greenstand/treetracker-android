@@ -1,13 +1,10 @@
 import java.util.Properties
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
+    id("treetracker.android.application")
+    id("treetracker.android.compose")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.firebase.crashlytics")
     id("io.github.takahirom.roborazzi")
@@ -25,20 +22,8 @@ fun key(name: String): String = keys.getProperty(name) ?: "configure in treetrac
 fun quoted(value: String) = "\"$value\""
 
 android {
-    compileSdk =
-        libs.versions.compileSdk
-            .get()
-            .toInt()
     defaultConfig {
         applicationId = "org.greenstand.android.TreeTracker"
-        minSdk =
-            libs.versions.minSdk
-                .get()
-                .toInt()
-        targetSdk =
-            libs.versions.targetSdk
-                .get()
-                .toInt()
         // Release builds use baseVersionCode as is. Other CI builds add the workflow's run number
         // (see .github/workflows/actions/build-apk), without committing anything.
         val baseVersionCode = 197
@@ -66,15 +51,8 @@ android {
     }
 
     buildFeatures {
-        compose = true
         viewBinding = true
         buildConfig = true
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-        isCoreLibraryDesugaringEnabled = true
     }
 
     buildTypes {
@@ -241,12 +219,6 @@ ksp {
     arg("appfunctions:aggregateAppFunctions", "true")
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_11)
-    }
-}
-
 dependencies {
     // AWS S3 SDK
     // Note: android s3 sdk does not support transfer acceleration
@@ -284,7 +256,6 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Database
     implementation(libs.androidx.room.runtime)
