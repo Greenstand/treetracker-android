@@ -30,12 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -43,6 +41,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButtonColors
 import org.greenstand.android.TreeTracker.view.OrangeAddButton
 import org.greenstand.android.TreeTracker.view.UserButton
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -54,7 +53,7 @@ fun UserSelect(
     selectedColor: Color = AppColors.Green,
     onNavigateForward: (User) -> Unit,
 ) {
-    val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val viewModel: UserSelectViewModel = koinViewModel()
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState(UserSelectState())
 

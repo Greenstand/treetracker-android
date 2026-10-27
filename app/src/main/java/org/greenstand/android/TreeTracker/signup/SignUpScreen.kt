@@ -20,17 +20,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
+fun SignUpScreen(viewModel: SignupViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsState()
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()

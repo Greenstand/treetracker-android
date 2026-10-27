@@ -37,14 +37,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -52,10 +50,11 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.OrangeAddButton
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.UserImageButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun WalletSelectScreen(
-    viewModel: WalletSelectViewModel = viewModel(factory = LocalViewModelFactory.current),
+    viewModel: WalletSelectViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val navigator = LocalNavigator.current

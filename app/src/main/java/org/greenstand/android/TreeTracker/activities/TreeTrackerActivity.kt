@@ -22,7 +22,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.navigationevent.setViewTreeNavigationEventDispatcherOwner
-import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.navigation.parseStartRoute
 import org.greenstand.android.TreeTracker.root.Root
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -31,7 +30,6 @@ import org.greenstand.android.TreeTracker.view.NoGPSDeviceDialog
 import org.koin.android.ext.android.inject
 
 class TreeTrackerActivity : AppCompatActivity() {
-    private val viewModelFactory: TreeTrackerViewModelFactory by inject()
     private val gpsUtils: GpsUtils by inject()
 
     @OptIn(ExperimentalComposeApi::class)
@@ -54,7 +52,7 @@ class TreeTrackerActivity : AppCompatActivity() {
         setContent {
             CustomTheme {
                 if (gpsUtils.hasGPSDevice()) {
-                    Root(viewModelFactory, startRoute)
+                    Root(startRoute)
                 } else {
                     NoGPSDeviceDialog(onPositiveClick = { finishAndRemoveTask() })
                 }

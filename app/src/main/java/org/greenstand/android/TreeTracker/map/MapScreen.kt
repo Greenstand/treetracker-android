@@ -58,7 +58,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
@@ -67,16 +66,16 @@ import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.koin.androidx.compose.koinViewModel
 import org.maplibre.android.MapLibre
 import java.io.File
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun MapScreen(
-    viewModel: MapViewModel = viewModel(factory = LocalViewModelFactory.current),
+    viewModel: MapViewModel = koinViewModel(),
 ) {
     val navigator = LocalNavigator.current
     val context = LocalContext.current

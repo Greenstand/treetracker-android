@@ -25,12 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun BoxScope.LanguageButton() {
@@ -39,7 +38,7 @@ fun BoxScope.LanguageButton() {
     // Viewmodels are large, we do not want to load them in the preview
     val languageViewModel: LanguagePickerViewModel? =
         if (!LocalInspectionMode.current) {
-            viewModel(factory = LocalViewModelFactory.current)
+            koinViewModel()
         } else {
             null
         }

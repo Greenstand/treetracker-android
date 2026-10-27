@@ -32,22 +32,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LanguageSelectScreen(
     isFromTopBar: Boolean,
-    viewModel: LanguagePickerViewModel = viewModel(factory = LocalViewModelFactory.current),
+    viewModel: LanguagePickerViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val navigator = LocalNavigator.current

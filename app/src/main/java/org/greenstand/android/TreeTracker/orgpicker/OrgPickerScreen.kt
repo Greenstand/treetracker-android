@@ -38,20 +38,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.organization.Org
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OrgPickerScreen(viewModel: OrgPickerViewModel = viewModel(factory = LocalViewModelFactory.current)) {
+fun OrgPickerScreen(viewModel: OrgPickerViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsState()
 
     HandleUIEvents(viewModel)

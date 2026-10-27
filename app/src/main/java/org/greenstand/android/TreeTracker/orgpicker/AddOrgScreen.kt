@@ -40,20 +40,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
+fun AddOrgScreen(viewModel: AddOrgViewModel = koinViewModel()) {
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()

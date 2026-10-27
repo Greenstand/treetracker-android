@@ -36,19 +36,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AddWalletScreen(
-    viewModel: AddWalletViewModel = viewModel(factory = LocalViewModelFactory.current),
+    viewModel: AddWalletViewModel = koinViewModel(),
 ) {
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()

@@ -46,11 +46,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.FeatureFlags
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -61,11 +59,12 @@ import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
+import org.koin.androidx.compose.koinViewModel
 import org.maplibre.android.MapLibre
 
 @Composable
 fun SettingsScreen() {
-    val viewModel: SettingsViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val viewModel: SettingsViewModel = koinViewModel()
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
 
