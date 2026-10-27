@@ -2,7 +2,7 @@
 
 ## Version codes
 
-`app/build.gradle.kts` has `baseVersionCode` (currently 197). CI never commits a version bump
+`gradle.properties` has `treetracker.baseVersionCode` (currently 197) and `treetracker.versionName`. CI never commits a version bump
 (`master` only accepts pull requests). Instead, the number is set for each build:
 
 - **Release builds** use `baseVersionCode` as is. To release, raise it in a normal PR.
@@ -12,7 +12,7 @@
 - **Local builds** use `baseVersionCode`.
 
 Raising `baseVersionCode` for a release also raises every later CI build, so betas stay above the
-release. To change `versionName`, edit it in `app/build.gradle.kts` in a normal PR.
+release. To change the version name, edit `treetracker.versionName` in `gradle.properties` in a normal PR.
 
 ## Legacy release notes
 

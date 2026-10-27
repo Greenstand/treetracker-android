@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     id("treetracker.android.application")
     id("treetracker.android.compose")
@@ -10,49 +8,22 @@ plugins {
     id("io.github.takahirom.roborazzi")
 }
 
-// API keys and identity pools come from treetracker.keys.properties (CI writes a dummy one).
-// Any key missing from the file falls back to a placeholder.
-val keys =
-    Properties().apply {
-        rootProject.file("treetracker.keys.properties").inputStream().use { load(it) }
-    }
-
-fun key(name: String): String = keys.getProperty(name) ?: "configure in treetracker.keys.properties"
-
-fun quoted(value: String) = "\"$value\""
-
 android {
     defaultConfig {
         applicationId = "org.greenstand.android.TreeTracker"
-        // Release builds use baseVersionCode as is. Other CI builds add the workflow's run number
-        // (see .github/workflows/actions/build-apk), without committing anything.
-        val baseVersionCode = 197
+        // Version lives in gradle.properties, shared with core/config. Release builds use
+        // baseVersionCode as is; other CI builds add the workflow's run number (see
+        // .github/workflows/actions/build-apk), without committing anything.
         versionCode =
-            baseVersionCode +
+            providers.gradleProperty("treetracker.baseVersionCode").get().toInt() +
             providers.gradleProperty("treetracker.versionCodeOffset").map { it.toInt() }.getOrElse(0)
-        versionName = "2.2.0"
+        versionName = providers.gradleProperty("treetracker.versionName").get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
-        buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_production_identity_pool_id")))
-        buildConfigField("String", "OBJECT_STORAGE_IDENTITY_REGION", "\"eu-central-1\"")
-        buildConfigField("String", "OBJECT_STORAGE_ENDPOINT", "\"eu-central-1\"")
-        buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-production-images\"")
-        buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-production-batch-uploads\"")
-        buildConfigField("String", "API_GATEWAY", "\"https://dev-k8s.treetracker.org\"")
-        buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("prod_treetracker_client_id")))
-        buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("prod_treetracker_client_secret")))
-        buildConfigField("Boolean", "TREE_HEIGHT_FEATURE_ENABLED", "false")
-        buildConfigField("Boolean", "TREE_NOTE_FEATURE_ENABLED", "true")
-        buildConfigField("Boolean", "TREE_DBH_FEATURE_ENABLED", "false")
-        buildConfigField("Boolean", "AUTOMATIC_SIGN_OUT_FEATURE_ENABLED", "true")
-        buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
-        buildConfigField("Boolean", "USE_AWS_S3", "false")
-        buildConfigField("Boolean", "ORG_LINK", "false")
     }
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
         resValues = true
     }
 
@@ -60,57 +31,23 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             resValue("string", "app_name", "Tree Tracker")
-            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_production_identity_pool_id")))
-            buildConfigField("String", "OBJECT_STORAGE_ENDPOINT", "\"eu-central-1\"")
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-production-images\"")
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-production-batch-uploads\"")
-            buildConfigField("Boolean", "USE_AWS_S3", "true")
-            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
-            buildConfigField("String", "API_GATEWAY", "\"https://prod-k8s.treetracker.org\"")
-            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("prod_treetracker_client_id")))
-            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("prod_treetracker_client_secret")))
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
 
         create("prerelease") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".prerelease"
-            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_production_identity_pool_id")))
-            buildConfigField("String", "OBJECT_STORAGE_ENDPOINT", "\"eu-central-1\"")
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-production-images\"")
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-production-batch-uploads\"")
-            buildConfigField("Boolean", "USE_AWS_S3", "true")
-            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
             resValue("string", "app_name", "Tree Tracker Prerelease")
-            buildConfigField("String", "API_GATEWAY", "\"https://prod-k8s.treetracker.org\"")
-            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("prod_treetracker_client_id")))
-            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("prod_treetracker_client_secret")))
         }
 
         getByName("debug") {
             applicationIdSuffix = ".debug"
             resValue("string", "app_name", "Tree Tracker(debug)")
-            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_test_identity_pool_id")))
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-test-images\"")
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-test-batch-uploads\"")
-            buildConfigField("Boolean", "USE_AWS_S3", "true")
-            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "true")
-            buildConfigField("String", "API_GATEWAY", "\"https://dev-k8s.treetracker.org\"")
-            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("test_treetracker_client_id")))
-            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("test_treetracker_client_secret")))
         }
 
         create("beta") {
             applicationIdSuffix = ".test"
             resValue("string", "app_name", "Tree Tracker(test)")
-            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_test_identity_pool_id")))
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-test-images\"")
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-test-batch-uploads\"")
-            buildConfigField("Boolean", "USE_AWS_S3", "true")
-            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "false")
-            buildConfigField("String", "API_GATEWAY", "\"https://test-k8s.treetracker.org\"")
-            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("test_treetracker_client_id")))
-            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("test_treetracker_client_secret")))
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = true
         }
@@ -119,13 +56,6 @@ android {
             initWith(getByName("debug"))
             applicationIdSuffix = ".dev"
             resValue("string", "app_name", "Tree Tracker(dev)")
-            buildConfigField("String", "OBJECT_STORAGE_IDENTITY_POOL_ID", quoted(key("s3_dev_identity_pool_id")))
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_IMAGES", "\"treetracker-dev-images\"")
-            buildConfigField("String", "OBJECT_STORAGE_BUCKET_BATCH_UPLOADS", "\"treetracker-dev-batch-uploads\"")
-            buildConfigField("Boolean", "BLUR_DETECTION_ENABLED", "true")
-            buildConfigField("String", "API_GATEWAY", "\"https://dev-k8s.treetracker.org\"")
-            buildConfigField("String", "TREETRACKER_CLIENT_ID", quoted(key("dev_treetracker_client_id")))
-            buildConfigField("String", "TREETRACKER_CLIENT_SECRET", quoted(key("dev_treetracker_client_secret")))
         }
     }
 
@@ -222,6 +152,8 @@ ksp {
 }
 
 dependencies {
+    implementation(project(":core:config"))
+
     // AWS S3 SDK
     // Note: android s3 sdk does not support transfer acceleration
     implementation(libs.aws.android.sdk.core)

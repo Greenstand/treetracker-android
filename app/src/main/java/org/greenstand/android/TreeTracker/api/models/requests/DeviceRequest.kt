@@ -17,7 +17,7 @@ package org.greenstand.android.TreeTracker.api.models.requests
 
 import android.os.Build
 import kotlinx.serialization.Serializable
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.config.BuildConfig
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 
 @Serializable
