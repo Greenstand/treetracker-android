@@ -23,29 +23,8 @@ on:
         type: string
 
 jobs:
-  bump-version:
-    name: Bump version code
-    runs-on: ubuntu-latest
-    outputs:
-      version_code: ${{ steps.bump.outputs.version_code }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch }}
-          fetch-depth: 0
-          token: ${{ secrets.ADMIN_PAT }}
-
-      - name: Bump version code
-        id: bump
-        uses: ./.github/workflows/actions/bump-version
-        with:
-          branch: ${{ inputs.branch }}
-
   build:
     name: Build beta APK
-    needs: bump-version
     uses: ./.github/workflows/build.yml
     with:
       build_variant: beta
@@ -56,7 +35,7 @@ jobs:
   deploy:
     name: Deploy to Firebase
     runs-on: ubuntu-latest
-    needs: [bump-version, build]
+    needs: build
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
 
     steps:
@@ -102,7 +81,7 @@ jobs:
 #  notify:
 #    name: Send Slack notifications
 #    runs-on: ubuntu-latest
-#    needs: [bump-version, deploy]
+#    needs: [build, deploy]
 #    if: success()
 #
 #    steps:
@@ -121,7 +100,7 @@ jobs:
 #                  "type": "section",
 #                  "text": {
 #                    "type": "mrkdwn",
-#                    "text": "A new Greenstand Beta Build has been released on Firebase\n*Build Number:* ${{ needs.bump-version.outputs.version_code }}\n*Branch:* ${{ steps.git-branch.outputs.branch }}"
+#                    "text": "A new Greenstand Beta Build has been released on Firebase\n*Build Number:* ${{ needs.build.outputs.version_code }}\n*Branch:* ${{ steps.git-branch.outputs.branch }}"
 #                  }
 #                }
 #              ]
@@ -141,7 +120,7 @@ jobs:
 #                  "type": "section",
 #                  "text": {
 #                    "type": "mrkdwn",
-#                    "text": "A new Greenstand Beta Build has been released on Firebase\n*Build Number:* ${{ needs.bump-version.outputs.version_code }}\n*Branch:* ${{ steps.git-branch.outputs.branch }}"
+#                    "text": "A new Greenstand Beta Build has been released on Firebase\n*Build Number:* ${{ needs.build.outputs.version_code }}\n*Branch:* ${{ steps.git-branch.outputs.branch }}"
 #                  }
 #                }
 #              ]

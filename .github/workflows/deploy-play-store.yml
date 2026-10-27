@@ -4,14 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  bump-version:
-    name: Bump version code
-    uses: ./.github/workflows/bump-version.yml
-    secrets: inherit
-
   build:
     name: Build release APK
-    needs: bump-version
     uses: ./.github/workflows/build.yml
     with:
       build_variant: release
@@ -21,7 +15,7 @@ jobs:
   deploy:
     name: Upload to Play Store
     runs-on: ubuntu-latest
-    needs: [bump-version, build]
+    needs: build
 
     steps:
       - name: Checkout code

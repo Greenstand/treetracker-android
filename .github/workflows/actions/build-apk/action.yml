@@ -9,6 +9,10 @@ inputs:
     description: 'Whether to decode keystore for signing'
     required: false
     default: 'false'
+outputs:
+  version_code:
+    description: 'The version code the APK was built with'
+    value: ${{ steps.version.outputs.version_code }}
 
 runs:
   using: 'composite'
@@ -22,8 +26,25 @@ runs:
       shell: bash
       run: chmod +x ./gradlew
 
+    # Version code: baseVersionCode from app/build.gradle, plus this workflow's run number for
+    # every variant except release. Nothing is committed (master only accepts PRs), so the
+    # number exists only in this build. Release builds keep the committed number.
+    - name: Compute version code
+      id: version
+      shell: bash
+      run: |
+        BASE=$(grep -oP 'def baseVersionCode = \K\d+' app/build.gradle)
+        if [ -z "$BASE" ]; then
+          echo "Couldn't find 'def baseVersionCode = <number>' in app/build.gradle." >&2
+          exit 1
+        fi
+        if [ "${{ inputs.build_variant }}" = "release" ]; then OFFSET=0; else OFFSET=${{ github.run_number }}; fi
+        echo "offset=$OFFSET" >> "$GITHUB_OUTPUT"
+        echo "version_code=$((BASE + OFFSET))" >> "$GITHUB_OUTPUT"
+        echo "Version code: $((BASE + OFFSET)) (base $BASE + run number offset $OFFSET)"
+
     - name: Build APK
       shell: bash
       run: |
         VARIANT=$(echo "${{ inputs.build_variant }}" | sed 's/\b\(.\)/\u\1/')
-        ./gradlew clean assemble${VARIANT}
+        ./gradlew clean assemble${VARIANT} -Ptreetracker.versionCodeOffset=${{ steps.version.outputs.offset }}
