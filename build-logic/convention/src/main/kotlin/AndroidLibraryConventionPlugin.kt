@@ -11,6 +11,12 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
+                // The app has beta, dev and prerelease build types as well as debug and release.
+                // Libraries declare the same ones so every app variant finds a matching library
+                // variant, and core:config can give each one its own values.
+                buildTypes.maybeCreate("beta")
+                buildTypes.maybeCreate("dev")
+                buildTypes.maybeCreate("prerelease")
                 testOptions.targetSdk = libs.version("targetSdk").toInt()
                 lint.targetSdk = libs.version("targetSdk").toInt()
             }

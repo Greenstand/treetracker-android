@@ -36,7 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.navigation.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.config.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute

@@ -15,7 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models
 
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.config.BuildConfig
 
 object FeatureFlags {
     val DEBUG_ENABLED: Boolean = (

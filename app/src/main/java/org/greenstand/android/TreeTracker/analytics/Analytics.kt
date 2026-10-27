@@ -19,7 +19,7 @@ import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.config.BuildConfig
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.MARKER_CLICKED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.NOTE_ADDED
 import org.greenstand.android.TreeTracker.analytics.AnalyticEvents.STOP_BUTTON_CLICKED
