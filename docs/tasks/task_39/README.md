@@ -58,3 +58,19 @@ Since December 2025, a repository ruleset ("Master") requires a pull request for
 
 GitHub flagged `actions/setup-java@v4` and other Node 20 actions as deprecated (Node 24 is forced
 for now). Moving to `setup-java@v5` and current major versions of the other actions is separate work.
+
+## When a non-release build's number can go down
+
+Within one workflow, run numbers only go up, so codes only go up. Re-running a run reuses its
+number (an equal code still installs). The number can go down when:
+
+- **The workflow file is renamed or moved.** GitHub treats the file as a new workflow, and its run
+  number restarts at 1. Raise `baseVersionCode` past the last build in the same PR.
+- **Another workflow builds the same app ID.** Each workflow has its own counter. Today only the
+  beta workflow builds non-release variants, so the beta app ID is safe. A future "debug build for
+  a PR" workflow would only clash with another workflow that also builds `.debug`.
+- **An older branch is built after `baseVersionCode` was raised on `master`.** For example, if
+  `master` raised the base to 210 and beta run #40 from `master` built 250, then run #41 from a
+  branch still on base 197 builds 238.
+- **A local build is installed over a CI build of the same app ID.** Local builds use the base
+  only. `adb install -r -d` allows the downgrade for debuggable builds.
