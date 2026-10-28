@@ -2,9 +2,10 @@
 
 ## Pattern
 
-The app follows MVVM (Model-View-ViewModel) architecture:
+The app follows MVVM (Model-View-ViewModel) architecture, split into core and feature modules
+(see [Modules](modules.md)):
 
-- View: Jetpack Compose UI with reusable components in `view/` package
+- View: Jetpack Compose UI with reusable components in `view/` (`core:designsystem`)
 - ViewModel: Per-screen ViewModels manage UI state and business logic
 - Model: Room database + Retrofit API + Repositories as single source of truth
 
@@ -79,24 +80,24 @@ Stateless UI composables are easy to preview and test without a ViewModel, DI fr
 
 The root composable is the entry point registered in the `NavHost`. It:
 
-1. Resolves the ViewModel via `LocalViewModelFactory`
+1. Resolves the ViewModel with `koinViewModel()`
 2. Collects state from the ViewModel (`observeAsState` for LiveData, `collectAsState` for Flow)
-3. Reads `LocalNavHostController` for navigation
+3. Reads `LocalNavigator` for navigation
 4. Delegates all rendering to the stateless UI composable, mapping ViewModel calls and navigation actions into lambda callbacks
 
 ```kotlin
 // DashboardScreen.kt — root (stateful)
 @Composable
 fun DashboardScreen(
-    viewModel: DashboardViewModel = viewModel(factory = LocalViewModelFactory.current),
+    viewModel: DashboardViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.observeAsState(DashboardState())
-    val navController = LocalNavHostController.current
+    val state by viewModel.state.collectAsState()
+    val navigator = LocalNavigator.current
 
     Dashboard(
         state = state,
         onSyncClicked = { viewModel.sync() },
-        onCaptureClicked = { navController.navigate(UserSelectRoute) },
+        onCaptureClicked = { navigator.navigate(UserSelectRoute) },
         // ...
     )
 }
@@ -121,7 +122,7 @@ fun Dashboard(
 
 ### Previews
 
-Previews target the stateless UI composable with hardcoded state. `PreviewDependencies` (in `utils/`) provides the minimal `CompositionLocalProvider` wrapper (nav controller, theme) needed for previews that use shared components like `ActionBar` or `LanguageButton`.
+Previews target the stateless UI composable with hardcoded state. `PreviewDependencies` (in `utils/`, module `core:designsystem`) provides the minimal `CompositionLocalProvider` wrapper (nav controller, theme) needed for previews that use shared components like `ActionBar` or `LanguageButton`.
 
 ```kotlin
 @Preview
@@ -164,9 +165,10 @@ When refactoring an existing screen that doesn't yet follow this split, extract 
 
 ## Dependency Injection
 
-Koin is used for dependency injection with three main modules in `di/`:
+Koin is used for dependency injection. The Koin modules live in the app shell (`app`, package `di/`),
+which depends on every other module:
 
-- `AppModule.kt`: ViewModels and application-level dependencies
+- `AppModule.kt`: ViewModels (from every feature module) and application-level dependencies
 - `RoomModule.kt`: Database and DAOs
 - `NetworkModule.kt`: Retrofit, OkHttp, AWS S3 SDK
 

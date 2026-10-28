@@ -3,8 +3,31 @@
 How to move Treetracker from a single Android module to Kotlin Multiplatform (KMP) with Compose
 Multiplatform (CMP) UI, and split it into modules on the way.
 
-Status: proposal (task 40). Nothing here is implemented yet. Sequencing is decided: structure
-first (Phases 0 to 3), then ship iOS (Phase 4).
+Status: Phases 0 and 1 are done (tasks 41 to 78). Sequencing is decided: structure first
+(Phases 0 to 3), then ship iOS (Phase 4). Next up is Phase 2.
+
+## Progress
+
+**Phase 0 (done):** Kotlin DSL build files, `build-logic` convention plugins, AGP 9.4 (Gradle
+9.6). The `:app` rename was skipped; it can happen in Phase 3 when the `shared` module appears.
+AppFunctions and compileSdk 37 were left for later.
+
+**Phase 1 (done):** the app is split into 13 core modules and 16 feature modules; see
+[Modules](modules.md) for the layout as built. Differences from the target layout below:
+
+- `core:config` (build-type `BuildConfig` and `FeatureFlags`) stands in for the injected
+  `AppConfig`. Code reads config statically, so the `AppConfig` refactor moves to Phase 2.
+- `core:resources` holds the Android resources until Phase 2 moves them to Compose resources.
+- `core:platform` and `core:storage` don't exist yet. The device and storage code sits in
+  `core:data` and `core:network` behind no interfaces; Phase 2 step 8 extracts the interfaces.
+- `core:ui` was added for screen-level UI several features share: the user picker, camera and
+  selfie screens, `ImageCaptureActivity`, the language button and the permission prompt.
+- The camera and permissions are shared UI in `core:ui`, not part of `feature:capture`.
+- The capture and setup flow controllers live in `core:data` (they drive domain classes), so
+  `core:data` depends on `core:navigation`.
+- Koin modules, including every feature's ViewModels, stay in the app shell, and so do the
+  Roborazzi screenshot tests.
+- A build rule fails if a feature depends on another feature, or core on a feature or the app.
 
 ## Where we start
 
