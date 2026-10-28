@@ -169,6 +169,7 @@ dependencies {
     implementation(project(":feature:permissions"))
     implementation(project(":feature:sessionnote"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:signup"))
     implementation(project(":feature:splash"))
     implementation(project(":feature:treeheight"))
     implementation(project(":feature:walletselect"))
