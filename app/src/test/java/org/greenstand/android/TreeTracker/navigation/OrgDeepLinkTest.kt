@@ -96,4 +96,40 @@ class OrgDeepLinkTest {
 
         assertEquals("abc", route.orgId)
     }
+
+    @Test
+    fun `org link with only name leaves id null`() {
+        val route = parseStartRoute(viewIntent("app://mobile.treetracker.org/org?name=Acme"))
+
+        assertNull(route.orgId)
+        assertEquals("Acme", route.orgName)
+    }
+
+    @Test
+    fun `unknown query params are ignored`() {
+        val route = parseStartRoute(viewIntent("app://mobile.treetracker.org/org?id=abc&name=Acme&utm_source=mail"))
+
+        assertEquals(SplashRoute(orgId = "abc", orgName = "Acme"), route)
+    }
+
+    @Test
+    fun `link without a path is ignored`() {
+        val route = parseStartRoute(viewIntent("app://mobile.treetracker.org?id=abc"))
+
+        assertEquals(SplashRoute(), route)
+    }
+
+    @Test
+    fun `intent action does not matter`() {
+        val intent = Intent(Intent.ACTION_MAIN, Uri.parse("app://mobile.treetracker.org/org?id=abc"))
+
+        assertEquals("abc", parseStartRoute(intent).orgId)
+    }
+
+    @Test
+    fun `numeric id is kept as a string`() {
+        val route = parseStartRoute(viewIntent("app://mobile.treetracker.org/org?id=109288091&name=Kasiki%20Hai"))
+
+        assertEquals(SplashRoute(orgId = "109288091", orgName = "Kasiki Hai"), route)
+    }
 }
