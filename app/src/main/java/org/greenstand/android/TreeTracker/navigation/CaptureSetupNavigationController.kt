@@ -40,7 +40,12 @@ class CaptureSetupNavigationController(
             // Setup complete — start session and transition to capture flow
             stepCounter.enable()
             deviceOrientation.enable()
-            sessionTracker.startSession()
+            val setup = CaptureSetupScopeManager.getData()
+            sessionTracker.startSession(
+                userId = setup.user!!.id,
+                organizationName = setup.organizationName,
+                sessionNote = setup.sessionNote,
+            )
             withContext(Dispatchers.Main) {
                 locationDataCapturer.startGpsUpdates()
             }

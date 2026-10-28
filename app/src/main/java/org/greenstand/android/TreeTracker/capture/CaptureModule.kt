@@ -39,7 +39,16 @@ import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletScreen
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
+import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
+import org.greenstand.android.TreeTracker.models.TreeCapturer
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowData
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScope
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.component.get
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
@@ -56,6 +65,19 @@ val captureModule =
         viewModel { TreeImageReviewViewModel(get(), get(), get()) }
         viewModel { TreeHeightSelectionViewModel(get()) }
         viewModel { PermissionViewModel(get()) }
+
+        // Capture setup (who, which org and wallet, session note) and the capture flow each keep
+        // their state in a Koin scope that lives as long as that flow.
+        scope<CaptureSetupScope> {
+            scoped { CaptureSetupData(get()) }
+            scoped { CaptureSetupNavigationController(get(), get(), get(), get(), get()) }
+        }
+        scope<CaptureFlowScope> {
+            scoped { CaptureFlowData() }
+            scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get(), get()) }
+            scoped { TreeCapturer(get(), get(), get(), get(), get()) }
+        }
+        factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
         navigation<OrgRoute> { _ -> OrgPickerScreen() }
         navigation<AddOrgRoute> { _ -> AddOrgScreen() }
