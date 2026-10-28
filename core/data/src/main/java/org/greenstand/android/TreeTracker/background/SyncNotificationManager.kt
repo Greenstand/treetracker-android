@@ -26,7 +26,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.work.ForegroundInfo
-import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.resources.R
 
 class SyncNotificationManager(
     private val notificationManagerCompat: NotificationManagerCompat,

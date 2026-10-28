@@ -31,8 +31,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.activities.TreeTrackerActivity
+import org.greenstand.android.TreeTracker.resources.R
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -97,13 +96,13 @@ class TreeSyncWorker(
         val notification =
             NotificationCompat
                 .Builder(applicationContext, NotificationConstants.WORKER_CHANNEL_ID)
-                .setContentIntent(PendingIntent.getActivity(applicationContext, 0, Intent(applicationContext, TreeTrackerActivity::class.java), pendingFlag))
+                .setContentIntent(PendingIntent.getActivity(applicationContext, 0, mainActivityIntent(), pendingFlag))
                 .setSmallIcon(R.drawable.upload_icon)
                 .setOngoing(true)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_MIN)
-                .setContentTitle(applicationContext.getString(R.string.app_name))
+                .setContentTitle(appName())
                 .setLocalOnly(true)
                 .setVisibility(NotificationCompat.VISIBILITY_SECRET)
                 .setContentText(applicationContext.getString(R.string.uploading_trees))
@@ -114,4 +113,14 @@ class TreeSyncWorker(
             ForegroundInfo(NotificationConstants.WORKER_NOTIFICATION_ID, notification)
         }
     }
+
+    // The worker lives in core:data, which can't see the app's activity class or the app_name
+    // string (a per-build-type resValue in :app). Both are resolved at runtime instead, with the
+    // same result: an explicit intent for TreeTrackerActivity, and the app's label (@string/app_name).
+    private fun mainActivityIntent(): Intent = Intent().setClassName(applicationContext, NotificationConstants.MAIN_ACTIVITY_CLASS)
+
+    private fun appName(): String =
+        applicationContext.applicationInfo
+            .loadLabel(applicationContext.packageManager)
+            .toString()
 }
