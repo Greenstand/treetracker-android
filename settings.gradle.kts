@@ -33,4 +33,5 @@ include(":core:ui")
 include(":feature:languagepicker")
 include(":feature:sessionnote")
 include(":feature:settings")
+include(":feature:treeheight")
 rootProject.name = "treetracker-android"

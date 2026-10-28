@@ -167,6 +167,7 @@ dependencies {
     implementation(project(":feature:languagepicker"))
     implementation(project(":feature:sessionnote"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:treeheight"))
 
     // AWS S3 SDK
     // Note: android s3 sdk does not support transfer acceleration
