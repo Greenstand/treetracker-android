@@ -156,6 +156,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:config"))
     implementation(project(":core:database"))
+    implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":core:preferences"))
     implementation(project(":core:resources"))
@@ -233,6 +234,7 @@ dependencies {
 
     // Testing
     testImplementation(libs.bundles.testing)
+    testImplementation(testFixtures(project(":core:navigation")))
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.arch.core.testing)
