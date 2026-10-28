@@ -17,4 +17,5 @@ dependencyResolutionManagement {
     }
 }
 include(":app")
+include(":core:config")
 rootProject.name = "treetracker-android"

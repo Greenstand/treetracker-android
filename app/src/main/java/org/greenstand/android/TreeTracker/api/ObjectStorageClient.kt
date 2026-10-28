@@ -28,7 +28,7 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.*
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.config.BuildConfig
 import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.File

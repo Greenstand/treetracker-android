@@ -15,7 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models.messages.network
 
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.config.BuildConfig
 import org.greenstand.android.TreeTracker.models.messages.network.responses.MessagesResponse
 import retrofit2.http.GET
 import retrofit2.http.Header

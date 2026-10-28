@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.config.BuildConfig
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
