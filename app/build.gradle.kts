@@ -164,6 +164,7 @@ dependencies {
     implementation(project(":core:preferences"))
     implementation(project(":core:resources"))
     implementation(project(":core:ui"))
+    implementation(project(":feature:languagepicker"))
 
     // AWS S3 SDK
     // Note: android s3 sdk does not support transfer acceleration
