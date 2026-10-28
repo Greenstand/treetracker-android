@@ -114,21 +114,6 @@ class SignupViewModelTest {
             assertFalse(signupViewModel.state.value.isCredentialValid)
         }
 
-    // Selfie Tutorial Dialogs
-    @Test
-    fun `update selfie tutorial dialog state = false, returns false`() =
-        runTest {
-            signupViewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(false))
-            assertFalse(signupViewModel.state.value.showSelfieTutorial!!)
-        }
-
-    @Test
-    fun `update selfie tutorial dialog state = true, returns true`() =
-        runTest {
-            signupViewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(true))
-            assertTrue(signupViewModel.state.value.showSelfieTutorial!!)
-        }
-
     // Go to Credentials Entry
     @Test
     fun `Go to credentials Entry, returns true`() =

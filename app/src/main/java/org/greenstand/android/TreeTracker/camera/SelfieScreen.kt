@@ -32,8 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.signup.SignupAction
-import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.InfoButton
@@ -45,7 +43,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SelfieScreen() {
     val navigator = LocalNavigator.current
     val cameraControl = remember { CameraControl() }
-    val viewModel = koinViewModel<SignupViewModel>()
+    val viewModel = koinViewModel<SelfieViewModel>()
     val state by viewModel.state.collectAsState()
 
     Scaffold(
@@ -64,7 +62,7 @@ fun SelfieScreen() {
                     InfoButton(
                         modifier = Modifier.align(Alignment.Center),
                         onClick = {
-                            viewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(true))
+                            viewModel.handleAction(SelfieAction.UpdateSelfieTutorialDialog(true))
                         },
                     )
                 },
@@ -103,7 +101,7 @@ fun SelfieScreen() {
             if (state.showSelfieTutorial == true) {
                 SelfieTutorial(
                     onCompleteClick = {
-                        viewModel.handleAction(SignupAction.UpdateSelfieTutorialDialog(false))
+                        viewModel.handleAction(SelfieAction.UpdateSelfieTutorialDialog(false))
                     },
                 )
             }
