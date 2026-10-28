@@ -156,6 +156,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:config"))
     implementation(project(":core:database"))
+    implementation(project(":core:model"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":core:preferences"))
