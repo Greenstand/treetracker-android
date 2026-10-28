@@ -33,7 +33,7 @@ import org.robolectric.annotation.Config
 import java.io.File
 
 /**
- * Builds a database from each exported Room schema (app/schemas), then opens it with the
+ * Builds a database from each exported Room schema (core/database/schemas), then opens it with the
  * app's configuration (AppDatabase.builder). Opening runs the migrations, and Room validates every
  * migrated table against the current entities, so a missing or broken migration fails here.
  *
