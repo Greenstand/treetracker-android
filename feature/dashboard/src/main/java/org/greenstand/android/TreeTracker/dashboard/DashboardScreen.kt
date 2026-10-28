@@ -60,7 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.resources.R
 import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.OrgRoute
 import org.greenstand.android.TreeTracker.navigation.SettingsRoute
