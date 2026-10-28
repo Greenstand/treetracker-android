@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.ui
 
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
+import org.greenstand.android.TreeTracker.camera.SelfieViewModel
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.SelfieRoute
@@ -31,6 +32,7 @@ import org.koin.dsl.navigation3.navigation
 val uiModule =
     module {
         viewModel { LanguagePickerViewModel(get()) }
+        viewModel { SelfieViewModel(get()) }
         viewModel { UserSelectViewModel(null, get(), get(), get(), get()) }
 
         navigation<SelfieRoute> { _ -> SelfieScreen() }
