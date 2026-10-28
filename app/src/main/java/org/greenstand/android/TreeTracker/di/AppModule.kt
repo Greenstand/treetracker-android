@@ -95,7 +95,7 @@ import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
 import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.component.get
 import org.koin.dsl.module
 

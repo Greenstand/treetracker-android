@@ -50,7 +50,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.OrangeAddButton
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.UserImageButton
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun WalletSelectScreen(

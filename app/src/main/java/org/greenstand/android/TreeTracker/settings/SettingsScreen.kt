@@ -59,7 +59,7 @@ import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import org.maplibre.android.MapLibre
 
 @Composable

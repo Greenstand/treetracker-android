@@ -39,13 +39,13 @@ import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.InfoButton
 import org.greenstand.android.TreeTracker.view.SelfieTutorial
 import org.greenstand.android.TreeTracker.view.TopBarTitle
-import org.koin.androidx.compose.getViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SelfieScreen() {
     val navigator = LocalNavigator.current
     val cameraControl = remember { CameraControl() }
-    val viewModel = getViewModel<SignupViewModel>()
+    val viewModel = koinViewModel<SignupViewModel>()
     val state by viewModel.state.collectAsState()
 
     Scaffold(
