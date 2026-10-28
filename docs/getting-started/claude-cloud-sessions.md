@@ -2,7 +2,7 @@
 
 Claude Code on the web (claude.ai/code) runs each session on a fresh Ubuntu 24.04 VM. The VM
 has JDK 21 and Gradle, but no Android SDK. The SDK and JDK 25 come from the cloud environment's
-settings. The repo adds one SessionStart hook for the part those settings can't reach.
+settings, so the repo needs nothing cloud-specific.
 
 ## Environment settings
 
@@ -70,12 +70,11 @@ ANDROID_SDK_ROOT=/opt/android-sdk
 JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64
 ```
 
-## SessionStart hook
+## API keys
 
-`app/build.gradle` reads `treetracker.keys.properties` and fails when it's missing. That file
-belongs in the checkout, which the environment settings can't reach. So
-`.claude/hooks/cloud-dummy-keys.sh` writes it with the dummy values CI uses for tests. It does
-nothing outside cloud sessions, or when the file already exists. Real keys never go to the cloud.
+`treetracker.keys.properties` is optional. Without it, the build logs a warning and uses the
+placeholder keys from the root `build.gradle`. Cloud sessions don't get the real keys, so
+anything that calls the Treetracker API or S3 with them won't work there.
 
 ## What works
 
