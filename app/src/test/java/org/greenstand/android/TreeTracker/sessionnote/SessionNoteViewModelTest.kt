@@ -33,6 +33,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class SessionNoteViewModelTest {
@@ -70,5 +71,45 @@ class SessionNoteViewModelTest {
             val state = viewModel.state.value
             assertEquals("This is a test note", state.note)
             verify { captureSetupData.sessionNote = "This is a test note" }
+        }
+
+    @Test
+    fun `WHEN created THEN state holds the setup user's photo and an empty note`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first().copy(photoPath = "/selfies/caleb.jpg")
+            every { captureSetupData.user } returns fakeUser
+
+            val viewModel = SessionNoteViewModel()
+
+            assertEquals(SessionNoteState(note = "", userImagePath = "/selfies/caleb.jpg"), viewModel.state.value)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN note is cleared THEN state and setup data hold an empty note`() =
+        runTest {
+            every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = SessionNoteViewModel()
+
+            viewModel.handleAction(SessionNoteAction.UpdateNote("draft"))
+            viewModel.handleAction(SessionNoteAction.UpdateNote(""))
+
+            assertEquals("", viewModel.state.value.note)
+            verify { captureSetupData.sessionNote = "" }
+        }
+
+    @Test
+    fun `WHEN NavigateBack or NavigateNext THEN view model leaves state and setup data unchanged`() =
+        runTest {
+            every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = SessionNoteViewModel()
+            val initialState = viewModel.state.value
+
+            viewModel.handleAction(SessionNoteAction.NavigateBack)
+            viewModel.handleAction(SessionNoteAction.NavigateNext)
+
+            assertEquals(initialState, viewModel.state.value)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+            verify(exactly = 0) { captureSetupData.sessionNote = any() }
         }
 }

@@ -18,10 +18,15 @@ package org.greenstand.android.TreeTracker.permissions
 import android.location.LocationManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -52,4 +57,42 @@ class PermissionViewModelTest {
             val result = testSubject.state.value.isLocationEnabled!!
             assertTrue(result)
         }
+
+    @Test
+    fun `initial state has not checked the location provider yet`() {
+        assertNull(testSubject.state.value.isLocationEnabled)
+        assertTrue(testSubject.events.replayCache.isEmpty())
+        verify(exactly = 0) { locationManager.isProviderEnabled(any()) }
+    }
+
+    @Test
+    fun `disabled gps provider sets isLocationEnabled to false`() {
+        every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns false
+
+        testSubject.handleAction(PermissionAction.CheckLocationEnabled)
+
+        assertEquals(false, testSubject.state.value.isLocationEnabled)
+    }
+
+    @Test
+    fun `only the gps provider is checked`() {
+        every { locationManager.isProviderEnabled(any()) } returns true
+
+        testSubject.handleAction(PermissionAction.CheckLocationEnabled)
+
+        verify(exactly = 1) { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) }
+        verify(exactly = 0) { locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) }
+    }
+
+    @Test
+    fun `rechecking picks up a provider that was switched on`() {
+        every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returnsMany listOf(false, true)
+
+        testSubject.handleAction(PermissionAction.CheckLocationEnabled)
+        assertFalse(testSubject.state.value.isLocationEnabled!!)
+
+        testSubject.handleAction(PermissionAction.CheckLocationEnabled)
+        assertTrue(testSubject.state.value.isLocationEnabled!!)
+        assertTrue(testSubject.events.replayCache.isEmpty())
+    }
 }
