@@ -166,6 +166,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":feature:devtools"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:trees"))
 
     // AWS S3 SDK
     // Note: android s3 sdk does not support transfer acceleration
