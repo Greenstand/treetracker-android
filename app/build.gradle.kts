@@ -164,6 +164,7 @@ dependencies {
     implementation(project(":core:preferences"))
     implementation(project(":core:resources"))
     implementation(project(":core:ui"))
+    implementation(project(":feature:dashboard"))
     implementation(project(":feature:devtools"))
     implementation(project(":feature:messages"))
     implementation(project(":feature:onboarding"))
