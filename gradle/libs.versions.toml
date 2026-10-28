@@ -190,6 +190,7 @@ install-referrer = { module = "com.android.installreferrer:installreferrer", ver
 
 # Testing
 junit = { module = "junit:junit", version.ref = "junit" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidxTestCore" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidxTestEspresso" }
@@ -254,6 +255,7 @@ koin = [
 
 testing = [
     "junit",
+    "kotlin-test",
     "androidx-test-core-ktx",
     "mockk",
     "robolectric",
