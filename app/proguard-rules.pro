@@ -62,3 +62,8 @@
 -keep,includedescriptorclasses class org.greenstand.android.TreeTracker.**$$serializer { *; }
 -keepclassmembers class org.greenstand.android.TreeTracker.** { *** Companion; }
 -keepclasseswithmembers class org.greenstand.android.TreeTracker.** { kotlinx.serialization.KSerializer serializer(...); }
+
+# AGP 9 dropped proguard-android.txt, which turned off R8 optimization. We now use
+# proguard-android-optimize.txt, and keep optimization off here so release builds behave as before.
+# Remove this (and test a release build) to turn optimization on.
+-dontoptimize
