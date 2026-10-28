@@ -101,10 +101,21 @@ class UserSelectViewModelTest {
             viewModel.handleAction(UserSelectAction.SelectUser(user))
 
             verify { preferences.setUserId(user.id) }
-            verify { captureSetupData.user = user }
             val state = viewModel.state.first()
             assertNotNull(state.selectedUser)
             assertEquals(user.id, state.selectedUser!!.id)
+        }
+
+    @Test
+    fun `the shared user picker does not start or change capture setup`() =
+        runTest {
+            // Messages, tree edit and profiles use this picker too; capture's own user select
+            // screen starts capture setup.
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(FakeFileGenerator.fakeUsers.first()))
+
+            verify(exactly = 0) { CaptureSetupScopeManager.open() }
+            verify(exactly = 0) { CaptureSetupScopeManager.getData() }
         }
 
     @Test
