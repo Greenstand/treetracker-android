@@ -190,6 +190,12 @@ android {
 // declared by ui-test-manifest, which is a debug-only dependency.
 def isRoborazziRun = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
 tasks.withType(Test).configureEach {
+    // Robolectric + Compose UI tests need more than the 512 MB default heap. A fresh JVM every
+    // 100 test classes keeps leaked Robolectric state bounded, and the timeout fails a stuck
+    // test JVM instead of letting CI hang until the job is cancelled.
+    maxHeapSize = "3g"
+    forkEvery = 100
+    timeout.set(java.time.Duration.ofMinutes(60))
     if (isRoborazziRun) {
         include '**/screenshot/**'
     } else {
