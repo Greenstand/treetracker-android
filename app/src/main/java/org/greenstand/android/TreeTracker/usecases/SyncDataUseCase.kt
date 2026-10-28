@@ -46,86 +46,100 @@ class SyncDataUseCase(
 
     override suspend fun execute(params: Unit): Boolean {
         syncProgressTracker.startSync()
-        try {
-            withContext(Dispatchers.IO) {
-                val instanceId =
-                    try {
-                        FirebaseInstallations.getInstance().id.await()
-                    } catch (e: Exception) {
-                        ""
+        val allTreesUploaded =
+            try {
+                withContext(Dispatchers.IO) {
+                    val instanceId =
+                        try {
+                            FirebaseInstallations.getInstance().id.await()
+                        } catch (e: Exception) {
+                            ""
+                        }
+
+                    executeTrackedStep(SyncStep.MESSAGES, "Message Sync") {
+                        messagesRepo.syncMessages()
                     }
 
-                executeTrackedStep(SyncStep.MESSAGES, "Message Sync") {
-                    messagesRepo.syncMessages()
+                    executeTrackedStep(SyncStep.DEVICE_CONFIG, "Device Config Upload") {
+                        deviceConfigUploader.upload(instanceId)
+                    }
+
+                    executeTrackedStep(SyncStep.USERS, "User Upload") {
+                        planterUploader.upload(instanceId)
+                    }
+
+                    executeTrackedStep(SyncStep.SESSIONS, "Session Upload") {
+                        sessionUploader.upload()
+                    }
+
+                    val legacyTreesUploaded =
+                        treeUpload(
+                            syncStep = SyncStep.LEGACY_TREES,
+                            onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
+                            onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
+                        )
+
+                    val treesUploaded =
+                        treeUpload(
+                            syncStep = SyncStep.TREES,
+                            onGetTreeIds = { dao.getAllTreeIdsToUpload() },
+                            onUpload = { treeUploader.uploadTrees(it) },
+                        )
+
+                    executeTrackedStep(SyncStep.LOCATIONS, "Location Upload") {
+                        uploadLocationDataUseCase.execute(Unit)
+                    }
+
+                    legacyTreesUploaded && treesUploaded
                 }
-
-                executeTrackedStep(SyncStep.DEVICE_CONFIG, "Device Config Upload") {
-                    deviceConfigUploader.upload(instanceId)
-                }
-
-                executeTrackedStep(SyncStep.USERS, "User Upload") {
-                    planterUploader.upload(instanceId)
-                }
-
-                executeTrackedStep(SyncStep.SESSIONS, "Session Upload") {
-                    sessionUploader.upload()
-                }
-
-                treeUpload(
-                    syncStep = SyncStep.LEGACY_TREES,
-                    onGetTreeIds = { dao.getAllTreeCaptureIdsToUpload() },
-                    onUpload = { treeUploader.uploadLegacyTrees(it, instanceId) },
-                )
-
-                treeUpload(
-                    syncStep = SyncStep.TREES,
-                    onGetTreeIds = { dao.getAllTreeIdsToUpload() },
-                    onUpload = { treeUploader.uploadTrees(it) },
-                )
-
-                executeTrackedStep(SyncStep.LOCATIONS, "Location Upload") {
-                    uploadLocationDataUseCase.execute(Unit)
-                }
+            } catch (e: Exception) {
+                Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
+                syncProgressTracker.endSync(error = e.localizedMessage)
+                return false
             }
-        } catch (e: Exception) {
-            Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
-            syncProgressTracker.endSync(error = e.localizedMessage)
+        if (!allTreesUploaded) {
+            // Report partial tree failures instead of success so the stranded trees aren't hidden.
+            syncProgressTracker.endSync(error = "Some trees failed to upload")
             return false
         }
         syncProgressTracker.endSync()
         return true
     }
 
+    /** Uploads trees until none remain or a pass finds no new trees. Returns true if every tree was uploaded. */
     private suspend fun treeUpload(
         syncStep: SyncStep,
         onGetTreeIds: suspend () -> List<Long>,
         onUpload: suspend (List<Long>) -> Unit,
-    ) {
+    ): Boolean {
         syncProgressTracker.startStep(syncStep)
         try {
             var treeIds = onGetTreeIds()
+            var remainingIds = treeIds
             val totalTrees = treeIds.size
-            var uploadedSoFar = 0
             syncProgressTracker.updateStepProgress(syncStep, 0, totalTrees)
 
             while (treeIds.isNotEmpty() && coroutineContext.isActive) {
                 executeIfContextActive("Tree Upload") {
                     onUpload(treeIds)
                 }
-                uploadedSoFar += treeIds.size
-                syncProgressTracker.updateStepProgress(syncStep, uploadedSoFar, totalTrees)
 
-                val remainingIds = onGetTreeIds()
+                remainingIds = onGetTreeIds()
+                syncProgressTracker.updateStepProgress(syncStep, (totalTrees - remainingIds.size).coerceAtLeast(0), totalTrees)
                 if (!treeIds.containsAll(remainingIds)) {
                     treeIds = remainingIds
                 } else {
-                    if (remainingIds.isNotEmpty()) {
-                        Timber.tag(TAG).e("Remaining trees failed to upload, ending tree sync...")
-                    }
                     break
                 }
             }
+
+            if (remainingIds.isNotEmpty()) {
+                Timber.tag(TAG).e("${remainingIds.size} trees failed to upload, ending tree sync...")
+                syncProgressTracker.failStep(syncStep, "${remainingIds.size} trees failed to upload")
+                return false
+            }
             syncProgressTracker.completeStep(syncStep)
+            return true
         } catch (e: Exception) {
             syncProgressTracker.failStep(syncStep, e.localizedMessage)
             throw e
