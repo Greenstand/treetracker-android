@@ -21,7 +21,7 @@ import androidx.compose.ui.test.performClick
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.greenstand.android.TreeTracker.models.location.ConvergenceStatus
+import org.greenstand.android.TreeTracker.models.ConvergenceStatus
 import org.greenstand.android.TreeTracker.overlay.GpsState
 import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsState
 import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
