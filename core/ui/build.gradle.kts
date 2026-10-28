@@ -1,0 +1,25 @@
+// Screen-level UI that several features share: the user picker (UserSelect + its ViewModel), the
+// camera (CameraX preview, selfie and image review screens, ImageCaptureActivity and its result
+// contract), and the language button.
+plugins {
+    id("treetracker.android.library")
+    id("treetracker.android.compose")
+}
+
+android {
+    namespace = "org.greenstand.android.TreeTracker.ui"
+}
+
+dependencies {
+    api(project(":core:data"))
+    api(project(":core:designsystem"))
+
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.bundles.camerax)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.timber)
+}
