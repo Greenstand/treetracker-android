@@ -152,6 +152,7 @@ ksp {
 }
 
 dependencies {
+    implementation(project(":core:analytics"))
     implementation(project(":core:common"))
     implementation(project(":core:config"))
     implementation(project(":core:database"))
