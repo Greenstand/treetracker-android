@@ -51,7 +51,7 @@ class UtilsTest {
         runTest {
             listOf(1, 2, 3).runInParallel(StandardTestDispatcher(testScheduler)) { delay(1000) }
 
-            assertEquals(1000L, currentTime)
+            assertEquals(1000L, testScheduler.currentTime)
         }
 
     @Test
