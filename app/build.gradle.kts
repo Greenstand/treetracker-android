@@ -146,7 +146,6 @@ afterEvaluate {
 }
 
 ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
     // Generates the app-wide AppFunctions index; only debug and dev run the AppFunctions compiler
     arg("appfunctions:aggregateAppFunctions", "true")
 }
@@ -172,64 +171,21 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:trees"))
 
-    // AWS S3 SDK
-    // Note: android s3 sdk does not support transfer acceleration
-    implementation(libs.aws.android.sdk.core)
-    implementation(libs.aws.android.sdk.s3)
-
-    // Koin dependencies
+    // Libraries the app shell uses directly. Everything else comes from the modules.
     implementation(libs.bundles.koin)
-    testImplementation(libs.koin.test)
-
-    // AndroidX Core
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.multidex)
-    implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.work.runtime.ktx)
-
-    // Compose
     implementation(libs.bundles.compose)
-    implementation(libs.accompanist.permissions)
-    implementation(libs.androidx.compose.material.icons.extended)
-
-    // MapLibre
-    implementation(libs.maplibre.android.sdk)
-
-    // Image Loading
-    implementation(libs.coil.compose)
-
-    // Kotlin
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.play.services)
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
-
-    // Database
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    // Networking
-    implementation(libs.retrofit.converter.kotlinx.serialization)
     implementation(libs.retrofit)
-    implementation(libs.okhttp.logging.interceptor)
-
-    // CameraX
-    implementation(libs.bundles.camerax)
-
-    // Logging
-    api(libs.timber)
-
-    // Firebase
+    implementation(libs.timber)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics.ktx)
-    implementation(libs.firebase.installations)
     implementation(libs.firebase.config)
 
     // AppFunctions: debug and dev only, see docs/testing/agent-app-functions.md
@@ -240,15 +196,13 @@ dependencies {
     "kspDebug"(libs.androidx.appfunctions.compiler)
     "kspDev"(libs.androidx.appfunctions.compiler)
 
-    // Play Install Referrer
-    implementation(libs.install.referrer)
-
     // Testing
     testImplementation(libs.bundles.testing)
+    testImplementation(libs.koin.test)
     testImplementation(testFixtures(project(":core:navigation")))
     testImplementation(project(":core:testing"))
-    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlinx.datetime)
     testImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.espresso.core)

@@ -23,6 +23,13 @@
 ./gradlew testDevUnitTest
 ./gradlew testDebugUnitTest
 
+# Run one module's tests (see docs/engineering/modules.md)
+./gradlew :core:data:testDebugUnitTest
+./gradlew :feature:dashboard:testDebugUnitTest
+
+# Screenshot tests (Roborazzi, in app)
+./gradlew verifyRoborazziDebug
+
 # Run instrumented tests on connected device
 ./gradlew connectedDebugAndroidTest
 ```

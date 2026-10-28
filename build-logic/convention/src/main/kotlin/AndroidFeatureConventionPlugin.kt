@@ -14,6 +14,10 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             pluginManager.apply("treetracker.android.library")
             pluginManager.apply("treetracker.android.compose")
 
+            forbidProjectDependencies("feature modules can't depend on other feature modules (navigate with the routes in core:navigation)") {
+                it.startsWith(":feature:")
+            }
+
             dependencies {
                 add("implementation", project(":core:ui"))
 

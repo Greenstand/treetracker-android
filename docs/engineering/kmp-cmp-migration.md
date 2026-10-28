@@ -3,8 +3,38 @@
 How to move Treetracker from a single Android module to Kotlin Multiplatform (KMP) with Compose
 Multiplatform (CMP) UI, and split it into modules on the way.
 
-Status: proposal (task 40). Nothing here is implemented yet. Sequencing is decided: structure
-first (Phases 0 to 3), then ship iOS (Phase 4).
+Status: Phases 0 and 1 are done (tasks 40 to 59 and 79 to 90). Sequencing is decided: structure first
+(Phases 0 to 3), then ship iOS (Phase 4). Next up is Phase 2.
+
+## Progress
+
+**Phase 0 (done):** Kotlin DSL build files, `build-logic` convention plugins, AGP 9.4 (Gradle
+9.6). The `:app` rename was skipped; it can happen in Phase 3 when the `shared` module appears.
+AppFunctions and compileSdk 37 were left for later.
+
+**Phase 1 (done):** the app is split into 13 core modules and 7 feature modules, one per feature
+(onboarding, dashboard, capture, trees, settings, messages, devtools); see [Modules](modules.md)
+for the layout as built and how features talk to each other. Before the module PRs:
+
+- Koin went from 3.5 to 4.2 (moved up from Phase 2), and each feature registers its own screens
+  and ViewModels in its Koin module with Koin's Navigation 3 support. `Host` lists no screens.
+- Sign-up hands a new planter back to the screen that opened it (a navigation result) instead of
+  driving capture setup, and capture owns its setup and capture flows. This also fixed adding a
+  planter from Settings, which used to drop you into capture setup.
+
+Differences from the target layout below:
+
+- `core:config` (build-type `BuildConfig` and `FeatureFlags`) stands in for the injected
+  `AppConfig`. Code reads config statically, so the `AppConfig` refactor moves to Phase 2.
+- `core:resources` holds the Android resources until Phase 2 moves them to Compose resources.
+- `core:platform` and `core:storage` don't exist yet. The device and storage code sits in
+  `core:data` and `core:network` behind no interfaces; Phase 2 step 8 extracts the interfaces.
+- `core:ui` was added for screen-level UI several features share: the user picker, camera,
+  selfie and image review screens, `ImageCaptureActivity` and the language button.
+- The capture and setup flow controllers and their state live in `feature:capture`, not
+  `core:navigation`; only capture uses them.
+- The Roborazzi screenshot tests stay in the app shell.
+- A build rule fails if a feature depends on another feature, or core on a feature or the app.
 
 ## Where we start
 
@@ -66,18 +96,22 @@ core/
   platform/      commonMain   interfaces for location, sensors, device info, connectivity, files;
                               androidMain + iosMain implementations
   analytics/     commonMain   Analytics + ExceptionLogger interfaces; Firebase impls per platform
-  data/          commonMain   repos and uploaders: UserRepo, OrgRepo, MessagesRepo, TreeCapturer,
+  data/          commonMain   repos and uploaders: UserRepo, OrgRepo, MessagesRepo,
                               SessionTracker, *Uploader, usecases/, SyncDataUseCase
   designsystem/  commonMain   theme/, view/ components, fonts, shared drawables, Colors
   resources/     commonMain   strings (en/pt/sw) as Compose resources (or fold into designsystem)
-  navigation/    commonMain   Routes, Navigator, flow controllers, RouteRegistry
+  navigation/    commonMain   Routes, Navigator, RouteRegistry
   testing/       commonMain   fakes, MainDispatcherRule equivalent, test data builders
 
-feature/
-  splash/  signup/  userselect/  dashboard/  orgpicker/  walletselect/  profile/
-  settings/  languagepicker/  messages/  map/  devoptions/
-  capture/       capture/, camera/, treeheight/, treeedit/, sessionnote/ (the add-tree flow)
-  overlay/       debug overlays (sync, sensors)
+feature/         one module per feature, not per screen
+  onboarding/    splash, language picker, sign-up
+  dashboard/     home screen
+  capture/       the add-tree flow: setup (planter, org, wallet, note), camera, image review,
+                 tree height, the flow controllers and their state
+  trees/         tree list, tree detail and edit, map
+  settings/      settings, profiles
+  messages/      message lists, chat, announcements, surveys
+  devtools/      developer options, debug overlays (sync, sensors)
 
 shared/          commonMain   the app shell: root/Host (NavDisplay + entryProvider), Koin graph,
                               App() composable. Depends on every feature. Exposes
@@ -173,9 +207,9 @@ dependency graph right without also fighting multiplatform problems.
 2. Extract leaf modules bottom-up, one PR each: `core:common`, `core:model`, `core:database`,
    `core:datastore`, `core:network`, `core:analytics`, `core:storage`, `core:platform`,
    `core:designsystem`, `core:navigation`, `core:data`.
-3. Extract features, smallest and most isolated first: `languagepicker`, `settings`, `profile`,
-   `orgpicker`, `walletselect`, `userselect`, `splash`, `signup`, `messages`, `devoptions`,
-   `dashboard`, `map`, then `capture` last (it's the largest and most device-bound).
+3. Extract features, one module per feature (not per screen), smallest and most isolated
+   first: `devtools`, `settings`, `trees`, `messages`, `onboarding`, `dashboard`, then `capture`
+   last (it's the largest and most device-bound).
 4. Move tests with the code they test. Screenshot tests move to each feature module
    (Roborazzi runs per module).
 5. Add a dependency check (e.g. module graph assertion plugin) so features can't depend on
@@ -192,7 +226,7 @@ Suggested order (cheapest and least risky first):
 
 1. Timber -> Kermit. `java.util.UUID` -> `kotlin.uuid`. `LiveData` -> `StateFlow`.
 2. kotlinx-datetime 0.5 -> 0.7, remove `SimpleDateFormat`/`java.util.Date`.
-3. Koin 3.5 -> 4.x.
+3. ~~Koin 3.5 -> 4.x.~~ Done in Phase 1 (Koin 4.2).
 4. Coil 2 -> 3.
 5. Retrofit -> Ktor for `MessagesApi`.
 6. `SharedPreferences` -> DataStore/Settings, with a migration that reads the existing
@@ -315,8 +349,9 @@ first half) either way. If option 2 isn't possible, fall back to option 1 on iOS
 3. **Preferences library:** DataStore (Google-backed, async) vs `multiplatform-settings`
    (synchronous, closer to today's `Preferences` API, so less churn). Leaning
    `multiplatform-settings` because `Preferences` is read synchronously in many places.
-4. **Granularity of `feature:capture`.** One module for the whole add-tree flow, or split camera
-   and tree height out. Start with one; split if it grows.
+4. ~~Granularity of `feature:capture`.~~ **Decided: one module for the whole add-tree flow**
+   (features are one module per feature). The camera screens several features use are in
+   `core:ui`.
 
 ## Rough size
 
