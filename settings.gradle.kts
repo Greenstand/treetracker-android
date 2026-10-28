@@ -35,6 +35,7 @@ include(":feature:orgpicker")
 include(":feature:permissions")
 include(":feature:sessionnote")
 include(":feature:settings")
+include(":feature:splash")
 include(":feature:treeheight")
 include(":feature:walletselect")
 rootProject.name = "treetracker-android"
