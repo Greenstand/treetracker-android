@@ -153,6 +153,7 @@ ksp {
 
 dependencies {
     implementation(project(":core:config"))
+    implementation(project(":core:resources"))
 
     // AWS S3 SDK
     // Note: android s3 sdk does not support transfer acceleration
