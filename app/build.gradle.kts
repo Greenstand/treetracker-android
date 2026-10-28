@@ -239,6 +239,7 @@ dependencies {
     // Testing
     testImplementation(libs.bundles.testing)
     testImplementation(testFixtures(project(":core:navigation")))
+    testImplementation(project(":core:testing"))
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.arch.core.testing)

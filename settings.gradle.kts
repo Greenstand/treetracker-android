@@ -28,5 +28,6 @@ include(":core:navigation")
 include(":core:network")
 include(":core:preferences")
 include(":core:resources")
+include(":core:testing")
 include(":core:ui")
 rootProject.name = "treetracker-android"

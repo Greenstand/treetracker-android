@@ -22,4 +22,9 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.timber)
+
+    testImplementation(project(":core:testing"))
+    testImplementation(testFixtures(project(":core:navigation")))
+    testImplementation(libs.bundles.testing)
+    testImplementation(libs.androidx.arch.core.testing)
 }

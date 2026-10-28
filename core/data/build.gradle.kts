@@ -50,7 +50,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
 
+    testImplementation(project(":core:testing"))
+    testImplementation(testFixtures(project(":core:navigation")))
     testImplementation(libs.bundles.testing)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.work.testing)
 }
