@@ -173,6 +173,7 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:signup"))
     implementation(project(":feature:splash"))
+    implementation(project(":feature:treeedit"))
     implementation(project(":feature:treeheight"))
     implementation(project(":feature:walletselect"))
 

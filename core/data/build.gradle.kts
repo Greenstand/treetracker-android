@@ -46,7 +46,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
-    implementation(libs.kotlinx.datetime)
+    // Public types (trees, sessions, messages) use kotlinx.datetime.Instant.
+    api(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
 

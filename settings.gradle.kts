@@ -39,6 +39,7 @@ include(":feature:sessionnote")
 include(":feature:settings")
 include(":feature:signup")
 include(":feature:splash")
+include(":feature:treeedit")
 include(":feature:treeheight")
 include(":feature:walletselect")
 rootProject.name = "treetracker-android"
