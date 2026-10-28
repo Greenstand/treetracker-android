@@ -29,7 +29,7 @@ import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.theme.CustomTheme
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun BoxScope.LanguageButton() {

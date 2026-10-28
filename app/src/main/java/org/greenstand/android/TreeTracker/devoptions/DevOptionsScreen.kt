@@ -50,7 +50,7 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.compose.koinInject
 
 @Composable

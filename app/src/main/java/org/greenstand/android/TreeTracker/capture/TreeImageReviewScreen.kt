@@ -43,7 +43,7 @@ import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun TreeImageReviewScreen(

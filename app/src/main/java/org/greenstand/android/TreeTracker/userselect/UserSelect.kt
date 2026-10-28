@@ -41,7 +41,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.DepthButtonColors
 import org.greenstand.android.TreeTracker.view.OrangeAddButton
 import org.greenstand.android.TreeTracker.view.UserButton
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

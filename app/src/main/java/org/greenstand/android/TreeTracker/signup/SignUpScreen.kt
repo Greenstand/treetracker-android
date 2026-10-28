@@ -26,7 +26,7 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeMana
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignUpScreen(viewModel: SignupViewModel = koinViewModel()) {

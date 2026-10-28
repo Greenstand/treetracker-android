@@ -68,7 +68,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import org.maplibre.android.MapLibre
 import java.io.File
 import java.time.format.DateTimeFormatter
