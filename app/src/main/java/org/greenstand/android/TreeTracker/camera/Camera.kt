@@ -19,8 +19,10 @@ import android.app.Activity
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Size
+import android.view.MotionEvent
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
@@ -35,6 +37,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun Camera(
@@ -145,12 +148,69 @@ fun Camera(
                             ).build()
 
                     cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(
-                        lifecycleOwner,
-                        cameraSelector,
-                        imageCapture,
-                        preview,
-                    )
+                    val camera =
+                        cameraProvider.bindToLifecycle(
+                            lifecycleOwner,
+                            cameraSelector,
+                            imageCapture,
+                            preview,
+                        )
+
+                    // Test, no changes in camera at all despite no exception. So the cameraControl itself isn't working
+//                    val future =
+//                        camera.cameraControl
+//                            .setLinearZoom(
+//                                0.1f,
+//                            )
+//                    future.addListener(
+//                        {
+//                            try {
+//                                future.get()
+//                                Timber.d("Zoom applied")
+//                            } catch (e: Exception) {
+//                                Timber.e(e, "Zoom failed")
+//                            }
+//                        },
+//                        ContextCompat.getMainExecutor(previewView.context),
+//                    )
+//                    val future2 = camera.cameraControl.setExposureCompensationIndex(3)
+//                    future2.addListener(
+//                        {
+//                            try {
+//                                future2.get()
+//                                Timber.d("Exposure applied")
+//                            } catch (e: Exception) {
+//                                Timber.e(e, "Exposure failed")
+//                            }
+//                        },
+//                        ContextCompat.getMainExecutor(previewView.context),
+//                    )
+
+                    previewView.setOnTouchListener { view, motionEvent ->
+                        when (motionEvent.action) {
+                            MotionEvent.ACTION_UP -> {
+                                view.performClick()
+                                val meteringPoint =
+                                    previewView.meteringPointFactory
+                                        .createPoint(motionEvent.x, motionEvent.y)
+                                val action = FocusMeteringAction.Builder(meteringPoint).setAutoCancelDuration(3, TimeUnit.SECONDS).build()
+                                val result = camera.cameraControl.startFocusAndMetering(action)
+
+                                result.addListener(
+                                    {
+                                        try {
+                                            val isFocusSuccessful = result.get().isFocusSuccessful
+                                            Timber.tag("CameraXApp").d("Focus result: $isFocusSuccessful and is focused on (x: ${motionEvent.x}, y: ${motionEvent.y})")
+                                        } catch (e: Exception) {
+                                            Timber.tag("CameraXApp").d(e, "Focus request was cancelled or failed")
+                                        }
+                                    },
+                                    ContextCompat.getMainExecutor(previewView.context),
+                                )
+                            }
+                        }
+                        true
+                    }
 
                     preview.setSurfaceProvider(previewView.surfaceProvider)
                 }, ContextCompat.getMainExecutor(previewView.context))
