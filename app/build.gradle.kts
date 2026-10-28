@@ -170,6 +170,7 @@ dependencies {
     implementation(project(":feature:sessionnote"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:treeheight"))
+    implementation(project(":feature:walletselect"))
 
     // AWS S3 SDK
     // Note: android s3 sdk does not support transfer acceleration
