@@ -27,6 +27,10 @@ gradlePlugin {
             id = "treetracker.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
         }
+        register("androidFeature") {
+            id = "treetracker.android.feature"
+            implementationClass = "AndroidFeatureConventionPlugin"
+        }
         register("codeQuality") {
             id = "treetracker.code-quality"
             implementationClass = "CodeQualityConventionPlugin"
