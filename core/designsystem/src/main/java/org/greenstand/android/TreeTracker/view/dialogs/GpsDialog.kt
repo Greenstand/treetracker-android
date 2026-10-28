@@ -18,7 +18,7 @@ package org.greenstand.android.TreeTracker.view
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.resources.R
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @Composable
