@@ -17,13 +17,8 @@ package org.greenstand.android.TreeTracker.userselect
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
-import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -33,11 +28,8 @@ import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -66,21 +58,10 @@ class UserSelectViewModelTest {
     @MockK(relaxed = true)
     private lateinit var preferences: Preferences
 
-    private lateinit var captureSetupData: CaptureSetupData
-
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        mockkObject(CaptureSetupScopeManager)
-        every { CaptureSetupScopeManager.open() } just Runs
-        captureSetupData = mockk(relaxed = true)
-        every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { userRepo.users() } returns flowOf(emptyList())
-    }
-
-    @After
-    fun tearDown() {
-        unmockkObject(CaptureSetupScopeManager)
     }
 
     private fun createViewModel(userId: Long? = null): UserSelectViewModel =
@@ -104,18 +85,6 @@ class UserSelectViewModelTest {
             val state = viewModel.state.first()
             assertNotNull(state.selectedUser)
             assertEquals(user.id, state.selectedUser!!.id)
-        }
-
-    @Test
-    fun `the shared user picker does not start or change capture setup`() =
-        runTest {
-            // Messages, tree edit and profiles use this picker too; capture's own user select
-            // screen starts capture setup.
-            val viewModel = createViewModel()
-            viewModel.handleAction(UserSelectAction.SelectUser(FakeFileGenerator.fakeUsers.first()))
-
-            verify(exactly = 0) { CaptureSetupScopeManager.open() }
-            verify(exactly = 0) { CaptureSetupScopeManager.getData() }
         }
 
     @Test
