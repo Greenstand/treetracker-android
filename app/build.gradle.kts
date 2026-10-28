@@ -165,6 +165,7 @@ dependencies {
     implementation(project(":core:resources"))
     implementation(project(":core:ui"))
     implementation(project(":feature:languagepicker"))
+    implementation(project(":feature:sessionnote"))
     implementation(project(":feature:settings"))
 
     // AWS S3 SDK
