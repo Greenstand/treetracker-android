@@ -468,7 +468,7 @@ class MessagesRepoTest {
 
             coVerify { messagesDAO.insertMessage(match { it.id == "m1" }) }
             coVerify(exactly = 1) { messageUploader.uploadMessages() }
-            assertEquals(listOf("HTTP 500 Server Error"), errorRecorder.errors)
+            assertEquals<List<String?>>(listOf("HTTP 500 Server Error"), errorRecorder.errors.toList())
         }
 
     @Test
