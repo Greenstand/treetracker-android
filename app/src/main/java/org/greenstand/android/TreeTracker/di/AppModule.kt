@@ -30,6 +30,7 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
+import org.greenstand.android.TreeTracker.camera.SelfieViewModel
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
 import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
@@ -103,6 +104,8 @@ val appModule =
     module {
 
         viewModel { SessionNoteViewModel() }
+
+        viewModel { SelfieViewModel(get()) }
 
         viewModel { AddWalletViewModel() }
 

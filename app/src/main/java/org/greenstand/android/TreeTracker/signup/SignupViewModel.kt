@@ -40,7 +40,6 @@ data class SignUpState(
     val autofocusTextEnabled: Boolean = false,
     val isInternetAvailable: Boolean = false,
     val isTherePowerUser: Boolean? = null,
-    val showSelfieTutorial: Boolean? = null,
     val showPrivacyDialog: Boolean? = true,
     val firstNameError: String? = null,
     val lastNameError: String? = null,
@@ -88,10 +87,6 @@ sealed class SignupAction : Action {
 
     object CloseExistingUserDialog : SignupAction()
 
-    data class UpdateSelfieTutorialDialog(
-        val show: Boolean,
-    ) : SignupAction()
-
     object EnableAutofocus : SignupAction()
 
     object GoToCredentialEntry : SignupAction()
@@ -122,7 +117,6 @@ class SignupViewModel(
             updateState {
                 copy(
                     isInternetAvailable = result,
-                    showSelfieTutorial = initialSetupRequired,
                     isTherePowerUser = !initialSetupRequired,
                 )
             }
@@ -163,9 +157,6 @@ class SignupViewModel(
             is SignupAction.SubmitInfo -> submitInfo()
             is SignupAction.CloseExistingUserDialog -> {
                 updateState { copy(existingUser = null) }
-            }
-            is SignupAction.UpdateSelfieTutorialDialog -> {
-                updateState { copy(showSelfieTutorial = action.show) }
             }
             is SignupAction.EnableAutofocus -> {
                 updateState { copy(autofocusTextEnabled = true) }
