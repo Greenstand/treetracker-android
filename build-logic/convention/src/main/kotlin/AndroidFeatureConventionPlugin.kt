@@ -17,6 +17,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             dependencies {
                 add("implementation", project(":core:ui"))
 
+                add("implementation", libs.library("androidx-core-ktx"))
                 add("implementation", libs.library("koin-android"))
                 add("implementation", libs.library("koin-androidx-compose"))
                 add("implementation", libs.library("androidx-lifecycle-runtime-compose"))
