@@ -14,3 +14,8 @@ Make `testReleaseUnitTest` and `testDebugUnitTest` pass on the test coverage bra
   nothing was written instead of that the file doesn't exist.
 - `app/build.gradle`: test JVMs get a 3 GB heap. With Gradle's 512 MB default the Robolectric
   Compose UI tests in `testDebugUnitTest` ran out of memory.
+- `CustomDialogUiTest`, `TreeImageReviewUiTest`, `TreeImageReviewScreenUiTest`: tests that
+  show a dialog with a text field failed with `AppNotIdleException`. At widths over 320dp
+  Robolectric never lets such a dialog go idle, so these classes run at
+  `DIALOG_TEXT_FIELD_QUALIFIERS` (`w320dp-h800dp-xxhdpi`) instead of the base class's
+  `w400dp-h800dp-xxhdpi`.

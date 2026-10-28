@@ -24,12 +24,15 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
+import org.greenstand.android.TreeTracker.uitest.DIALOG_TEXT_FIELD_QUALIFIERS
 import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.robolectric.annotation.Config
 
+@Config(qualifiers = DIALOG_TEXT_FIELD_QUALIFIERS)
 class CustomDialogUiTest : ComposeUiTest() {
     private var positiveClicks = 0
     private var negativeClicks = 0
