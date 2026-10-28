@@ -19,15 +19,22 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
+import org.greenstand.android.TreeTracker.navigation.IndividualMessageListRoute
+import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator.fakeAnnouncementMessage
+import org.greenstand.android.TreeTracker.utils.fakeNavigator
 import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -101,5 +108,85 @@ class AnnouncementViewModelTest {
 
             val event = announcementViewModel.events.first().getContentIfNotConsumed()
             assertEquals(PopBackStackEvent, event)
+        }
+
+    @Test
+    fun `WHEN created THEN loads the given message, fills state and marks it read in order`() =
+        runTest {
+            val message =
+                fakeAnnouncementMessage.copy(
+                    id = "msg-1",
+                    from = "Greenstand",
+                    subject = "Planting day",
+                    body = "Join us",
+                    videoLink = "https://example.com/video",
+                )
+            coEvery { messagesRepo.getAnnouncementMessages("msg-1") } returns message
+
+            val viewModel = AnnouncementViewModel("msg-1", messagesRepo)
+
+            assertEquals(
+                AnnouncementState(
+                    from = "Greenstand",
+                    currentBody = "Join us",
+                    currentUrl = "https://example.com/video",
+                    currentTitle = "Planting day",
+                ),
+                viewModel.state.value,
+            )
+            coVerifyOrder {
+                messagesRepo.getAnnouncementMessages("msg-1")
+                messagesRepo.markMessageAsRead("msg-1")
+            }
+        }
+
+    @Test
+    fun `GIVEN an announcement without body or link WHEN created THEN body and url are null`() =
+        runTest {
+            coEvery { messagesRepo.getAnnouncementMessages("msg-2") } returns
+                fakeAnnouncementMessage.copy(body = null, videoLink = null)
+
+            val viewModel = AnnouncementViewModel("msg-2", messagesRepo)
+
+            assertNull(viewModel.state.value.currentBody)
+            assertNull(viewModel.state.value.currentUrl)
+            assertEquals(fakeAnnouncementMessage.subject, viewModel.state.value.currentTitle)
+        }
+
+    @Test
+    fun `WHEN created THEN no events are emitted`() =
+        runTest {
+            assertTrue(announcementViewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN OpenLink action THEN state is unchanged and no events are emitted`() =
+        runTest {
+            val before = announcementViewModel.state.value
+
+            announcementViewModel.handleAction(AnnouncementAction.OpenLink("https://example.com"))
+
+            assertEquals(before, announcementViewModel.state.value)
+            assertTrue(announcementViewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN NavigateBack pop is dispatched THEN navigator returns to the message list`() =
+        runTest {
+            val navigator =
+                fakeNavigator(
+                    MessagesUserSelectRoute,
+                    IndividualMessageListRoute(planterInfoId = 1L),
+                    AnnouncementRoute(messageId = messageId),
+                )
+
+            announcementViewModel.handleAction(AnnouncementAction.NavigateBack)
+            assertEquals(PopBackStackEvent, announcementViewModel.events.first().getContentIfNotConsumed())
+            navigator.throttledPopBackStack()
+
+            assertEquals(
+                listOf(MessagesUserSelectRoute, IndividualMessageListRoute(planterInfoId = 1L)),
+                navigator.backStack,
+            )
         }
 }

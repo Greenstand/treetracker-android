@@ -33,6 +33,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class AddWalletViewModelTest {
@@ -82,5 +83,71 @@ class AddWalletViewModelTest {
             val state = viewModel.state.value
             assertEquals("new-wallet-name", state.walletName)
             verify { captureSetupData.destinationWallet = "new-wallet-name" }
+        }
+
+    @Test
+    fun `WHEN created THEN wallet name is empty and no events are emitted`() =
+        runTest {
+            every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
+
+            val viewModel = AddWalletViewModel()
+
+            assertEquals("", viewModel.state.value.walletName)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN wallet name is typed repeatedly THEN state and destination wallet hold the latest value`() =
+        runTest {
+            every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = AddWalletViewModel()
+
+            viewModel.handleAction(AddWalletAction.UpdateWalletName("w"))
+            viewModel.handleAction(AddWalletAction.UpdateWalletName("wallet-2"))
+
+            assertEquals("wallet-2", viewModel.state.value.walletName)
+            verify { captureSetupData.destinationWallet = "w" }
+            verify { captureSetupData.destinationWallet = "wallet-2" }
+        }
+
+    @Test
+    fun `WHEN wallet name is cleared THEN destination wallet is set to empty`() =
+        runTest {
+            every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = AddWalletViewModel()
+            viewModel.handleAction(AddWalletAction.UpdateWalletName("wallet"))
+
+            viewModel.handleAction(AddWalletAction.UpdateWalletName(""))
+
+            assertEquals("", viewModel.state.value.walletName)
+            verify { captureSetupData.destinationWallet = "" }
+        }
+
+    @Test
+    fun `WHEN wallet name is updated THEN user image path is kept`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            val viewModel = AddWalletViewModel()
+
+            viewModel.handleAction(AddWalletAction.UpdateWalletName("wallet"))
+
+            assertEquals(fakeUser.photoPath, viewModel.state.value.userImagePath)
+        }
+
+    @Test
+    fun `WHEN navigation actions are sent THEN state is unchanged and no events are emitted`() =
+        runTest {
+            every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = AddWalletViewModel()
+            viewModel.handleAction(AddWalletAction.UpdateWalletName("wallet"))
+            val before = viewModel.state.value
+
+            viewModel.handleAction(AddWalletAction.NavigateBack)
+            viewModel.handleAction(AddWalletAction.NavigateNext)
+
+            assertEquals(before, viewModel.state.value)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+            verify(exactly = 1) { captureSetupData.destinationWallet = any() }
         }
 }

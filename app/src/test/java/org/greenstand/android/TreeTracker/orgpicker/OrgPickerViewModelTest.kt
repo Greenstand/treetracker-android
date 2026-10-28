@@ -18,13 +18,18 @@ package org.greenstand.android.TreeTracker.orgpicker
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.OrgRoute
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
+import org.greenstand.android.TreeTracker.utils.fakeNavigator
 import org.greenstand.android.TreeTracker.viewmodel.PopBackStackEvent
 import org.junit.Assert
 import org.junit.Before
@@ -80,5 +85,98 @@ class OrgPickerViewModelTest {
 
             val event = orgPickerViewModel.events.first().getContentIfNotConsumed()
             Assert.assertEquals(PopBackStackEvent, event)
+        }
+
+    private val orgs = FakeFileGenerator.fakeOrganizationList
+
+    @Test
+    fun `WHEN created THEN state holds all orgs and the current org`() =
+        runTest {
+            coEvery { orgRepo.getOrgs() } returns orgs
+            every { orgRepo.currentOrg() } returns orgs[1]
+
+            val viewModel = OrgPickerViewModel(orgRepo)
+
+            Assert.assertEquals(OrgPickerState(orgs = orgs, currentOrg = orgs[1]), viewModel.state.value)
+            Assert.assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN created with no orgs THEN state has an empty org list`() =
+        runTest {
+            coEvery { orgRepo.getOrgs() } returns emptyList()
+            every { orgRepo.currentOrg() } returns orgs[0]
+
+            val viewModel = OrgPickerViewModel(orgRepo)
+
+            Assert.assertTrue(
+                viewModel.state.value.orgs
+                    .isEmpty(),
+            )
+            Assert.assertEquals(orgs[0], viewModel.state.value.currentOrg)
+        }
+
+    @Test
+    fun `WHEN an org is set THEN repo is updated before reading back the current org`() =
+        runTest {
+            coEvery { orgRepo.getOrgs() } returns orgs
+            every { orgRepo.currentOrg() } returns orgs[0]
+            val viewModel = OrgPickerViewModel(orgRepo)
+
+            viewModel.handleAction(OrgPickerAction.SetOrg(orgs[1]))
+
+            coVerifyOrder {
+                orgRepo.setOrg("newId")
+                orgRepo.currentOrg()
+            }
+        }
+
+    @Test
+    fun `WHEN the repo falls back to another org after set THEN state shows the repo's current org`() =
+        runTest {
+            coEvery { orgRepo.getOrgs() } returns orgs
+            every { orgRepo.currentOrg() } returnsMany listOf(orgs[1], orgs[0])
+            val viewModel = OrgPickerViewModel(orgRepo)
+            Assert.assertEquals(orgs[1], viewModel.state.value.currentOrg)
+
+            viewModel.handleAction(OrgPickerAction.SetOrg(orgs[1]))
+
+            Assert.assertEquals(orgs[0], viewModel.state.value.currentOrg)
+        }
+
+    @Test
+    fun `WHEN an org is set THEN org list is unchanged and no events are emitted`() =
+        runTest {
+            coEvery { orgRepo.getOrgs() } returns orgs
+            every { orgRepo.currentOrg() } returns orgs[1]
+            val viewModel = OrgPickerViewModel(orgRepo)
+
+            viewModel.handleAction(OrgPickerAction.SetOrg(orgs[1]))
+
+            Assert.assertEquals(orgs, viewModel.state.value.orgs)
+            Assert.assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN NavigateNext pop is dispatched THEN navigator returns to the previous screen`() =
+        runTest {
+            val navigator = fakeNavigator(DashboardRoute, OrgRoute)
+
+            orgPickerViewModel.handleAction(OrgPickerAction.NavigateNext)
+            val event = orgPickerViewModel.events.first().getContentIfNotConsumed()
+            Assert.assertEquals(PopBackStackEvent, event)
+            navigator.throttledPopBackStack()
+
+            Assert.assertEquals(listOf(DashboardRoute), navigator.backStack)
+        }
+
+    @Test
+    fun `WHEN NavigateNext is sent twice THEN two pop events are emitted`() =
+        runTest {
+            orgPickerViewModel.handleAction(OrgPickerAction.NavigateNext)
+            orgPickerViewModel.handleAction(OrgPickerAction.NavigateNext)
+
+            val events = orgPickerViewModel.events.replayCache.mapNotNull { it.getContentIfNotConsumed() }
+            Assert.assertEquals(listOf(PopBackStackEvent, PopBackStackEvent), events)
         }
 }
