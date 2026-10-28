@@ -39,6 +39,13 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 /**
+ * Screen qualifiers for tests that show a text field inside a dialog. Robolectric never idles
+ * when such a dialog is laid out wider than 320dp (robolectric/robolectric#8460), so those test
+ * classes override the default 400dp width with `@Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)`.
+ */
+const val TEXT_FIELD_DIALOG_QUALIFIERS = "w320dp-h800dp-xxhdpi"
+
+/**
  * Base class for Robolectric Compose UI tests.
  *
  * Renders content inside the same theme and CompositionLocals the app provides, with a

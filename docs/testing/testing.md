@@ -33,9 +33,15 @@ Robolectric Compose UI tests live in `app/src/test/.../uitest/<feature>/` and ex
 ./gradlew testDebugUnitTest --tests "org.greenstand.android.TreeTracker.uitest.*"
 ```
 
+- A text field inside a dialog never idles under Robolectric when the screen is wider than
+  320dp ([robolectric#8460](https://github.com/robolectric/robolectric/issues/8460)). Test
+  classes that show one use `@Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)`.
+
 Unit tests run with Android resources (`includeAndroidResources = true`).
 `app/src/test/resources/robolectric.properties` sets a plain `Application`, so
-`TreeTrackerApplication` and Koin never start in tests.
+`TreeTrackerApplication` and Koin never start in tests, and pins every test to SDK 35 so they
+share one Robolectric sandbox. Test JVMs get a 3 GB heap and restart every 100 test classes
+(`app/build.gradle`).
 
 ## Screenshot Tests
 
