@@ -54,7 +54,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.resources.R
 import org.greenstand.android.TreeTracker.models.messages.DirectMessage
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.theme.CustomTheme
