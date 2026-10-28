@@ -1,6 +1,6 @@
 // The data and domain layer: repositories (users, orgs, messages), uploaders and sync, tree and
 // session tracking, location and sensor capture, and use cases.
-// Also the messages Room database (MessageDatabase).
+// Also the messages Room database (MessageDatabase) and the background sync worker.
 plugins {
     id("treetracker.android.library")
     id("kotlin-parcelize")
@@ -10,6 +10,9 @@ plugins {
 
 android {
     namespace = "org.greenstand.android.TreeTracker.data"
+
+    // Robolectric tests read strings (e.g. the sync notification text).
+    testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 ksp {
@@ -25,12 +28,14 @@ dependencies {
     api(project(":core:navigation"))
     api(project(":core:network"))
     api(project(":core:preferences"))
+    implementation(project(":core:resources"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.aws.android.sdk.core)
     implementation(platform(libs.firebase.bom))
@@ -47,4 +52,5 @@ dependencies {
 
     testImplementation(libs.bundles.testing)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.work.testing)
 }
