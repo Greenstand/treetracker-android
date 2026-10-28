@@ -16,11 +16,17 @@ Let Claude Code on the web build and test this app, not just read it.
 
 ## Changes
 
-- `.claude/cloud-environment-setup.sh`: machine setup (JDK 25, cmdline-tools, SDK packages),
-  meant for the environment's Setup script field.
-- `.claude/hooks/cloud-android.sh` and `.claude/settings.json`: a SessionStart hook for
-  per-session project setup. It exits immediately outside cloud sessions.
-- `docs/getting-started/claude-cloud-sessions.md`, linked from `CLAUDE.md`.
+- `docs/getting-started/claude-cloud-sessions.md`, linked from `CLAUDE.md`: the network access,
+  setup script and environment variables to set in the cloud environment. Those settings install
+  JDK 25, the Android SDK and a Gradle init script for the Maven Central mirror.
+- `.claude/hooks/cloud-dummy-keys.sh` and `.claude/settings.json`: a SessionStart hook that writes
+  a dummy `treetracker.keys.properties` in cloud sessions. That's the one piece the environment
+  settings can't do, because the file lives in the checkout.
+
+## Decisions
+
+- **Toolchain in the environment, not the repo.** The environment's setup script is cached, and
+  keeping it out of the repo leaves local builds and the repo's tooling untouched.
 
 ## Not verified
 
