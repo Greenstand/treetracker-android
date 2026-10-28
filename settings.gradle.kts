@@ -17,6 +17,7 @@ dependencyResolutionManagement {
     }
 }
 include(":app")
+include(":core:common")
 include(":core:config")
 include(":core:database")
 include(":core:preferences")

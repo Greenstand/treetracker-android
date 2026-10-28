@@ -15,13 +15,22 @@
  */
 package org.greenstand.android.TreeTracker.utilities
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.provider.Settings
-import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
 import java.util.*
 
 object DeviceUtils {
+    private lateinit var appContext: Context
+
+    /** Called from Application.onCreate, before anything reads [deviceId]. */
+    fun init(context: Context) {
+        appContext = context.applicationContext
+    }
+
+    @get:SuppressLint("HardwareIds")
     val deviceId: String
-        get() = Settings.Secure.getString(TreeTrackerApplication.appContext.contentResolver, Settings.Secure.ANDROID_ID)
+        get() = Settings.Secure.getString(appContext.contentResolver, Settings.Secure.ANDROID_ID)
 
     val language: String
         get() = Locale.getDefault().displayLanguage

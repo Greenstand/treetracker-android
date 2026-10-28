@@ -25,6 +25,7 @@ import org.greenstand.android.TreeTracker.di.appModule
 import org.greenstand.android.TreeTracker.di.networkModule
 import org.greenstand.android.TreeTracker.di.roomModule
 import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -34,6 +35,7 @@ import timber.log.Timber
 class TreeTrackerApplication : Application() {
     override fun onCreate() {
         appContext = applicationContext
+        DeviceUtils.init(applicationContext)
 
         super.onCreate()
         FirebaseApp.initializeApp(appContext)
