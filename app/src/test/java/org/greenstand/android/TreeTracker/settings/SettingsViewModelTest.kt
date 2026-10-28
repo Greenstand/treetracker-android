@@ -221,7 +221,7 @@ class SettingsViewModelTest {
             event.navigate(navigator)
 
             assertEquals(
-                listOf(DashboardRoute, SettingsRoute, ProfileSelectRoute),
+                listOf<NavKey>(DashboardRoute, SettingsRoute, ProfileSelectRoute),
                 navigator.backStack,
             )
         }

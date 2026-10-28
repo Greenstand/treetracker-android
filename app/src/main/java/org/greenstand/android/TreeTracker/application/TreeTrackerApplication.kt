@@ -22,6 +22,7 @@ import com.google.firebase.FirebaseApp
 import org.greenstand.android.TreeTracker.analytics.ExceptionLogger
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.di.appModule
+import org.greenstand.android.TreeTracker.di.featureModules
 import org.greenstand.android.TreeTracker.di.networkModule
 import org.greenstand.android.TreeTracker.di.roomModule
 import org.greenstand.android.TreeTracker.models.FeatureFlags
@@ -49,6 +50,7 @@ class TreeTrackerApplication : Application() {
                 roomModule,
                 networkModule,
             )
+            modules(featureModules)
         }
 
         if (FeatureFlags.DEBUG_ENABLED) {

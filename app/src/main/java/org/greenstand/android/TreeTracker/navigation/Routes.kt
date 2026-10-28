@@ -18,91 +18,98 @@ package org.greenstand.android.TreeTracker.navigation
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
+/**
+ * Every screen's route. Routes live here, in one place every feature can see, so a feature can
+ * open another feature's screen without depending on it. Each feature registers the screen for
+ * its routes in its Koin module with `navigation<SomeRoute> { ... }`.
+ */
+sealed interface Route : NavKey
+
 // No-arg routes
 
 @Serializable data class SplashRoute(
     val orgId: String? = null,
     val orgName: String? = null,
-) : NavKey
+) : Route
 
-@Serializable data object SignupFlowRoute : NavKey
+@Serializable data object SignupFlowRoute : Route
 
-@Serializable data object DeleteProfileRoute : NavKey
+@Serializable data object DeleteProfileRoute : Route
 
-@Serializable data object OrgRoute : NavKey
+@Serializable data object OrgRoute : Route
 
-@Serializable data object DashboardRoute : NavKey
+@Serializable data object DashboardRoute : Route
 
-@Serializable data object TreeHeightScreenRoute : NavKey
+@Serializable data object TreeHeightScreenRoute : Route
 
-@Serializable data object UserSelectRoute : NavKey
+@Serializable data object UserSelectRoute : Route
 
-@Serializable data object ProfileSelectRoute : NavKey
+@Serializable data object ProfileSelectRoute : Route
 
-@Serializable data object WalletSelectRoute : NavKey
+@Serializable data object WalletSelectRoute : Route
 
-@Serializable data object AddWalletRoute : NavKey
+@Serializable data object AddWalletRoute : Route
 
-@Serializable data object SettingsRoute : NavKey
+@Serializable data object SettingsRoute : Route
 
-@Serializable data object SessionNoteRoute : NavKey
+@Serializable data object SessionNoteRoute : Route
 
-@Serializable data object AddOrgRoute : NavKey
+@Serializable data object AddOrgRoute : Route
 
-@Serializable data object SelfieRoute : NavKey
+@Serializable data object SelfieRoute : Route
 
-@Serializable data object MessagesUserSelectRoute : NavKey
+@Serializable data object MessagesUserSelectRoute : Route
 
-@Serializable data object DevOptionsRoute : NavKey
+@Serializable data object DevOptionsRoute : Route
 
-@Serializable data object MapRoute : NavKey
+@Serializable data object MapRoute : Route
 
-@Serializable data object TreeEditUserSelectRoute : NavKey
+@Serializable data object TreeEditUserSelectRoute : Route
 
 // Routes with arguments
 
 @Serializable data class ProfileRoute(
     val planterInfoId: Long,
-) : NavKey
+) : Route
 
 @Serializable data class IndividualMessageListRoute(
     val planterInfoId: Long,
-) : NavKey
+) : Route
 
 @Serializable data class SurveyRoute(
     val messageId: String,
-) : NavKey
+) : Route
 
 @Serializable data class ImageReviewRoute(
     val photoPath: String,
-) : NavKey
+) : Route
 
 @Serializable data class LanguageRoute(
     val isFromTopBar: Boolean = true,
-) : NavKey
+) : Route
 
 @Serializable data class TreeCaptureRoute(
     val profilePicUrl: String,
-) : NavKey
+) : Route
 
 @Serializable data class TreeImageReviewRoute(
     val photoPath: String,
-) : NavKey
+) : Route
 
 @Serializable data class ChatRoute(
     val planterInfoId: Long,
     val otherChatIdentifier: String,
-) : NavKey
+) : Route
 
 @Serializable data class AnnouncementRoute(
     val messageId: String,
-) : NavKey
+) : Route
 
 @Serializable data class TreeListRoute(
     val userWallet: String,
     val userName: String,
-) : NavKey
+) : Route
 
 @Serializable data class TreeDetailRoute(
     val treeId: Long,
-) : NavKey
+) : Route

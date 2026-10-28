@@ -30,16 +30,8 @@ import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.background.SyncNotificationManager
-import org.greenstand.android.TreeTracker.capture.TreeImageReviewViewModel
-import org.greenstand.android.TreeTracker.dashboard.DashboardViewModel
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.devoptions.Configurator
-import org.greenstand.android.TreeTracker.devoptions.DevOptionsViewModel
-import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerViewModel
-import org.greenstand.android.TreeTracker.map.MapViewModel
-import org.greenstand.android.TreeTracker.messages.ChatViewModel
-import org.greenstand.android.TreeTracker.messages.announcementmessage.AnnouncementViewModel
-import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListViewModel
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceConfigUploader
@@ -69,17 +61,11 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
-import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
-import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
 import org.greenstand.android.TreeTracker.overlay.NoOpSyncProgressTracker
 import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
 import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
-import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.preferences.Preferences
-import org.greenstand.android.TreeTracker.sessionnote.SessionNoteViewModel
-import org.greenstand.android.TreeTracker.settings.SettingsViewModel
-import org.greenstand.android.TreeTracker.treeheight.TreeHeightSelectionViewModel
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.usecases.CreateLegacyTreeUseCase
@@ -88,58 +74,15 @@ import org.greenstand.android.TreeTracker.usecases.CreateTreeUseCase
 import org.greenstand.android.TreeTracker.usecases.SyncDataUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.usecases.UploadLocationDataUseCase
-import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.GpsUtils
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel
-import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.dsl.viewModel
 import org.koin.core.component.get
 import org.koin.dsl.module
 
 val appModule =
     module {
-
-        viewModel { SessionNoteViewModel() }
-
-        viewModel { AddWalletViewModel() }
-
-        viewModel { AddOrgViewModel(get(), get()) }
-
-        viewModel { LanguagePickerViewModel(get()) }
-
-        viewModel { DashboardViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-
-        viewModel { OrgPickerViewModel(get()) }
-
-        viewModel { UserSelectViewModel(null, get(), get(), get(), get()) }
-
-        viewModel { DevOptionsViewModel(get(), get()) }
-
-        viewModel { TreeHeightSelectionViewModel(get()) }
-
-        viewModel {
-            org.greenstand.android.TreeTracker.signup
-                .SignupViewModel(get(), get())
-        }
-
-        viewModel { WalletSelectViewModel(get()) }
-
-        viewModel { IndividualMessageListViewModel(get(), get(), get()) }
-
-        viewModel { ChatViewModel(get(), get(), get(), get()) }
-
-        viewModel { AnnouncementViewModel(get(), get()) }
-
-        viewModel { TreeImageReviewViewModel(get(), get(), get()) }
-
-        viewModel { PermissionViewModel(get()) }
-
-        viewModel { SettingsViewModel(get()) }
-
-        viewModel { MapViewModel(get()) }
 
         single { UserRepo(get(), get(), get(), get(), get(), get()) }
 
