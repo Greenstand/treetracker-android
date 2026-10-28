@@ -153,6 +153,7 @@ ksp {
 
 dependencies {
     implementation(project(":core:config"))
+    implementation(project(":core:preferences"))
     implementation(project(":core:resources"))
 
     // AWS S3 SDK
