@@ -344,7 +344,7 @@ class SyncDataUseCaseTest {
             assertFalse(result)
             verify { syncProgressTracker.failStep(SyncStep.SESSIONS, "sessions failed") }
             coVerify(exactly = 0) { dao.getAllTreeCaptureIdsToUpload() }
-            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(any()) }
+            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(Unit) }
         }
 
     @Test
@@ -359,7 +359,7 @@ class SyncDataUseCaseTest {
             assertFalse(result)
             verify { syncProgressTracker.failStep(SyncStep.LEGACY_TREES, "legacy failed") }
             coVerify(exactly = 0) { treeUploader.uploadTrees(any()) }
-            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(any()) }
+            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(Unit) }
         }
 
     @Test
@@ -373,7 +373,7 @@ class SyncDataUseCaseTest {
 
             verify { syncProgressTracker.failStep(SyncStep.TREES, "trees failed") }
             verify(exactly = 0) { syncProgressTracker.completeStep(SyncStep.TREES) }
-            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(any()) }
+            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(Unit) }
         }
 
     @Test
@@ -485,7 +485,7 @@ class SyncDataUseCaseTest {
             assertFalse(result)
             coVerify(exactly = 0) { planterUploader.upload(any()) }
             coVerify(exactly = 0) { sessionUploader.upload() }
-            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(any()) }
+            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(Unit) }
             verify(exactly = 0) { syncProgressTracker.endSync(null) }
         }
 

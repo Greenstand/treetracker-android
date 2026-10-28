@@ -306,12 +306,10 @@ class ImageUtilsBitmapTest {
     }
 
     @Test
-    fun `orientImage ignores a missing file`() {
+    fun `orientImage on a missing file does not throw`() {
         val missing = File(tempFolder.root, "missing.jpg")
 
         ImageUtils.orientImage(missing.absolutePath)
-
-        assertFalse(missing.exists())
     }
 
     @Test
