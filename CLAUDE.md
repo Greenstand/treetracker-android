@@ -31,6 +31,7 @@ For every unit of work, create a task folder in `docs/tasks/` named `task_{id}` 
 ### Engineering
 
 - [Architecture](docs/engineering/architecture.md)
+- [Modules](docs/engineering/modules.md)
 - [Package Structure](docs/engineering/package-structure.md)
 - [Navigation Flows](docs/engineering/navigation-flows.md)
 - [Data Entities](docs/engineering/data-entities.md)

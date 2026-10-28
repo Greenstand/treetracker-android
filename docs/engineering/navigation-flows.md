@@ -13,13 +13,18 @@ Typical sequence:
 3. First/last name input
 4. Selfie capture
 
+The first user goes to the dashboard. When sign-up was opened from a user picker (the add button
+in capture's user select or in Settings -> View/Edit Profile), it goes back to that picker and
+hands it the new planter (`SignupFlowRoute.NewUserId`). Capture's user select then starts capture
+setup with them; the profile list just shows them.
+
 ### Capture Setup Flow
 
 Managed by `CaptureSetupNavigationController`.
 
 Typical sequence:
 
-1. Dashboard -> UserSelect
+1. Dashboard -> UserSelect (choosing a planter, or signing one up, starts a fresh setup)
 2. Optional org-specific setup steps (for org-linked configurations)
 3. TreeCapture entry
 

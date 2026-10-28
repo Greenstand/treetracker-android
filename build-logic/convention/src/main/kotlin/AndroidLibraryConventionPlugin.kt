@@ -9,6 +9,12 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             pluginManager.apply("com.android.library")
             pluginManager.apply("treetracker.code-quality")
 
+            if (path.startsWith(":core:")) {
+                forbidProjectDependencies("core modules can't depend on feature modules or the app") {
+                    it.startsWith(":feature:") || it == ":app"
+                }
+            }
+
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
                 // The app has beta, dev and prerelease build types as well as debug and release.
