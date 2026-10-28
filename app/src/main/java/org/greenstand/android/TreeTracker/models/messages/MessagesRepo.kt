@@ -249,15 +249,15 @@ class MessagesRepo(
             messagesDao.insertMessage(messageEntity)
 
             // If there is no survey, don't continue on
-            message.survey ?: return@withContext
+            val survey = message.survey ?: return@withContext
 
             // If survey exists, we'll reuse it
-            if (messagesDao.getSurvey(message.survey.id) != null) {
+            if (messagesDao.getSurvey(survey.id) != null) {
                 return@withContext
             }
 
             val surveyEntity =
-                with(message.survey) {
+                with(survey) {
                     SurveyEntity(
                         id = id,
                         title = title,
@@ -265,10 +265,10 @@ class MessagesRepo(
                 }
             messagesDao.insertSurvey(surveyEntity)
 
-            message.survey.questions.map { question ->
+            survey.questions.map { question ->
                 val questionEntity =
                     QuestionEntity(
-                        surveyId = message.survey.id,
+                        surveyId = survey.id,
                         prompt = question.prompt,
                         choices = question.choices,
                     )
