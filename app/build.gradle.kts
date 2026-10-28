@@ -165,6 +165,7 @@ dependencies {
     implementation(project(":core:resources"))
     implementation(project(":core:ui"))
     implementation(project(":feature:languagepicker"))
+    implementation(project(":feature:messages"))
     implementation(project(":feature:orgpicker"))
     implementation(project(":feature:permissions"))
     implementation(project(":feature:profile"))
