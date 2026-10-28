@@ -29,7 +29,7 @@ Let Claude Code on the web build and test this app, not just read it.
   keeping it out of the repo leaves local builds untouched.
 - **Optional keys file instead of a SessionStart hook.** The setup script can't write the file,
   because it runs only when the environment cache is rebuilt and each session starts from a
-  fresh clone. A hook that wrote dummy keys worked, but making the file optional needs no
+  fresh clone. A hook that writes dummy keys would also do, but making the file optional needs no
   cloud-specific code. The cost: a local build without the file now warns instead of failing.
 - **Kotlin DSL stack.** `kmp/02-gradle-kotlin-dsl` rewrites `app/build.gradle` as
   `app/build.gradle.kts`, which still requires the file. Whichever merges second needs the same
