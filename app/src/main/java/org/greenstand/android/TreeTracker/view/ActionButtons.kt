@@ -19,9 +19,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
+
+/** Test tag of an [ApprovalButton] with `approval = true`. */
+const val APPROVE_BUTTON_TAG = "ApproveButton"
+
+/** Test tag of an [ApprovalButton] with `approval = false`. */
+const val DECLINE_BUTTON_TAG = "DeclineButton"
+
+/** Test tag of an [InfoButton]. */
+const val INFO_BUTTON_TAG = "InfoButton"
 
 /**
  * @param onClick The callback function for click event.
@@ -41,7 +51,8 @@ fun ApprovalButton(
         colors = color,
         modifier =
             modifier
-                .size(height = 60.dp, width = 60.dp),
+                .size(height = 60.dp, width = 60.dp)
+                .testTag(if (approval) APPROVE_BUTTON_TAG else DECLINE_BUTTON_TAG),
         onClick = onClick,
     ) {
         Image(
@@ -59,7 +70,7 @@ fun InfoButton(
     shape: TreeTrackerButtonShape = TreeTrackerButtonShape.Circle,
 ) {
     TreeTrackerButton(
-        modifier = modifier.size(60.dp),
+        modifier = modifier.size(60.dp).testTag(INFO_BUTTON_TAG),
         colors = AppButtonColors.WhiteLight,
         onClick = onClick,
         shape = TreeTrackerButtonShape.Circle,
