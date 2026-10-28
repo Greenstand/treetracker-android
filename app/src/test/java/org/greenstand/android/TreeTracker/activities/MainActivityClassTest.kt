@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.background
+package org.greenstand.android.TreeTracker.activities
 
-object NotificationConstants {
-    // SyncNotificationManager
-    const val SYNC_NOTIFICATION_ID = 212
-    const val SYNC_CHANNEL_ID = "org.greenstand.android.TreeTracker.background.SyncNotificationManager"
-    const val SYNC_CHANNEL_NAME = "Sync Channel"
-    const val SYNC_CHANNEL_DESCRIPTION = "Tree Syncing"
+import org.greenstand.android.TreeTracker.background.NotificationConstants
+import org.junit.Test
+import kotlin.test.assertEquals
 
-    // TreeSyncWorker
-    const val UNIQUE_WORK_ID = "UNIQUE_WORK_ID_TREE_SYNC_WORKER"
-    const val WORKER_NOTIFICATION_ID = 1337
-    const val WORKER_CHANNEL_ID = "11"
-    const val WORKER_CHANNEL_NAME = "Work Service"
+class MainActivityClassTest {
+    @Test
+    fun `sync notification opens TreeTrackerActivity`() {
+        assertEquals(TreeTrackerActivity::class.java.name, NotificationConstants.MAIN_ACTIVITY_CLASS)
+    }
 }
