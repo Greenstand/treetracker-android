@@ -32,6 +32,8 @@ import org.greenstand.android.TreeTracker.viewmodel.LocalSnackbarController
 import org.greenstand.android.TreeTracker.viewmodel.SnackbarController
 import org.junit.Rule
 import org.junit.runner.RunWith
+import org.koin.compose.KoinContext
+import org.koin.core.context.GlobalContext
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -91,10 +93,25 @@ abstract class ComposeUiTest {
             ) {
                 CustomTheme {
                     TreeTrackerTheme {
-                        content()
+                        WithCurrentKoin(content)
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Provides the Koin instance a test started, if any. Compose caches a CompositionLocal's
+     * default value for the whole JVM, so without this `koinInject` would keep resolving from
+     * the first test's (by now closed) Koin root scope.
+     */
+    @Composable
+    private fun WithCurrentKoin(content: @Composable () -> Unit) {
+        val koin = GlobalContext.getOrNull()
+        if (koin != null) {
+            KoinContext(context = koin, content = content)
+        } else {
+            content()
         }
     }
 
