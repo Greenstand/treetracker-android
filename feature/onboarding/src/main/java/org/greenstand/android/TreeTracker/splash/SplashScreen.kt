@@ -37,7 +37,7 @@ import org.greenstand.android.TreeTracker.navigation.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.config.BuildConfig
-import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.resources.R
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.SplashRoute

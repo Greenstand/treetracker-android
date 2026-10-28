@@ -166,6 +166,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":feature:devtools"))
     implementation(project(":feature:messages"))
+    implementation(project(":feature:onboarding"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:trees"))
 
