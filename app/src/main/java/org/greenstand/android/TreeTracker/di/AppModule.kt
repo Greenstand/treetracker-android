@@ -51,7 +51,6 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
-import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowData
@@ -221,8 +220,6 @@ val appModule =
                 encodeDefaults = true
             }
         }
-
-        single { TreeTrackerViewModelFactory() }
 
         single<SyncProgressTracker> {
             if (FeatureFlags.DEBUG_ENABLED) SyncProgressTracker() else NoOpSyncProgressTracker()

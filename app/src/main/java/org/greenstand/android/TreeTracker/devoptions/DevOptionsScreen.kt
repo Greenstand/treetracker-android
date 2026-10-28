@@ -43,20 +43,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @Composable
 fun DevOptionsRoot() {
-    val viewModel: DevOptionsViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val viewModel: DevOptionsViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     val overlayManager: DebugOverlayManager = koinInject()
 

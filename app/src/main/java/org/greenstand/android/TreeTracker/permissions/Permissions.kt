@@ -32,7 +32,6 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.navigation.Navigator
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -43,13 +42,13 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.permissions.PermissionAction
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalPermissionsApi
 @Composable
 fun PermissionRequest(
-    viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current),
+    viewModel: PermissionViewModel = koinViewModel(),
 ) {
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()

@@ -22,12 +22,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.SettingsRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.userselect.DeleteProfileState
 import org.greenstand.android.TreeTracker.userselect.UserSelect
 import org.greenstand.android.TreeTracker.userselect.UserSelectAction
@@ -36,11 +34,12 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors.Red
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DeleteProfileScreen() {
     val navigator = LocalNavigator.current
-    val viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val viewModel: UserSelectViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     Box(
         modifier =

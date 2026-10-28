@@ -39,21 +39,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TreeHeightScreen() {
-    val viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val viewModel: TreeHeightSelectionViewModel = koinViewModel()
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()

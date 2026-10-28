@@ -34,9 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.InfoButton
@@ -45,10 +43,11 @@ import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TreeImageReviewScreen(
-    viewModel: TreeImageReviewViewModel = viewModel(factory = LocalViewModelFactory.current),
+    viewModel: TreeImageReviewViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
 

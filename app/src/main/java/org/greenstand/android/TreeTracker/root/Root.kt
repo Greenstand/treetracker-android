@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.splash.Splash
@@ -49,12 +47,9 @@ import org.greenstand.android.TreeTracker.viewmodel.SnackbarController
 import org.greenstand.android.TreeTracker.viewmodel.resolve
 import org.koin.compose.koinInject
 
-val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { error { "No active ViewModel factory found!" } }
-
 @ExperimentalComposeApi
 @Composable
 fun Root(
-    viewModelFactory: TreeTrackerViewModelFactory,
     startRoute: SplashRoute = SplashRoute(),
 ) {
     val snackbarController = remember { SnackbarController() }
@@ -88,7 +83,6 @@ fun Root(
     }
 
     CompositionLocalProvider(
-        LocalViewModelFactory provides viewModelFactory,
         LocalSnackbarController provides snackbarController,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
