@@ -137,7 +137,7 @@ class AgentTreeCapturerTest {
             coVerify { sessionTracker.createSession(userId = powerUser.id, organizationName = null, sessionNote = null) }
             coVerify { sessionTracker.closeSession(NEW_SESSION_ID) }
             coVerify { treesToSyncHelper.refreshTreeCountToSync() }
-            coVerify(exactly = 0) { sessionTracker.startSession() }
+            coVerify(exactly = 0) { sessionTracker.startSession(any(), any(), any()) }
             coVerify(exactly = 0) { sessionTracker.endSession() }
             assertEquals(NEW_SESSION_ID, result.sessionId)
             assertEquals(powerUser.wallet, result.wallet)

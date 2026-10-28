@@ -36,7 +36,7 @@ interface UiEvent
 /**
  * A navigation event carrying a suspend lambda that receives the [Navigator].
  * Allows any navigation operation (navigate, popBackStack, deep navigation flows) and
- * supports suspend calls like `CaptureFlowNavigationController.navForward`.
+ * supports suspend calls such as a flow controller moving to its next screen.
  *
  * Not a `data class` because lambda fields produce meaningless equals/hashCode.
  */

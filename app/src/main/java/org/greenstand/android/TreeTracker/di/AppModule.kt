@@ -42,12 +42,8 @@ import org.greenstand.android.TreeTracker.models.PlanterUploader
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
-import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.TreeUploader
 import org.greenstand.android.TreeTracker.models.UserRepo
-import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowData
-import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScope
-import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessageUploader
@@ -57,10 +53,6 @@ import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrg
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.PlayInstallReferrerDataSource
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
-import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
-import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
 import org.greenstand.android.TreeTracker.overlay.NoOpSyncProgressTracker
 import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
@@ -85,8 +77,6 @@ val appModule =
     module {
 
         single { UserRepo(get(), get(), get(), get(), get(), get()) }
-
-        factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
         single { Configurator(get()) }
 
@@ -209,15 +199,4 @@ val appModule =
         single { FirebaseRemoteConfig.getInstance() }
 
         single { OrgConfigProvider(get()) }
-
-        scope<CaptureSetupScope> {
-            scoped { CaptureSetupData(get()) }
-            scoped { CaptureSetupNavigationController(get(), get(), get(), get(), get()) }
-        }
-
-        scope<CaptureFlowScope> {
-            scoped { CaptureFlowData() }
-            scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get(), get()) }
-            scoped { TreeCapturer(get(), get(), get(), get(), get()) }
-        }
     }

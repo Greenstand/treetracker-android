@@ -23,6 +23,7 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeMana
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.koin.compose.koinInject
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -36,21 +37,25 @@ fun UserSelectScreen(userRepo: UserRepo = koinInject()) {
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
-    fun startCaptureSetup(user: User) {
-        CaptureSetupScopeManager.open()
-        CaptureSetupScopeManager.getData().user = user
-        scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
-    }
-
     LaunchedEffect(Unit) {
         val newUserId = navigator.takeResult(SignupFlowRoute.NewUserId) ?: return@LaunchedEffect
-        userRepo.getUser(newUserId)?.let { startCaptureSetup(it) }
+        userRepo.getUser(newUserId)?.let { startCaptureSetup(it, navigator) }
     }
 
     UserSelect(
         navigationButtonColors = AppButtonColors.ProgressGreen,
         isCreateUserEnabled = true,
         isNotificationEnabled = true,
-        onNavigateForward = { startCaptureSetup(it) },
+        onNavigateForward = { user -> scope.launch { startCaptureSetup(user, navigator) } },
     )
+}
+
+/** Starts a fresh capture setup for [user] and moves to the org's next setup step. */
+internal suspend fun startCaptureSetup(
+    user: User,
+    navigator: Navigator,
+) {
+    CaptureSetupScopeManager.open()
+    CaptureSetupScopeManager.getData().user = user
+    CaptureSetupScopeManager.nav.navForward(navigator)
 }

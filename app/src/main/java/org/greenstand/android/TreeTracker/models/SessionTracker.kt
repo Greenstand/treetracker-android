@@ -22,7 +22,6 @@ import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -41,16 +40,23 @@ class SessionTracker(
     val currentSessionId: Long?
         get() = _currentSessionId
 
-    suspend fun startSession() {
-        val captureSetupData = CaptureSetupScopeManager.getData()
+    /**
+     * Starts the current session for [userId], ending any previous one. [organizationName] falls
+     * back to the current org when null.
+     */
+    suspend fun startSession(
+        userId: Long,
+        organizationName: String?,
+        sessionNote: String?,
+    ) {
         endSession()
 
         withContext(Dispatchers.IO) {
             val sessionEntity =
                 createSession(
-                    userId = captureSetupData.user!!.id,
-                    organizationName = captureSetupData.organizationName,
-                    sessionNote = captureSetupData.sessionNote,
+                    userId = userId,
+                    organizationName = organizationName,
+                    sessionNote = sessionNote,
                 )
 
             _currentSessionId = sessionEntity.id
