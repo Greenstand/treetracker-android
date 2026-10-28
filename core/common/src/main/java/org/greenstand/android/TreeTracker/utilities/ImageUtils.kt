@@ -22,7 +22,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.util.Base64
 import androidx.exifinterface.media.ExifInterface
-import com.amazonaws.util.IOUtils
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -45,7 +44,7 @@ object ImageUtils {
         val myInput = context.assets.open(imageFileName)
         val f = createImageFile(context)
         val fos = FileOutputStream(f)
-        fos.write(IOUtils.toByteArray(myInput))
+        fos.write(myInput.readBytes())
         fos.close()
         return f
     }
