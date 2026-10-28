@@ -31,6 +31,7 @@ include(":core:resources")
 include(":core:testing")
 include(":core:ui")
 include(":feature:devtools")
+include(":feature:messages")
 include(":feature:settings")
 include(":feature:trees")
 rootProject.name = "treetracker-android"
