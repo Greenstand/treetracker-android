@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.resources.R
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.utilities.Constants
 import org.greenstand.android.TreeTracker.view.ActionBar
