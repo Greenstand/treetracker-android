@@ -167,6 +167,7 @@ dependencies {
     implementation(project(":feature:languagepicker"))
     implementation(project(":feature:orgpicker"))
     implementation(project(":feature:permissions"))
+    implementation(project(":feature:profile"))
     implementation(project(":feature:sessionnote"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:signup"))
