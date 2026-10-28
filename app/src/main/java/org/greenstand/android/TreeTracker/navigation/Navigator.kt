@@ -96,6 +96,7 @@ class Navigator(
     val backStack: MutableList<NavKey>,
     private val clock: () -> Long = SystemClock::elapsedRealtime,
     private val origin: Any? = null,
+    private val results: PendingResult = PendingResult(),
 ) {
     // Start outside the throttle window so the first navigation is never dropped.
     private var lastMutationTime = clock() - NAVIGATION_THROTTLE_MS
@@ -109,7 +110,7 @@ class Navigator(
      * the stack — i.e. you can only navigate *away from* a screen while that screen is on
      * top. See the class doc for the rationale.
      */
-    fun scopedTo(originContentKey: Any?): Navigator = Navigator(backStack, clock, originContentKey)
+    fun scopedTo(originContentKey: Any?): Navigator = Navigator(backStack, clock, originContentKey, results)
 
     /** Push [route], honoring [NavOptions] (popUpTo / popUpToRoot / launchSingleTop). */
     fun navigate(
@@ -164,6 +165,27 @@ class Navigator(
         return true
     }
 
+    /**
+     * Pop the top entry and hand [value] to the screen that is now on top, which reads it with
+     * [takeResult]. This is how a screen returns something to whoever opened it without either
+     * side depending on the other (for example, sign-up returning the new user to the screen
+     * that opened it). Returns false, and keeps nothing, if there was nothing to pop.
+     */
+    fun <T : Any> popBackStackWithResult(
+        key: NavResultKey<T>,
+        value: T,
+    ): Boolean {
+        if (!popBackStack()) return false
+        results.set(topKey, key, value)
+        return true
+    }
+
+    /**
+     * The value handed back with [key] to the screen on top, or null. Each value is read once,
+     * and any later change to the back stack drops a value nobody read.
+     */
+    fun <T : Any> takeResult(key: NavResultKey<T>): T? = results.take(topKey, key)
+
     /** [navigate], dropped silently when this screen may not navigate (see class doc). */
     fun throttledNavigate(
         route: NavKey,
@@ -198,11 +220,51 @@ class Navigator(
 
     /** Applies multi-step stack changes atomically so they land in a single frame. */
     private fun mutate(block: () -> Unit) {
+        results.clear()
         Snapshot.withMutableSnapshot(block)
         lastMutationTime = clock()
     }
 
     private companion object {
         const val NAVIGATION_THROTTLE_MS = 300L
+    }
+}
+
+/** Names a value one screen hands back to another; see [Navigator.popBackStackWithResult]. */
+class NavResultKey<T : Any>(
+    val name: String,
+)
+
+/** The one value waiting for the screen on top, shared by every view of a [Navigator]. */
+class PendingResult {
+    private var receiver: NavKey? = null
+    private var key: NavResultKey<*>? = null
+    private var value: Any? = null
+
+    fun set(
+        receiver: NavKey?,
+        key: NavResultKey<*>,
+        value: Any,
+    ) {
+        this.receiver = receiver
+        this.key = key
+        this.value = value
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> take(
+        top: NavKey?,
+        key: NavResultKey<T>,
+    ): T? {
+        if (top == null || top != receiver || key != this.key) return null
+        val result = value as T?
+        clear()
+        return result
+    }
+
+    fun clear() {
+        receiver = null
+        key = null
+        value = null
     }
 }

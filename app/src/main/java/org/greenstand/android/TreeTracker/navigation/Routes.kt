@@ -32,7 +32,13 @@ sealed interface Route : NavKey
     val orgName: String? = null,
 ) : Route
 
-@Serializable data object SignupFlowRoute : Route
+@Serializable data object SignupFlowRoute : Route {
+    /**
+     * When sign-up was opened from another screen (a user picker), it goes back to that screen
+     * and hands it the new user's id under this key. The first user goes to the dashboard instead.
+     */
+    val NewUserId = NavResultKey<Long>("signup.newUserId")
+}
 
 @Serializable data object DeleteProfileRoute : Route
 

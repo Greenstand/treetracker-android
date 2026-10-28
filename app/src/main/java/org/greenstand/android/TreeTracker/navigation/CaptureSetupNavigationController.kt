@@ -74,28 +74,4 @@ class CaptureSetupNavigationController(
             launchSingleTop = true
         }
     }
-
-    /**
-     * Navigate forward after a new user was created from the signup flow.
-     * Includes bounds checking to prevent IndexOutOfBoundsException.
-     */
-    suspend fun navFromNewUserCreation(navigator: Navigator) {
-        incrementIndex()
-        if (currentNavPathIndex >= navPath.size) {
-            // Signup was the last step — treat as setup complete
-            currentNavPathIndex = navPath.size - 1
-            navForward(navigator)
-            return
-        }
-        val destination = navPath[currentNavPathIndex]
-        val route =
-            resolveNoArgDestination(destination)
-                ?: error("Unknown setup flow destination: ${destination.route}")
-        withContext(Dispatchers.Main) {
-            navigator.throttledNavigate(route) {
-                popUpTo<SignupFlowRoute> { inclusive = true }
-                launchSingleTop = true
-            }
-        }
-    }
 }

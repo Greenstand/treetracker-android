@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.viewmodel.Action
@@ -85,7 +84,6 @@ class UserSelectViewModel(
     private val prefs: Preferences,
 ) : BaseViewModel<UserSelectState, UserSelectAction>(UserSelectState()) {
     init {
-        CaptureSetupScopeManager.open()
         locationDataCapturer.startGpsUpdates()
         userRepo
             .users()
@@ -104,7 +102,6 @@ class UserSelectViewModel(
         when (action) {
             is UserSelectAction.SelectUser -> {
                 prefs.setUserId(action.user.id)
-                CaptureSetupScopeManager.getData().user = action.user
                 updateState { copy(selectedUser = action.user) }
             }
             is UserSelectAction.DeleteUser -> deleteUser()

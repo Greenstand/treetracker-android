@@ -22,11 +22,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
-import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.Navigator
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.koin.compose.viewmodel.koinViewModel
+
+/**
+ * Sign-up for a second or later user was opened from a user picker: go back to it and hand it the
+ * user, so the screen that opened sign-up decides what happens next (capture setup continues with
+ * that user; the profile list just shows them). Falls back to the dashboard if sign-up is the only
+ * screen on the back stack.
+ */
+private fun returnUser(
+    navigator: Navigator,
+    userId: Long,
+) {
+    if (!navigator.popBackStackWithResult(SignupFlowRoute.NewUserId, userId)) {
+        navigator.navigate(DashboardRoute) { popUpToRoot() }
+    }
+}
 
 @Composable
 fun SignUpScreen(viewModel: SignupViewModel = koinViewModel()) {
@@ -44,8 +60,7 @@ fun SignUpScreen(viewModel: SignupViewModel = koinViewModel()) {
                             launchSingleTop = true
                         }
                     } else {
-                        CaptureSetupScopeManager.getData().user = user
-                        scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navigator) }
+                        returnUser(navigator, user.id)
                     }
                 }
             }
@@ -66,8 +81,7 @@ fun SignUpScreen(viewModel: SignupViewModel = koinViewModel()) {
                             launchSingleTop = true
                         }
                     } else {
-                        CaptureSetupScopeManager.getData().user = user
-                        scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navigator) }
+                        returnUser(navigator, user.id)
                     }
                 }
                 else -> viewModel.handleAction(action)
