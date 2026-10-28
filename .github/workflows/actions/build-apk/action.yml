@@ -26,16 +26,16 @@ runs:
       shell: bash
       run: chmod +x ./gradlew
 
-    # Version code: baseVersionCode from app/build.gradle, plus this workflow's run number for
+    # Version code: baseVersionCode from app/build.gradle.kts, plus this workflow's run number for
     # every variant except release. Nothing is committed (master only accepts PRs), so the
     # number exists only in this build. Release builds keep the committed number.
     - name: Compute version code
       id: version
       shell: bash
       run: |
-        BASE=$(grep -oP 'def baseVersionCode = \K\d+' app/build.gradle)
+        BASE=$(grep -oP 'val baseVersionCode = \K\d+' app/build.gradle.kts)
         if [ -z "$BASE" ]; then
-          echo "Couldn't find 'def baseVersionCode = <number>' in app/build.gradle." >&2
+          echo "Couldn't find 'val baseVersionCode = <number>' in app/build.gradle.kts." >&2
           exit 1
         fi
         if [ "${{ inputs.build_variant }}" = "release" ]; then OFFSET=0; else OFFSET=${{ github.run_number }}; fi
