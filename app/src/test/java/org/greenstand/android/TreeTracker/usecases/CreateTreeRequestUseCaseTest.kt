@@ -25,6 +25,7 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.api.models.requests.AttributeRequest
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
@@ -36,6 +37,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class CreateTreeRequestUseCaseTest {
@@ -114,4 +116,88 @@ class CreateTreeRequestUseCaseTest {
                 createTreeRequestUseCase.execute(params)
             }
         }
+
+    @Test
+    fun `WHEN planter check in not found THEN throws IllegalStateException`() =
+        runTest {
+            val treeCapture = FakeFileGenerator.fakeTreeCapture.copy().also { it.id = 10L }
+            coEvery { dao.getTreeCaptureById(10L) } returns treeCapture
+            coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns null
+
+            val error =
+                assertFailsWith<IllegalStateException> {
+                    createTreeRequestUseCase.execute(
+                        CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg"),
+                    )
+                }
+
+            assertEquals("No Planter CheckIn", error.message)
+        }
+
+    @Test
+    fun `WHEN tree has no attributes THEN request contains an empty attribute list`() =
+        runTest {
+            stubTreeGraph(treeId = 10L, accuracy = 1.11)
+            coEvery { dao.getTreeAttributeByTreeCaptureId(10L) } returns emptyList()
+
+            val result =
+                createTreeRequestUseCase.execute(
+                    CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg"),
+                )
+
+            assertTrue(result.attributes!!.isEmpty())
+        }
+
+    @Test
+    fun `WHEN request built THEN uses device id and truncates gps accuracy to an int`() =
+        runTest {
+            stubTreeGraph(treeId = 10L, accuracy = 7.9)
+            coEvery { dao.getTreeAttributeByTreeCaptureId(10L) } returns emptyList()
+
+            val result =
+                createTreeRequestUseCase.execute(
+                    CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg"),
+                )
+
+            assertEquals("test-device-id", result.deviceIdentifier)
+            assertEquals(7, result.gpsAccuracy)
+        }
+
+    @Test
+    fun `WHEN tree has several attributes THEN keeps them in DAO order`() =
+        runTest {
+            stubTreeGraph(treeId = 10L, accuracy = 1.11)
+            coEvery { dao.getTreeAttributeByTreeCaptureId(10L) } returns
+                listOf(
+                    TreeAttributeEntity(key = "dbh", value = "10", treeCaptureId = 10L),
+                    TreeAttributeEntity(key = "height_color", value = "green", treeCaptureId = 10L),
+                    TreeAttributeEntity(key = "abs_step_count", value = "42", treeCaptureId = 10L),
+                )
+
+            val result =
+                createTreeRequestUseCase.execute(
+                    CreateTreeRequestParams(treeId = 10L, treeImageUrl = "https://example.com/tree.jpg"),
+                )
+
+            assertEquals(
+                listOf(
+                    AttributeRequest(key = "dbh", value = "10"),
+                    AttributeRequest(key = "height_color", value = "green"),
+                    AttributeRequest(key = "abs_step_count", value = "42"),
+                ),
+                result.attributes,
+            )
+        }
+
+    private fun stubTreeGraph(
+        treeId: Long,
+        accuracy: Double,
+    ) {
+        val treeCapture = FakeFileGenerator.fakeTreeCapture.copy(accuracy = accuracy).also { it.id = treeId }
+        val planterCheckIn = FakeFileGenerator.fakePlanterCheckInEntity.copy().also { it.id = treeCapture.planterCheckInId }
+        val planterInfo = FakeFileGenerator.fakePlanterInfo.copy().also { it.id = planterCheckIn.planterInfoId }
+        coEvery { dao.getTreeCaptureById(treeId) } returns treeCapture
+        coEvery { dao.getPlanterCheckInById(treeCapture.planterCheckInId) } returns planterCheckIn
+        coEvery { dao.getPlanterInfoById(planterCheckIn.planterInfoId) } returns planterInfo
+    }
 }
