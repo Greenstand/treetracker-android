@@ -39,6 +39,13 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 /**
+ * Screen qualifiers for tests that show a text field inside a dialog. Robolectric never idles
+ * when such a dialog is laid out wider than 320dp (robolectric/robolectric#8460), so those test
+ * classes override the default 400dp width with `@Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)`.
+ */
+const val TEXT_FIELD_DIALOG_QUALIFIERS = "w320dp-h800dp-xxhdpi"
+
+/**
  * Base class for Robolectric Compose UI tests.
  *
  * Renders content inside the same theme and CompositionLocals the app provides, with a
@@ -50,7 +57,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(
-    qualifiers = DEFAULT_QUALIFIERS,
+    qualifiers = "w400dp-h800dp-xxhdpi",
     application = android.app.Application::class,
     sdk = [35],
 )
@@ -128,13 +135,3 @@ abstract class ComposeUiTest {
         const val CLOCK_STEP_MS = 1_000L
     }
 }
-
-/** Screen qualifiers every [ComposeUiTest] runs with. */
-const val DEFAULT_QUALIFIERS = "w400dp-h800dp-xxhdpi"
-
-/**
- * Screen qualifiers for tests that show a dialog containing a text field. At widths over
- * 320dp Robolectric never lets such a dialog go idle (`AppNotIdleException`), so these tests
- * use Robolectric's default width.
- */
-const val DIALOG_TEXT_FIELD_QUALIFIERS = "w320dp-h800dp-xxhdpi"

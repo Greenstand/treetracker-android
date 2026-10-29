@@ -29,16 +29,16 @@ import org.greenstand.android.TreeTracker.capture.TreeImageReview
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewAction
 import org.greenstand.android.TreeTracker.capture.TreeImageReviewState
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.uitest.DIALOG_TEXT_FIELD_QUALIFIERS
 import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.INFO_BUTTON_TAG
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.greenstand.android.TreeTracker.uitest.TEXT_FIELD_DIALOG_QUALIFIERS
 import org.robolectric.annotation.Config
 
 /** Tests for the stateless [TreeImageReview] screen. */
-@Config(qualifiers = DIALOG_TEXT_FIELD_QUALIFIERS)
+@Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)
 class TreeImageReviewUiTest : ComposeUiTest() {
     private val actions = mutableListOf<TreeImageReviewAction>()
 

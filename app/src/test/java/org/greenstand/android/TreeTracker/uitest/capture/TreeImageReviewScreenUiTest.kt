@@ -40,16 +40,16 @@ import org.greenstand.android.TreeTracker.models.organization.FeatureResolver
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.uitest.DIALOG_TEXT_FIELD_QUALIFIERS
 import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.greenstand.android.TreeTracker.uitest.TEXT_FIELD_DIALOG_QUALIFIERS
 import org.robolectric.annotation.Config
 
 /** Tests for the [TreeImageReviewScreen] root: ViewModel wiring and capture flow navigation. */
-@Config(qualifiers = DIALOG_TEXT_FIELD_QUALIFIERS)
+@Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)
 class TreeImageReviewScreenUiTest : ComposeUiTest() {
     private val treeCapturer = mockk<TreeCapturer>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)

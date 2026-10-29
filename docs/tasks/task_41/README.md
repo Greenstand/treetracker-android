@@ -6,16 +6,10 @@ Make `testReleaseUnitTest` and `testDebugUnitTest` pass on the test coverage bra
 
 ## Fixes
 
-- `SyncDataUseCaseTest`: `coVerify(exactly = 0) { uploadLocationDataUseCase.execute(any()) }`
-  failed with `MockKException: left matchers: [any<Unit>()]`. MockK can't match `any()` for a
-  `Unit` argument, so the checks pass `Unit` directly.
-- `ImageUtilsBitmapTest` "orientImage ignores a missing file": Robolectric's native
-  `BitmapFactory.decodeFile` creates an empty file at the path, so the test now checks that
-  nothing was written instead of that the file doesn't exist.
-- `app/build.gradle`: test JVMs get a 3 GB heap. With Gradle's 512 MB default the Robolectric
-  Compose UI tests in `testDebugUnitTest` ran out of memory.
-- `CustomDialogUiTest`, `TreeImageReviewUiTest`, `TreeImageReviewScreenUiTest`: tests that
-  show a dialog with a text field failed with `AppNotIdleException`. At widths over 320dp
-  Robolectric never lets such a dialog go idle, so these classes run at
-  `DIALOG_TEXT_FIELD_QUALIFIERS` (`w320dp-h800dp-xxhdpi`) instead of the base class's
-  `w400dp-h800dp-xxhdpi`.
+The main fixes (MockK `Unit` matchers in `SyncDataUseCaseTest`, test JVM heap, and 320dp
+qualifiers for text-field dialog UI tests) landed on the PR branch directly. This task adds:
+
+- `ImageUtilsBitmapTest` "orientImage on a missing file does not throw" also checks that
+  nothing was written. Robolectric's native `BitmapFactory.decodeFile` creates an empty file
+  at the path, so the check is on the file's length, not on it being absent.
+- `.gitignore`: ignore `.kotlin/` compiler session files.
