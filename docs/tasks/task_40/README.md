@@ -112,7 +112,6 @@ touch it. Each should get its own issue.
 - SessionTracker.createSession ignores CaptureSetupData.destinationWallet; orgRepo walletId fallback unreachable.
 - LocationDataCapturer.lastConvergenceWithinRange aliases currentConvergence; mutated in place after converging.
 - DeviceOrientation.takeSnapshotAndDisable stores live rotationMatrix array, not a copy.
-- ImageUtils.orientImage on a missing path creates the file instead of skipping it.
 - ImageUtils.printImage(IntArray) off by one row / out of bounds; decodeBitmap exif!! after catching IOException; resizeImage/orientImage leak FileOutputStream.
 - StepCounter.absoluteStepCount reads -1 not null; "-1" stored with no sensor.
 - TreeCapturer.pinLocation sets newTreeUuid even on failure and keeps previous convergence.
