@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.models
 
 import android.hardware.Sensor
+import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
@@ -31,6 +32,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class StepCounterTest {
@@ -106,4 +109,65 @@ class StepCounterTest {
                 sensorManager.unregisterListener(any<android.hardware.SensorEventListener>())
             }
         }
+
+    @Test
+    fun `WHEN registerListener succeeds THEN isListenerRegistered is true`() {
+        every {
+            sensorManager.registerListener(any<SensorEventListener>(), any<Sensor>(), any<Int>())
+        } returns true
+
+        stepCounter.enable()
+
+        assertTrue(stepCounter.isListenerRegistered)
+    }
+
+    @Test
+    fun `WHEN registerListener fails THEN isListenerRegistered is false`() {
+        every {
+            sensorManager.registerListener(any<SensorEventListener>(), any<Sensor>(), any<Int>())
+        } returns false
+
+        stepCounter.enable()
+
+        assertFalse(stepCounter.isListenerRegistered)
+    }
+
+    @Test
+    fun `WHEN the device has no step counter THEN enable registers nothing`() {
+        every { sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) } returns null
+        val counterWithoutSensor = StepCounter(sensorManager = sensorManager, preferences = preferences)
+
+        counterWithoutSensor.enable()
+
+        assertFalse(counterWithoutSensor.isListenerRegistered)
+        verify(exactly = 0) {
+            sensorManager.registerListener(any<SensorEventListener>(), any<Sensor>(), any<Int>())
+        }
+    }
+
+    @Test
+    fun `WHEN disable after a successful enable THEN isListenerRegistered is false`() {
+        every {
+            sensorManager.registerListener(any<SensorEventListener>(), any<Sensor>(), any<Int>())
+        } returns true
+        stepCounter.enable()
+
+        stepCounter.disable()
+
+        assertFalse(stepCounter.isListenerRegistered)
+    }
+
+    @Test
+    fun `WHEN both step counts are equal THEN deltaSteps is zero`() {
+        every { preferences.getInt(any(), any()) } returns 42
+
+        assertEquals(0, stepCounter.deltaSteps)
+    }
+
+    @Test
+    fun `WHEN absoluteStepCount read THEN it comes from preferences`() {
+        every { preferences.getInt(any(), any()) } returns 321
+
+        assertEquals(321, stepCounter.absoluteStepCount)
+    }
 }

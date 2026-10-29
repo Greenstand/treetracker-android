@@ -19,9 +19,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -36,6 +39,7 @@ import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
@@ -273,4 +277,155 @@ class TreeCapturerTest {
 
             assertFalse(result)
         }
+
+    @Test
+    fun `WHEN pinLocation THEN tree capture mode is turned on and GPS converges before checking coordinates`() =
+        runTest {
+            every { locationDataCapturer.isLocationCoordinateAvailable() } returns false
+
+            treeCapturer.pinLocation()
+
+            coVerifyOrder {
+                locationDataCapturer.turnOnTreeCaptureMode()
+                locationDataCapturer.converge()
+                locationDataCapturer.isLocationCoordinateAvailable()
+            }
+        }
+
+    @Test
+    fun `WHEN location not available THEN pinLocation does not read the convergence`() =
+        runTest {
+            every { locationDataCapturer.isLocationCoordinateAvailable() } returns false
+
+            treeCapturer.pinLocation()
+
+            verify(exactly = 0) { locationDataCapturer.convergence() }
+        }
+
+    @Test
+    fun `WHEN nothing captured yet THEN currentTree is null`() {
+        assertNull(treeCapturer.currentTree)
+    }
+
+    @Test
+    fun `WHEN setImage THEN step counts are stored as tree attributes`() =
+        runTest {
+            pinAndSetImage(absoluteSteps = 100, deltaSteps = 10)
+
+            val attributes = treeCapturer.currentTree!!.treeCaptureAttributes()
+            assertEquals("100", attributes[Tree.ABS_STEP_COUNT_KEY])
+            assertEquals("10", attributes[Tree.DELTA_STEP_COUNT_KEY])
+        }
+
+    @Test
+    fun `WHEN absolute step count is unknown THEN setImage stores zero`() =
+        runTest {
+            pinAndSetImage(absoluteSteps = null, deltaSteps = 0)
+
+            val attributes = treeCapturer.currentTree!!.treeCaptureAttributes()
+            assertEquals("0", attributes[Tree.ABS_STEP_COUNT_KEY])
+            assertEquals("0", attributes[Tree.DELTA_STEP_COUNT_KEY])
+        }
+
+    @Test
+    fun `WHEN setImage THEN the step count is snapshotted for the next tree`() =
+        runTest {
+            pinAndSetImage()
+
+            verify(exactly = 1) { stepCounter.snapshotAbsoluteStepCountOnTreeCapture() }
+        }
+
+    @Test
+    fun `WHEN a rotation matrix snapshot exists THEN setImage stores it comma separated`() =
+        runTest {
+            pinAndSetImage(rotationMatrix = floatArrayOf(1f, 0.5f, -2f))
+
+            val attributes = treeCapturer.currentTree!!.treeCaptureAttributes()
+            assertEquals("1.0,0.5,-2.0", attributes[Tree.ROTATION_MATRIX_KEY])
+        }
+
+    @Test
+    fun `WHEN no rotation matrix snapshot exists THEN setImage stores no rotation attribute`() =
+        runTest {
+            pinAndSetImage(rotationMatrix = null)
+
+            val attributes = treeCapturer.currentTree!!.treeCaptureAttributes()
+            assertFalse(attributes.containsKey(Tree.ROTATION_MATRIX_KEY))
+        }
+
+    @Test
+    fun `WHEN convergence has no stats THEN setImage uses zero coordinates`() =
+        runTest {
+            pinAndSetImage(longitude = null, latitude = null)
+
+            val tree = treeCapturer.currentTree!!
+            assertEquals(0.0, tree.meanLongitude)
+            assertEquals(0.0, tree.meanLatitude)
+        }
+
+    @Test
+    fun `WHEN setNote after addAttribute THEN attributes are kept`() =
+        runTest {
+            pinAndSetImage()
+            treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, "green")
+
+            treeCapturer.setNote("a note")
+
+            val tree = treeCapturer.currentTree!!
+            assertEquals("a note", tree.content)
+            assertEquals("green", tree.treeCaptureAttributes()[Tree.TREE_COLOR_ATTR_KEY])
+        }
+
+    @Test
+    fun `WHEN no tree captured THEN setNote and addAttribute leave currentTree null`() {
+        treeCapturer.setNote("a note")
+        treeCapturer.addAttribute("key", "value")
+
+        assertNull(treeCapturer.currentTree)
+    }
+
+    @Test
+    fun `WHEN saveTree THEN the current tree is passed to the use case`() =
+        runTest {
+            pinAndSetImage()
+            treeCapturer.setNote("saved note")
+            val savedTree = slot<Tree>()
+            coEvery { createTreeUseCase.execute(capture(savedTree)) } returns 1L
+
+            treeCapturer.saveTree()
+
+            assertEquals(TREE_UUID, savedTree.captured.treeUuid)
+            assertEquals(SESSION_ID, savedTree.captured.sessionId)
+            assertEquals("saved note", savedTree.captured.content)
+        }
+
+    private suspend fun pinAndSetImage(
+        absoluteSteps: Int? = 100,
+        deltaSteps: Int = 10,
+        rotationMatrix: FloatArray? = null,
+        longitude: ConvergenceStats? = ConvergenceStats(mean = -122.0, variance = 0.01, standardDeviation = 0.1),
+        latitude: ConvergenceStats? = ConvergenceStats(mean = 37.0, variance = 0.01, standardDeviation = 0.1),
+    ) {
+        val convergence = mockk<Convergence>()
+        every { convergence.longitudeConvergence } returns longitude
+        every { convergence.latitudeConvergence } returns latitude
+        every { locationDataCapturer.isLocationCoordinateAvailable() } returns true
+        every { locationDataCapturer.generatedTreeUuid } returns TREE_UUID
+        every { locationDataCapturer.convergence() } returns convergence
+        every { sessionTracker.currentSessionId } returns SESSION_ID
+        every { stepCounter.absoluteStepCount } returns absoluteSteps
+        every { stepCounter.deltaSteps } returns deltaSteps
+        every { deviceOrientation.rotationMatrixSnapshot } returns rotationMatrix
+
+        treeCapturer.pinLocation()
+
+        val imageFile = mockk<File>()
+        every { imageFile.absolutePath } returns "/test/image.jpg"
+        treeCapturer.setImage(imageFile)
+    }
+
+    companion object {
+        private val TREE_UUID: UUID = UUID.fromString("0f8fad5b-d9cb-469f-a165-70867728950e")
+        private const val SESSION_ID = 42L
+    }
 }

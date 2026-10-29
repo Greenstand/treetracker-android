@@ -55,8 +55,8 @@ import org.greenstand.android.TreeTracker.view.SelectableImageDetail
 fun TreeListScreen(
     userWallet: String,
     userName: String,
+    viewModel: TreeListViewModel = viewModel(factory = TreeListViewModelFactory(userWallet)),
 ) {
-    val viewModel: TreeListViewModel = viewModel(factory = TreeListViewModelFactory(userWallet))
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState(TreeListState())
 

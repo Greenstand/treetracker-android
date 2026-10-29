@@ -19,7 +19,9 @@ import android.location.Location
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
+import org.greenstand.android.TreeTracker.models.ConvergenceStats
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
@@ -177,5 +179,90 @@ class ConvergenceTest {
             convergence.latitudeConvergence!!.standardDeviation,
             0.0,
         )
+    }
+
+    @Test
+    fun `stats are null before convergence is computed`() {
+        assertNull(convergence.longitudeConvergence)
+        assertNull(convergence.latitudeConvergence)
+        assertNull(convergence.longitudinalStandardDeviation())
+        assertNull(convergence.latitudinalStandardDeviation())
+    }
+
+    @Test
+    fun `standard deviation accessors return the computed values`() {
+        convergence.computeConvergence()
+
+        assertEquals(LONGITUDINAL_STD_DEV, convergence.longitudinalStandardDeviation()!!, 0.0)
+        assertEquals(LATITUDINAL_STD_DEV, convergence.latitudinalStandardDeviation()!!, 0.0)
+    }
+
+    @Test
+    fun `identical locations have zero variance`() {
+        val sameLocations = List(4) { location(longitude = 10.0, latitude = 20.0) }
+        val identical = Convergence(sameLocations)
+
+        identical.computeConvergence()
+
+        assertEquals(ConvergenceStats(10.0, 0.0, 0.0), identical.longitudeConvergence)
+        assertEquals(ConvergenceStats(20.0, 0.0, 0.0), identical.latitudeConvergence)
+    }
+
+    @Test
+    fun `sliding window replacing a value with itself keeps the mean`() {
+        val window = Convergence(List(4) { location(longitude = 1.0, latitude = 1.0) })
+
+        val stats =
+            window.computeSlidingWindowStats(
+                currentStats = ConvergenceStats(mean = 2.0, variance = 0.0, standardDeviation = 0.0),
+                replacingValue = 2.0,
+                newValue = 2.0,
+            )
+
+        assertEquals(ConvergenceStats(2.0, 0.0, 0.0), stats)
+    }
+
+    @Test
+    fun `sliding window stats shift the mean by the replaced difference over the window size`() {
+        val window = Convergence(List(4) { location(longitude = 1.0, latitude = 1.0) })
+
+        val stats =
+            window.computeSlidingWindowStats(
+                currentStats = ConvergenceStats(mean = 1.0, variance = 0.0, standardDeviation = 0.0),
+                replacingValue = 1.0,
+                newValue = 5.0,
+            )
+
+        // mean = 1 - 1/4 + 5/4 = 2; variance = 0 - 0/4 + (5 - 2)^2 / 4 = 2.25
+        assertEquals(2.0, stats.mean, 0.0)
+        assertEquals(2.25, stats.variance, 0.0)
+        assertEquals(1.5, stats.standardDeviation, 0.0)
+    }
+
+    @Test
+    fun `sliding window convergence matches a fresh computation for the new window`() {
+        convergence.computeConvergence()
+        convergence.computeSlidingWindowConvergence(locations[0], locations[5])
+
+        val fresh = Convergence(locations.subList(1, 6))
+        fresh.computeConvergence()
+
+        assertEquals(fresh.longitudeConvergence!!.mean, convergence.longitudeConvergence!!.mean, 1e-9)
+        assertEquals(fresh.latitudeConvergence!!.mean, convergence.latitudeConvergence!!.mean, 1e-9)
+    }
+
+    @Test(expected = NullPointerException::class)
+    fun `sliding window convergence requires an initial computation`() {
+        convergence.computeSlidingWindowConvergence(locations[0], locations[5])
+    }
+
+    private fun location(
+        longitude: Double,
+        latitude: Double,
+    ): Location {
+        val location = mockk<Location>()
+        every { location.longitude } returns longitude
+        every { location.latitude } returns latitude
+        return location
     }
 }

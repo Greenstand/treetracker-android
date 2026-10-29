@@ -86,19 +86,42 @@ fun MapScreen(
         MapLibre.getInstance(context)
     }
 
+    MapContent(
+        state = state,
+        onBackClicked = { navigator.throttledPopBackStack() },
+        onMarkerSelected = { markerId ->
+            viewModel.handleAction(MapAction.SelectMarker(markerId))
+        },
+        map = {
+            LibreMap(
+                markers = state.markers,
+                stepPoints = state.stepPoints,
+                selectedMarkerId = state.selectedMarkerId,
+                selectedSessionId = state.selectedSessionId,
+                styleUrl = "https://tiles.openfreemap.org/styles/liberty",
+                onMarkerClick = { markerId ->
+                    viewModel.handleAction(MapAction.SelectMarker(markerId))
+                },
+            )
+        },
+    )
+}
+
+/**
+ * Stateless map screen UI: the [map] slot (MapLibre in the app) with the back button and
+ * the tree carousel drawn over it.
+ */
+@Composable
+fun MapContent(
+    state: MapState,
+    onBackClicked: () -> Unit,
+    onMarkerSelected: (String) -> Unit,
+    map: @Composable () -> Unit,
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        LibreMap(
-            markers = state.markers,
-            stepPoints = state.stepPoints,
-            selectedMarkerId = state.selectedMarkerId,
-            selectedSessionId = state.selectedSessionId,
-            styleUrl = "https://tiles.openfreemap.org/styles/liberty",
-            onMarkerClick = { markerId ->
-                viewModel.handleAction(MapAction.SelectMarker(markerId))
-            },
-        )
+        map()
 
         // Back button in top left corner
         Surface(
@@ -112,7 +135,7 @@ fun MapScreen(
             color = Color.White,
         ) {
             IconButton(
-                onClick = { navigator.throttledPopBackStack() },
+                onClick = onBackClicked,
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -132,7 +155,7 @@ fun MapScreen(
                 markers = state.markers,
                 selectedMarkerId = state.selectedMarkerId,
                 onMarkerClick = { marker ->
-                    viewModel.handleAction(MapAction.SelectMarker(marker.id))
+                    onMarkerSelected(marker.id)
                 },
             )
         }

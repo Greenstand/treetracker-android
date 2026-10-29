@@ -23,7 +23,9 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -38,6 +40,8 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class WalletSelectViewModelTest {
@@ -82,5 +86,113 @@ class WalletSelectViewModelTest {
             val state = viewModel.state.first()
             assertNotNull(state.selectedUser)
             assertEquals(targetUser.id, state.selectedUser!!.id)
+        }
+
+    private val current = FakeFileGenerator.fakeUsers[0].copy(wallet = "current-wallet")
+    private val other = FakeFileGenerator.fakeUsers[1].copy(wallet = "other-wallet")
+    private val third = FakeFileGenerator.fakeUsers[2].copy(wallet = "third-wallet")
+
+    @Test
+    fun `WHEN created THEN current user is set and excluded from alternate users`() =
+        runTest {
+            every { captureSetupData.user } returns current
+            every { userRepo.users() } returns flowOf(listOf(current, other, third))
+
+            val viewModel = WalletSelectViewModel(userRepo)
+
+            val state = viewModel.state.value
+            assertEquals(current, state.currentUser)
+            assertEquals(listOf(other, third), state.alternateUsers)
+            assertNull(state.selectedUser)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `GIVEN no current user WHEN created THEN every user is an alternate`() =
+        runTest {
+            every { captureSetupData.user } returns null
+            every { userRepo.users() } returns flowOf(listOf(current, other))
+
+            val viewModel = WalletSelectViewModel(userRepo)
+
+            assertNull(viewModel.state.value.currentUser)
+            assertEquals(listOf(current, other), viewModel.state.value.alternateUsers)
+        }
+
+    @Test
+    fun `WHEN the users flow emits again THEN alternate users are refreshed`() =
+        runTest {
+            val users = MutableStateFlow(listOf(current, other))
+            every { captureSetupData.user } returns current
+            every { userRepo.users() } returns users
+            val viewModel = WalletSelectViewModel(userRepo)
+            assertEquals(listOf(other), viewModel.state.value.alternateUsers)
+
+            users.value = listOf(current, other, third)
+
+            assertEquals(listOf(other, third), viewModel.state.value.alternateUsers)
+            assertEquals(current, viewModel.state.value.currentUser)
+        }
+
+    @Test
+    fun `WHEN a planter is selected THEN its wallet becomes the destination wallet`() =
+        runTest {
+            every { captureSetupData.user } returns current
+            every { userRepo.users() } returns flowOf(listOf(current, other))
+            coEvery { userRepo.getUserList() } returns listOf(current, other)
+            val viewModel = WalletSelectViewModel(userRepo)
+
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
+
+            assertEquals(other, viewModel.state.value.selectedUser)
+            verify { captureSetupData.destinationWallet = "other-wallet" }
+        }
+
+    @Test
+    fun `WHEN a different planter is selected THEN the selection and destination wallet change`() =
+        runTest {
+            every { captureSetupData.user } returns current
+            every { userRepo.users() } returns flowOf(listOf(current, other, third))
+            coEvery { userRepo.getUserList() } returns listOf(current, other, third)
+            val viewModel = WalletSelectViewModel(userRepo)
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
+
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(third.id))
+
+            assertEquals(third, viewModel.state.value.selectedUser)
+            verify { captureSetupData.destinationWallet = "third-wallet" }
+        }
+
+    @Test
+    fun `WHEN an unknown planter is selected THEN selection and destination wallet are cleared`() =
+        runTest {
+            every { captureSetupData.user } returns current
+            every { userRepo.users() } returns flowOf(listOf(current, other))
+            coEvery { userRepo.getUserList() } returns listOf(current, other)
+            val viewModel = WalletSelectViewModel(userRepo)
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
+
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(-99L))
+
+            assertNull(viewModel.state.value.selectedUser)
+            verify { captureSetupData.destinationWallet = null }
+        }
+
+    @Test
+    fun `WHEN navigation actions are sent THEN state is unchanged and no events are emitted`() =
+        runTest {
+            every { captureSetupData.user } returns current
+            every { userRepo.users() } returns flowOf(listOf(current, other))
+            val viewModel = WalletSelectViewModel(userRepo)
+            val before = viewModel.state.value
+
+            viewModel.handleAction(WalletSelectAction.NavigateToUserSelect)
+            viewModel.handleAction(WalletSelectAction.NavigateForward)
+            viewModel.handleAction(WalletSelectAction.NavigateToAddWallet)
+            viewModel.handleAction(WalletSelectAction.NavigateBack)
+
+            assertEquals(before, viewModel.state.value)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+            verify(exactly = 0) { captureSetupData.destinationWallet = any() }
         }
 }

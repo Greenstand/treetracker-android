@@ -38,6 +38,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class AddOrgViewModelTest {
@@ -200,5 +202,128 @@ class AddOrgViewModelTest {
 
             assertEquals("Different Org", viewModel.state.value.orgName)
             verify { captureSetupData.organizationName = "Different Org" }
+        }
+
+    private fun createViewModel(previousOrg: String? = null): AddOrgViewModel {
+        every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
+        every { preferences.getString(any(), any()) } returns previousOrg
+        return AddOrgViewModel(preferences, orgRepo)
+    }
+
+    @Test
+    fun `GIVEN no saved org WHEN created THEN previous org name is null and no events are emitted`() =
+        runTest {
+            val viewModel = createViewModel(previousOrg = null)
+
+            assertNull(viewModel.state.value.previousOrgName)
+            assertEquals("", viewModel.state.value.orgName)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN created THEN previous org name is read from the autofill org key`() =
+        runTest {
+            createViewModel(previousOrg = "PreviousOrg")
+
+            verify { preferences.getString(match { it.path.endsWith("/autofill-org") }, null) }
+        }
+
+    @Test
+    fun `GIVEN current org name is whitespace WHEN created THEN org name is not pre-filled`() =
+        runTest {
+            every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "9", name = "   ")
+
+            val viewModel = createViewModel()
+
+            assertEquals("", viewModel.state.value.orgName)
+            verify(exactly = 0) { captureSetupData.organizationName = any() }
+        }
+
+    @Test
+    fun `WHEN autofill is applied THEN org name becomes the previous org without touching capture data`() =
+        runTest {
+            val viewModel = createViewModel(previousOrg = "AutofillOrg")
+
+            viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
+
+            assertEquals("AutofillOrg", viewModel.state.value.orgName)
+            verify(exactly = 0) { captureSetupData.organizationName = any() }
+        }
+
+    @Test
+    fun `GIVEN autofill applied WHEN default org is set THEN autofilled name is saved and used`() =
+        runTest {
+            val viewModel = createViewModel(previousOrg = "AutofillOrg")
+            viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
+
+            viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+
+            verify { mockEditor.putString(match { it.path.endsWith("/autofill-org") }, "AutofillOrg") }
+            verify { mockEditor.apply() }
+            verify { captureSetupData.organizationName = "AutofillOrg" }
+        }
+
+    @Test
+    fun `GIVEN pre-filled org WHEN default org is set without typing THEN pre-filled name is saved`() =
+        runTest {
+            every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
+            val viewModel = createViewModel()
+
+            viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+
+            verify { mockEditor.putString(any(), "Kasiki Hai") }
+            verify(exactly = 2) { captureSetupData.organizationName = "Kasiki Hai" }
+        }
+
+    @Test
+    fun `GIVEN empty org name WHEN default org is set THEN nothing is saved but capture data gets the empty name`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+
+            verify(exactly = 0) { preferences.edit() }
+            verify(exactly = 0) { mockEditor.putString(any(), any()) }
+            verify { captureSetupData.organizationName = "" }
+        }
+
+    @Test
+    fun `GIVEN whitespace org name WHEN default org is set THEN nothing is saved`() =
+        runTest {
+            val viewModel = createViewModel()
+            viewModel.handleAction(AddOrgAction.UpdateOrgName("   "))
+
+            viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+
+            verify(exactly = 0) { mockEditor.putString(any(), any()) }
+            verify(exactly = 2) { captureSetupData.organizationName = "   " }
+        }
+
+    @Test
+    fun `WHEN org name is updated THEN user image and previous org are kept`() =
+        runTest {
+            val viewModel = createViewModel(previousOrg = "PreviousOrg")
+
+            viewModel.handleAction(AddOrgAction.UpdateOrgName("Typed"))
+
+            val state = viewModel.state.value
+            assertEquals("Typed", state.orgName)
+            assertEquals("PreviousOrg", state.previousOrgName)
+            assertEquals(FakeFileGenerator.fakeUsers.first().photoPath, state.userImagePath)
+        }
+
+    @Test
+    fun `WHEN navigation actions are sent THEN state is unchanged and no events are emitted`() =
+        runTest {
+            val viewModel = createViewModel(previousOrg = "PreviousOrg")
+            viewModel.handleAction(AddOrgAction.UpdateOrgName("Typed"))
+            val before = viewModel.state.value
+
+            viewModel.handleAction(AddOrgAction.NavigateBack)
+            viewModel.handleAction(AddOrgAction.NavigateNext)
+
+            assertEquals(before, viewModel.state.value)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+            verify(exactly = 0) { mockEditor.putString(any(), any()) }
         }
 }

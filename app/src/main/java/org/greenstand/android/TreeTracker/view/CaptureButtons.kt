@@ -26,9 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
+
+/** Test tag of an [OrangeAddButton]. */
+const val ORANGE_ADD_BUTTON_TAG = "OrangeAddButton"
+
+/** Test tag of a [CaptureButton]. */
+const val CAPTURE_BUTTON_TAG = "CaptureButton"
 
 @Composable
 fun OrangeAddButton(
@@ -41,7 +48,8 @@ fun OrangeAddButton(
         colors = AppButtonColors.UploadOrange,
         modifier =
             modifier
-                .size(70.dp),
+                .size(70.dp)
+                .testTag(ORANGE_ADD_BUTTON_TAG),
     ) {
         Image(
             painter = painterResource(id = R.drawable.add),
@@ -61,7 +69,7 @@ fun CaptureButton(
     isEnabled: Boolean,
 ) {
     TreeTrackerButton(
-        modifier = modifier.size(70.dp),
+        modifier = modifier.size(70.dp).testTag(CAPTURE_BUTTON_TAG),
         isEnabled = isEnabled,
         colors = AppButtonColors.ProgressGreen,
         onClick = onClick,

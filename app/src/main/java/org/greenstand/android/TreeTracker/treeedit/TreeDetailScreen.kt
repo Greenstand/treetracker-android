@@ -60,8 +60,10 @@ import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @Composable
-fun TreeDetailScreen(treeId: Long) {
-    val viewModel: TreeDetailViewModel = viewModel(factory = TreeDetailViewModelFactory(treeId))
+fun TreeDetailScreen(
+    treeId: Long,
+    viewModel: TreeDetailViewModel = viewModel(factory = TreeDetailViewModelFactory(treeId)),
+) {
     val state by viewModel.state.collectAsState(TreeDetailState())
 
     HandleUIEvents(viewModel)

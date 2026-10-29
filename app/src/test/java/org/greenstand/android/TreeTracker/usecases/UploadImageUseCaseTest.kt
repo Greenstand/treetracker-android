@@ -17,9 +17,11 @@ package org.greenstand.android.TreeTracker.usecases
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.amazonaws.AmazonClientException
+import com.amazonaws.AmazonServiceException
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -28,6 +30,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 @ExperimentalCoroutinesApi
@@ -82,5 +85,46 @@ class UploadImageUseCaseTest {
             val result = uploadImageUseCase.execute(params)
 
             assertNull(result)
+        }
+
+    @Test
+    fun `WHEN execute called THEN passes path latitude and longitude to the storage client`() =
+        runTest {
+            every { objectStorageClient.put(any(), any(), any()) } returns "https://bucket/image.jpg"
+
+            uploadImageUseCase.execute(
+                UploadImageParams(
+                    imagePath = "/photos/other.jpg",
+                    lat = -1.29,
+                    long = 36.82,
+                ),
+            )
+
+            verify(exactly = 1) { objectStorageClient.put("/photos/other.jpg", -1.29, 36.82) }
+        }
+
+    @Test
+    fun `WHEN storage service rejects the upload THEN returns null`() =
+        runTest {
+            every { objectStorageClient.put(any(), any(), any()) } throws AmazonServiceException("Access denied")
+
+            val result =
+                uploadImageUseCase.execute(
+                    UploadImageParams(imagePath = "/photos/tree.jpg", lat = 1.0, long = 2.0),
+                )
+
+            assertNull(result)
+        }
+
+    @Test
+    fun `WHEN a non AWS exception occurs THEN it propagates to the caller`() =
+        runTest {
+            every { objectStorageClient.put(any(), any(), any()) } throws IllegalStateException("Disk error")
+
+            assertFailsWith<IllegalStateException> {
+                uploadImageUseCase.execute(
+                    UploadImageParams(imagePath = "/photos/tree.jpg", lat = 1.0, long = 2.0),
+                )
+            }
         }
 }

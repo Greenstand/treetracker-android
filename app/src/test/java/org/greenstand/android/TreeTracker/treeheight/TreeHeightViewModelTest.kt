@@ -26,6 +26,9 @@ import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -59,4 +62,61 @@ class TreeHeightViewModelTest {
             confirmVerified(treeCapturer)
             Assert.assertEquals(result, 0)
         }
+
+    @Test
+    fun `initial state offers five height colors with nothing selected`() {
+        val state = treeHeightSelectionViewModel.state.value
+
+        assertEquals(
+            listOf(
+                AppButtonColors.ProgressGreen,
+                AppButtonColors.MessagePurple,
+                AppButtonColors.Yellow,
+                AppButtonColors.SkyBlue,
+                AppButtonColors.UploadOrange,
+            ),
+            state.colors,
+        )
+        assertNull(state.selectedColor)
+        assertTrue(treeHeightSelectionViewModel.events.replayCache.isEmpty())
+    }
+
+    @Test
+    fun `each color is stored as its index in the color list`() {
+        val colors = treeHeightSelectionViewModel.state.value.colors
+
+        colors.forEachIndexed { index, color ->
+            treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(color))
+
+            verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, index.toString()) }
+            assertEquals(color, treeHeightSelectionViewModel.state.value.selectedColor)
+        }
+    }
+
+    @Test
+    fun `selecting another color replaces the selection and keeps the color list`() {
+        treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(AppButtonColors.ProgressGreen))
+        treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(AppButtonColors.UploadOrange))
+
+        val state = treeHeightSelectionViewModel.state.value
+        assertEquals(AppButtonColors.UploadOrange, state.selectedColor)
+        assertEquals(5, state.colors.size)
+        verify(exactly = 1) { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, "0") }
+        verify(exactly = 1) { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, "4") }
+    }
+
+    @Test
+    fun `a color outside the height list is stored as index -1`() {
+        treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(AppButtonColors.DeclineRed))
+
+        verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, "-1") }
+        assertEquals(AppButtonColors.DeclineRed, treeHeightSelectionViewModel.state.value.selectedColor)
+    }
+
+    @Test
+    fun `selecting a color emits no ui event`() {
+        treeHeightSelectionViewModel.handleAction(TreeHeightAction.SelectColor(AppButtonColors.Yellow))
+
+        assertTrue(treeHeightSelectionViewModel.events.replayCache.isEmpty())
+    }
 }

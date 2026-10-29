@@ -22,6 +22,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -94,4 +95,46 @@ class TreesToSyncHelperTest {
 
             assertEquals(-1, result)
         }
+
+    @Test
+    fun `WHEN refreshTreeCountToSync called THEN writes under the tree count key and commits`() =
+        runTest {
+            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 1
+            coEvery { dao.getNonUploadedTreeImageCount() } returns 2
+
+            treesToSyncHelper.refreshTreeCountToSync()
+
+            val mockEditor = preferences.edit()
+            verifyOrder {
+                mockEditor.putInt(TreesToSyncHelper.TREES_TO_SYNC_KEY, 3)
+                mockEditor.commit()
+            }
+        }
+
+    @Test
+    fun `WHEN nothing is left to sync THEN stores zero`() =
+        runTest {
+            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 0
+            coEvery { dao.getNonUploadedTreeImageCount() } returns 0
+
+            treesToSyncHelper.refreshTreeCountToSync()
+
+            val mockEditor = preferences.edit()
+            verify { mockEditor.putInt(TreesToSyncHelper.TREES_TO_SYNC_KEY, 0) }
+        }
+
+    @Test
+    fun `WHEN getTreeCountToSync called THEN reads the tree count key with a negative default`() =
+        runTest {
+            every { preferences.getInt(any(), any()) } returns 7
+
+            treesToSyncHelper.getTreeCountToSync()
+
+            verify { preferences.getInt(TreesToSyncHelper.TREES_TO_SYNC_KEY, -1) }
+        }
+
+    @Test
+    fun `tree count key lives under system settings`() {
+        assertEquals("greenstand/system-settings/tree-count-to-sync", TreesToSyncHelper.TREES_TO_SYNC_KEY.path)
+    }
 }
