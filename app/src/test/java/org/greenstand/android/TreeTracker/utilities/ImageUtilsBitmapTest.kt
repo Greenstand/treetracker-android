@@ -310,6 +310,10 @@ class ImageUtilsBitmapTest {
         val missing = File(tempFolder.root, "missing.jpg")
 
         ImageUtils.orientImage(missing.absolutePath)
+
+        // Robolectric's native BitmapFactory.decodeFile creates an empty file at the path,
+        // so check that nothing was written rather than that the file doesn't exist.
+        assertEquals(0L, missing.length())
     }
 
     @Test
