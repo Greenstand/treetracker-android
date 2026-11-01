@@ -154,42 +154,30 @@ interface TreeTrackerDAO {
     @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 1")
     suspend fun getUploadedTreeCaptureCount(): Int
 
-    @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url not null")
-    suspend fun getUploadedLegacyTreeImageCount(): Int
-
-    @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url not null")
-    fun getUploadedLegacyTreeImageCountFlow(): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM tree WHERE photo_url not null")
-    suspend fun getUploadedTreeImageCount(): Int
-
-    @Query("SELECT COUNT(*) FROM tree WHERE photo_url not null")
-    fun getUploadedTreeImageCountFlow(): Flow<Int>
+    @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 1")
+    fun getUploadedTreeCaptureCountFlow(): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM tree WHERE uploaded = 1")
     suspend fun getUploadedTreeCount(): Int
 
-    @Transaction
-    @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url is null")
-    suspend fun getNonUploadedLegacyTreeCaptureImageCount(): Int
+    @Query("SELECT COUNT(*) FROM tree WHERE uploaded = 1")
+    fun getUploadedTreeCountFlow(): Flow<Int>
 
-    @Transaction
-    @Query("SELECT COUNT(*) FROM tree_capture WHERE photo_url is null")
-    fun getNonUploadedLegacyTreeCaptureImageCountFlow(): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM tree WHERE photo_url is null")
-    suspend fun getNonUploadedTreeImageCount(): Int
-
-    @Query("SELECT COUNT(*) FROM tree WHERE photo_url is null")
-    fun getNonUploadedTreeImageCountFlow(): Flow<Int>
-
+    // "Not uploaded" means the tree's bundle hasn't been uploaded. Don't count by photo_url:
+    // a tree can have its image uploaded but still be waiting on its bundle.
     @Transaction
     @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 0")
     suspend fun getNonUploadedTreeCaptureCount(): Int
 
+    @Query("SELECT COUNT(*) FROM tree_capture WHERE uploaded = 0")
+    fun getNonUploadedTreeCaptureCountFlow(): Flow<Int>
+
     @Transaction
     @Query("SELECT COUNT(*) FROM tree WHERE uploaded = 0")
     suspend fun getNonUploadedTreeCount(): Int
+
+    @Query("SELECT COUNT(*) FROM tree WHERE uploaded = 0")
+    fun getNonUploadedTreeCountFlow(): Flow<Int>
 
     @Query("SELECT _id FROM tree_capture WHERE uploaded = 0")
     suspend fun getAllTreeCaptureIdsToUpload(): List<Long>

@@ -179,10 +179,10 @@ class DashboardViewModel(
     private fun observeTreeCounts() {
         viewModelScope.launch {
             combine(
-                dao.getUploadedLegacyTreeImageCountFlow(),
-                dao.getUploadedTreeImageCountFlow(),
-                dao.getNonUploadedLegacyTreeCaptureImageCountFlow(),
-                dao.getNonUploadedTreeImageCountFlow(),
+                dao.getUploadedTreeCaptureCountFlow(),
+                dao.getUploadedTreeCountFlow(),
+                dao.getNonUploadedTreeCaptureCountFlow(),
+                dao.getNonUploadedTreeCountFlow(),
             ) { uploadedLegacy, uploadedNew, nonUploadedLegacy, nonUploadedNew ->
                 val synced = uploadedLegacy + uploadedNew
                 val remaining = nonUploadedLegacy + nonUploadedNew
