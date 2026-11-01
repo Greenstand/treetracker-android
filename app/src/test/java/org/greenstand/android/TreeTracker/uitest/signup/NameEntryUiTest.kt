@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.uitest.signup
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -157,6 +158,44 @@ class NameEntryUiTest : ComposeUiTest() {
         setNameEntry(SignUpState(isCredentialView = false, firstName = null, lastName = "Lee"))
 
         lastNameField().performImeAction()
+
+        assertTrue(actions.isEmpty())
+    }
+
+    @Test
+    fun `ime next on the first name moves focus to the last name`() {
+        setNameEntry()
+
+        firstNameField().performClick()
+        firstNameField().performImeAction()
+
+        lastNameField().assertIsFocused()
+        assertTrue(actions.none { it == SignupAction.LaunchCamera })
+    }
+
+    @Test
+    fun `ime go on last name with a blank first name does nothing`() {
+        setNameEntry(SignUpState(isCredentialView = false, firstName = "   ", lastName = "Lee"))
+
+        lastNameField().performImeAction()
+
+        assertTrue(actions.isEmpty())
+    }
+
+    @Test
+    fun `ime go on last name without a last name does nothing`() {
+        setNameEntry(SignUpState(isCredentialView = false, firstName = "Ann", lastName = null))
+
+        lastNameField().performImeAction()
+
+        assertTrue(actions.isEmpty())
+    }
+
+    @Test
+    fun `disabled next ignores clicks`() {
+        setNameEntry(SignUpState(isCredentialView = false, firstName = "Ann", lastName = "Lee"), isFormValid = false)
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
 
         assertTrue(actions.isEmpty())
     }

@@ -16,19 +16,26 @@
 package org.greenstand.android.TreeTracker.uitest.view
 
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class BorderedTextFieldUiTest : ComposeUiTest() {
@@ -90,6 +97,70 @@ class BorderedTextFieldUiTest : ComposeUiTest() {
         }
 
         composeTestRule.onNode(hasSetTextAction()).assertIsFocused()
+    }
+
+    @Test
+    fun `without autofocus the field is not focused`() {
+        setContent {
+            BorderedTextField(
+                modifier = Modifier.height(80.dp),
+                value = "",
+                onValueChange = {},
+                focusRequester = remember { FocusRequester() },
+                autofocusEnabled = false,
+            )
+        }
+
+        composeTestRule.onNode(hasSetTextAction()).assertIsNotFocused()
+    }
+
+    @Test
+    fun `focusing the field reports the focus change`() {
+        val focusStates = mutableListOf<Boolean>()
+        setContent {
+            BorderedTextField(
+                modifier = Modifier.height(80.dp),
+                value = "",
+                onValueChange = {},
+                onFocusChanged = { focusStates += it.isFocused },
+            )
+        }
+
+        composeTestRule.onNode(hasSetTextAction()).performClick()
+
+        composeTestRule.runOnIdle { assertTrue(focusStates.last()) }
+    }
+
+    @Test
+    fun `the keyboard action runs the matching callback`() {
+        var goActions = 0
+        setContent {
+            BorderedTextField(
+                modifier = Modifier.height(80.dp),
+                value = "",
+                onValueChange = {},
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
+                keyboardActions = KeyboardActions(onGo = { goActions++ }),
+            )
+        }
+
+        composeTestRule.onNode(hasSetTextAction()).performImeAction()
+
+        composeTestRule.runOnIdle { assertEquals(1, goActions) }
+    }
+
+    @Test
+    fun `the placeholder is hidden once the field has a value`() {
+        setContent {
+            BorderedTextField(
+                modifier = Modifier.height(80.dp),
+                value = "Hello",
+                onValueChange = {},
+                placeholder = { Text(PLACEHOLDER) },
+            )
+        }
+
+        composeTestRule.onNodeWithText(PLACEHOLDER).assertDoesNotExist()
     }
 
     private companion object {

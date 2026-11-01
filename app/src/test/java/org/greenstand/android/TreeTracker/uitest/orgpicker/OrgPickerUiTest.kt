@@ -132,4 +132,36 @@ class OrgPickerUiTest : ComposeUiTest() {
 
         assertEquals(listOf(DashboardRoute), backStack.toList())
     }
+
+    @Test
+    fun `org picker without orgs still offers next`() {
+        setOrgPicker(OrgPickerState())
+
+        composeTestRule.onNodeWithText("GREENSTAND").assertDoesNotExist()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        assertEquals(listOf<OrgPickerAction>(OrgPickerAction.NavigateNext), actions)
+    }
+
+    @Test
+    fun `clicking the current org sends SetOrg again`() {
+        setOrgPicker(OrgPickerState(orgs = listOf(greenstand, acme), currentOrg = acme))
+
+        composeTestRule.onNodeWithText("ACME FORESTS").performClick()
+
+        assertEquals(listOf<OrgPickerAction>(OrgPickerAction.SetOrg(acme)), actions)
+    }
+
+    @Test
+    fun `root shows only the title and next when there are no orgs`() {
+        val orgRepo = mockk<OrgRepo>(relaxed = true)
+        coEvery { orgRepo.getOrgs() } returns emptyList()
+        every { orgRepo.currentOrg() } returns greenstand
+        val viewModel = OrgPickerViewModel(orgRepo)
+        setContent(inspectionMode = false) { OrgPickerScreen(viewModel = viewModel) }
+
+        composeTestRule.onNodeWithText(string(R.string.select_organization).uppercase()).assertExists()
+        composeTestRule.onNodeWithText("GREENSTAND").assertDoesNotExist()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).assertExists()
+    }
 }

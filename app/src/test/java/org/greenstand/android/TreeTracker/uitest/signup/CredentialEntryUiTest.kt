@@ -15,8 +15,10 @@
  */
 package org.greenstand.android.TreeTracker.uitest.signup
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -309,5 +311,53 @@ class CredentialEntryUiTest : ComposeUiTest() {
         composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
 
         assertEquals(listOf<SignupAction>(SignupAction.CloseExistingUserDialog), actions)
+    }
+
+    @Test
+    fun `existing user dialog only offers to decline`() {
+        setCredentialEntry(SignUpState(showPrivacyDialog = false, existingUser = existingUser))
+
+        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertExists()
+        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertDoesNotExist()
+    }
+
+    @Test
+    fun `phone credential ignores a leftover email`() {
+        setCredentialEntry(SignUpState(showPrivacyDialog = false, email = "jane@example.org", phone = null))
+
+        composeTestRule.onNodeWithText("jane@example.org").assertDoesNotExist()
+        composeTestRule.onNodeWithText(string(R.string.phone_placeholder)).assertExists()
+    }
+
+    @Test
+    fun `email credential ignores a leftover phone`() {
+        setCredentialEntry(
+            SignUpState(
+                showPrivacyDialog = false,
+                credential = Credential.Email(),
+                phone = "0712345678",
+                email = null,
+            ),
+        )
+
+        composeTestRule.onNodeWithText("0712345678").assertDoesNotExist()
+        composeTestRule.onNodeWithText(string(R.string.email_placeholder)).assertExists()
+    }
+
+    @Test
+    fun `privacy dialog is shown on top of the credential form`() {
+        setCredentialEntry(SignUpState(showPrivacyDialog = true))
+
+        composeTestRule.onNodeWithText(string(R.string.policy_text_blob)).assertExists()
+        composeTestRule.onNodeWithText(string(R.string.phone_placeholder).uppercase()).assertExists()
+    }
+
+    @Test
+    fun `a validation error is shown only once per click`() {
+        setCredentialEntry(SignUpState(showPrivacyDialog = false, isCredentialValid = false))
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        composeTestRule.onAllNodesWithText(string(R.string.phone_validation_error)).assertCountEquals(1)
     }
 }

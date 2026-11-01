@@ -27,6 +27,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.messages.Chat
@@ -171,6 +172,60 @@ class ChatUiTest : ComposeUiTest() {
         }
     }
 
+    @Test
+    fun `chat asks for every message whether it came from the other user`() {
+        val askedIndexes = mutableListOf<Int>()
+        setContent {
+            Chat(
+                state = filledState,
+                checkIsOtherUser = { index ->
+                    askedIndexes += index
+                    index == 0
+                },
+            )
+        }
+
+        composeTestRule.runOnIdle { assertEquals(setOf(0, 1), askedIndexes.toSet()) }
+    }
+
+    @Test
+    fun `screen marks the unread messages of the conversation as read`() {
+        val messagesRepo = fakeMessagesRepo()
+        setScreenContent(messagesRepo)
+
+        composeTestRule.onNodeWithText(INCOMING.body).assertExists()
+
+        coVerify { messagesRepo.markMessagesAsRead(listOf(INCOMING.id)) }
+    }
+
+    @Test
+    fun `screen shows a message that arrives while the chat is open`() {
+        val messages = MutableStateFlow(listOf(INCOMING, OUTGOING))
+        val messagesRepo = mockk<MessagesRepo>(relaxed = true)
+        every { messagesRepo.getDirectMessages(USER.wallet, OTHER) } returns messages
+        setScreenContent(messagesRepo)
+        composeTestRule.onNodeWithText(INCOMING.body).assertExists()
+
+        messages.value = listOf(LATE_REPLY, INCOMING, OUTGOING)
+
+        composeTestRule.onNodeWithText(LATE_REPLY.body).assertIsDisplayed()
+        coVerify { messagesRepo.markMessagesAsRead(listOf(LATE_REPLY.id, INCOMING.id)) }
+    }
+
+    @Test
+    fun `sending twice saves each draft`() {
+        val messagesRepo = fakeMessagesRepo()
+        setScreenContent(messagesRepo)
+
+        composeTestRule.onNode(hasSetTextAction()).performTextInput(DRAFT)
+        composeTestRule.onNode(hasSetTextAction()).performImeAction()
+        composeTestRule.onNode(hasSetTextAction()).performTextInput("Second")
+        composeTestRule.onNode(hasSetTextAction()).performImeAction()
+
+        coVerify { messagesRepo.saveMessage(USER.wallet, OTHER, DRAFT) }
+        coVerify { messagesRepo.saveMessage(USER.wallet, OTHER, "Second") }
+    }
+
     private fun fakeMessagesRepo(): MessagesRepo {
         val messagesRepo = mockk<MessagesRepo>(relaxed = true)
         every { messagesRepo.getDirectMessages(USER.wallet, OTHER) } returns flowOf(listOf(INCOMING, OUTGOING))
@@ -211,6 +266,17 @@ class ChatUiTest : ComposeUiTest() {
                 isRead = false,
                 parentMessageId = null,
                 body = "How are the seedlings?",
+            )
+
+        val LATE_REPLY =
+            DirectMessage(
+                id = "message-3",
+                from = OTHER,
+                to = "planter@example.com",
+                composedAt = "2026-01-03T00:00:00Z",
+                isRead = false,
+                parentMessageId = null,
+                body = "Send a photo please",
             )
 
         val OUTGOING =

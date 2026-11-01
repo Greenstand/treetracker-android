@@ -119,4 +119,12 @@ class TreeHeightUiTest : ComposeUiTest() {
 
         assertEquals(1, nextClicks)
     }
+
+    @Test
+    fun `a shorter colour list shows only those colours`() {
+        render(state = TreeHeightSelectionState(colors = defaultColors.take(2)))
+
+        composeTestRule.onNodeWithTag(treeHeightColorTag(1)).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(treeHeightColorTag(2)).assertDoesNotExist()
+    }
 }

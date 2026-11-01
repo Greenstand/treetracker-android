@@ -31,6 +31,7 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgLink
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
@@ -82,10 +83,13 @@ class SplashUiTest : ComposeUiTest() {
         every { treesToSyncHelper.getTreeCountToSync() } returns 0
     }
 
-    private fun createViewModel(): SplashScreenViewModel =
+    private fun createViewModel(
+        orgId: String? = null,
+        orgName: String? = null,
+    ): SplashScreenViewModel =
         SplashScreenViewModel(
-            orgId = null,
-            orgName = null,
+            orgId = orgId,
+            orgName = orgName,
             userRepo = userRepo,
             treesToSyncHelper = treesToSyncHelper,
             sessionTracker = sessionTracker,
@@ -109,10 +113,13 @@ class SplashUiTest : ComposeUiTest() {
         )
     }
 
-    private fun launchSplash() {
-        val viewModel = createViewModel()
+    private fun launchSplash(
+        orgId: String? = null,
+        orgName: String? = null,
+    ) {
+        val viewModel = createViewModel(orgId, orgName)
         setContent(inspectionMode = false) {
-            SplashScreen(orgId = null, viewModel = viewModel, navigator = navigator)
+            SplashScreen(orgId = orgId, orgName = orgName, viewModel = viewModel, navigator = navigator)
         }
         composeTestRule.waitForIdle()
         // SplashScreen waits one second after bootstrapping before navigating.
@@ -162,8 +169,64 @@ class SplashUiTest : ComposeUiTest() {
         coVerify(exactly = 0) { deviceConfigUpdater.saveLatestConfig() }
     }
 
+    @Test
+    fun `coarse location alone keeps splash and skips bootstrap`() {
+        val application = RuntimeEnvironment.getApplication()
+        shadowOf(application).grantPermissions(Manifest.permission.CAMERA, Manifest.permission.ACCESS_COARSE_LOCATION)
+        shadowOf(application).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+        coEvery { userRepo.getPowerUser() } returns powerUser
+
+        launchSplash()
+        composeTestRule.waitForIdle()
+
+        assertEquals(listOf(SplashRoute()), backStack.toList())
+        coVerify(exactly = 0) { deviceConfigUpdater.saveLatestConfig() }
+    }
+
+    @Test
+    fun `deep linked org with a remote config is added from that config before continuing`() {
+        grantStartupPermissions()
+        coEvery { userRepo.getPowerUser() } returns powerUser
+        coEvery { orgConfigProvider.fetchOrgConfig(ORG_ID) } returns ORG_CONFIG
+
+        launchSplash(orgId = ORG_ID, orgName = ORG_NAME)
+
+        composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { backStack.lastOrNull() == DashboardRoute }
+        coVerify { orgRepo.addOrgFromRemoteConfig(ORG_ID, ORG_NAME, ORG_CONFIG) }
+        coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
+        coVerify(exactly = 0) { installReferrerOrgProvider.consume() }
+    }
+
+    @Test
+    fun `org from the install referrer is added when there is no deep link`() {
+        grantStartupPermissions()
+        coEvery { userRepo.getPowerUser() } returns null
+        coEvery { installReferrerOrgProvider.consume() } returns OrgLink(ORG_ID, ORG_NAME)
+        coEvery { orgConfigProvider.fetchOrgConfig(ORG_ID) } returns null
+
+        launchSplash()
+
+        composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { backStack.lastOrNull() is LanguageRoute }
+        coVerify { orgRepo.addMinimalOrg(ORG_ID, ORG_NAME) }
+    }
+
+    @Test
+    fun `messages are synced during startup when online`() {
+        grantStartupPermissions()
+        coEvery { userRepo.getPowerUser() } returns powerUser
+        coEvery { checkForInternetUseCase.execute(Unit) } returns true
+
+        launchSplash()
+
+        composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { backStack.lastOrNull() == DashboardRoute }
+        coVerify { messagesRepo.syncMessages() }
+    }
+
     private companion object {
         const val SPLASH_DELAY_MS = 1_000L
         const val WAIT_TIMEOUT_MS = 5_000L
+        const val ORG_ID = "org-42"
+        const val ORG_NAME = "Green Hills"
+        const val ORG_CONFIG = "{\"name\":\"Green Hills\"}"
     }
 }

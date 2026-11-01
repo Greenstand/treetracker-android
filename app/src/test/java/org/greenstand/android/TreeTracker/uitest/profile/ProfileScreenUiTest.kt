@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.uitest.profile
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
@@ -75,6 +76,52 @@ class ProfileScreenUiTest : UserSelectRootUiTest() {
         coVerify(timeout = WAIT_TIMEOUT_MS) { userRepo.updateUser(match { it.firstName == "Ann" }) }
         composeTestRule.onNodeWithText(string(R.string.edit_profile)).assertExists()
         composeTestRule.onNodeWithText(string(R.string.save_changes)).assertDoesNotExist()
+    }
+
+    @Test
+    fun `cancelling an edit leaves edit mode without saving`() {
+        composeTestRule.onNodeWithText(string(R.string.edit_profile)).performClick()
+        composeTestRule.onAllNodes(hasSetTextAction())[0].performTextReplacement("Ann")
+
+        composeTestRule.onNodeWithText(string(R.string.cancel_edit)).performClick()
+
+        composeTestRule.onNodeWithText(string(R.string.edit_profile)).assertExists()
+        composeTestRule.onNodeWithText(string(R.string.save_changes)).assertDoesNotExist()
+        coVerify(exactly = 0) { userRepo.updateUser(any()) }
+    }
+
+    @Test
+    fun `saving with a too short name stays in edit mode without saving`() {
+        composeTestRule.onNodeWithText(string(R.string.edit_profile)).performClick()
+        composeTestRule.onAllNodes(hasSetTextAction())[0].performTextReplacement("A")
+        composeTestRule.onNodeWithText("Name must be at least 2 characters").assertExists()
+
+        composeTestRule.onNodeWithText(string(R.string.save_changes)).performScrollTo().performClick()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText(string(R.string.save_changes)).assertExists()
+        coVerify(exactly = 0) { userRepo.updateUser(any()) }
+    }
+
+    @Test
+    fun `saving stores an edited phone as the new wallet`() {
+        composeTestRule.onNodeWithText(string(R.string.edit_profile)).performClick()
+        composeTestRule.onAllNodes(hasSetTextAction())[2].performTextReplacement("0799999999")
+
+        composeTestRule.onNodeWithText(string(R.string.save_changes)).performScrollTo().performClick()
+
+        coVerify(timeout = WAIT_TIMEOUT_MS) { userRepo.updateUser(match { it.wallet == "0799999999" && it.firstName == "Jane" }) }
+    }
+
+    @Test
+    fun `the edited name is shown read only after saving`() {
+        composeTestRule.onNodeWithText(string(R.string.edit_profile)).performClick()
+        composeTestRule.onAllNodes(hasSetTextAction())[1].performTextReplacement("Smith")
+
+        composeTestRule.onNodeWithText(string(R.string.save_changes)).performScrollTo().performClick()
+
+        composeTestRule.onNodeWithText("Smith").assertExists()
+        composeTestRule.onAllNodes(hasSetTextAction()).assertCountEquals(0)
     }
 
     private companion object {

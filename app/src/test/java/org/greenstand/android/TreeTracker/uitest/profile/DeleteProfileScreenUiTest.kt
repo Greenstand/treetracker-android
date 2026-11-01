@@ -15,6 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.uitest.profile
 
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -125,5 +127,56 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
         composeTestRule.waitForIdle()
 
         assertEquals(listOf(SignupFlowRoute), backStack.toList())
+    }
+
+    @Test
+    fun `the confirmation shows the chosen planter`() {
+        launchDeleteProfile()
+
+        requestDeletion()
+
+        composeTestRule.onAllNodesWithText("${planter.firstName} ${planter.lastName}").assertCountEquals(2)
+        composeTestRule.onAllNodesWithText(planter.wallet).assertCountEquals(2)
+    }
+
+    @Test
+    fun `a failed deletion keeps asking and sends no admin request`() {
+        coEvery { userRepo.deleteUser(any()) } returns false
+        launchDeleteProfile()
+        requestDeletion()
+
+        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        coVerify { userRepo.deleteUser(planter.wallet) }
+        composeTestRule.onNodeWithText(string(R.string.delete_account_dialog_message)).assertExists()
+        composeTestRule.onNodeWithText(string(R.string.account_deleted)).assertDoesNotExist()
+        coVerify(exactly = 0) { messagesRepo.saveMessage(any(), any(), any()) }
+        coVerify(exactly = 0) { messagesRepo.syncMessages() }
+    }
+
+    @Test
+    fun `a deletion asks the admin to delete the wallet and syncs the request`() {
+        launchDeleteProfile()
+        requestDeletion()
+
+        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithText(string(R.string.account_deleted)).assertExists()
+
+        coVerify { messagesRepo.saveMessage(planter.wallet, "admin", match { it.contains(planter.wallet) }) }
+        coVerify { messagesRepo.syncMessages() }
+    }
+
+    @Test
+    fun `declining and choosing again asks to confirm again`() {
+        launchDeleteProfile()
+        requestDeletion()
+        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithText(string(R.string.delete_account_dialog_message)).assertDoesNotExist()
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        composeTestRule.onNodeWithText(string(R.string.delete_account_dialog_message)).assertExists()
+        coVerify(exactly = 0) { userRepo.deleteUser(any()) }
     }
 }

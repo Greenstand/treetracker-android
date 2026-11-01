@@ -16,9 +16,12 @@
 package org.greenstand.android.TreeTracker.uitest.userselect
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.userselect.UserSelectContent
@@ -127,5 +130,54 @@ class UserSelectUiTest : ComposeUiTest() {
         render(isCreateUserEnabled = false)
 
         composeTestRule.onNodeWithTag(ORANGE_ADD_BUTTON_TAG).assertDoesNotExist()
+    }
+
+    @Test
+    fun `forward arrow forwards the selected user even with notifications off`() {
+        setContent {
+            UserSelectContent(
+                state = UserSelectState(users = userSelectTestUsers, selectedUser = userSelectTestUsers[1]),
+                navigationButtonColors = AppButtonColors.MessagePurple,
+                isCreateUserEnabled = false,
+                isNotificationEnabled = false,
+                onNavigateForward = { forwardedUsers += it },
+            )
+        }
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        assertEquals(listOf(userSelectTestUsers[1]), forwardedUsers)
+    }
+
+    @Test
+    fun `clicking the selected user again reports it again`() {
+        render(state = UserSelectState(users = userSelectTestUsers, selectedUser = userSelectTestUsers[0]))
+
+        composeTestRule.onNodeWithText(ANN_NAME).performClick()
+
+        assertEquals(listOf(userSelectTestUsers[0]), clickedUsers)
+    }
+
+    @Test
+    fun `many users can be scrolled to`() {
+        val manyUsers =
+            (1..12).map { index ->
+                userSelectTestUsers[0].copy(id = index.toLong(), firstName = "Planter", lastName = "$index", wallet = "w$index")
+            }
+        render(state = UserSelectState(users = manyUsers))
+
+        composeTestRule.onNode(hasScrollAction()).performScrollToNode(hasText("Planter 12"))
+
+        composeTestRule.onNodeWithText("Planter 12").assertIsDisplayed()
+    }
+
+    @Test
+    fun `clicking a user does not navigate forward by itself`() {
+        render()
+
+        composeTestRule.onNodeWithText(ANN_NAME).performClick()
+
+        assertTrue(forwardedUsers.isEmpty())
+        assertEquals(0, backClicks)
     }
 }

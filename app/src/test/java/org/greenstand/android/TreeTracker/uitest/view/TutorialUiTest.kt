@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.uitest.view
 
 import androidx.compose.material.Text
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -26,6 +27,7 @@ import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.CAPTURE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.ImageCapturing
 import org.greenstand.android.TreeTracker.view.SelfieTutorial
 import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
@@ -106,6 +108,48 @@ class TutorialUiTest : ComposeUiTest() {
         composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
 
         composeTestRule.runOnIdle { assertEquals(1, completions) }
+    }
+
+    @Test
+    fun `the example buttons in the review tutorial do not complete it`() {
+        setContent { TreeCaptureReviewTutorial(onCompleteClick = { completions++ }) }
+
+        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithText(string(R.string.note)).performClick()
+        composeTestRule.onAllNodesWithTag(APPROVE_BUTTON_TAG)[0].performClick()
+
+        composeTestRule.runOnIdle { assertEquals(0, completions) }
+    }
+
+    @Test
+    fun `the review tutorial completes with its own approve button`() {
+        setContent { TreeCaptureReviewTutorial(onCompleteClick = { completions++ }) }
+
+        composeTestRule.onAllNodesWithTag(APPROVE_BUTTON_TAG)[1].performClick()
+
+        composeTestRule.runOnIdle { assertEquals(1, completions) }
+    }
+
+    @Test
+    fun `tutorial dialog without content only offers the approve button`() {
+        setContent { TutorialDialog(onCompleteClick = { completions++ }) }
+
+        composeTestRule.onAllNodesWithTag(APPROVE_BUTTON_TAG).assertCountEquals(1)
+        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertDoesNotExist()
+    }
+
+    @Test
+    fun `image capturing shows the given instruction next to an inert capture button`() {
+        setContent {
+            ImageCapturing(
+                image = painterResource(id = R.drawable.selfie_illustration),
+                text = CONTENT,
+            )
+        }
+
+        composeTestRule.onNodeWithText(string(R.string.click_on)).assertExists()
+        composeTestRule.onNodeWithText(CONTENT).assertExists()
+        composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).assertExists()
     }
 
     private companion object {

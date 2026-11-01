@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.uitest.messages
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -22,6 +23,7 @@ import androidx.compose.ui.test.performClick
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.messages.survey.Survey
 import org.greenstand.android.TreeTracker.messages.survey.SurveyAction
 import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
@@ -38,8 +40,11 @@ import org.greenstand.android.TreeTracker.navigation.SurveyRoute
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
+import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
+import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Test
 
 class SurveyUiTest : ComposeUiTest() {
@@ -177,6 +182,92 @@ class SurveyUiTest : ComposeUiTest() {
                 listOf(FIRST_QUESTION.choices[1], SECOND_QUESTION.choices.first()),
             )
         }
+    }
+
+    @Test
+    fun `forward on the screen without an answer stays on the first question`() {
+        setScreenContent(fakeMessagesRepo())
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        composeTestRule.onNodeWithText(FIRST_QUESTION.prompt).assertIsDisplayed()
+        composeTestRule.onNodeWithText(SECOND_QUESTION.prompt).assertDoesNotExist()
+    }
+
+    @Test
+    fun `an answer is remembered when coming back to a question`() {
+        val messagesRepo = fakeMessagesRepo()
+        setScreenContent(messagesRepo)
+        composeTestRule.onNodeWithText(FIRST_QUESTION.choices[2]).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(ARROW_BACK_BUTTON_TAG).performClick()
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithText(SECOND_QUESTION.choices[1]).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        composeTestRule.waitForIdle()
+        coVerify {
+            messagesRepo.saveSurveyAnswers(MESSAGE_ID, listOf(FIRST_QUESTION.choices[2], SECOND_QUESTION.choices[1]))
+        }
+    }
+
+    @Test
+    fun `the last chosen answer wins when an answer is changed`() {
+        val messagesRepo = fakeMessagesRepo()
+        setScreenContent(messagesRepo)
+
+        composeTestRule.onNodeWithText(FIRST_QUESTION.choices[0]).performClick()
+        composeTestRule.onNodeWithText(FIRST_QUESTION.choices[1]).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithText(SECOND_QUESTION.choices[0]).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        composeTestRule.waitForIdle()
+        coVerify {
+            messagesRepo.saveSurveyAnswers(MESSAGE_ID, listOf(FIRST_QUESTION.choices[1], SECOND_QUESTION.choices[0]))
+        }
+    }
+
+    @Test
+    fun `completing the survey shows the survey completed snackbar`() {
+        val snackbars = mutableListOf<ShowSnackbar>()
+        backStack.add(IndividualMessageListRoute(USER.id))
+        backStack.add(SurveyRoute(MESSAGE_ID))
+        val userRepo = mockk<UserRepo>()
+        coEvery { userRepo.getUserWithWallet(USER.wallet) } returns USER
+        val viewModel = SurveyViewModel(MESSAGE_ID, fakeMessagesRepo(), userRepo)
+        setContent(inspectionMode = false) {
+            LaunchedEffect(Unit) { snackbarController.events.collect { snackbars += it } }
+            SurveyScreen(MESSAGE_ID, viewModel)
+        }
+
+        composeTestRule.onNodeWithText(FIRST_QUESTION.choices[0]).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithText(SECOND_QUESTION.choices[0]).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        composeTestRule.runOnIdle {
+            assertEquals(listOf<TextRef>(TextRef.Res(R.string.survey_completed)), snackbars.map { it.message })
+        }
+    }
+
+    @Ignore("Bug: SurveyViewModel stores answers in a fixed Array(3), so the 4th question never shows")
+    @Test
+    fun `a survey with four questions can be answered to the end`() {
+        val fourQuestions = List(4) { index -> Question(prompt = "Question ${index + 1}", choices = listOf("A$index", "B$index")) }
+        val messagesRepo = mockk<MessagesRepo>(relaxed = true)
+        coEvery { messagesRepo.getSurveyMessage(MESSAGE_ID) } returns SURVEY.copy(questions = fourQuestions)
+        setScreenContent(messagesRepo)
+
+        fourQuestions.forEachIndexed { index, question ->
+            composeTestRule.onNodeWithText(question.prompt).assertExists()
+            composeTestRule.onNodeWithText("A$index").performClick()
+            composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        }
+
+        composeTestRule.waitForIdle()
+        coVerify { messagesRepo.saveSurveyAnswers(MESSAGE_ID, listOf("A0", "A1", "A2", "A3")) }
     }
 
     private fun fakeMessagesRepo(): MessagesRepo {

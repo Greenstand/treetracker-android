@@ -23,6 +23,7 @@ import androidx.compose.ui.test.performClick
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerAction
 import org.greenstand.android.TreeTracker.languagepicker.LanguagePickerState
@@ -143,5 +144,65 @@ class LanguageSelectUiTest : ComposeUiTest() {
 
         verify { languageSwitcher.setLanguage(Language.PORTUGUESE) }
         assertEquals(listOf(LanguageRoute(isFromTopBar = false), SignupFlowRoute), backStack.toList())
+    }
+
+    @Test
+    fun `root enables next once the switcher reports a language`() {
+        backStack.add(LanguageRoute(isFromTopBar = true))
+        val observedLanguage = MutableSharedFlow<Language>(replay = 1)
+        val languageSwitcher = mockk<LanguageSwitcher>(relaxed = true)
+        every { languageSwitcher.currentLanguage() } returns null
+        every { languageSwitcher.observeCurrentLanguage() } returns observedLanguage
+        val viewModel = LanguagePickerViewModel(languageSwitcher)
+        setContent(inspectionMode = false) {
+            LanguageSelectScreen(isFromTopBar = true, viewModel = viewModel)
+        }
+
+        observedLanguage.tryEmit(Language.SWAHILI)
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        verify { languageSwitcher.setLanguage(Language.SWAHILI) }
+        assertEquals(listOf(DashboardRoute), backStack.toList())
+    }
+
+    @Test
+    fun `root saves the last language picked`() {
+        backStack.add(LanguageRoute(isFromTopBar = true))
+        val (viewModel, languageSwitcher) = createViewModel(currentLanguage = Language.ENGLISH)
+        setContent(inspectionMode = false) {
+            LanguageSelectScreen(isFromTopBar = true, viewModel = viewModel)
+        }
+
+        composeTestRule.onNodeWithText(Language.SWAHILI.toString()).performClick()
+        composeTestRule.onNodeWithText(Language.PORTUGUESE.toString()).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        verify(exactly = 1) { languageSwitcher.setLanguage(any()) }
+        verify { languageSwitcher.setLanguage(Language.PORTUGUESE) }
+    }
+
+    @Test
+    fun `root does not save a language that was only clicked`() {
+        val (viewModel, languageSwitcher) = createViewModel(currentLanguage = Language.ENGLISH)
+        setContent(inspectionMode = false) {
+            LanguageSelectScreen(isFromTopBar = true, viewModel = viewModel)
+        }
+
+        composeTestRule.onNodeWithText(Language.SWAHILI.toString()).performClick()
+        composeTestRule.waitForIdle()
+
+        verify(exactly = 0) { languageSwitcher.setLanguage(any()) }
+    }
+
+    @Test
+    fun `clicking the selected language sends SetLanguage again`() {
+        setLanguageSelect(LanguagePickerState(currentLanguage = Language.ENGLISH))
+
+        composeTestRule.onNodeWithText(Language.ENGLISH.toString()).performClick()
+
+        assertEquals(listOf<LanguagePickerAction>(LanguagePickerAction.SetLanguage(Language.ENGLISH)), actions)
     }
 }
