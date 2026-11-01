@@ -17,9 +17,11 @@ package org.greenstand.android.TreeTracker.treeedit
 
 import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.verify
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -30,6 +32,7 @@ import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -137,5 +140,83 @@ class TreeListViewModelTest {
                 vm.state.value.selectedTree
                     ?.id,
             )
+        }
+
+    @Test
+    fun `before the DAO emits the list is empty and loading`() =
+        runTest {
+            every { dao.getTreesByUserWallet("wallet-1") } returns emptyFlow()
+
+            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+
+            assertEquals(TreeListState(trees = emptyList(), selectedTree = null, isLoading = true), vm.state.value)
+            assertTrue(vm.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `init queries trees for the given wallet only`() =
+        runTest {
+            every { dao.getTreesByUserWallet(any()) } returns flowOf(emptyList())
+
+            TreeListViewModel(userWallet = "wallet-42", dao = dao)
+
+            verify(exactly = 1) { dao.getTreesByUserWallet("wallet-42") }
+        }
+
+    @Test
+    fun `init keeps the DAO order of trees`() =
+        runTest {
+            every { dao.getTreesByUserWallet("wallet-1") } returns flowOf(listOf(tree2, tree1))
+
+            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+
+            assertEquals(listOf(tree2, tree1), vm.state.first { !it.isLoading }.trees)
+        }
+
+    @Test
+    fun `selectedTree is refreshed with the updated entity from the DAO`() =
+        runTest {
+            val treeFlow = MutableSharedFlow<List<TreeEntity>>(replay = 1)
+            every { dao.getTreesByUserWallet("wallet-1") } returns treeFlow
+            treeFlow.emit(listOf(tree1, tree2))
+            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            vm.state.first { !it.isLoading }
+            vm.handleAction(TreeListAction.SelectTree(tree1))
+
+            val editedTree1 = tree1.copy(note = "Edited note").apply { id = 1 }
+            treeFlow.emit(listOf(editedTree1, tree2))
+
+            val state = vm.state.first { it.selectedTree?.note == "Edited note" }
+            assertEquals(editedTree1, state.selectedTree)
+            assertEquals(listOf(editedTree1, tree2), state.trees)
+        }
+
+    @Test
+    fun `selecting a different tree replaces the selection`() =
+        runTest {
+            every { dao.getTreesByUserWallet("wallet-1") } returns flowOf(listOf(tree1, tree2))
+            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            vm.state.first { !it.isLoading }
+
+            vm.handleAction(TreeListAction.SelectTree(tree1))
+            vm.handleAction(TreeListAction.SelectTree(tree2))
+
+            assertEquals(tree2, vm.state.value.selectedTree)
+            assertTrue(vm.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `new emissions without a selection keep selectedTree null`() =
+        runTest {
+            val treeFlow = MutableSharedFlow<List<TreeEntity>>(replay = 1)
+            every { dao.getTreesByUserWallet("wallet-1") } returns treeFlow
+            treeFlow.emit(listOf(tree1))
+            val vm = TreeListViewModel(userWallet = "wallet-1", dao = dao)
+            vm.state.first { !it.isLoading }
+
+            treeFlow.emit(listOf(tree1, tree2))
+
+            val state = vm.state.first { it.trees.size == 2 }
+            assertNull(state.selectedTree)
         }
 }

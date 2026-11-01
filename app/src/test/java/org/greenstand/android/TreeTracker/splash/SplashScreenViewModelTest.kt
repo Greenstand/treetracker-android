@@ -19,6 +19,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
@@ -41,6 +42,7 @@ import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -282,5 +284,182 @@ class SplashScreenViewModelTest {
             vm.bootstrap()
 
             coVerify(exactly = 0) { installReferrerOrgProvider.consume() }
+        }
+
+    // --- Initial state and actions ---
+
+    @Test
+    fun `WHEN created THEN state is bootstrapping and no events are emitted`() =
+        runTest {
+            assertEquals(SplashState(isBootstrapping = true), splashScreenViewModel.state.value)
+            assertTrue(splashScreenViewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN created THEN no bootstrap work starts until bootstrap is called`() =
+        runTest {
+            coVerify(exactly = 0) { deviceConfigUpdater.saveLatestConfig() }
+            coVerify(exactly = 0) { orgRepo.ensureInitialized() }
+            verify(exactly = 0) { locationDataCapturer.startGpsUpdates() }
+        }
+
+    @Test
+    fun `WHEN GPS updates are started for signup THEN no bootstrap work runs and state is unchanged`() =
+        runTest {
+            splashScreenViewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
+
+            coVerify(exactly = 0) { deviceConfigUpdater.saveLatestConfig() }
+            assertEquals(SplashState(), splashScreenViewModel.state.value)
+            assertTrue(splashScreenViewModel.events.replayCache.isEmpty())
+        }
+
+    // --- Bootstrap ordering ---
+
+    @Test
+    fun `WHEN bootstrapping with a deeplink THEN steps run in order`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "123", name = "TestOrg")
+            coEvery { orgConfigProvider.fetchOrgConfig("123") } returns null
+            coEvery { checkForInternetUseCase.execute(Unit) } returns true
+
+            vm.bootstrap()
+
+            coVerifyOrder {
+                deviceConfigUpdater.saveLatestConfig()
+                orgRepo.ensureInitialized()
+                orgConfigProvider.fetchOrgConfig("123")
+                orgRepo.addMinimalOrg("123", "TestOrg")
+                checkForInternetUseCase.execute(Unit)
+                messagesRepo.syncMessages()
+                userRepo.getPowerUser()
+            }
+        }
+
+    // --- Messages and power user ---
+
+    @Test
+    fun `GIVEN internet but no power user WHEN bootstrapping THEN syncs messages without tagging a power user`() =
+        runTest {
+            coEvery { checkForInternetUseCase.execute(Unit) } returns true
+            coEvery { userRepo.getPowerUser() } returns null
+
+            splashScreenViewModel.bootstrap()
+
+            coVerify(exactly = 1) { messagesRepo.syncMessages() }
+            verify(exactly = 0) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, any<String>()) }
+        }
+
+    @Test
+    fun `GIVEN no internet but a power user WHEN bootstrapping THEN tags the power user without syncing messages`() =
+        runTest {
+            val user = FakeFileGenerator.fakeUsers.first().copy(wallet = "power-wallet")
+            coEvery { checkForInternetUseCase.execute(Unit) } returns false
+            coEvery { userRepo.getPowerUser() } returns user
+
+            splashScreenViewModel.bootstrap()
+
+            coVerify(exactly = 0) { messagesRepo.syncMessages() }
+            verify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, "power-wallet") }
+        }
+
+    // --- Trees-to-sync refresh ---
+
+    @Test
+    fun `GIVEN an interrupted session and a known tree count WHEN bootstrapping THEN refreshes the tree count without reading it`() =
+        runTest {
+            every { sessionTracker.wasSessionInterrupted() } returns true
+            every { treesToSyncHelper.getTreeCountToSync() } returns 5
+
+            splashScreenViewModel.bootstrap()
+
+            coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
+            verify(exactly = 0) { treesToSyncHelper.getTreeCountToSync() }
+        }
+
+    @Test
+    fun `GIVEN no interrupted session and an unknown tree count WHEN bootstrapping THEN refreshes the tree count`() =
+        runTest {
+            every { sessionTracker.wasSessionInterrupted() } returns false
+            every { treesToSyncHelper.getTreeCountToSync() } returns -1
+
+            splashScreenViewModel.bootstrap()
+
+            coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
+        }
+
+    @Test
+    fun `GIVEN no interrupted session and zero trees to sync WHEN bootstrapping THEN does not refresh the tree count`() =
+        runTest {
+            every { sessionTracker.wasSessionInterrupted() } returns false
+            every { treesToSyncHelper.getTreeCountToSync() } returns 0
+
+            splashScreenViewModel.bootstrap()
+
+            coVerify(exactly = 0) { treesToSyncHelper.refreshTreeCountToSync() }
+        }
+
+    // --- Org link sources ---
+
+    @Test
+    fun `WHEN install referrer org has a Remote Config THEN applies the full config`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = null, name = null)
+            val configJson = """{"version":"2"}"""
+            coEvery { installReferrerOrgProvider.consume() } returns OrgLink("42", "Acme")
+            coEvery { orgConfigProvider.fetchOrgConfig("42") } returns configJson
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { orgRepo.addOrgFromRemoteConfig("42", "Acme", configJson) }
+            coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN deeplink orgId is blank THEN falls back to the install referrer org`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "  ", name = "Blank")
+            coEvery { installReferrerOrgProvider.consume() } returns OrgLink("42", "Acme")
+            coEvery { orgConfigProvider.fetchOrgConfig("42") } returns null
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { installReferrerOrgProvider.consume() }
+            coVerify(exactly = 1) { orgRepo.addMinimalOrg("42", "Acme") }
+            coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), "Blank") }
+        }
+
+    @Test
+    fun `WHEN deeplink orgId is empty THEN falls back to the install referrer`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "", name = "Empty")
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { installReferrerOrgProvider.consume() }
+            coVerify(exactly = 0) { orgConfigProvider.fetchOrgConfig(any()) }
+        }
+
+    @Test
+    fun `WHEN deeplink has orgId but no name THEN Remote Config org is added with an empty name`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "321", name = null)
+            val configJson = """{"version":"1"}"""
+            coEvery { orgConfigProvider.fetchOrgConfig("321") } returns configJson
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { orgRepo.addOrgFromRemoteConfig("321", "", configJson) }
+        }
+
+    @Test
+    fun `WHEN bootstrap completes THEN no navigation or other events are emitted`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "123", name = "TestOrg")
+            coEvery { orgConfigProvider.fetchOrgConfig("123") } returns null
+
+            vm.bootstrap()
+
+            assertTrue(vm.events.replayCache.isEmpty())
+            assertEquals(SplashState(), vm.state.value)
         }
 }

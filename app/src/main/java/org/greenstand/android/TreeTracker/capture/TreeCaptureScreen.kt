@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -73,6 +74,9 @@ import org.greenstand.android.TreeTracker.view.UserImageButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
+/** Test tag of the debug/beta button that creates fake trees. */
+internal const val CREATE_FAKE_TREES_BUTTON_TAG = "CreateFakeTreesButton"
+
 @ExperimentalPermissionsApi
 @Composable
 fun TreeCaptureScreen(
@@ -97,6 +101,67 @@ fun TreeCaptureScreen(
         }
     }
 
+    TreeCapture(
+        state = state,
+        onBackClicked = {
+            scope.launch {
+                CaptureFlowScopeManager.nav.goToDashboard(navigator)
+            }
+        },
+        onCaptureClicked = {
+            viewModel.handleAction(TreeCaptureAction.CaptureLocation)
+            scope.launch { cameraControl.captureImage() }
+        },
+        onInfoClicked = {
+            viewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(true))
+        },
+        onBadGpsRetryClicked = {
+            viewModel.handleAction(TreeCaptureAction.UpdateBadGpsDialogState(null))
+        },
+        onBadGpsExitClicked = {
+            CaptureFlowScopeManager.nav.goToDashboard(navigator)
+        },
+        onTutorialCompleted = {
+            viewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(false))
+        },
+        onProfileClicked = {
+            scope.launch {
+                CaptureFlowScopeManager.nav.goToUserSelect(navigator)
+            }
+        },
+        onCreateFakeTreesClicked = {
+            viewModel.handleAction(TreeCaptureAction.CreateFakeTrees)
+        },
+        cameraPreview = { modifier ->
+            Camera(
+                isSelfieMode = false,
+                cameraControl = cameraControl,
+                modifier = modifier,
+                onImageCaptured = {
+                    viewModel.handleAction(TreeCaptureAction.OnImageCaptured(it))
+                },
+            )
+        },
+    )
+}
+
+/**
+ * Stateless tree capture UI. The camera preview is a slot ([cameraPreview]) so the screen
+ * can be rendered without CameraX; it receives the modifier that sizes the preview.
+ */
+@Composable
+fun TreeCapture(
+    state: TreeCaptureState,
+    onBackClicked: () -> Unit = {},
+    onCaptureClicked: () -> Unit = {},
+    onInfoClicked: () -> Unit = {},
+    onBadGpsRetryClicked: () -> Unit = {},
+    onBadGpsExitClicked: () -> Unit = {},
+    onTutorialCompleted: () -> Unit = {},
+    onProfileClicked: () -> Unit = {},
+    onCreateFakeTreesClicked: () -> Unit = {},
+    cameraPreview: @Composable (Modifier) -> Unit = {},
+) {
     Scaffold(
         backgroundColor = AppColors.Gray,
         bottomBar = {
@@ -108,11 +173,7 @@ fun TreeCaptureScreen(
                 leftAction = {
                     ArrowButton(
                         isLeft = true,
-                        onClick = {
-                            scope.launch {
-                                CaptureFlowScopeManager.nav.goToDashboard(navigator)
-                            }
-                        },
+                        onClick = onBackClicked,
                     )
                 },
                 centerAction = {
@@ -120,19 +181,14 @@ fun TreeCaptureScreen(
                         modifier =
                             Modifier
                                 .align(Alignment.Center),
-                        onClick = {
-                            viewModel.handleAction(TreeCaptureAction.CaptureLocation)
-                            scope.launch { cameraControl.captureImage() }
-                        },
+                        onClick = onCaptureClicked,
                         isEnabled = !state.isGettingLocation,
                     )
                 },
                 rightAction = {
                     InfoButton(
                         modifier = Modifier.align(Alignment.Center),
-                        onClick = {
-                            viewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(true))
-                        },
+                        onClick = onInfoClicked,
                     )
                 },
             )
@@ -143,42 +199,26 @@ fun TreeCaptureScreen(
                 dialogIcon = painterResource(id = R.drawable.error_outline),
                 title = stringResource(R.string.poor_gps_header),
                 textContent = stringResource(R.string.poor_gps_message),
-                onPositiveClick = {
-                    viewModel.handleAction(TreeCaptureAction.UpdateBadGpsDialogState(null))
-                },
-                onNegativeClick = {
-                    CaptureFlowScopeManager.nav.goToDashboard(navigator)
-                },
+                onPositiveClick = onBadGpsRetryClicked,
+                onNegativeClick = onBadGpsExitClicked,
             )
         }
         if (state.showCaptureTutorial == true) {
             TreeCaptureTutorial(
-                onCompleteClick = {
-                    viewModel.handleAction(TreeCaptureAction.UpdateCaptureTutorialDialog(false))
-                },
+                onCompleteClick = onTutorialCompleted,
             )
         }
 
-        Camera(
-            isSelfieMode = false,
-            cameraControl = cameraControl,
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-            onImageCaptured = {
-                viewModel.handleAction(TreeCaptureAction.OnImageCaptured(it))
-            },
+        cameraPreview(
+            Modifier
+                .fillMaxSize()
+                .padding(padding),
         )
         ActionBar(
             modifier = Modifier.background(Color.Black).statusBarsPadding(),
             leftAction = {
                 UserImageButton(
-                    onClick = {
-                        scope.launch {
-                            CaptureFlowScopeManager.nav.goToUserSelect(navigator)
-                        }
-                    },
+                    onClick = onProfileClicked,
                     imagePath = state.profilePicUrl,
                 )
             },
@@ -188,11 +228,10 @@ fun TreeCaptureScreen(
                         modifier =
                             Modifier
                                 .size(height = 70.dp, width = 70.dp)
-                                .align(Alignment.Center),
+                                .align(Alignment.Center)
+                                .testTag(CREATE_FAKE_TREES_BUTTON_TAG),
                         isEnabled = !state.isCreatingFakeTrees,
-                        onClick = {
-                            viewModel.handleAction(TreeCaptureAction.CreateFakeTrees)
-                        },
+                        onClick = onCreateFakeTreesClicked,
                         colors = AppButtonColors.ProgressGreen,
                         shape = TreeTrackerButtonShape.Circle,
                     ) {

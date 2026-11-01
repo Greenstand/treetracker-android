@@ -33,6 +33,7 @@ import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.dashboard.TreesToSyncHelper
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
@@ -46,6 +47,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -253,6 +255,132 @@ class SessionTrackerTest {
             coVerify { treesToSyncHelper.refreshTreeCountToSync() }
             verify { exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, false) }
         }
+
+    @Test
+    fun `WHEN startSession THEN the session details are recorded for crash reports`() =
+        runTest {
+            setupStartSessionMocks(organizationName = "Org A", sessionNote = "a note")
+
+            sessionTracker.startSession()
+
+            verify { exceptionDataCollector.set(ExceptionDataCollector.ORG_NAME, "Org A") }
+            verify {
+                exceptionDataCollector.set(
+                    ExceptionDataCollector.USER_WALLET,
+                    FakeFileGenerator.fakeUserEntity.wallet,
+                )
+            }
+            verify { exceptionDataCollector.set(ExceptionDataCollector.SESSION_NOTE, "a note") }
+            verify { exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, true) }
+        }
+
+    @Test
+    fun `WHEN startSession THEN the session id is persisted`() =
+        runTest {
+            setupStartSessionMocks()
+
+            sessionTracker.startSession()
+
+            verify { editor.putLong(SessionTracker.SESSION_ID_KEY, 1L) }
+            verify { editor.commit() }
+        }
+
+    @Test
+    fun `WHEN startSession while a session is active THEN the previous session is ended first`() =
+        runTest {
+            setupStartSessionMocks()
+            sessionTracker.startSession()
+            val previous = savedSession()
+            coEvery { dao.getSessionById(1L) } returns previous
+            every { timeProvider.currentTime() } returns NOW
+            coEvery { dao.insertSession(any()) } returns 2L
+
+            sessionTracker.startSession()
+
+            assertEquals(NOW, previous.endTime)
+            coVerify { dao.updateSession(previous) }
+            assertEquals(2L, sessionTracker.currentSessionId)
+        }
+
+    @Test
+    fun `WHEN createSession THEN it records the user, start time and latest device config`() =
+        runTest {
+            setupStartSessionMocks()
+            val deviceConfig = deviceConfig(id = 7L)
+            coEvery { dao.getLatestDeviceConfig() } returns deviceConfig
+            every { timeProvider.currentTime() } returns NOW
+
+            val session =
+                sessionTracker.createSession(
+                    userId = FakeFileGenerator.fakeUsers.first().id,
+                    organizationName = "Org B",
+                    sessionNote = null,
+                )
+
+            assertEquals(FakeFileGenerator.fakeUserEntity.uuid, session.originUserId)
+            assertEquals(NOW, session.startTime)
+            assertEquals(7L, session.deviceConfigId)
+            assertEquals("Org B", session.organization)
+            assertEquals(null, session.note)
+            assertFalse(session.isUploaded)
+            assertEquals(null, session.endTime)
+        }
+
+    @Test
+    fun `WHEN createSession twice THEN each session gets a unique uuid`() =
+        runTest {
+            setupStartSessionMocks()
+            val userId = FakeFileGenerator.fakeUsers.first().id
+
+            val first = sessionTracker.createSession(userId, null, null)
+            val second = sessionTracker.createSession(userId, null, null)
+
+            assertTrue(first.uuid != second.uuid)
+        }
+
+    @Test
+    fun `WHEN createSession for an unknown user THEN it throws and saves nothing`() =
+        runTest {
+            coEvery { dao.getUserById(any()) } returns null
+
+            assertFailsWith<IllegalStateException> {
+                sessionTracker.createSession(userId = 99L, organizationName = null, sessionNote = null)
+            }
+            coVerify(exactly = 0) { dao.insertSession(any()) }
+        }
+
+    @Test
+    fun `WHEN endSession without an active session THEN crash report session data is still cleared`() =
+        runTest {
+            sessionTracker.endSession()
+
+            verify { exceptionDataCollector.clear(ExceptionDataCollector.ORG_NAME) }
+            verify { exceptionDataCollector.clear(ExceptionDataCollector.DESTINATION_WALLET) }
+            verify { exceptionDataCollector.clear(ExceptionDataCollector.SESSION_NOTE) }
+            verify { exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, false) }
+            coVerify(exactly = 0) { treesToSyncHelper.refreshTreeCountToSync() }
+            verify(exactly = 0) { preferences.edit() }
+        }
+
+    @Test
+    fun `WHEN a session is active THEN wasSessionInterrupted returns false`() =
+        runTest {
+            setupStartSessionMocks()
+            sessionTracker.startSession()
+            every { preferences.getLong(any(), any()) } returns 1L
+
+            assertFalse(sessionTracker.wasSessionInterrupted())
+        }
+
+    private fun deviceConfig(id: Long) =
+        DeviceConfigEntity(
+            uuid = "device-config-uuid",
+            appVersion = "2.2.0",
+            appBuild = 1,
+            osVersion = "14",
+            sdkVersion = 34,
+            loggedAt = Instant.fromEpochMilliseconds(0),
+        ).apply { this.id = id }
 
     private fun savedSession() =
         SessionEntity(

@@ -53,6 +53,7 @@ complexity:
     ignoredLabels: []
   LargeClass:
     active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
     allowedLines: 600
   LongMethod:
     active: false

@@ -72,4 +72,54 @@ class RouteRegistryTest {
     fun `isValidRoute rejects unknown routes`() {
         assertFalse(RouteRegistry.isValidRoute("nope"))
     }
+
+    @Test
+    fun `route constants keep their org config values`() {
+        assertEquals("user-select", RouteRegistry.ROUTE_USER_SELECT)
+        assertEquals("wallet-select", RouteRegistry.ROUTE_WALLET_SELECT)
+        assertEquals("add-org", RouteRegistry.ROUTE_ADD_ORG)
+        assertEquals("session-note", RouteRegistry.ROUTE_SESSION_NOTE)
+        assertEquals("tree-height-selection", RouteRegistry.ROUTE_TREE_HEIGHT)
+        assertEquals("capture/{profilePicUrl}", RouteRegistry.ROUTE_TREE_CAPTURE)
+        assertEquals("tree-image-review/{photoPath}", RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+    }
+
+    @Test
+    fun `aliases of arg routes do not resolve to no-arg routes`() {
+        assertNull(RouteRegistry.resolveNoArgRoute("tree-capture"))
+        assertNull(RouteRegistry.resolveNoArgRoute("image-review"))
+    }
+
+    @Test
+    fun `route matching is exact and case sensitive`() {
+        assertNull(RouteRegistry.resolveNoArgRoute("User-Select"))
+        assertNull(RouteRegistry.resolveNoArgRoute(" user-select"))
+        assertFalse(RouteRegistry.isValidRoute("USER-SELECT"))
+        assertFalse(RouteRegistry.isValidRoute(""))
+    }
+
+    @Test
+    fun `isValidRoute recognizes every no-arg route`() {
+        listOf("user-select", "wallet-select", "add-org", "session-note", "tree-height-selection").forEach {
+            assertTrue(it, RouteRegistry.isValidRoute(it))
+        }
+    }
+
+    @Test
+    fun `isValidRoute recognizes the image review route and its alias`() {
+        assertTrue(RouteRegistry.isValidRoute("tree-image-review/{photoPath}"))
+        assertTrue(RouteRegistry.isValidRoute("image-review"))
+    }
+
+    @Test
+    fun `isValidRoute rejects routes that exist only as typed NavKeys`() {
+        assertFalse(RouteRegistry.isValidRoute("dashboard"))
+        assertFalse(RouteRegistry.isValidRoute("settings"))
+    }
+
+    @Test
+    fun `normalize leaves canonical arg routes unchanged`() {
+        assertEquals("capture/{profilePicUrl}", RouteRegistry.normalize("capture/{profilePicUrl}"))
+        assertEquals("tree-image-review/{photoPath}", RouteRegistry.normalize("tree-image-review/{photoPath}"))
+    }
 }

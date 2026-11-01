@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models.organization
 
+import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.mockk.every
@@ -110,5 +111,59 @@ class OrgConfigProviderTest {
 
             assertEquals("""{"version":"1"}""", result)
             verify { remoteConfig.getString("org_abc-123") }
+        }
+
+    @Test
+    fun `WHEN reading the value throws THEN returns null`() =
+        runTest {
+            every { remoteConfig.fetchAndActivate() } returns Tasks.forResult(true)
+            every { remoteConfig.getString("org_boom") } throws IllegalStateException("not activated")
+
+            val result = orgConfigProvider.fetchOrgConfig("boom")
+
+            assertNull(result)
+        }
+
+    @Test
+    fun `WHEN fetch never completes THEN times out with null without reading a value`() =
+        runTest {
+            every { remoteConfig.fetchAndActivate() } returns TaskCompletionSource<Boolean>().task
+
+            val result = orgConfigProvider.fetchOrgConfig("slow")
+
+            assertNull(result)
+            verify(exactly = 0) { remoteConfig.getString(any()) }
+        }
+
+    @Test
+    fun `WHEN fetch is cancelled THEN returns null`() =
+        runTest {
+            every { remoteConfig.fetchAndActivate() } returns Tasks.forCanceled()
+
+            val result = orgConfigProvider.fetchOrgConfig("cancelled")
+
+            assertNull(result)
+            verify(exactly = 0) { remoteConfig.getString(any()) }
+        }
+
+    @Test
+    fun `WHEN fetch fails THEN no value is read`() =
+        runTest {
+            every { remoteConfig.fetchAndActivate() } returns Tasks.forException(RuntimeException("offline"))
+
+            orgConfigProvider.fetchOrgConfig("offline")
+
+            verify(exactly = 0) { remoteConfig.getString(any()) }
+        }
+
+    @Test
+    fun `WHEN value is only whitespace THEN returns null`() =
+        runTest {
+            every { remoteConfig.fetchAndActivate() } returns Tasks.forResult(true)
+            every { remoteConfig.getString("org_blank") } returns "  \n "
+
+            val result = orgConfigProvider.fetchOrgConfig("blank")
+
+            assertNull(result)
         }
 }

@@ -172,12 +172,12 @@ android {
     }
     namespace 'org.greenstand.android.TreeTracker'
 
-    // includeAndroidResources is only needed for screenshot tests (Compose theme loads
-    // fonts from R.font.*). Enabling it globally causes Robolectric to fully initialize
-    // TreeTrackerApplication, which starts Koin and breaks existing unit tests.
+    // Screenshot and Compose UI tests need app resources (strings, drawables, R.font.*).
+    // src/test/resources/robolectric.properties keeps Robolectric on a plain Application,
+    // so TreeTrackerApplication (and Koin) never starts in unit tests.
     testOptions {
         unitTests {
-            includeAndroidResources = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
+            includeAndroidResources = true
         }
     }
 }
@@ -186,12 +186,23 @@ android {
 // - `./gradlew test` runs only regular unit tests (excludes screenshot/)
 // - `./gradlew verifyRoborazziDebug` runs only screenshot tests (includes screenshot/ only)
 // This prevents Koin DI conflicts between the two test suites.
+// Compose UI tests (uitest/) run only in testDebugUnitTest: the activity they launch is
+// declared by ui-test-manifest, which is a debug-only dependency.
 def isRoborazziRun = gradle.startParameter.taskNames.any { it.toLowerCase().contains('roborazzi') }
 tasks.withType(Test).configureEach {
+    // Robolectric + Compose UI tests need more than the 512 MB default heap. A fresh JVM every
+    // 100 test classes keeps leaked Robolectric state bounded, and the timeout fails a stuck
+    // test JVM instead of letting CI hang until the job is cancelled.
+    maxHeapSize = "3g"
+    forkEvery = 100
+    timeout.set(java.time.Duration.ofMinutes(60))
     if (isRoborazziRun) {
         include '**/screenshot/**'
     } else {
         exclude '**/screenshot/**'
+        if (name != 'testDebugUnitTest') {
+            exclude '**/uitest/**'
+        }
     }
 }
 

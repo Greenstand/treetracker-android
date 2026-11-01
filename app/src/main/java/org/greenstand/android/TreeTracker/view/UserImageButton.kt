@@ -27,7 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+
+/** Test tag of a [UserImageButton]. */
+const val USER_IMAGE_BUTTON_TAG = "UserImageButton"
 
 @Composable
 fun BoxScope.UserImageButton(
@@ -47,7 +51,8 @@ fun BoxScope.UserImageButton(
                     end = 10.dp,
                     bottom = 10.dp,
                 ).aspectRatio(1.0f)
-                .clip(RoundedCornerShape(10.dp)),
+                .clip(RoundedCornerShape(10.dp))
+                .testTag(USER_IMAGE_BUTTON_TAG),
         onClick = onClick,
     ) {
         LocalImage(

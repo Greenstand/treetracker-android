@@ -27,9 +27,12 @@ import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
+import org.greenstand.android.TreeTracker.navigation.MapRoute
 import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
 import org.greenstand.android.TreeTracker.navigation.SettingsRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
+import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.greenstand.android.TreeTracker.utils.fakeNavigator
 import org.greenstand.android.TreeTracker.viewmodel.NavigationEvent
@@ -40,6 +43,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
@@ -241,5 +245,127 @@ class SettingsViewModelTest {
 
             // popUpToRoot() + launchSingleTop leaves SignupFlowRoute as the only entry.
             assertEquals(listOf<NavKey>(SignupFlowRoute), navigator.backStack)
+        }
+
+    private suspend fun SettingsViewModel.navigateWith(action: SettingsAction): List<NavKey> {
+        val navigator = fakeNavigator(DashboardRoute, SettingsRoute)
+        handleAction(action)
+        val event = events.first().getContentIfNotConsumed() as NavigationEvent
+        event.navigate(navigator)
+        return navigator.backStack
+    }
+
+    @Test
+    fun `WHEN init without a power user THEN powerUser is null and no dialog is shown`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns null
+
+            val viewModel = SettingsViewModel(userRepo)
+
+            assertEquals(SettingsState(), viewModel.state.value)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN NavigateToEditTrees action THEN navigator lands on TreeEditUserSelectRoute`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            val backStack = viewModel.navigateWith(SettingsAction.NavigateToEditTrees)
+
+            assertEquals(listOf(DashboardRoute, SettingsRoute, TreeEditUserSelectRoute), backStack)
+        }
+
+    @Test
+    fun `WHEN NavigateToMap action THEN navigator lands on MapRoute`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            val backStack = viewModel.navigateWith(SettingsAction.NavigateToMap)
+
+            assertEquals(listOf(DashboardRoute, SettingsRoute, MapRoute), backStack)
+        }
+
+    @Test
+    fun `WHEN NavigateToDeleteAccount action THEN navigator lands on DeleteProfileRoute`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            val backStack = viewModel.navigateWith(SettingsAction.NavigateToDeleteAccount)
+
+            assertEquals(listOf(DashboardRoute, SettingsRoute, DeleteProfileRoute), backStack)
+        }
+
+    @Test
+    fun `WHEN NavigateBack action THEN pop returns to the dashboard`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+            val navigator = fakeNavigator(DashboardRoute, SettingsRoute)
+
+            viewModel.handleAction(SettingsAction.NavigateBack)
+
+            assertEquals(PopBackStackEvent, viewModel.events.first().getContentIfNotConsumed())
+            // HandleUIEvents dispatches PopBackStackEvent as a throttled pop.
+            navigator.throttledPopBackStack()
+            assertEquals(listOf<NavKey>(DashboardRoute), navigator.backStack)
+        }
+
+    @Test
+    fun `WHEN logout without a power user THEN only hides the logout dialog`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns null
+            val viewModel = SettingsViewModel(userRepo)
+            viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(true))
+
+            viewModel.handleAction(SettingsAction.Logout)
+
+            coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
+            assertEquals(false, viewModel.state.value.showLogoutDialog)
+            assertTrue(viewModel.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `WHEN LogoutConfirmed action THEN hides the dialog and emits a single navigation`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = SettingsViewModel(userRepo)
+            viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(true))
+
+            viewModel.handleAction(SettingsAction.LogoutConfirmed)
+
+            assertEquals(false, viewModel.state.value.showLogoutDialog)
+            assertEquals(1, viewModel.events.replayCache.size)
+            coVerify(exactly = 1) { userRepo.setPowerUserStatus(FakeFileGenerator.fakeUsers.first().id, false) }
+        }
+
+    @Test
+    fun `WHEN LogoutConfirmed from a deep stack THEN only SignupFlowRoute remains`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = SettingsViewModel(userRepo)
+            val navigator = fakeNavigator(DashboardRoute, SettingsRoute, MapRoute, SettingsRoute)
+
+            viewModel.handleAction(SettingsAction.LogoutConfirmed)
+            val event = viewModel.events.first().getContentIfNotConsumed() as NavigationEvent
+            event.navigate(navigator)
+
+            assertEquals(listOf<NavKey>(SignupFlowRoute), navigator.backStack)
+        }
+
+    @Test
+    fun `WHEN dialog actions run THEN no events are emitted`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.SetPrivacyDialogVisibility(true))
+            viewModel.handleAction(SettingsAction.UpdateLogoutDialogVisibility(true))
+
+            assertTrue(viewModel.events.replayCache.isEmpty())
+            assertNull(viewModel.state.value.showDeleteAccountDialog)
         }
 }

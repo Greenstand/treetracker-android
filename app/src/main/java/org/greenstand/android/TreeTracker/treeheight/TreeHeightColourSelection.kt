@@ -26,7 +26,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,13 +53,36 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
+/** Test tag of the colour button at [index] in [TreeHeightSelectionState.colors]. */
+internal fun treeHeightColorTag(index: Int): String = "TreeHeightColor$index"
+
 @Composable
-fun TreeHeightScreen() {
-    val viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current)
+fun TreeHeightScreen(
+    viewModel: TreeHeightSelectionViewModel = viewModel(factory = LocalViewModelFactory.current),
+) {
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
+    TreeHeight(
+        state = state,
+        onColorSelected = { color -> viewModel.handleAction(TreeHeightAction.SelectColor(color)) },
+        onNextClicked = {
+            state.selectedColor?.let {
+                scope.launch {
+                    CaptureFlowScopeManager.nav.navForward(navigator)
+                }
+            }
+        },
+    )
+}
+
+@Composable
+fun TreeHeight(
+    state: TreeHeightSelectionState = TreeHeightSelectionState(),
+    onColorSelected: (ButtonColors) -> Unit = {},
+    onNextClicked: () -> Unit = {},
+) {
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -89,13 +114,7 @@ fun TreeHeightScreen() {
                         isLeft = false,
                         isEnabled = state.selectedColor != null,
                         colors = AppButtonColors.ProgressGreen,
-                        onClick = {
-                            state.selectedColor?.let {
-                                scope.launch {
-                                    CaptureFlowScopeManager.nav.navForward(navigator)
-                                }
-                            }
-                        },
+                        onClick = onNextClicked,
                     )
                 },
             )
@@ -107,7 +126,7 @@ fun TreeHeightScreen() {
             verticalArrangement = Arrangement.spacedBy(20.dp),
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 30.dp, bottom = padding.calculateBottomPadding()),
         ) {
-            items(state.colors) { color ->
+            itemsIndexed(state.colors) { index, color ->
                 val isSelected = color == state.selectedColor
                 val animatedWidth by animateDpAsState(
                     targetValue = if (isSelected) 350.dp else 200.dp,
@@ -121,12 +140,13 @@ fun TreeHeightScreen() {
                 TreeTrackerButton(
                     colors = color,
                     isSelected = isSelected,
-                    onClick = { viewModel.handleAction(TreeHeightAction.SelectColor(color)) },
+                    onClick = { onColorSelected(color) },
                     modifier =
-                        Modifier.size(
-                            width = animatedWidth,
-                            height = animatedHeight,
-                        ),
+                        Modifier
+                            .size(
+                                width = animatedWidth,
+                                height = animatedHeight,
+                            ).testTag(treeHeightColorTag(index)),
                 ) {}
             }
         }
