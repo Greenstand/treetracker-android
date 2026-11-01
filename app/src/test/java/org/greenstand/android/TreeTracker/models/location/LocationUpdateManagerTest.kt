@@ -173,6 +173,47 @@ class LocationUpdateManagerTest {
     }
 
     @Test
+    fun `WHEN updates are stopped and started again THEN GPS updates are requested again`() {
+        grantFineLocation()
+        locationUpdateManager.startLocationUpdates()
+        locationUpdateManager.stopLocationUpdates()
+
+        val restarted = locationUpdateManager.startLocationUpdates()
+
+        assertTrue(restarted)
+        assertTrue(locationUpdateManager.isUpdating)
+        verify(exactly = 2) {
+            locationManager.requestLocationUpdates(any<String>(), any<Long>(), any<Float>(), any<LocationListener>())
+        }
+    }
+
+    @Test
+    fun `WHEN permission is revoked while updating THEN start reports failure and clears isUpdating`() {
+        grantFineLocation()
+        locationUpdateManager.startLocationUpdates()
+        denyLocation()
+
+        val started = locationUpdateManager.startLocationUpdates()
+
+        assertFalse(started)
+        assertFalse(locationUpdateManager.isUpdating)
+    }
+
+    @Test
+    fun `WHEN updates are stopped THEN the last fix is kept as the current location`() {
+        grantFineLocation()
+        locationUpdateManager.startLocationUpdates()
+        val lastFix = Location(LocationManager.GPS_PROVIDER).apply { time = 1_700_000_000_000L }
+        listener.captured.onLocationChanged(lastFix)
+
+        locationUpdateManager.stopLocationUpdates()
+
+        // The live data is reset for observers, but TimeProvider and capture still read the last fix.
+        assertNull(locationUpdateManager.locationUpdateLiveData.value)
+        assertSame(lastFix, locationUpdateManager.currentLocation)
+    }
+
+    @Test
     fun `refreshLocationUpdateRequest re-requests updates with the latest config`() {
         grantFineLocation()
         locationUpdateManager.startLocationUpdates()

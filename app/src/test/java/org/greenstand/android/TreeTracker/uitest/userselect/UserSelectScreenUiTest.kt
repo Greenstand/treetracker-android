@@ -19,6 +19,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
@@ -26,6 +27,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
@@ -185,5 +187,61 @@ class UserSelectScreenUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
 
         coVerify(exactly = 0) { setupNav.navForward(any()) }
+    }
+
+    @Test
+    fun `selecting a second user replaces the first selection`() {
+        renderUserSelect()
+
+        composeTestRule.onNodeWithText(ANN_NAME).performClick()
+        composeTestRule.onNodeWithText(BEN_NAME).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        assertEquals(listOf(userSelectTestUsers[1]), forwardedUsers)
+        verify { preferences.setUserId(userSelectTestUsers[0].id) }
+        verify { preferences.setUserId(userSelectTestUsers[1].id) }
+    }
+
+    @Test
+    fun `users added to the repository later appear in the grid`() {
+        val users = MutableStateFlow(listOf(userSelectTestUsers[0]))
+        every { userRepo.users() } returns users
+        renderUserSelect()
+        composeTestRule.onNodeWithText(BEN_NAME).assertDoesNotExist()
+
+        users.value = userSelectTestUsers
+
+        composeTestRule.onNodeWithText(BEN_NAME).assertExists()
+    }
+
+    @Test
+    fun `a user id passed in preselects that user`() {
+        coEvery { userRepo.getUser(userSelectTestUsers[1].id) } returns userSelectTestUsers[1]
+        val viewModel =
+            UserSelectViewModel(
+                userId = userSelectTestUsers[1].id,
+                userRepo = userRepo,
+                messageRepo = mockk<MessagesRepo>(relaxed = true),
+                locationDataCapturer = mockk<LocationDataCapturer>(relaxed = true),
+                prefs = preferences,
+            )
+        setContent(inspectionMode = false) {
+            UserSelect(
+                navigationButtonColors = AppButtonColors.ProgressGreen,
+                isCreateUserEnabled = true,
+                isNotificationEnabled = true,
+                viewModel = viewModel,
+                onNavigateForward = { forwardedUsers += it },
+            )
+        }
+        composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { viewModel.state.value.selectedUser != null }
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+
+        assertEquals(listOf(userSelectTestUsers[1]), forwardedUsers)
+    }
+
+    private companion object {
+        const val WAIT_TIMEOUT_MS = 5_000L
     }
 }

@@ -16,6 +16,9 @@
 package org.greenstand.android.TreeTracker.viewmodel
 
 import app.cash.turbine.test
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -78,5 +81,25 @@ class SnackbarControllerTest {
                 }
                 cancelAndIgnoreRemainingEvents()
             }
+        }
+
+    @Test
+    fun `WHEN the subscriber is busy THEN up to sixteen snackbars are buffered and the rest dropped`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val received = mutableListOf<String>()
+            val gate = CompletableDeferred<Unit>()
+            val collector =
+                launch {
+                    controller.events.collect {
+                        received += (it.message as TextRef.Plain).value
+                        gate.await() // stay busy on the first snackbar
+                    }
+                }
+
+            repeat(20) { controller.show(ShowSnackbar(TextRef("$it"))) }
+            gate.complete(Unit)
+
+            assertEquals((0..16).map { "$it" }, received)
+            collector.cancel()
         }
 }

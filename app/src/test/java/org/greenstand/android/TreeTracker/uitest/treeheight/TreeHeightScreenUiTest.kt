@@ -83,4 +83,25 @@ class TreeHeightScreenUiTest : ComposeUiTest() {
 
         coVerify(exactly = 0) { flowNav.navForward(any()) }
     }
+
+    @Test
+    fun `selecting another colour moves the highlight and records the new index`() {
+        composeTestRule.onNodeWithTag(treeHeightColorTag(1)).performClick()
+        composeTestRule.onNodeWithTag(treeHeightColorTag(3)).performClick()
+        composeTestRule.waitForIdle()
+
+        verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, "3") }
+        composeTestRule.onNodeWithTag(treeHeightColorTag(3)).assertWidthIsEqualTo(350.dp)
+        composeTestRule.onNodeWithTag(treeHeightColorTag(1)).assertWidthIsEqualTo(200.dp)
+    }
+
+    @Test
+    fun `selecting the first colour records index zero and enables forward`() {
+        composeTestRule.onNodeWithTag(treeHeightColorTag(0)).performClick()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        verify { treeCapturer.addAttribute(Tree.TREE_COLOR_ATTR_KEY, "0") }
+        coVerify(exactly = 1) { flowNav.navForward(navigator) }
+    }
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -130,6 +131,28 @@ class PermissionRequestUiTest : ComposeUiTest() {
         val appSettings = drainStartedActivities().single { it.action == Settings.ACTION_APPLICATION_DETAILS_SETTINGS }
         assertEquals(Uri.fromParts("package", application.packageName, null), appSettings.data)
         assertTrue((appSettings.flags and Intent.FLAG_ACTIVITY_NEW_TASK) != 0)
+    }
+
+    @Test
+    fun `denied location permission shows the open settings dialog and skips the gps check`() {
+        shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
+        shadowOf(application).denyPermissions(*LOCATION_PERMISSIONS)
+
+        render()
+
+        composeTestRule.onAllNodesWithText(string(R.string.open_settings_header)).onFirst().assertIsDisplayed()
+        assertEquals(null, viewModel.state.value.isLocationEnabled)
+        assertFalse(drainStartedActivities().any { it.action == Settings.ACTION_LOCATION_SOURCE_SETTINGS })
+    }
+
+    @Test
+    fun `granted permissions never show the camera rationale`() {
+        shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
+
+        render()
+
+        composeTestRule.onNodeWithText(string(R.string.accept_camera_permission_header)).assertDoesNotExist()
+        composeTestRule.onNodeWithText(string(R.string.accept_location_permission_header)).assertDoesNotExist()
     }
 
     private companion object {
