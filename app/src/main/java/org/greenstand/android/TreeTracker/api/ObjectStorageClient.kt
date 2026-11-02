@@ -32,10 +32,12 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Date
 import java.util.UUID
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @Suppress("ImplicitDefaultLocale")
 class ObjectStorageClient private constructor(
@@ -100,7 +102,6 @@ class ObjectStorageClient private constructor(
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     @Throws(AmazonClientException::class)
     fun put(
         path: String,
@@ -111,7 +112,13 @@ class ObjectStorageClient private constructor(
         acl.grantPermission(GroupGrantee.AllUsers, Permission.Read)
 
         val image = File(path)
-        val timeStamp = SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Date())
+        val now = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val timeStamp = "%04d.%02d.%02d.%02d.%02d.%02d".format(
+            now.year, now.monthNumber, now.dayOfMonth,
+            now.hour, now.minute, now.second
+        )
 
         val dosKey = timeStamp + '_' + lat + '_' + long + '_' + UUID.randomUUID() + '_' + image.name
         val poRequest = PutObjectRequest(BuildConfig.OBJECT_STORAGE_BUCKET_IMAGES, dosKey, image)
@@ -145,7 +152,13 @@ class ObjectStorageClient private constructor(
         val acl = AccessControlList()
         acl.grantPermission(GroupGrantee.AllUsers, Permission.Read)
 
-        val timeStamp = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Date())
+        val now = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val timeStamp = "%04d-%02d-%02d-%02d-%02d-%02d".format(
+            now.year, now.monthNumber, now.dayOfMonth,
+            now.hour, now.minute, now.second
+        )
 
         val dosKey = timeStamp + '_'.toString() + UUID.randomUUID() + '_'.toString() + bundleId + ".json"
 
