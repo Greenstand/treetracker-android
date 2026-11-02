@@ -17,6 +17,7 @@ For every unit of work, create a task folder in `docs/tasks/` named `task_{id}` 
 - [Environment Setup](docs/getting-started/environment-setup.md)
 - [Build Variants](docs/getting-started/build-variants.md)
 - [Common Commands](docs/getting-started/common-commands.md)
+- [Claude Code Cloud Sessions](docs/getting-started/claude-cloud-sessions.md)
 
 ### Product
 

@@ -10,8 +10,15 @@ plugins {
 }
 
 def loadExtraProperties(String fileName) {
+    def file = project.rootProject.file(fileName)
+    if (!file.exists()) {
+        // Builds still configure with the placeholder keys from the root build.gradle, e.g. in
+        // Claude Code cloud sessions. Network calls that need real keys will fail.
+        project.logger.warn("$fileName not found, so API keys are placeholders. Ask the Android team for the file.")
+        return
+    }
     def props = new Properties()
-    props.load(new FileInputStream(fileName))
+    file.withInputStream { props.load(it) }
     props.each { key, val ->
         project.ext.set(key, val)
     }
