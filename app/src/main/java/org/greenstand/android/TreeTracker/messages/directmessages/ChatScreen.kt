@@ -35,7 +35,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -50,7 +49,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -64,6 +62,7 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.RoundedImageContainer
 import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
+import org.greenstand.android.TreeTracker.view.SharedKeyboardOptions
 
 private const val ConversationTestTag = "ConversationTestTag"
 
@@ -142,7 +141,10 @@ fun Chat(
         },
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(it),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it),
         ) {
             Messages(
                 state = state,
@@ -166,10 +168,8 @@ fun Chat(
                     value = state.draftText,
                     onValueChange = onDraftTextChanged,
                     keyboardOptions =
-                        KeyboardOptions(
+                        SharedKeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Go,
-                            autoCorrect = false,
                         ),
                     placeholder = {
                         Text(

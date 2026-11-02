@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -45,6 +43,7 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.SharedKeyboardOptions
 
 @Composable
 fun AddWalletScreen(
@@ -106,10 +105,8 @@ fun AddWallet(
                 onValueChange = { updatedName -> onHandleAction(AddWalletAction.UpdateWalletName(updatedName)) },
                 placeholder = { Text(text = stringResource(id = R.string.name_placeholder), color = Color.White) },
                 keyboardOptions =
-                    KeyboardOptions(
+                    SharedKeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Go,
-                        autoCorrect = false,
                         capitalization = KeyboardCapitalization.None,
                     ),
                 keyboardActions =
