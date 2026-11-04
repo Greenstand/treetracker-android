@@ -55,11 +55,11 @@ wait_id() {
   run "extendedWaitUntil: {visible: {id: \"$1\"}, timeout: ${2:-15000}}"
 }
 
-# back_to ID: press the bottom bar back arrow (up to 3 times) until ID shows.
+# back_to ID: press the bottom bar back arrow (up to 3 times) until `tb look` lists ID.
 back_to() {
   local i
   for i in 1 2 3; do
-    "$TB" do "extendedWaitUntil: {visible: {id: \"$1\"}, timeout: 2000}" > /dev/null 2>&1 && return 0
+    "$TB" look 2>/dev/null | grep -q "#$1\( \|$\)" && return 0
     tap "ArrowBackButton" "$BACK"
     sleep 1
   done
