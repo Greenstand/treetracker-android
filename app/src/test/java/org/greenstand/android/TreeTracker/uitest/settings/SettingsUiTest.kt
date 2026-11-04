@@ -27,9 +27,8 @@ import org.greenstand.android.TreeTracker.settings.Settings
 import org.greenstand.android.TreeTracker.settings.SettingsAction
 import org.greenstand.android.TreeTracker.settings.SettingsState
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Test
@@ -182,7 +181,7 @@ class SettingsUiTest : ComposeUiTest() {
         setSettings(SettingsState(showPrivacyPolicyDialog = true))
         composeTestRule.onNodeWithText(string(R.string.privacy_policy)).assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.PRIVACY_POLICY_CLOSE_BUTTON).performClick()
 
         assertEquals(listOf<SettingsAction>(SettingsAction.SetPrivacyDialogVisibility(false)), actions)
     }
@@ -207,7 +206,7 @@ class SettingsUiTest : ComposeUiTest() {
     fun `confirming the logout dialog sends LogoutConfirmed`() {
         setSettings(SettingsState(showLogoutDialog = true, powerUser = powerUser))
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
 
         assertEquals(listOf<SettingsAction>(SettingsAction.LogoutConfirmed), actions)
     }
@@ -216,7 +215,7 @@ class SettingsUiTest : ComposeUiTest() {
     fun `declining the logout dialog hides it`() {
         setSettings(SettingsState(showLogoutDialog = true, powerUser = powerUser))
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
 
         assertEquals(listOf<SettingsAction>(SettingsAction.UpdateLogoutDialogVisibility(false)), actions)
     }

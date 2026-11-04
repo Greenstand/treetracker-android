@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +53,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
 @Composable
@@ -140,13 +142,14 @@ private fun AnnouncementContent(
                 fontWeight = FontWeight.Bold,
                 style = CustomTheme.typography.large,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(CenterHorizontally),
+                modifier = Modifier.align(CenterHorizontally).testTag(TestTags.ANNOUNCEMENT_TITLE),
             )
         }
         Spacer(modifier = Modifier.height(6.dp))
         state.currentBody?.let { body ->
             Text(
                 text = body,
+                modifier = Modifier.testTag(TestTags.ANNOUNCEMENT_BODY),
                 color = CustomTheme.textColors.lightText,
                 fontWeight = FontWeight.Bold,
                 style = CustomTheme.typography.regular,
@@ -160,7 +163,8 @@ private fun AnnouncementContent(
                     .padding(top = 10.dp)
                     .clickable(onClick = {
                         onHandleAction(AnnouncementAction.OpenLink(url))
-                    }),
+                    })
+                    .testTag(TestTags.ANNOUNCEMENT_LINK),
                 color = AppColors.Green,
                 style = TextStyle(textDecoration = TextDecoration.Underline),
             )

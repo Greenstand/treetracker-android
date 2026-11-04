@@ -34,6 +34,7 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors.Red
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
@@ -76,6 +77,7 @@ fun DeleteProfileScreen() {
                             selectedColor = Red,
                             onClick = {
                             },
+                            testTag = TestTags.DIALOG_USER_BUTTON,
                         )
                     }
                 },
@@ -108,6 +110,7 @@ fun DeleteProfileScreen() {
                             selectedColor = Red,
                             onClick = {
                             },
+                            testTag = TestTags.DIALOG_USER_BUTTON,
                         )
                     }
                 },

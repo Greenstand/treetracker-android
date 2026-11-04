@@ -67,6 +67,7 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.CaptureButton
 import org.greenstand.android.TreeTracker.view.InfoButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
@@ -269,6 +270,7 @@ fun CaptureCustomLoading(
             Column(
                 modifier =
                     Modifier
+                        .testTag(TestTags.CAPTURE_PROGRESS)
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .wrapContentHeight()

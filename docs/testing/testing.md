@@ -53,6 +53,9 @@ them locally.
 CI runs them on an API 35 emulator in the "Android end-to-end" check
 (`.github/workflows/android-e2e.yml`); a failed step fails the check.
 
+Flows find controls by the ids in `TestTags` (`view/TestTags.kt`). Tag new controls there, and
+keep ids unique on screen; see [e2e/README.md](../../e2e/README.md#ids-for-flows).
+
 ## Screenshot Tests
 
 Roborazzi screenshot tests live in `app/src/test/.../screenshot/` and only run with

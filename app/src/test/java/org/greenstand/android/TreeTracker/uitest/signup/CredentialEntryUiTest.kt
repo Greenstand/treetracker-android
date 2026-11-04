@@ -32,10 +32,9 @@ import org.greenstand.android.TreeTracker.signup.SignUp
 import org.greenstand.android.TreeTracker.signup.SignUpState
 import org.greenstand.android.TreeTracker.signup.SignupAction
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -94,7 +93,7 @@ class CredentialEntryUiTest : ComposeUiTest() {
     fun `accepting the privacy policy sends ClosePrivacyPolicyDialog`() {
         setCredentialEntry(SignUpState(showPrivacyDialog = true))
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.PRIVACY_POLICY_CLOSE_BUTTON).performClick()
 
         assertEquals(listOf<SignupAction>(SignupAction.ClosePrivacyPolicyDialog), actions)
     }
@@ -308,7 +307,7 @@ class CredentialEntryUiTest : ComposeUiTest() {
     fun `declining the existing user dialog sends CloseExistingUserDialog`() {
         setCredentialEntry(SignUpState(showPrivacyDialog = false, existingUser = existingUser))
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
 
         assertEquals(listOf<SignupAction>(SignupAction.CloseExistingUserDialog), actions)
     }
@@ -317,8 +316,8 @@ class CredentialEntryUiTest : ComposeUiTest() {
     fun `existing user dialog only offers to decline`() {
         setCredentialEntry(SignUpState(showPrivacyDialog = false, existingUser = existingUser))
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertExists()
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).assertExists()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).assertDoesNotExist()
     }
 
     @Test

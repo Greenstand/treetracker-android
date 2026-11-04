@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,6 +75,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButtonShape
@@ -191,7 +193,7 @@ private fun DashboardHeader(
                     .size(width = 30.dp, height = 30.dp),
         )
         Text(
-            modifier = Modifier.align(CenterVertically),
+            modifier = Modifier.align(CenterVertically).testTag(TestTags.TREES_SYNCED_COUNT),
             text = treesSynced.toString(),
             fontWeight = FontWeight.Bold,
             color = CustomTheme.textColors.uploadText,
@@ -230,7 +232,7 @@ private fun DashboardStats(
             )
             Text(
                 text = treesRemainingToSync.toString(),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).testTag(TestTags.TREES_TO_SYNC_COUNT),
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.medium,
             )
@@ -241,7 +243,8 @@ private fun DashboardStats(
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .weight(1f),
+                    .weight(1f)
+                    .testTag(TestTags.UPLOAD_BUTTON),
             text = stringResource(R.string.upload),
             colors = AppButtonColors.UploadOrange,
             onClick = onSyncClicked,
@@ -263,7 +266,8 @@ private fun SyncStatusSection(
         modifier =
             modifier
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .testTag(TestTags.MESSAGES_BUTTON),
         colors = AppButtonColors.MessagePurple,
         onClick = onMessagesClicked,
         image = painterResource(id = R.drawable.announcement_icon),
@@ -282,7 +286,8 @@ private fun DashboardActions(
         modifier =
             modifier
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .testTag(TestTags.TRACK_BUTTON),
         colors = AppButtonColors.ProgressGreen,
         onClick = onCaptureClicked,
         image = painterResource(id = R.drawable.track_icon),
@@ -306,13 +311,13 @@ fun DashboardTopBar(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.settings_filled),
-                    contentDescription = "",
+                    contentDescription = stringResource(R.string.settings),
                     modifier =
                         Modifier
                             .size(50.dp)
                             .clickable {
                                 onSettingsClicked()
-                            },
+                            }.testTag(TestTags.SETTINGS_BUTTON),
                 )
             }
 //            Move Logic to settings screen for org feature

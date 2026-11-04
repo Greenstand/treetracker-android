@@ -29,6 +29,7 @@ import org.greenstand.android.TreeTracker.view.CAPTURE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ImageCapturing
 import org.greenstand.android.TreeTracker.view.SelfieTutorial
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 import org.greenstand.android.TreeTracker.view.TreeCaptureTutorial
 import org.greenstand.android.TreeTracker.view.TutorialDialog
@@ -44,25 +45,24 @@ class TutorialUiTest : ComposeUiTest() {
 
         composeTestRule.onNodeWithText(string(R.string.click_on)).assertExists()
         composeTestRule.onNodeWithText(string(R.string.selfie_instruction)).assertExists()
-        composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).assertExists()
+        composeTestRule.onNodeWithTag(TestTags.TUTORIAL_DONE_BUTTON).assertExists()
     }
 
     @Test
     fun `selfie tutorial completes when the approve button is clicked`() {
         setContent { SelfieTutorial(onCompleteClick = { completions++ }) }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.TUTORIAL_DONE_BUTTON).performClick()
 
         composeTestRule.runOnIdle { assertEquals(1, completions) }
     }
 
     @Test
-    fun `the example capture button in the tutorial is not clickable`() {
+    fun `the example capture button in the tutorial is hidden from accessibility`() {
         setContent { SelfieTutorial(onCompleteClick = { completions++ }) }
 
-        composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).performClick()
-
-        composeTestRule.runOnIdle { assertEquals(0, completions) }
+        // Only a picture of the button, so tools reading the screen do not mistake it for the real one.
+        composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).assertDoesNotExist()
     }
 
     @Test
@@ -77,7 +77,7 @@ class TutorialUiTest : ComposeUiTest() {
     fun `tree capture tutorial completes when the approve button is clicked`() {
         setContent { TreeCaptureTutorial(onCompleteClick = { completions++ }) }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.TUTORIAL_DONE_BUTTON).performClick()
 
         composeTestRule.runOnIdle { assertEquals(1, completions) }
     }
@@ -87,12 +87,9 @@ class TutorialUiTest : ComposeUiTest() {
         setContent { TreeCaptureReviewTutorial(onCompleteClick = {}) }
 
         composeTestRule.onNodeWithText(string(R.string.tree_capture_review_text)).assertExists()
-        composeTestRule.onNodeWithText(string(R.string.note)).assertExists()
         composeTestRule.onNodeWithText(string(R.string.capture_tutorial)).assertExists()
         composeTestRule.onNodeWithText(string(R.string.recapture_tutorial)).assertExists()
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertExists()
-        // The example save button plus the dialog's own complete button.
-        composeTestRule.onAllNodesWithTag(APPROVE_BUTTON_TAG).assertCountEquals(2)
+        composeTestRule.onNodeWithTag(TestTags.TUTORIAL_DONE_BUTTON).assertExists()
     }
 
     @Test
@@ -105,27 +102,28 @@ class TutorialUiTest : ComposeUiTest() {
         }
 
         composeTestRule.onNodeWithText(CONTENT).assertExists()
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.TUTORIAL_DONE_BUTTON).performClick()
 
         composeTestRule.runOnIdle { assertEquals(1, completions) }
     }
 
     @Test
-    fun `the example buttons in the review tutorial do not complete it`() {
+    fun `the example buttons in the review tutorial are hidden from accessibility`() {
         setContent { TreeCaptureReviewTutorial(onCompleteClick = { completions++ }) }
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
-        composeTestRule.onNodeWithText(string(R.string.note)).performClick()
-        composeTestRule.onAllNodesWithTag(APPROVE_BUTTON_TAG)[0].performClick()
-
-        composeTestRule.runOnIdle { assertEquals(0, completions) }
+        // Only pictures of the note, save and recapture buttons, so tools reading the screen do not
+        // mistake them for the real ones under the dialog.
+        composeTestRule.onNodeWithText(string(R.string.note)).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertDoesNotExist()
+        composeTestRule.onAllNodesWithTag(TestTags.TUTORIAL_DONE_BUTTON).assertCountEquals(1)
     }
 
     @Test
     fun `the review tutorial completes with its own approve button`() {
         setContent { TreeCaptureReviewTutorial(onCompleteClick = { completions++ }) }
 
-        composeTestRule.onAllNodesWithTag(APPROVE_BUTTON_TAG)[1].performClick()
+        composeTestRule.onNodeWithTag(TestTags.TUTORIAL_DONE_BUTTON).performClick()
 
         composeTestRule.runOnIdle { assertEquals(1, completions) }
     }
@@ -134,12 +132,12 @@ class TutorialUiTest : ComposeUiTest() {
     fun `tutorial dialog without content only offers the approve button`() {
         setContent { TutorialDialog(onCompleteClick = { completions++ }) }
 
-        composeTestRule.onAllNodesWithTag(APPROVE_BUTTON_TAG).assertCountEquals(1)
+        composeTestRule.onAllNodesWithTag(TestTags.TUTORIAL_DONE_BUTTON).assertCountEquals(1)
         composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertDoesNotExist()
     }
 
     @Test
-    fun `image capturing shows the given instruction next to an inert capture button`() {
+    fun `image capturing shows the given instruction and hides the example capture button`() {
         setContent {
             ImageCapturing(
                 image = painterResource(id = R.drawable.selfie_illustration),
@@ -149,7 +147,7 @@ class TutorialUiTest : ComposeUiTest() {
 
         composeTestRule.onNodeWithText(string(R.string.click_on)).assertExists()
         composeTestRule.onNodeWithText(CONTENT).assertExists()
-        composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).assertExists()
+        composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).assertDoesNotExist()
     }
 
     private companion object {

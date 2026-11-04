@@ -30,11 +30,10 @@ import org.greenstand.android.TreeTracker.capture.TreeCapture
 import org.greenstand.android.TreeTracker.capture.TreeCaptureState
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.CAPTURE_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.INFO_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.USER_IMAGE_BUTTON_TAG
 import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
@@ -151,7 +150,7 @@ class TreeCaptureUiTest : ComposeUiTest() {
     fun `approving the bad gps dialog retries`() {
         render(state = TreeCaptureState(isLocationAvailable = false))
 
-        composeTestRule.onNode(hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_POSITIVE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
 
         assertEquals(listOf(BAD_GPS_RETRY), clicks)
     }
@@ -160,7 +159,7 @@ class TreeCaptureUiTest : ComposeUiTest() {
     fun `declining the bad gps dialog exits`() {
         render(state = TreeCaptureState(isLocationAvailable = false))
 
-        composeTestRule.onNode(hasTestTag(DECLINE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_NEGATIVE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
 
         assertEquals(listOf(BAD_GPS_EXIT), clicks)
     }
@@ -183,7 +182,7 @@ class TreeCaptureUiTest : ComposeUiTest() {
     fun `completing the capture tutorial reports it`() {
         render(state = TreeCaptureState(showCaptureTutorial = true))
 
-        composeTestRule.onNode(hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.TUTORIAL_DONE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
 
         assertEquals(listOf(TUTORIAL_DONE), clicks)
     }

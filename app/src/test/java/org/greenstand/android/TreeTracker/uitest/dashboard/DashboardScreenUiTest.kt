@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.uitest.dashboard
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -47,7 +46,7 @@ import org.greenstand.android.TreeTracker.navigation.SettingsRoute
 import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.uitest.support.RootScreenUiTest
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -123,7 +122,7 @@ class DashboardScreenUiTest : RootScreenUiTest() {
         launchDashboard(treesToUpload = SYNC_REMINDER_THRESHOLD)
         composeTestRule.onNodeWithText(string(R.string.track)).performClick()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
         assertEquals(listOf(DashboardRoute, UserSelectRoute), backStack.toList())
@@ -144,7 +143,7 @@ class DashboardScreenUiTest : RootScreenUiTest() {
     fun `settings icon opens settings`() {
         launchDashboard(treesToUpload = 0)
 
-        composeTestRule.onNode(hasClickAction()).performClick()
+        composeTestRule.onNodeWithTag(TestTags.SETTINGS_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
         assertEquals(listOf(DashboardRoute, SettingsRoute), backStack.toList())

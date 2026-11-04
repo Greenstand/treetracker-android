@@ -20,7 +20,6 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertRangeInfoEquals
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,7 +27,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.dashboard.Dashboard
 import org.greenstand.android.TreeTracker.dashboard.DashboardState
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -124,7 +123,7 @@ class DashboardUiTest : ComposeUiTest() {
     fun `settings icon click invokes onSettingsClicked`() {
         setDashboard()
 
-        composeTestRule.onNode(hasClickAction()).performClick()
+        composeTestRule.onNodeWithTag(TestTags.SETTINGS_BUTTON).performClick()
 
         assertEquals(listOf(SETTINGS), clicks)
     }
@@ -148,7 +147,7 @@ class DashboardUiTest : ComposeUiTest() {
     fun `confirming the sync reminder dialog invokes onDialogConfirm`() {
         setDashboard(showSyncReminderDialog = true)
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
 
         assertEquals(listOf(DIALOG_CONFIRM), clicks)
     }

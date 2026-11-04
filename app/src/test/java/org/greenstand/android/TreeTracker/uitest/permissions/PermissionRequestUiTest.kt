@@ -38,8 +38,7 @@ import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.TreeCaptureRoute
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -113,7 +112,7 @@ class PermissionRequestUiTest : ComposeUiTest() {
         shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         render()
 
-        composeTestRule.onNode(hasTestTag(DECLINE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_NEGATIVE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
         composeTestRule.waitForIdle()
 
         assertEquals(listOf(DashboardRoute), backStack.toList())
@@ -125,7 +124,7 @@ class PermissionRequestUiTest : ComposeUiTest() {
         render()
         drainStartedActivities()
 
-        composeTestRule.onNode(hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_POSITIVE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
         composeTestRule.waitForIdle()
 
         val appSettings = drainStartedActivities().single { it.action == Settings.ACTION_APPLICATION_DETAILS_SETTINGS }

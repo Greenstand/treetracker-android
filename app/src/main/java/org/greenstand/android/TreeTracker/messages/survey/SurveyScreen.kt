@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,6 +42,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
@@ -110,6 +112,7 @@ fun Survey(
                         key = { it },
                     ) { index ->
                         AnswerItem(
+                            testTag = TestTags.surveyAnswer(index),
                             answerText = choices[index],
                             isSelected = state.selectedAnswerIndex == index,
                             onClick = { onHandleAction(SurveyAction.SelectAnswer(index)) },
@@ -134,7 +137,7 @@ fun BoxScope.UserImage(imagePath: String?) {
 @Composable
 fun QuestionPrompt(promptText: String) {
     Text(
-        modifier = Modifier.padding(12.dp),
+        modifier = Modifier.padding(12.dp).testTag(TestTags.SURVEY_QUESTION),
         text = promptText,
         textAlign = TextAlign.Center,
         color = CustomTheme.textColors.lightText,
@@ -146,13 +149,15 @@ fun QuestionPrompt(promptText: String) {
 fun AnswerItem(
     answerText: String,
     isSelected: Boolean,
+    testTag: String? = null,
     onClick: () -> Unit,
 ) {
     TreeTrackerButton(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(68.dp),
+                .height(68.dp)
+                .then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
         colors = if (isSelected) AppButtonColors.ProgressGreen else AppButtonColors.Default,
         onClick = onClick,
     ) {

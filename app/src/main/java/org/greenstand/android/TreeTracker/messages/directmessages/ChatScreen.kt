@@ -64,6 +64,7 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.RoundedImageContainer
 import org.greenstand.android.TreeTracker.view.RoundedLocalImageContainer
+import org.greenstand.android.TreeTracker.view.TestTags
 
 private const val ConversationTestTag = "ConversationTestTag"
 
@@ -162,7 +163,8 @@ fun Chat(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(5.dp),
+                            .padding(5.dp)
+                            .testTag(TestTags.CHAT_INPUT_FIELD),
                     value = state.draftText,
                     onValueChange = onDraftTextChanged,
                     keyboardOptions =

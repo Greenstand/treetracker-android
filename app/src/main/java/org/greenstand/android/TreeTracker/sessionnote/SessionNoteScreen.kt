@@ -46,6 +46,7 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.TestTags
 
 @Composable
 fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -95,6 +96,7 @@ fun SessionNote(
         ) {
             Spacer(modifier = Modifier.height(120.dp))
             BorderedTextField(
+                testTag = TestTags.SESSION_NOTE_FIELD,
                 value = state.note,
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedNote -> onHandleAction(SessionNoteAction.UpdateNote(updatedNote)) },

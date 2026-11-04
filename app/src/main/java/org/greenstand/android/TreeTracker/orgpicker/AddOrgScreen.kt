@@ -34,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -50,6 +51,7 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
@@ -103,6 +105,7 @@ fun AddOrg(
         ) {
             Spacer(modifier = Modifier.height(120.dp))
             BorderedTextField(
+                testTag = TestTags.ORG_NAME_FIELD,
                 value = state.orgName,
                 modifier = Modifier.height(80.dp),
                 padding = PaddingValues(4.dp),
@@ -127,7 +130,8 @@ fun AddOrg(
                     modifier =
                         Modifier
                             .padding(16.dp)
-                            .size(height = 80.dp, width = 156.dp),
+                            .size(height = 80.dp, width = 156.dp)
+                            .testTag(TestTags.PREVIOUS_ORG_BUTTON),
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),

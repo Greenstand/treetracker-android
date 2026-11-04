@@ -45,6 +45,7 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.TestTags
 
 @Composable
 fun AddWalletScreen(
@@ -101,6 +102,7 @@ fun AddWallet(
                     .padding(top = 120.dp),
         ) {
             BorderedTextField(
+                testTag = TestTags.WALLET_NAME_FIELD,
                 value = state.walletName,
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(AddWalletAction.UpdateWalletName(updatedName)) },

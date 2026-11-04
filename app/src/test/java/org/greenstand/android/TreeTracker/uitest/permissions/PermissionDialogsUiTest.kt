@@ -33,8 +33,7 @@ import org.greenstand.android.TreeTracker.models.PermissionDeniedPermanentlyDial
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.TreeCaptureRoute
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -70,12 +69,12 @@ class PermissionDialogsUiTest : ComposeUiTest() {
     }
 
     private fun approveDialog() {
-        composeTestRule.onNode(hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_POSITIVE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
         composeTestRule.waitForIdle()
     }
 
     private fun declineDialog() {
-        composeTestRule.onNode(hasTestTag(DECLINE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_NEGATIVE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
         composeTestRule.waitForIdle()
     }
 

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +60,7 @@ fun BoxScope.TopBarTitle() {
                 .width(100.dp)
                 .align(Alignment.Center)
                 .padding(all = 15.dp)
+                .testTag(TestTags.TOP_BAR_LOGO)
                 .run {
                     if (FeatureFlags.DEBUG_ENABLED || FeatureFlags.BETA) {
                         this.pointerInput(true) {
