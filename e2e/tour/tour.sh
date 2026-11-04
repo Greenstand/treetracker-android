@@ -59,7 +59,7 @@ wait_id() {
 back_to() {
   local i
   for i in 1 2 3; do
-    "$TB" look 2>/dev/null | grep -q "#$1\( \|$\)" && return 0
+    "$TB" look 2>&1 | grep -q "#$1\( \|$\)" && return 0
     tap "ArrowBackButton" "$BACK"
     sleep 1
   done
