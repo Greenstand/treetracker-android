@@ -43,6 +43,19 @@ Unit tests run with Android resources (`includeAndroidResources = true`).
 share one Robolectric sandbox. Test JVMs get a 3 GB heap and restart every 100 test classes
 (`app/build.gradle`).
 
+## Instrumented (End-to-End) Tests
+
+Instrumented tests live in `app/src/androidTest/` and run the real debug app on a device or
+emulator, with Koin and the real database. `e2e/FirstLaunchE2eTest.kt` walks a fresh install
+from the splash screen through the language picker to sign-up.
+
+```bash
+./gradlew :app:connectedDebugAndroidTest
+```
+
+CI runs them on an API 35 emulator in the "Android end-to-end" check
+(`.github/workflows/android-e2e.yml`); a failing test fails the check.
+
 ## Screenshot Tests
 
 Roborazzi screenshot tests live in `app/src/test/.../screenshot/` and only run with
