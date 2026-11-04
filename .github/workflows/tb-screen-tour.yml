@@ -63,6 +63,8 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Walk the screens
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -76,10 +78,10 @@ jobs:
             adb install -r -g app/build/outputs/apk/debug/app-debug.apk
             adb emu geo fix 37.3 -3.5
             mkdir -p build/tour
-            (adb shell 'for i in 1 2 3 4 5 6; do screenrecord --time-limit 170 --bit-rate 4000000 /sdcard/tour-$i.mp4; done' &) ; sleep 1
+            (adb shell 'i=1; while [ ! -f /sdcard/stop ]; do screenrecord --time-limit 170 --bit-rate 4000000 /sdcard/tour-$i.mp4; i=$((i+1)); done' &) ; sleep 1
             OUT=build/tour TB=bin/tb bash e2e/tour/tour.sh || true
-            sleep 2; adb shell pkill -f 'for i in' || true; adb shell pkill -INT screenrecord || true; sleep 4
-            for i in 1 2 3 4 5 6; do adb pull /sdcard/tour-$i.mp4 build/tour/part-$i.mp4 2>/dev/null || true; done
+            sleep 2; adb shell touch /sdcard/stop; adb shell pkill -INT screenrecord || true; sleep 4
+            for i in 1 2 3 4 5 6 7 8; do adb pull /sdcard/tour-$i.mp4 build/tour/part-$i.mp4 2>/dev/null || true; done
             ls build/tour/part-*.mp4 | sed "s|^build/tour/|file '|; s|$|'|" > build/tour/parts.txt || true
             ffmpeg -loglevel error -f concat -safe 0 -i build/tour/parts.txt -c copy build/tour/tour.mp4 && rm -f build/tour/part-*.mp4 build/tour/parts.txt || true
             ls -la build/tour | tail -5; ffprobe -v error -show_entries format=duration -of csv=p=0 build/tour/tour.mp4 || true

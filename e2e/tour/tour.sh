@@ -59,11 +59,11 @@ wait_id() {
 back_to() {
   local i
   for i in 1 2 3; do
-    "$TB" do "assertVisible: {id: \"$1\"}" > /dev/null 2>&1 && return 0
+    "$TB" do "extendedWaitUntil: {visible: {id: \"$1\"}, timeout: 2000}" > /dev/null 2>&1 && return 0
     tap "ArrowBackButton" "$BACK"
     sleep 1
   done
-  run "assertVisible: {id: \"$1\"}"
+  wait_id "$1" 3000
 }
 
 # type ID TEXT [FALLBACK]: focus a field, then type.
