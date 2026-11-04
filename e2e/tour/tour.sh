@@ -58,12 +58,17 @@ wait_id() {
 # back_to ID: press the bottom bar back arrow (up to 3 times) until `tb look` lists ID.
 back_to() {
   local i
-  for i in 1 2 3; do
-    "$TB" look 2>&1 | grep -q "#$1\( \|$\)" && return 0
+  for i in 1 2 3 4; do
+    "$TB" look > "$OUT/.look" 2>&1
+    grep -qE "#$1([^A-Za-z0-9_]|$)" "$OUT/.look" && return 0
+    [ "$i" = 4 ] && break
     tap "ArrowBackButton" "$BACK"
-    sleep 1
+    sleep 2
   done
-  wait_id "$1" 3000
+  log "    (back_to $1: not found; last look:)"
+  tee -a "$OUT/tour.log" < "$OUT/.look"
+  cat -A "$OUT/.look" | head -5 | tee -a "$OUT/tour.log"
+  return 1
 }
 
 # type ID TEXT [FALLBACK]: focus a field, then type.
