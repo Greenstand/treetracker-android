@@ -128,8 +128,6 @@ tap "ArrowForwardButton" "$NEXT"
 wait_id TreeNoteField
 snap tree-detail
 back_to SettingsMap
-# With exactly one tree the map crashes on master (LibreMap fits the camera to a
-# one-point LatLngBounds); this step fails until that is fixed.
 tap "SettingsMap" "Map"
 run "extendedWaitUntil: {visible: {id: MapTreeCard_0}, timeout: 10000}"
 snap map-one-tree
