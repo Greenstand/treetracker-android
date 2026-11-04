@@ -1,0 +1,93 @@
+name: tb screen tour (temporary)
+
+# Temporary: walks the debug app with tb (e2e/tour) and uploads what tb look sees on each
+# screen. Used while making the screens ready for tb flows; remove before merging.
+on:
+  push:
+    branches: [ claude/tb-ready-screens ]
+  workflow_dispatch:
+
+concurrency:
+  group: tb-screen-tour-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tour:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        # base: the app as on master (the "before"); branch: this branch's app.
+        app: [ base, branch ]
+    env:
+      API_LEVEL: "35"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Use master's app code for the before run
+        if: matrix.app == 'base'
+        run: |
+          git fetch origin master
+          git checkout origin/master -- app
+      - name: Check out Test Buddy
+        uses: actions/checkout@v4
+        with:
+          repository: Elforama/testbuddy
+          ref: main
+          path: .testbuddy
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: .testbuddy/go.mod
+          cache-dependency-path: .testbuddy/go.sum
+      - name: Build tb
+        working-directory: .testbuddy
+        run: |
+          (cd agents/android && ./gradlew assembleDebug)
+          cp agents/android/app/build/outputs/apk/debug/app-debug.apk internal/driver/android/assets/tb-agent.apk
+          go build -o "$GITHUB_WORKSPACE/bin/tb" ./cmd/tb
+          "$GITHUB_WORKSPACE/bin/tb" version
+      - name: Setup build environment
+        uses: ./.github/workflows/actions/setup-build-environment
+        with:
+          use_dummy_keys: true
+      - name: Build the debug app
+        run: bash ./gradlew :app:assembleDebug --stacktrace
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Walk the screens
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: |
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb emu geo fix 37.3 -3.5
+            mkdir -p build/tour
+            (adb shell screenrecord --time-limit 170 --bit-rate 4000000 /sdcard/tour.mp4 &) ; sleep 1
+            OUT=build/tour TB=bin/tb bash e2e/tour/tour.sh || true
+            sleep 2; adb shell pkill -INT screenrecord || true; sleep 3
+            adb pull /sdcard/tour.mp4 build/tour/tour.mp4 || true
+      - name: Upload tour
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tour-${{ matrix.app }}
+          path: build/tour/
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Delete dummy property file
+        if: always()
+        run: rm -f treetracker.keys.properties
