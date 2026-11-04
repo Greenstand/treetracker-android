@@ -163,7 +163,8 @@ private fun AnnouncementContent(
                     .padding(top = 10.dp)
                     .clickable(onClick = {
                         onHandleAction(AnnouncementAction.OpenLink(url))
-                    }).testTag(TestTags.ANNOUNCEMENT_LINK),
+                    })
+                    .testTag(TestTags.ANNOUNCEMENT_LINK),
                 color = AppColors.Green,
                 style = TextStyle(textDecoration = TextDecoration.Underline),
             )
