@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,11 +56,13 @@ fun SelectableImageDetail(
     onClick: () -> Unit,
     placeholderResId: Int? = null,
     header: @Composable (() -> Unit)? = null,
+    testTag: String? = null,
     content: @Composable () -> Unit,
 ) {
     TreeTrackerButton(
         modifier =
             Modifier
+                .then(if (testTag != null) Modifier.testTag(testTag) else Modifier)
                 .padding(8.dp)
                 .height(270.dp)
                 .width(156.dp)
@@ -138,6 +141,7 @@ fun UserButton(
     selectedColor: Color,
     onClick: () -> Unit,
     isNotificationEnabled: Boolean = false,
+    testTag: String = TestTags.userButton(user.wallet),
 ) {
     SelectableImageDetail(
         photoPath = user.photoPath,
@@ -145,6 +149,7 @@ fun UserButton(
         buttonColors = buttonColors,
         selectedColor = selectedColor,
         onClick = onClick,
+        testTag = testTag,
     ) {
         Text(
             text = "${user.firstName} ${user.lastName}",

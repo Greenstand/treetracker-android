@@ -50,6 +50,12 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -76,7 +82,11 @@ fun TreeTrackerButton(
         animationSpec = tween(durationMillis = 100),
     )
 
-    // Parent box handles clicking and sends size constraints to children
+    // Parent box handles clicking and sends size constraints to children.
+    // The tap is handled with pointerInput (for the press animation), which tells accessibility
+    // nothing, so the semantics describe the button: screen readers and UI test tools (tb,
+    // UiAutomator) then see one tappable button with its label, enabled and selected state,
+    // instead of loose texts and images.
     BoxWithConstraints(
         modifier =
             modifier
@@ -84,6 +94,14 @@ fun TreeTrackerButton(
                     if (shape == TreeTrackerButtonShape.Circle) {
                         aspectRatio(1f)
                     }
+                }.semantics(mergeDescendants = true) {
+                    role = Role.Button
+                    onClick {
+                        if (isEnabled) onClickState.value.invoke()
+                        isEnabled
+                    }
+                    if (!isEnabled) disabled()
+                    isSelected?.let { selected = it }
                 }.pointerInput(isEnabled) {
                     if (!isEnabled) return@pointerInput
                     detectTapGestures(

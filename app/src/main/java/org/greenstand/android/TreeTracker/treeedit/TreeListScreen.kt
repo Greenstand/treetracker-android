@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +51,7 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.SelectableImageDetail
+import org.greenstand.android.TreeTracker.view.TestTags
 
 @Composable
 fun TreeListScreen(
@@ -147,6 +149,7 @@ fun TreeList(
                     contentDescription = null,
                 )
                 Text(
+                    modifier = Modifier.testTag(TestTags.TREE_LIST_EMPTY),
                     text = stringResource(R.string.tree_list_empty),
                     color = CustomTheme.textColors.lightText,
                     textAlign = TextAlign.Center,
@@ -159,11 +162,12 @@ fun TreeList(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp, bottom = paddingValues.calculateBottomPadding()),
             ) {
-                items(state.trees) { tree ->
+                itemsIndexed(state.trees) { index, tree ->
                     TreeButton(
                         tree = tree,
                         isSelected = state.selectedTree?.id == tree.id,
                         onClick = { onHandleAction(TreeListAction.SelectTree(tree)) },
+                        testTag = TestTags.treeButton(index),
                     )
                 }
             }
@@ -176,8 +180,10 @@ fun TreeButton(
     tree: TreeEntity,
     isSelected: Boolean,
     onClick: () -> Unit,
+    testTag: String? = null,
 ) {
     SelectableImageDetail(
+        testTag = testTag,
         photoPath = tree.photoPath,
         isSelected = isSelected,
         buttonColors = AppButtonColors.Default,

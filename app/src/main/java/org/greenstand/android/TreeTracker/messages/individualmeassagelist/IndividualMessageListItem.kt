@@ -49,9 +49,11 @@ fun IndividualMessageItem(
     text: String,
     icon: Int,
     iconPadding: PaddingValues? = null,
+    testTag: String? = null,
     onClick: () -> Unit,
 ) {
     SelectableImageDetail(
+        testTag = testTag,
         isSelected = isSelected,
         buttonColors = AppButtonColors.MessagePurple,
         selectedColor = AppColors.Purple,

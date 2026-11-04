@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -65,6 +66,7 @@ import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.LocalImage
 import org.greenstand.android.TreeTracker.view.ProfileField
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
@@ -162,7 +164,8 @@ fun Profile(
                                 .aspectRatio(1.0f)
                                 .padding(bottom = 20.dp)
                                 .clip(RoundedCornerShape(10.dp))
-                                .clickable(enabled = state.editMode) { onHandleAction(UserSelectAction.NavigateToPhoto) },
+                                .clickable(enabled = state.editMode) { onHandleAction(UserSelectAction.NavigateToPhoto) }
+                                .testTag(TestTags.PROFILE_PHOTO),
                     )
                 }
 
@@ -172,7 +175,8 @@ fun Profile(
                         Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(top = 16.dp)
-                            .size(height = 80.dp, width = 156.dp),
+                            .size(height = 80.dp, width = 156.dp)
+                            .testTag(TestTags.EDIT_PROFILE_BUTTON),
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
@@ -186,7 +190,12 @@ fun Profile(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                ProfileField(stringResource(id = R.string.first_name_hint), selectedUser.firstName, state.editMode) { newFirstName ->
+                ProfileField(
+                    stringResource(id = R.string.first_name_hint),
+                    selectedUser.firstName,
+                    state.editMode,
+                    testTag = TestTags.PROFILE_FIRST_NAME,
+                ) { newFirstName ->
                     val filtered = ValidationUtils.filterNameInput(newFirstName)
                     onHandleAction(UserSelectAction.UpdateSelectedUser(firstName = filtered))
                     if (state.editMode) {
@@ -209,6 +218,7 @@ fun Profile(
                     stringResource(id = R.string.last_name_hint),
                     selectedUser.lastName ?: "",
                     state.editMode,
+                    testTag = TestTags.PROFILE_LAST_NAME,
                 ) { newLastName ->
                     val filtered = ValidationUtils.filterNameInput(newLastName)
                     onHandleAction(UserSelectAction.UpdateSelectedUser(lastName = filtered))
@@ -227,11 +237,21 @@ fun Profile(
                     )
                 }
                 if (selectedUser.wallet.contains("@")) {
-                    ProfileField(stringResource(id = R.string.email_placeholder), selectedUser.wallet, state.editMode) {
+                    ProfileField(
+                        stringResource(id = R.string.email_placeholder),
+                        selectedUser.wallet,
+                        state.editMode,
+                        testTag = TestTags.PROFILE_WALLET,
+                    ) {
                         onHandleAction(UserSelectAction.UpdateSelectedUser(email = it))
                     }
                 } else {
-                    ProfileField(stringResource(id = R.string.phone_placeholder), selectedUser.wallet, state.editMode) {
+                    ProfileField(
+                        stringResource(id = R.string.phone_placeholder),
+                        selectedUser.wallet,
+                        state.editMode,
+                        testTag = TestTags.PROFILE_WALLET,
+                    ) {
                         onHandleAction(UserSelectAction.UpdateSelectedUser(phone = it))
                     }
                 }
@@ -244,7 +264,8 @@ fun Profile(
                         modifier =
                             Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(width = 150.dp, 60.dp),
+                                .size(width = 150.dp, 60.dp)
+                                .testTag(TestTags.SAVE_PROFILE_BUTTON),
                         onClick = {
                             val firstName = state.selectedUser?.firstName ?: ""
                             val lastName = state.selectedUser?.lastName ?: ""

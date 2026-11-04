@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 
@@ -30,6 +31,7 @@ fun ProfileField(
     label: String,
     value: String,
     editable: Boolean,
+    testTag: String? = null,
     onValueChange: (String) -> Unit,
 ) {
     Column(
@@ -41,13 +43,18 @@ fun ProfileField(
         Text(label, style = CustomTheme.typography.medium, color = CustomTheme.textColors.lightText)
         if (editable) {
             BorderedTextField(
+                testTag = testTag,
                 padding = PaddingValues(top = 8.dp),
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {
-            Text(value, style = CustomTheme.typography.large)
+            Text(
+                value,
+                style = CustomTheme.typography.large,
+                modifier = if (testTag != null) Modifier.testTag(testTag) else Modifier,
+            )
         }
     }
 }

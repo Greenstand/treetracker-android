@@ -43,6 +43,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ApprovalButton
+import org.greenstand.android.TreeTracker.view.TestTags
 
 @Composable
 fun PrivacyPolicyDialog(
@@ -99,6 +100,7 @@ fun PrivacyPolicyDialog(
                     .align(Alignment.Companion.CenterHorizontally),
             onClick = onDismiss,
             approval = true,
+            testTag = TestTags.PRIVACY_POLICY_CLOSE_BUTTON,
         )
     }
 }

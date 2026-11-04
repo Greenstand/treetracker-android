@@ -41,10 +41,9 @@ import org.greenstand.android.TreeTracker.signup.SignUpScreen
 import org.greenstand.android.TreeTracker.signup.SignupViewModel
 import org.greenstand.android.TreeTracker.uitest.support.RootScreenUiTest
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -97,7 +96,7 @@ class SignUpScreenUiTest : RootScreenUiTest() {
     }
 
     private fun closePrivacyDialog() {
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.PRIVACY_POLICY_CLOSE_BUTTON).performClick()
         composeTestRule.onNodeWithText(string(R.string.privacy_policy)).assertDoesNotExist()
     }
 
@@ -230,7 +229,7 @@ class SignUpScreenUiTest : RootScreenUiTest() {
         closePrivacyDialog()
         submitExistingUserPhone()
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
 
         composeTestRule.onNodeWithText(string(R.string.user_exists_header)).assertDoesNotExist()
         composeTestRule.onNode(hasSetTextAction() and hasText(PHONE)).assertExists()

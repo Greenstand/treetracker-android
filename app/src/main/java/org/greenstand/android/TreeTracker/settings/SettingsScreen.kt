@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,7 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.AppColors.Red
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.UserButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
@@ -128,6 +130,7 @@ fun Settings(
                     iconResId = R.drawable.account,
                     titleResId = R.string.profile_title,
                     descriptionResId = R.string.profile_description,
+                    testTag = TestTags.SETTINGS_PROFILE,
                     onClick = { onHandleAction(SettingsAction.NavigateToProfile) },
                 )
                 Divider(color = Color.White)
@@ -136,6 +139,7 @@ fun Settings(
                     iconResId = R.drawable.note,
                     titleResId = R.string.edit_trees_title,
                     descriptionResId = R.string.edit_trees_description,
+                    testTag = TestTags.SETTINGS_EDIT_TREES,
                     iconTint = Color.White,
                     onClick = { onHandleAction(SettingsAction.NavigateToEditTrees) },
                 )
@@ -146,6 +150,7 @@ fun Settings(
                         iconResId = R.drawable.map_icon,
                         titleResId = R.string.map_title,
                         descriptionResId = R.string.map_description,
+                        testTag = TestTags.SETTINGS_MAP,
                         onClick = { onHandleAction(SettingsAction.NavigateToMap) },
                     )
                     Divider(color = Color.White)
@@ -155,6 +160,7 @@ fun Settings(
                     iconResId = R.drawable.privacy_policy,
                     titleResId = R.string.privacy_title,
                     descriptionResId = R.string.privacy_description,
+                    testTag = TestTags.SETTINGS_PRIVACY,
                     onClick = { onHandleAction(SettingsAction.SetPrivacyDialogVisibility(true)) },
                 )
 
@@ -165,6 +171,7 @@ fun Settings(
                         iconResId = R.drawable.logout,
                         titleResId = R.string.logout_title,
                         descriptionResId = R.string.logout_description,
+                        testTag = TestTags.SETTINGS_LOGOUT,
                         onClick = { onHandleAction(SettingsAction.UpdateLogoutDialogVisibility(true)) },
                     )
                     Divider(color = Color.White)
@@ -173,6 +180,7 @@ fun Settings(
                         iconResId = R.drawable.delete,
                         titleResId = R.string.delete_account_title,
                         descriptionResId = R.string.delete_account_description,
+                        testTag = TestTags.SETTINGS_DELETE_ACCOUNT,
                         onClick = { onHandleAction(SettingsAction.NavigateToDeleteAccount) },
                     )
                 }
@@ -187,6 +195,7 @@ fun Settings(
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = Color.White,
+                    modifier = Modifier.testTag(TestTags.APP_VERSION),
                 )
             }
             if (state.showPrivacyPolicyDialog == true) {
@@ -207,6 +216,7 @@ fun Settings(
                                 selectedColor = Red,
                                 onClick = {
                                 },
+                                testTag = TestTags.DIALOG_USER_BUTTON,
                             )
                         }
                     },
@@ -222,6 +232,7 @@ fun SettingsItem(
     titleResId: Int,
     descriptionResId: Int,
     iconTint: Color? = null,
+    testTag: String? = null,
     onClick: () -> Unit,
 ) {
     Row(
@@ -229,7 +240,8 @@ fun SettingsItem(
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
-                .clickable { onClick() },
+                .clickable { onClick() }
+                .then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(

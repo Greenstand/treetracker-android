@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,8 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ApprovalButton
+import org.greenstand.android.TreeTracker.view.TestTags
+import org.greenstand.android.TreeTracker.view.exposeTestTags
 
 /**
  * @param dialogIcon Icon to be displayed in the dialog.
@@ -90,6 +93,7 @@ fun CustomDialog(
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = title,
+                    modifier = Modifier.testTag(TestTags.DIALOG_TITLE),
                     color = CustomTheme.textColors.primaryText,
                     style = CustomTheme.typography.medium,
                     fontWeight = FontWeight.Bold,
@@ -98,6 +102,8 @@ fun CustomDialog(
         },
         modifier =
             backgroundModifier
+                // A dialog is a window of its own, so it needs its own exposeTestTags.
+                .exposeTestTags()
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(2.dp)
@@ -116,13 +122,13 @@ fun CustomDialog(
                         text = it,
                         color = CustomTheme.textColors.primaryText,
                         style = CustomTheme.typography.regular,
-                        modifier = Modifier.padding(bottom = 5.dp),
+                        modifier = Modifier.padding(bottom = 5.dp).testTag(TestTags.DIALOG_MESSAGE),
                     )
                 }
                 onTextInputValueChange?.let {
                     TextField(
                         value = textInputValue,
-                        modifier = Modifier.wrapContentHeight(),
+                        modifier = Modifier.wrapContentHeight().testTag(TestTags.DIALOG_TEXT_FIELD),
                         onValueChange = onTextInputValueChange,
                     )
                 }
@@ -153,6 +159,7 @@ fun CustomDialog(
                                 .size(40.dp),
                         onClick = it,
                         approval = false,
+                        testTag = TestTags.DIALOG_NEGATIVE_BUTTON,
                     )
                 }
 
@@ -163,6 +170,7 @@ fun CustomDialog(
                                 .size(40.dp),
                         onClick = it,
                         approval = true,
+                        testTag = TestTags.DIALOG_POSITIVE_BUTTON,
                     )
                 }
             }

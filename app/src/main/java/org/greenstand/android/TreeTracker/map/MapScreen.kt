@@ -32,7 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -54,6 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,6 +71,7 @@ import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.maplibre.android.MapLibre
 import java.io.File
 import java.time.format.DateTimeFormatter
@@ -136,6 +138,7 @@ fun MapContent(
         ) {
             IconButton(
                 onClick = onBackClicked,
+                modifier = Modifier.testTag(TestTags.MAP_BACK_BUTTON),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -204,11 +207,12 @@ fun TreeMarkerCarousel(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        items(markers, key = { it.id }) { marker ->
+        itemsIndexed(markers, key = { _, marker -> marker.id }) { index, marker ->
             TreeMarkerCard(
                 marker = marker,
                 isSelected = marker.id == selectedMarkerId,
                 onClick = { onMarkerClick(marker) },
+                modifier = Modifier.testTag(TestTags.mapTreeCard(index)),
             )
         }
     }

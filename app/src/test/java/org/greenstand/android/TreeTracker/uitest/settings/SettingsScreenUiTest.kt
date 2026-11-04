@@ -38,9 +38,8 @@ import org.greenstand.android.TreeTracker.navigation.TreeEditUserSelectRoute
 import org.greenstand.android.TreeTracker.settings.SettingsScreen
 import org.greenstand.android.TreeTracker.settings.SettingsViewModel
 import org.greenstand.android.TreeTracker.uitest.support.RootScreenUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.After
 import org.junit.Assume.assumeTrue
@@ -148,7 +147,7 @@ class SettingsScreenUiTest : RootScreenUiTest() {
         clickItem(R.string.privacy_title)
         composeTestRule.onNodeWithText(string(R.string.privacy_policy)).assertExists()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.PRIVACY_POLICY_CLOSE_BUTTON).performClick()
 
         composeTestRule.onNodeWithText(string(R.string.privacy_policy)).assertDoesNotExist()
         assertEquals(listOf(DashboardRoute, SettingsRoute), backStack.toList())
@@ -182,7 +181,7 @@ class SettingsScreenUiTest : RootScreenUiTest() {
         launchSettings()
         clickItem(R.string.logout_title)
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText(string(R.string.logout_dialog_message)).assertDoesNotExist()
@@ -196,7 +195,7 @@ class SettingsScreenUiTest : RootScreenUiTest() {
         launchSettings()
         clickItem(R.string.logout_title)
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
         coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }

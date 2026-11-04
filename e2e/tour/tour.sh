@@ -44,6 +44,17 @@ tap() {
   fi
 }
 
+# hold ID POINT: long press by id, else at the point.
+hold() {
+  run "longPressOn: {id: \"$1\"}" && return 0
+  [ -n "${2:-}" ] && run "longPressOn: {point: \"$2\"}"
+}
+
+# wait_id ID [MS]: wait for an id to show.
+wait_id() {
+  run "extendedWaitUntil: {visible: {id: \"$1\"}, timeout: ${2:-15000}}"
+}
+
 # type ID TEXT [FALLBACK]: focus a field, then type.
 type_in() {
   tap "$1" "${3:-}" && run "inputText: \"$2\""

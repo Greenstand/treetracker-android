@@ -33,9 +33,9 @@ import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.DevOptionsRoute
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.CAPTURE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.INFO_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Test
@@ -99,7 +99,7 @@ class SelfieUiTest : ComposeUiTest() {
     fun `completing the selfie tutorial reports it`() {
         render(showSelfieTutorial = true)
 
-        composeTestRule.onNode(hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.onNode(hasTestTag(TestTags.TUTORIAL_DONE_BUTTON) and hasAnyAncestor(isDialog())).performClick()
 
         assertEquals(1, tutorialCompletions)
     }

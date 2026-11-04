@@ -73,13 +73,15 @@ jobs:
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
           disable-animations: true
           script: |
-            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb install -r -g app/build/outputs/apk/debug/app-debug.apk
             adb emu geo fix 37.3 -3.5
             mkdir -p build/tour
-            (adb shell screenrecord --time-limit 170 --bit-rate 4000000 /sdcard/tour.mp4 &) ; sleep 1
+            (adb shell 'for i in 1 2 3 4 5 6; do screenrecord --time-limit 170 --bit-rate 4000000 /sdcard/tour-$i.mp4; done' &) ; sleep 1
             OUT=build/tour TB=bin/tb bash e2e/tour/tour.sh || true
-            sleep 2; adb shell pkill -INT screenrecord || true; sleep 3
-            adb pull /sdcard/tour.mp4 build/tour/tour.mp4 || true
+            sleep 2; adb shell pkill -f 'for i in' || true; adb shell pkill -INT screenrecord || true; sleep 4
+            for i in 1 2 3 4 5 6; do adb pull /sdcard/tour-$i.mp4 build/tour/part-$i.mp4 2>/dev/null || true; done
+            ls build/tour/part-*.mp4 | sed "s|^build/tour/|file '|; s|$|'|" > build/tour/parts.txt || true
+            ffmpeg -loglevel error -f concat -safe 0 -i build/tour/parts.txt -c copy build/tour/tour.mp4 && rm -f build/tour/part-*.mp4 build/tour/parts.txt || true
       - name: Upload tour
         if: always()
         uses: actions/upload-artifact@v4

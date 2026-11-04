@@ -31,9 +31,8 @@ import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
 import org.greenstand.android.TreeTracker.navigation.SettingsRoute
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.profile.DeleteProfileScreen
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -81,7 +80,7 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
         launchDeleteProfile()
         requestDeletion()
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
 
         composeTestRule.onNodeWithText(string(R.string.delete_account_dialog_message)).assertDoesNotExist()
         coVerify(exactly = 0) { userRepo.deleteUser(any()) }
@@ -93,7 +92,7 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
         launchDeleteProfile()
         requestDeletion()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
 
         composeTestRule.onNodeWithText(string(R.string.account_deleted)).assertExists()
         composeTestRule.onNodeWithText(string(R.string.account_deleted_message)).assertExists()
@@ -106,10 +105,10 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
     fun `acknowledging the deletion of a planter returns to settings`() {
         launchDeleteProfile()
         requestDeletion()
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.onNodeWithText(string(R.string.account_deleted)).assertExists()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
         assertEquals(listOf(DashboardRoute, SettingsRoute), backStack.toList())
@@ -120,10 +119,10 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
         val powerUser = planter.copy(isPowerUser = true)
         launchDeleteProfile(powerUser)
         requestDeletion(powerUser)
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.onNodeWithText(string(R.string.account_deleted)).assertExists()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
         assertEquals(listOf(SignupFlowRoute), backStack.toList())
@@ -145,7 +144,7 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
         launchDeleteProfile()
         requestDeletion()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
         coVerify { userRepo.deleteUser(planter.wallet) }
@@ -160,7 +159,7 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
         launchDeleteProfile()
         requestDeletion()
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.onNodeWithText(string(R.string.account_deleted)).assertExists()
 
         coVerify { messagesRepo.saveMessage(planter.wallet, "admin", match { it.contains(planter.wallet) }) }
@@ -171,7 +170,7 @@ class DeleteProfileScreenUiTest : UserSelectRootUiTest() {
     fun `declining and choosing again asks to confirm again`() {
         launchDeleteProfile()
         requestDeletion()
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
         composeTestRule.onNodeWithText(string(R.string.delete_account_dialog_message)).assertDoesNotExist()
 
         composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()

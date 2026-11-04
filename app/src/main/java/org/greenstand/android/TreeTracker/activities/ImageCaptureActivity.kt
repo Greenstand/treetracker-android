@@ -26,6 +26,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -41,6 +42,7 @@ import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.navigation.SelfieRoute
 import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
+import org.greenstand.android.TreeTracker.view.exposeTestTags
 
 class CaptureImageContract : ActivityResultContract<Boolean, String?>() {
     companion object {
@@ -81,6 +83,7 @@ class ImageCaptureActivity : ComponentActivity() {
             ) {
                 TreeTrackerTheme {
                     NavDisplay(
+                        modifier = Modifier.exposeTestTags(),
                         backStack = backStack,
                         onBack = { navigator.popBackStack() },
                         entryDecorators =
