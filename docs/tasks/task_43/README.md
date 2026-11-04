@@ -2,28 +2,20 @@
 
 ## Goal
 
-Run the app's instrumented tests on an Android emulator on every pull request, as its own
-GitHub check that fails when a test fails and passes otherwise.
+Run end-to-end tests on an Android emulator on every pull request, with Test Buddy (`tb`), as
+their own GitHub check that fails when a test fails and passes otherwise.
 
 ## Changes
 
-- `.github/workflows/android-e2e.yml`: new "Android end-to-end / emulator tests" check. It
-  builds the debug app and test APKs with dummy keys, boots an API 35 `google_apis` x86_64
-  emulator (KVM, with a cached boot snapshot), and runs `./gradlew :app:connectedDebugAndroidTest`.
-  A failing test makes Gradle exit non-zero, which fails the check. Test reports are uploaded as
-  the `android-e2e-reports` artifact on every run.
-- `app/src/androidTest/.../e2e/FirstLaunchE2eTest.kt`: the first instrumented test. A fresh
-  install, with its permissions granted, boots through the splash screen to the language
-  picker; picking English and tapping the forward arrow opens the sign-up screen.
-- `androidx.test:rules`, `androidx.test.ext:junit` and Compose `ui-test-junit4` added as
-  `androidTestImplementation` dependencies.
+- `.github/workflows/android-e2e.yml`: new "Android end-to-end / emulator tests" check, modeled
+  on the Android end-to-end job in Test Buddy's own CI. It builds `tb` (and its Android agent)
+  from a pinned Test Buddy commit, builds the debug app with dummy keys, boots an API 35
+  `google_apis` x86_64 emulator (KVM, with a cached boot snapshot), installs the app and runs
+  `tb test e2e/flows/ -p android`. A failed step makes `tb` exit non-zero, which fails the check.
+  The JUnit report and tb's debug files (screenshot, screen listing, log) upload as the
+  `android-e2e` artifact on every run.
+- `e2e/flows/first-screen.yaml`: the first flow. A fresh install, with its permissions granted
+  by `launchApp`, opens on the language picker.
+- `e2e/README.md` and `docs/testing/testing.md`: how to run the flows.
 
-The setup follows the Android end-to-end job in Test Buddy's CI.
-
-## Run locally
-
-With an emulator or device connected:
-
-```bash
-./gradlew :app:connectedDebugAndroidTest
-```
+To pick up a newer `tb`, bump `TESTBUDDY_REF` in the workflow.

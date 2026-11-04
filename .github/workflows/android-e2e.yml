@@ -9,8 +9,9 @@ concurrency:
   group: android-e2e-${{ github.ref }}
   cancel-in-progress: true
 
-# Runs the instrumented tests in app/src/androidTest on an Android emulator, against the real
-# debug app. A failing test makes connectedDebugAndroidTest exit non-zero, which fails this check.
+# Runs the Test Buddy flows in e2e/flows on an Android emulator against the debug app. A failed
+# step in a flow (an element that never shows up, a tap that finds nothing) makes tb exit
+# non-zero, which fails this check.
 jobs:
   android-e2e:
     name: emulator tests
@@ -18,17 +19,40 @@ jobs:
     timeout-minutes: 45
     env:
       API_LEVEL: "35"
+      # The Test Buddy commit tb is built from. Bump it to pick up a newer tb.
+      TESTBUDDY_REF: 6c7a54affd233711d5921c310f0c9acee3141dc9
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check out Test Buddy
+        uses: actions/checkout@v4
+        with:
+          repository: Elforama/testbuddy
+          ref: ${{ env.TESTBUDDY_REF }}
+          path: .testbuddy
+
+      # Test Buddy's Android agent builds with JDK 21; the app below uses JDK 25.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: .testbuddy/go.mod
+          cache-dependency-path: .testbuddy/go.sum
+      - name: Build tb
+        working-directory: .testbuddy
+        run: |
+          (cd agents/android && ./gradlew assembleDebug)
+          cp agents/android/app/build/outputs/apk/debug/app-debug.apk internal/driver/android/assets/tb-agent.apk
+          go build -o "$GITHUB_WORKSPACE/bin/tb" ./cmd/tb
 
       - name: Setup build environment
         uses: ./.github/workflows/actions/setup-build-environment
         with:
           use_dummy_keys: true
-
-      # Build both APKs before the emulator starts, so the emulator only runs tests.
-      - name: Build app and test APKs
-        run: bash ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace
+      - name: Build the debug app
+        run: bash ./gradlew :app:assembleDebug --stacktrace
 
       # The emulator needs hardware acceleration.
       - name: Enable KVM
@@ -59,7 +83,7 @@ jobs:
           disable-animations: true
           script: echo "snapshot saved"
 
-      - name: Run instrumented tests on the emulator
+      - name: Run the e2e flows on the emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.API_LEVEL }}
@@ -68,16 +92,16 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: bash ./gradlew :app:connectedDebugAndroidTest --stacktrace
+          script: |
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            bin/tb test e2e/flows/ -p android --format junit --output build/e2e/android.xml --debug-output build/e2e/android
 
-      - name: Test reports
+      - name: Test report and debug files
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: android-e2e-reports
-          path: |
-            app/build/reports/androidTests/
-            app/build/outputs/androidTest-results/
+          name: android-e2e
+          path: build/e2e/
           if-no-files-found: ignore
           retention-days: 14
 

@@ -43,18 +43,15 @@ Unit tests run with Android resources (`includeAndroidResources = true`).
 share one Robolectric sandbox. Test JVMs get a 3 GB heap and restart every 100 test classes
 (`app/build.gradle`).
 
-## Instrumented (End-to-End) Tests
+## End-to-End Tests
 
-Instrumented tests live in `app/src/androidTest/` and run the real debug app on a device or
-emulator, with Koin and the real database. `e2e/FirstLaunchE2eTest.kt` walks a fresh install
-from the splash screen through the language picker to sign-up.
-
-```bash
-./gradlew :app:connectedDebugAndroidTest
-```
+End-to-end flows live in `e2e/flows/` and run with [Test Buddy](https://github.com/Elforama/testbuddy)
+(`tb`) against the installed debug app on a device or emulator. `first-screen.yaml` checks that
+a fresh install opens on the language picker. See [e2e/README.md](../../e2e/README.md) to run
+them locally.
 
 CI runs them on an API 35 emulator in the "Android end-to-end" check
-(`.github/workflows/android-e2e.yml`); a failing test fails the check.
+(`.github/workflows/android-e2e.yml`); a failed step fails the check.
 
 ## Screenshot Tests
 
