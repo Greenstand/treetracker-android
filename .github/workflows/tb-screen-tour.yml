@@ -82,6 +82,7 @@ jobs:
             for i in 1 2 3 4 5 6; do adb pull /sdcard/tour-$i.mp4 build/tour/part-$i.mp4 2>/dev/null || true; done
             ls build/tour/part-*.mp4 | sed "s|^build/tour/|file '|; s|$|'|" > build/tour/parts.txt || true
             ffmpeg -loglevel error -f concat -safe 0 -i build/tour/parts.txt -c copy build/tour/tour.mp4 && rm -f build/tour/part-*.mp4 build/tour/parts.txt || true
+            ls -la build/tour | tail -5; ffprobe -v error -show_entries format=duration -of csv=p=0 build/tour/tour.mp4 || true
       - name: Upload tour
         if: always()
         uses: actions/upload-artifact@v4

@@ -47,8 +47,7 @@ snap dev-options
 tap "SyncOverlaySwitch" "88%,9%"
 snap dev-options-sync-on
 tap "SyncOverlaySwitch" "88%,9%"
-tap "ArrowBackButton" "$BACK"
-wait_id TrackButton
+back_to TrackButton
 
 # Settings and everything under it.
 tap "SettingsButton" "8%,5%"
@@ -58,8 +57,7 @@ snap profile-select
 tap "$USER" "25%,20%"
 tap "ArrowForwardButton" "$NEXT"
 snap profile
-tap "ArrowBackButton" "$BACK"
-tap "ArrowBackButton" "$BACK"
+back_to SettingsProfile
 tap "SettingsPrivacy" "Privacy Policy"
 snap settings-privacy
 tap "PrivacyPolicyCloseButton" "50%,90%"
@@ -71,13 +69,11 @@ snap tree-edit-user-select
 tap "$USER" "25%,20%"
 tap "ArrowForwardButton" "$NEXT"
 snap tree-list-empty
-tap "ArrowBackButton" "$BACK"
-tap "ArrowBackButton" "$BACK"
+back_to SettingsProfile
 tap "SettingsLogout" "Logout"
 snap settings-logout-dialog
 tap "DialogNegativeButton" "25%,60%"
-tap "ArrowBackButton" "$BACK"
-wait_id TrackButton
+back_to TrackButton
 
 # Messages.
 tap "MessagesButton" "Messages"
@@ -85,9 +81,7 @@ snap messages-user-select
 tap "$USER" "25%,20%"
 tap "ArrowForwardButton" "$NEXT"
 snap messages-empty
-tap "ArrowBackButton" "$BACK"
-tap "ArrowBackButton" "$BACK"
-wait_id TrackButton
+back_to TrackButton
 
 # Capture one tree with a note.
 tap "TrackButton" "Track"
@@ -113,8 +107,7 @@ tap "DialogPositiveButton" "75%,60%"
 tap "ApproveButton" "83%,92.5%"
 wait_id CaptureButton 30000
 snap capture-after-save
-tap "ArrowBackButton" "$BACK"
-wait_id TrackButton
+back_to TrackButton
 snap dashboard-one-tree
 
 # The new tree in tree edit and on the map.
@@ -124,10 +117,11 @@ tap "$USER" "25%,20%"
 tap "ArrowForwardButton" "$NEXT"
 snap tree-list
 tap "TreeButton_0" "25%,20%"
+tap "ArrowForwardButton" "$NEXT"
+wait_id TreeNoteField
 snap tree-detail
-run "pressKey: back"
-run "pressKey: back"
-run "pressKey: back"
+back_to SettingsMap
 tap "SettingsMap" "Map"
 run "extendedWaitUntil: {visible: {id: MapTreeCard_0}, timeout: 10000}"
 snap map-one-tree
+tap "MapBackButton" "$BACK"
