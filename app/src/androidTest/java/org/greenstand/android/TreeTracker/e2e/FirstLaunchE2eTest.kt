@@ -19,7 +19,7 @@ import android.Manifest
 import android.os.Build
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -45,6 +45,10 @@ import org.junit.runner.RunWith
 class FirstLaunchE2eTest {
     private val permissions = GrantPermissionRule.grant(*requiredPermissions())
 
+    // The v2 rule runs effects on a StandardTestDispatcher, so coroutines resume on the main
+    // thread as they do in production. The v1 rule's unconfined dispatcher resumes them on
+    // whatever thread finished the work (a Room thread here), and the splash screen then
+    // starts GPS updates off the main thread and crashes.
     private val composeRule = createAndroidComposeRule<TreeTrackerActivity>()
 
     // Permissions first, so the splash screen's request comes back granted at once.
