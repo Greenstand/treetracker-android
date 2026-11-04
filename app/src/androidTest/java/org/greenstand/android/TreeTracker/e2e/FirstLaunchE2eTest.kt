@@ -68,7 +68,7 @@ class FirstLaunchE2eTest {
         composeRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
 
         // Setting the language can recreate the activity; the back stack survives it.
-        composeRule.waitUntilAtLeastOneExists(hasText(email, ignoreCase = true), SCREEN_TIMEOUT_MS)
+        composeRule.waitUntilAtLeastOneExists(hasText("deliberately missing screen"), SCREEN_TIMEOUT_MS)
     }
 
     private companion object {
