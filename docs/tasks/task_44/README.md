@@ -25,9 +25,9 @@ yet: every control a flow needs shows up in `tb look` with a stable, unique id, 
 - Fields, counters and actions on every screen get tags (see `TestTags` for the full list).
   The dashboard settings icon also gets a content description ("Settings").
 - Tests that found nodes by the old shared tags or by "the only clickable node" now use the new tags.
-- `e2e/tour/` and `.github/workflows/tb-screen-tour.yml`: a temporary screen tour that walks the
-  app with `tb` on an emulator and saves `tb look`, a screenshot and the hierarchy for each screen,
-  before and after this change. Remove the workflow once the real flows land.
+- `e2e/tour/` and `.github/workflows/tb-screen-tour.yml`: a screen tour that walks the app with
+  `tb` on an emulator and saves `tb look`, a screenshot and the hierarchy for each screen, before
+  (master) and after this change. The workflow only runs by hand (`workflow_dispatch`).
 
 ## Still needs more than a tag
 

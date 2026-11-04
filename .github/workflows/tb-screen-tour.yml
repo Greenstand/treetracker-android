@@ -1,10 +1,9 @@
-name: tb screen tour (temporary)
+name: tb screen tour
 
-# Temporary: walks the debug app with tb (e2e/tour) and uploads what tb look sees on each
-# screen. Used while making the screens ready for tb flows; remove before merging.
+# Walks the debug app with tb (e2e/tour) and uploads what tb look sees on each screen, plus a
+# video of the walk, for this branch's app and for master's. Run it by hand (Actions > tb
+# screen tour > Run workflow) after changing screens or test tags.
 on:
-  push:
-    branches: [ claude/tb-ready-screens ]
   workflow_dispatch:
 
 concurrency:

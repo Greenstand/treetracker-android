@@ -23,11 +23,16 @@ type_in "LastNameField" "Admin" "Last Name"
 run "hideKeyboard"
 snap signup-name-filled
 tap "ArrowForwardButton" "$NEXT"
-run "extendedWaitUntil: {visible: {id: CaptureButton}, timeout: 15000}"
-snap selfie
-tap "InfoButton" "83%,92.5%"
+# The selfie tutorial opens by itself on the first visit.
+wait_id TutorialDoneButton
 snap selfie-tutorial
 tap "TutorialDoneButton" "50%,85%"
+wait_id CaptureButton
+snap selfie
+tap "InfoButton" "83%,92.5%"
+wait_id TutorialDoneButton 10000
+tap "TutorialDoneButton" "50%,85%"
+wait_id CaptureButton
 tap "CaptureButton" "50%,92.5%"
 run "extendedWaitUntil: {visible: {id: ApproveButton}, timeout: 15000}"
 snap selfie-review
@@ -57,7 +62,8 @@ snap profile-select
 tap "$USER" "25%,20%"
 tap "ArrowForwardButton" "$NEXT"
 snap profile
-back_to SettingsProfile
+# The profile user picker goes back to the dashboard, not to settings.
+open_settings
 tap "SettingsPrivacy" "Privacy Policy"
 snap settings-privacy
 tap "PrivacyPolicyCloseButton" "50%,90%"
@@ -96,9 +102,10 @@ tap "TutorialDoneButton" "50%,85%"
 wait_id CaptureButton
 snap capture
 tap "CaptureButton" "50%,92.5%"
-wait_id ApproveButton 60000
+# The review tutorial opens over the review screen on the first capture.
+maybe_id TutorialDoneButton 60000 && { snap review-tutorial; tap "TutorialDoneButton" "50%,85%"; }
+wait_id ApproveButton 30000
 snap review
-wait_id TutorialDoneButton 5000 && { snap review-tutorial; tap "TutorialDoneButton" "50%,85%"; }
 tap "NoteButton" "50%,92.5%"
 snap review-note-dialog
 type_in "DialogTextField" "tour note"
@@ -111,7 +118,7 @@ back_to TrackButton
 snap dashboard-one-tree
 
 # The new tree in tree edit and on the map.
-tap "SettingsButton" "8%,5%"
+open_settings
 tap "SettingsEditTrees" "Edit Trees"
 tap "$USER" "25%,20%"
 tap "ArrowForwardButton" "$NEXT"
@@ -121,7 +128,10 @@ tap "ArrowForwardButton" "$NEXT"
 wait_id TreeNoteField
 snap tree-detail
 back_to SettingsMap
+# With exactly one tree the map crashes on master (LibreMap fits the camera to a
+# one-point LatLngBounds); this step fails until that is fixed.
 tap "SettingsMap" "Map"
 run "extendedWaitUntil: {visible: {id: MapTreeCard_0}, timeout: 10000}"
 snap map-one-tree
 tap "MapBackButton" "$BACK"
+wait_id SettingsProfile 10000

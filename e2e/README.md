@@ -32,5 +32,18 @@ root sets `Modifier.exposeTestTags()` so the tags become resource ids. Use them 
 (`DialogPositiveButton`). When you add a screen or a dialog window, tag its controls in
 `TestTags` and check them with `tb look`.
 
-`tour/tour.sh` walks most screens and saves what `tb look` sees on each one; the temporary
-`tb-screen-tour` workflow runs it on an emulator.
+## Screen tour
+
+`tour/tour.sh` walks most screens and saves what `tb look` sees on each one (look text,
+screenshot, hierarchy) and ends with the number of failed steps. Run it on an API 35 emulator
+started with `-camera-back emulated -camera-front emulated`:
+
+```bash
+adb emu geo fix 37.3 -3.5
+./gradlew :app:installDebug
+OUT=build/tour TB=tb bash e2e/tour/tour.sh
+```
+
+The `tb screen tour` workflow (`.github/workflows/tb-screen-tour.yml`) runs it on CI for this
+branch and for master and uploads the results with a video. It only runs by hand, from the
+Actions tab.
