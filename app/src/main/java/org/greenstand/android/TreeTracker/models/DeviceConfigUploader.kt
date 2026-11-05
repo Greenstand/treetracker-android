@@ -20,11 +20,11 @@ import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.DeviceConfigRequest
 import org.greenstand.android.TreeTracker.api.models.requests.UploadBundle
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
 import org.greenstand.android.TreeTracker.utilities.md5
 
 class DeviceConfigUploader(
-    private val dao: TreeTrackerDAO,
+    private val dao: DeviceConfigDAO,
     private val objectStorageClient: ObjectStorageClient,
     private val json: Json,
 ) {
