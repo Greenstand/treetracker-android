@@ -48,7 +48,8 @@ share one Robolectric sandbox. Test JVMs get a 3 GB heap and restart every 100 t
 End-to-end flows live in `e2e/flows/` and run with [Test Buddy](https://github.com/Elforama/testbuddy)
 (`tb`) against the installed debug app on a device or emulator. `first-screen.yaml` checks that
 a fresh install opens on the language picker. See [e2e/README.md](../../e2e/README.md) to run
-them locally.
+them locally. [End-to-End Flow Test Plan](e2e-flow-test-plan.md) lists the flows still to
+write, by priority.
 
 CI runs them on an API 35 emulator in the "Android end-to-end" check
 (`.github/workflows/android-e2e.yml`); a failed step fails the check.
