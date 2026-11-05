@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.InfoButton
 import org.greenstand.android.TreeTracker.view.LocalImage
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeCaptureReviewTutorial
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
@@ -75,7 +77,8 @@ fun TreeImageReview(
                         modifier =
                             Modifier
                                 .align(Alignment.Center)
-                                .size(width = 100.dp, 60.dp),
+                                .size(width = 100.dp, 60.dp)
+                                .testTag(TestTags.NOTE_BUTTON),
                         onClick = { onHandleAction(TreeImageReviewAction.SetDialogState(true)) },
                     ) {
                         Text(stringResource(R.string.note))

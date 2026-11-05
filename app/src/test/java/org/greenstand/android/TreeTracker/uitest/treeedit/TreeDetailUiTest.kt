@@ -44,9 +44,8 @@ import org.greenstand.android.TreeTracker.treeedit.TreeDetailScreen
 import org.greenstand.android.TreeTracker.treeedit.TreeDetailState
 import org.greenstand.android.TreeTracker.treeedit.TreeDetailViewModel
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
 import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import org.junit.Assert.assertEquals
@@ -170,7 +169,7 @@ class TreeDetailUiTest : ComposeUiTest() {
             )
         }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
 
         composeTestRule.runOnIdle { assertEquals(listOf(TreeDetailAction.DeleteTree), actions) }
     }
@@ -184,7 +183,7 @@ class TreeDetailUiTest : ComposeUiTest() {
             )
         }
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
 
         composeTestRule.runOnIdle {
             assertEquals(listOf(TreeDetailAction.SetDeleteDialogVisibility(false)), actions)
@@ -236,7 +235,7 @@ class TreeDetailUiTest : ComposeUiTest() {
         val screen = setScreenContent(pendingTree())
 
         composeTestRule.onNodeWithText(string(R.string.tree_delete)).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
 
         composeTestRule.runOnIdle {
             assertEquals(listOf(DashboardRoute, TreeListRoute(WALLET, USER_NAME)), backStack.toList())
@@ -250,7 +249,7 @@ class TreeDetailUiTest : ComposeUiTest() {
         val screen = setScreenContent(pendingTree())
 
         composeTestRule.onNodeWithText(string(R.string.tree_delete)).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
 
         composeTestRule.onNodeWithText(string(R.string.tree_delete_confirm_title)).assertDoesNotExist()
         composeTestRule.runOnIdle { assertEquals(TreeDetailRoute(TREE_ID), backStack.last()) }

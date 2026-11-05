@@ -32,6 +32,7 @@ import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.INFO_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.greenstand.android.TreeTracker.uitest.TEXT_FIELD_DIALOG_QUALIFIERS
@@ -42,8 +43,8 @@ import org.robolectric.annotation.Config
 class TreeImageReviewUiTest : ComposeUiTest() {
     private val actions = mutableListOf<TreeImageReviewAction>()
 
-    private val approveInDialog = hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())
-    private val declineInDialog = hasTestTag(DECLINE_BUTTON_TAG) and hasAnyAncestor(isDialog())
+    private val approveInDialog = hasTestTag(TestTags.DIALOG_POSITIVE_BUTTON) and hasAnyAncestor(isDialog())
+    private val declineInDialog = hasTestTag(TestTags.DIALOG_NEGATIVE_BUTTON) and hasAnyAncestor(isDialog())
 
     private fun render(state: TreeImageReviewState = TreeImageReviewState(treeImagePath = "/no/such/tree.jpg")) {
         setContent {
@@ -157,12 +158,7 @@ class TreeImageReviewUiTest : ComposeUiTest() {
     fun `completing the review tutorial dismisses it`() {
         render(state = TreeImageReviewState(showReviewTutorial = true))
 
-        // The tutorial illustrates the approve button with an inert copy, so click every
-        // approve button in the dialog: only the real one reports an action.
-        val approveButtons = composeTestRule.onAllNodes(approveInDialog)
-        approveButtons.fetchSemanticsNodes().indices.forEach { index ->
-            approveButtons[index].performClick()
-        }
+        composeTestRule.onNodeWithTag(TestTags.TUTORIAL_DONE_BUTTON).performClick()
 
         assertEquals(listOf(TreeImageReviewAction.UpdateReviewTutorialDialog(false)), actions)
     }

@@ -37,12 +37,15 @@ const val INFO_BUTTON_TAG = "InfoButton"
  * @param onClick The callback function for click event.
  * @param modifier The modifier to be applied to the layout.
  * @param approval Set the type of button to display(if approval is true, shows green thumps up button )
+ * @param testTag The button's test tag. Dialogs shown over a screen pass their own, so it stays
+ * unique on screen.
  */
 @Composable
 fun ApprovalButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     approval: Boolean,
+    testTag: String = if (approval) APPROVE_BUTTON_TAG else DECLINE_BUTTON_TAG,
 ) {
     val color = if (approval) AppButtonColors.ProgressGreen else AppButtonColors.DeclineRed
     val image =
@@ -52,7 +55,7 @@ fun ApprovalButton(
         modifier =
             modifier
                 .size(height = 60.dp, width = 60.dp)
-                .testTag(if (approval) APPROVE_BUTTON_TAG else DECLINE_BUTTON_TAG),
+                .testTag(testTag),
         onClick = onClick,
     ) {
         Image(

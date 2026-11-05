@@ -24,8 +24,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -57,24 +56,24 @@ class CustomDialogUiTest : ComposeUiTest() {
     fun `dialog without callbacks shows no buttons`() {
         setContent { CustomDialog(title = TITLE, textContent = BODY) }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertDoesNotExist()
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).assertDoesNotExist()
     }
 
     @Test
     fun `dialog with only a positive callback shows only the approve button`() {
         setContent { CustomDialog(title = TITLE, onPositiveClick = {}) }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).assertDoesNotExist()
     }
 
     @Test
     fun `dialog with only a negative callback shows only the decline button`() {
         setContent { CustomDialog(title = TITLE, onNegativeClick = {}) }
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).assertDoesNotExist()
     }
 
     @Test
@@ -87,7 +86,7 @@ class CustomDialogUiTest : ComposeUiTest() {
             )
         }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
 
         composeTestRule.runOnIdle {
             assertEquals(1, positiveClicks)
@@ -105,7 +104,7 @@ class CustomDialogUiTest : ComposeUiTest() {
             )
         }
 
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).performClick()
 
         composeTestRule.runOnIdle {
             assertEquals(0, positiveClicks)

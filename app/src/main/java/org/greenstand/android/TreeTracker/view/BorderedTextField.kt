@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 
@@ -51,6 +52,7 @@ fun BorderedTextField(
     onFocusChanged: ((FocusState) -> Unit) = {},
     focusRequester: FocusRequester = FocusRequester.Default,
     autofocusEnabled: Boolean = false,
+    testTag: String? = null,
 ) {
     Box(
         modifier =
@@ -67,7 +69,8 @@ fun BorderedTextField(
                     .padding(8.dp)
                     .fillMaxSize()
                     .focusRequester(focusRequester)
-                    .onFocusChanged(onFocusChanged),
+                    .onFocusChanged(onFocusChanged)
+                    .then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
             value = value,
             onValueChange = onValueChange,
             placeholder = placeholder,

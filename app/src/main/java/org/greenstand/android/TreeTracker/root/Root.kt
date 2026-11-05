@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
@@ -44,6 +45,8 @@ import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.splash.Splash
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.TestTags
+import org.greenstand.android.TreeTracker.view.exposeTestTags
 import org.greenstand.android.TreeTracker.viewmodel.LocalSnackbarController
 import org.greenstand.android.TreeTracker.viewmodel.SnackbarController
 import org.greenstand.android.TreeTracker.viewmodel.resolve
@@ -91,7 +94,7 @@ fun Root(
         LocalViewModelFactory provides viewModelFactory,
         LocalSnackbarController provides snackbarController,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize().exposeTestTags()) {
             if (isOrgReady) {
                 Host(startRoute)
             } else {
@@ -107,6 +110,7 @@ fun Root(
                         .wrapContentHeight(Alignment.Bottom),
             ) { data ->
                 Snackbar(
+                    modifier = Modifier.testTag(TestTags.SNACKBAR),
                     contentColor = CustomTheme.textColors.darkText,
                     backgroundColor = AppColors.Green,
                 ) {

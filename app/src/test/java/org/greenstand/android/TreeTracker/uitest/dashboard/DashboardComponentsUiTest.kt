@@ -36,9 +36,8 @@ import org.greenstand.android.TreeTracker.dashboard.Dashboard
 import org.greenstand.android.TreeTracker.dashboard.DashboardState
 import org.greenstand.android.TreeTracker.dashboard.DashboardUploadProgressBar
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.AppButtonColors
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -100,8 +99,8 @@ class DashboardComponentsUiTest : ComposeUiTest() {
     fun `sync reminder can only be acknowledged, not declined`() {
         setContent { Dashboard(state = DashboardState(), showSyncReminderDialog = true) }
 
-        composeTestRule.onNode(hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())).assertExists()
-        composeTestRule.onNode(hasTestTag(DECLINE_BUTTON_TAG) and hasAnyAncestor(isDialog())).assertDoesNotExist()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_POSITIVE_BUTTON) and hasAnyAncestor(isDialog())).assertExists()
+        composeTestRule.onNode(hasTestTag(TestTags.DIALOG_NEGATIVE_BUTTON) and hasAnyAncestor(isDialog())).assertDoesNotExist()
     }
 
     private companion object {

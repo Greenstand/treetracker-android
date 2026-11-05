@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,7 @@ import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeTrackerTheme
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 import org.koin.compose.koinInject
@@ -104,6 +106,7 @@ fun DevOptionsScreen(
                 item {
                     OverlayToggleItem(
                         label = "Show Sync Overlay",
+                        testTag = TestTags.SYNC_OVERLAY_SWITCH,
                         checked = showSyncOverlay,
                         onToggle = { overlayManager?.setSyncOverlay(it) },
                     )
@@ -111,6 +114,7 @@ fun DevOptionsScreen(
                 item {
                     OverlayToggleItem(
                         label = "Show Sensor Overlay",
+                        testTag = TestTags.SENSOR_OVERLAY_SWITCH,
                         checked = showSensorOverlay,
                         onToggle = { overlayManager?.setSensorOverlay(it) },
                     )
@@ -134,6 +138,7 @@ fun DevOptionsScreen(
 @Composable
 private fun OverlayToggleItem(
     label: String,
+    testTag: String,
     checked: Boolean,
     onToggle: (Boolean) -> Unit,
 ) {
@@ -151,6 +156,7 @@ private fun OverlayToggleItem(
         Switch(
             checked = checked,
             onCheckedChange = onToggle,
+            modifier = Modifier.testTag(testTag),
             colors =
                 SwitchDefaults.colors(
                     checkedThumbColor = AppColors.Green,
@@ -203,6 +209,7 @@ private fun BooleanParamListItem(
         Checkbox(
             checked = config.defaultValue,
             onCheckedChange = onClicked,
+            modifier = Modifier.testTag(TestTags.devParam(config.name)),
         )
     }
 }
@@ -217,6 +224,7 @@ private fun IntParamListItem(
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = config.name)
         TextField(
+            modifier = Modifier.testTag(TestTags.devParam(config.name)),
             value = text,
             onValueChange = {
                 text = it
@@ -242,6 +250,7 @@ private fun FloatParamListItem(
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = config.name)
         TextField(
+            modifier = Modifier.testTag(TestTags.devParam(config.name)),
             value = text,
             onValueChange = {
                 text = it

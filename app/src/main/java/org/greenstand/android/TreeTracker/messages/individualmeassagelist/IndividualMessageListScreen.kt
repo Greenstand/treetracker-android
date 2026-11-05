@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,6 +44,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.NoMessages
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.UserImageButton
 
 @ExperimentalFoundationApi
@@ -122,13 +123,14 @@ fun IndividualMessageList(
                 modifier = Modifier.padding(it),
                 contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 10.dp, bottom = it.calculateBottomPadding()),
             ) {
-                items(state.messages) { message ->
+                itemsIndexed(state.messages) { index, message ->
 
                     val isSelected = state.selectedMessage == message
                     key(message.id) {
                         when (message) {
                             is DirectMessage ->
                                 IndividualMessageItem(
+                                    testTag = TestTags.messageItem(index),
                                     isSelected = isSelected,
                                     isNotificationEnabled = !message.isRead,
                                     text = message.from,
@@ -139,6 +141,7 @@ fun IndividualMessageList(
                                 }
                             is SurveyMessage ->
                                 IndividualMessageItem(
+                                    testTag = TestTags.messageItem(index),
                                     isSelected = isSelected,
                                     isNotificationEnabled = !message.isRead,
                                     text = message.title,
@@ -149,6 +152,7 @@ fun IndividualMessageList(
                                 }
                             is AnnouncementMessage ->
                                 IndividualMessageItem(
+                                    testTag = TestTags.messageItem(index),
                                     isSelected = isSelected,
                                     isNotificationEnabled = !message.isRead,
                                     text = message.subject,

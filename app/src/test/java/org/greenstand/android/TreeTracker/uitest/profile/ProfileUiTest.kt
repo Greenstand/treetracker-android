@@ -19,7 +19,6 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -33,6 +32,7 @@ import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectState
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -62,7 +62,7 @@ class ProfileUiTest : ComposeUiTest() {
 
     private fun textFields() = composeTestRule.onAllNodes(hasSetTextAction())
 
-    private fun photo() = composeTestRule.onNode(hasClickAction() and !hasSetTextAction())
+    private fun photo() = composeTestRule.onNodeWithTag(TestTags.PROFILE_PHOTO)
 
     @Test
     fun `shows a loading message until a user is selected`() {

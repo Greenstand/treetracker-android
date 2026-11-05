@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,7 +52,8 @@ fun BoxScope.LanguageButton() {
         modifier =
             Modifier
                 .align(Alignment.Center)
-                .size(width = 100.dp, 60.dp),
+                .size(width = 100.dp, 60.dp)
+                .testTag(TestTags.TOP_BAR_LANGUAGE_BUTTON),
         onClick = {
             navigator.throttledNavigate(LanguageRoute())
         },

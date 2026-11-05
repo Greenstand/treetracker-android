@@ -35,6 +35,7 @@ Docs that describe flows: `docs/engineering/navigation-flows.md`, `docs/product/
 - Unit: `NavigatorTest`, `FlowNavigationControllerTest`, `CaptureSetupNavigationControllerTest`, `CaptureFlowNavigationControllerTest`, `RouteRegistryTest`, `OrgDeepLinkTest`, `RoutesSerializationTest`, scope manager tests.
 - `app/src/androidTest/` is empty. Open issue #1243 asks for instrumentation tests of login, capture, sync and dashboard.
 - Seeding helpers: debug AppFunctions `createAccount` and `captureTrees` (need API 37; CI emulator is API 35).
+- Since this audit, #1402 gave every screen stable test tags (`TestTags`) and added a manual `tb` screen tour (`e2e/tour/`).
 
 Gap: no test walks screen to screen past the language picker, so a PR that breaks a hand-off between screens (wrong popUpTo, scope not opened, org flow misconfigured) passes CI.
 
@@ -155,7 +156,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 ## 5. How to build the suite
 
 - Runner: Test Buddy / Maestro YAML in `e2e/flows/`, as today. Black-box flows survive the KMP/CMP rewrite unchanged, which is the point; the same YAML can later run against iOS.
-- Selectors: there are only 9 `testTag`s in `app/src/main`. Text selectors break when language changes (E2) and when copy changes. Add stable tags (with `testTagsAsResourceId`) on buttons the flows touch before writing many flows. CMP supports the same tags.
+- Selectors: use the ids in `TestTags` (`view/TestTags.kt`, added in #1402), exposed through `testTagsAsResourceId`, never translated text, which breaks when the language changes (E2) or copy changes. Tag any new control there. CMP supports the same tags.
 - Seeding: AppFunctions `createAccount` / `captureTrees` skip slow setup, but need API 37 while CI runs API 35. Either bump the CI emulator or add a debug-only seeding path (intent or dev option) usable on 35.
 - Device control: GPS via emulator `geo fix` (and no fix for H3), offline via airplane mode / `svc wifi|data disable`, process death via `adb shell am kill` after backgrounding (check tb supports a shell or kill step), camera via the emulator virtual scene.
 - Backend: sync flows (D) need a fake or test bucket so PR runs don't write to production.

@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +56,7 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.LocalImage
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
@@ -148,11 +150,11 @@ fun TreeDetail(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                DetailField(stringResource(R.string.tree_uuid_label), tree.uuid)
-                DetailField(stringResource(R.string.tree_latitude_label), tree.latitude.toString())
-                DetailField(stringResource(R.string.tree_longitude_label), tree.longitude.toString())
-                DetailField(stringResource(R.string.tree_created_at_label), tree.createdAt.toString())
-                DetailField(stringResource(R.string.tree_uploaded_label), if (tree.uploaded) "Yes" else "No")
+                DetailField(stringResource(R.string.tree_uuid_label), tree.uuid, TestTags.TREE_UUID)
+                DetailField(stringResource(R.string.tree_latitude_label), tree.latitude.toString(), TestTags.TREE_LATITUDE)
+                DetailField(stringResource(R.string.tree_longitude_label), tree.longitude.toString(), TestTags.TREE_LONGITUDE)
+                DetailField(stringResource(R.string.tree_created_at_label), tree.createdAt.toString(), TestTags.TREE_CREATED_AT)
+                DetailField(stringResource(R.string.tree_uploaded_label), if (tree.uploaded) "Yes" else "No", TestTags.TREE_UPLOADED)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -168,7 +170,8 @@ fun TreeDetail(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .height(120.dp),
+                            .height(120.dp)
+                            .testTag(TestTags.TREE_NOTE_FIELD),
                     enabled = !tree.uploaded,
                     colors =
                         TextFieldDefaults.outlinedTextFieldColors(
@@ -188,7 +191,8 @@ fun TreeDetail(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .height(48.dp)
+                                .testTag(TestTags.SAVE_NOTE_BUTTON),
                         colors = AppButtonColors.ProgressGreen,
                         onClick = { onHandleAction(TreeDetailAction.SaveNote) },
                     ) {
@@ -206,7 +210,8 @@ fun TreeDetail(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .height(48.dp)
+                                .testTag(TestTags.DELETE_TREE_BUTTON),
                         colors = AppButtonColors.DeclineRed,
                         onClick = { onHandleAction(TreeDetailAction.SetDeleteDialogVisibility(true)) },
                     ) {
@@ -238,6 +243,7 @@ fun TreeDetail(
 private fun DetailField(
     label: String,
     value: String,
+    testTag: String,
 ) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
@@ -247,6 +253,7 @@ private fun DetailField(
         )
         Text(
             text = value,
+            modifier = Modifier.testTag(testTag),
             color = Color.White,
             style = CustomTheme.typography.regular,
         )

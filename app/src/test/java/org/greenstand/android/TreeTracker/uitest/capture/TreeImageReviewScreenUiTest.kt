@@ -42,6 +42,7 @@ import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationContro
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -57,7 +58,7 @@ class TreeImageReviewScreenUiTest : ComposeUiTest() {
     private val flowNav = mockk<CaptureFlowNavigationController>(relaxed = true)
 
     private val approveOutsideDialog = hasTestTag(APPROVE_BUTTON_TAG) and !hasAnyAncestor(isDialog())
-    private val approveInDialog = hasTestTag(APPROVE_BUTTON_TAG) and hasAnyAncestor(isDialog())
+    private val approveInDialog = hasTestTag(TestTags.DIALOG_POSITIVE_BUTTON) and hasAnyAncestor(isDialog())
 
     @Before
     fun setUp() {

@@ -21,7 +21,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.dialogs.PrivacyPolicyDialog
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -41,7 +41,7 @@ class PrivacyPolicyDialogUiTest : ComposeUiTest() {
     fun `clicking approve dismisses the privacy policy`() {
         setContent { PrivacyPolicyDialog(onDismiss = { dismissals++ }) }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithTag(TestTags.PRIVACY_POLICY_CLOSE_BUTTON).assertIsDisplayed().performClick()
 
         composeTestRule.runOnIdle { assertEquals(1, dismissals) }
     }

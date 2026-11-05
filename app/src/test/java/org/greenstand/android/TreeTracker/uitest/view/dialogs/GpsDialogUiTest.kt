@@ -21,9 +21,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
-import org.greenstand.android.TreeTracker.view.APPROVE_BUTTON_TAG
-import org.greenstand.android.TreeTracker.view.DECLINE_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.NoGPSDeviceDialog
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -42,15 +41,15 @@ class GpsDialogUiTest : ComposeUiTest() {
     fun `no gps dialog only offers the approve button`() {
         setContent { NoGPSDeviceDialog(onPositiveClick = {}) }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_NEGATIVE_BUTTON).assertDoesNotExist()
     }
 
     @Test
     fun `clicking approve invokes onPositiveClick`() {
         setContent { NoGPSDeviceDialog(onPositiveClick = { clicks++ }) }
 
-        composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
 
         composeTestRule.runOnIdle { assertEquals(1, clicks) }
     }

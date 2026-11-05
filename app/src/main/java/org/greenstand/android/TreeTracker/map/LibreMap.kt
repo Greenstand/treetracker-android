@@ -262,19 +262,31 @@ fun LibreMap(
                                 mapLibreMap.animateCamera(CameraUpdateFactory.newCameraPosition(position))
                             }
                         } else {
-                            // Calculate bounds to fit all markers
-                            val boundsBuilder = LatLngBounds.Builder()
-                            markers.forEach { marker ->
-                                boundsBuilder.include(LatLng(marker.latitude, marker.longitude))
+                            val single = singleMapPoint(markers.map { it.latitude to it.longitude })
+                            if (single != null) {
+                                // One point can't make a LatLngBounds (MapLibre throws), so center on it.
+                                val position =
+                                    CameraPosition
+                                        .Builder()
+                                        .target(LatLng(single.first, single.second))
+                                        .zoom(14.0)
+                                        .build()
+                                mapLibreMap.animateCamera(CameraUpdateFactory.newCameraPosition(position))
+                            } else {
+                                // Calculate bounds to fit all markers
+                                val boundsBuilder = LatLngBounds.Builder()
+                                markers.forEach { marker ->
+                                    boundsBuilder.include(LatLng(marker.latitude, marker.longitude))
+                                }
+
+                                val bounds = boundsBuilder.build()
+                                val padding = 100 // padding in pixels
+
+                                // Animate camera to show all markers
+                                mapLibreMap.animateCamera(
+                                    CameraUpdateFactory.newLatLngBounds(bounds, padding),
+                                )
                             }
-
-                            val bounds = boundsBuilder.build()
-                            val padding = 100 // padding in pixels
-
-                            // Animate camera to show all markers
-                            mapLibreMap.animateCamera(
-                                CameraUpdateFactory.newLatLngBounds(bounds, padding),
-                            )
                         }
                     }
                 }
@@ -282,3 +294,10 @@ fun LibreMap(
         },
     )
 }
+
+/**
+ * The one point to center the map on when the markers sit on fewer than two distinct points, or
+ * null when there are enough to fit the camera to their bounds. MapLibre's `LatLngBounds.Builder`
+ * throws `InvalidLatLngBoundsException` for a single point.
+ */
+internal fun singleMapPoint(points: List<Pair<Double, Double>>): Pair<Double, Double>? = points.distinct().singleOrNull()

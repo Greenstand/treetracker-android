@@ -45,6 +45,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +68,7 @@ import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.CustomSnackbar
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 import org.greenstand.android.TreeTracker.view.UserButton
@@ -264,8 +266,10 @@ private fun CredentialBorderedTextField(
     onValueChange: (String) -> Unit,
     onFocusChanged: (androidx.compose.ui.focus.FocusState) -> Unit,
     onImeGo: () -> Unit,
+    testTag: String,
 ) {
     BorderedTextField(
+        testTag = testTag,
         value = value,
         padding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
         onValueChange = onValueChange,
@@ -299,6 +303,7 @@ private fun EmailTextField(
     CredentialBorderedTextField(
         value = state.email ?: "",
         placeholderRes = R.string.email_placeholder,
+        testTag = TestTags.EMAIL_FIELD,
         keyboardType = KeyboardType.Email,
         capitalization = KeyboardCapitalization.None,
         autoCorrect = false,
@@ -334,6 +339,7 @@ private fun PhoneTextField(
     CredentialBorderedTextField(
         value = state.phone ?: "",
         placeholderRes = R.string.phone_placeholder,
+        testTag = TestTags.PHONE_FIELD,
         keyboardType = KeyboardType.Phone,
         capitalization = KeyboardCapitalization.None,
         autoCorrect = true,
@@ -363,6 +369,7 @@ fun EmailCredentialButton(
         credential = state.credential,
         credentialType = Credential.Email::class.java,
         placeholderTextRes = R.string.email_placeholder,
+        testTag = TestTags.EMAIL_CREDENTIAL_BUTTON,
         onClick = { onUpdateCredentialType(Credential.Email()) },
     )
 }
@@ -376,6 +383,7 @@ fun PhoneCredentialButton(
         credential = state.credential,
         credentialType = Credential.Phone::class.java,
         placeholderTextRes = R.string.phone_placeholder,
+        testTag = TestTags.PHONE_CREDENTIAL_BUTTON,
         onClick = { onUpdateCredentialType(Credential.Phone()) },
     )
 }
@@ -391,7 +399,8 @@ fun ViewWebMapText(
             modifier =
                 Modifier
                     .padding(top = 10.dp)
-                    .clickable(onClick = onClick),
+                    .clickable(onClick = onClick)
+                    .testTag(TestTags.VIEW_WEB_MAP_LINK),
             color = Color.White,
             style = TextStyle(textDecoration = TextDecoration.Underline),
         )
@@ -403,13 +412,15 @@ fun <T : Credential> CredentialButton(
     credential: Credential,
     credentialType: Class<T>,
     placeholderTextRes: Int,
+    testTag: String,
     onClick: () -> Unit,
 ) {
     TreeTrackerButton(
         modifier =
             Modifier
                 .padding(end = 12.dp)
-                .size(120.dp, 50.dp),
+                .size(120.dp, 50.dp)
+                .testTag(testTag),
         onClick = onClick,
         colors = AppButtonColors.ProgressGreen,
         isSelected = credentialType.isInstance(credential),
@@ -440,6 +451,7 @@ fun ExistingUserDialog(
                     buttonColors = AppButtonColors.Default,
                     selectedColor = Green,
                     onClick = { onHandleAction(SignupAction.ExistingUserSelected(user)) },
+                    testTag = TestTags.EXISTING_USER_BUTTON,
                 )
             }
         },
