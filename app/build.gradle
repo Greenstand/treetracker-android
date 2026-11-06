@@ -146,6 +146,7 @@ android {
     sourceSets {
         dev {
             kotlin.directories.add('src/debug/java')
+            manifest.srcFile 'src/debug/AndroidManifest.xml'
         }
     }
 
@@ -232,8 +233,6 @@ afterEvaluate {
 
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
-    // Generates the app-wide AppFunctions index; only debug and dev run the AppFunctions compiler
-    arg("appfunctions:aggregateAppFunctions", "true")
 }
 
 kotlin {
@@ -308,9 +307,7 @@ dependencies {
 
     // AppFunctions: debug and dev only, see docs/testing/agent-app-functions.md
     debugImplementation libs.androidx.appfunctions
-    debugImplementation libs.androidx.appfunctions.service
     devImplementation libs.androidx.appfunctions
-    devImplementation libs.androidx.appfunctions.service
     kspDebug libs.androidx.appfunctions.compiler
     kspDev libs.androidx.appfunctions.compiler
 

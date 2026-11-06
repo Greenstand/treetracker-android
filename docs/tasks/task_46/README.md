@@ -14,6 +14,12 @@ Target the latest released Android API level and open a pull request.
 - Preserve unit-test tasks for all build types so CI's `testReleaseUnitTest` still runs.
 - Add the missing serialization extension import needed to compile `OrgRepoTest`.
 - Update setup requirements and clarify that Robolectric remains pinned to API 35.
+- Move the debug AppFunctions from `1.0.0-alpha08` to `1.0.0-rc01`, which needs AGP 9.1 and
+  compileSdk 37. `AgentAppFunctions` becomes an `@AppFunctionServiceEntryPoint` service with
+  `@AppFunctionDeclaration` functions, as the library documents. This drops the separate
+  `appfunctions-service` artifact, `AppFunctionContext` and the old `aggregateAppFunctions` KSP
+  option. The generated service is declared in `src/debug/AndroidManifest.xml`, which dev shares.
+  Function IDs are unchanged, so the adb commands and `app_fn.sh` still work.
 
 ## Validation
 
