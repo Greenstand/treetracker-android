@@ -1,0 +1,48 @@
+# First run to dashboard (phone): Fresh install → grant permissions → pick English → dismiss privacy dialog →
+# phone → first/last name → selfie → accept → Dashboard shows 0 trees
+appId: org.greenstand.android.TreeTracker.debug
+name: First run to dashboard
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- extendedWaitUntil:
+    visible: "ENGLISH"
+    timeout: 30000
+- tapOn: "ENGLISH"
+- tapOn:
+    id: "ArrowForwardButton"
+- tapOn:
+    id: "PrivacyPolicyCloseButton"
+- tapOn: "PHONE"
+#    id: "PhoneCredentialButton"
+- tapOn: "Phone"
+#    id: "PhoneField"
+- inputText: "5551230001"
+- hideKeyboard
+- tapOn:
+    id: "ArrowForwardButton"
+- tapOn: "First Name"
+#    id: "FirstNameField"
+- inputText: "Ada"
+- tapOn: "Last Name"
+#    id: "LastNameField"
+- inputText: "Admin"
+- hideKeyboard
+- tapOn:
+    id: "ArrowForwardButton"
+- tapOn:
+    id: "TutorialDoneButton"
+- tapOn:
+    id: "CaptureButton"
+- extendedWaitUntil:
+    visible:
+      id: "ApproveButton"
+    timeout: 15000
+- tapOn:
+    id: "ApproveButton"
+- extendedWaitUntil:
+    visible:
+      id: "TrackButton"
+    timeout: 15000
