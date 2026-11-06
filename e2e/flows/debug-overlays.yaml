@@ -1,0 +1,66 @@
+# I2: overlay switches, floating controls, capture and a real offline sync attempt.
+# Offline deliberately: diagnostic UI is under test, not successful backend uploads.
+appId: org.greenstand.android.TreeTracker.debug
+name: I2 Debug overlays
+tags: [dev-tools]
+---
+- stopApp
+- openLink: treetracker-e2e://dev-options
+- tapOn: {id: SyncOverlaySwitch}
+- tapOn: {id: SensorOverlaySwitch}
+- assertVisible: {id: SyncOverlaySwitch, checked: true}
+- assertVisible: {id: SensorOverlaySwitch, checked: true}
+- tapOn: {id: ArrowBackButton}
+- assertVisible: {id: SyncOverlay}
+- assertVisible: {id: SensorOverlay}
+- openLink: treetracker-e2e://capture
+- assertVisible: {id: CaptureButton}
+- assertVisible: {id: SyncOverlay}
+- assertVisible: {id: SensorOverlay}
+- takeScreenshot: capture-overlays
+- tapOn: {id: DebugOverlayMenuButton}
+- tapOn: {id: DebugSyncOverlayToggle}
+- assertNotVisible: {id: SyncOverlay}
+- assertVisible: {id: SensorOverlay}
+- tapOn: {id: DebugSensorOverlayToggle}
+- assertNotVisible: {id: SensorOverlay}
+- assertVisible: {id: CaptureButton}
+- tapOn: {id: DebugSyncOverlayToggle}
+- tapOn: {id: DebugSensorOverlayToggle}
+- assertVisible: {id: SyncOverlay}
+- assertVisible: {id: SensorOverlay}
+- tapOn: {id: DebugOverlayMenuButton}
+- tapOn: {id: ArrowBackButton}
+- assertVisible: {id: TrackButton}
+# Start the sync section on a fresh Dashboard activity, preserving process state
+# (overlay toggles) and the seeded database while disposing the camera's view tree.
+- openLink: treetracker-e2e://dashboard
+- tapOn: {id: UploadButton}
+# Offline sync can finish before the next tap. Wait for its durable error rather
+# than a transient progress counter: this proves the worker actually attempted sync.
+- extendedWaitUntil:
+    visible: {id: SyncOverlayError}
+    timeout: 15000
+- takeScreenshot: offline-sync-overlays
+- tapOn: {id: DebugOverlayMenuButton}
+- tapOn: {id: DebugSyncOverlayToggle}
+- assertNotVisible: {id: SyncOverlay}
+- tapOn: {id: DebugSyncOverlayToggle}
+- assertVisible: {id: SyncOverlay}
+- tapOn: {id: DebugSensorOverlayToggle}
+- assertNotVisible: {id: SensorOverlay}
+- tapOn: {id: DebugSensorOverlayToggle}
+- assertVisible: {id: SensorOverlay}
+- tapOn: {id: DebugSyncOverlayToggle}
+- tapOn: {id: DebugSensorOverlayToggle}
+- tapOn: {id: DebugOverlayMenuButton}
+# Both entry points control the same state. Leave the app with overlays off.
+- longPressOn: {id: TopBarLogo}
+- assertVisible: {id: SyncOverlaySwitch, checked: false}
+- assertVisible: {id: SensorOverlaySwitch, checked: false}
+- assertNotVisible: {id: SyncOverlay}
+- assertNotVisible: {id: SensorOverlay}
+- tapOn: {id: ArrowBackButton}
+- assertVisible: {id: TrackButton}
+- assertVisible: {id: TreesToSyncCount, text: "2"}
+- stopApp

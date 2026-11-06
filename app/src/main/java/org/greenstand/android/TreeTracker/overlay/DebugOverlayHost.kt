@@ -48,11 +48,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.TestTags
 
 @Composable
 fun DebugOverlayHost(
@@ -121,11 +123,13 @@ fun DebugOverlayHost(
                 ) {
                     OverlayToggleItem(
                         label = "Sync",
+                        testTag = TestTags.DEBUG_SYNC_OVERLAY_TOGGLE,
                         isActive = showSync,
                         onClick = { overlayManager.toggleSyncOverlay() },
                     )
                     OverlayToggleItem(
                         label = "Sensors",
+                        testTag = TestTags.DEBUG_SENSOR_OVERLAY_TOGGLE,
                         isActive = showSensor,
                         onClick = { overlayManager.toggleSensorOverlay() },
                     )
@@ -138,6 +142,7 @@ fun DebugOverlayHost(
                 modifier =
                     Modifier
                         .size(36.dp)
+                        .testTag(TestTags.DEBUG_OVERLAY_MENU_BUTTON)
                         .clip(CircleShape)
                         .background(AppColors.DeepGray.copy(alpha = 0.7f))
                         .clickable { showMenu = !showMenu },
@@ -157,12 +162,14 @@ fun DebugOverlayHost(
 @Composable
 private fun OverlayToggleItem(
     label: String,
+    testTag: String,
     isActive: Boolean,
     onClick: () -> Unit,
 ) {
     Row(
         modifier =
             Modifier
+                .testTag(testTag)
                 .clip(RoundedCornerShape(4.dp))
                 .clickable(onClick = onClick)
                 .padding(horizontal = 12.dp, vertical = 6.dp),

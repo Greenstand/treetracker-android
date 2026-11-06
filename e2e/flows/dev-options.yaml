@@ -1,0 +1,34 @@
+# I1: hidden developer settings persist through navigation and process restart.
+appId: org.greenstand.android.TreeTracker.debug
+name: I1 Dev options
+tags: [dev-tools]
+---
+- stopApp
+- openLink: treetracker-e2e://dashboard
+- assertVisible: {id: TreesToSyncCount, text: "2"}
+- longPressOn: {id: TopBarLogo}
+- assertVisible: {id: SyncOverlaySwitch, checked: false}
+- assertVisible: {id: SensorOverlaySwitch, checked: false}
+- assertVisible: {id: "DevParam_Force Image Size", checked: false}
+- tapOn: {id: "DevParam_Force Image Size"}
+- assertVisible: {id: "DevParam_Force Image Size", checked: true}
+- tapOn: {id: ArrowBackButton}
+- assertVisible: {id: TrackButton}
+- longPressOn: {id: TopBarLogo}
+- assertVisible: {id: "DevParam_Force Image Size", checked: true}
+- tapOn: {id: ArrowBackButton}
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- longPressOn: {id: TopBarLogo}
+- assertVisible: {id: "DevParam_Force Image Size", checked: true}
+# Restore the default and verify the change is saved, too.
+- tapOn: {id: "DevParam_Force Image Size"}
+- assertVisible: {id: "DevParam_Force Image Size", checked: false}
+- tapOn: {id: ArrowBackButton}
+- longPressOn: {id: TopBarLogo}
+- assertVisible: {id: "DevParam_Force Image Size", checked: false}
+- tapOn: {id: ArrowBackButton}
+- assertVisible: {id: TrackButton}
