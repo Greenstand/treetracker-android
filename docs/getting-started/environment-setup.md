@@ -2,8 +2,9 @@
 
 ## Tooling
 
-- IDE: Android Studio (Jetpack Compose-compatible version)
-- Android API: API 21+
+- IDE: Android Studio Panda 3 (2025.3.3) Patch 1 or newer, with JDK 25
+- Build SDK: Android 17 (API 37), with Android SDK Build-Tools 36.0.0 or newer
+- Supported devices: Android 6.0 (API 23) or newer
 
 ## Device Setup
 

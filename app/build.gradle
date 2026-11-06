@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp'
     id 'org.jetbrains.kotlin.plugin.compose'
@@ -56,10 +55,7 @@ android {
         viewBinding true
 
         buildConfig = true
-    }
-
-    kotlinOptions {
-        jvmTarget = "11" //"1.8"
+        resValues = true
     }
 
     compileOptions {
@@ -83,7 +79,7 @@ android {
             buildConfigField 'String', 'API_GATEWAY', '"https://prod-k8s.treetracker.org"'
             buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${prod_treetracker_client_id}\""
             buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${prod_treetracker_client_secret}\""
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
 
@@ -149,7 +145,7 @@ android {
     // dev is also a local development build, so it compiles the same sources.
     sourceSets {
         dev {
-            java.srcDir 'src/debug/java'
+            kotlin.directories.add('src/debug/java')
         }
     }
 
@@ -240,9 +236,9 @@ ksp {
     arg("appfunctions:aggregateAppFunctions", "true")
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "11" //"1.8"
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
     }
 }
 
