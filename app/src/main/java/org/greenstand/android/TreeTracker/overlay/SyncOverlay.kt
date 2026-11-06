@@ -47,12 +47,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.TestTags
 import kotlin.math.roundToInt
 
 @Composable
@@ -72,6 +74,7 @@ fun SyncOverlay(syncProgressTracker: SyncProgressTracker) {
     Box(
         modifier =
             Modifier
+                .testTag(TestTags.SYNC_OVERLAY)
                 .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
@@ -135,6 +138,7 @@ fun SyncOverlay(syncProgressTracker: SyncProgressTracker) {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = error,
+                            modifier = Modifier.testTag(TestTags.SYNC_OVERLAY_ERROR),
                             color = AppColors.Red,
                             fontSize = 10.sp,
                             maxLines = 2,

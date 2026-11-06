@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
@@ -59,6 +60,7 @@ val LocalViewModelFactory = compositionLocalOf<TreeTrackerViewModelFactory> { er
 fun Root(
     viewModelFactory: TreeTrackerViewModelFactory,
     startRoute: SplashRoute = SplashRoute(),
+    initialBackStack: List<NavKey> = listOf(startRoute),
 ) {
     val snackbarController = remember { SnackbarController() }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -96,7 +98,7 @@ fun Root(
     ) {
         Box(modifier = Modifier.fillMaxSize().exposeTestTags()) {
             if (isOrgReady) {
-                Host(startRoute)
+                Host(startRoute, initialBackStack)
             } else {
                 Splash()
             }
