@@ -35,7 +35,21 @@ tags: [dev-tools]
 # Start the sync section on a fresh Dashboard activity, preserving process state
 # (overlay toggles) and the seeded database while disposing the camera's view tree.
 - openLink: treetracker-e2e://dashboard
+# On small screens the diagnostic panels cover Upload. Hide them to start the
+# real worker, then restore them to inspect its state.
+- tapOn: {id: DebugOverlayMenuButton}
+- tapOn: {id: DebugSyncOverlayToggle}
+- tapOn: {id: DebugSensorOverlayToggle}
+- assertNotVisible: {id: SyncOverlay}
+- assertNotVisible: {id: SensorOverlay}
+- tapOn: {id: DebugOverlayMenuButton}
 - tapOn: {id: UploadButton}
+- tapOn: {id: DebugOverlayMenuButton}
+- tapOn: {id: DebugSyncOverlayToggle}
+- tapOn: {id: DebugSensorOverlayToggle}
+- tapOn: {id: DebugOverlayMenuButton}
+- assertVisible: {id: SyncOverlay}
+- assertVisible: {id: SensorOverlay}
 # Offline sync can finish before the next tap. Wait for its durable error rather
 # than a transient progress counter: this proves the worker actually attempted sync.
 - extendedWaitUntil:

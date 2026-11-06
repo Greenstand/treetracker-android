@@ -56,6 +56,11 @@ a loading overlay and wait roughly 17 seconds before some taps on Dashboard.
 The flow uses normal required taps and assertions rather than optional actions
 or fixed sleeps; allow several minutes for I2.
 
+CI's initial 320x640 run exposed a real obstruction: diagnostic panels covered
+Upload, so the tap never started sync. I2 now hides both panels to reach Upload,
+then restores them before checking the durable error. This keeps the flow usable
+on the default CI screen rather than requiring a larger device profile.
+
 Recording: a complete branch-only run on the dedicated PrMedia emulator, as
 approved. `media/full-run.mp4` is uncut at normal speed (180.54 s, 720x1600,
 4.9 MB). First/last frames and both screenshot artifacts were visually checked.
