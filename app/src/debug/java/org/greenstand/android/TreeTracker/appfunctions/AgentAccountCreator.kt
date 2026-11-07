@@ -80,7 +80,7 @@ class AgentAccountCreator(
     companion object {
         private const val MAX_PHONE_ATTEMPTS = 10
 
-        // Shared by every instance: the AppFunctions library builds a new one for each call
+        // Shared by every instance: AgentAppFunctions builds a new one for each call
         private val creationLock = Mutex()
     }
 }

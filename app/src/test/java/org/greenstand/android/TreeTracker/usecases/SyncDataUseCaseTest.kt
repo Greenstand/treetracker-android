@@ -29,10 +29,11 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import io.mockk.verifyOrder
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
@@ -48,6 +49,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertFailsWith
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -415,24 +417,25 @@ class SyncDataUseCaseTest {
             }
             verifyOrder {
                 syncProgressTracker.updateStepProgress(SyncStep.TREES, 0, 3)
-                syncProgressTracker.updateStepProgress(SyncStep.TREES, 3, 3)
-                syncProgressTracker.updateStepProgress(SyncStep.TREES, 4, 3)
+                syncProgressTracker.updateStepProgress(SyncStep.TREES, 3, 4)
+                syncProgressTracker.updateStepProgress(SyncStep.TREES, 4, 4)
                 syncProgressTracker.completeStep(SyncStep.TREES)
             }
         }
 
     @Test
-    fun `WHEN some trees remain after an upload pass THEN stops retrying and still completes`() =
+    fun `WHEN some trees remain after an upload pass THEN reports failure without claiming completion`() =
         runTest {
             coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
             coEvery { dao.getAllTreeIdsToUpload() } returnsMany listOf(listOf(1L, 2L, 3L), listOf(2L))
 
             val result = syncDataUseCase.execute(Unit)
 
-            assertTrue(result)
+            assertFalse(result)
             coVerify(exactly = 1) { treeUploader.uploadTrees(any()) }
-            verify { syncProgressTracker.completeStep(SyncStep.TREES) }
-            coVerify { uploadLocationDataUseCase.execute(Unit) }
+            verify(exactly = 0) { syncProgressTracker.completeStep(SyncStep.TREES) }
+            verify { syncProgressTracker.updateStepProgress(SyncStep.TREES, 2, 3) }
+            coVerify(exactly = 0) { uploadLocationDataUseCase.execute(Unit) }
         }
 
     @Test
@@ -443,9 +446,9 @@ class SyncDataUseCaseTest {
 
             val result = syncDataUseCase.execute(Unit)
 
-            assertTrue(result)
+            assertFalse(result)
             coVerify(exactly = 1) { treeUploader.uploadLegacyTrees(listOf(10L, 20L), any()) }
-            verify { syncProgressTracker.updateStepProgress(SyncStep.LEGACY_TREES, 2, 2) }
+            verify { syncProgressTracker.updateStepProgress(SyncStep.LEGACY_TREES, 0, 2) }
         }
 
     @Test
@@ -462,31 +465,50 @@ class SyncDataUseCaseTest {
         }
 
     @Test
-    fun `WHEN a step throws CancellationException THEN sync ends with an error`() =
+    fun `retry after partial failure uploads remaining trees and completes`() =
         runTest {
-            coEvery { messagesRepo.syncMessages() } throws CancellationException("cancelled")
-
-            val result = syncDataUseCase.execute(Unit)
-
-            assertFalse(result)
-            verify { syncProgressTracker.failStep(SyncStep.MESSAGES, "cancelled") }
-            verify { syncProgressTracker.endSync(error = "cancelled") }
-            coVerify(exactly = 0) { deviceConfigUploader.upload(any()) }
+            val tracker = SyncProgressTracker()
+            coEvery { dao.getAllTreeCaptureIdsToUpload() } returns emptyList()
+            coEvery { dao.getAllTreeIdsToUpload() } returnsMany
+                listOf(listOf(1L, 2L), listOf(2L), listOf(2L), emptyList())
+            val useCase = createUseCase(tracker)
+            assertFalse(useCase.execute(Unit))
+            assertEquals(
+                1,
+                tracker.state.value.steps
+                    .first { it.step == SyncStep.TREES }
+                    .itemsCompleted,
+            )
+            assertTrue(useCase.execute(Unit))
+            coVerifyOrder {
+                treeUploader.uploadTrees(listOf(1L, 2L))
+                treeUploader.uploadTrees(listOf(2L))
+            }
+            assertFalse(tracker.state.value.isActive)
+            assertNull(tracker.state.value.overallError)
         }
 
     @Test
-    fun `WHEN sync coroutine is cancelled during a step THEN remaining uploads are skipped`() =
+    fun `actual coroutine cancellation skips subsequent uploads and closes progress`() =
         runTest {
-            stubNoTrees()
             coEvery { deviceConfigUploader.upload(any()) } coAnswers { currentCoroutineContext().cancel() }
-
-            val result = syncDataUseCase.execute(Unit)
-
-            assertFalse(result)
+            val job = launch { syncDataUseCase.execute(Unit) }
+            job.join()
+            assertTrue(job.isCancelled)
             coVerify(exactly = 0) { planterUploader.upload(any()) }
             coVerify(exactly = 0) { sessionUploader.upload() }
             coVerify(exactly = 0) { uploadLocationDataUseCase.execute(Unit) }
-            verify(exactly = 0) { syncProgressTracker.endSync(null) }
+            verify { syncProgressTracker.endSync() }
+        }
+
+    @Test
+    fun `WHEN a step is cancelled THEN propagates cancellation and closes progress`() =
+        runTest {
+            coEvery { messagesRepo.syncMessages() } throws CancellationException("quota stop")
+            assertFailsWith<CancellationException> { syncDataUseCase.execute(Unit) }
+            verify { syncProgressTracker.endSync() }
+            verify(exactly = 0) { syncProgressTracker.completeStep(SyncStep.MESSAGES) }
+            coVerify(exactly = 0) { deviceConfigUploader.upload(any()) }
         }
 
     @Test

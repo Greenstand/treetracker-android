@@ -16,8 +16,9 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.google.firebase.installations.FirebaseInstallations
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -51,6 +52,8 @@ class SyncDataUseCase(
                 val instanceId =
                     try {
                         FirebaseInstallations.getInstance().id.await()
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         ""
                     }
@@ -87,6 +90,9 @@ class SyncDataUseCase(
                     uploadLocationDataUseCase.execute(Unit)
                 }
             }
+        } catch (e: CancellationException) {
+            syncProgressTracker.endSync()
+            throw e
         } catch (e: Exception) {
             Timber.e("Error occurred during syncing data. ${e.localizedMessage}")
             syncProgressTracker.endSync(error = e.localizedMessage)
@@ -104,7 +110,7 @@ class SyncDataUseCase(
         syncProgressTracker.startStep(syncStep)
         try {
             var treeIds = onGetTreeIds()
-            val totalTrees = treeIds.size
+            var totalTrees = treeIds.size
             var uploadedSoFar = 0
             syncProgressTracker.updateStepProgress(syncStep, 0, totalTrees)
 
@@ -112,20 +118,19 @@ class SyncDataUseCase(
                 executeIfContextActive("Tree Upload") {
                     onUpload(treeIds)
                 }
-                uploadedSoFar += treeIds.size
-                syncProgressTracker.updateStepProgress(syncStep, uploadedSoFar, totalTrees)
-
+                coroutineContext.ensureActive()
                 val remainingIds = onGetTreeIds()
-                if (!treeIds.containsAll(remainingIds)) {
-                    treeIds = remainingIds
-                } else {
-                    if (remainingIds.isNotEmpty()) {
-                        Timber.tag(TAG).e("Remaining trees failed to upload, ending tree sync...")
-                    }
-                    break
-                }
+                val remainingIdSet = remainingIds.toHashSet()
+                val attemptedIdSet = treeIds.toHashSet()
+                uploadedSoFar += treeIds.count { it !in remainingIdSet }
+                totalTrees = maxOf(totalTrees, uploadedSoFar + remainingIds.size)
+                syncProgressTracker.updateStepProgress(syncStep, uploadedSoFar, totalTrees)
+                check(remainingIds.none { it in attemptedIdSet }) { "Some trees failed to upload; retry sync to resume" }
+                treeIds = remainingIds
             }
             syncProgressTracker.completeStep(syncStep)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             syncProgressTracker.failStep(syncStep, e.localizedMessage)
             throw e
@@ -141,6 +146,8 @@ class SyncDataUseCase(
         try {
             executeIfContextActive(tag, action)
             syncProgressTracker.completeStep(syncStep)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             syncProgressTracker.failStep(syncStep, e.localizedMessage)
             throw e
@@ -152,11 +159,9 @@ class SyncDataUseCase(
         action: suspend () -> Unit,
     ) {
         try {
-            if (coroutineContext.isActive) {
-                action()
-            } else {
-                coroutineContext.cancel()
-            }
+            coroutineContext.ensureActive()
+            action()
+            coroutineContext.ensureActive()
         } catch (e: Exception) {
             Timber.tag(TAG).e("$tag -> ${e.localizedMessage}")
             throw e
