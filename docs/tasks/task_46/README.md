@@ -1,12 +1,14 @@
-# Task 46 - Target Android 17
+# Task 46 - Meet Google Play targeting requirements and support AppFunctions
 
 ## Goal
 
-Target the latest released Android API level and open a pull request.
+Target Android 16 (API 36), the minimum required for Google Play updates, while
+compiling against Android 17 (API 37) for the current AppFunctions library.
 
 ## Changes
 
-- Raise compileSdk from 36 to 37 and targetSdk from 35 to 37 (Android 17).
+- Raise compileSdk from 36 to 37 for AppFunctions and targetSdk from 35 to 36
+  for Google Play. Keep minSdk at 23.
 - Upgrade to AGP 9.1.1, the minimum supported version for API 37, and compatible Firebase
   Crashlytics and Google Services build plugins.
 - Adopt AGP's built-in Kotlin and compilerOptions DSL, enable generated resource values,
@@ -23,6 +25,14 @@ Target the latest released Android API level and open a pull request.
 
 ## Validation
 
+The following results were recorded before reducing targetSdk from 37 to 36;
+they do not validate the revised target. The recording also uses the earlier target.
+
+For the target-36 revision, configuration checks confirmed minSdk 23, targetSdk 36,
+compileSdk 37, AppFunctions 1.0.0-rc01, and AGP 9.1.1; `git diff --check` passed.
+Build and runtime checks were not repeated because this fresh checkout has no
+`treetracker.keys.properties` build credentials.
+
 - `:app:assembleDebug :app:assembleDev :app:assembleRelease`: passed, including release R8.
 - `:app:testDebugUnitTest`: 2,592 tests, zero failures/errors, 2 skipped.
 - `:app:testReleaseUnitTest`: 1,747 tests, zero failures/errors, 1 skipped.
@@ -38,11 +48,23 @@ Target the latest released Android API level and open a pull request.
   played at 2x speed. Generated using dummy build credentials.
 
 Robolectric still uses API 35; API 37 runtime coverage above is an emulator smoke test,
-not a full camera, GPS, upload, or backend integration test. API 37 enforces adaptive
-layouts on large screens, so portrait manifest locks no longer apply there.
+not a full camera, GPS, upload, or backend integration test.
+
+## Compatibility scope
+
+Target 36 retains Android 16's predictive Back and edge-to-edge requirements.
+Large-screen orientation restrictions are ignored by default, but target 36 retains
+the temporary resizability opt-out. Target 37's mandatory removal of that opt-out
+and other Android 17 target-specific changes are outside this migration.
+Behavior changes that apply to all apps on newer Android releases still need testing,
+including Android 16's quotas for long-running WorkManager uploads.
+
+The AGP upgrade and AppFunctions service migration remain necessary for the selected
+AppFunctions library and compileSdk 37; lowering targetSdk does not remove them.
 
 ## References
 
+- [Google Play target API requirements](https://support.google.com/googleplay/android-developer/answer/11926878)
 - [Android 17 SDK setup](https://developer.android.com/about/versions/17/setup-sdk)
 - [Android API tool requirements](https://developer.android.com/build/releases/about-agp)
 - [AGP 9.1.1 compatibility](https://developer.android.com/build/releases/agp-9-1-0-release-notes)

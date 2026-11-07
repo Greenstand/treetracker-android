@@ -4,6 +4,7 @@
 
 - IDE: Android Studio Panda 3 (2025.3.3) Patch 1 or newer, with JDK 25
 - Build SDK: Android 17 (API 37), with Android SDK Build-Tools 36.0.0 or newer
+- Target SDK: Android 16 (API 36), the minimum required for Google Play updates
 - Supported devices: Android 6.0 (API 23) or newer
 
 ## Device Setup
