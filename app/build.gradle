@@ -20,6 +20,8 @@ loadExtraProperties("treetracker.keys.properties")
 
 android {
     compileSdk libs.versions.compileSdk.get().toInteger()
+    // Opt-in beta device QA; ordinary instrumentation tests continue to use debug.
+    testBuildType = providers.gradleProperty("treetracker.deviceTestBuildType").getOrElse("debug")
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdk libs.versions.minSdk.get().toInteger()
@@ -327,6 +329,7 @@ dependencies {
     // Screenshot testing
     testImplementation libs.bundles.roborazzi
     testImplementation libs.androidx.compose.ui.test.junit4
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
     debugImplementation libs.androidx.compose.ui.test.manifest
 }
 

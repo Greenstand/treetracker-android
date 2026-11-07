@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.models
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -86,6 +87,8 @@ class TreeUploader(
                 } else {
                     coroutineContext.cancel()
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Timber.e("NewTree upload failed")
             }

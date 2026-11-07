@@ -30,8 +30,8 @@ they do not validate the revised target. The recording also uses the earlier tar
 
 For the target-36 revision, configuration checks confirmed minSdk 23, targetSdk 36,
 compileSdk 37, AppFunctions 1.0.0-rc01, and AGP 9.1.1; `git diff --check` passed.
-Build and runtime checks were not repeated because this fresh checkout has no
-`treetracker.keys.properties` build credentials.
+The SDK-only revision did not repeat builds. The compatibility follow-up below uses
+dummy local build properties; no production credentials are needed for its automated tests.
 
 - `:app:assembleDebug :app:assembleDev :app:assembleRelease`: passed, including release R8.
 - `:app:testDebugUnitTest`: 2,592 tests, zero failures/errors, 2 skipped.
@@ -70,3 +70,85 @@ AppFunctions library and compileSdk 37; lowering targetSdk does not remove them.
 - [AGP 9.1.1 compatibility](https://developer.android.com/build/releases/agp-9-1-0-release-notes)
 - [Android 16 target behavior changes](https://developer.android.com/about/versions/16/behavior-changes-16)
 - [Android 17 target behavior changes](https://developer.android.com/about/versions/17/behavior-changes-17)
+
+## Camera and interrupted-upload compatibility follow-up
+
+- Keep the selfie preview square within the available content width and height, above
+  the capture controls; apply Scaffold content padding to selfie and tree review images.
+- Update CameraX preview and image target rotation on display and layout changes and
+  immediately before capture. Release display listeners and only this screen's camera
+  use cases when its composition leaves; ignore late provider initialization after disposal.
+- Propagate coroutine cancellation from upload windows and sync orchestration. Always
+  clear the worker's syncing flag and stop its notification progress coroutine.
+- Count completed trees from the remaining database queue, rather than counting attempted
+  trees as successful. Report partial failure so a subsequent sync can resume.
+- Regression coverage includes landscape selfie geometry, cancellation after photo URL
+  checkpointing for current and legacy trees, preserving files until bundle success,
+  cancellation cleanup, and partial failure followed by a successful retry.
+
+The upload regressions use mocked storage and DAO boundaries with real temporary image
+files. They verify client checkpoint/retry behavior, not server-side exactly-once delivery.
+A process death after a server accepts a request but before the database checkpoint can
+still repeat a request. Actual Android job-quota exhaustion was not forced; these tests
+do not validate unlimited background upload duration. Real beta storage recovery was subsequently
+checked on a device as described below.
+
+Follow-up validation with dummy build properties:
+
+- Focused debug regression suite: 94 tests, zero failures/errors/skips.
+- Full debug unit suite: 2,597 tests, zero failures/errors, 2 skipped.
+- `:app:assembleDebug`, `:app:assembleRelease` (including R8), `:app:ktlintCheck`,
+  `:app:spotlessCheck`, and `:app:detekt`: passed.
+- APK metadata confirms minSdk 23 and targetSdk 36.
+- Installed the debug APK on an API 36 emulator. Initial stock-emulator checks were
+  blocked by activity-service timeouts and a disabled front camera. Native camera QA
+  subsequently passed on an isolated camera-enabled API 36 emulator. The Compose
+  unit regression uses a placeholder preview under Robolectric API 35.
+
+End-to-end upload QA is assigned to the `beta` variant: it uses
+`https://test-k8s.treetracker.org`, `treetracker-test-images`, and
+`treetracker-test-batch-uploads`. Beta deliberately excludes AppFunctions.
+Beta credentials were subsequently located in the main checkout and copied into ignored
+local properties. Only the test storage pool and generic API credentials were selected;
+production and signing settings were not copied. The generic API property names were
+mapped to beta's expected test-specific names. The real beta storage checkpoint/retry
+test passed on API 36.
+
+### Beta device validation
+
+- `BetaUploadRecoveryTest`: passed on API 36 using real Room and test-bucket uploads.
+  Created one uniquely marked QA account/session/tree, uploaded prerequisite metadata,
+  cancelled at the persisted photo-URL checkpoint before its bundle, then resumed.
+  The retry retained the same photo URL, completed the metadata bundle, marked the
+  tree uploaded, and deleted the local image only after success. Cancellation is
+  deterministic via a delegating DAO barrier; this does not simulate an OS quota stop
+  or prove server-side exactly-once ingestion.
+- `BetaCameraRotationTest`: passed on an isolated API 36 emulator with emulated front
+  and back cameras. At 1920x1200 / 160 dpi, preview remained square, fully visible,
+  and above the shutter. Verified streaming and actual capture/review after display
+  rotations 0 and 180 degrees while the camera was open. Display settings were restored.
+- `:app:assembleBeta`, `:app:assembleBetaAndroidTest`, ktlint, Spotless, and Detekt passed.
+
+Both device tests are opt-in. Beta excludes AppFunctions; the tests use instrumentation.
+Build with real **test** properties in the ignored local file:
+
+```sh
+./gradlew -Ptreetracker.deviceTestBuildType=beta :app:assembleBeta :app:assembleBetaAndroidTest
+```
+
+Install both APKs on a disposable API 36+ emulator. The upload test requires a fresh beta
+install and refuses to sync existing accounts. It writes synthetic QA data to test storage:
+
+```sh
+adb -s <serial> install app/build/outputs/apk/beta/app-beta.apk
+adb -s <serial> install app/build/outputs/apk/androidTest/beta/app-beta-androidTest.apk
+adb -s <serial> shell am instrument -w -r \
+  -e class org.greenstand.android.TreeTracker.BetaUploadRecoveryTest \
+  -e betaUploadRecovery true \
+  org.greenstand.android.TreeTracker.test.test/androidx.test.runner.AndroidJUnitRunner
+python3 tools/test_beta_camera.py --serial <serial>
+```
+
+The native camera test needs an enabled emulated front camera. The host driver temporarily
+sets a large display and rotation, and restores them in `finally`. Ordinary test runs skip
+both device checks unless their explicit instrumentation argument is supplied.
