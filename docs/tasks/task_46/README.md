@@ -3,8 +3,8 @@
 ## Goal
 
 Google Play requires app updates to target Android 16 (API 36). Raise `targetSdk` from 35 to
-36 and update the app logic that the new target changes. `compileSdk` stays 36, `minSdk` stays
-23, and the build tooling is unchanged.
+36 and update the app logic that the new target changes. `minSdk` stays 23. `compileSdk` moves
+to 37 and the Android Gradle Plugin to 9.1.1, which AndroidX AppFunctions 1.0.0-rc01 requires.
 
 ## Behaviour changes handled
 
@@ -22,6 +22,19 @@ Google Play requires app updates to target Android 16 (API 36). Raise `targetSdk
   always clears the worker's syncing and progress state, counts uploads from the remaining
   database queue, and reports partial failures as failures. The next sync resumes the
   pending trees.
+
+## AppFunctions upgrade
+
+- AppFunctions moves to 1.0.0-rc01. The debug agent functions now live in an abstract
+  `AppFunctionService` annotated with `@AppFunctionServiceEntryPoint`; the compiler generates
+  `AgentAppFunctionService` and its XML, and `src/debug/AndroidManifest.xml` declares the
+  service. The `appfunctions-service` artifact and the custom service code are gone.
+- AppFunctions needs `minSdk` 24, so the debug manifest overrides it for that library only;
+  the functions are annotated for API 36 and are not in release builds.
+- AGP 9.1.1 uses built-in Kotlin, so the `kotlin-android` plugin and `kotlinOptions` are
+  replaced by `kotlin { compilerOptions { ... } }`. AGP 9 also needs the newer Google
+  Services and Crashlytics plugins and drops `proguard-android.txt`, so release uses
+  `proguard-android-optimize.txt`.
 
 ## Tests
 
