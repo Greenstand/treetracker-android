@@ -15,9 +15,11 @@
  */
 package org.greenstand.android.TreeTracker.camera
 
-import android.app.Activity
-import android.os.Build
-import android.util.DisplayMetrics
+import android.hardware.display.DisplayManager
+import android.os.Handler
+import android.os.Looper
+import android.view.Surface
+import android.view.View
 import android.util.Size
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
@@ -27,6 +29,10 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -45,118 +51,151 @@ fun Camera(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            PreviewView(context).also { previewView ->
-                previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                val cameraProviderFuture = ProcessCameraProvider.getInstance(previewView.context)
+    val context = LocalContext.current
+    val previewView =
+        remember(context) {
+            PreviewView(context).apply {
+                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+            }
+        }
+    val currentOnImageCaptured = rememberUpdatedState(onImageCaptured)
 
-                cameraProviderFuture.addListener({
-                    val cameraProvider = cameraProviderFuture.get()
-                    val screenSize =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            val bounds = (previewView.context as Activity).windowManager.currentWindowMetrics.bounds
-                            Size(bounds.width(), bounds.width())
-                        } else {
-                            @Suppress("DEPRECATION")
-                            val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
-                            Size(metrics.widthPixels, metrics.widthPixels)
-                        }
+    DisposableEffect(previewView, lifecycleOwner, isSelfieMode, cameraControl) {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        var disposed = false
+        var cameraProvider: ProcessCameraProvider? = null
+        var capture: ImageCapture? = null
+        var previewUseCase: Preview? = null
 
-                    val preview =
-                        if (isSelfieMode) {
-                            Preview
-                                .Builder()
-                                .setTargetResolution(screenSize)
-                                .build()
-                        } else {
-                            Preview
-                                .Builder()
-                                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                                .build()
-                        }
+        fun updateRotation() {
+            val rotation = previewView.display?.rotation ?: Surface.ROTATION_0
+            capture?.targetRotation = rotation
+            previewUseCase?.targetRotation = rotation
+        }
+        val displayManager = context.getSystemService(DisplayManager::class.java)
+        val displayListener =
+            object : DisplayManager.DisplayListener {
+                override fun onDisplayAdded(displayId: Int) {}
 
-                    val imageCapture =
-                        if (isSelfieMode) {
-                            ImageCapture
-                                .Builder()
-                                .setTargetResolution(Size(1000, 1000))
-                                .build()
-                        } else {
-                            ImageCapture
-                                .Builder()
-                                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                                // .setTargetResolution(Size(800, 800))
-                                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                                .build()
-                        }
+                override fun onDisplayRemoved(displayId: Int) {}
 
-                    cameraControl.captureListener = {
-                        val file = ImageUtils.createImageFile(context)
-
-                        val metadata =
-                            ImageCapture.Metadata().apply {
-                                // Mirror image when using the front camera
-                                isReversedHorizontal = isSelfieMode
-                            }
-
-                        val outputOptions =
-                            ImageCapture.OutputFileOptions
-                                .Builder(file)
-                                .setMetadata(metadata)
-                                .build()
-
-                        imageCapture.takePicture(
-                            outputOptions,
-                            ContextCompat.getMainExecutor(previewView.context),
-                            object : ImageCapture.OnImageSavedCallback {
-                                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                                    ImageUtils.resizeImage(
-                                        path = file.absolutePath,
-                                        forceScaling = cameraControl.isImageScalingEnabled,
-                                        targetHeight = cameraControl.imageScaleHeight,
-                                    )
-                                    ImageUtils.orientImage(file.absolutePath)
-                                    Timber
-                                        .tag("CameraXApp")
-                                        .d("Photo capture succeeded: ${file.absolutePath}")
-                                    onImageCaptured(file)
-                                }
-
-                                override fun onError(exception: ImageCaptureException) {
-                                    Timber
-                                        .tag("CameraXApp")
-                                        .e(exception, "Photo capture failed")
-                                }
-                            },
-                        )
+                override fun onDisplayChanged(displayId: Int) {
+                    if (previewView.display?.displayId == displayId) updateRotation()
+                }
+            }
+        val layoutListener = View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> updateRotation() }
+        previewView.addOnLayoutChangeListener(layoutListener)
+        displayManager.registerDisplayListener(displayListener, Handler(Looper.getMainLooper()))
+        cameraProviderFuture.addListener({
+            if (!disposed) {
+                val provider = cameraProviderFuture.get()
+                cameraProvider = provider
+                val preview =
+                    if (isSelfieMode) {
+                        Preview
+                            .Builder()
+                            .setTargetResolution(Size(1000, 1000))
+                            .build()
+                    } else {
+                        Preview
+                            .Builder()
+                            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                            .build()
                     }
 
-                    val cameraSelector =
-                        CameraSelector
+                val imageCapture =
+                    if (isSelfieMode) {
+                        ImageCapture
                             .Builder()
-                            .requireLensFacing(
-                                if (isSelfieMode) {
-                                    CameraSelector.LENS_FACING_FRONT
-                                } else {
-                                    CameraSelector.LENS_FACING_BACK
-                                },
-                            ).build()
+                            .setTargetResolution(Size(1000, 1000))
+                            .build()
+                    } else {
+                        ImageCapture
+                            .Builder()
+                            .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                            // .setTargetResolution(Size(800, 800))
+                            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                            .build()
+                    }
 
-                    cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(
-                        lifecycleOwner,
-                        cameraSelector,
-                        imageCapture,
-                        preview,
+                capture = imageCapture
+                previewUseCase = preview
+                updateRotation()
+                cameraControl.captureListener = {
+                    updateRotation()
+                    val file = ImageUtils.createImageFile(context)
+
+                    val metadata =
+                        ImageCapture.Metadata().apply {
+                            // Mirror image when using the front camera
+                            isReversedHorizontal = isSelfieMode
+                        }
+
+                    val outputOptions =
+                        ImageCapture.OutputFileOptions
+                            .Builder(file)
+                            .setMetadata(metadata)
+                            .build()
+
+                    imageCapture.takePicture(
+                        outputOptions,
+                        ContextCompat.getMainExecutor(previewView.context),
+                        object : ImageCapture.OnImageSavedCallback {
+                            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                                ImageUtils.resizeImage(
+                                    path = file.absolutePath,
+                                    forceScaling = cameraControl.isImageScalingEnabled,
+                                    targetHeight = cameraControl.imageScaleHeight,
+                                )
+                                ImageUtils.orientImage(file.absolutePath)
+                                Timber
+                                    .tag("CameraXApp")
+                                    .d("Photo capture succeeded: ${file.absolutePath}")
+                                currentOnImageCaptured.value(file)
+                            }
+
+                            override fun onError(exception: ImageCaptureException) {
+                                Timber
+                                    .tag("CameraXApp")
+                                    .e(exception, "Photo capture failed")
+                            }
+                        },
                     )
+                }
 
-                    preview.setSurfaceProvider(previewView.surfaceProvider)
-                }, ContextCompat.getMainExecutor(previewView.context))
+                val cameraSelector =
+                    CameraSelector
+                        .Builder()
+                        .requireLensFacing(
+                            if (isSelfieMode) {
+                                CameraSelector.LENS_FACING_FRONT
+                            } else {
+                                CameraSelector.LENS_FACING_BACK
+                            },
+                        ).build()
+
+                // Navigation transitions can briefly keep the previous camera entry alive.
+                provider.unbindAll()
+                provider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    imageCapture,
+                    preview,
+                )
+
+                preview.setSurfaceProvider(previewView.surfaceProvider)
             }
-        },
-    )
+        }, ContextCompat.getMainExecutor(context))
+        onDispose {
+            disposed = true
+            cameraControl.captureListener = null
+            previewView.removeOnLayoutChangeListener(layoutListener)
+            displayManager.unregisterDisplayListener(displayListener)
+            val useCases = listOfNotNull(previewUseCase, capture)
+            cameraProvider?.unbind(*useCases.toTypedArray())
+        }
+    }
+    AndroidView(modifier = modifier, factory = { previewView })
 }
 
 class CameraControl {

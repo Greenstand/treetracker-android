@@ -15,9 +15,12 @@
  */
 package org.greenstand.android.TreeTracker.appfunctions
 
-import androidx.appfunctions.AppFunctionContext
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.appfunctions.AppFunctionDeclaration
 import androidx.appfunctions.AppFunctionInvalidArgumentException
-import androidx.appfunctions.service.AppFunction
+import androidx.appfunctions.AppFunctionService
+import androidx.appfunctions.AppFunctionServiceEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -25,11 +28,19 @@ import org.koin.core.component.get
 
 /**
  * AppFunctions that let agents set up test data without driving the UI. Debug and dev builds
- * only. The library instantiates this class through its no-arg constructor on each call.
+ * only. The AppFunctions compiler generates [AgentAppFunctionService] from this class, and
+ * src/debug/AndroidManifest.xml declares it.
  *
  * See docs/testing/agent-app-functions.md for how to call them over adb.
  */
-class AgentAppFunctions : KoinComponent {
+@RequiresApi(Build.VERSION_CODES.BAKLAVA)
+@AppFunctionServiceEntryPoint(
+    serviceName = "AgentAppFunctionService",
+    appFunctionXmlFileName = "agent_app_functions",
+)
+abstract class AgentAppFunctions :
+    AppFunctionService(),
+    KoinComponent {
     /**
      * Creates a planter account without the sign-up screens, using a test image as the selfie.
      * The first account on a device becomes its admin, which skips the first-run setup flow on
@@ -43,9 +54,8 @@ class AgentAppFunctions : KoinComponent {
      * @param email Email to sign in with, instead of phone.
      * @return The created account.
      */
-    @AppFunction(isDescribedByKDoc = true)
+    @AppFunctionDeclaration(isDescribedByKDoc = true)
     suspend fun createAccount(
-        appFunctionContext: AppFunctionContext,
         firstName: String? = null,
         lastName: String? = null,
         phone: String? = null,
@@ -69,9 +79,8 @@ class AgentAppFunctions : KoinComponent {
      * @param note Note saved on every tree.
      * @return The saved trees.
      */
-    @AppFunction(isDescribedByKDoc = true)
+    @AppFunctionDeclaration(isDescribedByKDoc = true)
     suspend fun captureTrees(
-        appFunctionContext: AppFunctionContext,
         count: Int,
         wallet: String? = null,
         latitude: Double? = null,
