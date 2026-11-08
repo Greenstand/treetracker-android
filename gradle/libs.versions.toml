@@ -1,15 +1,15 @@
 [versions]
 # Android SDK
-compileSdk = "37"
+compileSdk = "36"
 minSdk = "23"
 targetSdk = "36"
 
 # Plugins
-androidGradlePlugin = "9.1.1"
+androidGradlePlugin = "8.13.2"
 kotlin = "2.3.20"
 ksp = "2.3.6"
-googleServices = "4.4.4"
-firebaseCrashlytics = "3.0.8"
+googleServices = "4.4.2"
+firebaseCrashlytics = "2.9.9"
 ktlint = "14.2.0"
 spotless = "8.4.0"
 detekt = "2.0.0-alpha.6"
@@ -56,7 +56,8 @@ cameraxExt = "1.4.1"
 koin = "3.5.6"
 
 # AppFunctions (debug-only agent tooling)
-appfunctions = "1.0.0-rc01"
+# alpha09+ needs AGP 9.1 and compileSdk 37
+appfunctions = "1.0.0-alpha08"
 
 # Logging
 timber = "5.0.1"
@@ -153,6 +154,7 @@ koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 
 # AppFunctions
 androidx-appfunctions = { module = "androidx.appfunctions:appfunctions", version.ref = "appfunctions" }
+androidx-appfunctions-service = { module = "androidx.appfunctions:appfunctions-service", version.ref = "appfunctions" }
 androidx-appfunctions-compiler = { module = "androidx.appfunctions:appfunctions-compiler", version.ref = "appfunctions" }
 
 # Logging

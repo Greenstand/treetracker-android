@@ -127,8 +127,8 @@ The app opens on the dashboard with 20 trees waiting to upload.
 - `.claude/skills/agent-app-functions/scripts/test_app_fn.sh` tests the script with a fake `adb`.
   It covers reading adb output, ranking devices, quoting JSON for the device shell, detecting
   errors and formatting the function list.
-- `AgentAppFunctions` is an abstract `AppFunctionService` marked `@AppFunctionServiceEntryPoint`.
-  The compiler generates `AgentAppFunctionService` from it, and `src/debug/AndroidManifest.xml`
-  declares that service, as the library's docs describe. The `dev` build uses the same manifest.
-- The library (`1.0.0-rc01`) has minSdk 24, so the debug manifest overrides it for the app's
-  minSdk 23. Its code only runs on Android 16 or newer, where the system binds the service.
+- The library's own manifest declares the service, so there is no manifest entry to maintain.
+- The library is pinned to `1.0.0-alpha08`, the last version that builds with AGP 8.x and
+  compileSdk 36. From alpha09 it needs AGP 9.1 and compileSdk 37, and later versions change the
+  API: `@AppFunction` becomes `@AppFunctionDeclaration` inside an
+  `@AppFunctionServiceEntryPoint` service, and `AppFunctionContext` is removed.

@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp'
     id 'org.jetbrains.kotlin.plugin.compose'
@@ -20,8 +21,6 @@ loadExtraProperties("treetracker.keys.properties")
 
 android {
     compileSdk libs.versions.compileSdk.get().toInteger()
-    // Opt-in beta device QA; ordinary instrumentation tests continue to use debug.
-    testBuildType = providers.gradleProperty("treetracker.deviceTestBuildType").getOrElse("debug")
     defaultConfig {
         applicationId "org.greenstand.android.TreeTracker"
         minSdk libs.versions.minSdk.get().toInteger()
@@ -57,7 +56,10 @@ android {
         viewBinding true
 
         buildConfig = true
-        resValues = true
+    }
+
+    kotlinOptions {
+        jvmTarget = "11" //"1.8"
     }
 
     compileOptions {
@@ -81,7 +83,7 @@ android {
             buildConfigField 'String', 'API_GATEWAY', '"https://prod-k8s.treetracker.org"'
             buildConfigField "String", "TREETRACKER_CLIENT_ID", "\"${prod_treetracker_client_id}\""
             buildConfigField "String", "TREETRACKER_CLIENT_SECRET", "\"${prod_treetracker_client_secret}\""
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
 
@@ -147,8 +149,7 @@ android {
     // dev is also a local development build, so it compiles the same sources.
     sourceSets {
         dev {
-            kotlin.directories.add('src/debug/java')
-            manifest.srcFile 'src/debug/AndroidManifest.xml'
+            java.srcDir 'src/debug/java'
         }
     }
 
@@ -235,11 +236,13 @@ afterEvaluate {
 
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
+    // Generates the app-wide AppFunctions index; only debug and dev run the AppFunctions compiler
+    arg("appfunctions:aggregateAppFunctions", "true")
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "11" //"1.8"
     }
 }
 
@@ -309,7 +312,9 @@ dependencies {
 
     // AppFunctions: debug and dev only, see docs/testing/agent-app-functions.md
     debugImplementation libs.androidx.appfunctions
+    debugImplementation libs.androidx.appfunctions.service
     devImplementation libs.androidx.appfunctions
+    devImplementation libs.androidx.appfunctions.service
     kspDebug libs.androidx.appfunctions.compiler
     kspDev libs.androidx.appfunctions.compiler
 
@@ -329,7 +334,6 @@ dependencies {
     // Screenshot testing
     testImplementation libs.bundles.roborazzi
     testImplementation libs.androidx.compose.ui.test.junit4
-    androidTestImplementation libs.androidx.compose.ui.test.junit4
     debugImplementation libs.androidx.compose.ui.test.manifest
 }
 
