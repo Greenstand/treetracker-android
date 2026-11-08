@@ -146,9 +146,11 @@ adb -s <serial> shell am instrument -w -r \
   -e class org.greenstand.android.TreeTracker.BetaUploadRecoveryTest \
   -e betaUploadRecovery true \
   org.greenstand.android.TreeTracker.test.test/androidx.test.runner.AndroidJUnitRunner
-python3 tools/test_beta_camera.py --serial <serial>
 ```
 
-The native camera test needs an enabled emulated front camera. The host driver temporarily
-sets a large display and rotation, and restores them in `finally`. Ordinary test runs skip
-both device checks unless their explicit instrumentation argument is supplied.
+The native camera test needs an enabled emulated front camera and a large display
+(smallest width 600dp or more). It waits for the display to be rotated from outside the
+device: after it writes `files/camera-ready-<n>`, something on the host must set
+`user_rotation` to `n` and create `files/camera-rotated-<n>`. This repo has no driver for
+that step, so the test is not part of the steps above. Ordinary test runs skip both device
+checks unless their explicit instrumentation argument is supplied.

@@ -39,7 +39,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 
-/** Opt-in native camera check, driven by tools/test_beta_camera.py on a disposable emulator. */
+/**
+ * Opt-in native camera check for a disposable large-screen emulator. The display must be rotated
+ * from the host: after the test writes `files/camera-ready-<n>`, set `user_rotation` to `n` and
+ * create `files/camera-rotated-<n>`.
+ */
 @RunWith(AndroidJUnit4::class)
 class BetaCameraRotationTest {
     private val instrumentation get() = InstrumentationRegistry.getInstrumentation()
