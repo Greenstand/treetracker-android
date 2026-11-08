@@ -24,6 +24,20 @@ val roomModule =
 
         single { AppDatabase.getInstance(get()) }
 
+        single { AppDatabase.getInstance(get()).treeDao() }
+
+        single { AppDatabase.getInstance(get()).userDao() }
+
+        single { AppDatabase.getInstance(get()).sessionDao() }
+
+        single { AppDatabase.getInstance(get()).organizationDao() }
+
+        single { AppDatabase.getInstance(get()).deviceConfigDao() }
+
+        single { AppDatabase.getInstance(get()).planterDao() }
+
+        single { AppDatabase.getInstance(get()).locationDao() }
+
         single { AppDatabase.getInstance(get()).treeTrackerDao() }
 
         single { MessageDatabase.getInstance(get()) }

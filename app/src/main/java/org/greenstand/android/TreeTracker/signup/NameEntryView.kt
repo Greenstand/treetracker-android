@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,6 +48,7 @@ import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
 import org.greenstand.android.TreeTracker.view.LanguageButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 
 @Composable
@@ -98,6 +100,7 @@ fun NameEntryView(
             verticalArrangement = Arrangement.Center,
         ) {
             BorderedTextField(
+                testTag = TestTags.FIRST_NAME_FIELD,
                 value = state.firstName ?: "",
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateFirstName(updatedName)) },
@@ -120,11 +123,12 @@ fun NameEntryView(
                     text = error,
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(start = 8.dp, top = 4.dp),
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp).testTag(TestTags.FIRST_NAME_ERROR),
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
             BorderedTextField(
+                testTag = TestTags.LAST_NAME_FIELD,
                 value = state.lastName ?: "",
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(SignupAction.UpdateLastName(updatedName)) },
@@ -149,7 +153,7 @@ fun NameEntryView(
                     text = error,
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(start = 8.dp, top = 4.dp),
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp).testTag(TestTags.LAST_NAME_ERROR),
                 )
             }
         }

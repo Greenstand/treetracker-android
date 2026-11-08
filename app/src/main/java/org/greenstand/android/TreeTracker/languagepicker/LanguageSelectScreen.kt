@@ -30,17 +30,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.Language
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TopBarTitle
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
@@ -50,7 +52,7 @@ fun LanguageSelectScreen(
     viewModel: LanguagePickerViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val state by viewModel.state.collectAsState()
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
 
     LanguageSelect(
         state = state,
@@ -59,9 +61,9 @@ fun LanguageSelectScreen(
                 is LanguagePickerAction.NavigateNext -> {
                     viewModel.handleAction(LanguagePickerAction.ConfirmLanguage)
                     if (isFromTopBar) {
-                        navController.popBackStack()
+                        navigator.throttledPopBackStack()
                     } else {
-                        navController.navigate(SignupFlowRoute)
+                        navigator.throttledNavigate(SignupFlowRoute)
                     }
                 }
                 else -> viewModel.handleAction(action)
@@ -102,6 +104,7 @@ fun LanguageSelect(
                 LanguageButton(
                     text = language.toString(),
                     isSelected = language == state.currentLanguage,
+                    testTag = TestTags.languageOption(language.name),
                 ) {
                     onHandleAction(LanguagePickerAction.SetLanguage(language))
                 }
@@ -122,6 +125,7 @@ fun LanguageTopBar() {
 fun LanguageButton(
     text: String,
     isSelected: Boolean,
+    testTag: String = TestTags.languageOption(text),
     onClick: () -> Unit,
 ) {
     TreeTrackerButton(
@@ -131,7 +135,8 @@ fun LanguageButton(
         modifier =
             Modifier
                 .padding(16.dp)
-                .size(height = 80.dp, width = 156.dp),
+                .size(height = 80.dp, width = 156.dp)
+                .testTag(testTag),
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),

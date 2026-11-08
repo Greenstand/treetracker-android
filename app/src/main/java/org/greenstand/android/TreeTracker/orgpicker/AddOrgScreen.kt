@@ -34,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -44,17 +45,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
 @Composable
 fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModelFactory.current)) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -62,10 +64,10 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is AddOrgAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
+                is AddOrgAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
                 is AddOrgAction.NavigateNext -> {
                     viewModel.handleAction(AddOrgAction.SetDefaultOrg)
-                    scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                    scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                 }
                 else -> viewModel.handleAction(action)
             }
@@ -103,6 +105,7 @@ fun AddOrg(
         ) {
             Spacer(modifier = Modifier.height(120.dp))
             BorderedTextField(
+                testTag = TestTags.ORG_NAME_FIELD,
                 value = state.orgName,
                 modifier = Modifier.height(80.dp),
                 padding = PaddingValues(4.dp),
@@ -127,7 +130,8 @@ fun AddOrg(
                     modifier =
                         Modifier
                             .padding(16.dp)
-                            .size(height = 80.dp, width = 156.dp),
+                            .size(height = 80.dp, width = 156.dp)
+                            .testTag(TestTags.PREVIOUS_ORG_BUTTON),
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),

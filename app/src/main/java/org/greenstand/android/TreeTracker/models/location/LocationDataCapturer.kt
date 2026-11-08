@@ -18,9 +18,11 @@ package org.greenstand.android.TreeTracker.models.location
 import android.location.Location
 import androidx.annotation.MainThread
 import androidx.lifecycle.Observer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -56,6 +58,7 @@ class LocationDataCapturer(
     private var convergenceStatus: ConvergenceStatus? = null
     private var areLocationUpdatesOn: Boolean = false
     val percentageConvergenceObservers = mutableListOf<(Float) -> Unit>()
+    private val locationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     var newestPercentageConvergence: Float by Delegates.observable(0f) { _, oldValue, newValue ->
         // convergence percentage fluctuates so it is only updated when it increases
         if (newValue > oldValue) {
@@ -122,7 +125,7 @@ class LocationDataCapturer(
 
                 sessionTracker.currentSessionId?.let { currentSessionId ->
 
-                    MainScope().launch(Dispatchers.IO) {
+                    locationScope.launch {
                         val locationData =
                             LocationData(
                                 currentSessionId,
@@ -164,6 +167,7 @@ class LocationDataCapturer(
         }
         locationUpdateManager.locationUpdateLiveData.removeObserver(locationObserver)
         locationUpdateManager.stopLocationUpdates()
+        locationScope.coroutineContext.cancelChildren()
         areLocationUpdatesOn = false
     }
 

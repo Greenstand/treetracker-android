@@ -15,15 +15,20 @@
  */
 package org.greenstand.android.TreeTracker.root
 
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.greenstand.android.TreeTracker.camera.ImageReviewScreen
 import org.greenstand.android.TreeTracker.camera.SelfieScreen
@@ -46,11 +51,15 @@ import org.greenstand.android.TreeTracker.navigation.ChatRoute
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
 import org.greenstand.android.TreeTracker.navigation.DevOptionsRoute
+import org.greenstand.android.TreeTracker.navigation.FastFadeIn
+import org.greenstand.android.TreeTracker.navigation.FastFadeOut
 import org.greenstand.android.TreeTracker.navigation.ImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.IndividualMessageListRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.navigation.MapRoute
 import org.greenstand.android.TreeTracker.navigation.MessagesUserSelectRoute
+import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.navigation.OrgRoute
 import org.greenstand.android.TreeTracker.navigation.ProfileRoute
 import org.greenstand.android.TreeTracker.navigation.ProfileSelectRoute
@@ -68,7 +77,7 @@ import org.greenstand.android.TreeTracker.navigation.TreeImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.TreeListRoute
 import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.WalletSelectRoute
-import org.greenstand.android.TreeTracker.navigation.trackedComposable
+import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayHost
@@ -95,106 +104,95 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @ExperimentalComposeApi
 @Composable
-fun Host() {
-    val navController = LocalNavHostController.current
+fun Host(startRoute: SplashRoute = SplashRoute()) {
+    // Persists across configuration changes and process death; on restore, the
+    // saved stack wins over startRoute — same as Nav2's restored NavController state.
+    val backStack = rememberNavBackStack(startRoute)
+    val navigator = remember(backStack) { Navigator(backStack) }
     TreeTrackerTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            NavHost(navController, startDestination = SplashRoute()) {
-                trackedComposable<SplashRoute>(
-                    deepLinks =
+        CompositionLocalProvider(LocalNavigator provides navigator) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                NavDisplay(
+                    backStack = backStack,
+                    onBack = { navigator.popBackStack() },
+                    entryDecorators =
                         listOf(
-                            navDeepLink { uriPattern = "app://mobile.treetracker.org/org?id={orgId}&name={orgName}" },
+                            rememberSaveableStateHolderNavEntryDecorator(),
+                            rememberViewModelStoreNavEntryDecorator(),
+                            rememberScreenTrackingNavEntryDecorator(),
                         ),
-                ) {
-                    val route = it.toRoute<SplashRoute>()
-                    SplashScreen(
-                        orgId = route.orgId,
-                        orgName = route.orgName,
+                    transitionSpec = { FastFadeIn togetherWith FastFadeOut },
+                    popTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
+                    predictivePopTransitionSpec = { FastFadeIn togetherWith FastFadeOut },
+                    entryProvider =
+                        entryProvider {
+                            entry<SplashRoute> { route ->
+                                SplashScreen(
+                                    orgId = route.orgId,
+                                    orgName = route.orgName,
+                                )
+                            }
+
+                            entry<LanguageRoute> { route -> LanguageSelectScreen(route.isFromTopBar) }
+
+                            entry<SignupFlowRoute> { SignUpScreen() }
+                            entry<DashboardRoute> { DashboardScreen() }
+                            entry<OrgRoute> { OrgPickerScreen() }
+                            entry<UserSelectRoute> { UserSelectScreen() }
+                            entry<WalletSelectRoute> { WalletSelectScreen() }
+                            entry<AddWalletRoute> { AddWalletScreen() }
+                            entry<AddOrgRoute> { AddOrgScreen() }
+                            entry<SelfieRoute> { SelfieScreen() }
+                            entry<TreeHeightScreenRoute> { TreeHeightScreen() }
+                            entry<SessionNoteRoute> { SessionNoteScreen() }
+                            entry<SettingsRoute> { SettingsScreen() }
+                            entry<ProfileSelectRoute> { ProfileSelectScreen() }
+                            entry<DeleteProfileRoute> { DeleteProfileScreen() }
+                            entry<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
+                            entry<DevOptionsRoute> { DevOptionsRoot() }
+                            entry<MapRoute> { MapScreen() }
+
+                            entry<TreeEditUserSelectRoute> { TreeEditUserSelectScreen() }
+
+                            entry<TreeListRoute> { route ->
+                                TreeListScreen(userWallet = route.userWallet, userName = route.userName)
+                            }
+
+                            entry<TreeDetailRoute> { route -> TreeDetailScreen(treeId = route.treeId) }
+
+                            entry<ProfileRoute> { route -> ProfileScreen(route.planterInfoId) }
+
+                            entry<IndividualMessageListRoute> { route ->
+                                IndividualMessageListScreen(route.planterInfoId)
+                            }
+
+                            entry<SurveyRoute> { route -> SurveyScreen(route.messageId) }
+
+                            entry<ImageReviewRoute> { route -> ImageReviewScreen(route.photoPath) }
+
+                            entry<TreeCaptureRoute> { route -> TreeCaptureScreen(route.profilePicUrl) }
+
+                            entry<TreeImageReviewRoute> { TreeImageReviewScreen() }
+
+                            entry<ChatRoute> { route ->
+                                ChatScreen(route.planterInfoId, route.otherChatIdentifier)
+                            }
+
+                            entry<AnnouncementRoute> { route -> AnnouncementScreen(route.messageId) }
+                        },
+                )
+
+                if (FeatureFlags.DEBUG_ENABLED) {
+                    val overlayManager: DebugOverlayManager = koinInject()
+                    val syncProgressTracker: SyncProgressTracker = koinInject()
+                    val sensorDiagnosticsTracker: SensorDiagnosticsTracker = koinInject()
+
+                    DebugOverlayHost(
+                        overlayManager = overlayManager,
+                        syncProgressTracker = syncProgressTracker,
+                        sensorDiagnosticsTracker = sensorDiagnosticsTracker,
                     )
                 }
-
-                trackedComposable<LanguageRoute> {
-                    val route = it.toRoute<LanguageRoute>()
-                    LanguageSelectScreen(route.isFromTopBar)
-                }
-
-                trackedComposable<SignupFlowRoute> { SignUpScreen() }
-                trackedComposable<DashboardRoute> { DashboardScreen() }
-                trackedComposable<OrgRoute> { OrgPickerScreen() }
-                trackedComposable<UserSelectRoute> { UserSelectScreen() }
-                trackedComposable<WalletSelectRoute> { WalletSelectScreen() }
-                trackedComposable<AddWalletRoute> { AddWalletScreen() }
-                trackedComposable<AddOrgRoute> { AddOrgScreen() }
-                trackedComposable<SelfieRoute> { SelfieScreen() }
-                trackedComposable<TreeHeightScreenRoute> { TreeHeightScreen() }
-                trackedComposable<SessionNoteRoute> { SessionNoteScreen() }
-                trackedComposable<SettingsRoute> { SettingsScreen() }
-                trackedComposable<ProfileSelectRoute> { ProfileSelectScreen() }
-                trackedComposable<DeleteProfileRoute> { DeleteProfileScreen() }
-                trackedComposable<MessagesUserSelectRoute> { MessagesUserSelectScreen() }
-                trackedComposable<DevOptionsRoute> { DevOptionsRoot() }
-                trackedComposable<MapRoute> { MapScreen() }
-
-                trackedComposable<TreeEditUserSelectRoute> { TreeEditUserSelectScreen() }
-
-                trackedComposable<TreeListRoute> {
-                    val route = it.toRoute<TreeListRoute>()
-                    TreeListScreen(userWallet = route.userWallet, userName = route.userName)
-                }
-
-                trackedComposable<TreeDetailRoute> {
-                    val route = it.toRoute<TreeDetailRoute>()
-                    TreeDetailScreen(treeId = route.treeId)
-                }
-
-                trackedComposable<ProfileRoute> {
-                    val route = it.toRoute<ProfileRoute>()
-                    ProfileScreen(route.planterInfoId)
-                }
-
-                trackedComposable<IndividualMessageListRoute> {
-                    val route = it.toRoute<IndividualMessageListRoute>()
-                    IndividualMessageListScreen(route.planterInfoId)
-                }
-
-                trackedComposable<SurveyRoute> {
-                    val route = it.toRoute<SurveyRoute>()
-                    SurveyScreen(route.messageId)
-                }
-
-                trackedComposable<ImageReviewRoute> {
-                    val route = it.toRoute<ImageReviewRoute>()
-                    ImageReviewScreen(route.photoPath)
-                }
-
-                trackedComposable<TreeCaptureRoute> {
-                    val route = it.toRoute<TreeCaptureRoute>()
-                    TreeCaptureScreen(route.profilePicUrl)
-                }
-
-                trackedComposable<TreeImageReviewRoute> { TreeImageReviewScreen() }
-
-                trackedComposable<ChatRoute> {
-                    val route = it.toRoute<ChatRoute>()
-                    ChatScreen(route.planterInfoId, route.otherChatIdentifier)
-                }
-
-                trackedComposable<AnnouncementRoute> {
-                    val route = it.toRoute<AnnouncementRoute>()
-                    AnnouncementScreen(route.messageId)
-                }
-            }
-
-            if (FeatureFlags.DEBUG_ENABLED) {
-                val overlayManager: DebugOverlayManager = koinInject()
-                val syncProgressTracker: SyncProgressTracker = koinInject()
-                val sensorDiagnosticsTracker: SensorDiagnosticsTracker = koinInject()
-
-                DebugOverlayHost(
-                    overlayManager = overlayManager,
-                    syncProgressTracker = syncProgressTracker,
-                    sensorDiagnosticsTracker = sensorDiagnosticsTracker,
-                )
             }
         }
     }

@@ -1,0 +1,10 @@
+# The first screen a fresh install shows. launchApp grants the app's runtime permissions, so the
+# splash screen goes straight on to the language picker.
+appId: org.greenstand.android.TreeTracker.debug
+name: First screen
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "ENGLISH"
+    timeout: 30000

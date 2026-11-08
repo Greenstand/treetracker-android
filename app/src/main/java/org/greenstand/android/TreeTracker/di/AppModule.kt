@@ -61,7 +61,10 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.MessageUploader
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.organization.InstallReferrerDataSource
+import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
+import org.greenstand.android.TreeTracker.models.organization.PlayInstallReferrerDataSource
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
@@ -148,6 +151,10 @@ val appModule =
         single { DeviceConfigUpdater(get(), get()) }
 
         single { OrgRepo(get(), get(), get()) }
+
+        single<InstallReferrerDataSource> { PlayInstallReferrerDataSource(androidContext()) }
+
+        single { InstallReferrerOrgProvider(get(), get()) }
 
         single {
             org.greenstand.android.TreeTracker.models.organization

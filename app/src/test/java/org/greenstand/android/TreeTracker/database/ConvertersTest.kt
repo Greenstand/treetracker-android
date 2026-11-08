@@ -103,4 +103,30 @@ class ConvertersTest {
 
             assertNull(result)
         }
+
+    @Test
+    fun `WHEN stringToArray receives malformed JSON THEN returns null instead of throwing`() =
+        runTest {
+            // Regression: a malformed/legacy survey_response value used to crash
+            // reads of the entire messages table via getMessagesForWalletFlow.
+            val result = Converters.stringToArray("not a json array")
+
+            assertNull(result)
+        }
+
+    @Test
+    fun `WHEN jsonToMap receives malformed JSON THEN returns null instead of throwing`() =
+        runTest {
+            val result = Converters.jsonToMap("not a json object")
+
+            assertNull(result)
+        }
+
+    @Test
+    fun `WHEN stringToInstance receives malformed value THEN returns null instead of throwing`() =
+        runTest {
+            val result = Converters.stringToInstance("not an instant")
+
+            assertNull(result)
+        }
 }

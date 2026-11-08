@@ -21,6 +21,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
@@ -35,6 +36,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -112,4 +116,77 @@ class DeviceConfigUpdaterTest {
 
             coVerify(exactly = 0) { dao.insertDeviceConfig(any()) }
         }
+
+    @Test
+    fun `WHEN no config stored THEN saves exactly one config with the current build values`() =
+        runTest {
+            coEvery { dao.getLatestDeviceConfig() } returns null
+            val configSlot = slot<DeviceConfigEntity>()
+            coEvery { dao.insertDeviceConfig(capture(configSlot)) } returns 1L
+
+            deviceConfigUpdater.saveLatestConfig()
+
+            coVerify(exactly = 1) { dao.insertDeviceConfig(any()) }
+            val config = configSlot.captured
+            assertEquals(BuildConfig.VERSION_NAME, config.appVersion)
+            assertEquals(BuildConfig.VERSION_CODE, config.appBuild)
+            assertEquals(android.os.Build.VERSION.RELEASE, config.osVersion)
+            assertEquals(android.os.Build.VERSION.SDK_INT, config.sdkVersion)
+            assertEquals(Instant.parse("2023-01-01T00:00:00Z"), config.loggedAt)
+            assertFalse(config.isUploaded)
+            assertTrue(config.uuid.isNotEmpty())
+        }
+
+    @Test
+    fun `WHEN app build differs from stored THEN saves new config`() =
+        runTest {
+            coEvery { dao.getLatestDeviceConfig() } returns currentConfig().copy(appBuild = BuildConfig.VERSION_CODE + 1)
+
+            deviceConfigUpdater.saveLatestConfig()
+
+            coVerify(exactly = 1) { dao.insertDeviceConfig(any()) }
+        }
+
+    @Test
+    fun `WHEN os version differs from stored THEN saves new config`() =
+        runTest {
+            coEvery { dao.getLatestDeviceConfig() } returns currentConfig().copy(osVersion = "older-os")
+
+            deviceConfigUpdater.saveLatestConfig()
+
+            coVerify(exactly = 1) { dao.insertDeviceConfig(any()) }
+        }
+
+    @Test
+    fun `WHEN sdk version differs from stored THEN saves new config`() =
+        runTest {
+            coEvery { dao.getLatestDeviceConfig() } returns currentConfig().copy(sdkVersion = android.os.Build.VERSION.SDK_INT - 1)
+
+            deviceConfigUpdater.saveLatestConfig()
+
+            coVerify(exactly = 1) { dao.insertDeviceConfig(any()) }
+        }
+
+    @Test
+    fun `WHEN config changed THEN new config gets a fresh uuid`() =
+        runTest {
+            coEvery { dao.getLatestDeviceConfig() } returns currentConfig().copy(appVersion = "0.0.1")
+            val configSlot = slot<DeviceConfigEntity>()
+            coEvery { dao.insertDeviceConfig(capture(configSlot)) } returns 1L
+
+            deviceConfigUpdater.saveLatestConfig()
+
+            assertTrue(configSlot.captured.uuid != "test-uuid")
+            assertEquals(BuildConfig.VERSION_NAME, configSlot.captured.appVersion)
+        }
+
+    private fun currentConfig(): DeviceConfigEntity =
+        DeviceConfigEntity(
+            uuid = "test-uuid",
+            appVersion = BuildConfig.VERSION_NAME,
+            appBuild = BuildConfig.VERSION_CODE,
+            osVersion = android.os.Build.VERSION.RELEASE,
+            sdkVersion = android.os.Build.VERSION.SDK_INT,
+            loggedAt = Instant.parse("2023-01-01T00:00:00Z"),
+        )
 }

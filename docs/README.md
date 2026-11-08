@@ -35,7 +35,9 @@ This is the primary documentation system for the repository.
 ## Testing
 
 - [Testing](testing/testing.md)
+- [Agent App Functions](testing/agent-app-functions.md)
 - [App Distribution Testing](testing/app-distribution-testing.md)
+- [End-to-End Flow Test Plan](testing/e2e-flow-test-plan.md)
 
 ## Release
 

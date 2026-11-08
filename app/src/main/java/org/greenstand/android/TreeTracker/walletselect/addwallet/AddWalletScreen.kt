@@ -40,17 +40,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.BorderedTextField
+import org.greenstand.android.TreeTracker.view.TestTags
 
 @Composable
 fun AddWalletScreen(
     viewModel: AddWalletViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
     val state by viewModel.state.collectAsState()
 
@@ -58,8 +59,8 @@ fun AddWalletScreen(
         state = state,
         onHandleAction = { action ->
             when (action) {
-                is AddWalletAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navController)
-                is AddWalletAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+                is AddWalletAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
+                is AddWalletAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                 else -> viewModel.handleAction(action)
             }
         },
@@ -101,6 +102,7 @@ fun AddWallet(
                     .padding(top = 120.dp),
         ) {
             BorderedTextField(
+                testTag = TestTags.WALLET_NAME_FIELD,
                 value = state.walletName,
                 padding = PaddingValues(4.dp),
                 onValueChange = { updatedName -> onHandleAction(AddWalletAction.UpdateWalletName(updatedName)) },

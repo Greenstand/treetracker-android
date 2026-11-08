@@ -32,7 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -54,6 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,10 +67,11 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import org.greenstand.android.TreeTracker.R
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.AppColors
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.maplibre.android.MapLibre
 import java.io.File
 import java.time.format.DateTimeFormatter
@@ -78,7 +80,7 @@ import java.time.format.DateTimeFormatter
 fun MapScreen(
     viewModel: MapViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
-    val navController = LocalNavHostController.current
+    val navigator = LocalNavigator.current
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
 
@@ -86,19 +88,42 @@ fun MapScreen(
         MapLibre.getInstance(context)
     }
 
+    MapContent(
+        state = state,
+        onBackClicked = { navigator.throttledPopBackStack() },
+        onMarkerSelected = { markerId ->
+            viewModel.handleAction(MapAction.SelectMarker(markerId))
+        },
+        map = {
+            LibreMap(
+                markers = state.markers,
+                stepPoints = state.stepPoints,
+                selectedMarkerId = state.selectedMarkerId,
+                selectedSessionId = state.selectedSessionId,
+                styleUrl = "https://tiles.openfreemap.org/styles/liberty",
+                onMarkerClick = { markerId ->
+                    viewModel.handleAction(MapAction.SelectMarker(markerId))
+                },
+            )
+        },
+    )
+}
+
+/**
+ * Stateless map screen UI: the [map] slot (MapLibre in the app) with the back button and
+ * the tree carousel drawn over it.
+ */
+@Composable
+fun MapContent(
+    state: MapState,
+    onBackClicked: () -> Unit,
+    onMarkerSelected: (String) -> Unit,
+    map: @Composable () -> Unit,
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        LibreMap(
-            markers = state.markers,
-            stepPoints = state.stepPoints,
-            selectedMarkerId = state.selectedMarkerId,
-            selectedSessionId = state.selectedSessionId,
-            styleUrl = "https://tiles.openfreemap.org/styles/liberty",
-            onMarkerClick = { markerId ->
-                viewModel.handleAction(MapAction.SelectMarker(markerId))
-            },
-        )
+        map()
 
         // Back button in top left corner
         Surface(
@@ -112,7 +137,8 @@ fun MapScreen(
             color = Color.White,
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = onBackClicked,
+                modifier = Modifier.testTag(TestTags.MAP_BACK_BUTTON),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -132,7 +158,7 @@ fun MapScreen(
                 markers = state.markers,
                 selectedMarkerId = state.selectedMarkerId,
                 onMarkerClick = { marker ->
-                    viewModel.handleAction(MapAction.SelectMarker(marker.id))
+                    onMarkerSelected(marker.id)
                 },
             )
         }
@@ -181,11 +207,12 @@ fun TreeMarkerCarousel(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        items(markers, key = { it.id }) { marker ->
+        itemsIndexed(markers, key = { _, marker -> marker.id }) { index, marker ->
             TreeMarkerCard(
                 marker = marker,
                 isSelected = marker.id == selectedMarkerId,
                 onClick = { onMarkerClick(marker) },
+                modifier = Modifier.testTag(TestTags.mapTreeCard(index)),
             )
         }
     }

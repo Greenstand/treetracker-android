@@ -21,12 +21,14 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.junit.Before
@@ -34,6 +36,8 @@ import org.junit.Rule
 import org.junit.Test
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class CreateLegacyTreeUseCaseTest {
@@ -126,6 +130,59 @@ class CreateLegacyTreeUseCaseTest {
                     match { it.createAt == fakeTime.epochSeconds },
                     any(),
                 )
+            }
+        }
+
+    @Test
+    fun `WHEN tree has attributes THEN inserts one attribute entity per attribute with placeholder tree id`() =
+        runTest {
+            every { timeProvider.currentTime() } returns Instant.fromEpochMilliseconds(5000000L)
+            val attributesSlot = slot<List<TreeAttributeEntity>>()
+            coEvery { dao.insertTreeWithAttributes(any(), capture(attributesSlot)) } returns 3L
+            val tree =
+                Tree(
+                    treeUuid = UUID.fromString("550e8400-e29b-41d4-a716-446655440002"),
+                    sessionId = 100L,
+                    content = "Legacy with attributes",
+                    photoPath = "/photos/legacy-2.jpg",
+                    meanLongitude = 36.82,
+                    meanLatitude = -1.29,
+                ).apply {
+                    addTreeAttribute(Tree.DBH_ATTR_KEY, "15")
+                    addTreeAttribute(Tree.ABS_STEP_COUNT_KEY, "120")
+                }
+
+            createLegacyTreeUseCase.execute(CreateLegacyTreeParams(planterCheckInId = 9L, tree = tree))
+
+            assertEquals(
+                listOf(
+                    TreeAttributeEntity(key = Tree.DBH_ATTR_KEY, value = "15", treeCaptureId = -1),
+                    TreeAttributeEntity(key = Tree.ABS_STEP_COUNT_KEY, value = "120", treeCaptureId = -1),
+                ),
+                attributesSlot.captured,
+            )
+        }
+
+    @Test
+    fun `WHEN tree has no attributes THEN inserts an empty attribute list`() =
+        runTest {
+            every { timeProvider.currentTime() } returns Instant.fromEpochMilliseconds(5000000L)
+            val attributesSlot = slot<List<TreeAttributeEntity>>()
+            coEvery { dao.insertTreeWithAttributes(any(), capture(attributesSlot)) } returns 3L
+
+            createLegacyTreeUseCase.execute(CreateLegacyTreeParams(planterCheckInId = 9L, tree = fakeTree))
+
+            assertTrue(attributesSlot.captured.isEmpty())
+        }
+
+    @Test
+    fun `WHEN insert fails THEN exception propagates to the caller`() =
+        runTest {
+            every { timeProvider.currentTime() } returns Instant.fromEpochMilliseconds(5000000L)
+            coEvery { dao.insertTreeWithAttributes(any(), any()) } throws IllegalStateException("db closed")
+
+            assertFailsWith<IllegalStateException> {
+                createLegacyTreeUseCase.execute(CreateLegacyTreeParams(planterCheckInId = 9L, tree = fakeTree))
             }
         }
 }

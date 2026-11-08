@@ -55,7 +55,10 @@ class LanguagePickerViewModel(
             is LanguagePickerAction.ConfirmLanguage -> {
                 state.value.currentLanguage?.let { languageSwitcher.setLanguage(it) }
             }
-            else -> { }
+            is LanguagePickerAction.NavigateNext -> {
+                // handled in composable, guarded here
+            }
+            else -> {}
         }
     }
 }

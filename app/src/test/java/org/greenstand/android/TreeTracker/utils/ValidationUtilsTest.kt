@@ -73,4 +73,78 @@ class ValidationUtilsTest {
         assertEquals("MaryJane", ValidationUtils.filterNameInput("Mary@Jane"))
         assertEquals("Test", ValidationUtils.filterNameInput("Test!@#"))
     }
+
+    @Test
+    fun `null and blank names fail as empty`() {
+        listOf(null, "   ", "\t").forEach { name ->
+            val (isValid, error) = ValidationUtils.validateName(name)
+            assertFalse(isValid)
+            assertEquals("Name cannot be empty", error)
+        }
+    }
+
+    @Test
+    fun `names shorter than two characters fail`() {
+        listOf("A", " B ").forEach { name ->
+            val (isValid, error) = ValidationUtils.validateName(name)
+            assertFalse("$name should be invalid", isValid)
+            assertEquals("Name must be at least 2 characters", error)
+        }
+    }
+
+    @Test
+    fun `two character names pass`() {
+        assertEquals(true to null, ValidationUtils.validateName("Al"))
+    }
+
+    @Test
+    fun `names of exactly 50 characters pass`() {
+        assertEquals(true to null, ValidationUtils.validateName("a".repeat(50)))
+    }
+
+    @Test
+    fun `names longer than 50 characters fail`() {
+        val (isValid, error) = ValidationUtils.validateName("a".repeat(51))
+
+        assertFalse(isValid)
+        assertEquals("Name cannot exceed 50 characters", error)
+    }
+
+    @Test
+    fun `names with surrounding spaces pass`() {
+        assertEquals(true to null, ValidationUtils.validateName("  Mary  "))
+    }
+
+    @Test
+    fun `underscores and backslashes count as special characters`() {
+        listOf("John_Doe", "John\\Doe").forEach { name ->
+            val (isValid, error) = ValidationUtils.validateName(name)
+            assertFalse("$name should be invalid", isValid)
+            assertEquals("Name cannot contain numbers or special characters", error)
+        }
+    }
+
+    @Test
+    fun `symbols that are not letters fail with the allowed characters message`() {
+        val (isValid, error) = ValidationUtils.validateName("John\u00a7")
+
+        assertFalse(isValid)
+        assertEquals("Name can only contain letters, spaces, hyphens and apostrophes", error)
+    }
+
+    @Test
+    fun `filterNameInput keeps letters, spaces, hyphens and apostrophes`() {
+        assertEquals("Mary-Jane O'Neil", ValidationUtils.filterNameInput("Mary-Jane O'Neil"))
+        assertEquals("Jos\u00e9", ValidationUtils.filterNameInput("Jos\u00e9_42!"))
+    }
+
+    @Test
+    fun `filterNameInput truncates to 50 characters`() {
+        assertEquals("a".repeat(50), ValidationUtils.filterNameInput("a".repeat(60)))
+    }
+
+    @Test
+    fun `filterNameInput of only invalid characters is empty`() {
+        assertEquals("", ValidationUtils.filterNameInput("123!@#"))
+    }
 }

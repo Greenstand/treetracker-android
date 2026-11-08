@@ -19,15 +19,27 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
 import io.mockk.unmockkObject
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.double
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.api.models.requests.NewTreeRequest
@@ -35,16 +47,24 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.SessionEntity
 import org.greenstand.android.TreeTracker.database.entity.TreeEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
+import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestParams
 import org.greenstand.android.TreeTracker.usecases.CreateTreeRequestUseCase
+import org.greenstand.android.TreeTracker.usecases.UploadImageParams
 import org.greenstand.android.TreeTracker.usecases.UploadImageUseCase
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
+import org.greenstand.android.TreeTracker.utilities.md5
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import java.io.File
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -55,6 +75,9 @@ class TreeUploaderTest {
 
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
+
+    @get:Rule
+    val tempFolder = TemporaryFolder()
 
     @MockK(relaxed = true)
     private lateinit var uploadImageUseCase: UploadImageUseCase
@@ -197,4 +220,384 @@ class TreeUploaderTest {
             coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
             coVerify(exactly = 1) { dao.updateTreeCapturesUploadStatus(listOf(1L), true) }
         }
+
+    @Test
+    fun `WHEN trees uploaded THEN bundle contains capture requests built from trees and sessions`() =
+        runTest {
+            val bundleSlot = slot<String>()
+            every { objectStorageClient.uploadBundle(capture(bundleSlot), any()) } returns Unit
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = "https://existing.url/photo.jpg")))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            val bundle = parse(bundleSlot.captured)
+            assertEquals("2", bundle["pack_format_version"]!!.jsonPrimitive.content)
+            assertEquals("test-device-id", bundle["device_id"]!!.jsonPrimitive.content)
+            val treeCapture = bundle["captures"]!!.jsonArray.single().jsonObject
+            assertEquals("session-uuid-1", treeCapture["session_id"]!!.jsonPrimitive.content)
+            assertEquals("tree-uuid-1", treeCapture["id"]!!.jsonPrimitive.content)
+            assertEquals(37.0, treeCapture["lat"]!!.jsonPrimitive.double)
+            assertEquals(-122.0, treeCapture["lon"]!!.jsonPrimitive.double)
+            assertEquals("test note", treeCapture["note"]!!.jsonPrimitive.content)
+            assertEquals("https://existing.url/photo.jpg", treeCapture["image_url"]!!.jsonPrimitive.content)
+            assertEquals("2023-01-01T00:00:00Z", treeCapture["captured_at"]!!.jsonPrimitive.content)
+            assertEquals(JsonNull, treeCapture["abs_step_count"])
+            assertEquals(JsonNull, treeCapture["delta_step_count"])
+            assertEquals(JsonNull, treeCapture["rotation_matrix"])
+            assertEquals(JsonNull, treeCapture["extra_attributes"])
+        }
+
+    @Test
+    fun `WHEN trees uploaded THEN records bundle id uploads bundle then marks uploaded and clears local paths`() =
+        runTest {
+            val bundleSlot = slot<String>()
+            val bundleIdSlot = slot<String>()
+            every { objectStorageClient.uploadBundle(capture(bundleSlot), capture(bundleIdSlot)) } returns Unit
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = "https://existing.url/photo.jpg")))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            val expectedBundleId = "${bundleSlot.captured.md5()}_captures"
+            assertEquals(expectedBundleId, bundleIdSlot.captured)
+            coVerifyOrder {
+                dao.updateTreesBundleIds(listOf(1L), expectedBundleId)
+                objectStorageClient.uploadBundle(any(), expectedBundleId)
+                dao.updateTreesUploadStatus(listOf(1L), true)
+                dao.removeTreesLocalImagePaths(listOf(1L))
+            }
+        }
+
+    @Test
+    fun `WHEN tree image uploaded THEN stores the image url before bundling it`() =
+        runTest {
+            val bundleSlot = slot<String>()
+            every { objectStorageClient.uploadBundle(capture(bundleSlot), any()) } returns Unit
+            coEvery { uploadImageUseCase.execute(any()) } returns "https://uploaded.url/photo.jpg"
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = null, photoPath = "/test/photo.jpg")))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            coVerify { uploadImageUseCase.execute(UploadImageParams(imagePath = "/test/photo.jpg", lat = 37.0, long = -122.0)) }
+            coVerify { dao.updateTree(match { it.id == 1L && it.photoUrl == "https://uploaded.url/photo.jpg" }) }
+            val treeCapture = parse(bundleSlot.captured)["captures"]!!.jsonArray.single().jsonObject
+            assertEquals("https://uploaded.url/photo.jpg", treeCapture["image_url"]!!.jsonPrimitive.content)
+        }
+
+    @Test
+    fun `WHEN tree image upload returns no url THEN skips the bundle and does not mark trees uploaded`() =
+        runTest {
+            coEvery { uploadImageUseCase.execute(any()) } returns null
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = null)))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            coVerify(exactly = 0) { dao.updateTree(any()) }
+            coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 0) { dao.updateTreesUploadStatus(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN trees uploaded THEN deletes their local image files`() =
+        runTest {
+            val photo = tempFolder.newFile("tree.jpg")
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = "https://existing.url/photo.jpg", photoPath = photo.absolutePath)))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            assertFalse(photo.exists())
+        }
+
+    @Test
+    fun `WHEN bundle upload fails THEN keeps local images and does not mark trees uploaded`() =
+        runTest {
+            val photo = tempFolder.newFile("tree.jpg")
+            every { objectStorageClient.uploadBundle(any(), any()) } throws RuntimeException("offline")
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = "https://existing.url/photo.jpg", photoPath = photo.absolutePath)))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            assertTrue(photo.exists())
+            coVerify(exactly = 0) { dao.updateTreesUploadStatus(any(), any()) }
+            coVerify(exactly = 0) { dao.removeTreesLocalImagePaths(any()) }
+        }
+
+    @Test
+    fun `WHEN more than fifty trees THEN uploads them in windows of fifty`() =
+        runTest {
+            val treeIds = (1L..120L).toList()
+            coEvery { dao.getTreesByIds(any()) } returns emptyList()
+
+            treeUploader.uploadTrees(treeIds)
+
+            coVerifyOrder {
+                dao.getTreesByIds((1L..50L).toList())
+                dao.getTreesByIds((51L..100L).toList())
+                dao.getTreesByIds((101L..120L).toList())
+            }
+            coVerify(exactly = 3) { dao.getTreesByIds(any()) }
+        }
+
+    @Test
+    fun `WHEN one window fails THEN the following windows are still uploaded`() =
+        runTest {
+            val treeIds = (1L..60L).toList()
+            coEvery { dao.getTreesByIds((1L..50L).toList()) } throws RuntimeException("db error")
+            stubTrees(listOf(treeEntity(id = 51L, photoUrl = "https://existing.url/photo.jpg")), ids = (51L..60L).toList())
+
+            treeUploader.uploadTrees(treeIds)
+
+            coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 1) { dao.updateTreesUploadStatus(listOf(51L), true) }
+        }
+
+    @Test
+    fun `WHEN tree id list is empty THEN nothing is read or uploaded`() =
+        runTest {
+            treeUploader.uploadTrees(emptyList())
+            treeUploader.uploadLegacyTrees(emptyList(), "instance-123")
+
+            coVerify(exactly = 0) { dao.getTreesByIds(any()) }
+            coVerify(exactly = 0) { dao.getTreeCapturesByIds(any()) }
+            coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN legacy trees uploaded THEN bundle is a v1 bundle with tree requests and the device`() =
+        runTest {
+            val bundleSlot = slot<String>()
+            every { objectStorageClient.uploadBundle(capture(bundleSlot), any()) } returns Unit
+            stubLegacyTrees(listOf(legacyTree(id = 1L, photoUrl = "https://existing.url/legacy.jpg")))
+            coEvery { createTreeRequestUseCase.execute(any()) } returns
+                NewTreeRequest(uuid = "legacy-uuid", imageUrl = "https://existing.url/legacy.jpg", sequenceId = 1L)
+
+            treeUploader.uploadLegacyTrees(listOf(1L), "instance-123")
+
+            val bundle = parse(bundleSlot.captured)
+            assertEquals("1", bundle["pack_format_version"]!!.jsonPrimitive.content)
+            val tree = bundle["trees"]!!.jsonArray.single().jsonObject
+            assertEquals("legacy-uuid", tree["uuid"]!!.jsonPrimitive.content)
+            assertEquals("https://existing.url/legacy.jpg", tree["image_url"]!!.jsonPrimitive.content)
+            val device = bundle["devices"]!!.jsonArray.single().jsonObject
+            assertEquals("instance-123", device["instanceId"]!!.jsonPrimitive.content)
+            assertEquals("test-device-id", device["device_identifier"]!!.jsonPrimitive.content)
+            assertEquals(JsonNull, bundle["captures"])
+        }
+
+    @Test
+    fun `WHEN legacy trees uploaded THEN bundle id is the plain md5 and steps run in order`() =
+        runTest {
+            val bundleSlot = slot<String>()
+            val bundleIdSlot = slot<String>()
+            every { objectStorageClient.uploadBundle(capture(bundleSlot), capture(bundleIdSlot)) } returns Unit
+            stubLegacyTrees(listOf(legacyTree(id = 1L, photoUrl = "https://existing.url/legacy.jpg")))
+            coEvery { createTreeRequestUseCase.execute(any()) } returns NewTreeRequest(uuid = "legacy-uuid")
+
+            treeUploader.uploadLegacyTrees(listOf(1L), "instance-123")
+
+            val expectedBundleId = bundleSlot.captured.md5()
+            assertEquals(expectedBundleId, bundleIdSlot.captured)
+            coVerifyOrder {
+                dao.updateTreeCapturesBundleIds(listOf(1L), expectedBundleId)
+                objectStorageClient.uploadBundle(any(), expectedBundleId)
+                dao.updateTreeCapturesUploadStatus(listOf(1L), true)
+                dao.removeTreeCapturesLocalImagePaths(listOf(1L))
+            }
+        }
+
+    @Test
+    fun `WHEN legacy tree already has an image url THEN builds request with it without uploading the image`() =
+        runTest {
+            stubLegacyTrees(listOf(legacyTree(id = 1L, photoUrl = "https://existing.url/legacy.jpg")))
+            coEvery { createTreeRequestUseCase.execute(any()) } returns NewTreeRequest(uuid = "legacy-uuid")
+
+            treeUploader.uploadLegacyTrees(listOf(1L), "instance-123")
+
+            coVerify(exactly = 0) { uploadImageUseCase.execute(any()) }
+            coVerify { createTreeRequestUseCase.execute(CreateTreeRequestParams(1L, "https://existing.url/legacy.jpg")) }
+        }
+
+    @Test
+    fun `WHEN legacy tree image uploaded THEN saves the url on the tree capture`() =
+        runTest {
+            stubLegacyTrees(listOf(legacyTree(id = 1L, photoUrl = null)))
+            coEvery { uploadImageUseCase.execute(any()) } returns "https://uploaded.url/legacy.jpg"
+            coEvery { createTreeRequestUseCase.execute(any()) } returns NewTreeRequest(uuid = "legacy-uuid")
+
+            treeUploader.uploadLegacyTrees(listOf(1L), "instance-123")
+
+            coVerify { uploadImageUseCase.execute(UploadImageParams(imagePath = "/test/legacy.jpg", lat = 37.0, long = -122.0)) }
+            coVerify { dao.updateTreeCapture(match { it.id == 1L && it.photoUrl == "https://uploaded.url/legacy.jpg" }) }
+            coVerify { createTreeRequestUseCase.execute(CreateTreeRequestParams(1L, "https://uploaded.url/legacy.jpg")) }
+        }
+
+    @Test
+    fun `WHEN legacy tree image upload returns no url THEN skips the bundle`() =
+        runTest {
+            stubLegacyTrees(listOf(legacyTree(id = 1L, photoUrl = null)))
+            coEvery { uploadImageUseCase.execute(any()) } returns null
+
+            treeUploader.uploadLegacyTrees(listOf(1L), "instance-123")
+
+            coVerify(exactly = 0) { createTreeRequestUseCase.execute(any()) }
+            coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 0) { dao.updateTreeCapturesUploadStatus(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN legacy trees uploaded THEN deletes their local image files`() =
+        runTest {
+            val photo = tempFolder.newFile("legacy.jpg")
+            stubLegacyTrees(
+                listOf(legacyTree(id = 1L, photoUrl = "https://existing.url/legacy.jpg", localPhotoPath = photo.absolutePath)),
+            )
+            coEvery { createTreeRequestUseCase.execute(any()) } returns NewTreeRequest(uuid = "legacy-uuid")
+
+            treeUploader.uploadLegacyTrees(listOf(1L), "instance-123")
+
+            assertFalse(photo.exists())
+        }
+
+    @Test
+    fun `WHEN only some trees need an image THEN only those images are uploaded but all are bundled`() =
+        runTest {
+            val bundleSlot = slot<String>()
+            every { objectStorageClient.uploadBundle(capture(bundleSlot), any()) } returns Unit
+            coEvery { uploadImageUseCase.execute(any()) } returns "https://new.url/photo.jpg"
+            stubTrees(
+                listOf(
+                    treeEntity(id = 1L, photoUrl = null, photoPath = "/test/new.jpg"),
+                    treeEntity(id = 2L, photoUrl = "https://existing.url/photo.jpg"),
+                ),
+            )
+
+            treeUploader.uploadTrees(listOf(1L, 2L))
+
+            coVerify(exactly = 1) { uploadImageUseCase.execute(any()) }
+            coVerify(exactly = 1) { uploadImageUseCase.execute(UploadImageParams("/test/new.jpg", 37.0, -122.0)) }
+            val imageUrls =
+                parse(bundleSlot.captured)["captures"]!!
+                    .jsonArray
+                    .map { it.jsonObject["image_url"]!!.jsonPrimitive.content }
+            assertEquals(listOf("https://new.url/photo.jpg", "https://existing.url/photo.jpg"), imageUrls)
+            coVerify { dao.updateTreesUploadStatus(listOf(1L, 2L), true) }
+        }
+
+    @Test
+    fun `WHEN a tree has neither an image url nor a local photo THEN its window is not uploaded`() =
+        runTest {
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = null, photoPath = null)))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            coVerify(exactly = 0) { uploadImageUseCase.execute(any()) }
+            coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify(exactly = 0) { dao.updateTreesUploadStatus(any(), any()) }
+            coVerify(exactly = 0) { dao.removeTreesLocalImagePaths(any()) }
+        }
+
+    @Test
+    fun `WHEN a local image file is already gone THEN the upload still completes`() =
+        runTest {
+            val missing = File(tempFolder.root, "already-deleted.jpg")
+            stubTrees(listOf(treeEntity(id = 1L, photoUrl = "https://existing.url/photo.jpg", photoPath = missing.path)))
+
+            treeUploader.uploadTrees(listOf(1L))
+
+            coVerify { dao.updateTreesUploadStatus(listOf(1L), true) }
+            coVerify { dao.removeTreesLocalImagePaths(listOf(1L)) }
+        }
+
+    @Test
+    fun `WHEN the upload is cancelled mid window THEN later windows are not read`() =
+        runTest {
+            val firstWindowStarted = CompletableDeferred<Unit>()
+            coEvery { dao.getTreesByIds((1L..50L).toList()) } coAnswers {
+                firstWindowStarted.complete(Unit)
+                awaitCancellation()
+            }
+            stubTrees(listOf(treeEntity(id = 51L, photoUrl = "https://existing.url/photo.jpg")), ids = listOf(51L))
+
+            val job = launch { treeUploader.uploadTrees((1L..51L).toList()) }
+            firstWindowStarted.await()
+            job.cancelAndJoin()
+
+            coVerify(exactly = 0) { dao.getTreesByIds(listOf(51L)) }
+            coVerify(exactly = 0) { objectStorageClient.uploadBundle(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN legacy trees span several windows THEN each window gets its own bundle`() =
+        runTest {
+            val ids = (1L..51L).toList()
+            coEvery { dao.getTreeCapturesByIds((1L..50L).toList()) } returns
+                (1L..50L).map { legacyTree(id = it, photoUrl = "https://existing.url/$it.jpg") }
+            coEvery { dao.getTreeCapturesByIds(listOf(51L)) } returns
+                listOf(legacyTree(id = 51L, photoUrl = "https://existing.url/51.jpg"))
+            coEvery { createTreeRequestUseCase.execute(any()) } answers {
+                val params = firstArg<CreateTreeRequestParams>()
+                NewTreeRequest(uuid = "legacy-${params.treeId}", imageUrl = params.treeImageUrl, sequenceId = params.treeId)
+            }
+
+            treeUploader.uploadLegacyTrees(ids, "instance-123")
+
+            coVerify(exactly = 2) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify { dao.updateTreeCapturesUploadStatus((1L..50L).toList(), true) }
+            coVerify { dao.updateTreeCapturesUploadStatus(listOf(51L), true) }
+        }
+
+    private fun parse(bundle: String): JsonObject = json.parseToJsonElement(bundle).jsonObject
+
+    private fun stubTrees(
+        trees: List<TreeEntity>,
+        ids: List<Long> = trees.map { it.id },
+    ) {
+        coEvery { dao.getTreesByIds(ids) } returns trees
+        coEvery { dao.getSessionById(1L) } returns
+            SessionEntity(
+                uuid = "session-uuid-1",
+                originUserId = "user-uuid",
+                originWallet = "wallet",
+                destinationWallet = "dest-wallet",
+                startTime = Instant.parse("2023-01-01T00:00:00Z"),
+                organization = "org",
+                isUploaded = false,
+            ).apply { id = 1L }
+    }
+
+    private fun stubLegacyTrees(trees: List<TreeCaptureEntity>) {
+        coEvery { dao.getTreeCapturesByIds(trees.map { it.id }) } returns trees
+    }
+
+    private fun treeEntity(
+        id: Long,
+        photoUrl: String?,
+        photoPath: String? = "/test/photo.jpg",
+    ): TreeEntity =
+        TreeEntity(
+            uuid = "tree-uuid-$id",
+            sessionId = 1L,
+            photoPath = photoPath,
+            photoUrl = photoUrl,
+            note = "test note",
+            latitude = 37.0,
+            longitude = -122.0,
+            createdAt = Instant.parse("2023-01-01T00:00:00Z"),
+        ).apply { this.id = id }
+
+    private fun legacyTree(
+        id: Long,
+        photoUrl: String?,
+        localPhotoPath: String? = "/test/legacy.jpg",
+    ): TreeCaptureEntity =
+        TreeCaptureEntity(
+            uuid = "legacy-uuid-$id",
+            planterCheckInId = 1L,
+            localPhotoPath = localPhotoPath,
+            photoUrl = photoUrl,
+            noteContent = "legacy note",
+            latitude = 37.0,
+            longitude = -122.0,
+            accuracy = 5.0,
+            createAt = 1_672_531_200L,
+        ).apply { this.id = id }
 }

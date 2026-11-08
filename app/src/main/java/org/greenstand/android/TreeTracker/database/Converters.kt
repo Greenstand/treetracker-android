@@ -20,6 +20,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 object Converters {
     val json = Json { ignoreUnknownKeys = true }
@@ -27,7 +28,11 @@ object Converters {
     @TypeConverter
     fun jsonToMap(value: String?): Map<String, String>? {
         if (value == null) return null
-        return json.decodeFromString<Map<String, String>>(value)
+        return runCatching { json.decodeFromString<Map<String, String>>(value) }
+            .getOrElse {
+                Timber.e(it, "Failed to decode map from stored value: %s", value)
+                null
+            }
     }
 
     @TypeConverter
@@ -40,12 +45,23 @@ object Converters {
     fun instantToString(instant: Instant?): String? = instant?.let { it.toString() }
 
     @TypeConverter
-    fun stringToInstance(s: String?): Instant? = s?.toInstant()
+    fun stringToInstance(s: String?): Instant? {
+        if (s == null) return null
+        return runCatching { s.toInstant() }
+            .getOrElse {
+                Timber.e(it, "Failed to parse Instant from stored value: %s", s)
+                null
+            }
+    }
 
     @TypeConverter
     fun stringToArray(value: String?): List<String>? {
         if (value == null) return null
-        return json.decodeFromString<List<String>>(value)
+        return runCatching { json.decodeFromString<List<String>>(value) }
+            .getOrElse {
+                Timber.e(it, "Failed to decode list from stored value: %s", value)
+                null
+            }
     }
 
     @TypeConverter

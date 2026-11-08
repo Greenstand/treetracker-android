@@ -17,21 +17,26 @@ package org.greenstand.android.TreeTracker.userselect
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.root.LocalNavHostController
+import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 
 @Composable
-fun UserSelectScreen() {
-    val navController = LocalNavHostController.current
+fun UserSelectScreen(
+    viewModel: UserSelectViewModel = viewModel(factory = LocalViewModelFactory.current),
+) {
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
     UserSelect(
         navigationButtonColors = AppButtonColors.ProgressGreen,
         isCreateUserEnabled = true,
         isNotificationEnabled = true,
+        viewModel = viewModel,
         onNavigateForward = {
-            scope.launch { CaptureSetupScopeManager.nav.navForward(navController) }
+            scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
         },
     )
 }

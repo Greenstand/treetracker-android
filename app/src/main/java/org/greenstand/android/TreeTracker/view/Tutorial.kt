@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -103,7 +104,10 @@ fun ImageCapturing(
             style = CustomTheme.typography.medium,
             fontWeight = FontWeight.Bold,
         )
+        // A picture of the capture button, not a button: hidden from accessibility so it is
+        // not mistaken for the real one under the dialog.
         CaptureButton(
+            modifier = Modifier.clearAndSetSemantics { },
             onClick = {},
             isEnabled = false,
         )
@@ -159,7 +163,8 @@ fun TreeCaptureReview() {
                     modifier =
                         Modifier
                             .align(Alignment.Center)
-                            .size(width = 100.dp, 60.dp),
+                            .size(width = 100.dp, 60.dp)
+                            .clearAndSetSemantics { },
                     isEnabled = false,
                     onClick = { },
                 ) {
@@ -197,7 +202,7 @@ fun TreeCaptureReview() {
                         .wrapContentHeight(),
                 contentAlignment = Center,
             ) {
-                ApprovalButton(onClick = { /*TODO*/ }, approval = true)
+                ApprovalButton(modifier = Modifier.clearAndSetSemantics { }, onClick = { }, approval = true)
                 Image(
                     modifier = Modifier.padding(top = 30.dp),
                     painter = painterResource(id = R.drawable.touch_gesture),
@@ -230,7 +235,7 @@ fun TreeCaptureReview() {
                         .wrapContentHeight(),
                 contentAlignment = Center,
             ) {
-                ApprovalButton(onClick = { /*TODO*/ }, approval = false)
+                ApprovalButton(modifier = Modifier.clearAndSetSemantics { }, onClick = { }, approval = false)
                 Image(
                     modifier = Modifier.padding(top = 30.dp),
                     painter = painterResource(id = R.drawable.touch_gesture),
@@ -253,6 +258,8 @@ fun TutorialDialog(
         title = null,
         modifier =
             Modifier
+                // A dialog is a window of its own, so it needs its own exposeTestTags.
+                .exposeTestTags()
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .alpha(0.8f)
@@ -275,6 +282,7 @@ fun TutorialDialog(
                             .align(Alignment.CenterHorizontally),
                     onClick = onCompleteClick,
                     approval = true,
+                    testTag = TestTags.TUTORIAL_DONE_BUTTON,
                 )
             }
         },

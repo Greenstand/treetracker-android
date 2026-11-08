@@ -19,12 +19,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.messages.Question
 import org.greenstand.android.TreeTracker.models.messages.SurveyMessage
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+import org.greenstand.android.TreeTracker.viewmodel.ShowSnackbar
+import org.greenstand.android.TreeTracker.viewmodel.TextRef
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -32,8 +35,6 @@ data class SurveyScreenState(
     val userImagePath: String? = null,
     val currentQuestion: Question? = null,
     val selectedAnswerIndex: Int? = null,
-    val surveyComplete: Boolean = false,
-    val shouldNavigateBack: Boolean = false,
 )
 
 sealed class SurveyAction : Action {
@@ -92,7 +93,8 @@ class SurveyViewModel(
                             answers[index]?.let { question.choices[it] }
                         }.requireNoNulls()
                 messagesRepo.saveSurveyAnswers(messageId, answerStrings)
-                updateState { copy(surveyComplete = true) }
+                sendEvent(ShowSnackbar(TextRef.Res(R.string.survey_completed)))
+                popBackStack()
                 return@launch
             }
             currentQuestionIndex++
@@ -107,7 +109,7 @@ class SurveyViewModel(
 
     private fun goToPrevQuestion() {
         if (currentQuestionIndex == 0) {
-            updateState { copy(shouldNavigateBack = true) }
+            popBackStack()
             return
         }
         currentQuestionIndex--

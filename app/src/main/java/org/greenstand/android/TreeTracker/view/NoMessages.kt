@@ -25,6 +25,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +39,7 @@ fun NoMessages() {
     Column(
         modifier =
             Modifier
+                .testTag(TestTags.NO_MESSAGES)
                 .padding(bottom = 30.dp)
                 .fillMaxSize()
                 .wrapContentHeight(),
