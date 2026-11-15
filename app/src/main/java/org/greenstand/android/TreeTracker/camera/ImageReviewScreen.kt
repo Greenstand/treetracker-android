@@ -91,9 +91,9 @@ fun ImageReview(
                 )
             }
         },
-    ) {
+    ) { padding ->
         LocalImage(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(padding),
             imagePath = photoPath,
             contentDescription = null,
             contentScale = ContentScale.Fit,

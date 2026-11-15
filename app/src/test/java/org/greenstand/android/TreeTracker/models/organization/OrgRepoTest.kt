@@ -25,6 +25,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
