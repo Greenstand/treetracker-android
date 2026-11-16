@@ -62,6 +62,9 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       # A booted emulator snapshot, saved once, so later runs skip the cold boot.
+      # Both cameras are emulated: sign-up opens the front camera for the selfie and tree capture
+      # the back one, and the app crashes when the camera it asks for is missing. The key names
+      # the camera setup so a snapshot saved without cameras is not reused.
       - name: Emulator snapshot cache
         uses: actions/cache@v4
         id: avd-cache

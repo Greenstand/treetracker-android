@@ -39,6 +39,8 @@ import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Test
+import org.robolectric.annotation.Config
+import org.junit.Assert.assertTrue
 
 /** Tests for the stateless [Selfie] screen, with a placeholder instead of the camera. */
 class SelfieUiTest : ComposeUiTest() {
@@ -113,6 +115,19 @@ class SelfieUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
 
         assertEquals(listOf(DashboardRoute, DevOptionsRoute), backStack.toList())
+    }
+
+    @Test
+    @Config(qualifiers = "w1200dp-h600dp-mdpi")
+    fun `landscape preview fits above capture controls`() {
+        render()
+        val preview = composeTestRule.onNodeWithTag(CAMERA_TAG).fetchSemanticsNode().boundsInRoot
+        val capture = composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).fetchSemanticsNode().boundsInRoot
+        assertTrue(preview.width > 0)
+        assertEquals(preview.width, preview.height, 1f)
+        assertTrue("Preview overlaps controls", preview.bottom <= capture.top)
+        composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).assertIsDisplayed().performClick()
+        assertEquals(1, captureClicks)
     }
 
     private companion object {

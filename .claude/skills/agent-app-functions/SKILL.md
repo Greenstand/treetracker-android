@@ -130,8 +130,8 @@ causing a `JSONException`. Use `org.greenstand.android.TreeTracker.dev` for dev 
 
 The code is in `app/src/debug/java/org/greenstand/android/TreeTracker/appfunctions/`. Argument
 checking lives in `AgentInput`. The full guide is `docs/testing/agent-app-functions.md`. If you add
-or change a function, update that guide, this skill and `scripts/app_fn.sh` too. The library is
-pinned to `1.0.0-alpha08`, because later versions need AGP 9.1 and compileSdk 37.
+or change a function, update that guide, this skill and `scripts/app_fn.sh` too. The service is
+declared in `app/src/debug/AndroidManifest.xml`.
 
 Run both test suites after a change. Neither needs a device:
 

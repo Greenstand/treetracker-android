@@ -26,6 +26,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkObject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
@@ -61,6 +62,7 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertFailsWith
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -119,6 +121,54 @@ class TreeUploaderTest {
     fun tearDown() {
         unmockkObject(DeviceUtils)
     }
+
+    @Test
+    fun `cancel after photo upload keeps file and resumes without uploading photo twice`() =
+        runTest {
+            val photo = tempFolder.newFile("interrupted.jpg")
+            val tree = treeEntity(1L, null, photo.absolutePath)
+            stubTrees(listOf(tree))
+            coEvery { uploadImageUseCase.execute(any()) } returns "https://uploaded/photo.jpg"
+            coEvery { dao.updateTreesBundleIds(any(), any()) } throws CancellationException("quota stop")
+
+            assertFailsWith<CancellationException> { treeUploader.uploadTrees(listOf(1L)) }
+            assertTrue(photo.exists())
+            assertEquals("https://uploaded/photo.jpg", tree.photoUrl)
+            coVerify { dao.updateTree(tree) }
+            coVerify(exactly = 0) { dao.updateTreesUploadStatus(any(), any()) }
+            coVerify(exactly = 0) { dao.removeTreesLocalImagePaths(any()) }
+
+            coEvery { dao.updateTreesBundleIds(any(), any()) } returns Unit
+            treeUploader.uploadTrees(listOf(1L))
+            coVerify(exactly = 1) { uploadImageUseCase.execute(any()) }
+            coVerify(exactly = 1) { objectStorageClient.uploadBundle(any(), any()) }
+            coVerify { dao.updateTreesUploadStatus(listOf(1L), true) }
+            assertFalse(photo.exists())
+        }
+
+    @Test
+    fun `legacy upload cancellation keeps photo and resumes from saved photo URL`() =
+        runTest {
+            val photo = tempFolder.newFile("legacy-interrupted.jpg")
+            val tree = legacyTree(1L, null, photo.absolutePath)
+            stubLegacyTrees(listOf(tree))
+            coEvery { uploadImageUseCase.execute(any()) } returns "https://uploaded/legacy.jpg"
+            coEvery { createTreeRequestUseCase.execute(any()) } returns
+                NewTreeRequest(uuid = "legacy-uuid", imageUrl = "https://uploaded/legacy.jpg", sequenceId = 1L)
+            coEvery { dao.updateTreeCapturesBundleIds(any(), any()) } throws CancellationException("quota stop")
+
+            assertFailsWith<CancellationException> { treeUploader.uploadLegacyTrees(listOf(1L), "instance") }
+            assertTrue(photo.exists())
+            coVerify { dao.updateTreeCapture(tree) }
+            coVerify(exactly = 0) { dao.updateTreeCapturesUploadStatus(any(), any()) }
+            coVerify(exactly = 0) { dao.removeTreeCapturesLocalImagePaths(any()) }
+
+            coEvery { dao.updateTreeCapturesBundleIds(any(), any()) } returns Unit
+            treeUploader.uploadLegacyTrees(listOf(1L), "instance")
+            coVerify(exactly = 1) { uploadImageUseCase.execute(any()) }
+            coVerify { dao.updateTreeCapturesUploadStatus(listOf(1L), true) }
+            assertFalse(photo.exists())
+        }
 
     @Test
     fun `WHEN trees have null photoUrl THEN uploads images and bundles`() =

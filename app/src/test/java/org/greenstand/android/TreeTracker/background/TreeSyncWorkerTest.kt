@@ -30,6 +30,7 @@ import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.R
@@ -47,6 +48,7 @@ import org.koin.dsl.module
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.util.UUID
+import kotlin.test.assertFailsWith
 import kotlin.test.assertEquals
 
 @RunWith(RobolectricTestRunner::class)
@@ -98,6 +100,19 @@ class TreeSyncWorkerTest {
     fun tearDown() {
         stopKoin()
     }
+
+    @Test
+    fun `cancellation propagates and clears crash report syncing flag`() =
+        runTest {
+            coEvery { syncDataUseCase.execute(Unit) } throws CancellationException("quota stop")
+            assertFailsWith<CancellationException> { worker.doWork() }
+            coVerifyOrder {
+                exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, true)
+                syncDataUseCase.execute(Unit)
+                exceptionDataCollector.set(ExceptionDataCollector.IS_SYNCING, false)
+            }
+            verify(exactly = 0) { syncNotificationManager.updateProgress(any(), any(), any()) }
+        }
 
     @Test
     fun `doWork promotes the worker to the foreground with the sync notification`() =
