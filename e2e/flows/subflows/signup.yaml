@@ -20,11 +20,13 @@ name: Sign up
       - tapOn: {id: PhoneCredentialButton}
       - tapOn: {id: PhoneField}
 - inputText: ${IDENTIFIER}
+- hideKeyboard
 - tapOn: {id: ArrowForwardButton}
 - tapOn: {id: FirstNameField}
 - inputText: ${FIRST_NAME}
 - tapOn: {id: LastNameField}
 - inputText: ${LAST_NAME}
+- hideKeyboard
 - tapOn: {id: ArrowForwardButton}
 - tapOn: {id: TutorialDoneButton}
 - tapOn: {id: CaptureButton}

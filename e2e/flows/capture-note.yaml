@@ -17,6 +17,7 @@ tags: [capture]
 - tapOn: {id: NoteButton}
 - tapOn: {id: DialogTextField}
 - inputText: Oak by the gate
+- hideKeyboard
 - tapOn: {id: DialogPositiveButton}
 - tapOn: {id: ApproveButton}
 - extendedWaitUntil:
@@ -32,4 +33,6 @@ tags: [capture]
 - tapOn: {id: ArrowForwardButton}
 - tapOn: {id: TreeButton_0}
 - tapOn: {id: ArrowForwardButton}
+- scrollUntilVisible:
+    element: {id: TreeNoteField}
 - assertVisible: {id: TreeNoteField, text: "Oak by the gate"}

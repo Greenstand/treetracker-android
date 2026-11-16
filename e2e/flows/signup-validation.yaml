@@ -16,6 +16,7 @@ tags: [signup]
 # Invalid phone: Next shows an error and stays on the credential step.
 - tapOn: {id: PhoneField}
 - inputText: "123"
+- hideKeyboard
 - tapOn: {id: ArrowForwardButton}
 - assertVisible: {id: Snackbar}
 - assertVisible: {id: PhoneField}
@@ -24,12 +25,14 @@ tags: [signup]
 - tapOn: {id: EmailCredentialButton}
 - tapOn: {id: EmailField}
 - inputText: "nope"
+- hideKeyboard
 - tapOn: {id: ArrowForwardButton}
 - assertVisible: {id: Snackbar}
 - assertVisible: {id: EmailField}
 - assertNotVisible: {id: FirstNameField}
 # A valid email moves on to the names.
 - inputText: "@example.com"
+- hideKeyboard
 - tapOn: {id: ArrowForwardButton}
 - assertVisible: {id: FirstNameField}
 - tapOn: {id: FirstNameField}
@@ -37,8 +40,8 @@ tags: [signup]
 - assertVisible: {id: FirstNameError}
 - tapOn: {id: LastNameField}
 - inputText: "B1!"
-- assertVisible: {id: LastNameError}
 - hideKeyboard
+- assertVisible: {id: LastNameError}
 - assertVisible: {id: ArrowForwardButton, enabled: false}
 # Fix both names; the errors go away and Next turns on.
 - tapOn: {id: FirstNameField}
