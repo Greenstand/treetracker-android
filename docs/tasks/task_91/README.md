@@ -42,13 +42,15 @@ first `tb test` call, before `setup-device.sh` seeds the dev-tools data.
   "Sync Preparing" snackbar squeezes the debug "D" button, so the tap lands on Track. It fails the
   same way on its own on a freshly seeded device and passes on CI, so it is not caused by this change.
 - `spotlessCheck` and `ktlintCheck` pass.
+- CI's emulator is 320x640, where the keyboard covers Next. The flows hide the keyboard before
+  tapping Next or a dialog button; all 12 also pass locally with `wm size 320x640` and `wm density 160`.
 
 ## Findings
 
 Added to section 4 of the plan:
 
-- Next on the signup credential step is never disabled. Invalid input shows a snackbar instead.
+- Next on the signup credential step is never disabled. Invalid input shows a snackbar instead (#1413).
 - Names drop digits and symbols while typing.
-- System back on the signup name step skips the credential step and goes to the language picker.
+- System back on the signup name step skips the credential step and goes to the language picker (#1412).
 - After the capture screen's profile icon, system back on user select closes the app. Confirmed
-  with a probe flow; not asserted in the suite.
+  with a probe flow; not asserted in the suite (#1411).

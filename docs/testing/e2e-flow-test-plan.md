@@ -153,9 +153,9 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 3. `CaptureSetupScopeManager` and `CaptureFlowScopeManager` are in-memory singletons, but the Nav3 back stack survives process death. Restoring onto Add org calls `CaptureSetupScopeManager.getData()` before any `open()`, which throws. H5 likely crashes; H6 may too.
 4. The org deep link is parsed only at cold start and the activity is `singleTask` with no `onNewIntent`, so a link tapped while the app is alive is ignored. Decide whether that's intended before writing G4.
 5. Seen while writing the A and B flows (tb, API 35):
-   - Next on the credential step is never disabled. An invalid phone or email shows an error snackbar and stays on the step. Names drop digits and symbols as they are typed, so the name errors only show for fewer than 2 characters. A3 asserts this.
-   - System back on the name step goes to the language picker; only the on-screen back arrow returns to the credential step. A6 asserts today's behaviour; change it if back should step back.
-   - The capture screen's profile icon opens user select with nothing under it: system back there closes the app instead of returning to the Dashboard. Not asserted by a flow yet.
+   - Next on the credential step is never disabled. An invalid phone or email shows an error snackbar and stays on the step. Names drop digits and symbols as they are typed, so the name errors only show for fewer than 2 characters. A3 asserts this. Issue #1413.
+   - System back on the name step goes to the language picker; only the on-screen back arrow returns to the credential step. A6 asserts today's behaviour; change it if back should step back. Issue #1412.
+   - The capture screen's profile icon opens user select with nothing under it: system back there closes the app instead of returning to the Dashboard. Not asserted by a flow yet. Issue #1411.
 
 ## 5. How to build the suite
 
