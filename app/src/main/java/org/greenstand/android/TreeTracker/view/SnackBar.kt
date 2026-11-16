@@ -25,6 +25,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 
@@ -41,7 +42,7 @@ fun CustomSnackbar(
         snackbar = { data ->
             Snackbar(
                 backgroundColor = backGroundColor,
-                modifier = modifier.padding(start = 16.dp, end = 16.dp),
+                modifier = modifier.testTag(TestTags.SNACKBAR).padding(start = 16.dp, end = 16.dp),
                 content = {
                     Text(
                         text = data.message,

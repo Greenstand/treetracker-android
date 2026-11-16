@@ -1,0 +1,12 @@
+# A2: a fresh install signs up with an email address and reaches an empty Dashboard.
+appId: org.greenstand.android.TreeTracker.debug
+name: A2 First run to dashboard (email)
+tags: [signup]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Email, IDENTIFIER: "ada@example.com", FIRST_NAME: Ada, LAST_NAME: Admin}
+- assertVisible: {id: TreesToSyncCount, text: "0"}
+- assertVisible: {id: TreesSyncedCount, text: "0"}

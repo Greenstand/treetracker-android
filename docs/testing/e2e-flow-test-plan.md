@@ -48,23 +48,23 @@ Priority: P0 = run on every PR (smoke, keep the set short), P1 = every PR if tim
 
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
-| A1 | First run to dashboard (phone) | Fresh install → grant permissions → pick English → dismiss privacy dialog → phone → first/last name → selfie → accept → Dashboard shows 0 trees | The front door; touches splash bootstrap, language, signup, ImageCaptureActivity result, DB write | Partly (stops at language) |
-| A2 | First run with email | Same as A1 with email credential | Second credential path, different validation | No |
-| A3 | Signup validation | Invalid phone/email keeps Next disabled; names with digits/symbols show errors; fix and continue | Validation regressions are common in contributor PRs | No |
-| A4 | Selfie retake and cancel | In selfie: capture → retake → capture → accept; then repeat signup and back out of camera → still on signup, no user created | Activity result null path | No |
-| A5 | Existing identifier | With a user already on device, sign up again with the same phone → existing-user dialog → pick user → goes to Dashboard (no admin) or continues capture setup (admin exists) | Shared-device core behaviour | No |
-| A6 | Back from signup | Language → Signup → back → Language; credential step back | Back stack correctness | No |
+| A1 | First run to dashboard (phone) | Fresh install → grant permissions → pick English → dismiss privacy dialog → phone → first/last name → selfie → accept → Dashboard shows 0 trees | The front door; touches splash bootstrap, language, signup, ImageCaptureActivity result, DB write | Yes (`signup-phone.yaml`) |
+| A2 | First run with email | Same as A1 with email credential | Second credential path, different validation | Yes (`signup-email.yaml`) |
+| A3 | Signup validation | Invalid phone/email keeps Next disabled; names with digits/symbols show errors; fix and continue | Validation regressions are common in contributor PRs | Yes (`signup-validation.yaml`) |
+| A4 | Selfie retake and cancel | In selfie: capture → retake → capture → accept; then repeat signup and back out of camera → still on signup, no user created | Activity result null path | Yes (`signup-selfie-retake.yaml`) |
+| A5 | Existing identifier | With a user already on device, sign up again with the same phone → existing-user dialog → pick user → goes to Dashboard (no admin) or continues capture setup (admin exists) | Shared-device core behaviour | Yes (`signup-existing-user.yaml`) |
+| A6 | Back from signup | Language → Signup → back → Language; credential step back | Back stack correctness | Yes (`signup-back.yaml`) |
 
 ### B. Capture (P0)
 
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
-| B1 | Capture first tree (default org) | Dashboard → Capture → select user → Next → Add org (keep default) → Next → capture tutorial → capture photo (GPS fixed) → review tutorial → approve → back on capture screen → back → Dashboard shows 1 to sync | The core job of the app; walks both flow controllers, session start/end, tree save | No |
-| B2 | Capture loop | From B1 capture 3 trees in a row without leaving | Loop back via `popBackStackTo<TreeCaptureRoute>`; count must be 3 | No |
-| B3 | Reject photo | Capture → review → reject/back → capture screen, count unchanged | `navBackward` path, no tree saved | No |
-| B4 | Add note on review | Capture → review → add note → approve; note visible in Settings → Edit trees → detail | Note persistence end to end | No |
-| B5 | Exit paths from capture | System back, top-bar back, profile icon (→ user select) | Each ends the session; profile icon goes to UserSelect not Dashboard | No |
-| B6 | New user mid setup | Dashboard → Capture → "+" add user → full signup → lands on Add org (not dashboard) → capture | `navFromNewUserCreation` and its popUpTo | No |
+| B1 | Capture first tree (default org) | Dashboard → Capture → select user → Next → Add org (keep default) → Next → capture tutorial → capture photo (GPS fixed) → review tutorial → approve → back on capture screen → back → Dashboard shows 1 to sync | The core job of the app; walks both flow controllers, session start/end, tree save | Yes (`capture-first-tree.yaml`) |
+| B2 | Capture loop | From B1 capture 3 trees in a row without leaving | Loop back via `popBackStackTo<TreeCaptureRoute>`; count must be 3 | Yes (`capture-loop.yaml`) |
+| B3 | Reject photo | Capture → review → reject/back → capture screen, count unchanged | `navBackward` path, no tree saved | Yes (`capture-reject.yaml`) |
+| B4 | Add note on review | Capture → review → add note → approve; note visible in Settings → Edit trees → detail | Note persistence end to end | Yes (`capture-note.yaml`) |
+| B5 | Exit paths from capture | System back, top-bar back, profile icon (→ user select) | Each ends the session; profile icon goes to UserSelect not Dashboard | Yes (`capture-exit.yaml`) |
+| B6 | New user mid setup | Dashboard → Capture → "+" add user → full signup → lands on Add org (not dashboard) → capture | `navFromNewUserCreation` and its popUpTo | Yes (`capture-new-user.yaml`) |
 
 ### C. Org-configured flow variants (P1, key for KMP)
 
@@ -152,6 +152,10 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 2. After logout or deleting the admin, the stack is cleared to `SignupFlowRoute`. Signup then navigates to Dashboard with `popUpTo<LanguageRoute>`, which is not on the stack, so Signup likely stays under Dashboard and back from Dashboard returns to Signup. E6/E8 check this.
 3. `CaptureSetupScopeManager` and `CaptureFlowScopeManager` are in-memory singletons, but the Nav3 back stack survives process death. Restoring onto Add org calls `CaptureSetupScopeManager.getData()` before any `open()`, which throws. H5 likely crashes; H6 may too.
 4. The org deep link is parsed only at cold start and the activity is `singleTask` with no `onNewIntent`, so a link tapped while the app is alive is ignored. Decide whether that's intended before writing G4.
+5. Seen while writing the A and B flows (tb, API 35):
+   - Next on the credential step is never disabled. An invalid phone or email shows an error snackbar and stays on the step. Names drop digits and symbols as they are typed, so the name errors only show for fewer than 2 characters. A3 asserts this. Issue #1413.
+   - System back on the name step goes to the language picker; only the on-screen back arrow returns to the credential step. A6 asserts today's behaviour; change it if back should step back. Issue #1412.
+   - The capture screen's profile icon opens user select with nothing under it: system back there closes the app instead of returning to the Dashboard. Not asserted by a flow yet. Issue #1411.
 
 ## 5. How to build the suite
 

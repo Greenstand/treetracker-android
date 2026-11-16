@@ -1,0 +1,26 @@
+appId: org.greenstand.android.TreeTracker.debug
+name: B1 Capture first tree
+tags: [capture]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- assertVisible: {id: ApproveButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "1"}

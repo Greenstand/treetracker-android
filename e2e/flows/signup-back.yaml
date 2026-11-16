@@ -1,0 +1,35 @@
+# A6: back from signup. System back on the credential step returns to the language picker, the
+# on-screen back arrow on the name step returns to the credential step, and system back on the
+# name step leaves signup for the language picker.
+appId: org.greenstand.android.TreeTracker.debug
+name: A6 Back from signup
+tags: [signup]
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: {id: LanguageOption_ENGLISH}
+    timeout: 30000
+- tapOn: {id: LanguageOption_ENGLISH}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- assertVisible: {id: PhoneField}
+- back
+- assertVisible: {id: LanguageOption_ENGLISH}
+- assertNotVisible: {id: PhoneField}
+# Credential -> names, then the on-screen back arrow returns to the credential step.
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PhoneField}
+- inputText: "5551230001"
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: FirstNameField}
+- tapOn: {id: ArrowBackButton}
+- assertVisible: {id: PhoneField, text: "5551230001"}
+- assertNotVisible: {id: FirstNameField}
+# System back on the name step leaves signup.
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: FirstNameField}
+- back
+- assertVisible: {id: LanguageOption_ENGLISH}
