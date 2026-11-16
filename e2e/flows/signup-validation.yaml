@@ -1,0 +1,61 @@
+# A3: invalid credentials stay on the credential step, short or symbol-only names show errors and
+# keep Next disabled, and fixing them continues to the selfie and the Dashboard.
+# Digits and symbols are filtered out of names as they are typed, so "B1!" becomes "B".
+appId: org.greenstand.android.TreeTracker.debug
+name: A3 Signup validation
+tags: [signup]
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: {id: LanguageOption_ENGLISH}
+    timeout: 30000
+- tapOn: {id: LanguageOption_ENGLISH}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+# Invalid phone: Next shows an error and stays on the credential step.
+- tapOn: {id: PhoneField}
+- inputText: "123"
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: Snackbar}
+- assertVisible: {id: PhoneField}
+- assertNotVisible: {id: FirstNameField}
+# Invalid email.
+- tapOn: {id: EmailCredentialButton}
+- tapOn: {id: EmailField}
+- inputText: "nope"
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: Snackbar}
+- assertVisible: {id: EmailField}
+- assertNotVisible: {id: FirstNameField}
+# A valid email moves on to the names.
+- inputText: "@example.com"
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: FirstNameField}
+- tapOn: {id: FirstNameField}
+- inputText: "A"
+- assertVisible: {id: FirstNameError}
+- tapOn: {id: LastNameField}
+- inputText: "B1!"
+- assertVisible: {id: LastNameError}
+- hideKeyboard
+- assertVisible: {id: ArrowForwardButton, enabled: false}
+# Fix both names; the errors go away and Next turns on.
+- tapOn: {id: FirstNameField}
+- inputText: "da"
+- tapOn: {id: LastNameField}
+- inputText: "dmin"
+- hideKeyboard
+- assertNotVisible: {id: FirstNameError}
+- assertNotVisible: {id: LastNameError}
+- assertVisible: {id: ArrowForwardButton, enabled: true}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 15000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000

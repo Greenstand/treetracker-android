@@ -4,6 +4,16 @@ Flows for [Test Buddy](https://github.com/Elforama/testbuddy) (`tb`), which read
 YAML and drives the installed debug app on an emulator or device.
 
 - `flows/first-screen.yaml`: a fresh install opens on the language picker.
+- `flows/signup-*.yaml` (tag `signup`): first run and signup, A1–A6 in
+  `docs/testing/e2e-flow-test-plan.md`.
+- `flows/capture-*.yaml` (tag `capture`): tree capture, B1–B6. Each starts from a fresh install
+  and signs up through `flows/subflows/signup.yaml`, then reaches the capture screen through
+  `flows/subflows/start-capture.yaml`. Capture needs a GPS fix (`adb emu geo fix 37.3 -3.5`) and
+  an emulator started with `-camera-back emulated -camera-front emulated`.
+- `flows/dev-options.yaml`, `flows/debug-overlays.yaml` (tag `dev-tools`): run after
+  `setup-device.sh` seeds a user and two trees.
+
+Sub-flows in `flows/subflows/` have no `tags` and are only run through `runFlow`.
 - `flows/dev-options.yaml`: I1, change a developer parameter and verify persistence
   after navigating back and restarting the app.
 - `flows/debug-overlays.yaml`: I2, toggle both overlays during capture and a real

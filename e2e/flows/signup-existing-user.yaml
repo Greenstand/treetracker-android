@@ -1,0 +1,28 @@
+# A5: signing up again with an identifier that already exists shows the existing-user dialog.
+# Picking the user continues to capture setup, since an admin already exists.
+appId: org.greenstand.android.TreeTracker.debug
+name: A5 Existing identifier
+tags: [signup]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- tapOn: {id: TrackButton}
+- tapOn: {id: OrangeAddButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PhoneField}
+- inputText: "5551230001"
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: DialogTitle}
+- assertVisible: {id: ExistingUserButton}
+- assertNotVisible: {id: FirstNameField}
+# Cancel keeps us on the credential step.
+- tapOn: {id: DialogNegativeButton}
+- assertNotVisible: {id: DialogTitle}
+- assertVisible: {id: PhoneField}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: ExistingUserButton}
+- assertVisible: {id: OrgNameField}
+- assertNotVisible: {id: FirstNameField}

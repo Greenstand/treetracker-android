@@ -1,0 +1,38 @@
+appId: org.greenstand.android.TreeTracker.debug
+name: B6 New user mid setup
+tags: [capture]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- tapOn: {id: TrackButton}
+- tapOn: {id: OrangeAddButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PhoneCredentialButton}
+- tapOn: {id: PhoneField}
+- inputText: "5551230002"
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: FirstNameField}
+- inputText: Bea
+- tapOn: {id: LastNameField}
+- inputText: Planter
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 15000
+- tapOn: {id: ApproveButton}
+# Lands on Add org, not the Dashboard.
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+- assertNotVisible: {id: TrackButton}
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000

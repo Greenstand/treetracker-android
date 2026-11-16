@@ -1,0 +1,37 @@
+# Signs up a new user from the language picker on a fresh install and ends on the Dashboard.
+# Env: CREDENTIAL (Phone or Email), IDENTIFIER, FIRST_NAME, LAST_NAME.
+appId: org.greenstand.android.TreeTracker.debug
+name: Sign up
+---
+- extendedWaitUntil:
+    visible: {id: LanguageOption_ENGLISH}
+    timeout: 30000
+- tapOn: {id: LanguageOption_ENGLISH}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- runFlow:
+    when: {true: "${CREDENTIAL == 'Email'}"}
+    commands:
+      - tapOn: {id: EmailCredentialButton}
+      - tapOn: {id: EmailField}
+- runFlow:
+    when: {true: "${CREDENTIAL != 'Email'}"}
+    commands:
+      - tapOn: {id: PhoneCredentialButton}
+      - tapOn: {id: PhoneField}
+- inputText: ${IDENTIFIER}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: FirstNameField}
+- inputText: ${FIRST_NAME}
+- tapOn: {id: LastNameField}
+- inputText: ${LAST_NAME}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 15000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000

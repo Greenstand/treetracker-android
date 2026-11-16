@@ -1,0 +1,22 @@
+# From the Dashboard, starts a capture session with the default org and ends on the capture screen.
+# Env: WALLET (the user's phone or email, as shown on their card).
+appId: org.greenstand.android.TreeTracker.debug
+name: Start capture
+---
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_${WALLET}"}
+    timeout: 15000
+- tapOn: {id: "UserButton_${WALLET}"}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000

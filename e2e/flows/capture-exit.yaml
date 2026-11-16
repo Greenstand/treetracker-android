@@ -1,0 +1,34 @@
+appId: org.greenstand.android.TreeTracker.debug
+name: B5 Exit paths from capture
+tags: [capture]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# System back returns to the Dashboard.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- back
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# The back button on the capture screen returns to the Dashboard.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# The profile icon goes to user select, not the Dashboard.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: UserImageButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- assertNotVisible: {id: TrackButton}
+- assertNotVisible: {id: CaptureButton}

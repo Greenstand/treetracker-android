@@ -1,0 +1,66 @@
+# A4: retake the selfie once before approving, then show that backing out of the camera on a
+# second signup leaves you on signup and creates no user.
+appId: org.greenstand.android.TreeTracker.debug
+name: A4 Selfie retake and cancel
+tags: [signup]
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: {id: LanguageOption_ENGLISH}
+    timeout: 30000
+- tapOn: {id: LanguageOption_ENGLISH}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PhoneField}
+- inputText: "5551230001"
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: FirstNameField}
+- inputText: Ada
+- tapOn: {id: LastNameField}
+- inputText: Admin
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: TutorialDoneButton}
+# Capture, reject the photo, capture again, approve.
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: DeclineButton}
+    timeout: 15000
+- tapOn: {id: DeclineButton}
+- assertNotVisible: {id: ApproveButton}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 15000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "0"}
+# Second signup from the user picker; back out of the camera.
+- tapOn: {id: TrackButton}
+- tapOn: {id: OrangeAddButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PhoneField}
+- inputText: "5551230002"
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: FirstNameField}
+- inputText: Bo
+- tapOn: {id: LastNameField}
+- inputText: Lee
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- back
+- extendedWaitUntil:
+    visible: {id: LastNameField}
+    timeout: 15000
+- assertVisible: {id: FirstNameField, text: Bo}
+# No user was created: leave signup and only Ada is listed.
+- tapOn: {id: ArrowBackButton}
+- hideKeyboard
+- back
+- assertVisible: {id: "UserButton_5551230001"}
+- assertNotVisible: {id: "UserButton_5551230002"}
