@@ -24,5 +24,20 @@
                 <action android:name="android.app.appfunctions.AppFunctionService" />
             </intent-filter>
         </service>
+
+        <!-- Test entry points are absent from release, beta and prerelease builds. -->
+        <activity
+            android:name=".e2e.E2eActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="treetracker-e2e" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

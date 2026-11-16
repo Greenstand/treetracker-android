@@ -124,6 +124,12 @@ object TestTags {
     // Dev options
     const val SYNC_OVERLAY_SWITCH = "SyncOverlaySwitch"
     const val SENSOR_OVERLAY_SWITCH = "SensorOverlaySwitch"
+    const val DEBUG_OVERLAY_MENU_BUTTON = "DebugOverlayMenuButton"
+    const val DEBUG_SYNC_OVERLAY_TOGGLE = "DebugSyncOverlayToggle"
+    const val DEBUG_SENSOR_OVERLAY_TOGGLE = "DebugSensorOverlayToggle"
+    const val SYNC_OVERLAY = "SyncOverlay"
+    const val SYNC_OVERLAY_ERROR = "SyncOverlayError"
+    const val SENSOR_OVERLAY = "SensorOverlay"
 
     /** A language on the language picker, by its enum name: `LanguageOption_ENGLISH`. */
     fun languageOption(name: String) = "LanguageOption_$name"

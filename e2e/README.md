@@ -4,16 +4,64 @@ Flows for [Test Buddy](https://github.com/Elforama/testbuddy) (`tb`), which read
 YAML and drives the installed debug app on an emulator or device.
 
 - `flows/first-screen.yaml`: a fresh install opens on the language picker.
+- `flows/dev-options.yaml`: I1, change a developer parameter and verify persistence
+  after navigating back and restarting the app.
+- `flows/debug-overlays.yaml`: I2, toggle both overlays during capture and a real
+  offline sync attempt, using the developer switches and floating menu.
 
 CI runs them in the "Android end-to-end" check (`.github/workflows/android-e2e.yml`). A failed
 step makes `tb` exit non-zero, which fails the check.
 
-Run locally, with an emulator running and `tb` built from the Test Buddy repo:
+Run locally with `adb` and `tb` on PATH and a **disposable emulator** running.
+The runner clears this emulator's debug app, grants runtime permissions, seeds
+the fixtures, and restores airplane mode and Wi-Fi when it exits. Other devices
+are not used. Use dummy keys as CI does; the seeded sync test runs offline.
 
 ```bash
-./gradlew :app:installDebug
-tb test e2e/flows/ -p android
+ANDROID_SERIAL=emulator-5584 ./gradlew :app:installDebug
+TB=tb bash e2e/run.sh -s emulator-5584
 ```
+
+JUnit reports and failure artifacts are written to `build/e2e/` (`OUT` overrides
+the destination). CI uses the same runner on API 35 with emulated cameras.
+
+## Seed first, then open a screen
+
+`setup-device.sh` reuses the
+[`agent-app-functions` skill](../.claude/skills/agent-app-functions/SKILL.md):
+`reset`, `createAccount` and `captureTrees`. It creates Ada Admin, phone
+`5551230001`, and two trees near latitude -3.5, longitude 37.3. On API 37+ it
+calls AppFunctions; on API 35/36 a debug-only setup link calls the very same
+`AgentAccountCreator` and `AgentTreeCapturer` helpers. No signup or camera UI
+is needed to prepare tests.
+
+```bash
+# Clears the named emulator's debug app, seeds it, then opens a screen.
+bash e2e/setup-device.sh -s emulator-5584 dev-options
+
+# Re-run only the seeded tests; omit clearState so fixtures survive.
+tb test e2e/flows/ -p android --device emulator-5584 --include-tags dev-tools
+```
+
+The `treetracker-e2e://` links exist only in debug/dev builds:
+
+| Link | Result |
+| --- | --- |
+| `treetracker-e2e://dashboard` | Dashboard with seeded counts |
+| `treetracker-e2e://dev-options` | Dev options, with Dashboard under it for Back |
+| `treetracker-e2e://capture` | Capture with a real session for the admin, with Dashboard under it |
+| `treetracker-e2e://setup` | API 35/36 fixture fallback; used by the script after reset |
+
+The screen links render the real app Host and initialize the org, device config
+and capture session before rendering a screen. They do not emulate screen
+behavior. Flows still exercise the long-press logo, navigation back, parameter
+persistence, overlay controls and real sync worker themselves. The sync assertion
+checks the worker's durable error diagnostic, not a successful upload; offline test data
+stays on the emulator. The runner stops the app to cancel outstanding work before
+restoring network settings.
+
+For navigation/onboarding tests, continue using the real entry points. The
+first-screen flow runs before seeding because it deliberately clears app data.
 
 ## Ids for flows
 

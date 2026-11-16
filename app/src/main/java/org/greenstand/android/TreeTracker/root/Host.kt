@@ -25,6 +25,7 @@ import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -104,10 +105,13 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @ExperimentalComposeApi
 @Composable
-fun Host(startRoute: SplashRoute = SplashRoute()) {
+fun Host(
+    startRoute: SplashRoute = SplashRoute(),
+    initialBackStack: List<NavKey> = listOf(startRoute),
+) {
     // Persists across configuration changes and process death; on restore, the
     // saved stack wins over startRoute — same as Nav2's restored NavController state.
-    val backStack = rememberNavBackStack(startRoute)
+    val backStack = rememberNavBackStack(*initialBackStack.toTypedArray())
     val navigator = remember(backStack) { Navigator(backStack) }
     TreeTrackerTheme {
         CompositionLocalProvider(LocalNavigator provides navigator) {
