@@ -1,46 +1,26 @@
-# Task 47 - Capture crash on Android 17: unknown dynamic range profile
+# Task 47 - Give the e2e emulator cameras
 
-Issue: [#1404](https://github.com/Greenstand/treetracker-android/issues/1404)
+## Goal
 
-## Problem
+Let e2e flows go past sign-up. The "Android end-to-end" check started its emulator with
+`-camera-back none` and no front camera. Sign-up opens the front camera for the selfie, CameraX
+finds no camera to bind, and the app crashes ("keeps stopping"). That is why the A1 flow in
+#1407 fails at `TutorialDoneButton`.
 
-Opening the capture camera on an Android 17 (API 37) emulator crashed the app:
+## Change
 
-```text
-java.lang.NullPointerException: Dynamic range profile cannot be converted to a DynamicRange object: 8192
-  at androidx.camera.camera2.internal.compat.params.DynamicRangesCompatApi33Impl.profileToDynamicRange
-  at androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle
-```
+- `.github/workflows/android-e2e.yml` starts the emulator with
+  `-camera-back emulated -camera-front emulated` when saving the snapshot and when running the
+  flows, the same as the `tb screen tour` workflow.
+- The AVD snapshot cache key gains a `-cameras` suffix so the old camera-less snapshot isn't
+  reused.
 
-The camera advertises dynamic range profile `8192`, which CameraX doesn't know. CameraX
-1.4.1 up to 1.5.1 fail with `checkNotNull` on any profile they can't convert, so
-`bindToLifecycle` throws and the camera screen never opens.
+## Not changed
 
-## Fix
-
-Move CameraX (core, camera2, lifecycle, view, extensions) from 1.4.1 to 1.5.3. From 1.5.2,
-CameraX logs a warning for a profile it can't convert and skips it. No app code changes.
-
-1.5.3 is the newest 1.5 release. 1.6 also skips unknown profiles, but it rewrites CameraX's
-camera2 internals in Kotlin, which is a bigger change than this fix needs.
+`camera/Camera.kt` still crashes when the requested camera doesn't exist. That only affects
+devices without a front or back camera and is left for a separate fix.
 
 ## Verification
 
-- Reproduced on the `Test_Device_A` emulator (API 37, `android-37.2` Play Store 16k image)
-  started with `-camera-back emulated`. That back camera advertises profiles `2` and `8192`.
-  With the default `virtualscene` back camera only profile `2` is advertised and nothing
-  crashes, so use the emulated camera to reproduce.
-- The account was seeded with `createAccount`, then Track, user, organization and tutorial
-  were tapped through with tb.
-- CameraX 1.4.1: the app crashes with the error above when the capture screen opens.
-- CameraX 1.5.3: the capture screen opens, the shutter takes a photo and the review screen
-  shows it.
-- Unit and Compose UI tests for camera, capture, permissions and the Koin graph pass (120
-  tests). The image review screenshots still match. ktlint, Spotless and Detekt pass. The
-  release build succeeds.
-
-## Tests
-
-No new unit test: the crash is inside CameraX's handling of the camera's characteristics,
-and Robolectric on SDK 35 can't create a camera that advertises profile `8192`. The e2e
-suite runs on API 35, where the profile doesn't exist.
+The "Android end-to-end" check on this PR runs the existing `first-screen` flow on the new
+emulator setup. Once merged, re-running #1407's check should get past the selfie step.

@@ -62,6 +62,9 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       # A booted emulator snapshot, saved once, so later runs skip the cold boot.
+      # Both cameras are emulated: sign-up opens the front camera for the selfie and tree capture
+      # the back one, and the app crashes when the camera it asks for is missing. The key names
+      # the camera setup so a snapshot saved without cameras is not reused.
       - name: Emulator snapshot cache
         uses: actions/cache@v4
         id: avd-cache
@@ -69,7 +72,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}-google_apis-x86_64
+          key: avd-${{ env.API_LEVEL }}-google_apis-x86_64-cameras
 
       - name: Create the emulator snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -79,7 +82,7 @@ jobs:
           target: google_apis
           arch: x86_64
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
           disable-animations: true
           script: echo "snapshot saved"
 
@@ -90,7 +93,7 @@ jobs:
           target: google_apis
           arch: x86_64
           force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
           disable-animations: true
           script: |
             adb install -r app/build/outputs/apk/debug/app-debug.apk
