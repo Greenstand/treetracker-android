@@ -20,7 +20,9 @@ jobs:
     env:
       API_LEVEL: "35"
       # The Test Buddy commit tb is built from. Bump it to pick up a newer tb.
-      TESTBUDDY_REF: 6c7a54affd233711d5921c310f0c9acee3141dc9
+      # v0.5.2: killApp ends the process like Android does and keeps the saved state; older
+      # builds also force-stopped the app, so the process death flows (H7, H10) could not pass.
+      TESTBUDDY_REF: ab598c27daa9784f026229c9322adba69b11f8b5
     steps:
       - uses: actions/checkout@v4
 

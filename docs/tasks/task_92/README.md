@@ -67,5 +67,9 @@ issue counts as fixed only when its flow passes; the fix PR removes the `known-b
 | Back from Add org skips it next time | #1422 | `sad-back-add-org.yaml` |
 | Double-tap Next skips Add org | #1423 | `sad-double-tap-setup.yaml` |
 
-CI fix: the first CI run had E6, H7 and H10 failing because CI's emulator was online with dummy
-keys and the app crashed syncing messages. `run.sh` now turns on airplane mode first.
+CI fixes:
+- E6 failed because CI's emulator was online with dummy keys and the app crashed syncing
+  messages. `run.sh` now turns on airplane mode first.
+- H7 and H10 failed because CI built tb from an older commit whose `killApp` also force-stopped
+  the app, which clears the saved state. The workflow now pins tb v0.5.2, the version the flows
+  were written with, whose `killApp` keeps it.
