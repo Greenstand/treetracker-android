@@ -20,7 +20,9 @@ again and shows the rationale or "open settings" dialog.
 
 - `SplashUiTest`: the two tests that asserted the app stays on the splash screen without location
   now assert that it moves on (language select without GPS updates; dashboard with coarse location
-  only).
+  only). Robolectric only answers a permission request by itself when every permission is
+  already granted, so these tests provide a `LocalActivityResultRegistryOwner` that answers with
+  the denial. (The old "stays on splash" tests passed only because no answer ever came.)
 - `e2e/flows/sad-location-denied.yaml`: `known-bug` tag dropped and header rewritten, so
   `e2e/run.sh` runs it in "Android end-to-end".
 - `docs/testing/e2e-flow-test-plan.md`: H1 and finding 1 updated.

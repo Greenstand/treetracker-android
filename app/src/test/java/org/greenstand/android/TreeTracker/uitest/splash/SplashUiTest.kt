@@ -16,7 +16,13 @@
 package org.greenstand.android.TreeTracker.uitest.splash
 
 import android.Manifest
+import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.ActivityResultRegistryOwner
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.onRoot
+import androidx.core.app.ActivityOptionsCompat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -113,13 +119,40 @@ class SplashUiTest : ComposeUiTest() {
         )
     }
 
+    /**
+     * Answers the permission request with [result] straight away. Robolectric only answers it by
+     * itself when every permission is already granted, so a denial needs this.
+     */
+    private fun permissionAnswer(result: Map<String, Boolean>): ActivityResultRegistryOwner =
+        object : ActivityResultRegistryOwner {
+            override val activityResultRegistry =
+                object : ActivityResultRegistry() {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <I, O> onLaunch(
+                        requestCode: Int,
+                        contract: ActivityResultContract<I, O>,
+                        input: I,
+                        options: ActivityOptionsCompat?,
+                    ) {
+                        dispatchResult(requestCode, result as O)
+                    }
+                }
+        }
+
     private fun launchSplash(
         orgId: String? = null,
         orgName: String? = null,
+        permissionResult: Map<String, Boolean>? = null,
     ) {
         val viewModel = createViewModel(orgId, orgName)
         setContent(inspectionMode = false) {
-            SplashScreen(orgId = orgId, orgName = orgName, viewModel = viewModel, navigator = navigator)
+            if (permissionResult == null) {
+                SplashScreen(orgId = orgId, orgName = orgName, viewModel = viewModel, navigator = navigator)
+            } else {
+                CompositionLocalProvider(LocalActivityResultRegistryOwner provides permissionAnswer(permissionResult)) {
+                    SplashScreen(orgId = orgId, orgName = orgName, viewModel = viewModel, navigator = navigator)
+                }
+            }
         }
         composeTestRule.waitForIdle()
         // SplashScreen waits one second after bootstrapping before navigating.
@@ -160,15 +193,16 @@ class SplashUiTest : ComposeUiTest() {
 
     @Test
     fun `location denied with no power user still navigates to language select without gps`() {
-        val application = RuntimeEnvironment.getApplication()
-        shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
-        shadowOf(application).denyPermissions(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-        )
         coEvery { userRepo.getPowerUser() } returns null
 
-        launchSplash()
+        launchSplash(
+            permissionResult =
+                mapOf(
+                    Manifest.permission.CAMERA to true,
+                    Manifest.permission.ACCESS_COARSE_LOCATION to false,
+                    Manifest.permission.ACCESS_FINE_LOCATION to false,
+                ),
+        )
 
         composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { backStack.lastOrNull() is LanguageRoute }
         assertEquals(listOf(LanguageRoute(isFromTopBar = false)), backStack.toList())
@@ -178,12 +212,16 @@ class SplashUiTest : ComposeUiTest() {
 
     @Test
     fun `coarse location alone with existing power user still navigates to dashboard`() {
-        val application = RuntimeEnvironment.getApplication()
-        shadowOf(application).grantPermissions(Manifest.permission.CAMERA, Manifest.permission.ACCESS_COARSE_LOCATION)
-        shadowOf(application).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
         coEvery { userRepo.getPowerUser() } returns powerUser
 
-        launchSplash()
+        launchSplash(
+            permissionResult =
+                mapOf(
+                    Manifest.permission.CAMERA to true,
+                    Manifest.permission.ACCESS_COARSE_LOCATION to true,
+                    Manifest.permission.ACCESS_FINE_LOCATION to false,
+                ),
+        )
 
         composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { backStack.lastOrNull() == DashboardRoute }
         assertEquals(listOf(DashboardRoute), backStack.toList())
