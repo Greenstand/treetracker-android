@@ -73,3 +73,6 @@ CI fixes:
 - H7 and H10 failed because CI built tb from an older commit whose `killApp` also force-stopped
   the app, which clears the saved state. The workflow now pins tb v0.5.2, the version the flows
   were written with, whose `killApp` keeps it.
+- With tb v0.5.2, I2 `debug-overlays.yaml` failed on CI as it always had locally (task 91): the
+  sync snackbar after Upload covers the "D" button and the tap lands on Track. The flow now waits
+  for the snackbar to go before tapping it, and passes at 1080x2400 and 320x640.
