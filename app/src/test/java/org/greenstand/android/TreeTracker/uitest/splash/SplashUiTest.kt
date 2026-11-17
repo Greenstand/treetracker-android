@@ -159,28 +159,35 @@ class SplashUiTest : ComposeUiTest() {
     }
 
     @Test
-    fun `permissions not granted keeps splash and skips bootstrap`() {
+    fun `location denied with no power user still navigates to language select without gps`() {
+        val application = RuntimeEnvironment.getApplication()
+        shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
+        shadowOf(application).denyPermissions(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
         coEvery { userRepo.getPowerUser() } returns null
 
         launchSplash()
-        composeTestRule.waitForIdle()
 
-        assertEquals(listOf(SplashRoute()), backStack.toList())
-        coVerify(exactly = 0) { deviceConfigUpdater.saveLatestConfig() }
+        composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { backStack.lastOrNull() is LanguageRoute }
+        assertEquals(listOf(LanguageRoute(isFromTopBar = false)), backStack.toList())
+        coVerify { deviceConfigUpdater.saveLatestConfig() }
+        verify(exactly = 0) { locationDataCapturer.startGpsUpdates() }
     }
 
     @Test
-    fun `coarse location alone keeps splash and skips bootstrap`() {
+    fun `coarse location alone with existing power user still navigates to dashboard`() {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application).grantPermissions(Manifest.permission.CAMERA, Manifest.permission.ACCESS_COARSE_LOCATION)
         shadowOf(application).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
         coEvery { userRepo.getPowerUser() } returns powerUser
 
         launchSplash()
-        composeTestRule.waitForIdle()
 
-        assertEquals(listOf(SplashRoute()), backStack.toList())
-        coVerify(exactly = 0) { deviceConfigUpdater.saveLatestConfig() }
+        composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { backStack.lastOrNull() == DashboardRoute }
+        assertEquals(listOf(DashboardRoute), backStack.toList())
+        coVerify { deviceConfigUpdater.saveLatestConfig() }
     }
 
     @Test

@@ -1,13 +1,9 @@
 # H1: location denied at first launch. A fresh install asks for its permissions on the splash
-# screen; the user allows everything but location. The app should leave the splash screen (or
-# explain that location is needed) instead of waiting forever.
-#
-# Known bug: SplashScreen only moves on when both location permissions are granted
-# (splash/SplashScreen.kt, the RequestMultiplePermissions onResult), so a denial leaves the app
-# on the splash image with no message. This flow asserts the expected behaviour and fails today.
+# screen; the user allows everything but location. The app still leaves the splash screen (it goes
+# on to language select); the capture screen asks for location again when it is needed. (#1417)
 appId: org.greenstand.android.TreeTracker.debug
 name: H1 Location denied at first launch
-tags: [sad-path, known-bug]
+tags: [sad-path]
 ---
 - launchApp:
     clearState: true
