@@ -1,0 +1,77 @@
+# H10: interrupted session. The user saves a tree, and Android kills the app while the capture
+# screen is open. Two ways back in:
+# - reopening from recents restores the capture screen without a crash, and leaving it shows the
+#   saved tree once on the Dashboard;
+# - a cold start (the restored state is gone) runs the splash screen's interrupted-session check
+#   (SessionTracker.wasSessionInterrupted), which recounts the trees to sync.
+# Capturing again on the restored capture screen does not work today: see
+# sad-capture-after-process-death.yaml.
+appId: org.greenstand.android.TreeTracker.debug
+name: H10 Interrupted session
+tags: [sad-path]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+# Killed in the background, reopened from recents: the capture screen comes back.
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "1"}
+# A second session saves a tree and is killed before it ends, then a cold start: the Dashboard
+# counts both trees.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 30000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- pressKey: Home
+- killApp
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- assertVisible: {id: TreesToSyncCount, text: "2"}
+# A new session after the interruption still captures.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 30000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "3"}

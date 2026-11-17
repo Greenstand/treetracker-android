@@ -1,0 +1,33 @@
+# H5: process death in capture setup. On Add org the app goes to the background, Android kills
+# its process and the user reopens it from recents. Add org should come back (or the app should
+# fall back to the Dashboard) without a crash.
+#
+# Known bug: Nav3 restores Add org, but the capture setup scope only lived in memory, so
+# AddOrgViewModel's init calls CaptureSetupScopeManager.getData() before any open() and crashes
+# (models/setupflow/SetupScope.kt:40, from orgpicker/AddOrgViewModel.kt:61). Fails today.
+appId: org.greenstand.android.TreeTracker.debug
+name: H5 Process death in capture setup
+tags: [sad-path, known-bug]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- tapOn: {id: TrackButton}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: OrgNameField}
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000

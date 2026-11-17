@@ -1,0 +1,33 @@
+# H8: double taps into capture setup should push one screen each: Track -> user select, and
+# Next on user select -> Add org.
+#
+# Known bugs:
+# - Track (small screens, e.g. 320x640): the second tap lands on user select's add-user button,
+#   which sits where Track was, and opens signup. Back then shows user select, not the Dashboard.
+# - Next (timing dependent, most runs): Add org opens, then the second tap's navForward finishes
+#   too and opens capture, skipping Add org. The second call sees the setup index already at the
+#   end, starts a session and navigates (navigation/CaptureSetupNavigationController.kt:38-53);
+#   the origin throttle in navigation/Navigator.kt does not stop it.
+# Fails today at the first back assertion (small screens) or at the ArrowBackButton tap.
+appId: org.greenstand.android.TreeTracker.debug
+name: H8 Double tap into capture setup
+tags: [sad-path, known-bug]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# Track
+- doubleTapOn: {id: TrackButton}
+- assertVisible: {id: "UserButton_5551230001"}
+- back
+- assertVisible: {id: TrackButton}
+# Next on user select
+- tapOn: {id: TrackButton}
+- tapOn: {id: "UserButton_5551230001"}
+- doubleTapOn: {id: ArrowForwardButton}
+- assertVisible: {id: OrgNameField}
+# Add org's own back arrow returns to user select when only Add org was pushed.
+- tapOn: {id: ArrowBackButton}
+- assertVisible: {id: "UserButton_5551230001"}
+- assertNotVisible: {id: CaptureButton}

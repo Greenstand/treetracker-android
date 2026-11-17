@@ -198,6 +198,7 @@ fun TreeCapture(
         if (state.isLocationAvailable == false) {
             CustomDialog(
                 dialogIcon = painterResource(id = R.drawable.error_outline),
+                backgroundModifier = Modifier.testTag(TestTags.BAD_GPS_DIALOG),
                 title = stringResource(R.string.poor_gps_header),
                 textContent = stringResource(R.string.poor_gps_message),
                 onPositiveClick = onBadGpsRetryClicked,

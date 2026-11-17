@@ -1,0 +1,107 @@
+# H9: system back from each screen lands where expected.
+#
+# | From                                  | Back lands on                |
+# | ------------------------------------- | ---------------------------- |
+# | Image review                          | Capture                      |
+# | Capture                               | Dashboard                    |
+# | Add org                               | Capture user select          |
+# | Capture user select                   | Dashboard                    |
+# | Language picker (top bar)             | Dashboard                    |
+# | Message list                          | Messages user select         |
+# | Messages user select                  | Dashboard                    |
+# | Profile                               | Profile user select          |
+# | Profile user select                   | Settings                     |
+# | Tree detail                           | Tree list                    |
+# | Tree list                             | Edit trees user select       |
+# | Edit trees user select                | Settings                     |
+# | Map                                   | Settings                     |
+# | Settings                              | Dashboard                    |
+# | Dashboard                             | Leaves the app               |
+#
+# System back on Add org does not step the setup flow's index back, so Next on user select then
+# goes straight to capture: see sad-back-add-org.yaml (known bug). This flow goes back out to the Dashboard
+# instead of continuing from there.
+appId: org.greenstand.android.TreeTracker.debug
+name: H9 Back everywhere
+tags: [sad-path]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# Save a tree so the tree list and map have one.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: ApproveButton}
+# Image review -> capture, capture -> Dashboard.
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 30000
+- back
+- assertVisible: {id: CaptureButton}
+- assertNotVisible: {id: ApproveButton}
+- back
+- assertVisible: {id: TrackButton}
+- assertVisible: {id: TreesToSyncCount, text: "1"}
+# Capture setup: Add org -> user select -> Dashboard.
+- tapOn: {id: TrackButton}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: OrgNameField}
+- back
+- assertVisible: {id: "UserButton_5551230001"}
+- assertNotVisible: {id: OrgNameField}
+- back
+- assertVisible: {id: TrackButton}
+# Language picker from the top bar.
+- tapOn: {id: TopBarLanguageButton}
+- assertVisible: {id: LanguageOption_ENGLISH}
+- back
+- assertVisible: {id: TrackButton}
+# Messages: message list -> user select -> Dashboard.
+- tapOn: {id: MessagesButton}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: NoMessages}
+- back
+- assertVisible: {id: "UserButton_5551230001"}
+- back
+- assertVisible: {id: TrackButton}
+# Settings and the screens under it.
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsProfile}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: ProfileFirstName}
+- back
+- assertVisible: {id: "UserButton_5551230001"}
+- back
+- assertVisible: {id: SettingsProfile}
+- tapOn: {id: SettingsEditTrees}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: TreeButton_0}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: TreeUuid}
+- back
+- assertVisible: {id: TreeButton_0}
+- back
+- assertVisible: {id: "UserButton_5551230001"}
+- back
+- assertVisible: {id: SettingsProfile}
+- tapOn: {id: SettingsMap}
+- assertVisible: {id: MapBackButton}
+- back
+- assertVisible: {id: SettingsProfile}
+- back
+- assertVisible: {id: TrackButton}
+# Back on the Dashboard leaves the app.
+- back
+- assertNotVisible: {id: TrackButton}

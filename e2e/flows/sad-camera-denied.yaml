@@ -1,0 +1,60 @@
+# H2: camera denied on capture. The user signs up with every permission, then camera is taken
+# away (Android stops the app when a permission is revoked). The splash screen asks for camera
+# again and the user denies it, which still reaches the Dashboard because only location is
+# required there. On capture the app asks once more:
+# - dismissing Android's dialog leaves the camera rationale dialog, whose cancel returns to the
+#   previous screen (Add org);
+# - "Don't allow" (now "don't ask again") leads to the dialog that points to the app settings.
+#
+# The flow does not tap Next on Add org after the rationale cancel: the capture setup scope was
+# closed when capture opened, so Next crashes (CaptureSetupScopeManager.getData(), see
+# sad-camera-rationale-next.yaml).
+appId: org.greenstand.android.TreeTracker.debug
+name: H2 Camera denied on capture
+tags: [sad-path]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- setPermissions: {permissions: {camera: deny}}
+- launchApp: {permissions: {camera: deny}}
+- extendedWaitUntil:
+    visible: {id: permission_deny_button}
+    timeout: 15000
+- tapOn: {id: permission_deny_button}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# Rationale: dismiss Android's dialog, close the capture tutorial, cancel the rationale.
+- tapOn: {id: TrackButton}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: permission_deny_and_dont_ask_again_button}
+    timeout: 15000
+- back
+- tapOn: {id: TutorialDoneButton}
+- assertVisible: {id: CameraRationaleDialog}
+- tapOn: {id: DialogNegativeButton}
+- assertVisible: {id: OrgNameField}
+- assertNotVisible: {id: CaptureButton}
+# Don't ask again: start a new setup from the Dashboard and deny for good.
+- back
+- assertVisible: {id: "UserButton_5551230001"}
+- back
+- assertVisible: {id: TrackButton}
+- tapOn: {id: TrackButton}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: permission_deny_and_dont_ask_again_button}
+    timeout: 15000
+- tapOn: {id: permission_deny_and_dont_ask_again_button}
+# The capture tutorial was closed above and does not show again.
+- assertVisible: {id: PermissionSettingsDialog}
+- tapOn: {id: DialogNegativeButton}
+- assertVisible: {id: OrgNameField}
+- assertNotVisible: {id: PermissionSettingsDialog}

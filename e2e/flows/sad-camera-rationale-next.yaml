@@ -1,0 +1,39 @@
+# H2: after cancelling the camera rationale, capture setup should still work. Cancel returns
+# from capture to Add org; Next there should open capture again (and ask for the camera).
+#
+# Known bug: the capture setup scope is closed once capture opens
+# (navigation/CaptureSetupNavigationController.kt:52), but the rationale's cancel pops back onto
+# Add org, so Next calls CaptureSetupScopeManager.getData() and crashes
+# (models/setupflow/SetupScope.kt:40, from orgpicker/AddOrgViewModel.kt:85). Fails today.
+appId: org.greenstand.android.TreeTracker.debug
+name: H2 Next after camera rationale cancel
+tags: [sad-path, known-bug]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- setPermissions: {permissions: {camera: deny}}
+- launchApp: {permissions: {camera: deny}}
+- extendedWaitUntil:
+    visible: {id: permission_deny_button}
+    timeout: 15000
+- tapOn: {id: permission_deny_button}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- tapOn: {id: TrackButton}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: permission_deny_and_dont_ask_again_button}
+    timeout: 15000
+- back
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: DialogNegativeButton}
+- assertVisible: {id: OrgNameField}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: permission_deny_and_dont_ask_again_button}
+    timeout: 15000

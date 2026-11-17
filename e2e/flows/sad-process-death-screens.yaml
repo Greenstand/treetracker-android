@@ -1,0 +1,32 @@
+# H7: process death on the Dashboard and on Settings. The app goes to the background, Android
+# kills its process (killApp, like `am kill`), and the user reopens it from recents
+# (launchApp with stopApp: false keeps the saved state). The same screen comes back without a
+# crash, and back from Settings still reaches the Dashboard.
+appId: org.greenstand.android.TreeTracker.debug
+name: H7 Process death on Dashboard and Settings
+tags: [sad-path]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# Dashboard
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "0"}
+# Settings
+- tapOn: {id: SettingsButton}
+- assertVisible: {id: SettingsProfile}
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: SettingsProfile}
+    timeout: 15000
+- assertNotVisible: {id: TrackButton}
+- back
+- assertVisible: {id: TrackButton}

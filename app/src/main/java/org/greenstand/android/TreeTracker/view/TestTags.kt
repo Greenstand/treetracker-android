@@ -53,6 +53,10 @@ object TestTags {
     const val DIALOG_USER_BUTTON = "DialogUserButton"
     const val TUTORIAL_DONE_BUTTON = "TutorialDoneButton"
     const val PRIVACY_POLICY_CLOSE_BUTTON = "PrivacyPolicyCloseButton"
+    const val CAMERA_RATIONALE_DIALOG = "CameraRationaleDialog"
+    const val LOCATION_RATIONALE_DIALOG = "LocationRationaleDialog"
+    const val PERMISSION_SETTINGS_DIALOG = "PermissionSettingsDialog"
+    const val BAD_GPS_DIALOG = "BadGpsDialog"
 
     // Signup
     const val PHONE_CREDENTIAL_BUTTON = "PhoneCredentialButton"
