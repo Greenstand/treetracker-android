@@ -296,7 +296,8 @@ class AddOrgViewModelTest {
 
             viewModel.handleAction(AddOrgAction.SetDefaultOrg)
 
-            verify(exactly = 0) { preferences.edit() }
+            // The only edit is init saving the setup user id; no org name is saved.
+            verify(exactly = 1) { preferences.edit() }
             verify(exactly = 0) { mockEditor.putString(any(), any()) }
             verify { captureSetupData.organizationName = "" }
         }
