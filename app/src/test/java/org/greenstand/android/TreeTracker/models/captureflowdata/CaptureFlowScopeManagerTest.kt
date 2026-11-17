@@ -145,7 +145,8 @@ class CaptureFlowScopeManagerTest {
         assertTrue(CaptureFlowScopeManager.restoreOnImageReview())
 
         assertTrue(CaptureFlowScopeManager.isOpen)
-        verify { CaptureFlowScopeManager.getData().scope.get<TreeCapturer>().restorePendingTree() }
+        val treeCapturer = CaptureFlowScopeManager.getData().scope.get<TreeCapturer>()
+        verify { treeCapturer.restorePendingTree() }
         verify { sessionTracker.resumeInterruptedSession() }
         verify { locationDataCapturer.startGpsUpdates() }
     }
@@ -158,7 +159,8 @@ class CaptureFlowScopeManagerTest {
         assertFalse(CaptureFlowScopeManager.restoreOnImageReview())
 
         assertSame(component, CaptureFlowScopeManager.getData())
-        verify(exactly = 0) { component.scope.get<TreeCapturer>().restorePendingTree() }
+        val treeCapturer = component.scope.get<TreeCapturer>()
+        verify(exactly = 0) { treeCapturer.restorePendingTree() }
         verify(exactly = 0) { sessionTracker.resumeInterruptedSession() }
     }
 
