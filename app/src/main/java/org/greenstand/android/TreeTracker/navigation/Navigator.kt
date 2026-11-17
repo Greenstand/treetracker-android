@@ -92,11 +92,23 @@ class NavOptions {
  * @param origin the contentKey of the entry this navigator is bound to, or null for an
  *   unscoped navigator. Set indirectly via [scopedTo].
  */
-class Navigator(
+class Navigator private constructor(
     val backStack: MutableList<NavKey>,
-    private val clock: () -> Long = SystemClock::elapsedRealtime,
-    private val origin: Any? = null,
+    private val clock: () -> Long,
+    private val origin: Any?,
+    private val lastNavigation: LastNavigation,
 ) {
+    constructor(
+        backStack: MutableList<NavKey>,
+        clock: () -> Long = SystemClock::elapsedRealtime,
+        origin: Any? = null,
+    ) : this(backStack, clock, origin, LastNavigation())
+
+    /** When the stack last changed, shared by this navigator and every [scopedTo] view of it. */
+    private class LastNavigation {
+        var at: Long? = null
+    }
+
     // Start outside the throttle window so the first navigation is never dropped.
     private var lastMutationTime = clock() - NAVIGATION_THROTTLE_MS
 
@@ -109,7 +121,15 @@ class Navigator(
      * the stack — i.e. you can only navigate *away from* a screen while that screen is on
      * top. See the class doc for the rationale.
      */
-    fun scopedTo(originContentKey: Any?): Navigator = Navigator(backStack, clock, originContentKey)
+    fun scopedTo(originContentKey: Any?): Navigator = Navigator(backStack, clock, originContentKey, lastNavigation)
+
+    /**
+     * Milliseconds since any view of this navigator last changed the stack, or [Long.MAX_VALUE]
+     * if none has. A screen can use it to tell a tap meant for it from the second tap of a
+     * double tap that navigated to it.
+     */
+    val millisSinceLastNavigation: Long
+        get() = lastNavigation.at?.let { clock() - it } ?: Long.MAX_VALUE
 
     /** Push [route], honoring [NavOptions] (popUpTo / popUpToRoot / launchSingleTop). */
     fun navigate(
@@ -206,6 +226,7 @@ class Navigator(
     private fun mutate(block: () -> Unit) {
         Snapshot.withMutableSnapshot(block)
         lastMutationTime = clock()
+        lastNavigation.at = lastMutationTime
     }
 
     private companion object {

@@ -21,14 +21,14 @@ import org.junit.Test
 
 class DoubleTapGuardTest {
     @Test
-    fun `a tap inside the double-tap timeout after the screen appeared is the second tap of a double tap`() {
-        assertTrue(isSecondTapOfDoubleTap(shownAtMs = 1_000, nowMs = 1_100, doubleTapTimeoutMs = 300))
-        assertTrue(isSecondTapOfDoubleTap(shownAtMs = 1_000, nowMs = 1_299, doubleTapTimeoutMs = 300))
+    fun `a tap inside the double-tap timeout after a navigation is the second tap of a double tap`() {
+        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 0, doubleTapTimeoutMs = 300))
+        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 299, doubleTapTimeoutMs = 300))
     }
 
     @Test
-    fun `a tap at or after the double-tap timeout is meant for the screen`() {
-        assertFalse(isSecondTapOfDoubleTap(shownAtMs = 1_000, nowMs = 1_300, doubleTapTimeoutMs = 300))
-        assertFalse(isSecondTapOfDoubleTap(shownAtMs = 1_000, nowMs = 5_000, doubleTapTimeoutMs = 300))
+    fun `a tap at or after the double-tap timeout, or with no navigation yet, is meant for the screen`() {
+        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 300, doubleTapTimeoutMs = 300))
+        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = Long.MAX_VALUE, doubleTapTimeoutMs = 300))
     }
 }

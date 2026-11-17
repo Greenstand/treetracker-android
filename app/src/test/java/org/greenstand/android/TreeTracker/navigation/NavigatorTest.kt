@@ -436,6 +436,20 @@ class NavigatorTest {
     }
 
     @Test
+    fun `millisSinceLastNavigation is shared by scoped views and counts from the last stack change`() {
+        val nav = fakeNavigator(DashboardRoute, clock = clock)
+        val dashboard = nav.scopedTo(DashboardRoute.toString())
+        val userSelect = nav.scopedTo(UserSelectRoute.toString())
+
+        assertEquals(Long.MAX_VALUE, userSelect.millisSinceLastNavigation)
+        dashboard.throttledNavigate(UserSelectRoute)
+        clock.advance(120)
+
+        assertEquals(120L, userSelect.millisSinceLastNavigation)
+        assertEquals(120L, nav.millisSinceLastNavigation)
+    }
+
+    @Test
     fun `scoped navigator does not gate non-throttled calls`() {
         val nav = fakeNavigator(DashboardRoute, SettingsRoute)
         val dashboard = nav.scopedTo(DashboardRoute.toString())

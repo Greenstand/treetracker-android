@@ -31,7 +31,10 @@ landed.
 
 The flow also double-taps Track, and CI's emulator is 320x640. There the second tap lands on user
 select's add-user button, which sits where Track was, and opens signup. That's a first tap from
-a new screen, so the origin throttle lets it through. `UserSelect` now ignores an add-user tap that
-comes within the system double-tap timeout (`ViewConfiguration.getDoubleTapTimeout()`, 300 ms) of
-the screen appearing (`isSecondTapOfDoubleTap`, tested in `DoubleTapGuardTest`). Only the add-user
-button is guarded; picking a user and Next are unchanged.
+a new screen, so the origin throttle lets it through. `Navigator.millisSinceLastNavigation` (shared by
+every scoped view of the navigator) says how long ago the stack last changed, and `UserSelect`
+ignores an add-user tap that comes within the system double-tap timeout
+(`ViewConfiguration.getDoubleTapTimeout()`, 300 ms) of that (`isSecondTapOfDoubleTap`, tested in
+`DoubleTapGuardTest` and `NavigatorTest`). It counts from the last navigation, not from when the
+screen was composed, so a user select that was not just navigated to (as in the UI tests) is not
+affected. Only the add-user button is guarded; picking a user and Next are unchanged.
