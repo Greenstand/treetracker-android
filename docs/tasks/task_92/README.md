@@ -31,6 +31,8 @@ Known-bug flows (tag `known-bug`, skipped by `run.sh`): `sad-location-denied.yam
 `sad-process-death-setup.yaml` (H5), `sad-process-death-review.yaml` and
 `sad-capture-after-process-death.yaml` (H6), `sad-camera-rationale-next.yaml` (H2),
 `sad-back-add-org.yaml` (H9), `sad-double-tap-setup.yaml` (H8).
+Also `settings-logout-back.yaml` (E6) and `settings-delete-user-offline.yaml` (E7), which assert
+the fixes for the logout and offline delete bugs.
 
 Scripts: `e2e/seed-org.sh` writes an org with a custom flow into the database (Remote Config is
 unreachable offline and the org link carries only id and name); `e2e/run-org.sh` seeds and runs
@@ -50,4 +52,20 @@ See the PR. Flows were written by three agents on separate API 35 emulators, eac
 
 ## Findings
 
-Finding 6 in the plan: nine bugs, each with a flow that shows it.
+Finding 6 in the plan: nine bugs, each filed with steps to reproduce and its known-bug flow. An
+issue counts as fixed only when its flow passes; the fix PR removes the `known-bug` tag.
+
+| Bug | Issue | Flow |
+|---|---|---|
+| Back after logout returns to Signup | #1415 | `settings-logout-back.yaml` |
+| Offline user delete crashes | #1416 | `settings-delete-user-offline.yaml` |
+| Location denied: stuck on splash | #1417 | `sad-location-denied.yaml` |
+| Process death on Add org crashes | #1418 | `sad-process-death-setup.yaml` |
+| Process death on image review crashes | #1419 | `sad-process-death-review.yaml` |
+| GPS not restarted after process death | #1420 | `sad-capture-after-process-death.yaml` |
+| Next after camera rationale cancel crashes | #1421 | `sad-camera-rationale-next.yaml` |
+| Back from Add org skips it next time | #1422 | `sad-back-add-org.yaml` |
+| Double-tap Next skips Add org | #1423 | `sad-double-tap-setup.yaml` |
+
+CI fix: the first CI run had E6, H7 and H10 failing because CI's emulator was online with dummy
+keys and the app crashed syncing messages. `run.sh` now turns on airplane mode first.

@@ -165,23 +165,27 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
      (`validateOrgRoutes` runs only there). C6 has no entry point: the Dashboard org button is
      commented out (`DashboardScreen.kt`).
    - After logout and signing back in, back from the Dashboard returns to Signup (finding 2
-     confirmed). `settings-logout.yaml` asserts today's behaviour.
+     confirmed). `settings-logout.yaml` asserts today's behaviour; `settings-logout-back.yaml`
+     (known-bug) asserts the fix (#1415).
    - Deleting any user while offline crashes the app: `UserSelectViewModel.deleteUser` calls
      `messageRepo.syncMessages()`, whose `uploadMessages()` (`MessagesRepo.kt`) is outside the
      try/catch. The user is deleted first, so E7/E8 relaunch and check the user is gone; the
-     "Account deleted" dialog and the Signup stack after deleting the admin are not asserted.
-   - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed).
+     "Account deleted" dialog and the Signup stack after deleting the admin are not asserted there; `settings-delete-user-offline.yaml`
+     (known-bug) asserts them (#1416). Online, the same unguarded upload runs at launch and on
+     picking a user; CI's e2e run is offline for that reason.
+   - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed) (#1417).
    - H5: process death on Add org crashes on reopen: `CaptureSetupScope not open` from
-     `AddOrgViewModel` init (finding 3 confirmed).
+     `AddOrgViewModel` init (finding 3 confirmed) (#1418).
    - H6: process death on image review crashes on reopen: `CaptureFlowScope not open` while
-     creating `TreeImageReviewViewModel`. Restoring onto the capture screen works, but GPS updates
-     are not restarted, so the next capture always shows the bad GPS dialog.
+     creating `TreeImageReviewViewModel` (#1419). Restoring onto the capture screen works, but GPS updates
+     are not restarted, so the next capture always shows the bad GPS dialog (#1420).
    - H2: cancelling the camera rationale returns to Add org with the setup scope closed; Next
-     there crashes (`AddOrgViewModel` SetDefaultOrg).
+     there crashes (`AddOrgViewModel` SetDefaultOrg) (#1421).
    - H9: system back from Add org doesn't step the setup flow back (`navBackward` isn't called),
-     so Next on user select then skips Add org.
+     so Next on user select then skips Add org (#1422).
    - H8: double-tapping Next on user select opens Add org and then capture; the Navigator
-     throttle doesn't stop the second `navForward`.
+     throttle doesn't stop the second `navForward` (#1423).
+   - Each issue says it is fixed only when its known-bug flow passes; the fix PR drops the tag.
 
 ## 5. How to build the suite
 
