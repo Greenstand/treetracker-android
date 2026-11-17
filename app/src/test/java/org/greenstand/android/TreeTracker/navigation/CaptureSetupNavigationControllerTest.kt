@@ -244,14 +244,36 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
-    fun `navForward on the last step closes the setup scope`() =
+    fun `navForward on the last step keeps the setup scope open`() =
         runTest {
             val controller = controllerFor(destinations("user-select"))
             val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
 
             controller.navForward(navigator)
 
-            assertFalse(CaptureSetupScopeManager.isOpen)
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
+    @Test
+    fun `navForward again after capture pops back onto the last step reopens capture`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+
+            controller.navForward(navigator)
+            settle()
+            controller.navForward(navigator)
+            settle()
+            // Cancelling the camera rationale pops capture off, back onto Add org.
+            navigator.throttledPopBackStack()
+            settle()
+            controller.navForward(navigator)
+
+            assertEquals(
+                listOf(DashboardRoute, UserSelectRoute, AddOrgRoute, TreeCaptureRoute("/photos/ada.jpg")),
+                navigator.backStack,
+            )
+            coVerify(exactly = 2) { sessionTracker.startSession() }
         }
 
     @Test
@@ -454,7 +476,7 @@ class CaptureSetupNavigationControllerTest {
             verify { stepCounter.enable() }
             verify { deviceOrientation.enable() }
             verify { locationDataCapturer.startGpsUpdates() }
-            assertFalse(CaptureSetupScopeManager.isOpen)
+            assertTrue(CaptureSetupScopeManager.isOpen)
         }
 
     @Test
