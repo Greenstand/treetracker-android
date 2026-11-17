@@ -1,0 +1,40 @@
+# C3. Needs the org from `bash e2e/seed-org.sh -s <serial> force-note`.
+appId: org.greenstand.android.TreeTracker.debug
+name: C3 Force note on image review
+tags: [org-config]
+---
+- launchApp
+- runFlow:
+    file: subflows/org-capture-setup.yaml
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 30000
+# Approving with a blank note is blocked by the dialog and stays on the review screen.
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: DialogTextField}
+    timeout: 15000
+- tapOn: {id: DialogTextField}
+- inputText: Planted beside the river
+- hideKeyboard
+- tapOn: {id: DialogPositiveButton}
+- assertNotVisible: {id: DialogTextField}
+- assertVisible: {id: ApproveButton}
+# With a note, approving continues and the loop returns to capture.
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "3"}

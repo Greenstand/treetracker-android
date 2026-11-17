@@ -1,0 +1,34 @@
+# C2. Needs the org from `bash e2e/seed-org.sh -s <serial> tree-height`.
+appId: org.greenstand.android.TreeTracker.debug
+name: C2 Tree height step
+tags: [org-config]
+---
+- launchApp
+- runFlow:
+    file: subflows/org-capture-setup.yaml
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 30000
+- tapOn: {id: ApproveButton}
+# The extra capture step: pick a colour, then the loop returns to capture.
+- extendedWaitUntil:
+    visible: {id: TreeHeightColor0}
+    timeout: 15000
+- tapOn: {id: TreeHeightColor0}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "3"}

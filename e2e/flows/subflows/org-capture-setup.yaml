@@ -1,0 +1,15 @@
+# From the Dashboard of a seeded org (see e2e/seed-org.sh), starts a capture session for Ada and
+# moves past user select, onto the first of the org's own setup steps.
+# The user is Ada Admin, wallet 5551230001.
+appId: org.greenstand.android.TreeTracker.debug
+name: Org capture setup
+---
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
