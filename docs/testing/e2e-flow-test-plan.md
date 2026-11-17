@@ -171,7 +171,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
      `messageRepo.syncMessages()`, whose `uploadMessages()` (`MessagesRepo.kt`) is outside the
      try/catch. The user is deleted first, so E7/E8 relaunch and check the user is gone; the
      "Account deleted" dialog and the Signup stack after deleting the admin are not asserted there; `settings-delete-user-offline.yaml`
-     (known-bug) asserts them (#1416). Online, the same unguarded upload runs at launch and on
+     asserts them (#1416, fixed: `deleteUser` now catches the sync failure). Online, the same unguarded upload runs at launch and on
      picking a user; CI's e2e run is offline for that reason.
    - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed) (#1417).
    - H5: process death on Add org crashes on reopen: `CaptureSetupScope not open` from

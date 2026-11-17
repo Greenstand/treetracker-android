@@ -259,6 +259,20 @@ class UserSelectViewModelTest {
         }
 
     @Test
+    fun `GIVEN a selected user WHEN message sync throws after delete THEN does not crash and still marks deleted locally`() =
+        runTest {
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            coEvery { messagesRepo.syncMessages() } throws RuntimeException("Unable to reach Cognito")
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+            coVerify { messagesRepo.syncMessages() }
+        }
+
+    @Test
     fun `GIVEN a selected user WHEN delete fails THEN state is unchanged and no admin message is sent`() =
         runTest {
             coEvery { userRepo.deleteUser("0712345678") } returns false
