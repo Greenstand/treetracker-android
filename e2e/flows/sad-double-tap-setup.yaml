@@ -1,17 +1,13 @@
-# H8: double taps into capture setup should push one screen each: Track -> user select, and
-# Next on user select -> Add org.
+# H8: double taps into capture setup push one screen each: Track -> user select, and
+# Next on user select -> Add org. Add org's back arrow then returns to user select, and no
+# capture screen was opened behind it.
 #
-# Known bugs:
-# - Track (small screens, e.g. 320x640): the second tap lands on user select's add-user button,
-#   which sits where Track was, and opens signup. Back then shows user select, not the Dashboard.
-# - Next (timing dependent, most runs): Add org opens, then the second tap's navForward finishes
-#   too and opens capture, skipping Add org. The second call sees the setup index already at the
-#   end, starts a session and navigates (navigation/CaptureSetupNavigationController.kt:38-53);
-#   the origin throttle in navigation/Navigator.kt does not stop it.
-# Fails today at the first back assertion (small screens) or at the ArrowBackButton tap.
+# A repeat navForward from the same screen is dropped in
+# navigation/CaptureSetupNavigationController.kt, so the second tap on Next can't start a
+# session and open capture (#1423).
 appId: org.greenstand.android.TreeTracker.debug
 name: H8 Double tap into capture setup
-tags: [sad-path, known-bug]
+tags: [sad-path]
 ---
 - launchApp: {clearState: true}
 - runFlow:

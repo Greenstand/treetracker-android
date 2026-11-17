@@ -180,6 +180,12 @@ class Navigator(
     }
 
     /**
+     * Whether a throttled call from this navigator would go through right now. Lets a caller
+     * skip side effects (e.g. starting a session) that only make sense if it will navigate.
+     */
+    val canNavigate: Boolean get() = !isThrottled()
+
+    /**
      * Whether a throttled call should be dropped. Origin-scoped navigators gate on
      * "is my screen still on top?"; unscoped navigators fall back to a time debounce.
      */

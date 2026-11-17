@@ -426,6 +426,16 @@ class NavigatorTest {
     }
 
     @Test
+    fun `canNavigate follows whether the origin is on top`() {
+        val nav = fakeNavigator(DashboardRoute)
+        val dashboard = nav.scopedTo(DashboardRoute.toString())
+
+        assertTrue(dashboard.canNavigate)
+        dashboard.throttledNavigate(SettingsRoute)
+        assertFalse(dashboard.canNavigate)
+    }
+
+    @Test
     fun `scoped navigator does not gate non-throttled calls`() {
         val nav = fakeNavigator(DashboardRoute, SettingsRoute)
         val dashboard = nav.scopedTo(DashboardRoute.toString())
