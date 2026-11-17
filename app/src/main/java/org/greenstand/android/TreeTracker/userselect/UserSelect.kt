@@ -15,6 +15,8 @@
  */
 package org.greenstand.android.TreeTracker.userselect
 
+import android.os.SystemClock
+import android.view.ViewConfiguration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -26,6 +28,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,6 +59,7 @@ fun UserSelect(
 ) {
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState(UserSelectState())
+    val shownAtMs = remember { SystemClock.uptimeMillis() }
 
     UserSelectContent(
         state = state,
@@ -64,7 +68,13 @@ fun UserSelect(
         isNotificationEnabled = isNotificationEnabled,
         selectedColor = selectedColor,
         onUserClicked = { user -> viewModel.handleAction(UserSelectAction.SelectUser(user)) },
-        onCreateUserClicked = { navigator.throttledNavigate(SignupFlowRoute) },
+        onCreateUserClicked = {
+            // On small screens the add-user button sits where Dashboard's Track button was, so
+            // the second tap of a double tap on Track lands here (#1423). Drop it.
+            if (!isSecondTapOfDoubleTap(shownAtMs, SystemClock.uptimeMillis())) {
+                navigator.throttledNavigate(SignupFlowRoute)
+            }
+        },
         onBackClicked = {
             if (!isFromSettings) {
                 navigator.throttledNavigate(DashboardRoute) {
@@ -78,6 +88,17 @@ fun UserSelect(
         onNavigateForward = onNavigateForward,
     )
 }
+
+/**
+ * Whether a tap at [nowMs] on a screen shown at [shownAtMs] comes too soon after the screen
+ * appeared to be meant for it: within the system double-tap timeout, it is the second half of
+ * a double tap on the previous screen.
+ */
+internal fun isSecondTapOfDoubleTap(
+    shownAtMs: Long,
+    nowMs: Long,
+    doubleTapTimeoutMs: Long = ViewConfiguration.getDoubleTapTimeout().toLong(),
+): Boolean = nowMs - shownAtMs < doubleTapTimeoutMs
 
 /**
  * Stateless user grid shared by every "pick a planter" screen. [onNavigateForward] is only

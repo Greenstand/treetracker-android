@@ -24,10 +24,14 @@ landed.
   dropped; a `navForward` while one is still running (session start suspended) is dropped; a
   `navForward` from a screen not on top does nothing.
 - `NavigatorTest`: `canNavigate` follows whether the origin is on top.
+- `DoubleTapGuardTest`: the add-user tap guard's timing.
 - `e2e/flows/sad-double-tap-setup.yaml` is no longer tagged `known-bug`, so the e2e run checks it.
 
-## Out of scope
+## Track double tap on small screens
 
-The flow header used to also mention double-tapping Track on small screens (320x640), where the
-second tap lands on user select's add-user button. CI runs a normal-sized emulator, and that's a
-different screen's first tap, which the origin throttle allows by design. Not changed here.
+The flow also double-taps Track, and CI's emulator is 320x640. There the second tap lands on user
+select's add-user button, which sits where Track was, and opens signup. That's a first tap from
+a new screen, so the origin throttle lets it through. `UserSelect` now ignores an add-user tap that
+comes within the system double-tap timeout (`ViewConfiguration.getDoubleTapTimeout()`, 300 ms) of
+the screen appearing (`isSecondTapOfDoubleTap`, tested in `DoubleTapGuardTest`). Only the add-user
+button is guarded; picking a user and Next are unchanged.
