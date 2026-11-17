@@ -1,0 +1,38 @@
+# E1 and E2: a returning user. Relaunching with an admin present goes from the splash straight to
+# the Dashboard (no language picker, no signup). Changing the language from the Dashboard
+# translates it, and the choice survives a relaunch.
+appId: org.greenstand.android.TreeTracker.debug
+name: E1-E2 Returning user and language
+tags: [settings]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# E1: cold start with the admin present.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- assertNotVisible: {id: LanguageOption_ENGLISH}
+- assertNotVisible: {id: PhoneField}
+# E2: the Dashboard language button opens the picker with the current language checked.
+- tapOn: {id: TopBarLanguageButton}
+- assertVisible: {id: LanguageOption_ENGLISH, checked: true}
+- tapOn: {id: LanguageOption_SWAHILI}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# The Dashboard is translated (Settings is "Mipangilio" in Swahili).
+- assertVisible: {id: SettingsButton, text: "Mipangilio"}
+# The language is kept after a relaunch.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- assertVisible: {id: SettingsButton, text: "Mipangilio"}
+- tapOn: {id: TopBarLanguageButton}
+- assertVisible: {id: LanguageOption_SWAHILI, checked: true}
