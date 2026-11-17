@@ -1,14 +1,10 @@
 # H6/H10: capture again after process death. The user saves a tree, Android kills the app on the
-# capture screen, and the user reopens it from recents. The restored capture screen should take
-# the next tree.
-#
-# Known bug: nothing restarts GPS updates when the capture screen is restored
-# (LocationDataCapturer.startGpsUpdates() is only called from the setup flow,
-# navigation/CaptureSetupNavigationController.kt:44, and at signup), so convergence times out and
-# the bad GPS dialog shows even with a good fix. Fails today at the ApproveButton wait.
+# capture screen, and the user reopens it from recents. The restored capture screen resumes the
+# session and GPS updates, so the next capture converges without the bad GPS dialog, the tree is
+# saved to the same session, and the Dashboard counts both trees (#1420).
 appId: org.greenstand.android.TreeTracker.debug
 name: H6 Capture again after process death
-tags: [sad-path, known-bug]
+tags: [sad-path]
 ---
 - launchApp: {clearState: true}
 - runFlow:

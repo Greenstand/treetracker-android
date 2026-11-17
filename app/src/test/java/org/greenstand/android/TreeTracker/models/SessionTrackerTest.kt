@@ -129,6 +129,41 @@ class SessionTrackerTest {
             assertFalse(result)
         }
 
+    @Test
+    fun `WHEN a session was interrupted THEN resumeInterruptedSession makes it current again`() =
+        runTest {
+            every { preferences.getLong(any(), any()) } returns 5L
+
+            sessionTracker.resumeInterruptedSession()
+
+            assertEquals(5L, sessionTracker.currentSessionId)
+            assertFalse(sessionTracker.wasSessionInterrupted())
+            verify { exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, true) }
+        }
+
+    @Test
+    fun `WHEN no session was in progress THEN resumeInterruptedSession leaves none current`() =
+        runTest {
+            every { preferences.getLong(any(), any()) } returns -1L
+
+            sessionTracker.resumeInterruptedSession()
+
+            assertEquals(null, sessionTracker.currentSessionId)
+        }
+
+    @Test
+    fun `WHEN a session is already current THEN resumeInterruptedSession keeps it`() =
+        runTest {
+            setupStartSessionMocks()
+            sessionTracker.startSession()
+            val current = sessionTracker.currentSessionId
+            every { preferences.getLong(any(), any()) } returns 99L
+
+            sessionTracker.resumeInterruptedSession()
+
+            assertEquals(current, sessionTracker.currentSessionId)
+        }
+
     // --- Org name attribution tests ---
 
     private fun setupStartSessionMocks(

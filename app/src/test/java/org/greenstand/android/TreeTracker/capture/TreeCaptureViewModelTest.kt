@@ -24,6 +24,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -33,9 +34,11 @@ import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
+import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.TreeCaptureRoute
@@ -77,6 +80,12 @@ class TreeCaptureViewModelTest {
     @MockK(relaxed = true)
     private lateinit var configurator: Configurator
 
+    @MockK(relaxed = true)
+    private lateinit var sessionTracker: SessionTracker
+
+    @MockK(relaxed = true)
+    private lateinit var locationDataCapturer: LocationDataCapturer
+
     private lateinit var treeCaptureViewModel: TreeCaptureViewModel
 
     @Before
@@ -98,7 +107,20 @@ class TreeCaptureViewModelTest {
             treeCapturer = treeCapturer,
             createFakeTreesUseCase = createFakeTreesUseCase,
             configurator = configurator,
+            sessionTracker = sessionTracker,
+            locationDataCapturer = locationDataCapturer,
         )
+
+    @Test
+    fun `WHEN created THEN the interrupted session is resumed before GPS updates start`() =
+        runTest {
+            createViewModel()
+
+            verifyOrder {
+                sessionTracker.resumeInterruptedSession()
+                locationDataCapturer.startGpsUpdates()
+            }
+        }
 
     @Test
     fun `WHEN numberOfTrees greater than 0 THEN showCaptureTutorial is false`() =
@@ -191,6 +213,8 @@ class TreeCaptureViewModelTest {
                     treeCapturer = treeCapturer,
                     createFakeTreesUseCase = createFakeTreesUseCase,
                     configurator = configurator,
+                    sessionTracker = sessionTracker,
+                    locationDataCapturer = locationDataCapturer,
                 )
 
             val state = treeCaptureViewModel.state.value
