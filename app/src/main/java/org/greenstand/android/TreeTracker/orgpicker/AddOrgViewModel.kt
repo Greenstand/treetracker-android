@@ -19,6 +19,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.user.UserRepo
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -29,6 +31,8 @@ data class AddOrgState(
     val orgName: String = "",
     val previousOrgName: String? = null,
     val userImagePath: String = "",
+    /** True when Add org came back after process death and its user could not be found again. */
+    val setupLost: Boolean = false,
 )
 
 sealed class AddOrgAction : Action {
@@ -48,9 +52,31 @@ sealed class AddOrgAction : Action {
 class AddOrgViewModel(
     private val preferences: Preferences,
     private val orgRepo: OrgRepo,
+    private val userRepo: UserRepo,
 ) : BaseViewModel<AddOrgState, AddOrgAction>(AddOrgState()) {
     init {
+        // After process death Nav3 restores Add org, but the capture setup scope only lived in
+        // memory. Reopen it at this step and reload the user saved below before reading it.
+        val restoring = !CaptureSetupScopeManager.isOpen
+        if (restoring) {
+            CaptureSetupScopeManager.open()
+            CaptureSetupScopeManager.nav.restoreAt(RouteRegistry.ROUTE_ADD_ORG)
+        }
         viewModelScope.launch {
+            val user =
+                if (restoring) {
+                    userRepo
+                        .getUser(preferences.getLong(SETUP_USER_ID_KEY))
+                        ?.also { CaptureSetupScopeManager.getData().user = it }
+                } else {
+                    CaptureSetupScopeManager.getData().user
+                }
+            if (user == null) {
+                CaptureSetupScopeManager.close()
+                updateState { copy(setupLost = true) }
+                return@launch
+            }
+            preferences.edit().putLong(SETUP_USER_ID_KEY, user.id).apply()
             val currentOrgName =
                 orgRepo
                     .currentOrg()
@@ -58,7 +84,7 @@ class AddOrgViewModel(
                     .takeIf { it.isNotBlank() && it != "Greenstand" }
             updateState {
                 copy(
-                    userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath,
+                    userImagePath = user.photoPath,
                     previousOrgName = preferences.getString(PREV_ORG_KEY),
                     orgName = currentOrgName ?: "",
                 )
@@ -90,5 +116,8 @@ class AddOrgViewModel(
 
     companion object {
         private val PREV_ORG_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("autofill-org")
+
+        /** The capture setup user, kept on disk so Add org can be restored after process death. */
+        internal val SETUP_USER_ID_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("add-org-user-id")
     }
 }

@@ -328,6 +328,28 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
+    fun `restoreAt points the flow at a restored step so Next continues from there`() =
+        runTest {
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, AddOrgRoute, clock = clock)
+
+            controller.restoreAt("add-org")
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute, SessionNoteRoute), navigator.backStack)
+            assertEquals(Destination("session-note"), controller.currentDestination)
+        }
+
+    @Test
+    fun `restoreAt an unknown route leaves the index alone`() {
+        val controller = controllerFor(fullFlow)
+
+        controller.restoreAt("not-a-step")
+
+        assertEquals(Destination("user-select"), controller.currentDestination)
+    }
+
+    @Test
     fun `navBackward at the start pops the first screen`() {
         val controller = controllerFor(fullFlow)
         val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)

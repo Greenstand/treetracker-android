@@ -17,11 +17,14 @@ package org.greenstand.android.TreeTracker.orgpicker
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.runs
 import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,6 +34,9 @@ import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.user.UserRepo
+import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.After
@@ -38,6 +44,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -58,6 +65,12 @@ class AddOrgViewModelTest {
     @MockK(relaxed = true)
     private lateinit var mockEditor: Preferences.Editor
 
+    @MockK(relaxed = true)
+    private lateinit var userRepo: UserRepo
+
+    @MockK(relaxed = true)
+    private lateinit var setupNav: CaptureSetupNavigationController
+
     private lateinit var captureSetupData: CaptureSetupData
 
     private val defaultOrg =
@@ -75,6 +88,7 @@ class AddOrgViewModelTest {
         MockKAnnotations.init(this)
         mockkObject(CaptureSetupScopeManager)
         captureSetupData = mockk(relaxed = true)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { preferences.edit() } returns mockEditor
         every { mockEditor.putString(any(), any()) } returns mockEditor
@@ -93,7 +107,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns "PreviousOrg"
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             val state = viewModel.state.value
             assertEquals(fakeUser.photoPath, state.userImagePath)
@@ -107,7 +121,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             viewModel.handleAction(AddOrgAction.UpdateOrgName("NewOrg"))
 
@@ -123,7 +137,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns "AutofillOrg"
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
 
@@ -138,7 +152,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             viewModel.handleAction(AddOrgAction.UpdateOrgName("SavedOrg"))
             viewModel.handleAction(AddOrgAction.SetDefaultOrg)
@@ -157,7 +171,7 @@ class AddOrgViewModelTest {
             every { preferences.getString(any(), any()) } returns null
             every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             assertEquals("Kasiki Hai", viewModel.state.value.orgName)
             coVerify { captureSetupData.organizationName = "Kasiki Hai" }
@@ -170,7 +184,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             assertEquals("", viewModel.state.value.orgName)
             coVerify(exactly = 0) { captureSetupData.organizationName = "Greenstand" }
@@ -184,7 +198,7 @@ class AddOrgViewModelTest {
             every { preferences.getString(any(), any()) } returns null
             every { orgRepo.currentOrg() } returns defaultOrg.copy(name = "")
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             assertEquals("", viewModel.state.value.orgName)
         }
@@ -197,7 +211,7 @@ class AddOrgViewModelTest {
             every { preferences.getString(any(), any()) } returns null
             every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
             viewModel.handleAction(AddOrgAction.UpdateOrgName("Different Org"))
 
             assertEquals("Different Org", viewModel.state.value.orgName)
@@ -207,7 +221,7 @@ class AddOrgViewModelTest {
     private fun createViewModel(previousOrg: String? = null): AddOrgViewModel {
         every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
         every { preferences.getString(any(), any()) } returns previousOrg
-        return AddOrgViewModel(preferences, orgRepo)
+        return AddOrgViewModel(preferences, orgRepo, userRepo)
     }
 
     @Test
@@ -326,4 +340,56 @@ class AddOrgViewModelTest {
             assertTrue(viewModel.events.replayCache.isEmpty())
             verify(exactly = 0) { mockEditor.putString(any(), any()) }
         }
+
+    // --- Process death restore (#1418) ---
+
+    @Test
+    fun `WHEN init with the setup scope open THEN saves the setup user id`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            every { captureSetupData.user } returns fakeUser
+            every { mockEditor.putLong(any(), any()) } returns mockEditor
+
+            AddOrgViewModel(preferences, orgRepo, userRepo)
+
+            verify { mockEditor.putLong(AddOrgViewModel.SETUP_USER_ID_KEY, fakeUser.id) }
+            verify(exactly = 0) { CaptureSetupScopeManager.open() }
+        }
+
+    @Test
+    fun `WHEN init after process death THEN reopens the scope at Add org with the saved user`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            stubClosedScope()
+            every { preferences.getLong(AddOrgViewModel.SETUP_USER_ID_KEY, any()) } returns fakeUser.id
+            coEvery { userRepo.getUser(fakeUser.id) } returns fakeUser
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+
+            verify { CaptureSetupScopeManager.open() }
+            verify { setupNav.restoreAt(RouteRegistry.ROUTE_ADD_ORG) }
+            verify { captureSetupData.user = fakeUser }
+            assertEquals(fakeUser.photoPath, viewModel.state.value.userImagePath)
+            assertFalse(viewModel.state.value.setupLost)
+        }
+
+    @Test
+    fun `WHEN init after process death and the saved user is gone THEN setup is lost and the scope closes`() =
+        runTest {
+            stubClosedScope()
+            every { preferences.getLong(AddOrgViewModel.SETUP_USER_ID_KEY, any()) } returns -1L
+            coEvery { userRepo.getUser(any()) } returns null
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+
+            assertTrue(viewModel.state.value.setupLost)
+            verify { CaptureSetupScopeManager.close() }
+        }
+
+    private fun stubClosedScope() {
+        every { CaptureSetupScopeManager.isOpen } returns false
+        every { CaptureSetupScopeManager.open() } just runs
+        every { CaptureSetupScopeManager.close() } just runs
+        every { CaptureSetupScopeManager.nav } returns setupNav
+    }
 }

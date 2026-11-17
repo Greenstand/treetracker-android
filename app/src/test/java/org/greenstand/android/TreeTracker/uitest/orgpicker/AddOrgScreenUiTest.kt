@@ -65,6 +65,7 @@ class AddOrgScreenUiTest : ComposeUiTest() {
     @Before
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { CaptureSetupScopeManager.nav } returns captureSetupNav
         every { captureSetupData.user } returns
@@ -99,7 +100,7 @@ class AddOrgScreenUiTest : ComposeUiTest() {
                 captureFlow = emptyList(),
             )
         previousOrgName?.let { preferences.edit().putString(PREV_ORG_KEY, it).apply() }
-        val viewModel = AddOrgViewModel(preferences, orgRepo)
+        val viewModel = AddOrgViewModel(preferences, orgRepo, mockk(relaxed = true))
         setContent(inspectionMode = false) { AddOrgScreen(viewModel = viewModel) }
     }
 

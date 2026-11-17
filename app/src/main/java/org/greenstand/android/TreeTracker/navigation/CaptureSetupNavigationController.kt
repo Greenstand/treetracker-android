@@ -62,6 +62,16 @@ class CaptureSetupNavigationController(
         }
     }
 
+    /**
+     * Points the flow back at [route]. Used when Android restores a setup screen after process
+     * death: the back stack comes back, but this controller is new and starts at index 0.
+     */
+    fun restoreAt(route: String) {
+        val target = RouteRegistry.normalize(route)
+        val index = navPath.indexOfFirst { RouteRegistry.normalize(it.route) == target }
+        if (index >= 0) currentNavPathIndex = index
+    }
+
     fun navBackward(navigator: Navigator) {
         decrementIndex()
         navigator.throttledPopBackStack()
