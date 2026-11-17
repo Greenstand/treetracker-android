@@ -36,6 +36,7 @@ class CaptureSetupNavigationController(
      * requires starting a session (DB write) before navigating to capture.
      */
     suspend fun navForward(navigator: Navigator) {
+        syncIndexWithBackStack(navigator)
         if (isAtEnd) {
             // Setup complete — start session and transition to capture flow
             stepCounter.enable()
@@ -58,6 +59,22 @@ class CaptureSetupNavigationController(
                     ?: error("Unknown setup flow destination: ${destination.route}")
             withContext(Dispatchers.Main) {
                 navigator.throttledNavigate(route)
+            }
+        }
+    }
+
+    /**
+     * System back pops the stack through NavDisplay's onBack without calling [navBackward], so
+     * the step index can be ahead of the screen the user is on. Re-derive it from the topmost
+     * setup step on the back stack. Screens outside the setup flow (signup, add wallet) are
+     * skipped, so the step underneath them counts.
+     */
+    private fun syncIndexWithBackStack(navigator: Navigator) {
+        for (key in navigator.backStack.asReversed()) {
+            val index = navPath.indexOfFirst { resolveNoArgDestination(it) == key }
+            if (index >= 0) {
+                currentNavPathIndex = index
+                return
             }
         }
     }

@@ -351,6 +351,55 @@ class CaptureSetupNavigationControllerTest {
         assertTrue(CaptureSetupScopeManager.isOpen)
     }
 
+    // --- system back (pops the stack without navBackward) ---
+
+    @Test
+    fun `navForward after system back from add org opens add org again`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            coVerify(exactly = 0) { sessionTracker.startSession() }
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
+    @Test
+    fun `navForward after system back in the middle of a flow re-enters the popped step`() =
+        runTest {
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+        }
+
+    @Test
+    fun `navForward from a screen outside the flow continues from the step beneath it`() =
+        runTest {
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddWalletRoute, clock = clock)
+
+            controller.navForward(navigator)
+
+            assertEquals(Destination("add-org"), controller.currentDestination)
+            assertEquals(AddOrgRoute, navigator.topKey)
+        }
+
     // --- navToUserSelect ---
 
     @Test
