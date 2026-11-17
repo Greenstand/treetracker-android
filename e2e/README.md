@@ -10,6 +10,17 @@ YAML and drives the installed debug app on an emulator or device.
   and signs up through `flows/subflows/signup.yaml`, then reaches the capture screen through
   `flows/subflows/start-capture.yaml`. Capture needs a GPS fix (`adb emu geo fix 37.3 -3.5`) and
   an emulator started with `-camera-back emulated -camera-front emulated`.
+- `flows/returning-user-relaunch.yaml`, `flows/settings-*.yaml` (tag `settings`): returning user,
+  language and Settings, E1–E9. They start from a fresh install and sign up through the sub-flow.
+- `flows/sad-*.yaml` (tag `sad-path`): permissions, process death (`killApp` after `pressKey:
+  Home`), double taps and system back, H1–H10.
+- Flows also tagged `known-bug` assert the fixed behaviour of a confirmed bug (section 4 of the
+  plan), so they fail until it's fixed. `run.sh` skips them; run them with
+  `tb test e2e/flows/ --include-tags known-bug`, and drop the tag in the PR that fixes the bug.
+- `flows/org-*.yaml` (tag `org-config`): org-configured setup and capture steps, C1–C4. Org config
+  normally comes from Firebase Remote Config, so `seed-org.sh -s <serial> <variant>` writes the org
+  into the app's database and makes it current; `run-org.sh` seeds before each flow. The flows
+  start with a plain `launchApp`.
 - `flows/dev-options.yaml`, `flows/debug-overlays.yaml` (tag `dev-tools`): run after
   `setup-device.sh` seeds a user and two trees.
 
