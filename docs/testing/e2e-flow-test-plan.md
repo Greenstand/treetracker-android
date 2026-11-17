@@ -72,12 +72,12 @@ Seed each variant with an org deep link carrying the config (see the test link i
 
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
-| C1 | Session note setup step | Org with setup `user-select → session-note` → note → capture | Optional screen only reachable by config | No |
-| C2 | Tree height step | Org with capture `capture → image-review → tree-height` → pick colour → loops | Optional capture step | No |
-| C3 | Force note | Org with `forceNote` on image review → approve with blank note → dialog → add note → continues | Org feature gate | No |
-| C4 | Wallet select / add wallet | Org with `wallet-select` → pick wallet or add wallet → continue | Legacy branch, easy to break silently | No |
-| C5 | Unknown route in config | Org config with a bad route name → app drops it and flow still works | `RouteRegistry` validation | Unit only |
-| C6 | Switch org from dashboard | Two orgs linked → Dashboard org button → pick other org → capture uses that org's steps | Org picker plus per-org flow | No |
+| C1 | Session note setup step | Org with setup `user-select → session-note` → note → capture | Optional screen only reachable by config | Yes (`org-session-note.yaml`) |
+| C2 | Tree height step | Org with capture `capture → image-review → tree-height` → pick colour → loops | Optional capture step | Yes (`org-tree-height.yaml`) |
+| C3 | Force note | Org with `forceNote` on image review → approve with blank note → dialog → add note → continues | Org feature gate | Yes (`org-force-note.yaml`) |
+| C4 | Wallet select / add wallet | Org with `wallet-select` → pick wallet or add wallet → continue | Legacy branch, easy to break silently | Yes (`org-wallet-select.yaml`) |
+| C5 | Unknown route in config | Org config with a bad route name → app drops it and flow still works | `RouteRegistry` validation | Unit only (see finding 6) |
+| C6 | Switch org from dashboard | Two orgs linked → Dashboard org button → pick other org → capture uses that org's steps | Org picker plus per-org flow | No (no entry point, see finding 6) |
 
 ### D. Sync and upload (P1)
 
@@ -95,15 +95,15 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
-| E1 | Cold start returning user | Relaunch with admin present → splash → Dashboard (no language/signup) | Splash routing | No |
-| E2 | Change language | Dashboard language button → pick another language → back on Dashboard with translated text → relaunch, language kept | Top-bar language path plus persistence | No |
-| E3 | Profiles | Settings → Profile → pick user → profile shows their details → back ×2 | Read-only path | No |
-| E4 | Edit and delete tree | Settings → Edit trees → user → tree list → detail → change note → save → delete → dialog → gone from list | Only place trees are edited | No |
-| E5 | Map | Settings → Map with trees → markers and carousel; with zero trees → empty state | Map rendering regressions | No |
-| E6 | Logout | Settings → Logout → confirm → Signup is the only screen; sign back in with existing identifier → Dashboard; back from Dashboard exits app | See finding 2 | No |
-| E7 | Delete non-admin user | Settings → Delete account → pick non-admin → confirm → "deleted" → back on Settings | Delete branch 1 | No |
-| E8 | Delete admin | Same for the admin → ends on Signup with clean stack | Delete branch 2 | No |
-| E9 | Privacy policy | Settings → privacy dialog → close | Cheap, often broken by dialog refactors | No |
+| E1 | Cold start returning user | Relaunch with admin present → splash → Dashboard (no language/signup) | Splash routing | Yes (`returning-user-relaunch.yaml`) |
+| E2 | Change language | Dashboard language button → pick another language → back on Dashboard with translated text → relaunch, language kept | Top-bar language path plus persistence | Yes (`returning-user-relaunch.yaml`) |
+| E3 | Profiles | Settings → Profile → pick user → profile shows their details → back ×2 | Read-only path | Yes (`settings-profile-privacy.yaml`) |
+| E4 | Edit and delete tree | Settings → Edit trees → user → tree list → detail → change note → save → delete → dialog → gone from list | Only place trees are edited | Yes (`settings-trees-map.yaml`) |
+| E5 | Map | Settings → Map with trees → markers and carousel; with zero trees → empty state | Map rendering regressions | Yes (`settings-trees-map.yaml`, carousel cards only) |
+| E6 | Logout | Settings → Logout → confirm → Signup is the only screen; sign back in with existing identifier → Dashboard; back from Dashboard exits app | See finding 2 | Yes (`settings-logout.yaml`, asserts finding 2) |
+| E7 | Delete non-admin user | Settings → Delete account → pick non-admin → confirm → "deleted" → back on Settings | Delete branch 1 | Partly (`settings-delete-user.yaml`, see finding 6) |
+| E8 | Delete admin | Same for the admin → ends on Signup with clean stack | Delete branch 2 | Partly (`settings-delete-admin.yaml`, see finding 6) |
+| E9 | Privacy policy | Settings → privacy dialog → close | Cheap, often broken by dialog refactors | Yes (`settings-profile-privacy.yaml`) |
 
 ### F. Messages (P2)
 
@@ -128,16 +128,16 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
-| H1 | Location denied at first launch | Fresh install → deny location | See finding 1 | No |
-| H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Per-screen only |
-| H3 | No GPS fix | No mock location → capture → bad GPS dialog → retry, then exit → Dashboard | Field reality, timeout path | Per-screen only |
-| H4 | Location services off | Location toggle off → capture → redirected to system location settings → enable → back to capture | `enableLocation()` redirect | No |
-| H5 | Process death mid setup | On Add org (or session note) → background → `am kill` → reopen | See finding 3 | No |
-| H6 | Process death mid capture | On image review → background → kill → reopen → tree not duplicated, can capture again | Same scope issue, data integrity | No |
-| H7 | Process death on dashboard/settings | Background → kill → reopen → same screen, no crash | Nav3 saved back stack | No |
-| H8 | Double taps | Double-tap Capture, Next, Settings → only one screen pushed | `Navigator` throttle | Unit only |
-| H9 | Back everywhere | From every screen, system back lands where expected (table in tests) | Nav3 migration and module split risk | No |
-| H10 | Interrupted session | Kill during capture → relaunch → dashboard counts correct | `wasSessionInterrupted` path | No |
+| H1 | Location denied at first launch | Fresh install → deny location | See finding 1 | Known bug (`sad-location-denied.yaml`) |
+| H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`); known bug (`sad-camera-rationale-next.yaml`) |
+| H3 | No GPS fix | No mock location → capture → bad GPS dialog → retry, then exit → Dashboard | Field reality, timeout path | Per-screen only (needs host adb to remove the GPS fix) |
+| H4 | Location services off | Location toggle off → capture → redirected to system location settings → enable → back to capture | `enableLocation()` redirect | No (needs host adb to turn location off) |
+| H5 | Process death mid setup | On Add org (or session note) → background → `am kill` → reopen | See finding 3 | Known bug (`sad-process-death-setup.yaml`) |
+| H6 | Process death mid capture | On image review → background → kill → reopen → tree not duplicated, can capture again | Same scope issue, data integrity | Known bug (`sad-process-death-review.yaml`, `sad-capture-after-process-death.yaml`) |
+| H7 | Process death on dashboard/settings | Background → kill → reopen → same screen, no crash | Nav3 saved back stack | Yes (`sad-process-death-screens.yaml`) |
+| H8 | Double taps | Double-tap Capture, Next, Settings → only one screen pushed | `Navigator` throttle | Yes (`sad-double-tap.yaml`); known bug (`sad-double-tap-setup.yaml`) |
+| H9 | Back everywhere | From every screen, system back lands where expected (table in tests) | Nav3 migration and module split risk | Yes (`sad-back.yaml`, 15 screens); known bug (`sad-back-add-org.yaml`) |
+| H10 | Interrupted session | Kill during capture → relaunch → dashboard counts correct | `wasSessionInterrupted` path | Yes (`sad-interrupted-session.yaml`) |
 
 ### I. Dev tools (P2)
 
@@ -156,6 +156,36 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
    - Next on the credential step is never disabled. An invalid phone or email shows an error snackbar and stays on the step. Names drop digits and symbols as they are typed, so the name errors only show for fewer than 2 characters. A3 asserts this. Issue #1413.
    - System back on the name step goes to the language picker; only the on-screen back arrow returns to the credential step. A6 asserts today's behaviour; change it if back should step back. Issue #1412.
    - The capture screen's profile icon opens user select with nothing under it: system back there closes the app instead of returning to the Dashboard. Not asserted by a flow yet. Issue #1411.
+
+6. Seen while writing the C, E and H flows (tb, API 35). Flows tagged `known-bug` assert the
+   fixed behaviour, so they fail today; `e2e/run.sh` skips them.
+   - Org config only arrives through Firebase Remote Config. The org link reads only `id` and
+     `name` (`OrgDeepLink.kt`); the inline `params={...}` link in `OrgRepo.kt` is not implemented.
+     The C flows seed the org into the database with `e2e/seed-org.sh`. C5 needs Remote Config
+     (`validateOrgRoutes` runs only there). C6 has no entry point: the Dashboard org button is
+     commented out (`DashboardScreen.kt`).
+   - After logout and signing back in, back from the Dashboard returns to Signup (finding 2
+     confirmed). `settings-logout.yaml` asserts today's behaviour; `settings-logout-back.yaml`
+     (known-bug) asserts the fix (#1415).
+   - Deleting any user while offline crashes the app: `UserSelectViewModel.deleteUser` calls
+     `messageRepo.syncMessages()`, whose `uploadMessages()` (`MessagesRepo.kt`) is outside the
+     try/catch. The user is deleted first, so E7/E8 relaunch and check the user is gone; the
+     "Account deleted" dialog and the Signup stack after deleting the admin are not asserted there; `settings-delete-user-offline.yaml`
+     (known-bug) asserts them (#1416). Online, the same unguarded upload runs at launch and on
+     picking a user; CI's e2e run is offline for that reason.
+   - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed) (#1417).
+   - H5: process death on Add org crashes on reopen: `CaptureSetupScope not open` from
+     `AddOrgViewModel` init (finding 3 confirmed) (#1418).
+   - H6: process death on image review crashes on reopen: `CaptureFlowScope not open` while
+     creating `TreeImageReviewViewModel` (#1419). Restoring onto the capture screen works, but GPS updates
+     are not restarted, so the next capture always shows the bad GPS dialog (#1420).
+   - H2: cancelling the camera rationale returns to Add org with the setup scope closed; Next
+     there crashes (`AddOrgViewModel` SetDefaultOrg) (#1421).
+   - H9: system back from Add org doesn't step the setup flow back (`navBackward` isn't called),
+     so Next on user select then skips Add org (#1422).
+   - H8: double-tapping Next on user select opens Add org and then capture; the Navigator
+     throttle doesn't stop the second `navForward` (#1423).
+   - Each issue says it is fixed only when its known-bug flow passes; the fix PR drops the tag.
 
 ## 5. How to build the suite
 

@@ -1,0 +1,24 @@
+# H8: double taps. A double tap on a button that opens a screen pushes that screen once: one
+# system back returns to where the tap started. Covers Settings on the Dashboard and a Settings
+# row. Track and Next in capture setup are in sad-double-tap-setup.yaml (known bugs).
+appId: org.greenstand.android.TreeTracker.debug
+name: H8 Double taps
+tags: [sad-path]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# Settings
+- doubleTapOn: {id: SettingsButton}
+- assertVisible: {id: SettingsProfile}
+- back
+- assertVisible: {id: TrackButton}
+# A Settings row
+- tapOn: {id: SettingsButton}
+- doubleTapOn: {id: SettingsEditTrees}
+- assertVisible: {id: "UserButton_5551230001"}
+- back
+- assertVisible: {id: SettingsProfile}
+- back
+- assertVisible: {id: TrackButton}

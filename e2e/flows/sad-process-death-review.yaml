@@ -1,0 +1,49 @@
+# H6: process death on image review. The photo is taken but not yet approved when Android kills
+# the app in the background; the user reopens it from recents. Image review should come back
+# without a crash, approving saves the tree exactly once, and the user can capture again.
+#
+# Known bug: Nav3 restores image review, but the capture flow scope only lived in memory, so
+# creating TreeImageReviewViewModel resolves TreeCapturer, whose Koin factory calls
+# CaptureFlowScopeManager.getData() and throws "CaptureFlowScope not open"
+# (models/captureflowdata/CaptureFlowScope.kt:40, from di/AppModule.kt:147 and
+# capture/TreeImageReviewScreen.kt:152). Fails today.
+appId: org.greenstand.android.TreeTracker.debug
+name: H6 Process death on image review
+tags: [sad-path, known-bug]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- assertVisible: {id: ApproveButton}
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 15000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 30000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "2"}

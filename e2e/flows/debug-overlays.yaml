@@ -44,6 +44,11 @@ tags: [dev-tools]
 - assertNotVisible: {id: SensorOverlay}
 - tapOn: {id: DebugOverlayMenuButton}
 - tapOn: {id: UploadButton}
+# Upload shows a sync snackbar over the bottom of the screen, covering the "D" button, so a tap
+# there lands on Track. Wait for it to go.
+- extendedWaitUntil:
+    notVisible: {id: Snackbar}
+    timeout: 15000
 - tapOn: {id: DebugOverlayMenuButton}
 - tapOn: {id: DebugSyncOverlayToggle}
 - tapOn: {id: DebugSensorOverlayToggle}

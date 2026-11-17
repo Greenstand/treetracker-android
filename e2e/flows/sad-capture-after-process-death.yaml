@@ -1,0 +1,48 @@
+# H6/H10: capture again after process death. The user saves a tree, Android kills the app on the
+# capture screen, and the user reopens it from recents. The restored capture screen should take
+# the next tree.
+#
+# Known bug: nothing restarts GPS updates when the capture screen is restored
+# (LocationDataCapturer.startGpsUpdates() is only called from the setup flow,
+# navigation/CaptureSetupNavigationController.kt:44, and at signup), so convergence times out and
+# the bad GPS dialog shows even with a good fix. Fails today at the ApproveButton wait.
+appId: org.greenstand.android.TreeTracker.debug
+name: H6 Capture again after process death
+tags: [sad-path, known-bug]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 45000
+- assertNotVisible: {id: BadGpsDialog}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "2"}

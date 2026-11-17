@@ -1,0 +1,77 @@
+# E4 and E5: with one captured tree, the Map shows the tree card. Edit trees changes the tree's
+# note (kept when the tree is reopened) and deletes the tree. The Map then has no cards.
+appId: org.greenstand.android.TreeTracker.debug
+name: E4 E5 Edit trees and map
+tags: [settings]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# Capture one tree.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: SettingsButton}
+    timeout: 15000
+- tapOn: {id: SettingsButton}
+# E5: the Map has a card for the tree.
+- tapOn: {id: SettingsMap}
+- extendedWaitUntil:
+    visible: {id: MapTreeCard_0}
+    timeout: 15000
+- assertVisible: {id: MapBackButton}
+- tapOn: {id: MapBackButton}
+# E4: open the tree and change its note.
+- tapOn: {id: SettingsEditTrees}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: TreeButton_0}
+- tapOn: {id: ArrowForwardButton}
+- scrollUntilVisible:
+    element: {id: TreeNoteField}
+- tapOn: {id: TreeNoteField}
+- inputText: Edited note
+- hideKeyboard
+- scrollUntilVisible:
+    element: {id: SaveNoteButton}
+- tapOn: {id: SaveNoteButton}
+- assertVisible: {id: Snackbar}
+# The note is kept when the tree is opened again.
+- tapOn: {id: ArrowBackButton}
+- tapOn: {id: TreeButton_0}
+- tapOn: {id: ArrowForwardButton}
+- scrollUntilVisible:
+    element: {id: TreeNoteField}
+- assertVisible: {id: TreeNoteField, text: "Edited note"}
+# Delete the tree. Cancel keeps it, confirm removes it from the list.
+- scrollUntilVisible:
+    element: {id: DeleteTreeButton}
+- tapOn: {id: DeleteTreeButton}
+- assertVisible: {id: DialogTitle}
+- tapOn: {id: DialogNegativeButton}
+- assertNotVisible: {id: DialogTitle}
+- assertVisible: {id: DeleteTreeButton}
+- tapOn: {id: DeleteTreeButton}
+- tapOn: {id: DialogPositiveButton}
+- assertVisible: {id: TreeListEmpty}
+- assertNotVisible: {id: TreeButton_0}
+# E5: with no trees the Map has no cards.
+- tapOn: {id: ArrowBackButton}
+- tapOn: {id: ArrowBackButton}
+- tapOn: {id: SettingsMap}
+- extendedWaitUntil:
+    visible: {id: MapBackButton}
+    timeout: 15000
+- assertNotVisible: {id: MapTreeCard_0}

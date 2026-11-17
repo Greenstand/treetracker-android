@@ -26,7 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Lifecycle
@@ -44,6 +46,7 @@ import org.greenstand.android.TreeTracker.permissions.PermissionAction
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 
 @ExperimentalPermissionsApi
@@ -90,6 +93,7 @@ fun PermissionRequest(
                     perm.status.isGranted -> {}
                     perm.status.shouldShowRationale -> {
                         CustomDialog(
+                            backgroundModifier = Modifier.testTag(TestTags.CAMERA_RATIONALE_DIALOG),
                             title = stringResource(R.string.accept_camera_permission_header),
                             textContent = stringResource(R.string.accept_camera_permission_message),
                             onNegativeClick = {
@@ -149,6 +153,7 @@ fun LocationRationaleDialog(
     perm: PermissionState,
 ) {
     CustomDialog(
+        backgroundModifier = Modifier.testTag(TestTags.LOCATION_RATIONALE_DIALOG),
         title = stringResource(R.string.accept_location_permission_header),
         textContent = stringResource(R.string.accept_location_permission_message),
         onNegativeClick = {
@@ -173,6 +178,7 @@ fun PermissionDeniedPermanentlyDialog(navigator: Navigator) {
     val activity: Context = LocalContext.current as Activity
 
     CustomDialog(
+        backgroundModifier = Modifier.testTag(TestTags.PERMISSION_SETTINGS_DIALOG),
         title = stringResource(R.string.open_settings_header),
         textContent = stringResource(R.string.open_settings_message),
         onNegativeClick = {

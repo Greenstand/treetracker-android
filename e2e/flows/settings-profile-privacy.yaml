@@ -1,0 +1,36 @@
+# E3 and E9: the read-only Settings paths. The privacy policy dialog opens and closes. Profile
+# shows the chosen user's details, and Back returns through Settings to the Dashboard.
+appId: org.greenstand.android.TreeTracker.debug
+name: E3 E9 Profile and privacy policy
+tags: [settings]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- tapOn: {id: SettingsButton}
+# E9: privacy policy dialog.
+- tapOn: {id: SettingsPrivacy}
+- assertVisible: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- assertNotVisible: {id: PrivacyPolicyCloseButton}
+- assertVisible: {id: SettingsPrivacy}
+# E3: profile of the signed-up user.
+- tapOn: {id: SettingsProfile}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: ProfileFirstName, text: "Ada"}
+- scrollUntilVisible:
+    element: {id: ProfileLastName}
+- assertVisible: {id: ProfileLastName, text: "Admin"}
+- scrollUntilVisible:
+    element: {id: ProfileWallet}
+- assertVisible: {id: ProfileWallet, text: "5551230001"}
+- back
+- assertVisible: {id: "UserButton_5551230001"}
+- back
+- assertVisible: {id: SettingsProfile}
+- back
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
