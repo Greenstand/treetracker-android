@@ -91,6 +91,22 @@ class CaptureFlowNavigationController(
         }
     }
 
+    /**
+     * Picks the capture flow up at [route] after Android killed the app there: points the flow at
+     * that step and restarts the session and sensors that only lived in memory.
+     */
+    fun resumeAt(route: String) {
+        val target = RouteRegistry.normalize(route)
+        val index = navPath.indexOfFirst { RouteRegistry.normalize(it.route) == target }
+        if (index >= 0) currentNavPathIndex = index
+        if (!sessionTracker.resumeInterruptedSession()) {
+            Timber.tag("CaptureFlowNav").w("No interrupted session to resume")
+        }
+        stepCounter.enable()
+        deviceOrientation.enable()
+        locationDataCapturer.startGpsUpdates()
+    }
+
     private fun resolveDestinationRoute(destination: org.greenstand.android.TreeTracker.models.organization.Destination): NavKey {
         resolveNoArgDestination(destination)?.let { return it }
 
@@ -107,6 +123,7 @@ class CaptureFlowNavigationController(
     }
 
     private fun endSession() {
+        treeCapturer.discardPendingTree()
         CaptureFlowScopeManager.close()
         scope.launch {
             try {

@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.models.captureflowdata
 
 import io.mockk.mockk
+import io.mockk.verify
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
@@ -137,6 +138,28 @@ class CaptureFlowScopeManagerTest {
 
         assertFalse(CaptureFlowScopeManager.isOpen)
         assertTrue(runCatching { CaptureFlowScopeManager.nav }.exceptionOrNull() is IllegalStateException)
+    }
+
+    @Test
+    fun `restoreOnImageReview reopens the scope with the kept tree and resumes the session`() {
+        assertTrue(CaptureFlowScopeManager.restoreOnImageReview())
+
+        assertTrue(CaptureFlowScopeManager.isOpen)
+        verify { CaptureFlowScopeManager.getData().scope.get<TreeCapturer>().restorePendingTree() }
+        verify { sessionTracker.resumeInterruptedSession() }
+        verify { locationDataCapturer.startGpsUpdates() }
+    }
+
+    @Test
+    fun `restoreOnImageReview leaves an open scope alone`() {
+        CaptureFlowScopeManager.open()
+        val component = CaptureFlowScopeManager.getData()
+
+        assertFalse(CaptureFlowScopeManager.restoreOnImageReview())
+
+        assertSame(component, CaptureFlowScopeManager.getData())
+        verify(exactly = 0) { component.scope.get<TreeCapturer>().restorePendingTree() }
+        verify(exactly = 0) { sessionTracker.resumeInterruptedSession() }
     }
 
     @Test

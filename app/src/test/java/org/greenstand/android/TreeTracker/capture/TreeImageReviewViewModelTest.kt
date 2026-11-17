@@ -207,6 +207,24 @@ class TreeImageReviewViewModelTest {
         }
 
     @Test
+    fun `init after process death does not show the review tutorial again`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.emptyUser.copy(numberOfTrees = 0)
+            every { treeCapturer.currentTree } returns CaptureFlowTestFixtures.tree()
+
+            val vm =
+                TreeImageReviewViewModel(
+                    treeCapturer = treeCapturer,
+                    userRepo = userRepo,
+                    featureResolver = featureResolver,
+                    restoredAfterProcessDeath = true,
+                )
+
+            assertEquals(false, vm.state.value.showReviewTutorial)
+            assertEquals(CaptureFlowTestFixtures.PHOTO_PATH, vm.state.value.treeImagePath)
+        }
+
+    @Test
     fun `init without a power user shows the review tutorial`() =
         runTest {
             coEvery { userRepo.getPowerUser() } returns null

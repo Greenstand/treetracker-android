@@ -59,6 +59,8 @@ class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
     private val userRepo: UserRepo,
     featureResolver: FeatureResolver,
+    // The user already saw the review tutorial before Android killed the app.
+    private val restoredAfterProcessDeath: Boolean = false,
 ) : BaseViewModel<TreeImageReviewState, TreeImageReviewAction>(TreeImageReviewState()) {
     private val forceNote =
         featureResolver.isCaptureFlowFeatureEnabled(
@@ -68,7 +70,7 @@ class TreeImageReviewViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            val firstTrack = isFirstTrack()
+            val firstTrack = !restoredAfterProcessDeath && isFirstTrack()
             updateState {
                 copy(
                     showReviewTutorial = firstTrack,

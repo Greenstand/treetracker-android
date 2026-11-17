@@ -101,6 +101,25 @@ class SessionTrackerTest {
     }
 
     @Test
+    fun `WHEN a session was interrupted THEN resumeInterruptedSession makes it current`() {
+        every { preferences.getLong(SessionTracker.SESSION_ID_KEY) } returns 42L
+
+        assertTrue(sessionTracker.resumeInterruptedSession())
+
+        assertEquals(42L, sessionTracker.currentSessionId)
+        assertFalse(sessionTracker.wasSessionInterrupted())
+    }
+
+    @Test
+    fun `WHEN no session was running THEN resumeInterruptedSession returns false`() {
+        every { preferences.getLong(SessionTracker.SESSION_ID_KEY) } returns -1L
+
+        assertFalse(sessionTracker.resumeInterruptedSession())
+
+        assertEquals(null, sessionTracker.currentSessionId)
+    }
+
+    @Test
     fun `WHEN no active session THEN endSession no-ops`() =
         runTest {
             sessionTracker.endSession()

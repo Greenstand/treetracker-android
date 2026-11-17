@@ -15,7 +15,9 @@
  */
 package org.greenstand.android.TreeTracker.models.captureflowdata
 
+import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.koin.core.component.KoinScopeComponent
 import org.koin.core.component.createScope
 import org.koin.core.scope.Scope
@@ -33,6 +35,23 @@ object CaptureFlowScopeManager {
         }
         currentScope = CaptureFlowScope().scope
         currentScope?.get<CaptureFlowScope>()
+    }
+
+    /**
+     * Reopens the scope when Android restores image review after killing the app, so the tree
+     * whose photo was taken can still be reviewed and saved. Does nothing while the scope is open.
+     * Returns true when it restored the flow.
+     */
+    fun restoreOnImageReview(): Boolean {
+        if (isOpen) return false
+        Timber.tag("CaptureFlowScope").i("Restoring capture flow on image review after process death")
+        open()
+        val data = getData()
+        if (data.scope.get<TreeCapturer>().restorePendingTree() == null) {
+            Timber.tag("CaptureFlowScope").w("No pending tree to restore")
+        }
+        nav.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+        return true
     }
 
     fun getData(): CaptureFlowScope =

@@ -402,6 +402,58 @@ class CaptureFlowNavigationControllerTest {
         verifySessionEnded()
     }
 
+    // --- resumeAt (process death) ---
+
+    @Test
+    fun `resumeAt image review then navForward moves on to tree height`() =
+        runTest {
+            val controller = controllerFor(standardFlow)
+            val review = TreeImageReviewRoute(photoPath = "/trees/1.jpg")
+            val navigator = fakeNavigator(DashboardRoute, capture, review, clock = clock)
+
+            controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+            assertEquals(Destination("tree-image-review/{photoPath}"), controller.currentDestination)
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, capture, review, TreeHeightScreenRoute), navigator.backStack)
+        }
+
+    @Test
+    fun `resumeAt image review at the end of the flow saves the tree once and returns to capture`() =
+        runTest {
+            val controller = controllerFor(destinations("capture/{profilePicUrl}", "image-review"))
+            val navigator =
+                fakeNavigator(DashboardRoute, capture, TreeImageReviewRoute(photoPath = "/trees/1.jpg"), clock = clock)
+
+            controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+            controller.navForward(navigator)
+
+            coVerify(exactly = 1) { treeCapturer.saveTree() }
+            assertEquals(listOf(DashboardRoute, capture), navigator.backStack)
+        }
+
+    @Test
+    fun `resumeAt restarts the session and sensors that only lived in memory`() {
+        val controller = controllerFor(standardFlow)
+
+        controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+
+        verify { sessionTracker.resumeInterruptedSession() }
+        verify { stepCounter.enable() }
+        verify { deviceOrientation.enable() }
+        verify { locationDataCapturer.startGpsUpdates() }
+    }
+
+    @Test
+    fun `leaving the capture flow drops the unsaved tree`() {
+        val controller = controllerFor(standardFlow)
+
+        controller.goToDashboard(fakeNavigator(DashboardRoute, capture, clock = clock))
+
+        verify { treeCapturer.discardPendingTree() }
+    }
+
     // --- goToDashboard ---
 
     @Test

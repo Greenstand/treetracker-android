@@ -47,6 +47,7 @@ import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.PendingTreeStore
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
@@ -134,7 +135,11 @@ val appModule =
 
         viewModel { AnnouncementViewModel(get(), get()) }
 
-        viewModel { TreeImageReviewViewModel(get(), get(), get()) }
+        viewModel {
+            // After process death Nav3 restores image review without the in-memory capture scope.
+            val restored = CaptureFlowScopeManager.restoreOnImageReview()
+            TreeImageReviewViewModel(get(), get(), get(), restoredAfterProcessDeath = restored)
+        }
 
         viewModel { PermissionViewModel(get()) }
 
@@ -143,6 +148,8 @@ val appModule =
         viewModel { MapViewModel(get()) }
 
         single { UserRepo(get(), get(), get(), get(), get(), get()) }
+
+        factory { PendingTreeStore(get()) }
 
         factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
@@ -278,6 +285,6 @@ val appModule =
         scope<CaptureFlowScope> {
             scoped { CaptureFlowData() }
             scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get(), get()) }
-            scoped { TreeCapturer(get(), get(), get(), get(), get()) }
+            scoped { TreeCapturer(get(), get(), get(), get(), get(), get()) }
         }
     }
