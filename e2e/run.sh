@@ -28,6 +28,10 @@ cleanup() {
   fi
 }
 trap cleanup EXIT
+# Run offline, as setup-device.sh does. Online, the app syncs messages on launch and on picking
+# a user, and with CI's dummy keys the upload fails outside its try/catch (bug 2 in the plan).
+"$ADB" -s "$SERIAL" shell cmd connectivity airplane-mode enable
+"$ADB" -s "$SERIAL" shell svc wifi disable
 # known-bug flows assert the fixed behaviour and fail until their bug is fixed; run them with
 # `tb test e2e/flows/ --include-tags known-bug`. org-config flows need a seeded org (run-org.sh).
 "$TB" test e2e/flows/ -p android --device "$SERIAL" --exclude-tags dev-tools,org-config,known-bug \
