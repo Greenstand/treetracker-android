@@ -64,6 +64,7 @@ Priority: P0 = run on every PR (smoke, keep the set short), P1 = every PR if tim
 | B3 | Reject photo | Capture → review → reject/back → capture screen, count unchanged | `navBackward` path, no tree saved | Yes (`capture-reject.yaml`) |
 | B4 | Add note on review | Capture → review → add note → approve; note visible in Settings → Edit trees → detail | Note persistence end to end | Yes (`capture-note.yaml`) |
 | B5 | Exit paths from capture | System back, top-bar back, profile icon (→ user select) | Each ends the session; profile icon goes to UserSelect not Dashboard | Yes (`capture-exit.yaml`) |
+| B5b | Profile exit, then setup again | Capture → profile icon → user select → pick user → Next → Add org → capture | User select opens a fresh setup scope after capture closed it | Yes (`capture-exit-profile-next.yaml`) |
 | B6 | New user mid setup | Dashboard → Capture → "+" add user → full signup → lands on Add org (not dashboard) → capture | `navFromNewUserCreation` and its popUpTo | Yes (`capture-new-user.yaml`) |
 
 ### C. Org-configured flow variants (P1, key for KMP)
