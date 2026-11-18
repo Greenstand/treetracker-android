@@ -3,8 +3,8 @@
 # capture screen was opened behind it.
 #
 # On small screens (320x640, as on CI) user select's add-user button sits where Track was;
-# userselect/UserSelect.kt ignores an add-user tap within the double-tap timeout of the
-# navigation to it. A repeat navForward from the same screen is dropped in
+# userselect/UserSelect.kt ignores an add-user press that went down within the double-tap
+# timeout of the navigation to it. A repeat navForward from the same screen is dropped in
 # navigation/CaptureSetupNavigationController.kt, so the second tap on Next can't start a
 # session and open capture (#1423).
 appId: org.greenstand.android.TreeTracker.debug

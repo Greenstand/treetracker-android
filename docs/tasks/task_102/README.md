@@ -31,10 +31,20 @@ landed.
 
 The flow also double-taps Track, and CI's emulator is 320x640. There the second tap lands on user
 select's add-user button, which sits where Track was, and opens signup. That's a first tap from
-a new screen, so the origin throttle lets it through. `Navigator.millisSinceLastNavigation` (shared by
-every scoped view of the navigator) says how long ago the stack last changed, and `UserSelect`
-ignores an add-user tap that comes within the system double-tap timeout
-(`ViewConfiguration.getDoubleTapTimeout()`, 300 ms) of that (`isSecondTapOfDoubleTap`, tested in
-`DoubleTapGuardTest` and `NavigatorTest`). It counts from the last navigation, not from when the
-screen was composed, so a user select that was not just navigated to (as in the UI tests) is not
-affected. Only the add-user button is guarded; picking a user and Next are unchanged.
+a new screen, so the origin throttle lets it through.
+
+`Navigator.millisSinceLastNavigation` (shared by every scoped view of the navigator) says how long
+ago the stack last changed. `UserSelect` records the event time of the latest finger down on the
+screen, and the add-user button ignores a press that went down within the system double-tap
+timeout (`ViewConfiguration.getDoubleTapTimeout()`, 300 ms) of that navigation, or before it
+(`isSecondTapOfDoubleTap`, tested in `DoubleTapGuardTest` and `NavigatorTest`).
+
+Two things this had to get right, both found on CI:
+
+- Count from the last navigation, not from when the screen was composed. Otherwise a user select
+  that was not just navigated to (the UI tests render it and click at once) drops the tap.
+- Use the press's event time, not when the click is handled. On a busy emulator Test Buddy's
+  double tap took 563 ms to arrive; its event times still say "double tap", but by wall clock the
+  second tap came more than 300 ms after the navigation and got through.
+
+Only the add-user button is guarded; picking a user and Next are unchanged.

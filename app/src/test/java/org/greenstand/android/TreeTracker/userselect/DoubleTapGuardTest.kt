@@ -21,14 +21,33 @@ import org.junit.Test
 
 class DoubleTapGuardTest {
     @Test
-    fun `a tap inside the double-tap timeout after a navigation is the second tap of a double tap`() {
-        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 0, doubleTapTimeoutMs = 300))
-        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 299, doubleTapTimeoutMs = 300))
+    fun `a press within the double-tap timeout of the navigation is the second tap of a double tap`() {
+        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 0, millisSincePress = 0, doubleTapTimeoutMs = 300))
+        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 299, millisSincePress = 0, doubleTapTimeoutMs = 300))
     }
 
     @Test
-    fun `a tap at or after the double-tap timeout, or with no navigation yet, is meant for the screen`() {
-        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 300, doubleTapTimeoutMs = 300))
-        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = Long.MAX_VALUE, doubleTapTimeoutMs = 300))
+    fun `a press that reached the app late is judged by when it went down`() {
+        // Navigated 700 ms ago; the press went down 500 ms ago, 200 ms after the navigation.
+        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 700, millisSincePress = 500, doubleTapTimeoutMs = 300))
+    }
+
+    @Test
+    fun `a press that went down before the navigation is not meant for this screen`() {
+        assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 100, millisSincePress = 150, doubleTapTimeoutMs = 300))
+    }
+
+    @Test
+    fun `a press at or after the double-tap timeout, or with no navigation yet, is meant for the screen`() {
+        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 300, millisSincePress = 0, doubleTapTimeoutMs = 300))
+        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 1_000, millisSincePress = 100, doubleTapTimeoutMs = 300))
+        assertFalse(
+            isSecondTapOfDoubleTap(millisSinceLastNavigation = Long.MAX_VALUE, millisSincePress = -5, doubleTapTimeoutMs = 300),
+        )
+    }
+
+    @Test
+    fun `a press time in the future counts as now`() {
+        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 400, millisSincePress = -50, doubleTapTimeoutMs = 300))
     }
 }
