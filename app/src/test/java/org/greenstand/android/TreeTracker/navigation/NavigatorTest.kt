@@ -426,6 +426,30 @@ class NavigatorTest {
     }
 
     @Test
+    fun `canNavigate follows whether the origin is on top`() {
+        val nav = fakeNavigator(DashboardRoute)
+        val dashboard = nav.scopedTo(DashboardRoute.toString())
+
+        assertTrue(dashboard.canNavigate)
+        dashboard.throttledNavigate(SettingsRoute)
+        assertFalse(dashboard.canNavigate)
+    }
+
+    @Test
+    fun `millisSinceLastNavigation is shared by scoped views and counts from the last stack change`() {
+        val nav = fakeNavigator(DashboardRoute, clock = clock)
+        val dashboard = nav.scopedTo(DashboardRoute.toString())
+        val userSelect = nav.scopedTo(UserSelectRoute.toString())
+
+        assertEquals(Long.MAX_VALUE, userSelect.millisSinceLastNavigation)
+        dashboard.throttledNavigate(UserSelectRoute)
+        clock.advance(120)
+
+        assertEquals(120L, userSelect.millisSinceLastNavigation)
+        assertEquals(120L, nav.millisSinceLastNavigation)
+    }
+
+    @Test
     fun `scoped navigator does not gate non-throttled calls`() {
         val nav = fakeNavigator(DashboardRoute, SettingsRoute)
         val dashboard = nav.scopedTo(DashboardRoute.toString())

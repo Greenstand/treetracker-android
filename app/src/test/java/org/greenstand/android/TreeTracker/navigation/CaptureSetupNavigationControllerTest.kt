@@ -20,7 +20,10 @@ import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
@@ -293,6 +296,79 @@ class CaptureSetupNavigationControllerTest {
 
             assertEquals(listOf(DashboardRoute, TreeCaptureRoute("/photos/ada.jpg")), navigator.backStack)
             coVerify { sessionTracker.startSession() }
+        }
+
+    // --- double tap (issue #1423) ---
+
+    @Test
+    fun `second navForward from user select after it navigated is dropped`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+
+            controller.navForward(navigator)
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+            coVerify(exactly = 0) { sessionTracker.startSession() }
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
+    @Test
+    fun `navForward is dropped while an earlier call is still running`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+            val sessionStarted = CompletableDeferred<Unit>()
+            coEvery { sessionTracker.startSession() } coAnswers { sessionStarted.await() }
+
+            launch { controller.navForward(navigator) }
+            launch { controller.navForward(navigator) }
+            advanceUntilIdle()
+            sessionStarted.complete(Unit)
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { sessionTracker.startSession() }
+            assertEquals(
+                listOf(DashboardRoute, UserSelectRoute, TreeCaptureRoute("/photos/ada.jpg")),
+                navigator.backStack,
+            )
+        }
+
+    @Test
+    fun `navForward runs again after an earlier call failed`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+            coEvery { sessionTracker.startSession() } throws IllegalStateException("db") andThen Unit
+
+            runCatching { controller.navForward(navigator) }
+            controller.navForward(navigator)
+
+            coVerify(exactly = 2) { sessionTracker.startSession() }
+            assertEquals(TreeCaptureRoute("/photos/ada.jpg"), navigator.topKey)
+        }
+
+    @Test
+    fun `navForward from a screen that is no longer on top does nothing`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, AddOrgRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+
+            controller.navForward(navigator)
+
+            coVerify(exactly = 0) { sessionTracker.startSession() }
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            assertTrue(CaptureSetupScopeManager.isOpen)
         }
 
     // --- navBackward ---

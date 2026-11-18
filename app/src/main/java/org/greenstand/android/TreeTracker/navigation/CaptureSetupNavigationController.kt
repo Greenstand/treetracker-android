@@ -31,12 +31,33 @@ class CaptureSetupNavigationController(
     private val locationDataCapturer: LocationDataCapturer,
     private val deviceOrientation: DeviceOrientation,
 ) : FlowNavigationController(orgRepo.currentOrg().captureSetupFlow) {
+    private var navForwardInProgress = false
+
     /**
      * Navigate forward in the setup flow. Suspend because completing setup
      * requires starting a session (DB write) before navigating to capture.
+     *
+     * A repeat call from the same screen (e.g. a double tap on Next) is dropped: either
+     * while the first call is still running, or once its screen is no longer on top.
+     * Without this the second call would see the index already advanced and could
+     * start a session and open capture, skipping the next setup step.
      */
     suspend fun navForward(navigator: Navigator) {
-        syncIndexWithBackStack(navigator)
+        if (navForwardInProgress || !navigator.canNavigate) return
+        navForwardInProgress = true
+        try {
+            syncIndexWithBackStack(navigator)
+            advance(navigator)
+        } finally {
+            navForwardInProgress = false
+        }
+    }
+
+    /**
+     * One step forward from [currentNavPathIndex]. Callers sync the index first; it isn't synced
+     * here because [navFromNewUserCreation] sets the index past signup before calling this.
+     */
+    private suspend fun advance(navigator: Navigator) {
         if (isAtEnd) {
             // Setup complete — start session and transition to capture flow
             stepCounter.enable()
@@ -104,7 +125,7 @@ class CaptureSetupNavigationController(
         if (currentNavPathIndex >= navPath.size) {
             // Signup was the last step — treat as setup complete
             currentNavPathIndex = navPath.size - 1
-            navForward(navigator)
+            advance(navigator)
             return
         }
         val destination = navPath[currentNavPathIndex]
