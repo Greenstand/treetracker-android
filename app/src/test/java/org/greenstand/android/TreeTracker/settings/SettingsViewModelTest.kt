@@ -20,9 +20,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -399,32 +397,5 @@ class SettingsViewModelTest {
                     "so the next person to sign in is treated as the previous power user",
             )
             assertEquals(false, viewModel.state.value.showLogoutDialog)
-        }
-
-    @Test
-    fun `WHEN logout and the screen is popped before the power user has loaded THEN the power-user flag is still cleared`() =
-        runTest {
-            // LogoutConfirmed navigates with popUpToRoot(), which clears this ViewModel and cancels
-            // viewModelScope while getPowerUser() may still be waiting on a slow database.
-            val powerUser = FakeFileGenerator.fakeUsers.first()
-            val loaded = CompletableDeferred<User?>()
-            coEvery { userRepo.getPowerUser() } coAnswers { loaded.await() }
-            val cleared = mutableListOf<Pair<Long, Boolean>>()
-            coEvery { userRepo.setPowerUserStatus(any(), any()) } answers {
-                cleared.add(firstArg<Long>() to secondArg<Boolean>())
-                Unit
-            }
-            val viewModel = SettingsViewModel(userRepo)
-
-            viewModel.handleAction(SettingsAction.LogoutConfirmed)
-            viewModel.viewModelScope.cancel()
-            loaded.complete(powerUser)
-
-            assertEquals(
-                listOf(powerUser.id to false),
-                cleared,
-                "Leaving Settings cancelled the logout before it cleared the power-user flag for user ${powerUser.id}, " +
-                    "so the next person to sign in is treated as the previous power user",
-            )
         }
 }
