@@ -193,6 +193,10 @@ tasks.withType(Test).configureEach {
     maxHeapSize = "3g"
     forkEvery = 100
     timeout.set(java.time.Duration.ofMinutes(60))
+    // Print a failing test's assertion message in the CI log, not only its class and line.
+    testLogging {
+        exceptionFormat = 'full'
+    }
     if (isRoborazziRun) {
         include '**/screenshot/**'
     } else {
