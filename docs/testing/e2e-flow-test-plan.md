@@ -129,8 +129,8 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
-| H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`, `sad-camera-rationale-next.yaml`) |
 | H1 | Location denied at first launch | Fresh install → deny location → language select | See finding 1 | Yes (`sad-location-denied.yaml`; waits for language select, so it fails if the app closes or crashes (#1449)) |
+| H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`, `sad-camera-rationale-next.yaml`) |
 | H3 | No GPS fix | No mock location → capture → bad GPS dialog → retry, then exit → Dashboard | Field reality, timeout path | Per-screen only (needs host adb to remove the GPS fix) |
 | H4 | Location services off | Location toggle off → capture → redirected to system location settings → enable → back to capture | `enableLocation()` redirect | No (needs host adb to turn location off) |
 | H5 | Process death mid setup | On Add org (or session note) → background → `am kill` → reopen | See finding 3 | Known bug (`sad-process-death-setup.yaml`) |
