@@ -42,7 +42,12 @@ for FLOW in "$@"; do
   "$ADB" -s "$SERIAL" shell touch /sdcard/rec-stop
   "$ADB" -s "$SERIAL" shell pkill -INT screenrecord || true
   wait "$REC" 2>/dev/null || true
-  sleep 2
+  # screenrecord finishes writing the file after SIGINT; pulling earlier can miss the last part.
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    "$ADB" -s "$SERIAL" shell pidof screenrecord >/dev/null 2>&1 || break
+    sleep 1
+  done
+  sleep 1
   PARTS=()
   for i in 1 2 3 4 5 6; do
     "$ADB" -s "$SERIAL" pull "/sdcard/rec-$i.mp4" "$OUT/$NAME-part-$i.mp4" >/dev/null 2>&1 \
