@@ -104,6 +104,19 @@ class LocationUpdateManagerTest {
     }
 
     @Test
+    fun `WHEN the GPS provider refuses the permission THEN updates are not started`() {
+        shadowOf(application).grantPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+        every {
+            locationManager.requestLocationUpdates(any<String>(), any<Long>(), any<Float>(), any<LocationListener>())
+        } throws SecurityException("gps requires ACCESS_FINE_LOCATION")
+
+        val started = locationUpdateManager.startLocationUpdates()
+
+        assertFalse(started)
+        assertFalse(locationUpdateManager.isUpdating)
+    }
+
+    @Test
     fun `WHEN already updating THEN startLocationUpdates does not request again`() {
         grantFineLocation()
         locationUpdateManager.startLocationUpdates()
