@@ -25,9 +25,22 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.activities.CaptureImageContract
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
-import org.greenstand.android.TreeTracker.navigation.LanguageRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
+
+/**
+ * Leaves Signup for the Dashboard once the power user is set, clearing the whole back stack so
+ * back from the Dashboard exits the app. Signup is reached from Language on first run but from
+ * a cleared stack after logout or profile deletion, so popping up to a specific route would
+ * leave Signup under the Dashboard in those cases.
+ */
+internal fun navigateToDashboardAfterSignup(navigator: Navigator) {
+    navigator.navigate(DashboardRoute) {
+        popUpToRoot()
+        launchSingleTop = true
+    }
+}
 
 @Composable
 fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModelFactory.current)) {
@@ -40,10 +53,7 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
             scope.launch {
                 viewModel.createUser(photoPath)?.let { user ->
                     if (user.isPowerUser) {
-                        navigator.navigate(DashboardRoute) {
-                            popUpTo<LanguageRoute> { inclusive = true }
-                            launchSingleTop = true
-                        }
+                        navigateToDashboardAfterSignup(navigator)
                     } else {
                         CaptureSetupScopeManager.getData().user = user
                         scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navigator) }
@@ -62,10 +72,7 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
                     val user = action.user
                     if (state.isTherePowerUser == false) {
                         viewModel.handleAction(SignupAction.SetExistingUserAsPowerUser(user.id))
-                        navigator.navigate(DashboardRoute) {
-                            popUpTo<LanguageRoute> { inclusive = true }
-                            launchSingleTop = true
-                        }
+                        navigateToDashboardAfterSignup(navigator)
                     } else {
                         CaptureSetupScopeManager.getData().user = user
                         scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navigator) }
