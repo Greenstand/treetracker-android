@@ -33,6 +33,7 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.flow.flowOf
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
@@ -81,6 +82,7 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
     @Before
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { CaptureSetupScopeManager.nav } returns setupNav
         every { captureSetupData.user } returns walletTestCurrentUser
@@ -134,7 +136,7 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
     // --- session note: Next is always enabled ---
 
     private fun openSessionNote(millisSinceOpened: Long) {
-        val viewModel = SessionNoteViewModel()
+        val viewModel = SessionNoteViewModel(CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
         open(SessionNoteRoute, millisSinceOpened) { SessionNoteScreen(viewModel = viewModel) }
     }
 
@@ -169,7 +171,7 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
     // --- wallet select: Next is enabled once a wallet is picked ---
 
     private fun openWalletSelectAndPickWallet(millisSinceOpened: Long) {
-        val viewModel = WalletSelectViewModel(userRepo)
+        val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
         open(WalletSelectRoute, millisSinceOpened) { WalletSelectScreen(viewModel = viewModel) }
         composeTestRule.onNodeWithText(OTHER_USER_NAME).performClick()
         composeTestRule.waitForIdle()
@@ -196,7 +198,7 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
     // --- add wallet: Next is enabled once a wallet name is typed ---
 
     private fun openAddWalletAndTypeName(millisSinceOpened: Long) {
-        val viewModel = AddWalletViewModel()
+        val viewModel = AddWalletViewModel(CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
         open(AddWalletRoute, millisSinceOpened) { AddWalletScreen(viewModel = viewModel) }
         composeTestRule.onNode(hasSetTextAction()).performTextInput("Forest Fund")
         composeTestRule.waitForIdle()
