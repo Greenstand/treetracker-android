@@ -150,7 +150,8 @@ class PermissionRequestUiTest : ComposeUiTest() {
 
     /**
      * Asserts that leaving capture from a permission dialog ended the capture session: the
-     * session and sensors are stopped and the capture scope is closed, while the setup scope
+     * session, step counter and orientation sensor are stopped (GPS stops on the main looper,
+     * which Robolectric doesn't run here) and the capture scope is closed, while the setup scope
      * stays open because the setup screens are still on the back stack (#1421).
      */
     private fun assertCaptureSessionEnded(dialog: String) {
@@ -311,8 +312,24 @@ class PermissionRequestUiTest : ComposeUiTest() {
     }
 
     @Test
+    fun `cancelling the location rationale ends the capture session`() {
+        backStack.add(1, AddOrgRoute)
+        shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
+        shadowOf(application).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+        shadowOf(application.packageManager)
+            .setShouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION, true)
+        render()
+        composeTestRule.onNode(hasTestTag(TestTags.LOCATION_RATIONALE_DIALOG)).assertExists()
+
+        clickDialogButton(TestTags.DIALOG_NEGATIVE_BUTTON)
+
+        assertEquals(listOf(DashboardRoute, AddOrgRoute), backStack.toList())
+        assertCaptureSessionEnded("Cancel on the location rationale")
+    }
+
+    @Test
     fun `declining the open settings dialog without a capture scope still leaves the screen`() {
-        // E.g. capture restored after process death, which loses the capture scope.
+        // E.g. the scope was already closed by a first tap on another permission dialog.
         CaptureFlowScopeManager.close()
         shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         render()

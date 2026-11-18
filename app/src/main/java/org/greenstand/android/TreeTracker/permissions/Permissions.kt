@@ -57,7 +57,7 @@ fun PermissionRequest(
 ) {
     val navigator = LocalNavigator.current
     // The dialogs below leave capture, so they end the capture session too. Without a capture
-    // scope (already left, or lost to process death) there is no session to end: just pop.
+    // scope (already closed, e.g. by a second tap) there is no session to end: just pop.
     val leaveCapture: () -> Unit = {
         if (CaptureFlowScopeManager.isOpen) {
             CaptureFlowScopeManager.nav.leaveToSetup(navigator)

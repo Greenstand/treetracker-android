@@ -40,10 +40,24 @@ the capture session" assertion. Issue #1438.
 - `PermissionRequest` routes every dialog that leaves capture through it: camera rationale
   Cancel/OK, location rationale Cancel/OK and the open-settings dialog's Cancel.
   `LocationRationaleDialog` and `PermissionDeniedPermanentlyDialog` take an `onLeave` callback
-  (default: plain pop). Without a capture scope (e.g. after process death) they just pop.
+  (default: plain pop). Without a capture scope (already closed, e.g. by a second tap) they just pop.
 - Next on Add org then starts a new session as before (`sad-camera-rationale-next.yaml`).
 
 Extra tests: `CaptureFlowNavigationControllerTest` (`leaveToSetup` pops, ends the session and
 keeps the setup scope; a throttled pop ends nothing) and `PermissionRequestUiTest` (no capture
 scope still leaves the screen). The two camera e2e flows only got comment updates, so the video
 workflow records them still passing.
+
+## Review (independent subagent)
+
+Fixed: comments that said the capture scope can be lost to process death (TreeCaptureViewModel's
+factory always opens it before `PermissionRequest` composes), the test KDoc that claimed GPS is
+verified, and a new UI test for Cancel on the location rationale.
+
+Not changed:
+- A fast Next on Add org could in theory overlap the asynchronous session end (stale coroutine
+  clearing the new session id). It needs the DB write to outlast Add org's ~300ms double-tap
+  guard; `goToDashboard`/`goToUserSelect` already end sessions the same way. A fix belongs in
+  `SessionTracker` (serialize start/end), outside this bug.
+- `onLeave` keeps its plain-pop default so the dialogs still work on their own (PermissionDialogsUiTest).
+- Leaving capture stops the GPS warm-up started on User select; Next restarts it.
