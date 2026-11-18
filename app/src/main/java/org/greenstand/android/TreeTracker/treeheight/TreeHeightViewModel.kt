@@ -18,9 +18,11 @@ package org.greenstand.android.TreeTracker.treeheight
 import androidx.compose.material.ButtonColors
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
+import org.greenstand.android.TreeTracker.viewmodel.NavigationEvent
 
 data class TreeHeightSelectionState(
     val colors: List<ButtonColors> =
@@ -42,7 +44,16 @@ sealed class TreeHeightAction : Action {
 
 class TreeHeightSelectionViewModel(
     private val treeCapturer: TreeCapturer,
+    // True when the capture flow was rebuilt after Android killed the app on this screen.
+    restoredAfterProcessDeath: Boolean = false,
 ) : BaseViewModel<TreeHeightSelectionState, TreeHeightAction>(TreeHeightSelectionState()) {
+    init {
+        if (restoredAfterProcessDeath && treeCapturer.currentTree == null) {
+            // The tree could not be restored, so there is nothing to measure.
+            sendEvent(NavigationEvent { CaptureFlowScopeManager.nav.goToDashboard(this) })
+        }
+    }
+
     override fun handleAction(action: TreeHeightAction) {
         when (action) {
             is TreeHeightAction.SelectColor -> {

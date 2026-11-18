@@ -101,6 +101,25 @@ class SessionTrackerTest {
     }
 
     @Test
+    fun `WHEN a session was interrupted THEN resumeInterruptedSession makes it current`() {
+        every { preferences.getLong(SessionTracker.SESSION_ID_KEY) } returns 42L
+
+        assertTrue(sessionTracker.resumeInterruptedSession())
+
+        assertEquals(42L, sessionTracker.currentSessionId)
+        assertFalse(sessionTracker.wasSessionInterrupted())
+    }
+
+    @Test
+    fun `WHEN no session was running THEN resumeInterruptedSession returns false`() {
+        every { preferences.getLong(SessionTracker.SESSION_ID_KEY) } returns -1L
+
+        assertFalse(sessionTracker.resumeInterruptedSession())
+
+        assertEquals(null, sessionTracker.currentSessionId)
+    }
+
+    @Test
     fun `WHEN no active session THEN endSession no-ops`() =
         runTest {
             sessionTracker.endSession()
@@ -127,6 +146,35 @@ class SessionTrackerTest {
             val result = sessionTracker.wasSessionInterrupted()
 
             assertFalse(result)
+        }
+
+    @Test
+    fun `WHEN a resumed session is ended THEN it is closed and no longer persisted`() =
+        runTest {
+            every { preferences.getLong(any(), any()) } returns 5L
+            val session = mockk<SessionEntity>(relaxed = true)
+            coEvery { dao.getSessionById(5L) } returns session
+            sessionTracker.resumeInterruptedSession()
+
+            sessionTracker.endSession()
+
+            coVerify { dao.getSessionById(5L) }
+            coVerify { dao.updateSession(session) }
+            verify { editor.putLong(SessionTracker.SESSION_ID_KEY, -1) }
+            assertEquals(null, sessionTracker.currentSessionId)
+        }
+
+    @Test
+    fun `WHEN a session is already current THEN resumeInterruptedSession keeps it`() =
+        runTest {
+            setupStartSessionMocks()
+            sessionTracker.startSession()
+            val current = sessionTracker.currentSessionId
+            every { preferences.getLong(any(), any()) } returns 99L
+
+            sessionTracker.resumeInterruptedSession()
+
+            assertEquals(current, sessionTracker.currentSessionId)
         }
 
     // --- Org name attribution tests ---

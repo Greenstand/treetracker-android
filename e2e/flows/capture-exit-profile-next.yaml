@@ -1,0 +1,35 @@
+# B5b: the profile icon on the capture screen ends the session and goes to user select. Capture
+# setup must work again from there: picking the user and tapping Next opens Add org.
+#
+# goToUserSelect closes the capture setup scope, then shows user select again. The new user
+# select must open a fresh setup scope, or picking a user crashes with "CaptureSetupScope not
+# open" (follow-up to #1421, found in the review of PR #1425).
+appId: org.greenstand.android.TreeTracker.debug
+name: B5b Profile exit then capture setup again
+tags: [capture]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: UserImageButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+# And on into capture again.
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000

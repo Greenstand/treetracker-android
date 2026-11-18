@@ -69,15 +69,21 @@ class LocationUpdateManager(
         if (hasLocationPermissions()) {
             if (!isUpdating) {
                 val locationDataConfig = convergenceConfiguration.locationDataConfig
-                locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    locationDataConfig.minTimeBetweenUpdates,
-                    locationDataConfig.minDistanceBetweenUpdates,
-                    locationUpdateListener,
-                )
-                isUpdating = true
+                try {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        locationDataConfig.minTimeBetweenUpdates,
+                        locationDataConfig.minDistanceBetweenUpdates,
+                        locationUpdateListener,
+                    )
+                    isUpdating = true
+                } catch (e: SecurityException) {
+                    // Before Android 12 the GPS provider needs fine location; approximate alone
+                    // throws here.
+                    Timber.w(e, "GPS updates need fine location")
+                }
             }
-            true
+            isUpdating
         } else {
             isUpdating = false
             false
