@@ -19,8 +19,8 @@ It selects a user, deletes them, and asserts that the last id written with `pref
 the capture-setup user are no longer that user. Before the fix it failed in CI (issue #1448, run 44240549081) with
 `AssertionError: Deleted user 122 is still the current user id in Preferences. Illegal value: <122>.`
 
-`app/build.gradle` now sets `testLogging { exceptionFormat = 'full' }`, because without it Gradle
-printed only `AssertionError at UserSelectViewModelTest.kt:264` and not the message.
+To get that message, a temporary commit set `testLogging { exceptionFormat = 'full' }` in `app/build.gradle`; without it Gradle
+printed only `AssertionError at UserSelectViewModelTest.kt:264`. It was removed before review.
 
 ## Fix
 
