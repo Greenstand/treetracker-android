@@ -155,7 +155,11 @@ class LocationDataCapturer(
         if (areLocationUpdatesOn) {
             return
         }
-        locationUpdateManager.startLocationUpdates()
+        // Without location permission nothing starts. Leave updates off so that a later call,
+        // once the permission is granted, starts them.
+        if (!locationUpdateManager.startLocationUpdates()) {
+            return
+        }
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
         areLocationUpdatesOn = true
     }
