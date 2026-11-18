@@ -24,6 +24,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -33,9 +34,13 @@ import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
+import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.TreeCaptureRoute
@@ -77,6 +82,18 @@ class TreeCaptureViewModelTest {
     @MockK(relaxed = true)
     private lateinit var configurator: Configurator
 
+    @MockK(relaxed = true)
+    private lateinit var sessionTracker: SessionTracker
+
+    @MockK(relaxed = true)
+    private lateinit var locationDataCapturer: LocationDataCapturer
+
+    @MockK(relaxed = true)
+    private lateinit var stepCounter: StepCounter
+
+    @MockK(relaxed = true)
+    private lateinit var deviceOrientation: DeviceOrientation
+
     private lateinit var treeCaptureViewModel: TreeCaptureViewModel
 
     @Before
@@ -98,7 +115,49 @@ class TreeCaptureViewModelTest {
             treeCapturer = treeCapturer,
             createFakeTreesUseCase = createFakeTreesUseCase,
             configurator = configurator,
+            sessionTracker = sessionTracker,
+            locationDataCapturer = locationDataCapturer,
+            stepCounter = stepCounter,
+            deviceOrientation = deviceOrientation,
         )
+
+    @Test
+    fun `WHEN created THEN the interrupted session is resumed before GPS updates start`() =
+        runTest {
+            every { sessionTracker.wasSessionInterrupted() } returns true
+
+            createViewModel()
+
+            verifyOrder {
+                sessionTracker.resumeInterruptedSession()
+                locationDataCapturer.startGpsUpdates()
+            }
+        }
+
+    @Test
+    fun `WHEN created after process death THEN the step counter and orientation sensors are re-enabled`() =
+        runTest {
+            every { sessionTracker.wasSessionInterrupted() } returns true
+            every { sessionTracker.resumeInterruptedSession() } returns true
+
+            createViewModel()
+
+            verify(exactly = 1) { stepCounter.enable() }
+            verify(exactly = 1) { deviceOrientation.enable() }
+        }
+
+    @Test
+    fun `WHEN created on the normal path THEN the sensors set up by capture setup are left alone`() =
+        runTest {
+            // A session is already current: resumeInterruptedSession() returns true for it.
+            every { sessionTracker.wasSessionInterrupted() } returns false
+            every { sessionTracker.resumeInterruptedSession() } returns true
+
+            createViewModel()
+
+            verify(exactly = 0) { stepCounter.enable() }
+            verify(exactly = 0) { deviceOrientation.enable() }
+        }
 
     @Test
     fun `WHEN numberOfTrees greater than 0 THEN showCaptureTutorial is false`() =
@@ -191,6 +250,10 @@ class TreeCaptureViewModelTest {
                     treeCapturer = treeCapturer,
                     createFakeTreesUseCase = createFakeTreesUseCase,
                     configurator = configurator,
+                    sessionTracker = sessionTracker,
+                    locationDataCapturer = locationDataCapturer,
+                    stepCounter = stepCounter,
+                    deviceOrientation = deviceOrientation,
                 )
 
             val state = treeCaptureViewModel.state.value
