@@ -60,8 +60,10 @@ Verdict: valid and in scope; no bugs. Findings and what was done:
   (documented above).
 - Nit: task id 106 isn't the next free integer. Kept; 106 was reserved for this task.
 
-## Why not an e2e flow
+## E2E flow
 
-These steps only exist in org-configured flows, which need `e2e/seed-org.sh`. Neither the
-"Android end-to-end" job nor the before/after video workflow seeds an org, so a flow wouldn't run
-on CI. The Compose UI test runs in `testDebugUnitTest` on every PR.
+`e2e/flows/org-double-tap-session-note.yaml` (H8, org variant, tag `org-config`) seeds the
+`session-note` org, double-taps Next on user select and checks the session note stays open with
+no capture behind it, then continues with a single tap. `e2e/run-org.sh` runs it after seeding, so
+"Android end-to-end" checks it on every PR. Session note is the step shown on screen because its
+Next is always enabled; wallet select and add wallet are covered by the unit test.
