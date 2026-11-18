@@ -401,6 +401,25 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
+    fun `navForward after a double tap on back from add org opens add org again`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            // The second tap's pop is throttled away, but navBackward still decrements the index.
+            controller.navBackward(navigator)
+            controller.navBackward(navigator)
+            assertEquals(listOf(DashboardRoute, UserSelectRoute), navigator.backStack)
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+        }
+
+    @Test
     fun `navFromNewUserCreation after system back re-enters the popped step`() =
         runTest {
             val controller = controllerFor(destinations("user-select", "wallet-select", "add-org"))
