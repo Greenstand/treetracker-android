@@ -24,7 +24,7 @@ The `getPowerUser()` mock suspends on a `CompletableDeferred`, so `LogoutConfirm
 `setPowerUserStatus(id, false)` was called. A unit test is enough because the race is entirely in
 the ViewModel. An e2e flow can't reliably tap Logout inside the few milliseconds the Room query takes.
 
-## Fix
+## Fix (#1436)
 
 In `Logout`, read the power user from the repository when logging out instead of using the cached
 state.
