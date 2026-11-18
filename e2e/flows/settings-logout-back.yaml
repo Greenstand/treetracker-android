@@ -1,10 +1,8 @@
-# Bug: after logout and signing back in, back from the Dashboard returns to Signup instead of
-# leaving the app. Signup leaves with popUpTo<LanguageRoute> (SignUpScreen.kt:44,66), but after
-# logout (SettingsViewmodel.kt:95) LanguageRoute is not on the stack, so Signup stays under the
-# Dashboard. Passes once back from the Dashboard leaves the app.
+# Logout, then sign back in as the existing user. Back from the Dashboard leaves the app instead of
+# returning to Signup, because Signup clears the whole back stack when it goes to the Dashboard.
 appId: org.greenstand.android.TreeTracker.debug
-name: Bug Logout then back returns to Signup
-tags: [settings, known-bug]
+name: Logout then back exits the app
+tags: [settings]
 ---
 - launchApp: {clearState: true}
 - runFlow:
@@ -23,7 +21,7 @@ tags: [settings, known-bug]
     visible: {id: TrackButton}
     timeout: 15000
 - back
-# Fixed: the app is gone, neither the Dashboard nor Signup is showing.
+# The app is gone, neither the Dashboard nor Signup is showing.
 - assertNotVisible: {id: TrackButton}
 - assertNotVisible: {id: ExistingUserButton}
 - assertNotVisible: {id: PhoneField}
