@@ -268,8 +268,18 @@ class UserSelectViewModelTest {
 
             viewModel.handleAction(UserSelectAction.DeleteUser)
 
+            // An exception escaping viewModelScope would fail runTest; reaching here means it was caught.
             assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
-            coVerify { messagesRepo.syncMessages() }
+            // The admin message is queued before the sync, so the next sync can still upload it.
+            coVerifyOrder {
+                userRepo.deleteUser("0712345678")
+                messagesRepo.saveMessage(
+                    wallet = "0712345678",
+                    to = "admin",
+                    body = "Hi admin, I would like to delete my account with the wallet 0712345678 I understand that all my data will be lost.",
+                )
+                messagesRepo.syncMessages()
+            }
         }
 
     @Test

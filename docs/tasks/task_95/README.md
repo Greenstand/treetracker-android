@@ -28,4 +28,16 @@ are outside this bug.
   crash, state is `ACCOUNTDELETEDLOCALLY`.
 - `e2e/flows/settings-delete-user-offline.yaml`: `known-bug` tag removed and header rewritten, so
   `e2e/run.sh` checks it on CI.
-- `docs/testing/e2e-flow-test-plan.md` finding 6 notes the fix.
+- `settings-delete-user-offline.yaml` matches the "Account Deleted" text (the confirm dialog shares
+  the `DialogTitle` tag), then reopens Delete account to check Bob is gone and the app is still up.
+- E7 (`settings-delete-user.yaml`) and E8 (`settings-delete-admin.yaml`): their KNOWN BUG notes are
+  gone, and they now check the "Account Deleted" dialog and where closing it lands (Settings for a
+  non-admin, Signup for the admin) before relaunching.
+- `docs/testing/e2e-flow-test-plan.md` finding 6 notes the fix and which flows check each path.
+
+## Review follow-ups not done here
+
+- Online, a failed admin-request upload after a delete is now only logged; the user sees the same
+  "Account Deleted" dialog. `DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED` exists but is never set.
+- `DeleteProfileScreen` calls `SelectUser` on the user being deleted, which stores their id as the
+  current user id (`prefs.setUserId`) after they're gone. Older code, separate from this bug.
