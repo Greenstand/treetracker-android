@@ -31,3 +31,13 @@ one first) and opens capture, which asks for the camera again.
 - `e2e/flows/sad-camera-rationale-next.yaml` is no longer tagged `known-bug`, so `e2e/run.sh` runs it.
 
 The container has no Android SDK, so unit tests and e2e flows ran on CI only.
+
+## Review follow-ups (not fixed here)
+
+- The permission dialogs (camera/location rationale, permanently-denied dialog) pop capture with
+  `throttledPopBackStack()` and end nothing: the session, sensors and capture scope stay open, and
+  now the setup scope too. Leaving setup afterwards with the in-app back arrows reaches the
+  Dashboard without ending the session, so the next cold start reports an interrupted session.
+  This was already reachable via system back before this fix. A follow-up could end the session and
+  close only the capture scope on those pops (it must not close the setup scope, or #1421 returns).
+- Process death while capture is shown still loses both scopes (#1418, #1419).

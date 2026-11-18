@@ -412,6 +412,28 @@ class CaptureFlowNavigationControllerTest {
         verifySessionEnded()
     }
 
+    @Test
+    fun `navBackward at the start closes the setup scope`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, capture, clock = clock)
+
+        controller.navBackward(navigator)
+
+        assertFalse(CaptureSetupScopeManager.isOpen)
+    }
+
+    @Test
+    fun `goToDashboard with the setup scope already closed still goes to the dashboard`() {
+        CaptureSetupScopeManager.close()
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, capture, clock = clock)
+
+        controller.goToDashboard(navigator)
+
+        assertEquals(listOf<Any>(DashboardRoute), navigator.backStack)
+        assertFalse(CaptureSetupScopeManager.isOpen)
+    }
+
     // --- goToDashboard ---
 
     @Test

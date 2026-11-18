@@ -129,7 +129,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
 | H1 | Location denied at first launch | Fresh install → deny location | See finding 1 | Known bug (`sad-location-denied.yaml`) |
-| H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`); known bug (`sad-camera-rationale-next.yaml`) |
+| H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`, `sad-camera-rationale-next.yaml`) |
 | H3 | No GPS fix | No mock location → capture → bad GPS dialog → retry, then exit → Dashboard | Field reality, timeout path | Per-screen only (needs host adb to remove the GPS fix) |
 | H4 | Location services off | Location toggle off → capture → redirected to system location settings → enable → back to capture | `enableLocation()` redirect | No (needs host adb to turn location off) |
 | H5 | Process death mid setup | On Add org (or session note) → background → `am kill` → reopen | See finding 3 | Known bug (`sad-process-death-setup.yaml`) |
@@ -180,7 +180,8 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
      creating `TreeImageReviewViewModel` (#1419). Restoring onto the capture screen works, but GPS updates
      are not restarted, so the next capture always shows the bad GPS dialog (#1420).
    - H2: cancelling the camera rationale returns to Add org with the setup scope closed; Next
-     there crashes (`AddOrgViewModel` SetDefaultOrg) (#1421).
+     there crashes (`AddOrgViewModel` SetDefaultOrg) (#1421). Fixed: the setup scope now stays
+     open until the capture flow ends.
    - H9: system back from Add org doesn't step the setup flow back (`navBackward` isn't called),
      so Next on user select then skips Add org (#1422).
    - H8: double-tapping Next on user select opens Add org and then capture; the Navigator
