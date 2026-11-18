@@ -640,6 +640,8 @@ class CaptureFlowNavigationControllerTest {
         controller.leaveToSetup(navigator)
 
         assertEquals(listOf<Any>(DashboardRoute, AddOrgRoute), navigator.backStack)
+        // Let the session end finish here, so it can't touch Dispatchers.Main after this test.
+        verifySessionEnded()
     }
 
     @Test
