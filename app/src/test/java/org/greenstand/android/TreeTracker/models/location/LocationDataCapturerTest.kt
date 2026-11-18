@@ -21,6 +21,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import io.mockk.CapturingSlot
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -84,6 +85,7 @@ class LocationDataCapturerTest {
         MockKAnnotations.init(this)
         preferences = Preferences(sharedPreferences)
         every { convergenceConfiguration.locationDataConfig } returns LocationDataConfig()
+        every { locationUpdateManager.startLocationUpdates() } returns true
         locationDataCapturer =
             LocationDataCapturer(
                 locationUpdateManager,
@@ -261,6 +263,18 @@ class LocationDataCapturerTest {
         )
     }
 
+    /**
+     * Waits for the location the capturer saves on its background coroutine. coVerify can see the
+     * call before the capture() matcher fills the slot, so wait on the slot itself.
+     */
+    private fun awaitCaptured(slot: CapturingSlot<LocationEntity>) {
+        val deadline = System.currentTimeMillis() + 5_000
+        while (!slot.isCaptured && System.currentTimeMillis() < deadline) {
+            Thread.sleep(10)
+        }
+        assertTrue("no location was saved", slot.isCaptured)
+    }
+
     private fun startCapturing(): MutableLiveData<Location?> {
         val locationsLiveData = MutableLiveData<Location?>()
         every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
@@ -383,6 +397,23 @@ class LocationDataCapturerTest {
     }
 
     @Test
+    fun `WHEN location permission is missing THEN updates stay off and start once it is granted`() {
+        val locationsLiveData = MutableLiveData<Location?>()
+        every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
+        every { locationUpdateManager.startLocationUpdates() } returns false
+
+        locationDataCapturer.startGpsUpdates()
+
+        assertFalse(locationsLiveData.hasObservers())
+
+        every { locationUpdateManager.startLocationUpdates() } returns true
+        locationDataCapturer.startGpsUpdates()
+
+        assertTrue(locationsLiveData.hasObservers())
+        verify(exactly = 2) { locationUpdateManager.startLocationUpdates() }
+    }
+
+    @Test
     fun `stopGpsUpdates without starting does nothing`() {
         locationDataCapturer.stopGpsUpdates()
 
@@ -458,7 +489,7 @@ class LocationDataCapturerTest {
 
         locationsLiveData.postValue(location)
 
-        coVerify(timeout = 5000) { treeTrackerDAO.insertLocationData(any()) }
+        awaitCaptured(savedLocation)
         assertEquals(5L, savedLocation.captured.sessionId)
         assertEquals(
             LocationData(
@@ -507,7 +538,7 @@ class LocationDataCapturerTest {
 
             assertFalse(locationDataCapturer.isConvergenceWithinRange())
             locationsLiveData.postValue(mockk<Location>(relaxed = true))
-            coVerify(timeout = 5000) { treeTrackerDAO.insertLocationData(any()) }
+            awaitCaptured(savedLocation)
             val saved = Json.decodeFromString(LocationData.serializer(), savedLocation.captured.locationDataJson)
             assertEquals(ConvergenceStatus.TIMED_OUT, saved.convergenceStatus)
         }

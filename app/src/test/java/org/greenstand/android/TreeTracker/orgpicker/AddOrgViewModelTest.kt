@@ -42,8 +42,6 @@ import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
-import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
-import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.After
@@ -70,9 +68,6 @@ class AddOrgViewModelTest {
 
     @MockK(relaxed = true)
     private lateinit var userRepo: UserRepo
-
-    @MockK(relaxed = true)
-    private lateinit var setupNav: CaptureSetupNavigationController
 
     private lateinit var captureSetupData: CaptureSetupData
 
@@ -359,7 +354,7 @@ class AddOrgViewModelTest {
         }
 
     @Test
-    fun `WHEN init after process death THEN reopens the scope at Add org with the saved user`() =
+    fun `WHEN init after process death THEN reopens the scope with the saved user`() =
         runTest {
             val fakeUser = FakeFileGenerator.fakeUsers.first()
             stubClosedScope()
@@ -369,7 +364,6 @@ class AddOrgViewModelTest {
             val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             verify { CaptureSetupScopeManager.open() }
-            verify { setupNav.restoreAt(RouteRegistry.ROUTE_ADD_ORG) }
             verify { captureSetupData.user = fakeUser }
             assertEquals(fakeUser.photoPath, viewModel.state.value.userImagePath)
             assertFalse(viewModel.state.value.restoring)
@@ -424,6 +418,5 @@ class AddOrgViewModelTest {
         every { CaptureSetupScopeManager.isOpen } returns false
         every { CaptureSetupScopeManager.open() } just runs
         every { CaptureSetupScopeManager.close() } just runs
-        every { CaptureSetupScopeManager.nav } returns setupNav
     }
 }

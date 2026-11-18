@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.orgpicker
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -48,6 +49,7 @@ import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -61,6 +63,7 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
+    val doubleTapGuard = rememberDoubleTapGuard()
 
     LaunchedEffect(state.setupLost) {
         // Restored after process death without a user to set up for: fall back to the Dashboard.
@@ -69,22 +72,27 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
         }
     }
 
-    AddOrg(
-        state = state,
-        onHandleAction = { action ->
-            // Until a restored Add org has its user back, leaving it would start setup without one.
-            val canLeave = !state.restoring && !state.setupLost
-            when (action) {
-                is AddOrgAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
-                is AddOrgAction.NavigateNext ->
-                    if (canLeave) {
-                        viewModel.handleAction(AddOrgAction.SetDefaultOrg)
-                        scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
+    Box(doubleTapGuard.modifier) {
+        AddOrg(
+            state = state,
+            onHandleAction = { action ->
+                // Until a restored Add org has its user back, leaving it would start setup without one.
+                val canLeave = !state.restoring && !state.setupLost
+                when (action) {
+                    is AddOrgAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
+                    is AddOrgAction.NavigateNext -> {
+                        // Next sits where user select's Next was, so the second tap of a double tap
+                        // there lands here (#1423). Drop it.
+                        if (canLeave && !doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
+                            viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+                            scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
+                        }
                     }
-                else -> viewModel.handleAction(action)
-            }
-        },
-    )
+                    else -> viewModel.handleAction(action)
+                }
+            },
+        )
+    }
 }
 
 @Composable
