@@ -149,7 +149,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 ## 4. Findings worth confirming (from reading the code, not run)
 
 1. Splash only advanced when location was granted (`SplashScreen.kt`, `onResult`). If the user denied, the app sat on the splash image with no message; after "don't ask again" it never moved. Fixed in #1417: splash now moves on whatever the user answers, and capture starts GPS once location is granted there.
-2. After logout or deleting the admin, the stack is cleared to `SignupFlowRoute`. Signup then navigates to Dashboard with `popUpTo<LanguageRoute>`, which is not on the stack, so Signup likely stays under Dashboard and back from Dashboard returns to Signup. E6/E8 check this. Fixed in #1415: Signup clears the whole stack when it goes to the Dashboard.
+2. After logout or deleting the admin, the stack is cleared to `SignupFlowRoute`. Signup then navigated to Dashboard with `popUpTo<LanguageRoute>`, which was not on the stack, so Signup stayed under Dashboard and back from Dashboard returned to Signup. Fixed in #1415 for both paths: Signup clears the whole stack when it goes to the Dashboard. E6 and `settings-logout-back.yaml` check the logout path; E8 can't check the delete-admin path yet (offline crash, #1416).
 3. `CaptureSetupScopeManager` and `CaptureFlowScopeManager` are in-memory singletons, but the Nav3 back stack survives process death. Restoring onto Add org calls `CaptureSetupScopeManager.getData()` before any `open()`, which throws. H5 likely crashes; H6 may too.
 4. The org deep link is parsed only at cold start and the activity is `singleTask` with no `onNewIntent`, so a link tapped while the app is alive is ignored. Decide whether that's intended before writing G4.
 5. Seen while writing the A and B flows (tb, API 35):
@@ -167,11 +167,12 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
    - After logout and signing back in, back from the Dashboard returned to Signup (finding 2
      confirmed). Fixed in #1415: Signup now clears the whole stack when it goes to the Dashboard.
      `settings-logout.yaml` and `settings-logout-back.yaml` check that back then exits the app.
-   - Deleting any user while offline crashes the app: `UserSelectViewModel.deleteUser` calls
+   - Deleting any user while offline crashed the app: `UserSelectViewModel.deleteUser` called
      `messageRepo.syncMessages()`, whose `uploadMessages()` (`MessagesRepo.kt`) is outside the
-     try/catch. The user is deleted first, so E7/E8 relaunch and check the user is gone; the
-     "Account deleted" dialog and the Signup stack after deleting the admin are not asserted there; `settings-delete-user-offline.yaml`
-     asserts them (#1416, fixed: `deleteUser` now catches the sync failure). Online, the same unguarded upload runs at launch and on
+     try/catch. Fixed in #1416: `deleteUser` now catches the sync failure. `settings-delete-user-offline.yaml`
+     and E7 (`settings-delete-user.yaml`) check the "Account Deleted" dialog and the return to
+     Settings after deleting a non-admin; E8 (`settings-delete-admin.yaml`) checks the dialog and the
+     move to Signup after deleting the admin. Online, the same unguarded upload runs at launch and on
      picking a user; CI's e2e run is offline for that reason.
    - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed) (#1417).
    - H5: process death on Add org crashes on reopen: `CaptureSetupScope not open` from
