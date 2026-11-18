@@ -136,8 +136,8 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 | H5 | Process death mid setup | On Add org (or session note) → background → `am kill` → reopen | See finding 3 | Known bug (`sad-process-death-setup.yaml`) |
 | H6 | Process death mid capture | On image review → background → kill → reopen → tree not duplicated, can capture again | Same scope issue, data integrity | Known bug (`sad-process-death-review.yaml`, `sad-capture-after-process-death.yaml`) |
 | H7 | Process death on dashboard/settings | Background → kill → reopen → same screen, no crash | Nav3 saved back stack | Yes (`sad-process-death-screens.yaml`) |
-| H8 | Double taps | Double-tap Capture, Next, Settings → only one screen pushed | `Navigator` throttle | Yes (`sad-double-tap.yaml`); known bug (`sad-double-tap-setup.yaml`) |
-| H9 | Back everywhere | From every screen, system back lands where expected (table in tests) | Nav3 migration and module split risk | Yes (`sad-back.yaml`, 15 screens); known bug (`sad-back-add-org.yaml`) |
+| H8 | Double taps | Double-tap Capture, Next, Settings → only one screen pushed | `Navigator` throttle | Yes (`sad-double-tap.yaml`, `sad-double-tap-setup.yaml`) |
+| H9 | Back everywhere | From every screen, system back lands where expected (table in tests) | Nav3 migration and module split risk | Yes (`sad-back.yaml`, 15 screens); back from Add org (`sad-back-add-org.yaml`) |
 | H10 | Interrupted session | Kill during capture → relaunch → dashboard counts correct | `wasSessionInterrupted` path | Yes (`sad-interrupted-session.yaml`) |
 
 ### I. Dev tools (P2)
@@ -185,7 +185,8 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
      there crashes (`AddOrgViewModel` SetDefaultOrg) (#1421). Fixed: the setup scope now stays
      open until the capture flow ends.
    - H9: system back from Add org doesn't step the setup flow back (`navBackward` isn't called),
-     so Next on user select then skips Add org (#1422).
+     so Next on user select then skips Add org (#1422). Fixed: `navForward` re-reads the step from
+     the back stack; `sad-back-add-org.yaml` is no longer `known-bug`.
    - H8: double-tapping Next on user select opens Add org and then capture; the Navigator
      throttle doesn't stop the second `navForward` (#1423).
    - Each issue says it is fixed only when its known-bug flow passes; the fix PR drops the tag.
