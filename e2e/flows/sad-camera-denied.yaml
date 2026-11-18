@@ -6,9 +6,7 @@
 #   previous screen (Add org);
 # - "Don't allow" (now "don't ask again") leads to the dialog that points to the app settings.
 #
-# The flow does not tap Next on Add org after the rationale cancel: the capture setup scope was
-# closed when capture opened, so Next crashes (CaptureSetupScopeManager.getData(), see
-# sad-camera-rationale-next.yaml).
+# Next on Add org after the rationale cancel is checked by sad-camera-rationale-next.yaml.
 appId: org.greenstand.android.TreeTracker.debug
 name: H2 Camera denied on capture
 tags: [sad-path]

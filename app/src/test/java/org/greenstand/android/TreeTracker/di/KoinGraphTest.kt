@@ -76,6 +76,7 @@ import org.koin.dsl.module
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -234,6 +235,16 @@ class KoinGraphTest {
         CaptureFlowScopeManager.open()
 
         assertNotSame(first, koin.get<TreeCapturer>())
+    }
+
+    @Test
+    fun `image review view model reopens the capture flow when restored after process death`() {
+        // Nav3 restores image review with no capture flow scope open (#1419).
+        assertFalse(CaptureFlowScopeManager.isOpen)
+
+        assertTrue(koin.get<TreeImageReviewViewModel>() is TreeImageReviewViewModel)
+
+        assertTrue(CaptureFlowScopeManager.isOpen)
     }
 
     @Test
