@@ -51,5 +51,7 @@ closed scope in init and the app crashed with `IllegalStateException: CaptureSet
   the saved user, `restoring` until it is back, lost setup ignores input.
 - `CaptureSetupRestoreUiTest`: each restored step waits for its user before navigating, and ends on
   the Dashboard when the user is gone, with or without a Dashboard on the stack.
-- No e2e flow: reaching these steps needs an org seeded by `e2e/seed-org.sh`, and CI's e2e job and
-  the before/after video workflow don't seed orgs.
+- e2e: `e2e/flows/org-process-death-session-note.yaml` (C5, org-config) kills the app on the
+  session note step of the `session-note` org from `e2e/seed-org.sh`, reopens it, and finishes setup
+  into capture. `e2e/run-org.sh` runs it on CI, and now names each flow's report after the flow, so
+  two flows on one org don't overwrite each other.

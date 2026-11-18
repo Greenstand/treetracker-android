@@ -17,11 +17,12 @@ while read -r VARIANT FLOW; do
   # Children must not read the loop's stdin.
   bash "$ROOT/e2e/seed-org.sh" -s "$SERIAL" "$VARIANT" </dev/null || { FAILED=1; continue; }
   "$TB" test "$ROOT/e2e/flows/$FLOW" -p android --device "$SERIAL" --format junit \
-    --output "$OUT/org-$VARIANT.xml" --debug-output "$OUT/org-$VARIANT" </dev/null || FAILED=1
+    --output "$OUT/${FLOW%.yaml}.xml" --debug-output "$OUT/${FLOW%.yaml}" </dev/null || FAILED=1
 done <<'EOF'
 session-note org-session-note.yaml
 tree-height org-tree-height.yaml
 force-note org-force-note.yaml
 wallet-select org-wallet-select.yaml
+session-note org-process-death-session-note.yaml
 EOF
 exit $FAILED
