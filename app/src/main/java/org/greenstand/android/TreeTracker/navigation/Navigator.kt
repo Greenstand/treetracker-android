@@ -108,7 +108,7 @@ class Navigator private constructor(
     private class LastNavigation {
         var at: Long? = null
 
-        /** Event uptime of the latest finger down passed to [recordPress]. */
+        /** Event uptime of the latest touch (down or release) passed to [recordPress]. */
         var lastPressUptime: Long? = null
 
         /** [lastPressUptime] as it was when the stack last changed. */
@@ -138,7 +138,7 @@ class Navigator private constructor(
         get() = lastNavigation.at?.let { clock() - it } ?: Long.MAX_VALUE
 
     /**
-     * Records a finger down anywhere in the navigation host, by its event uptime
+     * Records a finger down or release anywhere in the navigation host, by its event uptime
      * (`PointerInputChange.uptimeMillis`). Lets [DoubleTapGuard] judge a tap against the tap that
      * led to the current screen rather than against when the screen appeared.
      */
@@ -147,8 +147,8 @@ class Navigator private constructor(
     }
 
     /**
-     * Event uptime of the last press recorded before the stack last changed, or null if no press
-     * had been recorded by then (or the stack has not changed yet).
+     * Event uptime of the last touch recorded before the stack last changed, or null if none had
+     * been recorded by then (or the stack has not changed yet).
      */
     val pressBeforeLastNavigation: Long?
         get() = lastNavigation.pressBeforeNavigation
