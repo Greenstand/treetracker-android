@@ -28,6 +28,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.application.TreeTrackerApplication
@@ -148,6 +149,9 @@ class CaptureSetupProcessDeathTest {
     fun tearDown() {
         CaptureSetupScopeManager.close()
         stopKoin()
+        // kotlinx-coroutines-test also keeps a crash from a view model's init and fails the next
+        // runTest in this JVM with it. This test already reported it, so drop it here.
+        runCatching { runTest { } }
     }
 
     @Test
