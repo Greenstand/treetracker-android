@@ -426,6 +426,20 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
+    fun `a fresh controller under a restored Add org continues from Add org (#1418)`() =
+        runTest {
+            // After process death the setup scope, and so this controller, is new (index 0), while
+            // Nav3 has restored the back stack up to Add org.
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute, clock = clock)
+
+            controller.navForward(navigator)
+
+            assertEquals(SessionNoteRoute, navigator.backStack.last())
+            assertEquals(Destination("session-note"), controller.currentDestination)
+        }
+
+    @Test
     fun `navBackward at the start pops the first screen`() {
         val controller = controllerFor(fullFlow)
         val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)

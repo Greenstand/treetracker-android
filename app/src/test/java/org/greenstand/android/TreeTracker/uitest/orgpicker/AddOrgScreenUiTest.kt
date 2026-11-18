@@ -23,18 +23,26 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.runs
 import io.mockk.unmockkObject
 import io.mockk.verify
+import kotlinx.coroutines.awaitCancellation
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.preferences.PrefKey
@@ -57,6 +65,7 @@ class AddOrgScreenUiTest : ComposeUiTest() {
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val captureSetupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
     private val orgRepo = mockk<OrgRepo>(relaxed = true)
+    private val userRepo = mockk<UserRepo>(relaxed = true)
     private val preferences =
         Preferences(
             RuntimeEnvironment.getApplication().getSharedPreferences("add-org-ui-test", Context.MODE_PRIVATE),
@@ -65,6 +74,7 @@ class AddOrgScreenUiTest : ComposeUiTest() {
     @Before
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { CaptureSetupScopeManager.nav } returns captureSetupNav
         every { captureSetupData.user } returns
@@ -99,7 +109,7 @@ class AddOrgScreenUiTest : ComposeUiTest() {
                 captureFlow = emptyList(),
             )
         previousOrgName?.let { preferences.edit().putString(PREV_ORG_KEY, it).apply() }
-        val viewModel = AddOrgViewModel(preferences, orgRepo)
+        val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
         setContent(inspectionMode = false) { AddOrgScreen(viewModel = viewModel) }
     }
 
@@ -204,5 +214,48 @@ class AddOrgScreenUiTest : ComposeUiTest() {
 
     private companion object {
         val PREV_ORG_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("autofill-org")
+    }
+
+    // --- Restored after process death (#1418) ---
+
+    private fun restoreAfterProcessDeath() {
+        every { CaptureSetupScopeManager.isOpen } returns false
+        every { CaptureSetupScopeManager.open() } just runs
+        every { CaptureSetupScopeManager.close() } just runs
+    }
+
+    @Test
+    fun `Next waits while a restored Add org reloads its user`() {
+        restoreAfterProcessDeath()
+        coEvery { userRepo.getUser(any()) } coAnswers { awaitCancellation() }
+        launch()
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        coVerify(exactly = 0) { captureSetupNav.navForward(any()) }
+    }
+
+    @Test
+    fun `a restored Add org whose user is gone pops back to the Dashboard`() {
+        restoreAfterProcessDeath()
+        coEvery { userRepo.getUser(any()) } returns null
+        backStack.addAll(listOf(UserSelectRoute, AddOrgRoute))
+        launch()
+        composeTestRule.waitForIdle()
+
+        assertEquals(listOf(DashboardRoute), backStack.toList())
+    }
+
+    @Test
+    fun `a restored Add org whose user is gone opens the Dashboard when it is not on the stack`() {
+        restoreAfterProcessDeath()
+        coEvery { userRepo.getUser(any()) } returns null
+        backStack.clear()
+        backStack.add(AddOrgRoute)
+        launch()
+        composeTestRule.waitForIdle()
+
+        assertEquals(listOf(DashboardRoute), backStack.toList())
     }
 }
