@@ -68,6 +68,7 @@ import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.PlayInstallReferrerDataSource
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
@@ -105,9 +106,9 @@ import org.koin.dsl.module
 val appModule =
     module {
 
-        viewModel { SessionNoteViewModel() }
+        viewModel { SessionNoteViewModel(get()) }
 
-        viewModel { AddWalletViewModel() }
+        viewModel { AddWalletViewModel(get()) }
 
         viewModel { AddOrgViewModel(get(), get(), get()) }
 
@@ -132,7 +133,7 @@ val appModule =
                 .SignupViewModel(get(), get())
         }
 
-        viewModel { WalletSelectViewModel(get()) }
+        viewModel { WalletSelectViewModel(get(), get()) }
 
         viewModel { IndividualMessageListViewModel(get(), get(), get()) }
 
@@ -281,6 +282,8 @@ val appModule =
         single { FirebaseRemoteConfig.getInstance() }
 
         single { OrgConfigProvider(get()) }
+
+        factory { CaptureSetupRestorer(get(), get()) }
 
         scope<CaptureSetupScope> {
             scoped { CaptureSetupData(get()) }

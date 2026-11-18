@@ -37,6 +37,7 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
@@ -109,7 +110,7 @@ class AddOrgScreenUiTest : ComposeUiTest() {
                 captureFlow = emptyList(),
             )
         previousOrgName?.let { preferences.edit().putString(PREV_ORG_KEY, it).apply() }
-        val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+        val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
         setContent(inspectionMode = false) { AddOrgScreen(viewModel = viewModel) }
     }
 
