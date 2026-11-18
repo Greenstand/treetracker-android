@@ -65,6 +65,9 @@ class TreeCapturerTest {
     @MockK(relaxed = true)
     private lateinit var sessionTracker: SessionTracker
 
+    @MockK(relaxed = true)
+    private lateinit var pendingTreeStore: PendingTreeStore
+
     private lateinit var treeCapturer: TreeCapturer
 
     @Before
@@ -77,6 +80,7 @@ class TreeCapturerTest {
                 createTreeUseCase = createTreeUseCase,
                 deviceOrientation = deviceOrientation,
                 sessionTracker = sessionTracker,
+                pendingTreeStore = pendingTreeStore,
             )
     }
 
@@ -397,6 +401,86 @@ class TreeCapturerTest {
             assertEquals(TREE_UUID, savedTree.captured.treeUuid)
             assertEquals(SESSION_ID, savedTree.captured.sessionId)
             assertEquals("saved note", savedTree.captured.content)
+        }
+
+    @Test
+    fun `WHEN setImage, addAttribute and setNote THEN each change is kept for process death`() =
+        runTest {
+            pinAndSetImage()
+            treeCapturer.addAttribute("key", "value")
+            treeCapturer.setNote("a note")
+
+            verify(exactly = 3) { pendingTreeStore.save(any()) }
+            verify { pendingTreeStore.save(treeCapturer.currentTree!!) }
+        }
+
+    @Test
+    fun `WHEN saveTree succeeds THEN the kept tree is cleared`() =
+        runTest {
+            pinAndSetImage()
+            coEvery { createTreeUseCase.execute(any()) } returns 1L
+
+            treeCapturer.saveTree()
+
+            verify { pendingTreeStore.clear() }
+        }
+
+    @Test
+    fun `WHEN saveTree succeeds THEN currentTree is cleared so the tree can't be saved again`() =
+        runTest {
+            pinAndSetImage()
+            coEvery { createTreeUseCase.execute(any()) } returns 1L
+
+            treeCapturer.saveTree()
+            treeCapturer.setNote("late note")
+
+            assertNull(treeCapturer.currentTree)
+            assertFalse(treeCapturer.saveTree())
+            coVerify(exactly = 1) { createTreeUseCase.execute(any()) }
+        }
+
+    @Test
+    fun `WHEN saveTree fails THEN the kept tree stays`() =
+        runTest {
+            pinAndSetImage()
+            coEvery { createTreeUseCase.execute(any()) } throws RuntimeException("db")
+
+            treeCapturer.saveTree()
+
+            verify(exactly = 0) { pendingTreeStore.clear() }
+        }
+
+    @Test
+    fun `WHEN restorePendingTree THEN the kept tree becomes current and saveTree saves it`() =
+        runTest {
+            val kept = Tree(TREE_UUID, SESSION_ID, "", "/photo.jpg", 1.0, 2.0)
+            every { pendingTreeStore.load() } returns kept
+            val savedTree = slot<Tree>()
+            coEvery { createTreeUseCase.execute(capture(savedTree)) } returns 1L
+
+            assertEquals(kept, treeCapturer.restorePendingTree())
+            assertTrue(treeCapturer.saveTree())
+
+            assertEquals(kept, savedTree.captured)
+        }
+
+    @Test
+    fun `WHEN nothing was kept THEN restorePendingTree returns null`() {
+        every { pendingTreeStore.load() } returns null
+
+        assertNull(treeCapturer.restorePendingTree())
+        assertNull(treeCapturer.currentTree)
+    }
+
+    @Test
+    fun `WHEN discardPendingTree THEN current and kept tree are dropped`() =
+        runTest {
+            pinAndSetImage()
+
+            treeCapturer.discardPendingTree()
+
+            assertNull(treeCapturer.currentTree)
+            verify { pendingTreeStore.clear() }
         }
 
     private suspend fun pinAndSetImage(
