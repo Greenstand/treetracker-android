@@ -56,16 +56,39 @@ class DoubleTapGuard(
      * Whether the latest press is the second half of a double tap that navigated to this screen.
      * Each check uses up the recorded press, so an action with no press of its own (the keyboard's
      * Go) is judged as happening now rather than by an older tap on the screen.
+     *
+     * When the navigator knows the last press before it navigated ([recordPressesFor] on the
+     * navigation host), the press is judged against that tap: a double tap's second tap goes down
+     * within the double-tap timeout of its first. So a quick first tap after a navigation that no
+     * recent tap caused (signup returning from the camera to Add org, #1450) is let through.
+     * Without that, it falls back to the time since the navigation.
      */
     fun isSecondTapOfDoubleTap(navigator: Navigator): Boolean {
-        val millisSincePress = lastPressUptimeMs?.let { uptimeMillis() - it } ?: 0L
+        val pressUptimeMs = lastPressUptimeMs
         lastPressUptimeMs = null
+        val tapBeforeNavigation = navigator.pressBeforeLastNavigation
+        if (tapBeforeNavigation != null && navigator.millisSinceLastNavigation != Long.MAX_VALUE) {
+            return (pressUptimeMs ?: uptimeMillis()) - tapBeforeNavigation < doubleTapTimeoutMs()
+        }
+        val millisSincePress = pressUptimeMs?.let { uptimeMillis() - it } ?: 0L
         return isSecondTapOfDoubleTap(navigator.millisSinceLastNavigation, millisSincePress, doubleTapTimeoutMs())
     }
 }
 
 @Composable
 fun rememberDoubleTapGuard(): DoubleTapGuard = remember { DoubleTapGuard() }
+
+/**
+ * Records every finger down inside it with [Navigator.recordPress], without consuming anything.
+ * Put it once on the root that hosts the navigation, so [DoubleTapGuard] knows the tap that led
+ * to each navigation, on any screen.
+ */
+fun Modifier.recordPressesFor(navigator: Navigator): Modifier =
+    pointerInput(navigator) {
+        awaitEachGesture {
+            navigator.recordPress(awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial).uptimeMillis)
+        }
+    }
 
 /**
  * Whether a press that went down [millisSincePress] ago, on a screen whose navigator last changed
