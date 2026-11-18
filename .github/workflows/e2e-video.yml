@@ -1,0 +1,377 @@
+name: E2E before/after videos
+
+# Records a video of the e2e flows a PR adds or changes, run against master's app ("before") and
+# against this branch's app ("after"). Both runs use this branch's flow files, so a bug fix PR
+# that drops the known-bug tag from its flow gets a video of the flow failing on master and
+# passing with the fix. Videos and results are uploaded as the e2e-video-before and
+# e2e-video-after artifacts and listed in the run summary. For PRs from this repo, the publish job
+# also puts a before/after table of GIFs (with MP4 links) into the PR description. The runs never
+# fail this check: the "Android end-to-end" check is the one that gates the PR.
+#
+# A PR that only changes this recorder records every known-bug flow, as a test of the recorder.
+# Run it by hand (Actions > E2E before/after videos > Run workflow) to record any flows.
+on:
+  pull_request:
+    branches: [ master, release* ]
+    paths:
+      - "e2e/flows/**"
+      - "e2e/record.sh"
+      - ".github/workflows/e2e-video.yml"
+  workflow_dispatch:
+    inputs:
+      flows:
+        description: "Flow files to record, space separated (e.g. e2e/flows/sad-back-add-org.yaml)"
+        required: true
+      base:
+        description: "Ref whose app is the 'before'"
+        required: false
+        default: master
+
+concurrency:
+  group: e2e-video-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pick-flows:
+    name: pick flows
+    runs-on: ubuntu-latest
+    outputs:
+      flows: ${{ steps.pick.outputs.flows }}
+      base: ${{ steps.pick.outputs.base }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: pick
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_FLOWS: ${{ inputs.flows }}
+          INPUT_BASE: ${{ inputs.base }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [[ $EVENT == workflow_dispatch ]]; then
+            BASE=$(git rev-parse "origin/${INPUT_BASE#origin/}")
+            FLOWS=$INPUT_FLOWS
+          else
+            BASE=$(git merge-base "$PR_BASE" HEAD)
+            FLOWS=$(git diff --name-only --diff-filter=AM "$BASE" HEAD -- 'e2e/flows/*.yaml' | { grep -v '^e2e/flows/subflows/' || true; } | tr '\n' ' ')
+            if [[ -z ${FLOWS// } ]]; then
+              FLOWS=$(grep -l -E '^tags:.*known-bug' e2e/flows/*.yaml | tr '\n' ' ')
+            fi
+          fi
+          for F in $FLOWS; do [[ -f $F ]] || { echo "::error::No flow file $F"; exit 1; }; done
+          echo "Recording: $FLOWS (before = $BASE)"
+          echo "flows=$FLOWS" >> "$GITHUB_OUTPUT"
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+
+  record:
+    name: record (${{ matrix.app }})
+    needs: pick-flows
+    if: needs.pick-flows.outputs.flows != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [ before, after ]
+    env:
+      API_LEVEL: "35"
+      # Keep in step with android-e2e.yml.
+      TESTBUDDY_REF: ab598c27daa9784f026229c9322adba69b11f8b5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # The "before" app is the base's code; the flows and scripts stay this branch's.
+      - name: Use the base's app code
+        if: matrix.app == 'before'
+        env:
+          BASE: ${{ needs.pick-flows.outputs.base }}
+        run: |
+          git restore --source="$BASE" --staged --worktree -- . ':(exclude)e2e' ':(exclude).github'
+          git status --short | head -20
+
+      - name: Check out Test Buddy
+        uses: actions/checkout@v4
+        with:
+          repository: Elforama/testbuddy
+          ref: ${{ env.TESTBUDDY_REF }}
+          path: .testbuddy
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: .testbuddy/go.mod
+          cache-dependency-path: .testbuddy/go.sum
+      - name: Build tb
+        working-directory: .testbuddy
+        run: |
+          (cd agents/android && ./gradlew assembleDebug)
+          cp agents/android/app/build/outputs/apk/debug/app-debug.apk internal/driver/android/assets/tb-agent.apk
+          go build -o "$GITHUB_WORKSPACE/bin/tb" ./cmd/tb
+
+      - name: Setup build environment
+        uses: ./.github/workflows/actions/setup-build-environment
+        with:
+          use_dummy_keys: true
+      - name: Build the debug app
+        run: bash ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      # Same snapshot as android-e2e.yml (same key), so either workflow can save it.
+      - name: Emulator snapshot cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.API_LEVEL }}-google_apis-x86_64-cameras
+      - name: Create the emulator snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: echo "snapshot saved"
+
+      - name: Record the flows
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          FLOWS: ${{ needs.pick-flows.outputs.flows }}
+          OUT: build/e2e-video
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: |
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            TB="$GITHUB_WORKSPACE/bin/tb" bash e2e/record.sh -s "$(adb get-serialno)" $FLOWS
+
+      - name: Summary
+        if: always()
+        env:
+          APP: ${{ matrix.app }}
+          BASE: ${{ needs.pick-flows.outputs.base }}
+        run: |
+          {
+            if [[ $APP == before ]]; then echo "### Before: app at ${BASE:0:10}"; else echo "### After: app at ${GITHUB_SHA:0:10}"; fi
+            echo
+            echo "| Flow | Result |"
+            echo "|---|---|"
+            if [[ -f build/e2e-video/results.txt ]]; then
+              while read -r NAME RESULT; do echo "| \`$NAME\` | $RESULT |"; done < build/e2e-video/results.txt
+            fi
+            echo
+            echo "Videos: the \`e2e-video-$APP\` artifact of this run."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-video-${{ matrix.app }}
+          path: build/e2e-video/
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Delete dummy property file
+        if: always()
+        run: rm -f treetracker.keys.properties
+
+  # Puts the recordings into the PR description between the e2e-videos markers. gh 2.105+ uploads
+  # them as GitHub attachments (`gh pr edit --attach`), which play inline like a video dragged in
+  # from the browser. If that fails, each recording becomes a GIF on the e2e-media branch instead.
+  # Skipped for PRs from forks, whose token can't edit the PR.
+  publish:
+    name: publish videos to the PR
+    needs: [ pick-flows, record ]
+    if: >-
+      !cancelled() && needs.pick-flows.outputs.flows != '' && github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      PR: ${{ github.event.pull_request.number }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: e2e-video-*
+          path: videos
+      # gh 2.105+ uploads videos as real GitHub attachments, which play inline.
+      - name: Install the latest gh
+        run: |
+          FILE=$(curl -fsSL https://cli.github.com/packages/dists/stable/main/binary-amd64/Packages \
+            | awk '/^Filename: /{f=$2} END{print f}')
+          curl -fsSL -o /tmp/gh.deb "https://cli.github.com/packages/$FILE"
+          sudo dpkg -i /tmp/gh.deb >/dev/null
+          gh --version | head -1
+      - name: Attach the videos to the PR description
+        id: attach
+        continue-on-error: true
+        env:
+          # gh only attaches files with a token from a user who has write access; the workflow's
+          # own token is refused ("attaching files requires write access to the repository").
+          # E2E_ATTACH_TOKEN is a maintainer's fine-grained token (Contents and Pull requests:
+          # read and write). Without it this step fails and the GIF fallback runs.
+          GH_TOKEN: ${{ secrets.E2E_ATTACH_TOKEN || github.token }}
+          # No checkout in this job, so gh can't read the repo from git.
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, re, subprocess
+          pr, sha, run = os.environ["PR"], os.environ["SHA"], os.environ["RUN_URL"]
+          def results(side):
+              f = pathlib.Path(f"videos/e2e-video-{side}/results.txt")
+              return dict(l.split() for l in f.read_text().split("\n") if l.strip()) if f.exists() else {}
+          before, after = results("before"), results("after")
+          icon = {"passed": "✅ passed", "failed": "❌ failed"}
+          attach, lines = [], []
+          for name in sorted(set(before) | set(after)):
+              lines += [f"**`{name}`**", ""]
+              for side, res in (("before", before), ("after", after)):
+                  mp4 = pathlib.Path(f"videos/e2e-video-{side}/{name}.mp4")
+                  label = "Before (master's app)" if side == "before" else "After (this PR's app)"
+                  lines.append(f"{label}: {icon.get(res.get(name), '–')}")
+                  lines.append("")
+                  if mp4.exists():
+                      # gh rewrites ./ paths in the body to the uploaded attachment's URL.
+                      lines += [f"./{mp4}", ""]
+                      attach.append(str(mp4))
+                  else:
+                      lines += ["(no video)", ""]
+          section = "\n".join([
+              "<!-- e2e-videos:start -->",
+              f"#### E2E before/after videos ({sha[:7]})",
+              "",
+              f"Recorded by [this run]({run}).",
+              "",
+              *lines,
+              "<!-- e2e-videos:end -->",
+          ])
+          body = json.loads(subprocess.check_output(["gh", "pr", "view", pr, "--json", "body"]))["body"] or ""
+          marker = re.compile(r"<!-- e2e-videos:start -->.*?<!-- e2e-videos:end -->", re.S)
+          anchor = re.compile(r"(### 🎥[^\n]*\n)")
+          if marker.search(body):
+              body = marker.sub(lambda m: section, body)
+          elif anchor.search(body):
+              body = anchor.sub(lambda m: m.group(1) + "\n" + section + "\n", body, count=1)
+          else:
+              body = body + "\n\n" + section + "\n"
+          pathlib.Path("body.md").write_text(body)
+          cmd = ["gh", "pr", "edit", pr, "--body-file", "body.md"]
+          for f in attach:
+              cmd += ["--attach", f]
+          subprocess.run(cmd, check=True)
+          PY
+      # Fallback when the upload fails: GIFs on the e2e-media branch, which render inline too.
+      - name: Install ffmpeg
+        if: steps.attach.outcome != 'success'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Make GIFs
+        if: steps.attach.outcome != 'success'
+        run: |
+          DIR="pr-$PR/${SHA:0:7}"
+          mkdir -p "media/$DIR"
+          for SIDE in before after; do
+            for MP4 in videos/e2e-video-$SIDE/*.mp4; do
+              [[ -f $MP4 ]] || continue
+              NAME=$(basename "$MP4" .mp4)
+              cp "$MP4" "media/$DIR/$NAME-$SIDE.mp4"
+              # Double speed, 8 fps, 270px wide keeps a minute-long flow to a few MB.
+              ffmpeg -loglevel error -y -i "$MP4" -filter_complex \
+                "[0:v]setpts=0.5*PTS,fps=8,scale=270:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64[p];[b][p]paletteuse=dither=bayer" \
+                "media/$DIR/$NAME-$SIDE.gif"
+            done
+            [[ -f videos/e2e-video-$SIDE/results.txt ]] && cp "videos/e2e-video-$SIDE/results.txt" "media/$DIR/results-$SIDE.txt"
+          done
+          ls -la "media/$DIR"
+          echo "DIR=$DIR" >> "$GITHUB_ENV"
+      - name: Push to the e2e-media branch
+        if: steps.attach.outcome != 'success'
+        run: |
+          cd media
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          REMOTE="https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          # Other PRs push to e2e-media at the same time. Keep the files outside the checkout and
+          # rebuild the commit on the newest tip on each try, so a rejected push can be retried.
+          mkdir -p ../staged && cp -r "$DIR" ../staged/files && rm -rf "${DIR%%/*}"
+          for TRY in 1 2 3 4 5 6 7 8; do
+            if git fetch -q --depth 1 "$REMOTE" e2e-media 2>/dev/null; then
+              git checkout -q -f -B e2e-media FETCH_HEAD
+            else
+              git symbolic-ref HEAD refs/heads/e2e-media
+            fi
+            mkdir -p "$DIR" && cp -r ../staged/files/. "$DIR/"
+            git add "$DIR"
+            git commit -q -m "Videos for #$PR at ${SHA:0:7}" || exit 0
+            git push -q "$REMOTE" HEAD:e2e-media && exit 0
+            sleep $((TRY * 2 + RANDOM % 5))
+          done
+          exit 1
+      - name: Put the GIFs in the PR description
+        if: steps.attach.outcome != 'success'
+        uses: actions/github-script@v7
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const dir = process.env.DIR;
+            const raw = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/e2e-media/${dir}`;
+            const results = side => {
+              const f = `media/${dir}/results-${side}.txt`;
+              if (!fs.existsSync(f)) return {};
+              return Object.fromEntries(fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(l => l.split(' ')));
+            };
+            const before = results('before'), after = results('after');
+            const names = [...new Set([...Object.keys(before), ...Object.keys(after)])].sort();
+            const icon = r => r === 'passed' ? '✅ passed' : r === 'failed' ? '❌ failed' : '–';
+            const cell = (name, side) => fs.existsSync(`media/${dir}/${name}-${side}.gif`)
+              ? `<img src="${raw}/${name}-${side}.gif" width="270"><br>[${name}-${side}.mp4](${raw}/${name}-${side}.mp4)`
+              : 'no video';
+            const rows = names.map(n =>
+              `| \`${n}\` | ${icon(before[n])}<br>${cell(n, 'before')} | ${icon(after[n])}<br>${cell(n, 'after')} |`);
+            const section = [
+              '<!-- e2e-videos:start -->',
+              `#### E2E before/after videos (${process.env.SHA.slice(0, 7)})`,
+              '',
+              'Before: master\'s app. After: this PR\'s app. GIFs play at double speed; the MP4 links are full speed.',
+              `Recorded by [this run](${process.env.RUN_URL}).`,
+              '',
+              '| Flow | Before | After |',
+              '|---|---|---|',
+              ...rows,
+              '<!-- e2e-videos:end -->',
+            ].join('\n');
+            const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: Number(process.env.PR) });
+            const body = pr.body || '';
+            const re = /<!-- e2e-videos:start -->[\s\S]*?<!-- e2e-videos:end -->/;
+            const anchor = /(### 🎥[^\n]*\n)/;
+            const next = re.test(body) ? body.replace(re, section)
+              : anchor.test(body) ? body.replace(anchor, `$1\n${section}\n`)
+              : `${body}\n\n${section}\n`;
+            if (next !== body) {
+              await github.rest.pulls.update({ ...context.repo, pull_number: Number(process.env.PR), body: next });
+            }
