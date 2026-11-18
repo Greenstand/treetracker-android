@@ -288,6 +288,44 @@ class UserSelectViewModelTest {
         }
 
     @Test
+    fun `GIVEN a user selected for deletion WHEN delete fails THEN they stay the current user`() =
+        runTest {
+            val currentUserIds = mutableListOf<Long?>()
+            every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
+            val setupData = CaptureSetupData(mockk(relaxed = true))
+            every { CaptureSetupScopeManager.getData() } returns setupData
+            coEvery { userRepo.deleteUser("0712345678") } returns false
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(listOf<Long?>(planter.id), currentUserIds)
+            assertEquals(planter, setupData.user)
+        }
+
+    @Test
+    fun `GIVEN another user is current WHEN a user opened by id is deleted THEN the current user is kept`() =
+        runTest {
+            val other = FakeFileGenerator.fakeUsers[1]
+            val setupData = CaptureSetupData(mockk(relaxed = true))
+            setupData.user = other
+            every { CaptureSetupScopeManager.getData() } returns setupData
+            coEvery { userRepo.getUser(planter.id) } returns planter
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            val viewModel = createViewModel(userId = planter.id)
+            withContext(Dispatchers.Default) {
+                withTimeout(5_000) { viewModel.state.first { it.selectedUser != null } }
+            }
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+            verify(exactly = 0) { preferences.setUserId(any()) }
+            assertEquals(other, setupData.user)
+        }
+
+    @Test
     fun `GIVEN a selected user WHEN message sync throws after delete THEN does not crash and still marks deleted locally`() =
         runTest {
             coEvery { userRepo.deleteUser("0712345678") } returns true
