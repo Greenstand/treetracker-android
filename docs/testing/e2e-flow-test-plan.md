@@ -100,7 +100,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 | E3 | Profiles | Settings → Profile → pick user → profile shows their details → back ×2 | Read-only path | Yes (`settings-profile-privacy.yaml`) |
 | E4 | Edit and delete tree | Settings → Edit trees → user → tree list → detail → change note → save → delete → dialog → gone from list | Only place trees are edited | Yes (`settings-trees-map.yaml`) |
 | E5 | Map | Settings → Map with trees → markers and carousel; with zero trees → empty state | Map rendering regressions | Yes (`settings-trees-map.yaml`, carousel cards only) |
-| E6 | Logout | Settings → Logout → confirm → Signup is the only screen; sign back in with existing identifier → Dashboard; back from Dashboard exits app | See finding 2 | Yes (`settings-logout.yaml`, asserts finding 2) |
+| E6 | Logout | Settings → Logout → confirm → Signup is the only screen; sign back in with existing identifier → Dashboard; back from Dashboard exits app | See finding 2 | Yes (`settings-logout.yaml`, `settings-logout-back.yaml`) |
 | E7 | Delete non-admin user | Settings → Delete account → pick non-admin → confirm → "deleted" → back on Settings | Delete branch 1 | Partly (`settings-delete-user.yaml`, see finding 6) |
 | E8 | Delete admin | Same for the admin → ends on Signup with clean stack | Delete branch 2 | Partly (`settings-delete-admin.yaml`, see finding 6) |
 | E9 | Privacy policy | Settings → privacy dialog → close | Cheap, often broken by dialog refactors | Yes (`settings-profile-privacy.yaml`) |
@@ -149,7 +149,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 ## 4. Findings worth confirming (from reading the code, not run)
 
 1. Splash only advances when location is granted (`SplashScreen.kt`, `onResult`). If the user denies, the app sits on the splash image with no message; after "don't ask again" it never moves. H1 should fail today.
-2. After logout or deleting the admin, the stack is cleared to `SignupFlowRoute`. Signup then navigates to Dashboard with `popUpTo<LanguageRoute>`, which is not on the stack, so Signup likely stays under Dashboard and back from Dashboard returns to Signup. E6/E8 check this.
+2. After logout or deleting the admin, the stack is cleared to `SignupFlowRoute`. Signup then navigated to Dashboard with `popUpTo<LanguageRoute>`, which was not on the stack, so Signup stayed under Dashboard and back from Dashboard returned to Signup. Fixed in #1415 for both paths: Signup clears the whole stack when it goes to the Dashboard. E6 and `settings-logout-back.yaml` check the logout path; E8 can't check the delete-admin path yet (offline crash, #1416).
 3. `CaptureSetupScopeManager` and `CaptureFlowScopeManager` are in-memory singletons, but the Nav3 back stack survives process death. Restoring onto Add org calls `CaptureSetupScopeManager.getData()` before any `open()`, which throws. H5 likely crashes; H6 may too.
 4. The org deep link is parsed only at cold start and the activity is `singleTask` with no `onNewIntent`, so a link tapped while the app is alive is ignored. Decide whether that's intended before writing G4.
 5. Seen while writing the A and B flows (tb, API 35):
@@ -164,9 +164,9 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
      The C flows seed the org into the database with `e2e/seed-org.sh`. C5 needs Remote Config
      (`validateOrgRoutes` runs only there). C6 has no entry point: the Dashboard org button is
      commented out (`DashboardScreen.kt`).
-   - After logout and signing back in, back from the Dashboard returns to Signup (finding 2
-     confirmed). `settings-logout.yaml` asserts today's behaviour; `settings-logout-back.yaml`
-     (known-bug) asserts the fix (#1415).
+   - After logout and signing back in, back from the Dashboard returned to Signup (finding 2
+     confirmed). Fixed in #1415: Signup now clears the whole stack when it goes to the Dashboard.
+     `settings-logout.yaml` and `settings-logout-back.yaml` check that back then exits the app.
    - Deleting any user while offline crashes the app: `UserSelectViewModel.deleteUser` calls
      `messageRepo.syncMessages()`, whose `uploadMessages()` (`MessagesRepo.kt`) is outside the
      try/catch. The user is deleted first, so E7/E8 relaunch and check the user is gone; the

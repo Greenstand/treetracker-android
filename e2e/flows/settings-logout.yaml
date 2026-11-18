@@ -1,5 +1,5 @@
 # E6: logout. Cancel keeps the user signed in. Confirming goes to Signup. Signing in again with the
-# existing identifier reaches the Dashboard.
+# existing identifier reaches the Dashboard, and back from there exits the app.
 appId: org.greenstand.android.TreeTracker.debug
 name: E6 Logout
 tags: [settings]
@@ -30,10 +30,7 @@ tags: [settings]
 - extendedWaitUntil:
     visible: {id: TrackButton}
     timeout: 15000
-# KNOWN BUG (plan finding 2): Signup stays under the Dashboard, because signup leaves with
-# popUpTo<LanguageRoute> (SignUpScreen.kt:44,66), which is not on the stack after logout. Back from
-# the Dashboard should exit the app but returns to Signup. Replace these assertions with an app
-# exit check when it is fixed.
+# Back from the Dashboard after signing in again exits the app.
 - back
 - assertNotVisible: {id: TrackButton}
-- assertVisible: {id: ExistingUserButton}
+- assertNotVisible: {id: ExistingUserButton}
