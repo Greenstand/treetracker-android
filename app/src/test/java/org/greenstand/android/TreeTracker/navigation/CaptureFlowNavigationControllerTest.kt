@@ -34,6 +34,9 @@ import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScop
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.organization.Destination
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.utils.FakeClock
 import org.greenstand.android.TreeTracker.utils.fakeNavigator
 import org.junit.After
@@ -67,6 +70,7 @@ class CaptureFlowNavigationControllerTest {
     @Before
     fun setUp() {
         CaptureFlowScopeManager.close()
+        CaptureSetupScopeManager.close()
         stopKoin()
         startKoin {
             modules(
@@ -74,9 +78,14 @@ class CaptureFlowNavigationControllerTest {
                     scope<CaptureFlowScope> {
                         scoped { CaptureFlowData() }
                     }
+                    scope<CaptureSetupScope> {
+                        scoped { CaptureSetupData(mockk(relaxed = true)) }
+                    }
                 },
             )
         }
+        // Setup leaves its scope open while capture runs, since capture can pop back onto it.
+        CaptureSetupScopeManager.open()
         CaptureFlowScopeManager.open()
 
         val tree = mockk<Tree>()
@@ -88,6 +97,7 @@ class CaptureFlowNavigationControllerTest {
     @After
     fun tearDown() {
         CaptureFlowScopeManager.close()
+        CaptureSetupScopeManager.close()
         stopKoin()
     }
 
@@ -402,6 +412,28 @@ class CaptureFlowNavigationControllerTest {
         verifySessionEnded()
     }
 
+    @Test
+    fun `navBackward at the start closes the setup scope`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, capture, clock = clock)
+
+        controller.navBackward(navigator)
+
+        assertFalse(CaptureSetupScopeManager.isOpen)
+    }
+
+    @Test
+    fun `goToDashboard with the setup scope already closed still goes to the dashboard`() {
+        CaptureSetupScopeManager.close()
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, capture, clock = clock)
+
+        controller.goToDashboard(navigator)
+
+        assertEquals(listOf<Any>(DashboardRoute), navigator.backStack)
+        assertFalse(CaptureSetupScopeManager.isOpen)
+    }
+
     // --- goToDashboard ---
 
     @Test
@@ -439,6 +471,16 @@ class CaptureFlowNavigationControllerTest {
         controller.goToDashboard(navigator)
 
         assertFalse(CaptureFlowScopeManager.isOpen)
+    }
+
+    @Test
+    fun `goToDashboard closes the setup scope`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, capture, clock = clock)
+
+        controller.goToDashboard(navigator)
+
+        assertFalse(CaptureSetupScopeManager.isOpen)
     }
 
     @Test
@@ -492,6 +534,7 @@ class CaptureFlowNavigationControllerTest {
         controller.goToUserSelect(navigator)
 
         assertFalse(CaptureFlowScopeManager.isOpen)
+        assertFalse(CaptureSetupScopeManager.isOpen)
         verifySessionEnded()
     }
 

@@ -24,7 +24,6 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
-import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
@@ -58,7 +57,7 @@ class WalletSelectViewModel(
 ) : BaseViewModel<WalletSelectState, WalletSelectAction>(WalletSelectState()) {
     init {
         // After process death Nav3 restores wallet select with the capture setup scope closed.
-        val restoring = setupRestorer.reopenIfClosed(RouteRegistry.ROUTE_WALLET_SELECT)
+        val restoring = setupRestorer.reopenIfClosed()
         if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
             val currentUser = setupRestorer.loadUser(restoring)

@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -58,7 +57,7 @@ class AddOrgViewModel(
 ) : BaseViewModel<AddOrgState, AddOrgAction>(AddOrgState()) {
     init {
         // After process death Nav3 restores Add org with the capture setup scope closed.
-        val restoring = setupRestorer.reopenIfClosed(RouteRegistry.ROUTE_ADD_ORG)
+        val restoring = setupRestorer.reopenIfClosed()
         if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
             val user = setupRestorer.loadUser(restoring)

@@ -27,19 +27,20 @@ import org.greenstand.android.TreeTracker.preferences.Preferences
  * Navigation 3 restores the back stack, but [CaptureSetupScopeManager] only keeps the setup scope
  * in memory, so the restored step finds it closed. Each step's view model calls [reopenIfClosed]
  * from init and then [loadUser], which also saves the user's id so a later restore can find it.
+ * The setup step index needs nothing: `CaptureSetupNavigationController.navForward` re-derives
+ * it from the restored back stack.
  */
 class CaptureSetupRestorer(
     private val preferences: Preferences,
     private val userRepo: UserRepo,
 ) {
     /**
-     * Reopens a closed setup scope and points the setup flow back at [route]. Returns true when it
-     * did, which means the step was restored after process death and the user must be reloaded.
+     * Reopens a closed setup scope. Returns true when it did, which means the step was restored
+     * after process death and the user must be reloaded.
      */
-    fun reopenIfClosed(route: String): Boolean {
+    fun reopenIfClosed(): Boolean {
         if (CaptureSetupScopeManager.isOpen) return false
         CaptureSetupScopeManager.open()
-        CaptureSetupScopeManager.nav.restoreAt(route)
         return true
     }
 

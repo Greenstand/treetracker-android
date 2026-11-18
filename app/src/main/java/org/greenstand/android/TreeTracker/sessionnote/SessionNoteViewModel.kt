@@ -19,7 +19,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
@@ -47,7 +46,7 @@ class SessionNoteViewModel(
 ) : BaseViewModel<SessionNoteState, SessionNoteAction>(SessionNoteState()) {
     init {
         // After process death Nav3 restores session note with the capture setup scope closed.
-        val restoring = setupRestorer.reopenIfClosed(RouteRegistry.ROUTE_SESSION_NOTE)
+        val restoring = setupRestorer.reopenIfClosed()
         if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
             val user = setupRestorer.loadUser(restoring)

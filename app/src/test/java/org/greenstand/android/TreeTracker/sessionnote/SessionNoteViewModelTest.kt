@@ -35,7 +35,6 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
-import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.After
 import org.junit.Before
@@ -138,14 +137,13 @@ class SessionNoteViewModelTest {
     }
 
     @Test
-    fun `WHEN restored after process death THEN reopens setup at session note with the saved user`() =
+    fun `WHEN restored after process death THEN reopens setup with the saved user`() =
         runTest {
             val fakeUser = FakeFileGenerator.fakeUsers.first()
             coEvery { restoreUserRepo.getUser(any()) } returns fakeUser
 
             val viewModel = restoredViewModel()
 
-            verify { setupNav.restoreAt(RouteRegistry.ROUTE_SESSION_NOTE) }
             verify { captureSetupData.user = fakeUser }
             assertEquals(fakeUser.photoPath, viewModel.state.value.userImagePath)
             assertFalse(viewModel.state.value.restoring)

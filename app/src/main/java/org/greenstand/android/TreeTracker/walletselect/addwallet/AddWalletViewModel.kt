@@ -19,7 +19,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
-import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
@@ -46,9 +45,8 @@ class AddWalletViewModel(
     setupRestorer: CaptureSetupRestorer,
 ) : BaseViewModel<AddWalletState, AddWalletAction>(AddWalletState()) {
     init {
-        // After process death Nav3 restores add wallet with the capture setup scope closed. Add
-        // wallet is part of the wallet select step, so the setup flow continues from there.
-        val restoring = setupRestorer.reopenIfClosed(RouteRegistry.ROUTE_WALLET_SELECT)
+        // After process death Nav3 restores add wallet with the capture setup scope closed.
+        val restoring = setupRestorer.reopenIfClosed()
         if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
             val user = setupRestorer.loadUser(restoring)

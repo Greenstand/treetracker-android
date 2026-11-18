@@ -11,9 +11,10 @@ scope in memory. `AddOrgViewModel` init called `getData()` before anything had c
 
 - `AddOrgViewModel` saves the setup user's id to preferences
   (`system-settings/add-org-user-id`) each time Add org opens with an open scope.
-- If Add org is created while the scope is closed (process death restore), it reopens the scope,
-  points the setup flow back at Add org (`CaptureSetupNavigationController.restoreAt`) and reloads
-  the saved user, so Next finishes setup and opens capture as before.
+- If Add org is created while the scope is closed (process death restore), it reopens the scope
+  and reloads the saved user, so Next finishes setup and opens capture as before. The setup step
+  needs no restoring: `CaptureSetupNavigationController.navForward` re-derives it from the
+  restored back stack (#1422).
 - While a restored Add org reloads that user, Next and Back wait (`AddOrgState.restoring`), so
   setup can't continue without a user.
 - If the saved user can't be found, it closes the scope and sets `setupLost`; `AddOrgScreen` then
@@ -32,7 +33,7 @@ scope in memory. `AddOrgViewModel` init called `getData()` before anything had c
   user is back, falls back when the user is gone, and ignores input once setup is lost.
 - `AddOrgScreenUiTest`: Next waits while restoring; a lost setup ends on the Dashboard with or
   without a Dashboard on the restored stack.
-- `CaptureSetupNavigationControllerTest`: `restoreAt` continues the flow from the restored step and
-  ignores unknown routes.
+- `CaptureSetupNavigationControllerTest`: a fresh controller under a restored Add org continues
+  from Add org.
 - e2e: `e2e/flows/sad-process-death-setup.yaml` no longer has the `known-bug` tag, so `e2e/run.sh`
   runs it on CI.

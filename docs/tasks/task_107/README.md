@@ -14,13 +14,12 @@ closed scope in init and the app crashed with `IllegalStateException: CaptureSet
 
 - `CaptureSetupRestorer` (new, `models/setupflow`) holds #1418's restore logic so every step shares
   it instead of copying it:
-  - `reopenIfClosed(route)` reopens a closed scope and points the setup flow back at the step
-    (`CaptureSetupNavigationController.restoreAt`).
+  - `reopenIfClosed()` reopens a closed scope. The step index needs nothing:
+    `CaptureSetupNavigationController.navForward` re-derives it from the restored back stack.
   - `loadUser(restored)` returns the setup user, reloading it from the saved id after a restore,
     and saves its id (`system-settings/capture-setup-user-id`). With no user it closes the scope.
 - `AddOrgViewModel`, `SessionNoteViewModel`, `WalletSelectViewModel` and `AddWalletViewModel` use
-  it from init. Add wallet is part of the wallet select step, so it restores the flow at
-  wallet select.
+  it from init.
 - Each step's state has `restoring` (navigation waits while the user reloads) and `setupLost`
   (the user is gone; input is ignored). `LeaveLostSetupEffect` (shared with Add org) then pops
   back to the Dashboard, or opens it if the restored stack has none.

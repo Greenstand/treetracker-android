@@ -26,8 +26,6 @@ import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.models.UserRepo
-import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
-import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.After
@@ -43,7 +41,6 @@ class CaptureSetupRestorerTest {
     private val editor = mockk<Preferences.Editor>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val setupData = mockk<CaptureSetupData>(relaxed = true)
-    private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
     private val user = FakeFileGenerator.fakeUsers.first()
     private val restorer = CaptureSetupRestorer(preferences, userRepo)
 
@@ -53,7 +50,6 @@ class CaptureSetupRestorerTest {
         every { CaptureSetupScopeManager.open() } just runs
         every { CaptureSetupScopeManager.close() } just runs
         every { CaptureSetupScopeManager.getData() } returns setupData
-        every { CaptureSetupScopeManager.nav } returns setupNav
         every { preferences.edit() } returns editor
         every { editor.putLong(any(), any()) } returns editor
     }
@@ -67,20 +63,18 @@ class CaptureSetupRestorerTest {
     fun `an open scope is left alone`() {
         every { CaptureSetupScopeManager.isOpen } returns true
 
-        assertFalse(restorer.reopenIfClosed(RouteRegistry.ROUTE_SESSION_NOTE))
+        assertFalse(restorer.reopenIfClosed())
 
         verify(exactly = 0) { CaptureSetupScopeManager.open() }
-        verify(exactly = 0) { setupNav.restoreAt(any()) }
     }
 
     @Test
-    fun `a closed scope is reopened at the restored step`() {
+    fun `a closed scope is reopened`() {
         every { CaptureSetupScopeManager.isOpen } returns false
 
-        assertTrue(restorer.reopenIfClosed(RouteRegistry.ROUTE_SESSION_NOTE))
+        assertTrue(restorer.reopenIfClosed())
 
         verify { CaptureSetupScopeManager.open() }
-        verify { setupNav.restoreAt(RouteRegistry.ROUTE_SESSION_NOTE) }
     }
 
     @Test

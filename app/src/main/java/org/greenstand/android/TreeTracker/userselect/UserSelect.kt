@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.userselect
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -56,27 +58,36 @@ fun UserSelect(
 ) {
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState(UserSelectState())
+    val doubleTapGuard = rememberDoubleTapGuard()
 
-    UserSelectContent(
-        state = state,
-        navigationButtonColors = navigationButtonColors,
-        isCreateUserEnabled = isCreateUserEnabled,
-        isNotificationEnabled = isNotificationEnabled,
-        selectedColor = selectedColor,
-        onUserClicked = { user -> viewModel.handleAction(UserSelectAction.SelectUser(user)) },
-        onCreateUserClicked = { navigator.throttledNavigate(SignupFlowRoute) },
-        onBackClicked = {
-            if (!isFromSettings) {
-                navigator.throttledNavigate(DashboardRoute) {
-                    popUpTo<DashboardRoute> { inclusive = true }
-                    launchSingleTop = true
+    Box(doubleTapGuard.modifier) {
+        UserSelectContent(
+            state = state,
+            navigationButtonColors = navigationButtonColors,
+            isCreateUserEnabled = isCreateUserEnabled,
+            isNotificationEnabled = isNotificationEnabled,
+            selectedColor = selectedColor,
+            onUserClicked = { user -> viewModel.handleAction(UserSelectAction.SelectUser(user)) },
+            onCreateUserClicked = {
+                // On small screens the add-user button sits where Dashboard's Track button was, so
+                // the second tap of a double tap on Track lands here (#1423). Drop it.
+                if (!doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
+                    navigator.throttledNavigate(SignupFlowRoute)
                 }
-            } else {
-                navigator.throttledPopBackStack()
-            }
-        },
-        onNavigateForward = onNavigateForward,
-    )
+            },
+            onBackClicked = {
+                if (!isFromSettings) {
+                    navigator.throttledNavigate(DashboardRoute) {
+                        popUpTo<DashboardRoute> { inclusive = true }
+                        launchSingleTop = true
+                    }
+                } else {
+                    navigator.throttledPopBackStack()
+                }
+            },
+            onNavigateForward = onNavigateForward,
+        )
+    }
 }
 
 /**

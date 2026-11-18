@@ -137,7 +137,7 @@ val appModule =
 
         viewModel { TreeImageReviewViewModel(get(), get(), get()) }
 
-        viewModel { PermissionViewModel(get()) }
+        viewModel { PermissionViewModel(get(), get()) }
 
         viewModel { SettingsViewModel(get()) }
 

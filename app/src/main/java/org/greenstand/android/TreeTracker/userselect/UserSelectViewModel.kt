@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.userselect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,6 +33,7 @@ import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import timber.log.Timber
 import java.util.Collections.emptyList
 
 data class UserSelectState(
@@ -81,12 +83,11 @@ class UserSelectViewModel(
     userId: Long?,
     private val userRepo: UserRepo,
     private val messageRepo: MessagesRepo,
-    locationDataCapturer: LocationDataCapturer,
+    private val locationDataCapturer: LocationDataCapturer,
     private val prefs: Preferences,
 ) : BaseViewModel<UserSelectState, UserSelectAction>(UserSelectState()) {
     init {
-        CaptureSetupScopeManager.open()
-        locationDataCapturer.startGpsUpdates()
+        startSetup()
         userRepo
             .users()
             .onEach { userList ->
@@ -98,6 +99,27 @@ class UserSelectViewModel(
                 updateState { copy(selectedUser = user) }
             }
         }
+    }
+
+    /**
+     * Starts capture setup again if capture ended it while this ViewModel stayed alive.
+     *
+     * Leaving capture for user select (`CaptureFlowNavigationController.goToUserSelect`) closes
+     * the setup scope and replaces the back stack with `UserSelectRoute` in one step. That
+     * route's entry never leaves the back stack, so Navigation 3 keeps its ViewModel and `init`
+     * doesn't run again. The capture setup user select screen calls this each time it is shown:
+     * it reopens the setup scope and clears the selection, which belonged to the ended session.
+     * While the scope is still open (e.g. Back from a later setup screen) it changes nothing.
+     */
+    fun resumeSetup() {
+        if (CaptureSetupScopeManager.isOpen) return
+        startSetup()
+        updateState { copy(selectedUser = null) }
+    }
+
+    private fun startSetup() {
+        CaptureSetupScopeManager.open()
+        locationDataCapturer.startGpsUpdates()
     }
 
     override fun handleAction(action: UserSelectAction) {
@@ -134,7 +156,15 @@ class UserSelectViewModel(
                     to = "admin",
                     body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost.",
                 )
-                messageRepo.syncMessages()
+                // The user is already deleted locally and the message is queued, so a failed sync
+                // (for example offline) must not crash the app; the next sync uploads it.
+                try {
+                    messageRepo.syncMessages()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Timber.e(e, "Message sync after deleting a user failed")
+                }
             }
         }
     }

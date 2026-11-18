@@ -1,12 +1,11 @@
-# H9: after system back from Add org to user select, Next should open Add org again.
+# H9: after system back from Add org to user select, Next opens Add org again.
 #
-# Known bug: system back pops the screen through NavDisplay's onBack (root/Host.kt), not
-# CaptureSetupNavigationController.navBackward, so the setup step index is not decremented. The
-# next Next thinks setup is done, starts the session and opens capture without Add org. Fails
-# today at the OrgNameField assertion.
+# Signs up Ada, taps Track, picks her and taps Next to reach Add org. System back returns to user
+# select (NavDisplay's onBack, not the screen's back button). Next must open Add org again and not
+# start the session and open capture. Covers #1422.
 appId: org.greenstand.android.TreeTracker.debug
 name: H9 Next after back from Add org
-tags: [sad-path, known-bug]
+tags: [sad-path]
 ---
 - launchApp: {clearState: true}
 - runFlow:
