@@ -75,20 +75,22 @@ fun SplashScreen(
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestMultiplePermissions(),
             onResult = { result ->
+                // Move on whatever the user answered: a denied permission must not leave the app
+                // on the splash image. Screens that need location (capture) ask for it again.
                 scope.launch {
-                    if (isLocationPermissionGranted(result)) {
-                        Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
+                    Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
-                        viewModel.bootstrap()
+                    viewModel.bootstrap()
 
-                        delay(1000)
+                    delay(1000)
 
-                        if (viewModel.isInitialSetupRequired()) {
+                    if (viewModel.isInitialSetupRequired()) {
+                        if (isLocationPermissionGranted(result)) {
                             viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
-                            navigateToLanguageScreen(navigator)
-                        } else {
-                            navigateToDashboardScreen(navigator)
                         }
+                        navigateToLanguageScreen(navigator)
+                    } else {
+                        navigateToDashboardScreen(navigator)
                     }
                 }
             },
