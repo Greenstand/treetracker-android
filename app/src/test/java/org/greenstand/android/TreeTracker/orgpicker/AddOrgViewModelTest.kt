@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.orgpicker
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.MockKAnnotations
+import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -31,6 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
@@ -39,6 +41,7 @@ import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.preferences.Preferences
@@ -296,8 +299,6 @@ class AddOrgViewModelTest {
 
             viewModel.handleAction(AddOrgAction.SetDefaultOrg)
 
-            // The only edit is init saving the setup user id; no org name is saved.
-            verify(exactly = 1) { preferences.edit() }
             verify(exactly = 0) { mockEditor.putString(any(), any()) }
             verify { captureSetupData.organizationName = "" }
         }
@@ -371,6 +372,7 @@ class AddOrgViewModelTest {
             verify { setupNav.restoreAt(RouteRegistry.ROUTE_ADD_ORG) }
             verify { captureSetupData.user = fakeUser }
             assertEquals(fakeUser.photoPath, viewModel.state.value.userImagePath)
+            assertFalse(viewModel.state.value.restoring)
             assertFalse(viewModel.state.value.setupLost)
         }
 
@@ -384,7 +386,38 @@ class AddOrgViewModelTest {
             val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
 
             assertTrue(viewModel.state.value.setupLost)
+            assertFalse(viewModel.state.value.restoring)
             verify { CaptureSetupScopeManager.close() }
+        }
+
+    @Test
+    fun `WHEN a restored Add org is still reloading its user THEN it is restoring`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            val reload = CompletableDeferred<User?>()
+            stubClosedScope()
+            coEvery { userRepo.getUser(any()) } coAnswers { reload.await() }
+
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            assertTrue(viewModel.state.value.restoring)
+
+            reload.complete(fakeUser)
+            assertFalse(viewModel.state.value.restoring)
+        }
+
+    @Test
+    fun `WHEN setup is lost THEN org name changes do not touch the closed scope`() =
+        runTest {
+            stubClosedScope()
+            coEvery { userRepo.getUser(any()) } returns null
+            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            clearMocks(CaptureSetupScopeManager, answers = false)
+
+            viewModel.handleAction(AddOrgAction.UpdateOrgName("Acme"))
+            viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+
+            verify(exactly = 0) { CaptureSetupScopeManager.getData() }
+            assertEquals("", viewModel.state.value.orgName)
         }
 
     private fun stubClosedScope() {

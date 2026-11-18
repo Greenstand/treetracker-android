@@ -14,13 +14,24 @@ scope in memory. `AddOrgViewModel` init called `getData()` before anything had c
 - If Add org is created while the scope is closed (process death restore), it reopens the scope,
   points the setup flow back at Add org (`CaptureSetupNavigationController.restoreAt`) and reloads
   the saved user, so Next finishes setup and opens capture as before.
+- While a restored Add org reloads that user, Next and Back wait (`AddOrgState.restoring`), so
+  setup can't continue without a user.
 - If the saved user can't be found, it closes the scope and sets `setupLost`; `AddOrgScreen` then
-  pops back to the Dashboard instead of crashing.
+  pops back to the Dashboard, or opens it if the restored stack has no Dashboard.
+
+## Limits
+
+- Only Add org is restored. Process death on the other setup steps (session note, wallet select,
+  add wallet) still hits the closed scope; those are separate bugs.
+- Only the user and the current org name come back. A session note or wallet picked on a step
+  before Add org, and an org name typed but not yet confirmed, are lost.
 
 ## Tests
 
-- `AddOrgViewModelTest`: saves the user id, restores after process death, and falls back when the
-  user is gone.
+- `AddOrgViewModelTest`: saves the user id, restores after process death, is `restoring` until the
+  user is back, falls back when the user is gone, and ignores input once setup is lost.
+- `AddOrgScreenUiTest`: Next waits while restoring; a lost setup ends on the Dashboard with or
+  without a Dashboard on the restored stack.
 - `CaptureSetupNavigationControllerTest`: `restoreAt` continues the flow from the restored step and
   ignores unknown routes.
 - e2e: `e2e/flows/sad-process-death-setup.yaml` no longer has the `known-bug` tag, so `e2e/run.sh`

@@ -64,18 +64,23 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
 
     LaunchedEffect(state.setupLost) {
         // Restored after process death without a user to set up for: fall back to the Dashboard.
-        if (state.setupLost) navigator.popBackStackTo<DashboardRoute>()
+        if (state.setupLost && !navigator.popBackStackTo<DashboardRoute>()) {
+            navigator.navigate(DashboardRoute) { popUpToRoot() }
+        }
     }
 
     AddOrg(
         state = state,
         onHandleAction = { action ->
+            // Until a restored Add org has its user back, leaving it would start setup without one.
+            val canLeave = !state.restoring && !state.setupLost
             when (action) {
-                is AddOrgAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
-                is AddOrgAction.NavigateNext -> {
-                    viewModel.handleAction(AddOrgAction.SetDefaultOrg)
-                    scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
-                }
+                is AddOrgAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
+                is AddOrgAction.NavigateNext ->
+                    if (canLeave) {
+                        viewModel.handleAction(AddOrgAction.SetDefaultOrg)
+                        scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
+                    }
                 else -> viewModel.handleAction(action)
             }
         },
