@@ -101,34 +101,6 @@ root sets `Modifier.exposeTestTags()` so the tags become resource ids. Use them 
 (`DialogPositiveButton`). When you add a screen or a dialog window, tag its controls in
 `TestTags` and check them with `tb look`.
 
-## Before/after videos
-
-`.github/workflows/e2e-video.yml` records a video of every flow a PR adds or changes, once against
-master's app ("before") and once against the PR's app ("after"). Both runs use the PR's flow
-files. So a bug fix PR that drops `known-bug` from its flow gets a video of the flow failing on
-master and passing with the fix. The run summary lists each flow's result, and the videos are in
-the `e2e-video-before` and `e2e-video-after` artifacts. The workflow never fails: the
-"Android end-to-end" check is the one that gates the PR. Org-config flows aren't seeded, so
-record those with `run-org.sh` instead.
-
-For PRs from this repo, the workflow also puts the videos into the PR description, between the
-`<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->` markers. It installs the latest `gh` and
-uploads them with `gh pr edit --attach`, so they play inline like a video dragged in from the
-browser. The upload needs a token from a user with write access, saved as the
-`E2E_ATTACH_TOKEN` repository secret (fine-grained, Contents and Pull requests: read and write);
-the workflow's own token is refused. Without the secret, or if the upload fails, it falls back to
-GIFs pushed to the `e2e-media` branch. Keep the
-markers when editing the description; the next run replaces what's between them.
-
-To record any flows on your own emulator (needs `ffmpeg` for runs over 170 seconds):
-
-```bash
-TB=tb OUT=build/e2e-video bash e2e/record.sh -s emulator-5554 e2e/flows/sad-back-add-org.yaml
-```
-
-To record flows on CI without a PR, run the workflow by hand from the Actions tab with the flow
-files and the ref whose app is the "before".
-
 ## Screen tour
 
 `tour/tour.sh` walks most screens and saves what `tb look` sees on each one (look text,
