@@ -28,6 +28,7 @@ import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import timber.log.Timber
 
 class CaptureFlowNavigationController(
@@ -108,6 +109,7 @@ class CaptureFlowNavigationController(
 
     private fun endSession() {
         CaptureFlowScopeManager.close()
+        CaptureSetupScopeManager.close()
         scope.launch {
             try {
                 sessionTracker.endSession()
