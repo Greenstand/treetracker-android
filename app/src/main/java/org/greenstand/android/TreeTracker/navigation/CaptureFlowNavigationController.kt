@@ -28,6 +28,7 @@ import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import timber.log.Timber
 
 class CaptureFlowNavigationController(
@@ -91,6 +92,33 @@ class CaptureFlowNavigationController(
         }
     }
 
+    /**
+     * Picks the capture flow up at [route] after Android killed the app there: points the flow at
+     * that step and restarts the session [sessionId] and the sensors that only lived in memory.
+     * Returns false, and changes nothing, when [route] isn't in this flow or [sessionId] isn't the
+     * session that was interrupted.
+     */
+    fun resumeAt(
+        route: String,
+        sessionId: Long,
+    ): Boolean {
+        val target = RouteRegistry.normalize(route)
+        val index = navPath.indexOfFirst { RouteRegistry.normalize(it.route) == target }
+        if (index < 0) {
+            Timber.tag("CaptureFlowNav").w("$route is not in the capture flow")
+            return false
+        }
+        if (!sessionTracker.resumeInterruptedSession() || sessionTracker.currentSessionId != sessionId) {
+            Timber.tag("CaptureFlowNav").w("Session $sessionId was not the interrupted session")
+            return false
+        }
+        currentNavPathIndex = index
+        stepCounter.enable()
+        deviceOrientation.enable()
+        locationDataCapturer.startGpsUpdates()
+        return true
+    }
+
     private fun resolveDestinationRoute(destination: org.greenstand.android.TreeTracker.models.organization.Destination): NavKey {
         resolveNoArgDestination(destination)?.let { return it }
 
@@ -107,7 +135,9 @@ class CaptureFlowNavigationController(
     }
 
     private fun endSession() {
+        treeCapturer.discardPendingTree()
         CaptureFlowScopeManager.close()
+        CaptureSetupScopeManager.close()
         scope.launch {
             try {
                 sessionTracker.endSession()

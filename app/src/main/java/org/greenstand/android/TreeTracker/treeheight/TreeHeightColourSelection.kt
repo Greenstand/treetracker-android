@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -63,6 +64,7 @@ fun TreeHeightScreen(
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
+    HandleUIEvents(viewModel)
 
     TreeHeight(
         state = state,

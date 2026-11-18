@@ -71,7 +71,9 @@ class CaptureSetupNavigationController(
             withContext(Dispatchers.Main) {
                 navigator.throttledNavigate(TreeCaptureRoute(profilePicUrl = userPhotoPath))
             }
-            CaptureSetupScopeManager.close()
+            // The setup scope stays open: the setup screens are still on the back stack, and
+            // capture can pop back onto them (e.g. cancelling the camera rationale). The capture
+            // flow closes it when it leaves for the dashboard or user select.
         } else {
             incrementIndex()
             val destination = navPath[currentNavPathIndex]

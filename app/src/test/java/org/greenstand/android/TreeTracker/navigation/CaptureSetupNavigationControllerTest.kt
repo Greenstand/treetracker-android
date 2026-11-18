@@ -247,14 +247,36 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
-    fun `navForward on the last step closes the setup scope`() =
+    fun `navForward on the last step keeps the setup scope open`() =
         runTest {
             val controller = controllerFor(destinations("user-select"))
             val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
 
             controller.navForward(navigator)
 
-            assertFalse(CaptureSetupScopeManager.isOpen)
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
+    @Test
+    fun `navForward again after capture pops back onto the last step reopens capture`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+
+            controller.navForward(navigator)
+            settle()
+            controller.navForward(navigator)
+            settle()
+            // Cancelling the camera rationale pops capture off, back onto Add org.
+            navigator.throttledPopBackStack()
+            settle()
+            controller.navForward(navigator)
+
+            assertEquals(
+                listOf(DashboardRoute, UserSelectRoute, AddOrgRoute, TreeCaptureRoute("/photos/ada.jpg")),
+                navigator.backStack,
+            )
+            coVerify(exactly = 2) { sessionTracker.startSession() }
         }
 
     @Test
@@ -401,6 +423,20 @@ class CaptureSetupNavigationControllerTest {
             controller.navForward(navigator)
 
             assertEquals(listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute), navigator.backStack)
+        }
+
+    @Test
+    fun `a fresh controller under a restored Add org continues from Add org (#1418)`() =
+        runTest {
+            // After process death the setup scope, and so this controller, is new (index 0), while
+            // Nav3 has restored the back stack up to Add org.
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute, clock = clock)
+
+            controller.navForward(navigator)
+
+            assertEquals(SessionNoteRoute, navigator.backStack.last())
+            assertEquals(Destination("session-note"), controller.currentDestination)
         }
 
     @Test
@@ -667,7 +703,7 @@ class CaptureSetupNavigationControllerTest {
             verify { stepCounter.enable() }
             verify { deviceOrientation.enable() }
             verify { locationDataCapturer.startGpsUpdates() }
-            assertFalse(CaptureSetupScopeManager.isOpen)
+            assertTrue(CaptureSetupScopeManager.isOpen)
         }
 
     @Test
