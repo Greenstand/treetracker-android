@@ -44,13 +44,22 @@ class DoubleTapGuard(
     val modifier: Modifier =
         Modifier.pointerInput(this) {
             awaitEachGesture {
-                lastPressUptimeMs = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial).uptimeMillis
+                recordPress(awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial).uptimeMillis)
             }
         }
 
-    /** Whether the latest press is the second half of a double tap that navigated to this screen. */
+    internal fun recordPress(uptimeMs: Long) {
+        lastPressUptimeMs = uptimeMs
+    }
+
+    /**
+     * Whether the latest press is the second half of a double tap that navigated to this screen.
+     * Each check uses up the recorded press, so an action with no press of its own (the keyboard's
+     * Go) is judged as happening now rather than by an older tap on the screen.
+     */
     fun isSecondTapOfDoubleTap(navigator: Navigator): Boolean {
         val millisSincePress = lastPressUptimeMs?.let { uptimeMillis() - it } ?: 0L
+        lastPressUptimeMs = null
         return isSecondTapOfDoubleTap(navigator.millisSinceLastNavigation, millisSincePress, doubleTapTimeoutMs())
     }
 }

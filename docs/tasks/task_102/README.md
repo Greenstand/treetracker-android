@@ -51,3 +51,24 @@ Two things it had to get right, both found on CI:
 - Use the press's event time, not when the click is handled. On a busy emulator Test Buddy's
   double tap took over 500 ms to arrive; its event times still say "double tap", but by wall
   clock the second tap came more than 300 ms after the navigation and got through.
+
+## Self-review
+
+A review of this task's own commits (not #1424's recorder commits) found no high-severity bugs. Fixed:
+
+- Add org's keyboard Go could reuse an old press: a tap on the org field within 300 ms of arriving
+  made a later Go look like a second tap. Each check now uses up the recorded press.
+- Tests: renamed a test whose name contradicted its assertion; added tests for the used-up press,
+  a late-arriving second tap, and `navForward` running again after an earlier call threw.
+
+Left as is:
+
+- Wallet select, Add wallet and Session note have the same bottom-right Next but no guard. Orgs with
+  those steps in their setup flow could hit the same cross-screen double tap. The default flow is
+  user select -> Add org, and those screens are outside #1423; worth a follow-up issue.
+- A double tap on Add org's back arrow decrements the setup index twice (`navBackward`). That
+  predates this change and is #1422's area.
+- `advance` starts the session before a navigation that system back could still beat. That
+  predates this change.
+- The flow's `assertNotVisible: {id: CaptureButton}` adds little, but the issue asks not to change
+  the flow's assertions.

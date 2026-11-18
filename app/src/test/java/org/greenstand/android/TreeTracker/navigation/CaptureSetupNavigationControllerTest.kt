@@ -341,6 +341,22 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
+    fun `navForward runs again after an earlier call failed`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+            coEvery { sessionTracker.startSession() } throws IllegalStateException("db") andThen Unit
+
+            runCatching { controller.navForward(navigator) }
+            controller.navForward(navigator)
+
+            coVerify(exactly = 2) { sessionTracker.startSession() }
+            assertEquals(TreeCaptureRoute("/photos/ada.jpg"), navigator.topKey)
+        }
+
+    @Test
     fun `navForward from a screen that is no longer on top does nothing`() =
         runTest {
             val controller = controllerFor(destinations("user-select"))
