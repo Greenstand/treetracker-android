@@ -16,7 +16,6 @@
 package org.greenstand.android.TreeTracker.splash
 
 import android.Manifest
-import android.app.Activity
 import android.os.Build
 import android.util.TypedValue
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -71,8 +70,6 @@ fun SplashScreen(
     }
 
     val scope = rememberCoroutineScope()
-    // TEMPORARY (task_110): deliberate breakage, never to be merged. See onResult.
-    val activity = LocalContext.current as Activity
 
     val permissionRequester =
         rememberLauncherForActivityResult(
@@ -80,14 +77,6 @@ fun SplashScreen(
             onResult = { result ->
                 // Move on whatever the user answered: a denied permission must not leave the app
                 // on the splash image. Screens that need location (capture) ask for it again.
-                // TEMPORARY (task_110): deliberate breakage, never to be merged. Debug builds close
-                // the app when location is denied, to show the e2e flow H1 cannot tell this apart
-                // from the fix. Reverted in the next commits.
-                if (BuildConfig.DEBUG && !isLocationPermissionGranted(result)) {
-                    Timber.w("TEMPORARY task_110 breakage: finishing the activity on location denial")
-                    activity.finish()
-                    return@rememberLauncherForActivityResult
-                }
                 scope.launch {
                     Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 
