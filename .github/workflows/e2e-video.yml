@@ -4,8 +4,9 @@ name: E2E before/after videos
 # against this branch's app ("after"). Both runs use this branch's flow files, so a bug fix PR
 # that drops the known-bug tag from its flow gets a video of the flow failing on master and
 # passing with the fix. Videos and results are uploaded as the e2e-video-before and
-# e2e-video-after artifacts and listed in the run summary. The runs never fail this check: the
-# "Android end-to-end" check is the one that gates the PR.
+# e2e-video-after artifacts and listed in the run summary. For PRs from this repo, the publish job
+# also puts a before/after table of GIFs (with MP4 links) into the PR description. The runs never
+# fail this check: the "Android end-to-end" check is the one that gates the PR.
 #
 # A PR that only changes this recorder records every known-bug flow, as a test of the recorder.
 # Run it by hand (Actions > E2E before/after videos > Run workflow) to record any flows.
@@ -191,3 +192,110 @@ jobs:
       - name: Delete dummy property file
         if: always()
         run: rm -f treetracker.keys.properties
+
+  # GitHub only plays a video inline when someone uploads it in the browser, and there is no API
+  # for that. GIFs do render inline, so this turns each recording into a GIF, pushes the GIFs and
+  # MP4s to the e2e-media branch, and writes a before/after table into the PR description between
+  # the e2e-videos markers. Skipped for PRs from forks, whose token can't push or edit the PR.
+  publish:
+    name: publish videos to the PR
+    needs: [ pick-flows, record ]
+    if: >-
+      always() && needs.pick-flows.outputs.flows != '' && github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      PR: ${{ github.event.pull_request.number }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: e2e-video-*
+          path: videos
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Make GIFs
+        run: |
+          DIR="pr-$PR/${SHA:0:7}"
+          mkdir -p "media/$DIR"
+          for SIDE in before after; do
+            for MP4 in videos/e2e-video-$SIDE/*.mp4; do
+              [[ -f $MP4 ]] || continue
+              NAME=$(basename "$MP4" .mp4)
+              cp "$MP4" "media/$DIR/$NAME-$SIDE.mp4"
+              # Double speed, 8 fps, 270px wide keeps a minute-long flow to a few MB.
+              ffmpeg -loglevel error -y -i "$MP4" -filter_complex \
+                "[0:v]setpts=0.5*PTS,fps=8,scale=270:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64[p];[b][p]paletteuse=dither=bayer" \
+                "media/$DIR/$NAME-$SIDE.gif"
+            done
+            [[ -f videos/e2e-video-$SIDE/results.txt ]] && cp "videos/e2e-video-$SIDE/results.txt" "media/$DIR/results-$SIDE.txt"
+          done
+          ls -la "media/$DIR"
+          echo "DIR=$DIR" >> "$GITHUB_ENV"
+      - name: Push to the e2e-media branch
+        run: |
+          cd media
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          REMOTE="https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          for TRY in 1 2 3 4 5; do
+            if git fetch -q --depth 1 "$REMOTE" e2e-media 2>/dev/null; then
+              git checkout -q -B e2e-media FETCH_HEAD
+            else
+              git symbolic-ref HEAD refs/heads/e2e-media
+            fi
+            git add "$DIR"
+            git commit -q -m "Videos for #$PR at ${SHA:0:7}" || exit 0
+            git push -q "$REMOTE" HEAD:e2e-media && exit 0
+            git reset -q --hard; sleep $((TRY * 3))
+          done
+          exit 1
+      - name: Put the videos in the PR description
+        uses: actions/github-script@v7
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const dir = process.env.DIR;
+            const raw = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/e2e-media/${dir}`;
+            const results = side => {
+              const f = `media/${dir}/results-${side}.txt`;
+              if (!fs.existsSync(f)) return {};
+              return Object.fromEntries(fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(l => l.split(' ')));
+            };
+            const before = results('before'), after = results('after');
+            const names = [...new Set([...Object.keys(before), ...Object.keys(after)])].sort();
+            const icon = r => r === 'passed' ? '✅ passed' : r === 'failed' ? '❌ failed' : '–';
+            const cell = (name, side) => fs.existsSync(`media/${dir}/${name}-${side}.gif`)
+              ? `<img src="${raw}/${name}-${side}.gif" width="270"><br>[${name}-${side}.mp4](${raw}/${name}-${side}.mp4)`
+              : 'no video';
+            const rows = names.map(n =>
+              `| \`${n}\` | ${icon(before[n])}<br>${cell(n, 'before')} | ${icon(after[n])}<br>${cell(n, 'after')} |`);
+            const section = [
+              '<!-- e2e-videos:start -->',
+              `#### E2E before/after videos (${process.env.SHA.slice(0, 7)})`,
+              '',
+              'Before: master\'s app. After: this PR\'s app. GIFs play at double speed; the MP4 links are full speed.',
+              `Recorded by [this run](${process.env.RUN_URL}).`,
+              '',
+              '| Flow | Before | After |',
+              '|---|---|---|',
+              ...rows,
+              '<!-- e2e-videos:end -->',
+            ].join('\n');
+            const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: Number(process.env.PR) });
+            const body = pr.body || '';
+            const re = /<!-- e2e-videos:start -->[\s\S]*?<!-- e2e-videos:end -->/;
+            const anchor = /(### 🎥[^\n]*\n)/;
+            const next = re.test(body) ? body.replace(re, section)
+              : anchor.test(body) ? body.replace(anchor, `$1\n${section}\n`)
+              : `${body}\n\n${section}\n`;
+            if (next !== body) {
+              await github.rest.pulls.update({ ...context.repo, pull_number: Number(process.env.PR), body: next });
+            }

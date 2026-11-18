@@ -111,6 +111,13 @@ the `e2e-video-before` and `e2e-video-after` artifacts. The workflow never fails
 "Android end-to-end" check is the one that gates the PR. Org-config flows aren't seeded, so
 record those with `run-org.sh` instead.
 
+For PRs from this repo, the workflow also puts the videos into the PR description: it turns each
+recording into a GIF (double speed, so it plays inline), pushes the GIFs and MP4s to the
+`e2e-media` branch, and writes a before/after table between the `<!-- e2e-videos:start -->` and
+`<!-- e2e-videos:end -->` markers. Keep those markers when editing the description; the next run
+replaces what's between them. GitHub has no API for its own inline video player, which only takes
+files dragged in from a browser, so GIFs are the closest a workflow can get.
+
 To record any flows on your own emulator (needs `ffmpeg` for runs over 170 seconds):
 
 ```bash

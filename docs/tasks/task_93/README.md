@@ -33,3 +33,13 @@ failing on master and passing on the branch. Link both artifacts in the PR descr
 | #1421 Next after camera rationale cancel crashes | `sad-camera-rationale-next.yaml` | task_100 |
 | #1422 Back from Add org skips Add org | `sad-back-add-org.yaml` | task_101 |
 | #1423 Double-tap Next skips Add org | `sad-double-tap-setup.yaml` | task_102 |
+
+## Inline videos
+
+GitHub plays a video inline only when it's uploaded from the browser; there's no API for it, so
+neither `gh` nor a workflow can do it. The `publish` job in `e2e-video.yml` instead converts each
+recording to a GIF (double speed, 8 fps, 270px wide; about 1.3 MB for a minute), pushes GIFs and
+MP4s to the `e2e-media` branch under `pr-<number>/<sha>/`, and writes a before/after table into the
+PR description between `<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->`. The GIFs render
+inline through raw.githubusercontent.com; the MP4 links are full speed. Fork PRs are skipped
+because their token can't push or edit the PR.
