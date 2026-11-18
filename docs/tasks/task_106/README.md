@@ -37,9 +37,28 @@ the screen in a `Box` with `rememberDoubleTapGuard().modifier` and skip `navForw
 `isSecondTapOfDoubleTap(navigator)` says Next is the second tap of the double tap that opened the
 screen. No new mechanism.
 
-Edge-case tests added with the fix: keyboard Go on session note (after a tap on the field) and on
-add wallet still continues setup, since the guard judges an action with no press of its own as
-happening now.
+Edge-case tests added with the fix: keyboard Go on session note and on add wallet still continues
+setup, since the guard judges an action with no press of its own as happening now. These check the
+wiring only; how the guard judges and uses up a press is covered by `DoubleTapGuardTest`.
+
+Known behaviour, same as user select and Add org: every stack change counts as a navigation, pops
+included, so a Next pressed within the double-tap timeout of returning to one of these screens
+(Back from add wallet, say) is dropped, and a second tap works.
+
+## Review (independent subagent)
+
+Verdict: valid and in scope; no bugs. Findings and what was done:
+
+- Risk: the UI tests record no press on the navigator, so they cover the guard's "time since the
+  navigation" rule, not the "press vs the tap before the navigation" rule PR #1451 adds. The tests
+  can't use `Navigator.recordPress` until #1451 merges; the class doc now says which rule they
+  cover. Follow-up once #1451 lands: one variant that records the tap before the navigation.
+- Nit: the session note Go test tapped the field first, which made it look like it tested the
+  guard using up that press. It couldn't, since the navigator's clock and the press clock are
+  separate. Renamed to "session note keyboard Go continues setup" and the field tap removed.
+- Nit: quick Next right after Back is dropped. Kept; consistent with user select and Add org
+  (documented above).
+- Nit: task id 106 isn't the next free integer. Kept; 106 was reserved for this task.
 
 ## Why not an e2e flow
 

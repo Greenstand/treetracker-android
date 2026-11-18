@@ -67,7 +67,10 @@ import org.junit.Test
  * stops it, and setup moves on a second step: the step is skipped, or capture opens.
  *
  * Each test renders the screen behind a navigator whose last navigation was [millisSinceOpened]
- * ago and counts how often Next reached `navForward`.
+ * ago and counts how often Next reached `navForward`. No press is recorded on the navigator, so
+ * the guard judges by the time since the navigation. How the guard judges a press itself (and that
+ * each check uses up the press) is covered by `DoubleTapGuardTest`; these tests check that each
+ * screen's Next and keyboard Go go through the guard.
  */
 class SetupNextDoubleTapUiTest : ComposeUiTest() {
     private val userRepo = mockk<UserRepo>(relaxed = true)
@@ -154,9 +157,8 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
     }
 
     @Test
-    fun `session note keyboard Go continues after a tap on the note field`() {
+    fun `session note keyboard Go continues setup`() {
         openSessionNote(millisSinceOpened = LONG_AFTER_MS)
-        composeTestRule.onNode(hasSetTextAction()).performClick()
 
         composeTestRule.onNode(hasSetTextAction()).performImeAction()
         composeTestRule.waitForIdle()
