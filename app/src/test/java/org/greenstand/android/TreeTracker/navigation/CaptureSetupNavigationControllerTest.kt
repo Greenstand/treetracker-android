@@ -400,6 +400,75 @@ class CaptureSetupNavigationControllerTest {
             assertEquals(AddOrgRoute, navigator.topKey)
         }
 
+    @Test
+    fun `navFromNewUserCreation after system back re-enters the popped step`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "wallet-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+            navigator.navigate(SignupFlowRoute)
+            settle()
+
+            controller.navFromNewUserCreation(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute), navigator.backStack)
+            assertEquals(Destination("wallet-select"), controller.currentDestination)
+        }
+
+    @Test
+    fun `navForward after back from add wallet continues from wallet select`() =
+        runTest {
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            navigator.navigate(AddWalletRoute)
+            settle()
+            controller.navBackward(navigator)
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute), navigator.backStack)
+        }
+
+    @Test
+    fun `navForward through a flow with a repeated step reaches the end`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "session-note", "add-org", "session-note"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            repeat(3) {
+                controller.navForward(navigator)
+                settle()
+            }
+
+            controller.navForward(navigator)
+
+            assertEquals(TreeCaptureRoute(profilePicUrl = "/photos/ada.jpg"), navigator.topKey)
+            coVerify(exactly = 1) { sessionTracker.startSession() }
+        }
+
+    @Test
+    fun `navForward after system back to a repeated step re-enters the step after it`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "session-note", "add-org", "session-note"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, SessionNoteRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+        }
+
     // --- navToUserSelect ---
 
     @Test

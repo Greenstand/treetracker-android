@@ -67,13 +67,15 @@ class CaptureSetupNavigationController(
      * System back pops the stack through NavDisplay's onBack without calling [navBackward], so
      * the step index can be ahead of the screen the user is on. Re-derive it from the topmost
      * setup step on the back stack. Screens outside the setup flow (signup, add wallet) are
-     * skipped, so the step underneath them counts.
+     * skipped, so the step underneath them counts. If a route appears more than once in the
+     * flow, the occurrence at or before the current index wins, so a repeated step doesn't send
+     * the user back to its first occurrence.
      */
     private fun syncIndexWithBackStack(navigator: Navigator) {
         for (key in navigator.backStack.asReversed()) {
-            val index = navPath.indexOfFirst { resolveNoArgDestination(it) == key }
-            if (index >= 0) {
-                currentNavPathIndex = index
+            val matches = navPath.indices.filter { resolveNoArgDestination(navPath[it]) == key }
+            if (matches.isNotEmpty()) {
+                currentNavPathIndex = matches.lastOrNull { it <= currentNavPathIndex } ?: matches.first()
                 return
             }
         }
@@ -97,6 +99,7 @@ class CaptureSetupNavigationController(
      * Includes bounds checking to prevent IndexOutOfBoundsException.
      */
     suspend fun navFromNewUserCreation(navigator: Navigator) {
+        syncIndexWithBackStack(navigator)
         incrementIndex()
         if (currentNavPathIndex >= navPath.size) {
             // Signup was the last step — treat as setup complete

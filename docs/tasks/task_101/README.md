@@ -12,12 +12,23 @@ step, so `isAtEnd` is true and `navForward` finishes setup.
 
 ## Fix
 
-`CaptureSetupNavigationController.navForward` first re-derives the step index from the back stack:
-it walks down from the top and takes the first key that is a step of the setup flow. Screens
-outside the flow (signup, add wallet) are skipped, so the step under them counts. The index can
-then no longer drift from what the user sees, whichever way a screen was popped.
+`CaptureSetupNavigationController.navForward` and `navFromNewUserCreation` first re-derive the step
+index from the back stack: they walk down from the top and take the first key that is a step of
+the setup flow. Screens outside the flow (signup, add wallet) are skipped, so the step under them
+counts. If a route appears more than once in the flow, the occurrence at or before the current
+index wins. So moving forward always starts from the screen the user is on, even after a system
+back.
 
-`navBackward`, `navToUserSelect` and `navFromNewUserCreation` are unchanged.
+`navBackward` and `navToUserSelect` are unchanged. `navBackward` can still leave the index stale
+(for example after Add wallet's back arrow), but every forward move re-syncs first.
+
+## Review follow-up
+
+A review of the first commit found that signing up after a system back still used the stale index
+(flow `user-select, wallet-select, add-org`: back from Wallet select, sign up, and Wallet select
+was skipped), and that `indexOfFirst` would loop on a flow with a repeated step. Both are fixed,
+with unit tests. Not changed: flows without `user-select` (pre-existing, Dashboard always opens
+user select) and double-tap Next (#1423, its own fix).
 
 ## Tests
 
