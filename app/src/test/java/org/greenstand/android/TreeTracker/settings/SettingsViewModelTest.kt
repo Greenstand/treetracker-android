@@ -20,12 +20,14 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
 import org.greenstand.android.TreeTracker.navigation.MapRoute
@@ -367,5 +369,33 @@ class SettingsViewModelTest {
 
             assertTrue(viewModel.events.replayCache.isEmpty())
             assertNull(viewModel.state.value.showDeleteAccountDialog)
+        }
+
+    @Test
+    fun `WHEN logout before the power user has loaded THEN the power-user flag is still cleared`() =
+        runTest {
+            // getPowerUser() suspends until we release it, so the user taps Logout while the
+            // init load is still in flight and state.powerUser is still null.
+            val powerUser = FakeFileGenerator.fakeUsers.first()
+            val loaded = CompletableDeferred<User?>()
+            coEvery { userRepo.getPowerUser() } coAnswers { loaded.await() }
+            val cleared = mutableListOf<Pair<Long, Boolean>>()
+            coEvery { userRepo.setPowerUserStatus(any(), any()) } answers {
+                cleared.add(firstArg<Long>() to secondArg<Boolean>())
+                Unit
+            }
+            val viewModel = SettingsViewModel(userRepo)
+            assertNull(viewModel.state.value.powerUser, "precondition: power user must not be loaded yet")
+
+            viewModel.handleAction(SettingsAction.LogoutConfirmed)
+            loaded.complete(powerUser)
+
+            assertEquals(
+                listOf(powerUser.id to false),
+                cleared,
+                "Logout before the power user loaded left the power-user flag set for user ${powerUser.id}, " +
+                    "so the next person to sign in is treated as the previous power user",
+            )
+            assertEquals(false, viewModel.state.value.showLogoutDialog)
         }
 }
