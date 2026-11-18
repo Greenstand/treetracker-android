@@ -148,7 +148,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 
 ## 4. Findings worth confirming (from reading the code, not run)
 
-1. Splash only advances when location is granted (`SplashScreen.kt`, `onResult`). If the user denies, the app sits on the splash image with no message; after "don't ask again" it never moves. H1 should fail today. Fixed in #1417: splash now moves on whatever the user answers.
+1. Splash only advanced when location was granted (`SplashScreen.kt`, `onResult`). If the user denied, the app sat on the splash image with no message; after "don't ask again" it never moved. Fixed in #1417: splash now moves on whatever the user answers, and capture starts GPS once location is granted there.
 2. After logout or deleting the admin, the stack is cleared to `SignupFlowRoute`. Signup then navigates to Dashboard with `popUpTo<LanguageRoute>`, which is not on the stack, so Signup likely stays under Dashboard and back from Dashboard returns to Signup. E6/E8 check this. Fixed in #1415: Signup clears the whole stack when it goes to the Dashboard.
 3. `CaptureSetupScopeManager` and `CaptureFlowScopeManager` are in-memory singletons, but the Nav3 back stack survives process death. Restoring onto Add org calls `CaptureSetupScopeManager.getData()` before any `open()`, which throws. H5 likely crashes; H6 may too.
 4. The org deep link is parsed only at cold start and the activity is `singleTask` with no `onNewIntent`, so a link tapped while the app is alive is ignored. Decide whether that's intended before writing G4.

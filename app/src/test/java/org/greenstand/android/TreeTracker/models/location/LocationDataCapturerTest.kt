@@ -84,6 +84,7 @@ class LocationDataCapturerTest {
         MockKAnnotations.init(this)
         preferences = Preferences(sharedPreferences)
         every { convergenceConfiguration.locationDataConfig } returns LocationDataConfig()
+        every { locationUpdateManager.startLocationUpdates() } returns true
         locationDataCapturer =
             LocationDataCapturer(
                 locationUpdateManager,
@@ -380,6 +381,23 @@ class LocationDataCapturerTest {
         locationDataCapturer.startGpsUpdates()
 
         verify(exactly = 1) { locationUpdateManager.startLocationUpdates() }
+    }
+
+    @Test
+    fun `WHEN location permission is missing THEN updates stay off and start once it is granted`() {
+        val locationsLiveData = MutableLiveData<Location?>()
+        every { locationUpdateManager.locationUpdateLiveData } returns locationsLiveData
+        every { locationUpdateManager.startLocationUpdates() } returns false
+
+        locationDataCapturer.startGpsUpdates()
+
+        assertFalse(locationsLiveData.hasObservers())
+
+        every { locationUpdateManager.startLocationUpdates() } returns true
+        locationDataCapturer.startGpsUpdates()
+
+        assertTrue(locationsLiveData.hasObservers())
+        verify(exactly = 2) { locationUpdateManager.startLocationUpdates() }
     }
 
     @Test

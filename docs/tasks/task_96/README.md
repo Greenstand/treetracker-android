@@ -16,7 +16,27 @@ is missing, which would stop a later call from starting them.
 Location is still needed to capture trees; `TreeCaptureScreen` runs `PermissionRequest`, which asks
 again and shows the rationale or "open settings" dialog.
 
+## Review follow-up
+
+A review of the fix found two problems on paths the splash used to block:
+
+- **GPS never started after a late grant.** `LocationDataCapturer.startGpsUpdates()` marked updates as
+  on even when `LocationUpdateManager.startLocationUpdates()` returned false (no permission). User
+  select and capture setup call it before capture asks for location, so granting location on the
+  capture screen started nothing and the bad GPS dialog kept coming back. Now updates are only marked
+  on when they started, and `PermissionViewModel` (sent `CheckLocationEnabled` while location is
+  granted) calls `startGpsUpdates()`.
+- **Approximate location only.** Before Android 12, requesting GPS provider updates without fine
+  location throws `SecurityException`. `startLocationUpdates()` now catches it and returns false.
+
+Not changed: sign-up without location stores the admin's location as 0,0 (`UserRepo`'s existing
+fallback when there is no fix); rotating the splash re-sends the permission request (existing); and
+the e2e flow's assertion, which the issue asks to keep as is.
+
 ## Tests
+
+- `LocationDataCapturerTest`, `LocationUpdateManagerTest`, `PermissionViewModelTest`: the review
+  follow-up above.
 
 - `SplashUiTest`: the two tests that asserted the app stays on the splash screen without location
   now assert that it moves on (language select without GPS updates; dashboard with coarse location
