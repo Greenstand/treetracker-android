@@ -26,3 +26,24 @@ The camera rationale is reached by setting
 Each check also requires the setup scope to stay open, so #1421 can't come back.
 
 The container has no Android SDK, so tests ran on CI only.
+
+CI on the test commit (dba6c22) failed exactly these three, at the "left capture without ending
+the capture session" assertion. Issue #1438.
+
+## Fix (step 2)
+
+- `CaptureFlowNavigationController.leaveToSetup(navigator)`: pops capture back to the last setup
+  step and, only if the pop happened, ends the session like `goToDashboard` does (session end
+  time, step counter, orientation, GPS, capture scope) but keeps the setup scope open, because
+  the setup screens are still on the back stack (#1421). `endSession` takes
+  `closeSetupScope` for that.
+- `PermissionRequest` routes every dialog that leaves capture through it: camera rationale
+  Cancel/OK, location rationale Cancel/OK and the open-settings dialog's Cancel.
+  `LocationRationaleDialog` and `PermissionDeniedPermanentlyDialog` take an `onLeave` callback
+  (default: plain pop). Without a capture scope (e.g. after process death) they just pop.
+- Next on Add org then starts a new session as before (`sad-camera-rationale-next.yaml`).
+
+Extra tests: `CaptureFlowNavigationControllerTest` (`leaveToSetup` pops, ends the session and
+keeps the setup scope; a throttled pop ends nothing) and `PermissionRequestUiTest` (no capture
+scope still leaves the screen). The two camera e2e flows only got comment updates, so the video
+workflow records them still passing.

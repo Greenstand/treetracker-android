@@ -310,6 +310,19 @@ class PermissionRequestUiTest : ComposeUiTest() {
         assertTrue(CaptureSetupScopeManager.isOpen)
     }
 
+    @Test
+    fun `declining the open settings dialog without a capture scope still leaves the screen`() {
+        // E.g. capture restored after process death, which loses the capture scope.
+        CaptureFlowScopeManager.close()
+        shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
+        render()
+
+        clickDialogButton(TestTags.DIALOG_NEGATIVE_BUTTON)
+
+        assertEquals(listOf(DashboardRoute), backStack.toList())
+        assertTrue(CaptureSetupScopeManager.isOpen)
+    }
+
     private companion object {
         const val SESSION_END_TIMEOUT_S = 5L
 

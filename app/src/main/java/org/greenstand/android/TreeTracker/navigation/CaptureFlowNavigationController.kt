@@ -92,6 +92,17 @@ class CaptureFlowNavigationController(
         }
     }
 
+    /**
+     * Leaves capture for the screen under it (the last setup step) and ends the session, e.g. when
+     * the user cancels a permission dialog. The setup scope stays open: the setup screens are
+     * still on the back stack and Next there starts a new session (#1421).
+     */
+    fun leaveToSetup(navigator: Navigator) {
+        if (navigator.throttledPopBackStack()) {
+            endSession(closeSetupScope = false)
+        }
+    }
+
     private fun resolveDestinationRoute(destination: org.greenstand.android.TreeTracker.models.organization.Destination): NavKey {
         resolveNoArgDestination(destination)?.let { return it }
 
@@ -107,9 +118,11 @@ class CaptureFlowNavigationController(
         }
     }
 
-    private fun endSession() {
+    private fun endSession(closeSetupScope: Boolean = true) {
         CaptureFlowScopeManager.close()
-        CaptureSetupScopeManager.close()
+        if (closeSetupScope) {
+            CaptureSetupScopeManager.close()
+        }
         scope.launch {
             try {
                 sessionTracker.endSession()

@@ -538,6 +538,45 @@ class CaptureFlowNavigationControllerTest {
         verifySessionEnded()
     }
 
+    // --- leaveToSetup (a permission dialog leaves capture) ---
+
+    @Test
+    fun `leaveToSetup pops back to the last setup step`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, AddOrgRoute, capture, clock = clock)
+
+        controller.leaveToSetup(navigator)
+
+        assertEquals(listOf<Any>(DashboardRoute, AddOrgRoute), navigator.backStack)
+    }
+
+    @Test
+    fun `leaveToSetup ends the session and closes the capture scope but keeps the setup scope`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, AddOrgRoute, capture, clock = clock)
+
+        controller.leaveToSetup(navigator)
+
+        assertFalse(CaptureFlowScopeManager.isOpen)
+        assertTrue(CaptureSetupScopeManager.isOpen)
+        verifySessionEnded()
+    }
+
+    @Test
+    fun `leaveToSetup ends nothing when the pop is throttled`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, AddOrgRoute, clock = clock)
+        navigator.throttledNavigate(capture)
+
+        // No settle(): this pop falls in the throttle window of the navigation above.
+        controller.leaveToSetup(navigator)
+
+        assertEquals(listOf<Any>(DashboardRoute, AddOrgRoute, capture), navigator.backStack)
+        assertTrue(CaptureFlowScopeManager.isOpen)
+        assertTrue(CaptureSetupScopeManager.isOpen)
+        coVerify(exactly = 0) { sessionTracker.endSession() }
+    }
+
     private companion object {
         const val SESSION_END_TIMEOUT_MS = 5_000L
     }
