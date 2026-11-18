@@ -1,4 +1,4 @@
-# Task 106 - Double tap on Next skips org-configured setup steps (follow-up to #1423)
+# Task 106 - Double tap on Next skips org-configured setup steps (#1442, follow-up to #1423)
 
 ## Bug
 
@@ -27,6 +27,22 @@ and taps Next. Without the fix Next reaches `navForward`, and the test fails wit
 on again and skipped a step". Control tests tap long after the screen opened and expect one
 `navForward`.
 
+CI on the test-only commit (fbfd1ed) failed exactly those three tests, with that message;
+the controls passed.
+
 ## Fix
 
-TBD in step 2.
+`SessionNoteScreen`, `WalletSelectScreen` and `AddWalletScreen` do what `AddOrgScreen` does: wrap
+the screen in a `Box` with `rememberDoubleTapGuard().modifier` and skip `navForward` when
+`isSecondTapOfDoubleTap(navigator)` says Next is the second tap of the double tap that opened the
+screen. No new mechanism.
+
+Edge-case tests added with the fix: keyboard Go on session note (after a tap on the field) and on
+add wallet still continues setup, since the guard judges an action with no press of its own as
+happening now.
+
+## Why not an e2e flow
+
+These steps only exist in org-configured flows, which need `e2e/seed-org.sh`. Neither the
+"Android end-to-end" job nor the before/after video workflow seeds an org, so a flow wouldn't run
+on CI. The Compose UI test runs in `testDebugUnitTest` on every PR.

@@ -22,6 +22,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation3.runtime.NavKey
 import io.mockk.coEvery
@@ -152,6 +153,17 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
         assertTapAccepted("session note")
     }
 
+    @Test
+    fun `session note keyboard Go continues after a tap on the note field`() {
+        openSessionNote(millisSinceOpened = LONG_AFTER_MS)
+        composeTestRule.onNode(hasSetTextAction()).performClick()
+
+        composeTestRule.onNode(hasSetTextAction()).performImeAction()
+        composeTestRule.waitForIdle()
+
+        assertTapAccepted("session note")
+    }
+
     // --- wallet select: Next is enabled once a wallet is picked ---
 
     private fun openWalletSelectAndPickWallet(millisSinceOpened: Long) {
@@ -202,6 +214,16 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
         openAddWalletAndTypeName(millisSinceOpened = LONG_AFTER_MS)
 
         tapNext()
+
+        assertTapAccepted("add wallet")
+    }
+
+    @Test
+    fun `add wallet keyboard Go continues setup`() {
+        openAddWalletAndTypeName(millisSinceOpened = LONG_AFTER_MS)
+
+        composeTestRule.onNode(hasSetTextAction()).performImeAction()
+        composeTestRule.waitForIdle()
 
         assertTapAccepted("add wallet")
     }
