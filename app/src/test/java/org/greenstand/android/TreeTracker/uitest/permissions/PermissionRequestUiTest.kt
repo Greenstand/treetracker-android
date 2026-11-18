@@ -30,26 +30,53 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.PermissionRequest
+import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.TreeCapturer
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowData
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScope
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
+import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.TreeCaptureRoute
+import org.greenstand.android.TreeTracker.navigation.destinations
+import org.greenstand.android.TreeTracker.navigation.orgRepoWith
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.view.TestTags
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * Tests for [PermissionRequest] with permissions granted or denied through Robolectric.
- * The rationale dialogs are not covered: Robolectric never asks to show a rationale.
+ * Robolectric never asks to show a rationale unless a test sets it on the package manager
+ * (see [showCameraRationale]).
+ *
+ * [PermissionRequest] runs on the capture screen, so each test starts inside a capture session:
+ * the setup and capture scopes are open, like after Next on the last setup step.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 class PermissionRequestUiTest : ComposeUiTest() {
@@ -57,11 +84,86 @@ class PermissionRequestUiTest : ComposeUiTest() {
     private val locationManager = mockk<LocationManager>(relaxed = true)
     private val viewModel = PermissionViewModel(locationManager)
 
+    private val sessionTracker = mockk<SessionTracker>(relaxed = true)
+    private val stepCounter = mockk<StepCounter>(relaxed = true)
+    private val deviceOrientation = mockk<DeviceOrientation>(relaxed = true)
+    private val locationDataCapturer = mockk<LocationDataCapturer>(relaxed = true)
+    private val sessionEnded = CountDownLatch(1)
+
     @Before
     fun setUp() {
         backStack.add(TreeCaptureRoute(profilePicUrl = ""))
         shadowOf(application).grantPermissions(*LOCATION_PERMISSIONS, Manifest.permission.ACTIVITY_RECOGNITION)
         every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
+        coEvery { sessionTracker.endSession() } answers { sessionEnded.countDown() }
+        startCaptureSession()
+    }
+
+    @After
+    fun tearDown() {
+        CaptureFlowScopeManager.close()
+        CaptureSetupScopeManager.close()
+        stopKoin()
+    }
+
+    /** Opens the setup and capture scopes as finishing setup and opening capture does. */
+    private fun startCaptureSession() {
+        CaptureFlowScopeManager.close()
+        CaptureSetupScopeManager.close()
+        stopKoin()
+        startKoin {
+            modules(
+                module {
+                    scope<CaptureSetupScope> {
+                        scoped { CaptureSetupData(mockk(relaxed = true)) }
+                    }
+                    scope<CaptureFlowScope> {
+                        scoped { CaptureFlowData() }
+                        scoped {
+                            CaptureFlowNavigationController(
+                                orgRepo = orgRepoWith(captureFlow = destinations("capture/{profilePicUrl}")),
+                                stepCounter = stepCounter,
+                                sessionTracker = sessionTracker,
+                                locationDataCapturer = locationDataCapturer,
+                                treeCapturer = mockk<TreeCapturer>(relaxed = true),
+                                deviceOrientation = deviceOrientation,
+                            )
+                        }
+                    }
+                },
+            )
+        }
+        CaptureSetupScopeManager.open()
+        CaptureFlowScopeManager.open()
+    }
+
+    /** Camera denied once: Android asks to explain why before asking again. */
+    private fun showCameraRationale() {
+        shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
+        shadowOf(application.packageManager).setShouldShowRequestPermissionRationale(Manifest.permission.CAMERA, true)
+    }
+
+    private fun clickDialogButton(tag: String) {
+        composeTestRule.onNode(hasTestTag(tag) and hasAnyAncestor(isDialog())).performClick()
+        composeTestRule.waitForIdle()
+    }
+
+    /**
+     * Asserts that leaving capture from a permission dialog ended the capture session: the
+     * session and sensors are stopped and the capture scope is closed, while the setup scope
+     * stays open because the setup screens are still on the back stack (#1421).
+     */
+    private fun assertCaptureSessionEnded(dialog: String) {
+        assertTrue(
+            "$dialog left capture without ending the capture session (SessionTracker.endSession() was never called)",
+            sessionEnded.await(SESSION_END_TIMEOUT_S, TimeUnit.SECONDS),
+        )
+        coVerify(timeout = SESSION_END_TIMEOUT_S * 1_000) {
+            stepCounter.disable()
+            deviceOrientation.disable()
+        }
+        assertFalse("$dialog left the capture scope open", CaptureFlowScopeManager.isOpen)
+        assertTrue("$dialog closed the setup scope while setup is still on the back stack", CaptureSetupScopeManager.isOpen)
     }
 
     private fun render() {
@@ -154,7 +256,63 @@ class PermissionRequestUiTest : ComposeUiTest() {
         composeTestRule.onNodeWithText(string(R.string.accept_location_permission_header)).assertDoesNotExist()
     }
 
+    // --- Leaving capture from a permission dialog ends the capture session ---
+
+    @Test
+    fun `cancelling the camera rationale ends the capture session`() {
+        backStack.add(1, AddOrgRoute)
+        showCameraRationale()
+        render()
+        composeTestRule.onNode(hasTestTag(TestTags.CAMERA_RATIONALE_DIALOG)).assertExists()
+
+        clickDialogButton(TestTags.DIALOG_NEGATIVE_BUTTON)
+
+        assertEquals(listOf(DashboardRoute, AddOrgRoute), backStack.toList())
+        assertCaptureSessionEnded("Cancel on the camera rationale")
+    }
+
+    @Test
+    fun `accepting the camera rationale ends the capture session`() {
+        backStack.add(1, AddOrgRoute)
+        showCameraRationale()
+        render()
+        composeTestRule.onNode(hasTestTag(TestTags.CAMERA_RATIONALE_DIALOG)).assertExists()
+
+        clickDialogButton(TestTags.DIALOG_POSITIVE_BUTTON)
+
+        assertEquals(listOf(DashboardRoute, AddOrgRoute), backStack.toList())
+        assertCaptureSessionEnded("OK on the camera rationale")
+    }
+
+    @Test
+    fun `declining the open settings dialog ends the capture session`() {
+        shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
+        render()
+
+        clickDialogButton(TestTags.DIALOG_NEGATIVE_BUTTON)
+
+        assertEquals(listOf(DashboardRoute), backStack.toList())
+        assertCaptureSessionEnded("Cancel on the permission settings dialog")
+    }
+
+    @Test
+    fun `opening the app settings keeps the capture session`() {
+        shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
+        render()
+
+        clickDialogButton(TestTags.DIALOG_POSITIVE_BUTTON)
+
+        assertFalse(
+            "Opening the app settings ended the capture session",
+            sessionEnded.await(1, TimeUnit.SECONDS),
+        )
+        assertTrue(CaptureFlowScopeManager.isOpen)
+        assertTrue(CaptureSetupScopeManager.isOpen)
+    }
+
     private companion object {
+        const val SESSION_END_TIMEOUT_S = 5L
+
         val LOCATION_PERMISSIONS =
             arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
