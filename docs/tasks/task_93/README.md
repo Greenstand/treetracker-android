@@ -47,3 +47,8 @@ Fork PRs are skipped because their token can't edit the PR.
 
 `record.sh` now waits for `screenrecord` to exit before pulling the video: #1424's first run lost
 the last flow's "before" video by pulling too early.
+
+On CI, `gh pr edit --attach` with the workflow's `GITHUB_TOKEN` fails with "attaching files
+requires write access to the repository", even with `contents: write`: attachments need a user's
+token. The attach step uses the `E2E_ATTACH_TOKEN` secret when a maintainer adds one, and the GIF
+fallback otherwise.
