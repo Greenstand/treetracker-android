@@ -109,7 +109,7 @@ val appModule =
 
         viewModel { AddWalletViewModel() }
 
-        viewModel { AddOrgViewModel(get(), get()) }
+        viewModel { AddOrgViewModel(get(), get(), get()) }
 
         viewModel { LanguagePickerViewModel(get()) }
 
@@ -146,7 +146,7 @@ val appModule =
             TreeImageReviewViewModel(get(), get(), get(), restoredAfterProcessDeath = restored)
         }
 
-        viewModel { PermissionViewModel(get()) }
+        viewModel { PermissionViewModel(get(), get()) }
 
         viewModel { SettingsViewModel(get()) }
 

@@ -55,7 +55,7 @@ import org.robolectric.Shadows.shadowOf
 class PermissionRequestUiTest : ComposeUiTest() {
     private val application = RuntimeEnvironment.getApplication()
     private val locationManager = mockk<LocationManager>(relaxed = true)
-    private val viewModel = PermissionViewModel(locationManager)
+    private val viewModel = PermissionViewModel(locationManager, mockk(relaxed = true))
 
     @Before
     fun setUp() {
