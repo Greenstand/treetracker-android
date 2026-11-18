@@ -201,7 +201,7 @@ jobs:
     name: publish videos to the PR
     needs: [ pick-flows, record ]
     if: >-
-      always() && needs.pick-flows.outputs.flows != '' && github.event_name == 'pull_request' &&
+      !cancelled() && needs.pick-flows.outputs.flows != '' && github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -228,7 +228,13 @@ jobs:
         id: attach
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ github.token }}
+          # gh only attaches files with a token from a user who has write access; the workflow's
+          # own token is refused ("attaching files requires write access to the repository").
+          # E2E_ATTACH_TOKEN is a maintainer's fine-grained token (Contents and Pull requests:
+          # read and write). Without it this step fails and the GIF fallback runs.
+          GH_TOKEN: ${{ secrets.E2E_ATTACH_TOKEN || github.token }}
+          # No checkout in this job, so gh can't read the repo from git.
+          GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           python3 - <<'PY'
