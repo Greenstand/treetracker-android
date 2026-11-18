@@ -1,11 +1,11 @@
-# Bug: deleting a user while offline crashes the app. UserSelectViewModel.deleteUser
-# (UserSelectViewModel.kt:128-139) calls messageRepo.syncMessages(), and
-# messageUploader.uploadMessages() (MessagesRepo.kt:158) is outside the try/catch, so an
-# AmazonClientException escapes. Passes once the "Account Deleted" dialog shows and closing it
-# returns to Settings. Run with the device offline (airplane mode on), as e2e/run.sh does.
+# Deleting a user while offline. Signs up Ada, adds Bob, then deletes Bob from Settings with the
+# device offline (airplane mode on, as e2e/run.sh does). The message sync that follows the delete
+# can't reach the server; the app must stay up, show the "Account Deleted" dialog, and return to
+# Settings when it's closed, with Bob gone from the list. Regression check for #1416. The same
+# guarded sync runs when deleting the admin; settings-delete-admin.yaml checks that path.
 appId: org.greenstand.android.TreeTracker.debug
-name: Bug Delete user offline crashes
-tags: [settings, known-bug]
+name: Delete user offline
+tags: [settings]
 ---
 - launchApp: {clearState: true}
 - runFlow:
@@ -41,9 +41,14 @@ tags: [settings, known-bug]
 - tapOn: {id: "UserButton_5551230002"}
 - tapOn: {id: ArrowForwardButton}
 - tapOn: {id: DialogPositiveButton}
-# Fixed: the app stays up, shows "Account Deleted", and closing it returns to Settings.
+# The app stays up, shows "Account Deleted" (the confirm dialog uses the same DialogTitle tag, so
+# match the text), and closing it returns to Settings.
 - extendedWaitUntil:
-    visible: {id: DialogTitle}
+    visible: {id: DialogTitle, text: "Account Deleted"}
     timeout: 10000
 - tapOn: {id: DialogPositiveButton}
 - assertVisible: {id: SettingsDeleteAccount}
+# The failed sync can surface late, so keep using the app: Bob is gone and Ada is still there.
+- tapOn: {id: SettingsDeleteAccount}
+- assertVisible: {id: "UserButton_5551230001"}
+- assertNotVisible: {id: "UserButton_5551230002"}

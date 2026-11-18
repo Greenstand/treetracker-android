@@ -167,11 +167,12 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
    - After logout and signing back in, back from the Dashboard returned to Signup (finding 2
      confirmed). Fixed in #1415: Signup now clears the whole stack when it goes to the Dashboard.
      `settings-logout.yaml` and `settings-logout-back.yaml` check that back then exits the app.
-   - Deleting any user while offline crashes the app: `UserSelectViewModel.deleteUser` calls
+   - Deleting any user while offline crashed the app: `UserSelectViewModel.deleteUser` called
      `messageRepo.syncMessages()`, whose `uploadMessages()` (`MessagesRepo.kt`) is outside the
-     try/catch. The user is deleted first, so E7/E8 relaunch and check the user is gone; the
-     "Account deleted" dialog and the Signup stack after deleting the admin are not asserted there; `settings-delete-user-offline.yaml`
-     (known-bug) asserts them (#1416). Online, the same unguarded upload runs at launch and on
+     try/catch. Fixed in #1416: `deleteUser` now catches the sync failure. `settings-delete-user-offline.yaml`
+     and E7 (`settings-delete-user.yaml`) check the "Account Deleted" dialog and the return to
+     Settings after deleting a non-admin; E8 (`settings-delete-admin.yaml`) checks the dialog and the
+     move to Signup after deleting the admin. Online, the same unguarded upload runs at launch and on
      picking a user; CI's e2e run is offline for that reason.
    - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed) (#1417).
    - H5: process death on Add org crashes on reopen: `CaptureSetupScope not open` from
