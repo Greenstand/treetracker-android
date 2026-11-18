@@ -2,11 +2,11 @@
 # Next on user select -> Add org. Add org's back arrow then returns to user select, and no
 # capture screen was opened behind it.
 #
-# On small screens (320x640, as on CI) user select's add-user button sits where Track was;
-# userselect/UserSelect.kt ignores an add-user press that went down within the double-tap
-# timeout of the navigation to it. A repeat navForward from the same screen is dropped in
-# navigation/CaptureSetupNavigationController.kt, so the second tap on Next can't start a
-# session and open capture (#1423).
+# On small screens (320x640, as on CI) the next screen's button sits where the tapped one was:
+# user select's add-user where Track was, Add org's Next where user select's Next was.
+# navigation/DoubleTapGuard.kt drops a press there that went down within the double-tap timeout
+# of the navigation, and CaptureSetupNavigationController.navForward drops a repeat call from
+# the same screen, so neither second tap opens signup or capture (#1423).
 appId: org.greenstand.android.TreeTracker.debug
 name: H8 Double tap into capture setup
 tags: [sad-path]

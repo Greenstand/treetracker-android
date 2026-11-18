@@ -15,11 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.userselect
 
-import android.os.SystemClock
-import android.view.ViewConfiguration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -31,18 +27,14 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
+import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -66,16 +58,9 @@ fun UserSelect(
 ) {
     val navigator = LocalNavigator.current
     val state by viewModel.state.collectAsState(UserSelectState())
-    // Event time (uptime) of the latest finger down anywhere on this screen.
-    var lastPressUptimeMs by remember { mutableLongStateOf(NO_PRESS) }
+    val doubleTapGuard = rememberDoubleTapGuard()
 
-    Box(
-        Modifier.pointerInput(Unit) {
-            awaitEachGesture {
-                lastPressUptimeMs = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial).uptimeMillis
-            }
-        },
-    ) {
+    Box(doubleTapGuard.modifier) {
         UserSelectContent(
             state = state,
             navigationButtonColors = navigationButtonColors,
@@ -86,9 +71,7 @@ fun UserSelect(
             onCreateUserClicked = {
                 // On small screens the add-user button sits where Dashboard's Track button was, so
                 // the second tap of a double tap on Track lands here (#1423). Drop it.
-                val millisSincePress =
-                    if (lastPressUptimeMs == NO_PRESS) 0L else SystemClock.uptimeMillis() - lastPressUptimeMs
-                if (!isSecondTapOfDoubleTap(navigator.millisSinceLastNavigation, millisSincePress)) {
+                if (!doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
                     navigator.throttledNavigate(SignupFlowRoute)
                 }
             },
@@ -105,24 +88,6 @@ fun UserSelect(
             onNavigateForward = onNavigateForward,
         )
     }
-}
-
-private const val NO_PRESS = -1L
-
-/**
- * Whether a press that went down [millisSincePress] ago, on a screen whose navigator last changed
- * the stack [millisSinceLastNavigation] ago, is the second half of a double tap on the button
- * that navigated here: it went down within the system double-tap timeout of that navigation (or
- * before it). Uses the press's own event time, so a double tap that reaches the app late (a busy
- * device) is still caught.
- */
-internal fun isSecondTapOfDoubleTap(
-    millisSinceLastNavigation: Long,
-    millisSincePress: Long,
-    doubleTapTimeoutMs: Long = ViewConfiguration.getDoubleTapTimeout().toLong(),
-): Boolean {
-    if (millisSinceLastNavigation == Long.MAX_VALUE) return false
-    return millisSinceLastNavigation - millisSincePress.coerceAtLeast(0) < doubleTapTimeoutMs
 }
 
 /**

@@ -24,27 +24,30 @@ landed.
   dropped; a `navForward` while one is still running (session start suspended) is dropped; a
   `navForward` from a screen not on top does nothing.
 - `NavigatorTest`: `canNavigate` follows whether the origin is on top.
-- `DoubleTapGuardTest`: the add-user tap guard's timing.
+- `DoubleTapGuardTest`: the cross-screen second-tap guard.
 - `e2e/flows/sad-double-tap-setup.yaml` is no longer tagged `known-bug`, so the e2e run checks it.
 
-## Track double tap on small screens
+## Cross-screen second taps (found on CI)
 
-The flow also double-taps Track, and CI's emulator is 320x640. There the second tap lands on user
-select's add-user button, which sits where Track was, and opens signup. That's a first tap from
-a new screen, so the origin throttle lets it through.
+CI's emulator is 320x640. There the next screen's button sits where the tapped one was, so the
+second tap of a double tap presses a button on the new screen. That's a first tap from a new
+screen, so the origin throttle lets it through:
 
-`Navigator.millisSinceLastNavigation` (shared by every scoped view of the navigator) says how long
-ago the stack last changed. `UserSelect` records the event time of the latest finger down on the
-screen, and the add-user button ignores a press that went down within the system double-tap
-timeout (`ViewConfiguration.getDoubleTapTimeout()`, 300 ms) of that navigation, or before it
-(`isSecondTapOfDoubleTap`, tested in `DoubleTapGuardTest` and `NavigatorTest`).
+- Track -> user select's add-user button opened signup.
+- Next on user select -> Add org's Next finished setup and opened capture. This is what the flow
+  actually hit; the same-screen `navForward` guard above alone did not fix it.
 
-Two things this had to get right, both found on CI:
+`navigation/DoubleTapGuard.kt` handles both. Its `modifier` goes on the screen root and records the
+event time of each finger down; `isSecondTapOfDoubleTap(navigator)` is true when that press went
+down within the system double-tap timeout (`ViewConfiguration.getDoubleTapTimeout()`, 300 ms) of
+the last navigation, or before it. `Navigator.millisSinceLastNavigation` (shared by every scoped
+view of the navigator) gives the navigation time. `UserSelect` checks it before add-user, and
+`AddOrgScreen` before Next. Tested in `DoubleTapGuardTest` and `NavigatorTest`.
 
-- Count from the last navigation, not from when the screen was composed. Otherwise a user select
-  that was not just navigated to (the UI tests render it and click at once) drops the tap.
+Two things it had to get right, both found on CI:
+
+- Count from the last navigation, not from when the screen was composed. Otherwise a screen that
+  was not just navigated to (the UI tests render it and click at once) drops the tap.
 - Use the press's event time, not when the click is handled. On a busy emulator Test Buddy's
-  double tap took 563 ms to arrive; its event times still say "double tap", but by wall clock the
-  second tap came more than 300 ms after the navigation and got through.
-
-Only the add-user button is guarded; picking a user and Next are unchanged.
+  double tap took over 500 ms to arrive; its event times still say "double tap", but by wall
+  clock the second tap came more than 300 ms after the navigation and got through.

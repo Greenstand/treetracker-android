@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.greenstand.android.TreeTracker.userselect
+package org.greenstand.android.TreeTracker.navigation
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -41,13 +41,30 @@ class DoubleTapGuardTest {
     fun `a press at or after the double-tap timeout, or with no navigation yet, is meant for the screen`() {
         assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 300, millisSincePress = 0, doubleTapTimeoutMs = 300))
         assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 1_000, millisSincePress = 100, doubleTapTimeoutMs = 300))
-        assertFalse(
-            isSecondTapOfDoubleTap(millisSinceLastNavigation = Long.MAX_VALUE, millisSincePress = -5, doubleTapTimeoutMs = 300),
-        )
+        assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = Long.MAX_VALUE, millisSincePress = -5, doubleTapTimeoutMs = 300))
     }
 
     @Test
     fun `a press time in the future counts as now`() {
         assertFalse(isSecondTapOfDoubleTap(millisSinceLastNavigation = 400, millisSincePress = -50, doubleTapTimeoutMs = 300))
+    }
+
+    @Test
+    fun `with no press recorded the guard only looks at the navigation`() {
+        val clock = FakeClockForGuard()
+        val nav = Navigator(mutableListOf(DashboardRoute), clock = clock::now)
+        val guard = DoubleTapGuard(uptimeMillis = clock::now, doubleTapTimeoutMs = { 300L })
+
+        assertFalse(guard.isSecondTapOfDoubleTap(nav))
+        nav.navigate(UserSelectRoute)
+        assertTrue(guard.isSecondTapOfDoubleTap(nav))
+        clock.time += 300
+        assertFalse(guard.isSecondTapOfDoubleTap(nav))
+    }
+
+    private class FakeClockForGuard {
+        var time = 1_000L
+
+        fun now(): Long = time
     }
 }
