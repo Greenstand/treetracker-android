@@ -47,6 +47,7 @@ import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.LanguageSwitcher
 import org.greenstand.android.TreeTracker.models.PlanterUploader
+import org.greenstand.android.TreeTracker.models.PendingTreeStore
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.SessionUploader
 import org.greenstand.android.TreeTracker.models.StepCounter
@@ -70,6 +71,7 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerViewModel
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
@@ -119,7 +121,11 @@ val appModule =
 
         viewModel { DevOptionsViewModel(get(), get()) }
 
-        viewModel { TreeHeightSelectionViewModel(get()) }
+        viewModel {
+            // After process death Nav3 restores tree height without the in-memory capture scope.
+            val restored = CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_HEIGHT)
+            TreeHeightSelectionViewModel(get(), restoredAfterProcessDeath = restored)
+        }
 
         viewModel {
             org.greenstand.android.TreeTracker.signup
@@ -134,7 +140,11 @@ val appModule =
 
         viewModel { AnnouncementViewModel(get(), get()) }
 
-        viewModel { TreeImageReviewViewModel(get(), get(), get()) }
+        viewModel {
+            // After process death Nav3 restores image review without the in-memory capture scope.
+            val restored = CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+            TreeImageReviewViewModel(get(), get(), get(), restoredAfterProcessDeath = restored)
+        }
 
         viewModel { PermissionViewModel(get(), get()) }
 
@@ -143,6 +153,8 @@ val appModule =
         viewModel { MapViewModel(get()) }
 
         single { UserRepo(get(), get(), get(), get(), get(), get()) }
+
+        factory { PendingTreeStore(get()) }
 
         factory<TreeCapturer> { CaptureFlowScopeManager.getData().get() }
 
@@ -278,6 +290,6 @@ val appModule =
         scope<CaptureFlowScope> {
             scoped { CaptureFlowData() }
             scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get(), get()) }
-            scoped { TreeCapturer(get(), get(), get(), get(), get()) }
+            scoped { TreeCapturer(get(), get(), get(), get(), get(), get()) }
         }
     }

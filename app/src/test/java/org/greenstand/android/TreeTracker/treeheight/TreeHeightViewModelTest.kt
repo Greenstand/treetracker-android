@@ -17,14 +17,17 @@ package org.greenstand.android.TreeTracker.treeheight
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.view.AppButtonColors
+import org.greenstand.android.TreeTracker.viewmodel.NavigationEvent
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -47,6 +50,25 @@ class TreeHeightViewModelTest {
     @Before
     fun setup() {
         treeHeightSelectionViewModel = TreeHeightSelectionViewModel(treeCapturer)
+    }
+
+    @Test
+    fun `after process death with no tree to restore it leaves for the dashboard`() =
+        runTest {
+            every { treeCapturer.currentTree } returns null
+
+            val vm = TreeHeightSelectionViewModel(treeCapturer, restoredAfterProcessDeath = true)
+
+            assertTrue(vm.events.first().getContentIfNotConsumed() is NavigationEvent)
+        }
+
+    @Test
+    fun `after process death with the restored tree it stays`() {
+        every { treeCapturer.currentTree } returns mockk()
+
+        val vm = TreeHeightSelectionViewModel(treeCapturer, restoredAfterProcessDeath = true)
+
+        assertTrue(vm.events.replayCache.isEmpty())
     }
 
     @Test
