@@ -27,9 +27,11 @@ command -v ffmpeg >/dev/null || echo "ffmpeg not found: videos longer than 170s 
 for FLOW in "$@"; do
   NAME=$(basename "$FLOW" .yaml)
   "$ADB" -s "$SERIAL" shell am force-stop "$APP" || true
-  "$ADB" -s "$SERIAL" shell 'rm -f /sdcard/rec-stop /sdcard/rec-*.mp4'
+  # Per-flow file names, so a recorder left over from the previous flow can't touch this one.
+  REC_DIR=/sdcard/e2e-rec
+  "$ADB" -s "$SERIAL" shell "rm -rf $REC_DIR; mkdir -p $REC_DIR"
   # screenrecord stops at 3 minutes, so record in parts until told to stop.
-  "$ADB" -s "$SERIAL" shell 'i=1; while [ ! -f /sdcard/rec-stop ]; do screenrecord --time-limit 170 --bit-rate 4000000 /sdcard/rec-$i.mp4; i=$((i+1)); done' &
+  "$ADB" -s "$SERIAL" shell "i=1; while [ ! -f $REC_DIR/$NAME.stop ]; do screenrecord --time-limit 170 --bit-rate 4000000 $REC_DIR/$NAME-\$i.mp4; i=\$((i+1)); done" &
   REC=$!
   sleep 2
   if "$TB" test "$ROOT/$FLOW" -p android --device "$SERIAL" --format junit \
@@ -39,15 +41,26 @@ for FLOW in "$@"; do
     RESULT=failed
   fi
   sleep 2
-  "$ADB" -s "$SERIAL" shell touch /sdcard/rec-stop
+  "$ADB" -s "$SERIAL" shell touch "$REC_DIR/$NAME.stop"
   "$ADB" -s "$SERIAL" shell pkill -INT screenrecord || true
   wait "$REC" 2>/dev/null || true
-  sleep 2
+  # screenrecord finishes writing the file after SIGINT; pulling earlier can miss the last part.
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    "$ADB" -s "$SERIAL" shell pidof screenrecord >/dev/null 2>&1 || break
+    sleep 1
+  done
+  sleep 1
+  echo "Recorded for $NAME: $("$ADB" -s "$SERIAL" shell ls -l "$REC_DIR" 2>&1 | tr '\n' ' ')"
   PARTS=()
   for i in 1 2 3 4 5 6; do
-    "$ADB" -s "$SERIAL" pull "/sdcard/rec-$i.mp4" "$OUT/$NAME-part-$i.mp4" >/dev/null 2>&1 \
-      && PARTS+=("$OUT/$NAME-part-$i.mp4")
+    "$ADB" -s "$SERIAL" shell "[ -f $REC_DIR/$NAME-$i.mp4 ]" || break
+    if "$ADB" -s "$SERIAL" pull "$REC_DIR/$NAME-$i.mp4" "$OUT/$NAME-part-$i.mp4" >/dev/null; then
+      PARTS+=("$OUT/$NAME-part-$i.mp4")
+    else
+      echo "Could not pull $REC_DIR/$NAME-$i.mp4" >&2
+    fi
   done
+  (( ${#PARTS[@]} > 0 )) || echo "No video for $NAME" >&2
   if (( ${#PARTS[@]} == 1 )) || ! command -v ffmpeg >/dev/null; then
     [[ ${#PARTS[@]} -gt 0 ]] && mv "${PARTS[0]}" "$OUT/$NAME.mp4"
   elif (( ${#PARTS[@]} > 1 )); then
