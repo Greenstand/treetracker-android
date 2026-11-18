@@ -18,6 +18,9 @@ tags: [sad-path]
     when: {visible: {id: permission_allow_button}}
     commands:
       - tapOn: {id: permission_allow_button}
+# The app must land on language select. Waiting only for the splash to go also passes when the
+# app closes or crashes after the denial, so wait for the screen it should show. (task_110)
 - extendedWaitUntil:
-    notVisible: {id: SplashScreen}
+    visible: {id: LanguageOption_ENGLISH}
     timeout: 15000
+- assertNotVisible: {id: SplashScreen}
