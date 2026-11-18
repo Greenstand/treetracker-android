@@ -26,6 +26,8 @@ the e2e flow was blind to it.
 
 - `e2e/flows/sad-location-denied.yaml`: wait for `LanguageOption_ENGLISH` (language select, where a
   fresh install lands), then assert the splash is gone.
+  The wait allows 30 s, as `first-screen.yaml` does: on CI it took from 1.6 s up to 15.0 s
+  (cold emulator), and a closed app never shows the screen, so the longer wait costs nothing.
 - `docs/testing/e2e-flow-test-plan.md`: H1 row.
 
 The container has no Android SDK or emulator, so the flow was checked on CI only.
