@@ -35,6 +35,7 @@ import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScop
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
@@ -50,6 +51,7 @@ import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
 import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -133,6 +135,7 @@ class ReturnToUserSelectFromCaptureUiTest : ComposeUiTest() {
                         entryProvider {
                             entry<DashboardRoute> { BasicText("Dashboard") }
                             entry<UserSelectRoute> { UserSelectScreen() }
+                            entry<AddOrgRoute> { BasicText("Add org") }
                             entry<TreeCaptureRoute> { BasicText("Capture") }
                         },
                 )
@@ -170,6 +173,39 @@ class ReturnToUserSelectFromCaptureUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
 
         assertEquals(userSelectTestUsers[1], CaptureSetupScopeManager.getData().user)
+        coVerify(exactly = 1) { setupNav.navForward(any()) }
+    }
+
+    @Test
+    fun `returning to user select from capture clears the previous selection`() {
+        setNavDisplay()
+        selectUserAndStartCapture(ANN_NAME)
+
+        composeTestRule.runOnIdle { captureFlowNav.goToUserSelect(navigator) }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        assertEquals(null, CaptureSetupScopeManager.getData().user)
+        coVerify(exactly = 0) { setupNav.navForward(any()) }
+    }
+
+    @Test
+    fun `back onto user select from a later setup screen keeps the setup data and selection`() {
+        setNavDisplay()
+        composeTestRule.onNodeWithText(ANN_NAME).performClick()
+        val setupData = CaptureSetupScopeManager.getData()
+        composeTestRule.runOnIdle { navigator.navigate(AddOrgRoute) }
+        composeTestRule.onNodeWithText("Add org").assertExists()
+
+        composeTestRule.runOnIdle { navigator.popBackStack() }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        assertSame(setupData, CaptureSetupScopeManager.getData())
+        assertEquals(userSelectTestUsers[0], setupData.user)
+        assertEquals(1, userSelectViewModelsCreated)
         coVerify(exactly = 1) { setupNav.navForward(any()) }
     }
 }

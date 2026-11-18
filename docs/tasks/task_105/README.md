@@ -30,3 +30,21 @@ The container has no Android SDK, so both ran on CI only.
 
 `e2e/flows/capture-exit-profile-next.yaml` (B5b) does the same on a device: capture → profile icon
 → user select → pick the user → Next → Add org → capture.
+
+## Fix
+
+`UserSelectScreen` calls `UserSelectViewModel.resumeSetup()` from a `LaunchedEffect` each time it
+is shown. If capture closed the setup scope while the ViewModel stayed alive, `resumeSetup` reopens
+the scope, starts GPS updates again (as `init` does) and clears the selection left from the ended
+session. While the scope is still open (first show, or Back from a later setup screen) it does
+nothing.
+
+The ViewModel can't be swapped for a new one at the navigation level: any single back-stack change
+that keeps `UserSelectRoute` on the stack keeps its ViewModel store.
+
+## Edge-case tests
+
+- Returning from capture clears the previous selection, so Next does nothing until a user is picked.
+- Back from Add org onto user select keeps the same setup data and selection, and creates no new
+  ViewModel.
+- `UserSelectScreenUiTest` stubs `CaptureSetupScopeManager.isOpen` to match its stubbed `open()`.
