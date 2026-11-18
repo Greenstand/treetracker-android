@@ -1,0 +1,84 @@
+# Captures a tree with a unique note on the phone, uploads it, then logs in to the dev admin
+# panel in Chrome and checks that the newest capture on Verify carries that note. This is the tb
+# version of the WebdriverIO + Appium + Chrome test on releases/2.2.1
+# (e2e/features/03_capture_setup.feature and e2e/utils/admin.ts).
+#
+# Run it with e2e/admin/run.sh, not a bare `tb test`. The script hands tb the admin login
+# through MAESTRO_ADMIN_USER and MAESTRO_ADMIN_PASSWORD in the environment (never on the
+# command line) and removes both values from everything tb prints or writes.
+#
+# Needs the dev build (org.greenstand.android.TreeTracker.dev) with a real
+# s3_dev_identity_pool_id, network on the emulator and a GPS fix.
+# Env: NOTE (unique per run), MAESTRO_ADMIN_USER, MAESTRO_ADMIN_PASSWORD.
+name: Uploaded capture shows on the admin panel
+tags: [admin-upload]
+devices:
+  phone:
+    platform: android
+    appId: org.greenstand.android.TreeTracker.dev
+  admin:
+    platform: web
+    appId: https://dev-admin.treetracker.org/
+---
+- parallel:
+    phone:
+      - launchApp: {clearState: true}
+      - runFlow:
+          file: ../flows/subflows/signup.yaml
+          env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+      - runFlow:
+          file: ../flows/subflows/start-capture.yaml
+          env: {WALLET: "5551230001"}
+      # One tree, with the run's note as its fingerprint.
+      - tapOn: {id: CaptureButton}
+      - extendedWaitUntil:
+          visible: {id: TutorialDoneButton}
+          timeout: 30000
+      - tapOn: {id: TutorialDoneButton}
+      - tapOn: {id: NoteButton}
+      - tapOn: {id: DialogTextField}
+      - inputText: ${NOTE}
+      - hideKeyboard
+      - tapOn: {id: DialogPositiveButton}
+      - tapOn: {id: ApproveButton}
+      - extendedWaitUntil:
+          visible: {id: CaptureButton}
+          timeout: 15000
+      - tapOn: {id: ArrowBackButton}
+      - extendedWaitUntil:
+          visible: {id: TreesToSyncCount, text: "1"}
+          timeout: 15000
+      # Upload, and wait for the sync to finish on the device.
+      - tapOn: {id: UploadButton}
+      - extendedWaitUntil:
+          visible: {id: TreesToSyncCount, text: "0"}
+          timeout: 180000
+      - assertVisible: {id: TreesSyncedCount, text: "1"}
+      - signal: uploaded
+    admin:
+      # Log in while the phone captures. Chrome runs with a fresh profile and no password manager.
+      - launchApp: {clearState: true}
+      - tapOn: {css: "#userName"}
+      - inputText: ${MAESTRO_ADMIN_USER}
+      - tapOn: {css: "#password"}
+      - inputText: ${MAESTRO_ADMIN_PASSWORD}
+      - tapOn: {css: 'button[type="submit"]'}
+      - extendedWaitUntil:
+          notVisible: {css: "#password"}
+          timeout: 30000
+      - waitForSignal: {name: uploaded, timeout: 900000}
+
+# Verify lists the newest capture first. The backend takes a few minutes to ingest an upload, so
+# reload Verify and open the top capture until its details show our note: up to about 8 minutes.
+- admin:
+    - retry:
+        maxRetries: 40
+        commands:
+          - openLink: https://dev-admin.treetracker.org/verify
+          - extendedWaitUntil:
+              visible: {css: '[aria-label="Capture details"]', index: 0}
+              timeout: 30000
+          - tapOn: {css: '[aria-label="Capture details"]', index: 0}
+          - extendedWaitUntil:
+              visible: ${NOTE}
+              timeout: 8000

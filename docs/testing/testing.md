@@ -63,6 +63,13 @@ write, by priority.
 CI runs them on an API 35 emulator in the "Android end-to-end" check
 (`.github/workflows/android-e2e.yml`); a failed step fails the check.
 
+`e2e/admin/capture-upload.yaml` checks the whole upload path: it captures a tree with the dev
+build, uploads it, and finds it on the dev admin panel's Verify page in headless Chrome, in one
+tb flow. It needs admin credentials, so it runs only in the "Admin upload end-to-end" workflow
+(`.github/workflows/admin-upload-e2e.yml`: by hand, on release branches and nightly, never on pull
+requests). See [e2e/admin/README.md](../../e2e/admin/README.md) for the secrets it needs and how
+they are kept out of logs.
+
 Flows find controls by the ids in `TestTags` (`view/TestTags.kt`). Tag new controls there, and
 keep ids unique on screen; see [e2e/README.md](../../e2e/README.md#ids-for-flows).
 

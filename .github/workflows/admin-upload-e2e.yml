@@ -1,0 +1,154 @@
+name: Admin upload end-to-end
+
+# Captures a tree on an emulator with the dev build, uploads it to the dev backend, and checks
+# with headless Chrome that it shows on the dev admin panel (https://dev-admin.treetracker.org)
+# under Verify. One Test Buddy flow drives both: e2e/admin/capture-upload.yaml.
+#
+# It needs real credentials, so it never runs on pull requests (a pull request could change this
+# file or the flow and read them). It runs by hand, on pushes to release branches and nightly.
+# The credentials are secrets of the `e2e-admin` environment; see e2e/admin/README.md for the
+# secrets and the branch rule that keeps other branches from using them.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "release*", "releases/**" ]
+  schedule:
+    - cron: "17 3 * * *"
+
+# Every run uploads a capture and checks the newest one on Verify, so two runs must not overlap.
+concurrency:
+  group: admin-upload-e2e
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  admin-upload:
+    name: capture, upload, find on admin panel
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: e2e-admin
+    env:
+      API_LEVEL: "35"
+      # Same Test Buddy commit as the Android end-to-end check.
+      TESTBUDDY_REF: ab598c27daa9784f026229c9322adba69b11f8b5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check out Test Buddy
+        uses: actions/checkout@v4
+        with:
+          repository: Elforama/testbuddy
+          ref: ${{ env.TESTBUDDY_REF }}
+          path: .testbuddy
+          persist-credentials: false
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: .testbuddy/go.mod
+          cache-dependency-path: .testbuddy/go.sum
+      - name: Build tb
+        working-directory: .testbuddy
+        run: |
+          (cd agents/android && ./gradlew assembleDebug)
+          cp agents/android/app/build/outputs/apk/debug/app-debug.apk internal/driver/android/assets/tb-agent.apk
+          go build -o "$GITHUB_WORKSPACE/bin/tb" ./cmd/tb
+
+      # Dummy keys, then the one real key an upload needs: the dev S3 identity pool. Only this
+      # step sees it, and it goes into the file with printf, never onto a command line.
+      - name: Setup build environment
+        uses: ./.github/workflows/actions/setup-build-environment
+        with:
+          use_dummy_keys: true
+      - name: Add the dev upload key
+        env:
+          S3_DEV_IDENTITY_POOL_ID: ${{ secrets.S3_DEV_IDENTITY_POOL_ID }}
+        run: |
+          if [ -z "$S3_DEV_IDENTITY_POOL_ID" ]; then
+            echo "::error::S3_DEV_IDENTITY_POOL_ID is not set in the e2e-admin environment or the repository"
+            exit 1
+          fi
+          grep -v '^s3_dev_identity_pool_id=' treetracker.keys.properties > keys.tmp
+          printf 's3_dev_identity_pool_id=%s\n' "$S3_DEV_IDENTITY_POOL_ID" >> keys.tmp
+          mv keys.tmp treetracker.keys.properties
+      - name: Build the dev app
+        run: bash ./gradlew :app:assembleDev --stacktrace
+      # The key is compiled into the APK now; nothing else needs the file.
+      - name: Delete the property file
+        if: always()
+        run: rm -f treetracker.keys.properties
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # Same snapshot as the Android end-to-end check (both cameras emulated).
+      - name: Emulator snapshot cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.API_LEVEL }}-google_apis-x86_64-cameras
+
+      - name: Create the emulator snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: echo "snapshot saved"
+
+      # The admin login reaches tb only as MAESTRO_* environment variables of this step. GitHub
+      # masks secrets in the log, and run.sh also scrubs them from tb's output and files.
+      - name: Capture, upload and check the admin panel
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          MAESTRO_ADMIN_USER: ${{ secrets.ADMIN_USER }}
+          MAESTRO_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: |
+            adb install -r app/build/outputs/apk/dev/app-dev.apk
+            TB="$GITHUB_WORKSPACE/bin/tb" bash e2e/admin/run.sh -s "$(adb get-serialno)"
+
+      # run.sh scrubs on exit; this checks again before anything leaves the runner, and the
+      # upload below only runs when it passes.
+      - name: Check the report holds no credentials
+        id: scrub
+        if: always()
+        env:
+          MAESTRO_ADMIN_USER: ${{ secrets.ADMIN_USER }}
+          MAESTRO_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          SCRUB_VARS: MAESTRO_ADMIN_USER,MAESTRO_ADMIN_PASSWORD
+        run: |
+          mkdir -p build/e2e-admin
+          python3 e2e/admin/scrub.py build/e2e-admin
+
+      - name: Test report and debug files
+        if: always() && steps.scrub.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-upload-e2e
+          path: build/e2e-admin/
+          if-no-files-found: ignore
+          retention-days: 7

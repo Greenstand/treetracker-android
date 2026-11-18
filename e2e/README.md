@@ -23,6 +23,9 @@ YAML and drives the installed debug app on an emulator or device.
   start with a plain `launchApp`.
 - `flows/dev-options.yaml`, `flows/debug-overlays.yaml` (tag `dev-tools`): run after
   `setup-device.sh` seeds a user and two trees.
+- `admin/capture-upload.yaml` (tag `admin-upload`): captures and uploads a tree with the dev build,
+  then finds it on the dev admin panel in Chrome. It needs credentials and the network, so it
+  lives outside `flows/` and runs through `admin/run.sh`; see [admin/README.md](admin/README.md).
 
 Sub-flows in `flows/subflows/` have no `tags` and are only run through `runFlow`.
 - `flows/dev-options.yaml`: I1, change a developer parameter and verify persistence
