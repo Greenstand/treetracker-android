@@ -222,6 +222,23 @@ class TreeImageReviewViewModelTest {
 
             assertEquals(false, vm.state.value.showReviewTutorial)
             assertEquals(CaptureFlowTestFixtures.PHOTO_PATH, vm.state.value.treeImagePath)
+            assertTrue(vm.events.replayCache.isEmpty())
+        }
+
+    @Test
+    fun `init after process death with no tree to restore leaves for the dashboard`() =
+        runTest {
+            every { treeCapturer.currentTree } returns null
+
+            val vm =
+                TreeImageReviewViewModel(
+                    treeCapturer = treeCapturer,
+                    userRepo = userRepo,
+                    featureResolver = featureResolver,
+                    restoredAfterProcessDeath = true,
+                )
+
+            assertTrue(vm.events.first().getContentIfNotConsumed() is NavigationEvent)
         }
 
     @Test

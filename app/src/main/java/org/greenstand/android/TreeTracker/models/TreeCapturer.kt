@@ -112,6 +112,7 @@ class TreeCapturer(
         }
         return try {
             createTreeUseCase.execute(tree)
+            currentTree = null
             pendingTreeStore.clear()
             true
         } catch (e: Exception) {

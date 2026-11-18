@@ -21,19 +21,39 @@ started" because the session id and GPS updates were lost too.
   (`SYSTEM_SETTINGS/pending-capture-tree`, JSON). `TreeCapturer` saves it on `setImage`,
   `addAttribute` and `setNote`, clears it once `saveTree` succeeds, and drops it when the user
   leaves the capture flow (`CaptureFlowNavigationController.endSession`).
-- `CaptureFlowScopeManager.restoreOnImageReview()`: when the scope is closed, opens it, restores
-  the kept tree into `TreeCapturer`, and calls `CaptureFlowNavigationController.resumeAt(image review)`.
-  It does nothing while the scope is open, so the normal flow is unchanged.
-- `CaptureFlowNavigationController.resumeAt(route)`: points the flow at that step, resumes the
-  interrupted session (`SessionTracker.resumeInterruptedSession()`, from the persisted
-  `session-active` id) and restarts the step counter, orientation sensor and GPS updates.
-- `di/AppModule.kt`: the `TreeImageReviewViewModel` definition calls `restoreOnImageReview()`
-  before resolving `TreeCapturer`, and tells the view model when it restored the flow.
+- `CaptureFlowScopeManager.restoreAt(route)`: when the scope is closed, opens it, restores the
+  kept tree into `TreeCapturer`, and calls `CaptureFlowNavigationController.resumeAt(route, sessionId)`.
+  It does nothing while the scope is open, so the normal flow is unchanged. If the kept tree
+  can't be picked up (none kept, no interrupted session, the tree belongs to another session, or
+  the step isn't in the org's flow), the kept tree is dropped and the screen sends the user to
+  the dashboard, which ends the session, instead of reviewing an empty tree.
+- `CaptureFlowNavigationController.resumeAt(route, sessionId)`: points the flow at that step,
+  resumes the interrupted session (`SessionTracker.resumeInterruptedSession()`, from the
+  persisted `session-active` id; it must match the tree's session) and restarts the step counter,
+  orientation sensor and GPS updates.
+- `di/AppModule.kt`: the `TreeImageReviewViewModel` and `TreeHeightSelectionViewModel`
+  definitions call `restoreAt()` for their step before resolving `TreeCapturer`, and tell the
+  view model when they restored the flow. Tree height is part of capture flows that list
+  `tree-height-selection` (for example the org config example in `OrgRepo.kt`) and crashed the
+  same way.
 - `TreeImageReviewViewModel`: does not show the first-tree review tutorial again after a
-  restore. The user saw it before the app was killed, and the dialog would cover Approve.
+  restore. The app was killed after the photo was taken, and the dialog would cover Approve.
+- `TreeCapturer.saveTree()` clears `currentTree` once the tree is saved, so a later change can't
+  store or save it again.
+
+Back on the capture screen, `TreeCaptureViewModelFactory` opens a fresh scope as usual; the
+session, sensors and GPS are singletons, so the resumed session carries on.
 
 Approving the restored tree saves it once and pops back to capture, where the next tree goes
 into the same session.
+
+## Review
+
+A review of the fix found the tree height crash, the restore going ahead with nothing to restore,
+the session id not being checked against the kept tree, and `currentTree` staying set after a
+save; all are fixed above. Not changed: the step count baseline is reset on resume (steps walked
+before the kill are not counted, same as starting a session), and a note typed but not yet added
+is lost on process death.
 
 ## Tests
 

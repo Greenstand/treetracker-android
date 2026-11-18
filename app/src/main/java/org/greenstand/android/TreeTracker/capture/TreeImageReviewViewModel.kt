@@ -59,7 +59,8 @@ class TreeImageReviewViewModel(
     private val treeCapturer: TreeCapturer,
     private val userRepo: UserRepo,
     featureResolver: FeatureResolver,
-    // The user already saw the review tutorial before Android killed the app.
+    // True when the capture flow was rebuilt after Android killed the app on this screen. The
+    // tutorial is not shown again then: the app was killed after the photo was taken.
     private val restoredAfterProcessDeath: Boolean = false,
 ) : BaseViewModel<TreeImageReviewState, TreeImageReviewAction>(TreeImageReviewState()) {
     private val forceNote =
@@ -69,6 +70,10 @@ class TreeImageReviewViewModel(
         )
 
     init {
+        if (restoredAfterProcessDeath && treeCapturer.currentTree == null) {
+            // The tree could not be restored, so there is nothing to review.
+            sendEvent(NavigationEvent { CaptureFlowScopeManager.nav.goToDashboard(this) })
+        }
         viewModelScope.launch(Dispatchers.Main) {
             val firstTrack = !restoredAfterProcessDeath && isFirstTrack()
             updateState {

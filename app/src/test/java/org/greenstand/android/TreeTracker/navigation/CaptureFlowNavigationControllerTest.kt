@@ -404,14 +404,20 @@ class CaptureFlowNavigationControllerTest {
 
     // --- resumeAt (process death) ---
 
+    private fun interruptedSession(id: Long = 1L) {
+        every { sessionTracker.resumeInterruptedSession() } returns true
+        every { sessionTracker.currentSessionId } returns id
+    }
+
     @Test
     fun `resumeAt image review then navForward moves on to tree height`() =
         runTest {
             val controller = controllerFor(standardFlow)
             val review = TreeImageReviewRoute(photoPath = "/trees/1.jpg")
             val navigator = fakeNavigator(DashboardRoute, capture, review, clock = clock)
+            interruptedSession()
 
-            controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+            assertTrue(controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, sessionId = 1L))
             assertEquals(Destination("tree-image-review/{photoPath}"), controller.currentDestination)
 
             controller.navForward(navigator)
@@ -425,8 +431,9 @@ class CaptureFlowNavigationControllerTest {
             val controller = controllerFor(destinations("capture/{profilePicUrl}", "image-review"))
             val navigator =
                 fakeNavigator(DashboardRoute, capture, TreeImageReviewRoute(photoPath = "/trees/1.jpg"), clock = clock)
+            interruptedSession()
 
-            controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+            controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, sessionId = 1L)
             controller.navForward(navigator)
 
             coVerify(exactly = 1) { treeCapturer.saveTree() }
@@ -436,13 +443,46 @@ class CaptureFlowNavigationControllerTest {
     @Test
     fun `resumeAt restarts the session and sensors that only lived in memory`() {
         val controller = controllerFor(standardFlow)
+        interruptedSession()
 
-        controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+        controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, sessionId = 1L)
 
         verify { sessionTracker.resumeInterruptedSession() }
         verify { stepCounter.enable() }
         verify { deviceOrientation.enable() }
         verify { locationDataCapturer.startGpsUpdates() }
+    }
+
+    @Test
+    fun `resumeAt tree height points the flow at tree height`() {
+        val controller = controllerFor(standardFlow)
+        interruptedSession()
+
+        assertTrue(controller.resumeAt(RouteRegistry.ROUTE_TREE_HEIGHT, sessionId = 1L))
+
+        assertEquals(Destination("tree-height-selection"), controller.currentDestination)
+    }
+
+    @Test
+    fun `resumeAt a step that is not in the flow changes nothing`() {
+        val controller = controllerFor(destinations("capture/{profilePicUrl}", "image-review"))
+        interruptedSession()
+
+        assertFalse(controller.resumeAt(RouteRegistry.ROUTE_TREE_HEIGHT, sessionId = 1L))
+
+        assertTrue(controller.isAtStart)
+        verify(exactly = 0) { locationDataCapturer.startGpsUpdates() }
+    }
+
+    @Test
+    fun `resumeAt with a tree from another session changes nothing`() {
+        val controller = controllerFor(standardFlow)
+        interruptedSession(id = 2L)
+
+        assertFalse(controller.resumeAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, sessionId = 1L))
+
+        assertTrue(controller.isAtStart)
+        verify(exactly = 0) { stepCounter.enable() }
     }
 
     @Test

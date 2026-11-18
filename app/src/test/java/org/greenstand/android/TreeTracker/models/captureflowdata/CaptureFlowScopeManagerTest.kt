@@ -15,14 +15,18 @@
  */
 package org.greenstand.android.TreeTracker.models.captureflowdata
 
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.Tree
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
+import org.greenstand.android.TreeTracker.navigation.destinations
 import org.greenstand.android.TreeTracker.navigation.orgRepoWith
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -35,12 +39,14 @@ import org.junit.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import java.util.UUID
 
 class CaptureFlowScopeManagerTest {
     private val stepCounter = mockk<StepCounter>(relaxed = true)
     private val sessionTracker = mockk<SessionTracker>(relaxed = true)
     private val locationDataCapturer = mockk<LocationDataCapturer>(relaxed = true)
     private val deviceOrientation = mockk<DeviceOrientation>(relaxed = true)
+    private val treeCapturer = mockk<TreeCapturer>(relaxed = true)
 
     @Before
     fun setUp() {
@@ -49,14 +55,14 @@ class CaptureFlowScopeManagerTest {
         startKoin {
             modules(
                 module {
-                    single { orgRepoWith() }
+                    single { orgRepoWith(captureFlow = destinations("capture/{profilePicUrl}", "image-review")) }
                     single { stepCounter }
                     single { sessionTracker }
                     single { locationDataCapturer }
                     single { deviceOrientation }
                     scope<CaptureFlowScope> {
                         scoped { CaptureFlowData() }
-                        scoped { mockk<TreeCapturer>(relaxed = true) }
+                        scoped { treeCapturer }
                         scoped { CaptureFlowNavigationController(get(), get(), get(), get(), get(), get()) }
                     }
                 },
@@ -140,26 +146,65 @@ class CaptureFlowScopeManagerTest {
         assertTrue(runCatching { CaptureFlowScopeManager.nav }.exceptionOrNull() is IllegalStateException)
     }
 
-    @Test
-    fun `restoreOnImageReview reopens the scope with the kept tree and resumes the session`() {
-        assertTrue(CaptureFlowScopeManager.restoreOnImageReview())
+    private fun keptTree(sessionId: Long) = Tree(UUID.randomUUID(), sessionId, "", "/photo.jpg", 1.0, 2.0)
 
-        assertTrue(CaptureFlowScopeManager.isOpen)
-        val treeCapturer = CaptureFlowScopeManager.getData().scope.get<TreeCapturer>()
-        verify { treeCapturer.restorePendingTree() }
-        verify { sessionTracker.resumeInterruptedSession() }
-        verify { locationDataCapturer.startGpsUpdates() }
+    private fun interruptedSession(id: Long) {
+        every { sessionTracker.resumeInterruptedSession() } returns true
+        every { sessionTracker.currentSessionId } returns id
     }
 
     @Test
-    fun `restoreOnImageReview leaves an open scope alone`() {
+    fun `restoreAt reopens the scope with the kept tree and resumes its session`() {
+        every { treeCapturer.restorePendingTree() } returns keptTree(sessionId = 7L)
+        interruptedSession(7L)
+
+        assertTrue(CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW))
+
+        assertTrue(CaptureFlowScopeManager.isOpen)
+        verify { locationDataCapturer.startGpsUpdates() }
+        verify(exactly = 0) { treeCapturer.discardPendingTree() }
+    }
+
+    @Test
+    fun `restoreAt with no kept tree opens the scope but restores nothing`() {
+        every { treeCapturer.restorePendingTree() } returns null
+
+        assertTrue(CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW))
+
+        assertTrue(CaptureFlowScopeManager.isOpen)
+        verify { treeCapturer.discardPendingTree() }
+        verify(exactly = 0) { locationDataCapturer.startGpsUpdates() }
+    }
+
+    @Test
+    fun `restoreAt drops a kept tree from another session`() {
+        every { treeCapturer.restorePendingTree() } returns keptTree(sessionId = 3L)
+        interruptedSession(7L)
+
+        CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+
+        verify { treeCapturer.discardPendingTree() }
+        verify(exactly = 0) { locationDataCapturer.startGpsUpdates() }
+    }
+
+    @Test
+    fun `restoreAt drops the kept tree when no session was interrupted`() {
+        every { treeCapturer.restorePendingTree() } returns keptTree(sessionId = 7L)
+        every { sessionTracker.resumeInterruptedSession() } returns false
+
+        CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
+
+        verify { treeCapturer.discardPendingTree() }
+    }
+
+    @Test
+    fun `restoreAt leaves an open scope alone`() {
         CaptureFlowScopeManager.open()
         val component = CaptureFlowScopeManager.getData()
 
-        assertFalse(CaptureFlowScopeManager.restoreOnImageReview())
+        assertFalse(CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW))
 
         assertSame(component, CaptureFlowScopeManager.getData())
-        val treeCapturer = component.scope.get<TreeCapturer>()
         verify(exactly = 0) { treeCapturer.restorePendingTree() }
         verify(exactly = 0) { sessionTracker.resumeInterruptedSession() }
     }

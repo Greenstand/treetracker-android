@@ -426,6 +426,20 @@ class TreeCapturerTest {
         }
 
     @Test
+    fun `WHEN saveTree succeeds THEN currentTree is cleared so the tree can't be saved again`() =
+        runTest {
+            pinAndSetImage()
+            coEvery { createTreeUseCase.execute(any()) } returns 1L
+
+            treeCapturer.saveTree()
+            treeCapturer.setNote("late note")
+
+            assertNull(treeCapturer.currentTree)
+            assertFalse(treeCapturer.saveTree())
+            coVerify(exactly = 1) { createTreeUseCase.execute(any()) }
+        }
+
+    @Test
     fun `WHEN saveTree fails THEN the kept tree stays`() =
         runTest {
             pinAndSetImage()
