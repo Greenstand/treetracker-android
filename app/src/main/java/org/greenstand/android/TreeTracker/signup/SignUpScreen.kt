@@ -30,10 +30,10 @@ import org.greenstand.android.TreeTracker.navigation.Navigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 
 /**
- * Leaves Signup for the Dashboard once the power user is set, clearing the whole back stack so
- * back from the Dashboard exits the app. Signup is reached from Language on first run but from
- * a cleared stack after logout or profile deletion, so popping up to a specific route would
- * leave Signup under the Dashboard in those cases.
+ * Leaves Signup for the Dashboard after the power user is chosen or created, clearing the whole
+ * back stack so back from the Dashboard exits the app. Signup is reached from Language on first
+ * run but from a cleared stack after logout or profile deletion, so popping up to a specific
+ * route would leave Signup under the Dashboard in those cases.
  */
 internal fun navigateToDashboardAfterSignup(navigator: Navigator) {
     navigator.navigate(DashboardRoute) {
