@@ -40,6 +40,7 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
@@ -110,7 +111,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns "PreviousOrg"
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             val state = viewModel.state.value
             assertEquals(fakeUser.photoPath, state.userImagePath)
@@ -124,7 +125,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             viewModel.handleAction(AddOrgAction.UpdateOrgName("NewOrg"))
 
@@ -140,7 +141,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns "AutofillOrg"
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             viewModel.handleAction(AddOrgAction.ApplyOrgAutofill)
 
@@ -155,7 +156,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             viewModel.handleAction(AddOrgAction.UpdateOrgName("SavedOrg"))
             viewModel.handleAction(AddOrgAction.SetDefaultOrg)
@@ -174,7 +175,7 @@ class AddOrgViewModelTest {
             every { preferences.getString(any(), any()) } returns null
             every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             assertEquals("Kasiki Hai", viewModel.state.value.orgName)
             coVerify { captureSetupData.organizationName = "Kasiki Hai" }
@@ -187,7 +188,7 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { preferences.getString(any(), any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             assertEquals("", viewModel.state.value.orgName)
             coVerify(exactly = 0) { captureSetupData.organizationName = "Greenstand" }
@@ -201,7 +202,7 @@ class AddOrgViewModelTest {
             every { preferences.getString(any(), any()) } returns null
             every { orgRepo.currentOrg() } returns defaultOrg.copy(name = "")
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             assertEquals("", viewModel.state.value.orgName)
         }
@@ -214,7 +215,7 @@ class AddOrgViewModelTest {
             every { preferences.getString(any(), any()) } returns null
             every { orgRepo.currentOrg() } returns defaultOrg.copy(id = "123", name = "Kasiki Hai")
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
             viewModel.handleAction(AddOrgAction.UpdateOrgName("Different Org"))
 
             assertEquals("Different Org", viewModel.state.value.orgName)
@@ -224,7 +225,7 @@ class AddOrgViewModelTest {
     private fun createViewModel(previousOrg: String? = null): AddOrgViewModel {
         every { captureSetupData.user } returns FakeFileGenerator.fakeUsers.first()
         every { preferences.getString(any(), any()) } returns previousOrg
-        return AddOrgViewModel(preferences, orgRepo, userRepo)
+        return AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
     }
 
     @Test
@@ -352,9 +353,9 @@ class AddOrgViewModelTest {
             every { captureSetupData.user } returns fakeUser
             every { mockEditor.putLong(any(), any()) } returns mockEditor
 
-            AddOrgViewModel(preferences, orgRepo, userRepo)
+            AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
-            verify { mockEditor.putLong(AddOrgViewModel.SETUP_USER_ID_KEY, fakeUser.id) }
+            verify { mockEditor.putLong(CaptureSetupRestorer.SETUP_USER_ID_KEY, fakeUser.id) }
             verify(exactly = 0) { CaptureSetupScopeManager.open() }
         }
 
@@ -363,10 +364,10 @@ class AddOrgViewModelTest {
         runTest {
             val fakeUser = FakeFileGenerator.fakeUsers.first()
             stubClosedScope()
-            every { preferences.getLong(AddOrgViewModel.SETUP_USER_ID_KEY, any()) } returns fakeUser.id
+            every { preferences.getLong(CaptureSetupRestorer.SETUP_USER_ID_KEY, any()) } returns fakeUser.id
             coEvery { userRepo.getUser(fakeUser.id) } returns fakeUser
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             verify { CaptureSetupScopeManager.open() }
             verify { setupNav.restoreAt(RouteRegistry.ROUTE_ADD_ORG) }
@@ -380,10 +381,10 @@ class AddOrgViewModelTest {
     fun `WHEN init after process death and the saved user is gone THEN setup is lost and the scope closes`() =
         runTest {
             stubClosedScope()
-            every { preferences.getLong(AddOrgViewModel.SETUP_USER_ID_KEY, any()) } returns -1L
+            every { preferences.getLong(CaptureSetupRestorer.SETUP_USER_ID_KEY, any()) } returns -1L
             coEvery { userRepo.getUser(any()) } returns null
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
 
             assertTrue(viewModel.state.value.setupLost)
             assertFalse(viewModel.state.value.restoring)
@@ -398,7 +399,7 @@ class AddOrgViewModelTest {
             stubClosedScope()
             coEvery { userRepo.getUser(any()) } coAnswers { reload.await() }
 
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
             assertTrue(viewModel.state.value.restoring)
 
             reload.complete(fakeUser)
@@ -410,7 +411,7 @@ class AddOrgViewModelTest {
         runTest {
             stubClosedScope()
             coEvery { userRepo.getUser(any()) } returns null
-            val viewModel = AddOrgViewModel(preferences, orgRepo, userRepo)
+            val viewModel = AddOrgViewModel(preferences, orgRepo, CaptureSetupRestorer(preferences, userRepo))
             clearMocks(CaptureSetupScopeManager, answers = false)
 
             viewModel.handleAction(AddOrgAction.UpdateOrgName("Acme"))

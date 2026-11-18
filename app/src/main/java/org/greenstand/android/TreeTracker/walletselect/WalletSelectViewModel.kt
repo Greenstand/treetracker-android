@@ -21,8 +21,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
@@ -30,6 +32,10 @@ data class WalletSelectState(
     val currentUser: User? = null,
     val alternateUsers: List<User> = emptyList(),
     val selectedUser: User? = null,
+    /** True while wallet select, restored after process death, reloads its setup user. Navigation waits. */
+    val restoring: Boolean = false,
+    /** True when wallet select came back after process death and its user could not be found again. */
+    val setupLost: Boolean = false,
 )
 
 sealed class WalletSelectAction : Action {
@@ -48,13 +54,22 @@ sealed class WalletSelectAction : Action {
 
 class WalletSelectViewModel(
     private val userRepo: UserRepo,
+    setupRestorer: CaptureSetupRestorer,
 ) : BaseViewModel<WalletSelectState, WalletSelectAction>(WalletSelectState()) {
     init {
+        // After process death Nav3 restores wallet select with the capture setup scope closed.
+        val restoring = setupRestorer.reopenIfClosed(RouteRegistry.ROUTE_WALLET_SELECT)
+        if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
-            val currentUser = CaptureSetupScopeManager.getData().user
+            val currentUser = setupRestorer.loadUser(restoring)
+            if (currentUser == null) {
+                updateState { copy(restoring = false, setupLost = true) }
+                return@launch
+            }
+            updateState { copy(restoring = false, currentUser = currentUser) }
             userRepo
                 .users()
-                .map { users -> users.filter { it.id != currentUser?.id } }
+                .map { users -> users.filter { it.id != currentUser.id } }
                 .onEach { users ->
                     updateState {
                         copy(currentUser = currentUser, alternateUsers = users)
@@ -64,6 +79,8 @@ class WalletSelectViewModel(
     }
 
     override fun handleAction(action: WalletSelectAction) {
+        // The setup scope is closed once setup is lost; the screen is on its way to the Dashboard.
+        if (currentState.setupLost) return
         when (action) {
             is WalletSelectAction.SelectPlanter -> {
                 viewModelScope.launch {

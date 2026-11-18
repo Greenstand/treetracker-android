@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.setupflow.LeaveLostSetupEffect
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
@@ -61,25 +62,31 @@ fun WalletSelectScreen(
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
+    LeaveLostSetupEffect(state.setupLost)
+
     WalletSelect(
         state = state,
         onHandleAction = { action ->
+            // Until a restored wallet select has its user back, leaving it would continue setup without one.
+            val canLeave = !state.restoring && !state.setupLost
             when (action) {
                 is WalletSelectAction.NavigateToUserSelect -> {
-                    CaptureSetupScopeManager.nav.navToUserSelect(navigator)
+                    if (canLeave) CaptureSetupScopeManager.nav.navToUserSelect(navigator)
                 }
                 is WalletSelectAction.NavigateForward -> {
-                    scope.launch {
-                        state.currentUser?.let {
-                            CaptureSetupScopeManager.nav.navForward(navigator)
+                    if (canLeave) {
+                        scope.launch {
+                            state.currentUser?.let {
+                                CaptureSetupScopeManager.nav.navForward(navigator)
+                            }
                         }
                     }
                 }
                 is WalletSelectAction.NavigateToAddWallet -> {
-                    navigator.throttledNavigate(AddWalletRoute)
+                    if (canLeave) navigator.throttledNavigate(AddWalletRoute)
                 }
                 is WalletSelectAction.NavigateBack -> {
-                    CaptureSetupScopeManager.nav.navBackward(navigator)
+                    if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
                 }
                 else -> viewModel.handleAction(action)
             }

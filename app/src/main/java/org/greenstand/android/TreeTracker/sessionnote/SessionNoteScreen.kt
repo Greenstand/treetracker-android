@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.setupflow.LeaveLostSetupEffect
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -54,12 +55,17 @@ fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = Loca
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
+    LeaveLostSetupEffect(state.setupLost)
+
     SessionNote(
         state = state,
         onHandleAction = { action ->
+            // Until a restored session note has its user back, leaving it would continue setup without one.
+            val canLeave = !state.restoring && !state.setupLost
             when (action) {
-                is SessionNoteAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
-                is SessionNoteAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
+                is SessionNoteAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
+                is SessionNoteAction.NavigateNext ->
+                    if (canLeave) scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                 else -> viewModel.handleAction(action)
             }
         },

@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.setupflow.LeaveLostSetupEffect
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -55,12 +56,17 @@ fun AddWalletScreen(
     val scope = rememberCoroutineScope()
     val state by viewModel.state.collectAsState()
 
+    LeaveLostSetupEffect(state.setupLost)
+
     AddWallet(
         state = state,
         onHandleAction = { action ->
+            // Until a restored add wallet has its user back, leaving it would continue setup without one.
+            val canLeave = !state.restoring && !state.setupLost
             when (action) {
-                is AddWalletAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
-                is AddWalletAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
+                is AddWalletAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
+                is AddWalletAction.NavigateNext ->
+                    if (canLeave) scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                 else -> viewModel.handleAction(action)
             }
         },
