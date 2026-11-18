@@ -16,7 +16,9 @@
 package org.greenstand.android.TreeTracker.settings
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
@@ -76,8 +78,11 @@ class SettingsViewModel(
             is SettingsAction.Logout -> {
                 viewModelScope.launch {
                     // Read from the repo, not state: the init load may not have finished yet.
-                    userRepo.getPowerUser()?.let {
-                        userRepo.setPowerUserStatus(it.id, false)
+                    // NonCancellable: LogoutConfirmed pops this screen, which cancels viewModelScope.
+                    withContext(NonCancellable) {
+                        userRepo.getPowerUser()?.let {
+                            userRepo.setPowerUserStatus(it.id, false)
+                        }
                     }
                     handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
                 }
