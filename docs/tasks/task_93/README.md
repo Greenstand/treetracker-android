@@ -36,10 +36,14 @@ failing on master and passing on the branch. Link both artifacts in the PR descr
 
 ## Inline videos
 
-GitHub plays a video inline only when it's uploaded from the browser; there's no API for it, so
-neither `gh` nor a workflow can do it. The `publish` job in `e2e-video.yml` instead converts each
-recording to a GIF (double speed, 8 fps, 270px wide; about 1.3 MB for a minute), pushes GIFs and
-MP4s to the `e2e-media` branch under `pr-<number>/<sha>/`, and writes a before/after table into the
-PR description between `<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->`. The GIFs render
-inline through raw.githubusercontent.com; the MP4 links are full speed. Fork PRs are skipped
-because their token can't push or edit the PR.
+`gh` 2.105 added `--attach` to `gh pr edit` and `gh pr comment`, which uploads images and videos as
+GitHub attachments that play inline. It needs GraphQL, which agent sessions can't reach, so the
+`publish` job in `e2e-video.yml` does it on the runner: it installs the latest `gh` from
+cli.github.com, writes a before/after section into the PR description between
+`<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->` with `./videos/...mp4` paths, and runs
+`gh pr edit --body-file ... --attach ...`, which swaps the paths for the uploaded URLs. If that step
+fails, the job falls back to GIFs (double speed, 8 fps, 270px) pushed to the `e2e-media` branch.
+Fork PRs are skipped because their token can't edit the PR.
+
+`record.sh` now waits for `screenrecord` to exit before pulling the video: #1424's first run lost
+the last flow's "before" video by pulling too early.

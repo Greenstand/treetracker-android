@@ -193,10 +193,10 @@ jobs:
         if: always()
         run: rm -f treetracker.keys.properties
 
-  # GitHub only plays a video inline when someone uploads it in the browser, and there is no API
-  # for that. GIFs do render inline, so this turns each recording into a GIF, pushes the GIFs and
-  # MP4s to the e2e-media branch, and writes a before/after table into the PR description between
-  # the e2e-videos markers. Skipped for PRs from forks, whose token can't push or edit the PR.
+  # Puts the recordings into the PR description between the e2e-videos markers. gh 2.105+ uploads
+  # them as GitHub attachments (`gh pr edit --attach`), which play inline like a video dragged in
+  # from the browser. If that fails, each recording becomes a GIF on the e2e-media branch instead.
+  # Skipped for PRs from forks, whose token can't edit the PR.
   publish:
     name: publish videos to the PR
     needs: [ pick-flows, record ]
@@ -216,9 +216,73 @@ jobs:
         with:
           pattern: e2e-video-*
           path: videos
+      # gh 2.105+ uploads videos as real GitHub attachments, which play inline.
+      - name: Install the latest gh
+        run: |
+          FILE=$(curl -fsSL https://cli.github.com/packages/dists/stable/main/binary-amd64/Packages \
+            | awk '/^Filename: /{f=$2} END{print f}')
+          curl -fsSL -o /tmp/gh.deb "https://cli.github.com/packages/$FILE"
+          sudo dpkg -i /tmp/gh.deb >/dev/null
+          gh --version | head -1
+      - name: Attach the videos to the PR description
+        id: attach
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, re, subprocess
+          pr, sha, run = os.environ["PR"], os.environ["SHA"], os.environ["RUN_URL"]
+          def results(side):
+              f = pathlib.Path(f"videos/e2e-video-{side}/results.txt")
+              return dict(l.split() for l in f.read_text().split("\n") if l.strip()) if f.exists() else {}
+          before, after = results("before"), results("after")
+          icon = {"passed": "✅ passed", "failed": "❌ failed"}
+          attach, lines = [], []
+          for name in sorted(set(before) | set(after)):
+              lines += [f"**`{name}`**", ""]
+              for side, res in (("before", before), ("after", after)):
+                  mp4 = pathlib.Path(f"videos/e2e-video-{side}/{name}.mp4")
+                  label = "Before (master's app)" if side == "before" else "After (this PR's app)"
+                  lines.append(f"{label}: {icon.get(res.get(name), '–')}")
+                  lines.append("")
+                  if mp4.exists():
+                      # gh rewrites ./ paths in the body to the uploaded attachment's URL.
+                      lines += [f"./{mp4}", ""]
+                      attach.append(str(mp4))
+                  else:
+                      lines += ["(no video)", ""]
+          section = "\n".join([
+              "<!-- e2e-videos:start -->",
+              f"#### E2E before/after videos ({sha[:7]})",
+              "",
+              f"Recorded by [this run]({run}).",
+              "",
+              *lines,
+              "<!-- e2e-videos:end -->",
+          ])
+          body = json.loads(subprocess.check_output(["gh", "pr", "view", pr, "--json", "body"]))["body"] or ""
+          marker = re.compile(r"<!-- e2e-videos:start -->.*?<!-- e2e-videos:end -->", re.S)
+          anchor = re.compile(r"(### 🎥[^\n]*\n)")
+          if marker.search(body):
+              body = marker.sub(lambda m: section, body)
+          elif anchor.search(body):
+              body = anchor.sub(lambda m: m.group(1) + "\n" + section + "\n", body, count=1)
+          else:
+              body = body + "\n\n" + section + "\n"
+          pathlib.Path("body.md").write_text(body)
+          cmd = ["gh", "pr", "edit", pr, "--body-file", "body.md"]
+          for f in attach:
+              cmd += ["--attach", f]
+          subprocess.run(cmd, check=True)
+          PY
+      # Fallback when the upload fails: GIFs on the e2e-media branch, which render inline too.
       - name: Install ffmpeg
+        if: steps.attach.outcome != 'success'
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Make GIFs
+        if: steps.attach.outcome != 'success'
         run: |
           DIR="pr-$PR/${SHA:0:7}"
           mkdir -p "media/$DIR"
@@ -237,6 +301,7 @@ jobs:
           ls -la "media/$DIR"
           echo "DIR=$DIR" >> "$GITHUB_ENV"
       - name: Push to the e2e-media branch
+        if: steps.attach.outcome != 'success'
         run: |
           cd media
           git init -q
@@ -255,7 +320,8 @@ jobs:
             git reset -q --hard; sleep $((TRY * 3))
           done
           exit 1
-      - name: Put the videos in the PR description
+      - name: Put the GIFs in the PR description
+        if: steps.attach.outcome != 'success'
         uses: actions/github-script@v7
         env:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
