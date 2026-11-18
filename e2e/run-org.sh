@@ -20,6 +20,7 @@ while read -r VARIANT FLOW; do
     --output "$OUT/org-$VARIANT.xml" --debug-output "$OUT/org-$VARIANT" </dev/null || FAILED=1
 done <<'EOF'
 session-note org-session-note.yaml
+session-note org-double-tap-session-note.yaml
 tree-height org-tree-height.yaml
 force-note org-force-note.yaml
 wallet-select org-wallet-select.yaml
