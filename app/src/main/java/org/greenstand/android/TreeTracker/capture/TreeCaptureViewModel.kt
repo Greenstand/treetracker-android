@@ -24,7 +24,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
@@ -75,15 +77,20 @@ class TreeCaptureViewModel(
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val configurator: Configurator,
     sessionTracker: SessionTracker,
-    locationDataCapturer: LocationDataCapturer,
+    private val locationDataCapturer: LocationDataCapturer,
+    stepCounter: StepCounter,
+    deviceOrientation: DeviceOrientation,
 ) : BaseViewModel<TreeCaptureState, TreeCaptureAction>(TreeCaptureState(profilePicUrl = profilePicUrl)) {
     private var pinLocationDeferred: CompletableDeferred<Boolean>? = null
 
     init {
         // After Android kills the app, the capture screen is restored without going through
-        // capture setup, so resume the session and GPS updates it started. Both are no-ops when
-        // capture setup already did this.
-        sessionTracker.resumeInterruptedSession()
+        // capture setup, so resume the session, sensors and GPS updates it started. On the
+        // normal path setup already did this: no session is resumed and GPS is already on.
+        if (sessionTracker.resumeInterruptedSession()) {
+            stepCounter.enable()
+            deviceOrientation.enable()
+        }
         locationDataCapturer.startGpsUpdates()
 
         viewModelScope.launch(Dispatchers.Main) {
@@ -104,6 +111,9 @@ class TreeCaptureViewModel(
         when (action) {
             is TreeCaptureAction.CaptureLocation -> {
                 if (pinLocationDeferred != null) return
+                // Retries GPS if it could not start earlier, e.g. location permission was only
+                // granted on this screen. No-op when updates are already on.
+                locationDataCapturer.startGpsUpdates()
                 val deferred = CompletableDeferred<Boolean>()
                 pinLocationDeferred = deferred
                 viewModelScope.launch {
@@ -168,6 +178,6 @@ class TreeCaptureViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         CaptureFlowScopeManager.open()
-        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get(), get()) as T
+        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get(), get(), get(), get()) as T
     }
 }

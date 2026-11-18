@@ -34,7 +34,9 @@ import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
@@ -86,6 +88,12 @@ class TreeCaptureViewModelTest {
     @MockK(relaxed = true)
     private lateinit var locationDataCapturer: LocationDataCapturer
 
+    @MockK(relaxed = true)
+    private lateinit var stepCounter: StepCounter
+
+    @MockK(relaxed = true)
+    private lateinit var deviceOrientation: DeviceOrientation
+
     private lateinit var treeCaptureViewModel: TreeCaptureViewModel
 
     @Before
@@ -109,6 +117,8 @@ class TreeCaptureViewModelTest {
             configurator = configurator,
             sessionTracker = sessionTracker,
             locationDataCapturer = locationDataCapturer,
+            stepCounter = stepCounter,
+            deviceOrientation = deviceOrientation,
         )
 
     @Test
@@ -120,6 +130,38 @@ class TreeCaptureViewModelTest {
                 sessionTracker.resumeInterruptedSession()
                 locationDataCapturer.startGpsUpdates()
             }
+        }
+
+    @Test
+    fun `WHEN created after process death THEN the step counter and orientation sensors are re-enabled`() =
+        runTest {
+            every { sessionTracker.resumeInterruptedSession() } returns true
+
+            createViewModel()
+
+            verify(exactly = 1) { stepCounter.enable() }
+            verify(exactly = 1) { deviceOrientation.enable() }
+        }
+
+    @Test
+    fun `WHEN created on the normal path THEN the sensors set up by capture setup are left alone`() =
+        runTest {
+            every { sessionTracker.resumeInterruptedSession() } returns false
+
+            createViewModel()
+
+            verify(exactly = 0) { stepCounter.enable() }
+            verify(exactly = 0) { deviceOrientation.enable() }
+        }
+
+    @Test
+    fun `WHEN CaptureLocation THEN GPS updates are started again in case they could not start before`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            viewModel.handleAction(TreeCaptureAction.CaptureLocation)
+
+            verify(exactly = 2) { locationDataCapturer.startGpsUpdates() }
         }
 
     @Test
@@ -215,6 +257,8 @@ class TreeCaptureViewModelTest {
                     configurator = configurator,
                     sessionTracker = sessionTracker,
                     locationDataCapturer = locationDataCapturer,
+                    stepCounter = stepCounter,
+                    deviceOrientation = deviceOrientation,
                 )
 
             val state = treeCaptureViewModel.state.value

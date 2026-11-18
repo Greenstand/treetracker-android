@@ -1,7 +1,7 @@
 # H6/H10: capture again after process death. The user saves a tree, Android kills the app on the
 # capture screen, and the user reopens it from recents. The restored capture screen resumes the
-# session and GPS updates, so the next capture converges without the bad GPS dialog, the tree is
-# saved to the same session, and the Dashboard counts both trees (#1420).
+# session and GPS updates, so the next capture converges and reaches image review instead of the
+# bad GPS dialog, the tree is saved, and the Dashboard counts both trees (#1420).
 appId: org.greenstand.android.TreeTracker.debug
 name: H6 Capture again after process death
 tags: [sad-path]

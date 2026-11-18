@@ -134,8 +134,9 @@ class SessionTrackerTest {
         runTest {
             every { preferences.getLong(any(), any()) } returns 5L
 
-            sessionTracker.resumeInterruptedSession()
+            val resumed = sessionTracker.resumeInterruptedSession()
 
+            assertTrue(resumed)
             assertEquals(5L, sessionTracker.currentSessionId)
             assertFalse(sessionTracker.wasSessionInterrupted())
             verify { exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, true) }
@@ -146,8 +147,25 @@ class SessionTrackerTest {
         runTest {
             every { preferences.getLong(any(), any()) } returns -1L
 
+            val resumed = sessionTracker.resumeInterruptedSession()
+
+            assertFalse(resumed)
+            assertEquals(null, sessionTracker.currentSessionId)
+        }
+
+    @Test
+    fun `WHEN a resumed session is ended THEN it is closed and no longer persisted`() =
+        runTest {
+            every { preferences.getLong(any(), any()) } returns 5L
+            val session = mockk<SessionEntity>(relaxed = true)
+            coEvery { dao.getSessionById(5L) } returns session
             sessionTracker.resumeInterruptedSession()
 
+            sessionTracker.endSession()
+
+            coVerify { dao.getSessionById(5L) }
+            coVerify { dao.updateSession(session) }
+            verify { editor.putLong(SessionTracker.SESSION_ID_KEY, -1) }
             assertEquals(null, sessionTracker.currentSessionId)
         }
 
@@ -159,8 +177,9 @@ class SessionTrackerTest {
             val current = sessionTracker.currentSessionId
             every { preferences.getLong(any(), any()) } returns 99L
 
-            sessionTracker.resumeInterruptedSession()
+            val resumed = sessionTracker.resumeInterruptedSession()
 
+            assertFalse(resumed)
             assertEquals(current, sessionTracker.currentSessionId)
         }
 

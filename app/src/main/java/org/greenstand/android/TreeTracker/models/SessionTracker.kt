@@ -121,11 +121,14 @@ class SessionTracker(
      * Makes the session that was in progress when Android killed the app current again, so a
      * restored capture screen keeps saving trees to it. Does nothing if a session is already
      * current or none was in progress.
+     *
+     * @return true if an interrupted session was resumed.
      */
-    fun resumeInterruptedSession() {
-        if (!wasSessionInterrupted()) return
+    fun resumeInterruptedSession(): Boolean {
+        if (!wasSessionInterrupted()) return false
         _currentSessionId = preferences.getLong(SESSION_ID_KEY)
         exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, true)
+        return true
     }
 
     fun wasSessionInterrupted(): Boolean =

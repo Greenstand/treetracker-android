@@ -19,9 +19,24 @@ setup. Two things that setup starts only live in memory, so they were gone:
   was in progress.
 - `TreeCaptureViewModel` calls `resumeInterruptedSession()` and then `startGpsUpdates()` when it
   is created. On the normal path both are no-ops, because capture setup has already done them.
-- Not changed: the step counter and device orientation are also not re-enabled after process
-  death. That only affects the step and rotation attributes saved with the tree, not the capture
-  itself, and is left out to keep this fix to #1420.
+- When a session was resumed, it also re-enables the step counter and device orientation, so trees
+  saved after a restore keep their step and rotation attributes. On the normal path these are left
+  alone so the step baseline set by capture setup isn't reset.
+- `LocationDataCapturer.startGpsUpdates()` no longer marks updates as on when
+  `startLocationUpdates()` fails for lack of permission, and tapping Capture calls it again. Revoking
+  location in Settings kills the app, so after granting it again on the restored capture screen
+  GPS now starts on the next capture instead of never.
+
+## Review (follow-up commit)
+
+An independent review of the first commit found the permission and sensor gaps above, which are
+fixed. Not changed:
+- Crash-report session fields (org, wallets, note) aren't restored on resume, only `IS_IN_SESSION`.
+  Low impact, and it needs a DB read.
+- Process death on the other capture-flow screens (image review, height, note) is #1419, not this
+  task.
+- A sync that uploaded the session while the app was dead leaves later trees on an uploaded
+  session; the same happens for a sync during a live session today.
 
 ## Tests
 
