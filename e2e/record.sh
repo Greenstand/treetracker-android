@@ -26,13 +26,13 @@ command -v ffmpeg >/dev/null || echo "ffmpeg not found: videos longer than 170s 
 
 for FLOW in "$@"; do
   NAME=$(basename "$FLOW" .yaml)
-  # An org-config flow names its org in its header ("seed-org.sh -s <serial> <variant>"). Seed it
-  # first, as run-org.sh does.
-  VARIANT=$(grep -m1 -oE 'seed-org\.sh -s <serial> [a-z-]+' "$ROOT/$FLOW" | awk '{print $NF}')
-  if [[ -n $VARIANT ]]; then
-    bash "$ROOT/e2e/seed-org.sh" -s "$SERIAL" "$VARIANT" </dev/null || echo "Could not seed org $VARIANT for $NAME" >&2
-  fi
   "$ADB" -s "$SERIAL" shell am force-stop "$APP" || true
+  # Org-config flows need their org seeded first, the same variant run-org.sh uses for the flow.
+  VARIANT=$(awk -v f="$NAME.yaml" '$2 == f {print $1}' "$ROOT/e2e/run-org.sh")
+  if [[ -n $VARIANT ]] && ! bash "$ROOT/e2e/seed-org.sh" -s "$SERIAL" "$VARIANT" </dev/null; then
+    echo "$NAME failed (could not seed org $VARIANT)" | tee -a "$OUT/results.txt"
+    continue
+  fi
   # Per-flow file names, so a recorder left over from the previous flow can't touch this one.
   REC_DIR=/sdcard/e2e-rec
   "$ADB" -s "$SERIAL" shell "rm -rf $REC_DIR; mkdir -p $REC_DIR"
