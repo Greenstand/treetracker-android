@@ -16,6 +16,7 @@
 package org.greenstand.android.TreeTracker.permissions
 
 import android.location.LocationManager
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
@@ -29,10 +30,14 @@ sealed class PermissionAction : Action {
 
 class PermissionViewModel(
     private val locationManager: LocationManager,
+    private val locationDataCapturer: LocationDataCapturer,
 ) : BaseViewModel<PermissionItemsState, PermissionAction>(PermissionItemsState()) {
     override fun handleAction(action: PermissionAction) {
         when (action) {
             is PermissionAction.CheckLocationEnabled -> {
+                // Sent while location is granted. If it was denied at first launch and granted
+                // only now, GPS updates haven't started yet; this starts them (a no-op otherwise).
+                locationDataCapturer.startGpsUpdates()
                 updateState {
                     copy(isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
                 }
