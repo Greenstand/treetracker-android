@@ -96,7 +96,7 @@ touch it. Each should get its own issue.
 - CustomDialog / TutorialDialog onDismissRequest = {} (back/outside tap do nothing).
 - PermissionRequest calls handleAction + enableLocation (startActivity) during composition, on every recomposition, twice.
 - WalletSelectScreen NavigateForward checks state.currentUser not selectedUser.
-- DeleteProfileScreen: approving "Account deleted" dialog dispatches DeleteUser again; ACCOUNTDELETEDANDADMINREQUESTED never set.
+- DeleteProfileScreen: approving "Account deleted" dialog dispatches DeleteUser again; ACCOUNTDELETEDANDADMINREQUESTED never set (set since #1443).
 - SignUpScreen ExistingUserSelected treats isTherePowerUser == null as true → CaptureSetupScopeManager.getData() may throw.
 - Dashboard org button commented out; OrgRoute unreachable from Dashboard.
 - ProfileScreen camera callback mutates state.selectedUser?.photoPath directly.

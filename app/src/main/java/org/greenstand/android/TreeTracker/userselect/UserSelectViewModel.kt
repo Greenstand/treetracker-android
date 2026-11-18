@@ -161,8 +161,8 @@ class UserSelectViewModel(
                 // and the next sync uploads the message.
                 try {
                     messageRepo.syncMessages()
-                    // Only move on from ACCOUNTDELETEDLOCALLY: if the state changed while the sync
-                    // ran, a late upload must not overwrite it.
+                    // Only move on from ACCOUNTDELETEDLOCALLY, so a sync that returns after the
+                    // state was changed by another action never overwrites that newer state.
                     updateState {
                         if (deleteProfileState == DeleteProfileState.ACCOUNTDELETEDLOCALLY) {
                             copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED)

@@ -22,9 +22,22 @@ message sync (dashboard sync, splash bootstrap) uploads it.
 ## Fix
 
 After `syncMessages()` returns, the state moves from `ACCOUNTDELETEDLOCALLY` to
-`ACCOUNTDELETEDANDADMINREQUESTED`. It only moves from `ACCOUNTDELETEDLOCALLY`, so an upload that
-finishes after the state changed (for example, another user picked) does not overwrite it. The
-failure path is unchanged: no crash, message queued, `ACCOUNTDELETEDLOCALLY`.
+`ACCOUNTDELETEDANDADMINREQUESTED`. It only moves from `ACCOUNTDELETEDLOCALLY`, so a sync that
+returns after another action changed the state does not overwrite it. In the app today nothing can
+change it mid-sync (the "Account Deleted" dialog can't be dismissed), so this is a guard, not a fix
+for a reachable case. The failure path is unchanged: no crash, message queued,
+`ACCOUNTDELETEDLOCALLY`.
+
+## Limits (not changed here)
+
+- The sync runs in `viewModelScope`, and the ViewModel belongs to the `DeleteProfileRoute` entry.
+  Tapping OK on the "Account Deleted" dialog pops that entry, which cancels a sync still running.
+  The state then never reaches `ACCOUNTDELETEDANDADMINREQUESTED`. If the S3 put had already
+  finished, the message stays `shouldUpload = true` and the next sync sends it again. Fixing that
+  means running the sync outside the screen (app scope or WorkManager).
+- `uploadMessages` uploads every queued message and fails if any bundle fails. If the admin message
+  uploaded but another bundle failed, the state stays `ACCOUNTDELETEDLOCALLY`. It errs towards
+  "still pending"; a normal return always means the admin message was uploaded.
 
 ## Product decision
 
