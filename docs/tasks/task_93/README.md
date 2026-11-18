@@ -33,3 +33,22 @@ failing on master and passing on the branch. Link both artifacts in the PR descr
 | #1421 Next after camera rationale cancel crashes | `sad-camera-rationale-next.yaml` | task_100 |
 | #1422 Back from Add org skips Add org | `sad-back-add-org.yaml` | task_101 |
 | #1423 Double-tap Next skips Add org | `sad-double-tap-setup.yaml` | task_102 |
+
+## Inline videos
+
+`gh` 2.105 added `--attach` to `gh pr edit` and `gh pr comment`, which uploads images and videos as
+GitHub attachments that play inline. It needs GraphQL, which agent sessions can't reach, so the
+`publish` job in `e2e-video.yml` does it on the runner: it installs the latest `gh` from
+cli.github.com, writes a before/after section into the PR description between
+`<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->` with `./videos/...mp4` paths, and runs
+`gh pr edit --body-file ... --attach ...`, which swaps the paths for the uploaded URLs. If that step
+fails, the job falls back to GIFs (double speed, 8 fps, 270px) pushed to the `e2e-media` branch.
+Fork PRs are skipped because their token can't edit the PR.
+
+`record.sh` now waits for `screenrecord` to exit before pulling the video: #1424's first run lost
+the last flow's "before" video by pulling too early.
+
+On CI, `gh pr edit --attach` with the workflow's `GITHUB_TOKEN` fails with "attaching files
+requires write access to the repository", even with `contents: write`: attachments need a user's
+token. The attach step uses the `E2E_ATTACH_TOKEN` secret when a maintainer adds one, and the GIF
+fallback otherwise.

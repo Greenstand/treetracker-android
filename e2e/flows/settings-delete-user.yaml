@@ -1,13 +1,5 @@
-# E7: delete a non-admin user. Cancel keeps the user. Confirming removes them: after a relaunch
-# the Delete account list only has the admin.
-#
-# KNOWN BUG: confirming a delete while the device is offline crashes the app. The user is deleted
-# locally, then UserSelectViewModel.deleteUser (UserSelectViewModel.kt:128-139) calls
-# messageRepo.syncMessages(), whose messageUploader.uploadMessages() (MessagesRepo.kt:158) is
-# outside the try/catch and throws an AmazonClientException on the main-immediate scope. Because of
-# it the "Account Deleted" dialog and the return to Settings cannot be checked here. stopApp and
-# launchApp make the flow the same whether the app crashed or stayed up. Once fixed, assert the
-# DialogTitle, tap DialogPositiveButton and assert SettingsDeleteAccount before the relaunch.
+# E7: delete a non-admin user. Cancel keeps the user. Confirming shows "Account Deleted", closing it
+# returns to Settings, and after a relaunch the Delete account list only has the admin.
 appId: org.greenstand.android.TreeTracker.debug
 name: E7 Delete non-admin user
 tags: [settings]
@@ -54,6 +46,12 @@ tags: [settings]
 # Confirm deletes Bob.
 - tapOn: {id: ArrowForwardButton}
 - tapOn: {id: DialogPositiveButton}
+- extendedWaitUntil:
+    visible: {id: DialogTitle, text: "Account Deleted"}
+    timeout: 10000
+- tapOn: {id: DialogPositiveButton}
+- assertVisible: {id: SettingsDeleteAccount}
+# The deletion is saved: it survives a relaunch.
 - stopApp
 - launchApp
 - extendedWaitUntil:
