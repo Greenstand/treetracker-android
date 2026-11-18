@@ -82,6 +82,8 @@ class UserSelectViewModelTest {
         MockKAnnotations.init(this)
         mockkObject(CaptureSetupScopeManager)
         every { CaptureSetupScopeManager.open() } just Runs
+        // open() is stubbed, so report the scope as open to match getData() below.
+        every { CaptureSetupScopeManager.isOpen } returns true
         captureSetupData = mockk(relaxed = true)
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { userRepo.users() } returns flowOf(emptyList())
@@ -90,6 +92,15 @@ class UserSelectViewModelTest {
     @After
     fun tearDown() {
         unmockkObject(CaptureSetupScopeManager)
+    }
+
+    /** The delete succeeded: the admin request is either still queued or already sent. */
+    private fun assertDeleted(viewModel: UserSelectViewModel) {
+        val state = viewModel.state.value.deleteProfileState
+        assertTrue(
+            state == DeleteProfileState.ACCOUNTDELETEDLOCALLY || state == DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED,
+            "Expected a deleted state, was $state",
+        )
     }
 
     private fun createViewModel(userId: Long? = null): UserSelectViewModel =
@@ -274,7 +285,7 @@ class UserSelectViewModelTest {
 
             viewModel.handleAction(UserSelectAction.DeleteUser)
 
-            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+            assertDeleted(viewModel)
             assertNotEquals(
                 planter.id,
                 currentUserIds.lastOrNull(),
@@ -320,9 +331,36 @@ class UserSelectViewModelTest {
 
             viewModel.handleAction(UserSelectAction.DeleteUser)
 
-            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+            assertDeleted(viewModel)
             verify(exactly = 0) { preferences.setUserId(any()) }
             assertEquals(other, setupData.user)
+        }
+
+    @Test
+    fun `GIVEN the setup scope closes while the delete runs WHEN delete succeeds THEN it does not crash and still asks admin`() =
+        runTest {
+            val currentUserIds = mutableListOf<Long?>()
+            every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
+            coEvery { userRepo.deleteUser("0712345678") } coAnswers {
+                // Something closes the capture setup scope while the delete is suspended.
+                every { CaptureSetupScopeManager.isOpen } returns false
+                every { CaptureSetupScopeManager.getData() } throws IllegalStateException("CaptureSetupScope not open")
+                true
+            }
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertDeleted(viewModel)
+            assertEquals(null, currentUserIds.lastOrNull(), "Deleted user ${planter.id} is still the current user id in Preferences")
+            coVerify {
+                messagesRepo.saveMessage(
+                    wallet = "0712345678",
+                    to = "admin",
+                    body = "Hi admin, I would like to delete my account with the wallet 0712345678 I understand that all my data will be lost.",
+                )
+            }
         }
 
     @Test
