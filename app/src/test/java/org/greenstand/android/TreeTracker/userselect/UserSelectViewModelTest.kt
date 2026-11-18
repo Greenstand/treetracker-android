@@ -50,6 +50,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -256,6 +257,34 @@ class UserSelectViewModelTest {
                 )
                 messagesRepo.syncMessages()
             }
+        }
+
+    @Test
+    fun `GIVEN a user selected for deletion WHEN delete succeeds THEN the deleted user is no longer the current user`() =
+        runTest {
+            // Record every current-user id written to Preferences, and keep the capture-setup user in a real holder.
+            val currentUserIds = mutableListOf<Long?>()
+            every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
+            val setupData = CaptureSetupData(mockk(relaxed = true))
+            every { CaptureSetupScopeManager.getData() } returns setupData
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            val viewModel = createViewModel()
+            // DeleteProfileScreen sends SelectUser for the user picked for deletion, then DeleteUser.
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+            assertNotEquals(
+                planter.id,
+                currentUserIds.lastOrNull(),
+                "Deleted user ${planter.id} is still the current user id in Preferences",
+            )
+            assertNotEquals(
+                planter.id,
+                setupData.user?.id,
+                "Deleted user ${planter.id} is still the current capture-setup user",
+            )
         }
 
     @Test
