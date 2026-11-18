@@ -107,7 +107,7 @@ val appModule =
 
         viewModel { AddWalletViewModel() }
 
-        viewModel { AddOrgViewModel(get(), get()) }
+        viewModel { AddOrgViewModel(get(), get(), get()) }
 
         viewModel { LanguagePickerViewModel(get()) }
 
