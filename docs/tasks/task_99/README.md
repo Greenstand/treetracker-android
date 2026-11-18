@@ -4,44 +4,54 @@
 
 When Android killed the app on the capture screen and the user reopened it from recents, the
 capture screen was restored straight from the saved back stack, without going through capture
-setup. Two things that setup starts only live in memory, so they were gone:
+setup. Things that setup starts only live in memory, so they were gone:
 
-- GPS updates. `LocationDataCapturer.startGpsUpdates()` was only called from
-  `CaptureSetupNavigationController.navForward()` and at signup, so convergence always timed out
-  and every capture showed the bad GPS dialog.
+- GPS updates. `LocationDataCapturer.startGpsUpdates()` was only called from capture setup and
+  at signup, so convergence always timed out and every capture showed the bad GPS dialog.
 - The current session id. `SessionTracker.currentSessionId` was null, so once GPS worked,
   `TreeCapturer.setImage()` would fail with "Session must be started before setImage()".
+- The step counter and device orientation sensors, so trees saved after a restore had a step
+  count of 0 and no rotation matrix.
 
 ## Fix
 
-- `SessionTracker.resumeInterruptedSession()` makes the session saved under `SESSION_ID_KEY`
-  current again when no session is current. It does nothing when a session is current or none
-  was in progress.
-- `TreeCaptureViewModel` calls `resumeInterruptedSession()` and then `startGpsUpdates()` when it
-  is created. On the normal path both are no-ops, because capture setup has already done them.
-- When a session was resumed, it also re-enables the step counter and device orientation, so trees
-  saved after a restore keep their step and rotation attributes. On the normal path these are left
-  alone so the step baseline set by capture setup isn't reset.
-- `LocationDataCapturer.startGpsUpdates()` no longer marks updates as on when
-  `startLocationUpdates()` fails for lack of permission, and tapping Capture calls it again. Revoking
-  location in Settings kills the app, so after granting it again on the restored capture screen
-  GPS now starts on the next capture instead of never.
+`TreeCaptureViewModel`, when it is created:
 
-## Review (follow-up commit)
+- If a session was interrupted (`SessionTracker.wasSessionInterrupted()`), resumes it with
+  `resumeInterruptedSession()` and re-enables the step counter and device orientation.
+- Calls `LocationDataCapturer.startGpsUpdates()`.
 
-An independent review of the first commit found the permission and sensor gaps above, which are
-fixed. Not changed:
+When a session is already current (the normal path through capture setup, or returning to capture
+from an image review restored by #1419's `CaptureFlowNavigationController.resumeAt()`), nothing is
+resumed and the sensors are left alone, so the step baseline isn't reset. GPS is already on, so
+`startGpsUpdates()` is a no-op.
+
+## Merge with master
+
+This branch was first written before #1417 and #1419 merged. After merging master:
+
+- `SessionTracker.resumeInterruptedSession()` and the `startGpsUpdates()` permission fix are
+  master's (#1419 and #1417 made the same changes). Master's `resumeInterruptedSession()` also
+  returns true when a session is already current, which is why the capture screen checks
+  `wasSessionInterrupted()` first before re-enabling sensors.
+- An earlier retry of `startGpsUpdates()` on tapping Capture was dropped: master's
+  `PermissionViewModel` starts GPS as soon as location is granted on the capture screen.
+
+## Review
+
+An independent review of the first commit found the sensor and permission gaps, both now covered.
+Not changed:
+
 - Crash-report session fields (org, wallets, note) aren't restored on resume, only `IS_IN_SESSION`.
   Low impact, and it needs a DB read.
-- Process death on the other capture-flow screens (image review, height, note) is #1419, not this
-  task.
 - A sync that uploaded the session while the app was dead leaves later trees on an uploaded
   session; the same happens for a sync during a live session today.
 
 ## Tests
 
-- `SessionTrackerTest`: resume after interruption, no session in progress, session already current.
-- `TreeCaptureViewModelTest`: creating the view model resumes the session, then starts GPS.
+- `SessionTrackerTest`: ending a resumed session closes it and clears `SESSION_ID_KEY`; a session
+  that is already current is kept.
+- `TreeCaptureViewModelTest`: an interrupted session is resumed before GPS starts; sensors are
+  re-enabled only after process death, not on the normal path.
 - `e2e/flows/sad-capture-after-process-death.yaml`: `known-bug` tag dropped, so `e2e/run.sh`
-  runs it in the "Android end-to-end" check. Before/after videos come from the
-  "E2E before/after videos" workflow on the PR.
+  runs it in the "Android end-to-end" check.

@@ -124,6 +124,8 @@ class TreeCaptureViewModelTest {
     @Test
     fun `WHEN created THEN the interrupted session is resumed before GPS updates start`() =
         runTest {
+            every { sessionTracker.wasSessionInterrupted() } returns true
+
             createViewModel()
 
             verifyOrder {
@@ -135,6 +137,7 @@ class TreeCaptureViewModelTest {
     @Test
     fun `WHEN created after process death THEN the step counter and orientation sensors are re-enabled`() =
         runTest {
+            every { sessionTracker.wasSessionInterrupted() } returns true
             every { sessionTracker.resumeInterruptedSession() } returns true
 
             createViewModel()
@@ -146,22 +149,14 @@ class TreeCaptureViewModelTest {
     @Test
     fun `WHEN created on the normal path THEN the sensors set up by capture setup are left alone`() =
         runTest {
-            every { sessionTracker.resumeInterruptedSession() } returns false
+            // A session is already current: resumeInterruptedSession() returns true for it.
+            every { sessionTracker.wasSessionInterrupted() } returns false
+            every { sessionTracker.resumeInterruptedSession() } returns true
 
             createViewModel()
 
             verify(exactly = 0) { stepCounter.enable() }
             verify(exactly = 0) { deviceOrientation.enable() }
-        }
-
-    @Test
-    fun `WHEN CaptureLocation THEN GPS updates are started again in case they could not start before`() =
-        runTest {
-            val viewModel = createViewModel()
-
-            viewModel.handleAction(TreeCaptureAction.CaptureLocation)
-
-            verify(exactly = 2) { locationDataCapturer.startGpsUpdates() }
         }
 
     @Test

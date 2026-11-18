@@ -77,7 +77,7 @@ class TreeCaptureViewModel(
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val configurator: Configurator,
     sessionTracker: SessionTracker,
-    private val locationDataCapturer: LocationDataCapturer,
+    locationDataCapturer: LocationDataCapturer,
     stepCounter: StepCounter,
     deviceOrientation: DeviceOrientation,
 ) : BaseViewModel<TreeCaptureState, TreeCaptureAction>(TreeCaptureState(profilePicUrl = profilePicUrl)) {
@@ -85,9 +85,10 @@ class TreeCaptureViewModel(
 
     init {
         // After Android kills the app, the capture screen is restored without going through
-        // capture setup, so resume the session, sensors and GPS updates it started. On the
-        // normal path setup already did this: no session is resumed and GPS is already on.
-        if (sessionTracker.resumeInterruptedSession()) {
+        // capture setup, so resume the session, sensors and GPS updates it started. When a
+        // session is already current (normal path, or returning from a restored image review)
+        // the sensors are left alone so their step baseline isn't reset, and GPS is already on.
+        if (sessionTracker.wasSessionInterrupted() && sessionTracker.resumeInterruptedSession()) {
             stepCounter.enable()
             deviceOrientation.enable()
         }
@@ -111,9 +112,6 @@ class TreeCaptureViewModel(
         when (action) {
             is TreeCaptureAction.CaptureLocation -> {
                 if (pinLocationDeferred != null) return
-                // Retries GPS if it could not start earlier, e.g. location permission was only
-                // granted on this screen. No-op when updates are already on.
-                locationDataCapturer.startGpsUpdates()
                 val deferred = CompletableDeferred<Boolean>()
                 pinLocationDeferred = deferred
                 viewModelScope.launch {

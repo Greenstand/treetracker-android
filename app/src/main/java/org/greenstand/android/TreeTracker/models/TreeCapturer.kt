@@ -28,6 +28,7 @@ class TreeCapturer(
     private val createTreeUseCase: CreateTreeUseCase,
     private val deviceOrientation: DeviceOrientation,
     private val sessionTracker: SessionTracker,
+    private val pendingTreeStore: PendingTreeStore,
 ) {
     private var newTreeUuid: UUID? = null
     private var convergence: Convergence? = null
@@ -72,6 +73,7 @@ class TreeCapturer(
             )
         }
         currentTree = tree
+        pendingTreeStore.save(tree)
 
         stepCounter.snapshotAbsoluteStepCountOnTreeCapture()
     }
@@ -80,11 +82,26 @@ class TreeCapturer(
         key: String,
         value: String,
     ) {
-        currentTree?.addTreeAttribute(key, value)
+        currentTree?.let {
+            it.addTreeAttribute(key, value)
+            pendingTreeStore.save(it)
+        }
     }
 
     fun setNote(note: String) {
-        currentTree = currentTree?.copy(content = note)
+        currentTree = currentTree?.copy(content = note)?.also { pendingTreeStore.save(it) }
+    }
+
+    /**
+     * Brings back the tree whose photo was taken before Android killed the app, so image review
+     * can show and save it. Returns null when there is none.
+     */
+    fun restorePendingTree(): Tree? = pendingTreeStore.load()?.also { currentTree = it }
+
+    /** Forgets the unsaved tree, for when the user leaves the capture flow. */
+    fun discardPendingTree() {
+        currentTree = null
+        pendingTreeStore.clear()
     }
 
     suspend fun saveTree(): Boolean {
@@ -95,6 +112,8 @@ class TreeCapturer(
         }
         return try {
             createTreeUseCase.execute(tree)
+            currentTree = null
+            pendingTreeStore.clear()
             true
         } catch (e: Exception) {
             Timber.tag("TreeCapturer").e(e, "Failed to save tree")

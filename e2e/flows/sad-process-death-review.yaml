@@ -1,15 +1,10 @@
 # H6: process death on image review. The photo is taken but not yet approved when Android kills
-# the app in the background; the user reopens it from recents. Image review should come back
-# without a crash, approving saves the tree exactly once, and the user can capture again.
-#
-# Known bug: Nav3 restores image review, but the capture flow scope only lived in memory, so
-# creating TreeImageReviewViewModel resolves TreeCapturer, whose Koin factory calls
-# CaptureFlowScopeManager.getData() and throws "CaptureFlowScope not open"
-# (models/captureflowdata/CaptureFlowScope.kt:40, from di/AppModule.kt:147 and
-# capture/TreeImageReviewScreen.kt:152). Fails today.
+# the app in the background; the user reopens it from recents. Image review comes back without a
+# crash, approving saves the tree exactly once, and the user can capture another tree in the same
+# session, so the dashboard counts two trees to sync.
 appId: org.greenstand.android.TreeTracker.debug
 name: H6 Process death on image review
-tags: [sad-path, known-bug]
+tags: [sad-path]
 ---
 - launchApp: {clearState: true}
 - runFlow:

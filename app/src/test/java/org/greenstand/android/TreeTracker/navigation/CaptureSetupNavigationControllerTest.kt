@@ -20,7 +20,10 @@ import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
@@ -244,14 +247,36 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
-    fun `navForward on the last step closes the setup scope`() =
+    fun `navForward on the last step keeps the setup scope open`() =
         runTest {
             val controller = controllerFor(destinations("user-select"))
             val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
 
             controller.navForward(navigator)
 
-            assertFalse(CaptureSetupScopeManager.isOpen)
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
+    @Test
+    fun `navForward again after capture pops back onto the last step reopens capture`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+
+            controller.navForward(navigator)
+            settle()
+            controller.navForward(navigator)
+            settle()
+            // Cancelling the camera rationale pops capture off, back onto Add org.
+            navigator.throttledPopBackStack()
+            settle()
+            controller.navForward(navigator)
+
+            assertEquals(
+                listOf(DashboardRoute, UserSelectRoute, AddOrgRoute, TreeCaptureRoute("/photos/ada.jpg")),
+                navigator.backStack,
+            )
+            coVerify(exactly = 2) { sessionTracker.startSession() }
         }
 
     @Test
@@ -295,6 +320,79 @@ class CaptureSetupNavigationControllerTest {
             coVerify { sessionTracker.startSession() }
         }
 
+    // --- double tap (issue #1423) ---
+
+    @Test
+    fun `second navForward from user select after it navigated is dropped`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+
+            controller.navForward(navigator)
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+            coVerify(exactly = 0) { sessionTracker.startSession() }
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
+    @Test
+    fun `navForward is dropped while an earlier call is still running`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+            val sessionStarted = CompletableDeferred<Unit>()
+            coEvery { sessionTracker.startSession() } coAnswers { sessionStarted.await() }
+
+            launch { controller.navForward(navigator) }
+            launch { controller.navForward(navigator) }
+            advanceUntilIdle()
+            sessionStarted.complete(Unit)
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { sessionTracker.startSession() }
+            assertEquals(
+                listOf(DashboardRoute, UserSelectRoute, TreeCaptureRoute("/photos/ada.jpg")),
+                navigator.backStack,
+            )
+        }
+
+    @Test
+    fun `navForward runs again after an earlier call failed`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+            coEvery { sessionTracker.startSession() } throws IllegalStateException("db") andThen Unit
+
+            runCatching { controller.navForward(navigator) }
+            controller.navForward(navigator)
+
+            coVerify(exactly = 2) { sessionTracker.startSession() }
+            assertEquals(TreeCaptureRoute("/photos/ada.jpg"), navigator.topKey)
+        }
+
+    @Test
+    fun `navForward from a screen that is no longer on top does nothing`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select"))
+            val navigator =
+                fakeNavigator(DashboardRoute, UserSelectRoute, AddOrgRoute, clock = clock)
+                    .scopedTo(UserSelectRoute.toString())
+
+            controller.navForward(navigator)
+
+            coVerify(exactly = 0) { sessionTracker.startSession() }
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
     // --- navBackward ---
 
     @Test
@@ -328,6 +426,20 @@ class CaptureSetupNavigationControllerTest {
         }
 
     @Test
+    fun `a fresh controller under a restored Add org continues from Add org (#1418)`() =
+        runTest {
+            // After process death the setup scope, and so this controller, is new (index 0), while
+            // Nav3 has restored the back stack up to Add org.
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute, clock = clock)
+
+            controller.navForward(navigator)
+
+            assertEquals(SessionNoteRoute, navigator.backStack.last())
+            assertEquals(Destination("session-note"), controller.currentDestination)
+        }
+
+    @Test
     fun `navBackward at the start pops the first screen`() {
         val controller = controllerFor(fullFlow)
         val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
@@ -350,6 +462,143 @@ class CaptureSetupNavigationControllerTest {
         coVerify(exactly = 0) { sessionTracker.endSession() }
         assertTrue(CaptureSetupScopeManager.isOpen)
     }
+
+    // --- system back (pops the stack without navBackward) ---
+
+    @Test
+    fun `navForward after system back from add org opens add org again`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            coVerify(exactly = 0) { sessionTracker.startSession() }
+            assertTrue(CaptureSetupScopeManager.isOpen)
+        }
+
+    @Test
+    fun `navForward after system back in the middle of a flow re-enters the popped step`() =
+        runTest {
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+        }
+
+    @Test
+    fun `navForward from a screen outside the flow continues from the step beneath it`() =
+        runTest {
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddWalletRoute, clock = clock)
+
+            controller.navForward(navigator)
+
+            assertEquals(Destination("add-org"), controller.currentDestination)
+            assertEquals(AddOrgRoute, navigator.topKey)
+        }
+
+    @Test
+    fun `navForward after a double tap on back from add org opens add org again`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            // The second tap's pop is throttled away, but navBackward still decrements the index.
+            controller.navBackward(navigator)
+            controller.navBackward(navigator)
+            assertEquals(listOf(DashboardRoute, UserSelectRoute), navigator.backStack)
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+        }
+
+    @Test
+    fun `navFromNewUserCreation after system back re-enters the popped step`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "wallet-select", "add-org"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+            navigator.navigate(SignupFlowRoute)
+            settle()
+
+            controller.navFromNewUserCreation(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute), navigator.backStack)
+            assertEquals(Destination("wallet-select"), controller.currentDestination)
+        }
+
+    @Test
+    fun `navForward after back from add wallet continues from wallet select`() =
+        runTest {
+            val controller = controllerFor(fullFlow)
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            navigator.navigate(AddWalletRoute)
+            settle()
+            controller.navBackward(navigator)
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute), navigator.backStack)
+        }
+
+    @Test
+    fun `navForward through a flow with a repeated step reaches the end`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "session-note", "add-org", "session-note"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            repeat(3) {
+                controller.navForward(navigator)
+                settle()
+            }
+
+            controller.navForward(navigator)
+
+            assertEquals(TreeCaptureRoute(profilePicUrl = "/photos/ada.jpg"), navigator.topKey)
+            coVerify(exactly = 1) { sessionTracker.startSession() }
+        }
+
+    @Test
+    fun `navForward after system back to a repeated step re-enters the step after it`() =
+        runTest {
+            val controller = controllerFor(destinations("user-select", "session-note", "add-org", "session-note"))
+            val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
+            controller.navForward(navigator)
+            settle()
+            controller.navForward(navigator)
+            settle()
+            navigator.popBackStack()
+            settle()
+
+            controller.navForward(navigator)
+
+            assertEquals(listOf(DashboardRoute, UserSelectRoute, SessionNoteRoute, AddOrgRoute), navigator.backStack)
+            assertEquals(Destination("add-org"), controller.currentDestination)
+        }
 
     // --- navToUserSelect ---
 
@@ -454,7 +703,7 @@ class CaptureSetupNavigationControllerTest {
             verify { stepCounter.enable() }
             verify { deviceOrientation.enable() }
             verify { locationDataCapturer.startGpsUpdates() }
-            assertFalse(CaptureSetupScopeManager.isOpen)
+            assertTrue(CaptureSetupScopeManager.isOpen)
         }
 
     @Test

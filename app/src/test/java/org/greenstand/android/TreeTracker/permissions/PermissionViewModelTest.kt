@@ -24,6 +24,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -41,11 +42,12 @@ class PermissionViewModelTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     private val locationManager = mockk<LocationManager>(relaxed = true)
+    private val locationDataCapturer = mockk<LocationDataCapturer>(relaxed = true)
     private lateinit var testSubject: PermissionViewModel
 
     @Before
     fun setup() {
-        testSubject = PermissionViewModel(locationManager)
+        testSubject = PermissionViewModel(locationManager, locationDataCapturer)
     }
 
     @Test
@@ -57,6 +59,13 @@ class PermissionViewModelTest {
             val result = testSubject.state.value.isLocationEnabled!!
             assertTrue(result)
         }
+
+    @Test
+    fun `checking location while it is granted starts GPS updates`() {
+        testSubject.handleAction(PermissionAction.CheckLocationEnabled)
+
+        verify { locationDataCapturer.startGpsUpdates() }
+    }
 
     @Test
     fun `initial state has not checked the location provider yet`() {

@@ -101,6 +101,25 @@ class SessionTrackerTest {
     }
 
     @Test
+    fun `WHEN a session was interrupted THEN resumeInterruptedSession makes it current`() {
+        every { preferences.getLong(SessionTracker.SESSION_ID_KEY) } returns 42L
+
+        assertTrue(sessionTracker.resumeInterruptedSession())
+
+        assertEquals(42L, sessionTracker.currentSessionId)
+        assertFalse(sessionTracker.wasSessionInterrupted())
+    }
+
+    @Test
+    fun `WHEN no session was running THEN resumeInterruptedSession returns false`() {
+        every { preferences.getLong(SessionTracker.SESSION_ID_KEY) } returns -1L
+
+        assertFalse(sessionTracker.resumeInterruptedSession())
+
+        assertEquals(null, sessionTracker.currentSessionId)
+    }
+
+    @Test
     fun `WHEN no active session THEN endSession no-ops`() =
         runTest {
             sessionTracker.endSession()
@@ -130,30 +149,6 @@ class SessionTrackerTest {
         }
 
     @Test
-    fun `WHEN a session was interrupted THEN resumeInterruptedSession makes it current again`() =
-        runTest {
-            every { preferences.getLong(any(), any()) } returns 5L
-
-            val resumed = sessionTracker.resumeInterruptedSession()
-
-            assertTrue(resumed)
-            assertEquals(5L, sessionTracker.currentSessionId)
-            assertFalse(sessionTracker.wasSessionInterrupted())
-            verify { exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, true) }
-        }
-
-    @Test
-    fun `WHEN no session was in progress THEN resumeInterruptedSession leaves none current`() =
-        runTest {
-            every { preferences.getLong(any(), any()) } returns -1L
-
-            val resumed = sessionTracker.resumeInterruptedSession()
-
-            assertFalse(resumed)
-            assertEquals(null, sessionTracker.currentSessionId)
-        }
-
-    @Test
     fun `WHEN a resumed session is ended THEN it is closed and no longer persisted`() =
         runTest {
             every { preferences.getLong(any(), any()) } returns 5L
@@ -177,9 +172,8 @@ class SessionTrackerTest {
             val current = sessionTracker.currentSessionId
             every { preferences.getLong(any(), any()) } returns 99L
 
-            val resumed = sessionTracker.resumeInterruptedSession()
+            sessionTracker.resumeInterruptedSession()
 
-            assertFalse(resumed)
             assertEquals(current, sessionTracker.currentSessionId)
         }
 

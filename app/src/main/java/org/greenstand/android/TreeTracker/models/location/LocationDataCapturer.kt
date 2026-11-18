@@ -155,9 +155,9 @@ class LocationDataCapturer(
         if (areLocationUpdatesOn) {
             return
         }
-        // Without location permission nothing starts, so stay off and let a later call retry.
+        // Without location permission nothing starts. Leave updates off so that a later call,
+        // once the permission is granted, starts them.
         if (!locationUpdateManager.startLocationUpdates()) {
-            Timber.w("Location updates not started: location permission missing")
             return
         }
         locationUpdateManager.locationUpdateLiveData.observeForever(locationObserver)
