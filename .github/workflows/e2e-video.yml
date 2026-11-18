@@ -201,7 +201,7 @@ jobs:
     name: publish videos to the PR
     needs: [ pick-flows, record ]
     if: >-
-      always() && needs.pick-flows.outputs.flows != '' && github.event_name == 'pull_request' &&
+      !cancelled() && needs.pick-flows.outputs.flows != '' && github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -229,6 +229,8 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
+          # No checkout in this job, so gh can't read the repo from git.
+          GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           python3 - <<'PY'
