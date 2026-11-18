@@ -82,7 +82,7 @@ import java.util.concurrent.TimeUnit
 class PermissionRequestUiTest : ComposeUiTest() {
     private val application = RuntimeEnvironment.getApplication()
     private val locationManager = mockk<LocationManager>(relaxed = true)
-    private val viewModel = PermissionViewModel(locationManager)
+    private val viewModel = PermissionViewModel(locationManager, mockk(relaxed = true))
 
     private val sessionTracker = mockk<SessionTracker>(relaxed = true)
     private val stepCounter = mockk<StepCounter>(relaxed = true)
