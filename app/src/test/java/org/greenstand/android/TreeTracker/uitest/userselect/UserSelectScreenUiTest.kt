@@ -67,6 +67,7 @@ class UserSelectScreenUiTest : ComposeUiTest() {
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
         every { CaptureSetupScopeManager.open() } just Runs
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { CaptureSetupScopeManager.nav } returns setupNav
         every { userRepo.users() } returns flowOf(userSelectTestUsers)

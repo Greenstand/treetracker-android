@@ -83,12 +83,11 @@ class UserSelectViewModel(
     userId: Long?,
     private val userRepo: UserRepo,
     private val messageRepo: MessagesRepo,
-    locationDataCapturer: LocationDataCapturer,
+    private val locationDataCapturer: LocationDataCapturer,
     private val prefs: Preferences,
 ) : BaseViewModel<UserSelectState, UserSelectAction>(UserSelectState()) {
     init {
-        CaptureSetupScopeManager.open()
-        locationDataCapturer.startGpsUpdates()
+        startSetup()
         userRepo
             .users()
             .onEach { userList ->
@@ -100,6 +99,27 @@ class UserSelectViewModel(
                 updateState { copy(selectedUser = user) }
             }
         }
+    }
+
+    /**
+     * Starts capture setup again if capture ended it while this ViewModel stayed alive.
+     *
+     * Leaving capture for user select (`CaptureFlowNavigationController.goToUserSelect`) closes
+     * the setup scope and replaces the back stack with `UserSelectRoute` in one step. That
+     * route's entry never leaves the back stack, so Navigation 3 keeps its ViewModel and `init`
+     * doesn't run again. The capture setup user select screen calls this each time it is shown:
+     * it reopens the setup scope and clears the selection, which belonged to the ended session.
+     * While the scope is still open (e.g. Back from a later setup screen) it changes nothing.
+     */
+    fun resumeSetup() {
+        if (CaptureSetupScopeManager.isOpen) return
+        startSetup()
+        updateState { copy(selectedUser = null) }
+    }
+
+    private fun startSetup() {
+        CaptureSetupScopeManager.open()
+        locationDataCapturer.startGpsUpdates()
     }
 
     override fun handleAction(action: UserSelectAction) {

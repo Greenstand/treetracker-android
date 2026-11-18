@@ -24,9 +24,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
+import org.greenstand.android.TreeTracker.models.DeviceOrientation
+import org.greenstand.android.TreeTracker.models.SessionTracker
+import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeCapturer
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
+import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesParams
 import org.greenstand.android.TreeTracker.usecases.CreateFakeTreesUseCase
 import org.greenstand.android.TreeTracker.viewmodel.Action
@@ -72,10 +76,24 @@ class TreeCaptureViewModel(
     private val treeCapturer: TreeCapturer,
     private val createFakeTreesUseCase: CreateFakeTreesUseCase,
     private val configurator: Configurator,
+    sessionTracker: SessionTracker,
+    locationDataCapturer: LocationDataCapturer,
+    stepCounter: StepCounter,
+    deviceOrientation: DeviceOrientation,
 ) : BaseViewModel<TreeCaptureState, TreeCaptureAction>(TreeCaptureState(profilePicUrl = profilePicUrl)) {
     private var pinLocationDeferred: CompletableDeferred<Boolean>? = null
 
     init {
+        // After Android kills the app, the capture screen is restored without going through
+        // capture setup, so resume the session, sensors and GPS updates it started. When a
+        // session is already current (normal path, or returning from a restored image review)
+        // the sensors are left alone so their step baseline isn't reset, and GPS is already on.
+        if (sessionTracker.wasSessionInterrupted() && sessionTracker.resumeInterruptedSession()) {
+            stepCounter.enable()
+            deviceOrientation.enable()
+        }
+        locationDataCapturer.startGpsUpdates()
+
         viewModelScope.launch(Dispatchers.Main) {
             val enabled = configurator.getBoolean(ConfigKeys.FORCE_IMAGE_SIZE)
             val imageHeight = configurator.getInt(ConfigKeys.IMAGE_CAPTURE_HEIGHT)
@@ -158,6 +176,6 @@ class TreeCaptureViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         CaptureFlowScopeManager.open()
-        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get()) as T
+        return TreeCaptureViewModel(profilePicUrl, get(), get(), get(), get(), get(), get(), get(), get()) as T
     }
 }
