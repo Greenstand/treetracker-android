@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# Runs Test Buddy flows one at a time on a disposable emulator and saves what an agent or person
+# needs to check them later: a screenshot after each step, the step log, logcat and, optionally, a
+# video. Writes summary.json and summary.md at the top of OUT. Used by
+# .github/workflows/flow-runner.yml (see docs/testing/ci-flows.md); works locally too.
+#
+# Flows are picked by selectors: a path (e2e/flows/a.yaml), a name (settings-logout), a glob
+# (settings-*) or a tag (tag:settings). Names, globs and tags look in e2e/flows only (not its
+# sub-flows), and include known-bug flows that match.
+# A failing flow doesn't stop the run. Exit status: 0 all passed, 1 a flow failed, 2 bad input.
+#
+# Usage: TB=tb OUT=build/flow-results bash e2e/ci/run-flows.sh -s emulator-5554 <selector>...
+#    or: FLOW_SELECTORS="a b" ... bash e2e/ci/run-flows.sh -s emulator-5554  (no shell globbing)
+# Env:
+#   SCREENSHOTS=steps|end|none  after each step that can change the screen (default), last only, none
+#   RECORD=1                    record a video of each flow (videos/<flow>.mp4)
+#   ONLINE=1                    leave the network on (by default flows run offline, as run.sh does)
+set -uo pipefail
+ROOT=$(cd "$(dirname "$0")/../.." && pwd)
+ADB=${ADB:-adb}
+TB=${TB:-tb}
+OUT=${OUT:-build/flow-results}
+SCREENSHOTS=${SCREENSHOTS:-steps}
+RECORD=${RECORD:-0}
+ONLINE=${ONLINE:-0}
+APP=org.greenstand.android.TreeTracker.debug
+if [[ $# == 2 && -n ${FLOW_SELECTORS:-} ]]; then
+  set -f
+  # shellcheck disable=SC2086 # split on spaces and commas, without expanding globs
+  set -- "$1" "$2" ${FLOW_SELECTORS//,/ }
+  set +f
+fi
+if [[ $# -lt 3 || $1 != -s || $2 != emulator-* ]]; then
+  echo "Usage: TB=tb OUT=<dir> bash e2e/ci/run-flows.sh -s <emulator-serial> <flow selector>..." >&2
+  exit 2
+fi
+case "$SCREENSHOTS" in steps|end|none) ;; *) echo "SCREENSHOTS must be steps, end or none" >&2; exit 2 ;; esac
+SERIAL=$2
+shift 2
+cd "$ROOT" || exit 2
+
+# Selectors to flow files, in order, without repeats.
+header() { awk '/^---[[:space:]]*$/{exit} {print}' "$1"; }
+has_tag() { header "$1" | grep -qE "^tags:.*[^A-Za-z0-9_-]$2([^A-Za-z0-9_-]|$)"; }
+FLOWS=()
+add() { local f; for f in "$@"; do [[ " ${FLOWS[*]-} " == *" $f "* ]] || FLOWS+=("$f"); done; }
+for SEL in "$@"; do
+  case "$SEL" in
+    tag:*)
+      MATCHED=()
+      for f in e2e/flows/*.yaml; do has_tag "$f" "${SEL#tag:}" && MATCHED+=("$f"); done ;;
+    */*.yaml) MATCHED=("$SEL") ;;
+    *)
+      shopt -s nullglob
+      # A glob in the name is meant to expand.
+      # shellcheck disable=SC2206
+      MATCHED=(e2e/flows/${SEL%.yaml}.yaml)
+      shopt -u nullglob ;;
+  esac
+  if (( ${#MATCHED[@]} == 0 )) || [[ ! -f ${MATCHED[0]} ]]; then
+    echo "No flow matches '$SEL'" >&2
+    exit 2
+  fi
+  add "${MATCHED[@]}"
+done
+echo "Flows: ${FLOWS[*]}"
+
+rm -rf "$OUT"
+mkdir -p "$OUT"
+if [[ $ONLINE != 1 ]]; then
+  # Online, the app syncs on launch and the dummy CI keys make that fail (see run.sh).
+  "$ADB" -s "$SERIAL" shell cmd connectivity airplane-mode enable
+  "$ADB" -s "$SERIAL" shell svc wifi disable
+fi
+"$ADB" -s "$SERIAL" emu geo fix 37.3 -3.5 >/dev/null || true
+
+start_recording() {
+  REC_DIR=/sdcard/flow-rec
+  "$ADB" -s "$SERIAL" shell "rm -rf $REC_DIR; mkdir -p $REC_DIR"
+  # screenrecord stops at 3 minutes, so record in parts until told to stop.
+  "$ADB" -s "$SERIAL" shell "i=1; while [ ! -f $REC_DIR/stop ]; do screenrecord --time-limit 170 --bit-rate 4000000 $REC_DIR/part-\$i.mp4; i=\$((i+1)); done" &
+  REC=$!
+  sleep 2
+}
+stop_recording() {  # $1: flow name
+  sleep 1
+  "$ADB" -s "$SERIAL" shell touch "$REC_DIR/stop"
+  "$ADB" -s "$SERIAL" shell pkill -INT screenrecord || true
+  wait "$REC" 2>/dev/null || true
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    "$ADB" -s "$SERIAL" shell pidof screenrecord >/dev/null 2>&1 || break
+    sleep 1
+  done
+  mkdir -p "$OUT/videos"
+  local parts=() i
+  for i in 1 2 3 4 5 6; do
+    "$ADB" -s "$SERIAL" shell "[ -f $REC_DIR/part-$i.mp4 ]" || break
+    "$ADB" -s "$SERIAL" pull "$REC_DIR/part-$i.mp4" "$OUT/videos/$1-part-$i.mp4" >/dev/null && parts+=("$OUT/videos/$1-part-$i.mp4")
+  done
+  if (( ${#parts[@]} == 1 )) || { (( ${#parts[@]} > 1 )) && ! command -v ffmpeg >/dev/null; }; then
+    mv "${parts[0]}" "$OUT/videos/$1.mp4"
+  elif (( ${#parts[@]} > 1 )); then
+    printf "file '%s'\n" "${parts[@]##*/}" > "$OUT/videos/$1-parts.txt"
+    (cd "$OUT/videos" && ffmpeg -loglevel error -f concat -safe 0 -i "$1-parts.txt" -c copy "$1.mp4")
+  fi
+  rm -f "$OUT/videos/$1"-part-*.mp4 "$OUT/videos/$1-parts.txt"
+}
+
+FAILED=0
+: > "$OUT/results.tsv"
+for FLOW in "${FLOWS[@]}"; do
+  NAME=$(basename "$FLOW" .yaml)
+  DIR="$OUT/flows/$NAME"
+  SHOTS="$OUT/screens/$NAME"
+  mkdir -p "$DIR" "$SHOTS"
+  echo "::group::$NAME"
+  "$ADB" -s "$SERIAL" shell am force-stop "$APP" || true
+  SETUP_OK=1
+  # Org-config flows need their org seeded (the variant run-org.sh uses for the flow); dev-tools
+  # flows need the seeded user and trees from setup-device.sh.
+  VARIANT=$(awk -v f="$NAME.yaml" '$2 == f {print $1}' e2e/run-org.sh)
+  if [[ -n $VARIANT ]]; then
+    bash e2e/seed-org.sh -s "$SERIAL" "$VARIANT" </dev/null > "$DIR/setup.txt" 2>&1 || SETUP_OK=0
+  elif has_tag "$FLOW" dev-tools; then
+    bash e2e/setup-device.sh -s "$SERIAL" </dev/null > "$DIR/setup.txt" 2>&1 || SETUP_OK=0
+  fi
+
+  RUN="$FLOW"
+  if [[ $SCREENSHOTS != none ]]; then
+    # A copy next to the flow, so its runFlow paths still resolve.
+    RUN="$(dirname "$FLOW")/.ci-$NAME.yaml"
+    python3 e2e/ci/step_shots.py --mode "$SCREENSHOTS" "$FLOW" > "$RUN"
+  fi
+  "$ADB" -s "$SERIAL" logcat -c || true
+  [[ $RECORD == 1 ]] && start_recording
+  BEGIN=$(date +%s)
+  if (( SETUP_OK == 0 )); then
+    STATUS=failed
+    echo "Setup failed: see setup.txt" > "$DIR/error.txt"
+  elif "$TB" test "$RUN" -p android --device "$SERIAL" --format junit --output "$DIR/report.xml" \
+      --debug-output "$DIR/tb" --flatten-debug-output </dev/null 2>&1 | tee "$DIR/console.txt"; then
+    STATUS=passed
+  else
+    STATUS=failed
+  fi
+  SECONDS_TAKEN=$(( $(date +%s) - BEGIN ))
+  [[ $RECORD == 1 ]] && stop_recording "$NAME"
+  "$ADB" -s "$SERIAL" logcat -d > "$DIR/logcat.txt" 2>/dev/null || true
+  "$ADB" -s "$SERIAL" logcat -d -b crash > "$DIR/crash.txt" 2>/dev/null || true
+  [[ -s $DIR/crash.txt ]] || rm -f "$DIR/crash.txt"
+  # The lines worth reading first: warnings and errors, and anything from the app.
+  grep -E ' [WEF] |TreeTracker|greenstand|AndroidRuntime' "$DIR/logcat.txt" > "$DIR/logcat-app.txt" 2>/dev/null || true
+  [[ $RUN != "$FLOW" ]] && rm -f "$RUN"
+
+  # tb writes into a folder named after the flow: the steps' screenshots (takeScreenshot/), its
+  # log and, for a failure, the screen it saw then. Move them where the summary points.
+  find "$DIR/tb" -path '*/takeScreenshot/*.png' -exec mv {} "$SHOTS/" \; 2>/dev/null
+  for f in "$DIR"/tb/*/screenshot*.png; do
+    [[ -f $f ]] && mv "$f" "$SHOTS/failure$(basename "$f" .png | sed 's/^screenshot//').png"
+  done
+  for f in "$DIR"/tb/*/{error.txt,screen*.txt,hierarchy*.json,log.txt,commands.json}; do
+    [[ -f $f ]] && mv "$f" "$DIR/"
+  done
+  find "$DIR/tb" -type d -empty -delete 2>/dev/null
+  [[ $STATUS == failed ]] && FAILED=1
+  printf '%s\t%s\t%s\t%s\n' "$NAME" "$FLOW" "$STATUS" "$SECONDS_TAKEN" >> "$OUT/results.tsv"
+  echo "::endgroup::"
+  echo "$NAME $STATUS (${SECONDS_TAKEN}s, $(ls "$SHOTS" | wc -l) screenshots)"
+done
+
+"$ADB" -s "$SERIAL" shell am force-stop "$APP" || true
+if [[ $ONLINE != 1 ]]; then
+  "$ADB" -s "$SERIAL" shell cmd connectivity airplane-mode disable || true
+  "$ADB" -s "$SERIAL" shell svc wifi enable || true
+fi
+python3 e2e/ci/summarize.py "$OUT"
+exit $FAILED
