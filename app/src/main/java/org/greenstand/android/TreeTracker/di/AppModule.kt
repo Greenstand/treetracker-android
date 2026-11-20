@@ -153,7 +153,7 @@ val appModule =
 
         viewModel { MapViewModel(get()) }
 
-        single { UserRepo(get(), get(), get(), get(), get(), get()) }
+        single { UserRepo(get(), get(), get(), get(), get(), get(), get(), get()) }
 
         factory { PendingTreeStore(get()) }
 
