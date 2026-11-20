@@ -57,7 +57,7 @@ in `flows/<flow>/`: `error.txt`, `screen.txt` (what tb saw on screen when it fai
 `crash.txt` when the app crashed.
 
 Why a branch: the session's network can reach GitHub's API and git, but not the storage that run
-artifacts download from. So each run also pushes its results (without videos or the full logcat)
+artifacts download from. So each run also pushes its results (without the full logcat)
 to `flow-results/pr-<N>` (or `flow-results/run-<run id>`), one commit replaced on each run.
 Branches nobody updated for 14 days are deleted by the next run.
 
@@ -82,7 +82,12 @@ Branches nobody updated for 14 days are deleted by the next run.
         pr: ${{ github.event.pull_request.number }}
   ```
 
-A PR that changes the runner itself runs `first-screen` and `settings-logout` as a smoke test.
+A PR that changes the runner itself runs `first-screen` and `settings-logout`, with videos, as a
+smoke test.
+
+A video on the results branch can go in a PR description for the "Check for screenshot & video"
+check: link it at the results commit (`https://github.com/<repo>/blob/<commit>/videos/<flow>.mp4`),
+since the branch moves on with the next run.
 
 ## Results
 
@@ -97,7 +102,7 @@ screens/<flow>/step-23-end-....png                the screen the flow ended on
 screens/<flow>/failure.png                        the screen at a failure
 flows/<flow>/  console.txt log.txt error.txt screen.txt hierarchy.json commands.json
                logcat.txt (artifact only) logcat-app.txt crash.txt report.xml setup.txt
-videos/<flow>.mp4                                 with --video (artifact only)
+videos/<flow>.mp4                                 with --video
 ```
 
 Steps that only check the screen (`assertVisible` and the like) get no screenshot, since the screen

@@ -13,8 +13,7 @@ can't download (the artifact storage host is outside its network).
   Inputs: flow selectors or an inline flow, ref, PR number, API level, screenshots
   (steps/end/none), video. Builds the debug app and tb (tb cached by its commit), boots the API 35
   emulator from android-e2e.yml's snapshot cache, runs the flows, writes the job summary, uploads
-  the `flow-results-pr<N>-<run id>` artifact and pushes the same folder (no videos, no full
-  logcat) to the `flow-results/pr-<N>` branch, which a session can `git fetch`.
+  the `flow-results-pr<N>-<run id>` artifact and pushes the same folder (no full logcat) to the `flow-results/pr-<N>` branch, which a session can `git fetch`.
 - `.github/workflows/flow-runner-pr.yml`: on PRs, the `run-flows` label (flows from a `run-flows:`
   line in the description, else the PR's changed flows) and a `/run-flows` comment; one summary
   comment per PR. A PR that changes the runner runs first-screen and settings-logout.

@@ -7,9 +7,9 @@ name: Flow runner
 #
 # Results, in the same layout everywhere (summary.json lists every file):
 #   - the artifact named by the `artifact` output (flow-results-pr<N>-<run id> or
-#     flow-results-<run id>), with full logcat and videos;
+#     flow-results-<run id>), with the full logcat;
 #   - the flow-results/pr-<N> (or flow-results/run-<run id>) branch, one commit replaced on each
-#     run, without videos or full logcat, so a session that can only reach GitHub through git can
+#     run, without the full logcat, so a session that can only reach GitHub through git can
 #     fetch it;
 #   - the run's summary page.
 #
@@ -294,8 +294,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           rm -rf /tmp/results && mkdir /tmp/results
-          # No videos or full logcat: the branch is for reading, the artifact has everything.
-          (cd build/flow-results && tar -cf - --exclude=videos --exclude='logcat.txt' .) | tar -xf - -C /tmp/results
+          # No full logcat (large): the artifact has it. Videos stay, so a PR can link one.
+          (cd build/flow-results && tar -cf - --exclude='logcat.txt' .) | tar -xf - -C /tmp/results
           cd /tmp/results
           git init -q -b "$BRANCH"
           git config user.name "github-actions[bot]"

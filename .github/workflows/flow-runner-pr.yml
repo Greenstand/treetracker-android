@@ -11,7 +11,7 @@ name: Flow runner (PR)
 #     and collaborators, PRs from this repo only). This trigger only works once this file is on
 #     master, as GitHub runs comment workflows from the default branch.
 #
-# A PR that changes the runner itself runs a smoke test (first-screen and settings-logout).
+# A PR that changes the runner itself runs a smoke test (first-screen and settings-logout, with videos).
 on:
   pull_request:
     branches: [ master, release* ]
@@ -80,7 +80,7 @@ jobs:
               echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
             fi
           elif [[ $SELF == true && $ACTION != edited ]]; then
-            ARGS="first-screen settings-logout"
+            ARGS="first-screen settings-logout --video"
           else
             echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
