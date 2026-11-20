@@ -16,6 +16,9 @@ tags: [settings]
 - tapOn: {id: ArrowForwardButton}
 - assertVisible: {id: ProfileFirstName, text: "Ada"}
 - tapOn: {id: EditProfileButton}
+# The edit fields sit below the photo, off screen on the CI emulator's small display.
+- scrollUntilVisible:
+    element: {id: ProfileFirstName}
 - tapOn: {id: ProfileFirstName}
 - eraseText
 - inputText: Grace
@@ -29,7 +32,9 @@ tags: [settings]
     element: {id: SaveProfileButton}
 - tapOn: {id: SaveProfileButton}
 - assertNotVisible: {id: SaveProfileButton}
-- assertVisible: {id: ProfileFirstName, text: "Grace"}
+- scrollUntilVisible:
+    element: {id: ProfileFirstName, text: "Grace"}
+    direction: UP
 # Relaunch: the edit was saved to the database, not only held on screen.
 - stopApp
 - launchApp
@@ -40,7 +45,8 @@ tags: [settings]
 - tapOn: {id: SettingsProfile}
 - tapOn: {id: "UserButton_5551230001"}
 - tapOn: {id: ArrowForwardButton}
-- assertVisible: {id: ProfileFirstName, text: "Grace"}
+- scrollUntilVisible:
+    element: {id: ProfileFirstName, text: "Grace"}
 - scrollUntilVisible:
     element: {id: ProfileLastName}
 - assertVisible: {id: ProfileLastName, text: "Hopper"}
