@@ -1,0 +1,65 @@
+{
+  "name": "flow-results-pr1454-44759791907",
+  "ref": "664a82bd07968cf03a0e9ff7f767000e47100dc0",
+  "sha": "664a82bd07968cf03a0e9ff7f767000e47100dc0",
+  "pr": 1454,
+  "apiLevel": "35",
+  "runId": "44759791907",
+  "runUrl": "https://github.com/Greenstand/treetracker-android/actions/runs/44759791907",
+  "passed": 2,
+  "failed": 0,
+  "flows": [
+    {
+      "name": "first-screen",
+      "file": "e2e/flows/first-screen.yaml",
+      "status": "passed",
+      "seconds": 13,
+      "error": null,
+      "screenshots": [
+        "screens/first-screen/step-01-launchApp.png",
+        "screens/first-screen/step-02-end-extendedWaitUntil-ENGLISH.png"
+      ],
+      "video": "videos/first-screen.mp4",
+      "files": [
+        "flows/first-screen/console.txt",
+        "flows/first-screen/log.txt",
+        "flows/first-screen/logcat-app.txt",
+        "flows/first-screen/logcat.txt",
+        "flows/first-screen/report.xml"
+      ]
+    },
+    {
+      "name": "settings-logout",
+      "file": "e2e/flows/settings-logout.yaml",
+      "status": "passed",
+      "seconds": 24,
+      "error": null,
+      "screenshots": [
+        "screens/settings-logout/step-01-launchApp.png",
+        "screens/settings-logout/step-02-runFlow-signup.png",
+        "screens/settings-logout/step-03-tapOn-SettingsButton.png",
+        "screens/settings-logout/step-04-tapOn-SettingsLogout.png",
+        "screens/settings-logout/step-06-tapOn-DialogNegativeButton.png",
+        "screens/settings-logout/step-09-tapOn-SettingsLogout.png",
+        "screens/settings-logout/step-10-tapOn-DialogPositiveButton.png",
+        "screens/settings-logout/step-11-tapOn-PrivacyPolicyCloseButton.png",
+        "screens/settings-logout/step-15-tapOn-PhoneField.png",
+        "screens/settings-logout/step-16-inputText-5551230001.png",
+        "screens/settings-logout/step-17-hideKeyboard.png",
+        "screens/settings-logout/step-18-tapOn-ArrowForwardButton.png",
+        "screens/settings-logout/step-19-tapOn-ExistingUserButton.png",
+        "screens/settings-logout/step-20-extendedWaitUntil-TrackButton.png",
+        "screens/settings-logout/step-21-back.png",
+        "screens/settings-logout/step-23-end-assertNotVisible-ExistingUserButton.png"
+      ],
+      "video": "videos/settings-logout.mp4",
+      "files": [
+        "flows/settings-logout/console.txt",
+        "flows/settings-logout/log.txt",
+        "flows/settings-logout/logcat-app.txt",
+        "flows/settings-logout/logcat.txt",
+        "flows/settings-logout/report.xml"
+      ]
+    }
+  ]
+}
