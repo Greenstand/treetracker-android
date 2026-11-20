@@ -131,7 +131,7 @@ for FLOW in "${FLOWS[@]}"; do
     RUN="$(dirname "$FLOW")/.ci-$NAME.yaml"
     python3 e2e/ci/step_shots.py --mode "$SCREENSHOTS" "$FLOW" > "$RUN"
   fi
-  "$ADB" -s "$SERIAL" logcat -c || true
+  "$ADB" -s "$SERIAL" logcat -b all -c || true
   [[ $RECORD == 1 ]] && start_recording
   BEGIN=$(date +%s)
   if (( SETUP_OK == 0 )); then
@@ -146,10 +146,15 @@ for FLOW in "${FLOWS[@]}"; do
   SECONDS_TAKEN=$(( $(date +%s) - BEGIN ))
   [[ $RECORD == 1 ]] && stop_recording "$NAME"
   "$ADB" -s "$SERIAL" logcat -d > "$DIR/logcat.txt" 2>/dev/null || true
+  # The app's own lines (by its uid) are the ones worth reading first; crash.txt only when the
+  # app crashed (the emulator's own services crash now and then too).
+  APP_UID=$("$ADB" -s "$SERIAL" shell cmd package list packages -U "$APP" | tr -d '\r' | sed -n "s/^package:$APP uid:\([0-9]*\).*/\1/p")
+  if [[ -n $APP_UID ]]; then
+    "$ADB" -s "$SERIAL" logcat -d --uid="$APP_UID" > "$DIR/logcat-app.txt" 2>/dev/null || true
+  fi
+  [[ -s $DIR/logcat-app.txt ]] || grep -E 'TreeTracker|greenstand|AndroidRuntime' "$DIR/logcat.txt" > "$DIR/logcat-app.txt" 2>/dev/null || true
   "$ADB" -s "$SERIAL" logcat -d -b crash > "$DIR/crash.txt" 2>/dev/null || true
-  [[ -s $DIR/crash.txt ]] || rm -f "$DIR/crash.txt"
-  # The lines worth reading first: warnings and errors, and anything from the app.
-  grep -E ' [WEF] |TreeTracker|greenstand|AndroidRuntime' "$DIR/logcat.txt" > "$DIR/logcat-app.txt" 2>/dev/null || true
+  grep -q "$APP" "$DIR/crash.txt" 2>/dev/null || rm -f "$DIR/crash.txt"
   [[ $RUN != "$FLOW" ]] && rm -f "$RUN"
 
   # tb writes into a folder named after the flow: the steps' screenshots (takeScreenshot/), its

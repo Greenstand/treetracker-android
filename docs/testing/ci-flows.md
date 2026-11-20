@@ -53,8 +53,8 @@ bash e2e/ci/cloud-flows.sh run --inline /tmp/try.yaml                # an uncomm
 Then read `build/flow-results/summary.md`, and for a flow to check, its screenshots in
 `summary.json` order (Read shows a PNG). A failed flow also has `screens/<flow>/failure.png`, and
 in `flows/<flow>/`: `error.txt`, `screen.txt` (what tb saw on screen when it failed),
-`console.txt` (each step, ✓ or ✗), `logcat-app.txt` (warnings, errors and the app's lines) and
-`crash.txt` when something crashed.
+`console.txt` (each step, ✓ or ✗), `logcat-app.txt` (the app's own logcat lines) and
+`crash.txt` when the app crashed.
 
 Why a branch: the session's network can reach GitHub's API and git, but not the storage that run
 artifacts download from. So each run also pushes its results (without videos or the full logcat)
