@@ -192,18 +192,10 @@ for FLOW in "${FLOWS[@]}"; do
   # tb writes into a folder named after the flow: the steps' screenshots (takeScreenshot/), its
   # log and, for a failure, the screen it saw then. Move them where the summary points.
   find "$DIR/tb" -path '*/takeScreenshot/*.png' -exec mv {} "$SHOTS/" \; 2>/dev/null
-  # tb's own recording (with --annotate): recording.mp4 and its captions, recording.srt.
+  # tb's own recording (with --annotate): recording.mp4 and its captions, recording.srt, in
+  # 3-minute parts (recording-part2.mp4, ...) for a longer flow, joined into one.
   if [[ -n $ANNOTATE ]]; then
-    VIDEO=$(find "$DIR/tb" -name 'recording.mp4' -o -name 'recording-part1.mp4' 2>/dev/null | head -n1)
-    [[ -z $VIDEO ]] && VIDEO=$(find "$DIR/tb" -name 'recording*.mp4' 2>/dev/null | sort | head -n1)
-    if [[ -n $VIDEO ]]; then
-      mkdir -p "$OUT/videos"
-      mv "$VIDEO" "$OUT/videos/$NAME.mp4"
-      SRT=$(find "$DIR/tb" -name 'recording*.srt' 2>/dev/null | sort | head -n1)
-      [[ -n $SRT ]] && mv "$SRT" "$OUT/videos/$NAME.srt"
-    else
-      echo "No recording from tb for $NAME" >&2
-    fi
+    python3 e2e/ci/join_recording.py "$DIR/tb" "$OUT/videos/$NAME" || echo "No recording from tb for $NAME" >&2
   fi
   for f in "$DIR"/tb/*/screenshot*.png; do
     [[ -f $f ]] && mv "$f" "$SHOTS/failure$(basename "$f" .png | sed 's/^screenshot//').png"

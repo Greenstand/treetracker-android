@@ -50,7 +50,7 @@ on:
         required: false
         default: ""
       save_caches:
-        description: "Save the tb and emulator caches on a miss. Off for code that isn't trusted (a PR from a fork): later runs would use what it saved."
+        description: "Off for code that isn't trusted (a PR from a fork): no cache is saved (tb, emulator, Go, Gradle), since later runs would use what it saved, and no local action is loaded from its checkout."
         type: boolean
         required: false
         default: true
@@ -146,6 +146,8 @@ jobs:
         with:
           go-version-file: .testbuddy/go.mod
           cache-dependency-path: .testbuddy/go.sum
+          # Its cache is saved at the end of the job, after the app's code has run.
+          cache: ${{ inputs.save_caches }}
       - name: Build tb
         if: steps.tb-cache.outputs.cache-hit != 'true'
         working-directory: .testbuddy
@@ -162,9 +164,32 @@ jobs:
           key: tb-${{ env.TESTBUDDY_REF }}-linux-x64
 
       - name: Setup build environment
+        if: inputs.save_caches
         uses: ./.github/workflows/actions/setup-build-environment
         with:
           use_dummy_keys: true
+      # For code that isn't trusted: the composite action above would be the PR's own copy (it is
+      # loaded from the checkout), and its Gradle cache is saved after the build. The same JDK
+      # and dummy keys, with no cache.
+      - name: Set up JDK 25 (no cache)
+        if: ${{ !inputs.save_caches }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: 25
+          distribution: temurin
+      - name: Dummy property file
+        if: ${{ !inputs.save_caches }}
+        run: |
+          cat > treetracker.keys.properties <<'KEYS'
+          #Treetracker API Keys
+          treetracker_client_id=dummy-id
+          treetracker_client_secret=dummy-secret
+          s3_dev_identity_pool_id=dummy-pool-id-dev
+          s3_test_identity_pool_id=dummy-pool-id-test
+          prod_treetracker_client_id=dummy-prod-id
+          prod_treetracker_client_secret=dummy-prod-secret
+          s3_production_identity_pool_id=dummy-pool-id-prod
+          KEYS
       - name: Build the debug app
         run: bash ./gradlew :app:assembleDebug --stacktrace
 

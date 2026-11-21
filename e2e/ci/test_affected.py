@@ -11,6 +11,7 @@ from pathlib import Path
 import affected
 from affected import Change, select, selectors
 from cut_flow import cut
+import join_recording
 
 PKG = "app/src/main/java/org/greenstand/android/TreeTracker"
 
@@ -235,6 +236,54 @@ class AffectedTest(unittest.TestCase):
         self.assertEqual(len(r["picks"]), 1)
         self.assertEqual(len(r["skipped"]), 1)
 
+    def test_deleted_renamed_and_unknown_flows_are_listed(self):
+        changes = [Change("e2e/flows/gone.yaml", "D"), Change("e2e/flows/capture.yaml", "R100"),
+                   Change("e2e/flows/not-there.yaml")]
+        r = select(changes, self.root, 6)
+        self.assertEqual(selectors(r), [])
+        self.assertEqual(len(r["unmapped"]), 3)
+
+    def test_flow_in_another_folder_is_a_subflow(self):
+        r = self.pick("e2e/flows/subflows/signup.yaml")
+        self.assertEqual(selectors(r), ["e2e/flows/settings-logout.yaml@2"])
+
+    def test_values_file_without_names_says_so(self):
+        r = self.pick("app/src/main/res/values/strings.xml")
+        self.assertIn("no resource names", r["unmapped"][0][1])
+
+    def test_tag_names_match_whole_words(self):
+        # TestTags.SETTINGS_BUTTON must not credit a file that only uses SETTINGS_BUTTON_X.
+        code = affected.CodeIndex(self.root, affected.FlowIndex(self.root).all_ids())
+        f = code.files[f"{PKG}/settings/SettingsScreen.kt"]
+        self.assertFalse(code.uses(f, "org.greenstand.android.TreeTracker.view", "SETTINGS", "TestTags"))
+        self.assertTrue(code.uses(f, "org.greenstand.android.TreeTracker.view", "SETTINGS_LOGOUT", "TestTags"))
+
+    def test_block_style_tags(self):
+        self.assertEqual(affected.flow_tags("appId: x\ntags:\n  - a\n  - known-bug\n---\n"), {"a", "known-bug"})
+        self.assertEqual(affected.flow_tags("appId: x\ntags: [a, b]\nname: y\n---\n"), {"a", "b"})
+
+    def test_long_lists_are_capped(self):
+        changes = [Change(f"docs/file{i}.txt") for i in range(80)]
+        md = affected.markdown(select(changes, self.root, 6), 6)
+        self.assertIn("and 30 more", md)
+
+    def test_git_paths_with_unusual_characters(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as d:
+            run = lambda *a: subprocess.run(["git", "-C", d, *a], check=True, capture_output=True)
+            run("init", "-q")
+            run("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", "a")
+            Path(d, "café.txt").write_text("x")
+            Path(d, "old.txt").write_text("same\n" * 20)
+            run("add", "-A")
+            run("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "b")
+            run("mv", "old.txt", "new.txt")
+            run("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "c")
+            changes = affected.changes_from_git(d, "HEAD~2", "HEAD")
+            self.assertEqual({(c.path, c.status[:1]) for c in changes}, {("café.txt", "A"), ("new.txt", "A")})
+            changes = affected.changes_from_git(d, "HEAD~1", "HEAD")
+            self.assertEqual([(c.path, c.status) for c in changes], [("new.txt", "R100")])
+
     def test_markdown_lists_everything(self):
         r = self.pick(f"{PKG}/dashboard/DashboardScreen.kt", f"{PKG}/sync/Uploader.kt")
         md = affected.markdown(r, 6)
@@ -257,6 +306,26 @@ class RealRepoTest(unittest.TestCase):
         self.assertTrue(flows)
         for f in flows.values():
             self.assertTrue(f.steps, f.path)
+
+
+class JoinRecordingTest(unittest.TestCase):
+    def test_parts_in_order_and_captions_shifted(self):
+        with tempfile.TemporaryDirectory() as d:
+            for name in ["recording-part2.mp4", "recording.mp4", "recording-part10.mp4", "other.mp4"]:
+                Path(d, name).write_text("")
+            self.assertEqual([p.name for p in join_recording.parts(d)],
+                             ["recording.mp4", "recording-part2.mp4", "recording-part10.mp4"])
+        self.assertEqual(join_recording.shift("00:00:59,900 --> 00:01:00,100", 61.25),
+                         "00:02:01,150 --> 00:02:01,350")
+
+    def test_single_part_is_moved(self):
+        with tempfile.TemporaryDirectory() as d:
+            Path(d, "tb").mkdir()
+            Path(d, "tb", "recording.mp4").write_text("v")
+            Path(d, "tb", "recording.srt").write_text("s")
+            join_recording.keep_apart(join_recording.parts(Path(d, "tb")), Path(d, "out"))
+            self.assertEqual(Path(d, "out.mp4").read_text(), "v")
+            self.assertEqual(Path(d, "out.srt").read_text(), "s")
 
 
 class CutFlowTest(unittest.TestCase):

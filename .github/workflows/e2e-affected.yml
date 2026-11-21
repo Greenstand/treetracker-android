@@ -10,8 +10,11 @@ name: Affected flows (annotated video)
 #
 # PRs from forks don't run on their own: their code would run on the emulator with this
 # repository's caches. The job summary says which flows would run; a maintainer who has read the
-# PR's code presses Actions > "Affected flows (annotated video)" > Run workflow with its number.
-# That run gets a read-only token, pushes no results branch and saves no caches.
+# PR's code presses Actions > "Affected flows (annotated video)" > Run workflow with its number and
+# the commit they read (the run stops if the PR has moved on). That run gets a read-only token,
+# pushes no results branch, saves no caches and loads no local action from the PR; the flows are
+# picked by the base branch's copy of affected.py. Code on a runner can still reach the runner's
+# cache token, so only run code you have read.
 on:
   pull_request:
     branches: [ master, release* ]
@@ -20,6 +23,9 @@ on:
     inputs:
       pr:
         description: "PR number (from this repository or a fork)"
+        required: true
+      sha:
+        description: "The PR's head commit you reviewed (full or the first 7+ characters); the run stops if the PR has moved on"
         required: true
 
 concurrency:
@@ -55,11 +61,21 @@ jobs:
           REPO: ${{ github.repository }}
           EVENT: ${{ github.event_name }}
           PR: ${{ github.event.pull_request.number || inputs.pr }}
+          REVIEWED: ${{ inputs.sha }}
         run: |
           set -euo pipefail
           [[ $PR =~ ^[0-9]+$ ]] || { echo "::error::pr must be a number"; exit 1; }
           PRJ=$(gh api "repos/$REPO/pulls/$PR")
           [[ $(jq -r .state <<<"$PRJ") == open ]] || { echo "::error::PR #$PR is not open"; exit 1; }
+          SHA=$(jq -r .head.sha <<<"$PRJ")
+          # A run by hand runs only the commit the maintainer read.
+          if [[ $EVENT == workflow_dispatch ]]; then
+            [[ $REVIEWED =~ ^[0-9a-f]{7,40}$ ]] || { echo "::error::sha: 7 to 40 hex characters"; exit 1; }
+            if [[ $SHA != "$REVIEWED"* ]]; then
+              echo "::error::PR #$PR is at ${SHA:0:12} now, not ${REVIEWED:0:12}: read the new commits, then run it with the new sha"
+              exit 1
+            fi
+          fi
           HEAD_REPO=$(jq -r '.head.repo.full_name // ""' <<<"$PRJ")
           FORK=false
           [[ $HEAD_REPO == "$REPO" ]] || FORK=true
@@ -68,7 +84,7 @@ jobs:
           [[ $FORK == true && $EVENT == pull_request ]] && RUN=false
           {
             echo "pr=$PR"
-            echo "sha=$(jq -r .head.sha <<<"$PRJ")"
+            echo "sha=$SHA"
             echo "base=$(jq -r .base.ref <<<"$PRJ")"
             echo "fork=$FORK"
             echo "run=$RUN"
@@ -80,19 +96,36 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      # A fork's copy of affected.py is code nobody has vouched for yet: pick its flows with the
+      # base branch's copy, reading the fork's files as data.
+      - name: The base branch's selector
+        if: steps.pr.outputs.fork == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.base }}
+          path: .trusted
+          sparse-checkout: e2e/ci
+          persist-credentials: false
+
       # Only reads files: picking flows runs none of the PR's app code.
       - name: Pick the flows
         id: pick
         env:
           BASE: ${{ steps.pr.outputs.base }}
           SHA: ${{ steps.pr.outputs.sha }}
+          FORK: ${{ steps.pr.outputs.fork }}
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
           set -euo pipefail
           git fetch -q --no-tags origin "$BASE"
-          python3 -m unittest discover -s e2e/ci -p 'test_*.py' 2>&1 | tail -n 3
+          CI=e2e/ci
+          if [[ $FORK == true ]]; then
+            CI=.trusted/e2e/ci
+          else
+            python3 -m unittest discover -s e2e/ci -p 'test_*.py' 2>&1 | tail -n 3
+          fi
           mkdir -p build
-          FLOWS=$(python3 e2e/ci/affected.py --base FETCH_HEAD --head "$SHA" --max "$MAX_FLOWS" \
+          FLOWS=$(python3 "$CI/affected.py" --root . --base FETCH_HEAD --head "$SHA" --max "$MAX_FLOWS" \
             --json build/affected.json --md build/affected.md)
           echo "flows=$FLOWS" >> "$GITHUB_OUTPUT"
           {
@@ -107,11 +140,13 @@ jobs:
         if: steps.pr.outputs.run == 'false' && steps.pick.outputs.flows != ''
         env:
           PR: ${{ steps.pr.outputs.pr }}
+          SHA: ${{ steps.pr.outputs.sha }}
         run: |
           {
             echo
             echo "**From a fork, so nothing ran.** After reading the PR's code, a maintainer can run these"
-            echo "flows: Actions > \"Affected flows (annotated video)\" > Run workflow, with PR \`$PR\`."
+            echo "flows: Actions > \"Affected flows (annotated video)\" > Run workflow, with PR \`$PR\`"
+            echo "and the commit they read, \`$SHA\`."
           } >> "$GITHUB_STEP_SUMMARY"
           echo "::notice::PR from a fork: run the annotated flows by hand (Actions > Affected flows > Run workflow, PR $PR)"
 
@@ -206,7 +241,11 @@ jobs:
                 `the \`${env.ARTIFACT}\` artifact` + (env.BRANCH ? ` and the \`${env.BRANCH}\` branch.` : '.'));
             }
             lines.push('', '<sub>Not a required check. Every flow still runs, without video, in "Android end-to-end".</sub>');
-            const body = lines.join('\n');
+            // GitHub refuses a comment over 65536 characters.
+            let body = lines.join('\n');
+            if (body.length > 60000) {
+              body = body.slice(0, 60000) + `\n\n… cut short: the [run](${env.RUN_URL}) has the full list.`;
+            }
             const issue_number = Number(env.PR);
             const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
             const mine = comments.find(c => c.user.type === 'Bot' && c.body.startsWith(marker));

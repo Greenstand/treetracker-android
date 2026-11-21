@@ -34,6 +34,7 @@ tags, with a small overrides file. Also decided:
   the one that shows it in the fewest steps, cut a few steps after; a flow already picked is reused
   when it shows the change too. Changed flows run whole. Writes the selectors
   (`e2e/flows/x.yaml@N`), a markdown table and JSON.
+- `e2e/ci/join_recording.py` (new): joins tb's 3-minute recording parts and their captions.
 - `e2e/ci/affected-overrides.json` (new): ids and "after" anchors for screens built only from
   shared components (capture, image review, selfie, user/wallet/profile select), and ignore globs.
 - `e2e/ci/cut_flow.py`, `e2e/ci/flowfile.py` (new): cut a flow after N top-level steps; the step
@@ -50,9 +51,33 @@ tags, with a small overrides file. Also decided:
 - `cloud-flows.sh fetch --affected <N>`.
 - `docs/testing/ci-flows.md`: "Flows a PR affects".
 
+## Review fixes
+
+A review of the first version found:
+
+- A fork run by hand could still save caches: the build setup is a local composite action, loaded
+  from the PR's own checkout, and its `setup-java` saved the Gradle cache after the build. With
+  `save_caches: false`, flow-runner-job.yml now sets up the JDK and dummy keys inline, without a
+  cache, and turns off setup-go's cache. A fork's flows are picked by the base branch's copy of
+  `affected.py` (`--root`), and its tests aren't run.
+- Run workflow took only a PR number, so a push after the review would run unread code. It now
+  also takes the reviewed commit and stops when the PR's head differs.
+- tb splits recordings over 3 minutes into `recording-part2.mp4`, ...; only the first part was
+  kept, sometimes with another part's captions. `e2e/ci/join_recording.py` joins the parts with
+  ffmpeg and shifts each part's captions.
+- The comment could pass GitHub's 65536-character limit on a huge PR: lists are capped at 50 and
+  the body at 60000 characters.
+- `TestTags.X` matched as a prefix (`SYNC_OVERLAY` in `SYNC_OVERLAY_SWITCH`); now whole words.
+- `git diff -z` for paths with unusual characters; deleted, renamed-only and unknown flows, and
+  values files with no names in the diff, are listed instead of dropped; any flow in a folder
+  under e2e/flows counts as a sub-flow; block-style `tags:` lists are read.
+
+Kept: videos stay on the `flow-results/affected-pr-<N>` branch, so the comment can link them and a
+cloud session can fetch them, at the cost of a heavier branch.
+
 ## Checks
 
-- `python3 -m unittest discover -s e2e/ci -p 'test_*.py'`: 18 tests (made-up app: screen,
+- `python3 -m unittest discover -s e2e/ci -p 'test_*.py'`: 27 tests (made-up app: screen,
   ViewModel, two hops, resources, TestTags, sub-flow, shared component, override, limit, known-bug;
   and this repo: a Dashboard change picks one cut flow).
 - `affected.py` on recent merged PRs: #1441 → 3 flows (session note whole, wallet select cut at

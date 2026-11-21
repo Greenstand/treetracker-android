@@ -54,6 +54,7 @@ MAX_EXTRA_STEPS = 3
 SETUP_COST = 5
 HUB_MIN_COMPONENTS = 10
 MAX_REASONS = 4
+MAX_LISTED = 50
 SEEDED_TAGS = {"org-config", "dev-tools"}
 # A tag used by more files than this (shared buttons, dialogs) doesn't say which screen a flow is
 # on, when the screen file has tags of its own.
@@ -61,7 +62,7 @@ SPECIFIC_MAX_FILES = 2
 
 ID_RE = re.compile(r'\bid:\s*"?((?:[A-Za-z0-9_.-]|\$\{\w+\})+)')
 FILE_RE = re.compile(r'(?:\bfile:|runFlow:)\s*"?([A-Za-z0-9_./-]+\.yaml)')
-TAGS_RE = re.compile(r"^tags:\s*\[?([^\]\n]*)", re.M)
+TAGS_RE = re.compile(r"^tags:[ \t]*\[?([^\]\n]*)\]?[ \t]*\n((?:[ \t]+-[^\n]*\n)*)", re.M)
 CONST_RE = re.compile(r'\bconst\s+val\s+(\w+)\s*=\s*"([^"$]+)"')
 TAG_FUN_RE = re.compile(r'\bfun\s+(\w+)\([^)]*\)\s*=\s*"([^"$]*)\$')
 PACKAGE_RE = re.compile(r"^package\s+([\w.]+)", re.M)
@@ -129,21 +130,30 @@ def without_absent(block):
     return out
 
 
+def flow_tags(text):
+    """The tags in a flow's header: `tags: [a, b]`, or a block list under `tags:`."""
+    m = TAGS_RE.search(text.split("\n---", 1)[0] + "\n")
+    if not m:
+        return set()
+    inline = [t.strip() for t in m.group(1).split(",")]
+    block = [l.strip()[1:].strip() for l in m.group(2).splitlines()]
+    return {t.strip("'\"") for t in inline + block if t.strip()}
+
+
 def without_comments(block):
     return [l for l in block if l.strip() and not l.lstrip().startswith("#")]
 
 
 class FlowIndex:
     def __init__(self, root):
-        self.root = Path(root)
+        self.root = Path(root).resolve()
         self._sub = {}
         self.flows = {}
         for p in sorted((self.root / FLOWS_DIR).glob("*.yaml")):
             if p.name.startswith(".ci-") or p.name == "inline.yaml":
                 continue
             text = p.read_text(encoding="utf-8")
-            m = TAGS_RE.search(text.split("\n---", 1)[0])
-            tags = {t.strip() for t in m.group(1).split(",")} if m else set()
+            tags = flow_tags(text)
             path = rel(p.relative_to(self.root))
             self.flows[path] = Flow(path, p.stem, tags, self._steps(p, text, set()))
 
@@ -291,7 +301,7 @@ class CodeIndex:
         """Whether file f can see and names the symbol `name` declared in package pkg (as a
         member of object `owner`, when given)."""
         if owner:
-            if f"{owner}.{name}" in f.text:
+            if re.search(rf"\b{owner}\.{name}\b", f.text):
                 return (f.package == pkg or f"{pkg}.{owner}" in f.imports
                         or pkg in f.star_imports)
             return f"{pkg}.{owner}.{name}" in f.imports and name in f.words
@@ -458,12 +468,20 @@ def targets_for(changes, flows, code):
     for c in changes:
         p = c.path
         if c.status.startswith("D"):
+            unmapped.append((p, "deleted"))
             continue
-        if p.startswith(FLOWS_DIR + "/subflows/") and p.endswith(".yaml"):
+        if c.status == "R100":
+            unmapped.append((p, "renamed, not changed"))
+            continue
+        is_flow = p.startswith(FLOWS_DIR + "/") and p.endswith(".yaml")
+        if is_flow and "/" in p[len(FLOWS_DIR) + 1:]:
+            # In a folder under e2e/flows: a sub-flow other flows run.
             targets.append(Target(p, subflow=p, order=0))
-        elif p.startswith(FLOWS_DIR + "/") and p.endswith(".yaml"):
+        elif is_flow:
             if p in flows.flows:
                 whole.append(p)
+            else:
+                unmapped.append((p, "not a flow run-flows.sh runs"))
         elif p == TEST_TAGS:
             names = {m for line in c.lines for m in re.findall(r"\b(?:val|fun)\s+(\w+)", line)}
             keys = {k for (pkg, owner, n), k in code.tag_symbols.items() if n in names}
@@ -479,6 +497,9 @@ def targets_for(changes, flows, code):
                 unmapped.append((p, "not found"))
         elif p.startswith(SRC + "/res/"):
             res = resources(c)
+            if not res:
+                unmapped.append((p, "no resource names found in the diff"))
+                continue
             files = set()
             for kind, name in res:
                 files |= code.files_using_resource(kind, name)
@@ -612,13 +633,19 @@ def markdown(result, max_flows):
         md += [f"- `{short(f)}`: {why}" for f, why, _ in result["skipped"]]
     if result["no_flow"]:
         md += ["", "**Changed screens no flow reaches** (worth a new flow?):", ""]
-        md += [f"- {why}" for _, why in result["no_flow"]]
+        md += capped([f"- {why}" for _, why in result["no_flow"]])
     if result["unmapped"]:
         md += ["", "<details><summary>Changed files with no screen to show "
                f"({len(result['unmapped'])}): the full end-to-end check covers them</summary>", ""]
-        md += [f"- `{p}`: {why}" for p, why in result["unmapped"]]
+        md += capped([f"- `{p}`: {why}" for p, why in result["unmapped"]])
         md += ["", "</details>"]
     return "\n".join(md) + "\n"
+
+
+def capped(lines, n=None):
+    """At most n lines (MAX_LISTED), so the PR comment stays under GitHub's size limit."""
+    n = n or MAX_LISTED
+    return lines[:n] + ([f"- and {len(lines) - n} more"] if len(lines) > n else [])
 
 
 def as_json(result):
@@ -634,19 +661,24 @@ def as_json(result):
 
 # ---------------------------------------------------------------------------------------------
 
-def git(*args):
-    return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True,
+def git(root, *args):
+    return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True,
                           text=True).stdout
 
 
-def changes_from_git(base, head):
+def changes_from_git(root, base, head):
     out = []
-    for line in git("diff", "--name-status", "-M", f"{base}...{head}").splitlines():
-        parts = line.split("\t")
-        status, path = parts[0], parts[-1]
+    # -z: paths as they are, not quoted when they have unusual characters.
+    fields = git(root, "diff", "-z", "--name-status", "-M", f"{base}...{head}").split("\0")
+    i = 0
+    while i < len(fields) and fields[i]:
+        status = fields[i]
+        n = 2 if status[:1] in "RC" else 1
+        path = fields[i + n]
+        i += n + 1
         c = Change(path, status)
         if path == TEST_TAGS or path.startswith(SRC + "/res/values"):
-            diff = git("diff", "-U0", f"{base}...{head}", "--", path)
+            diff = git(root, "diff", "-U0", f"{base}...{head}", "--", path)
             c.lines = [l[1:] for l in diff.splitlines()
                        if l[:1] in "+-" and not l.startswith(("+++", "---"))]
         out.append(c)
@@ -661,11 +693,14 @@ def main():
     ap.add_argument("--max", type=int, default=6)
     ap.add_argument("--json")
     ap.add_argument("--md")
+    ap.add_argument("--root", default=str(ROOT),
+                    help="the checkout to look at (default: the one this script is in)")
     a = ap.parse_args()
     if bool(a.base) == bool(a.files):
         ap.error("give --base or --files")
-    changes = [Change(p) for p in a.files] if a.files else changes_from_git(a.base, a.head)
-    result = select(changes, ROOT, a.max)
+    root = Path(a.root).resolve()
+    changes = [Change(p) for p in a.files] if a.files else changes_from_git(root, a.base, a.head)
+    result = select(changes, root, a.max)
     md = markdown(result, a.max)
     if a.json:
         Path(a.json).write_text(json.dumps(as_json(result), indent=2) + "\n")

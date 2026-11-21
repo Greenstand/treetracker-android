@@ -140,10 +140,14 @@ python3 -m unittest discover -s e2e/ci -p 'test_*.py'
 ```
 
 **PRs from forks** don't run on their own: their code would run on the emulator with this
-repository's caches. The "pick flows" job still lists what would run. After reading the PR's code, a
-maintainer runs it from Actions > "Affected flows (annotated video)" > Run workflow, with the PR's
-number. That run has a read-only token, saves no caches and pushes no results branch; the videos are
-in the artifact, linked from the PR comment. The same button re-runs a PR from this repository.
+repository's caches. The "pick flows" job still lists what would run (picked by the base branch's
+copy of `affected.py`, not the fork's). After reading the PR's code, a maintainer runs it from
+Actions > "Affected flows (annotated video)" > Run workflow, with the PR's number and the commit they
+read; the run stops if the PR has moved on since. That run has a read-only token, saves no caches
+(tb, emulator, Go, Gradle), loads no local action from the PR and pushes no results branch; the
+videos are in the artifact, linked from the PR comment. Code on a runner can still reach the
+runner's cache token, so only run code you have read. The same button re-runs a PR from this
+repository.
 
 Results are as below, in the `flow-results-affected-pr<N>-<run id>` artifact and, for a PR from this
 repository, the `flow-results/affected-pr-<N>` branch (`cloud-flows.sh fetch --affected <N>`), with
@@ -163,7 +167,8 @@ screens/<flow>/failure.png                        the screen at a failure
 flows/<flow>/  console.txt log.txt error.txt screen.txt hierarchy.json commands.json
                logcat.txt (artifact only) logcat-app.txt crash.txt report.xml setup.txt
 videos/<flow>.mp4                                 with --video, or annotated (ANNOTATE=1)
-videos/<flow>.srt                                 annotated: the step captions
+videos/<flow>.srt                                 annotated: the step captions (tb's 3-minute
+                                                  parts joined into one video and one .srt)
 ```
 
 Steps that only check the screen (`assertVisible` and the like) get no screenshot, since the screen
