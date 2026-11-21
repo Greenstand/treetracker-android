@@ -13,71 +13,10 @@ name: Flow runner
 #     fetch it;
 #   - the run's summary page.
 #
-# Start it from another workflow (workflow_call, as flow-runner-pr.yml does), by hand or with
-# `gh workflow run flow-runner.yml` (workflow_dispatch). The job fails when a flow fails.
-# The job itself is flow-runner-job.yml; this file gives it a token that can push the results.
+# Start it by hand or with `gh workflow run flow-runner.yml`. The job fails when a flow fails.
+# The job itself is flow-runner-job.yml, which other workflows call directly; this file gives it a
+# token that can push the results.
 on:
-  workflow_call:
-    inputs:
-      flows:
-        description: "Flow selectors, space or comma separated: paths, names, globs (settings-*) or tags (tag:settings)"
-        type: string
-        required: false
-        default: ""
-      inline_flow:
-        description: "A whole flow's YAML to run as e2e/flows/inline.yaml, besides the selected flows"
-        type: string
-        required: false
-        default: ""
-      ref:
-        description: "Branch, tag or SHA whose app and flows to run (default: the caller's)"
-        type: string
-        required: false
-        default: ""
-      pr:
-        description: "PR number, used to name the artifact and results branch"
-        type: string
-        required: false
-        default: ""
-      api_level:
-        description: "Emulator API level"
-        type: string
-        required: false
-        default: "35"
-      screenshots:
-        description: "steps (after each step that can change the screen), end (last screen only) or none"
-        type: string
-        required: false
-        default: steps
-      record_video:
-        description: "Record a video of each flow"
-        type: boolean
-        required: false
-        default: false
-      annotate:
-        description: "Record each flow with tb's --record --annotate: slowed down, taps and step captions drawn"
-        type: boolean
-        required: false
-        default: false
-      publish_branch:
-        description: "Push the results to a flow-results/ branch too"
-        type: boolean
-        required: false
-        default: true
-    outputs:
-      artifact:
-        description: "Name of the uploaded artifact"
-        value: ${{ jobs.run.outputs.artifact }}
-      results_branch:
-        description: "Branch the results were pushed to (empty if not pushed)"
-        value: ${{ jobs.run.outputs.results_branch }}
-      results_sha:
-        description: "Commit of the results on results_branch"
-        value: ${{ jobs.run.outputs.results_sha }}
-      passed:
-        value: ${{ jobs.run.outputs.passed }}
-      failed:
-        value: ${{ jobs.run.outputs.failed }}
   workflow_dispatch:
     inputs:
       flows:
@@ -129,8 +68,8 @@ jobs:
       inline_flow: ${{ inputs.inline_flow }}
       ref: ${{ inputs.ref }}
       pr: ${{ inputs.pr }}
-      api_level: ${{ inputs.api_level || '35' }}
-      screenshots: ${{ inputs.screenshots || 'steps' }}
-      record_video: ${{ inputs.record_video == true }}
-      annotate: ${{ inputs.annotate == true }}
-      publish_branch: ${{ inputs.publish_branch != false }}
+      api_level: ${{ inputs.api_level }}
+      screenshots: ${{ inputs.screenshots }}
+      record_video: ${{ inputs.record_video }}
+      annotate: ${{ inputs.annotate }}
+      publish_branch: ${{ inputs.publish_branch }}

@@ -49,7 +49,6 @@ def main():
     lines = open(args[0], encoding="utf-8").read().splitlines()
     # The commands are the document after the header's "---"; a file without one is all commands.
     out, blocks = split(lines)
-    out = list(out)
     steps = [b for b in blocks if is_step(b)]
     n = 0
     for b in blocks:

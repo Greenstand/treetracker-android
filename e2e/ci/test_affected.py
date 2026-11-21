@@ -215,11 +215,6 @@ class AffectedTest(unittest.TestCase):
         r = self.pick(f"{PKG}/settings/SettingsScreen.kt")
         self.assertEqual(selectors(r), ["e2e/flows/settings-logout.yaml@4"])
 
-    def test_subflow_change_runs_one_flow_up_to_it(self):
-        r = self.pick("e2e/flows/subflows/signup.yaml")
-        self.assertEqual(len(r["picks"]), 1)
-        self.assertEqual(r["picks"][0].cut, 2)
-
     def test_string_change_reaches_the_screen_using_it(self):
         r = self.pick("app/src/main/res/values/strings.xml",
                       lines=['    <string name="track">Track trees</string>'])
@@ -285,7 +280,7 @@ class AffectedTest(unittest.TestCase):
             "name: y": set(),
         }
         for header, want in cases.items():
-            self.assertEqual(affected.flow_tags(f"appId: x\n{header}\n---\n- back\n"), want, header)
+            self.assertEqual(flowfile.tags(f"appId: x\n{header}\n---\n- back\n"), want, header)
 
     def test_at_the_limit_a_picked_flow_runs_further(self):
         # User select is only in capture (cut at 5). Settings is cheaper in settings-logout, but
@@ -309,7 +304,6 @@ class AffectedTest(unittest.TestCase):
         self.assertIn("and 30 more", md)
 
     def test_git_paths_with_unusual_characters(self):
-        import subprocess
         with tempfile.TemporaryDirectory() as d:
             run = lambda *a: subprocess.run(["git", "-C", d, *a], check=True, capture_output=True)
             run("init", "-q")

@@ -14,14 +14,11 @@ from flowfile import is_step, split
 
 def cut(lines, n):
     header, blocks = split(lines)
-    out, kept = list(header), 0
+    out, kept = header, 0
     for b in blocks:
-        if is_step(b):
-            if kept == n:
-                break
-            kept += 1
-        elif kept == n:
+        if kept == n:
             break
+        kept += is_step(b)
         out.extend(b)
     return out
 

@@ -86,10 +86,6 @@ def main():
     if len(videos) == 1:
         keep_apart(videos, out)
         return
-    if not (shutil.which("ffmpeg") and shutil.which("ffprobe")):
-        print("ffmpeg missing: keeping the recording's parts apart", file=sys.stderr)
-        keep_apart(videos, out)
-        return
     listing = None
     try:
         offsets, total = [], 0.0
@@ -115,8 +111,7 @@ def main():
         Path(f"{out}.srt").write_text(srt, encoding="utf-8")
     for v in videos:
         v.unlink()
-        if captions_for(v):
-            captions_for(v).unlink()
+        v.with_suffix(".srt").unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

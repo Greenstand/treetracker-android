@@ -1,20 +1,10 @@
 name: Affected flows (annotated video)
 
-# On every PR, records annotated videos (tb --record --annotate: slowed down, each tap drawn, a
-# caption band naming the step) of the flows the PR affects, so a reviewer can see what changed
-# even when every flow still passes. e2e/ci/affected.py picks them: flows the PR adds or edits,
-# whole, and for each changed screen (or code and resources a screen uses) one flow, cut soon after
-# it has shown that screen. At most 6 flows. See docs/testing/ci-flows.md.
-#
-# Not a required check; "Android end-to-end" (android-e2e.yml) still runs every flow on every PR.
-#
-# PRs from forks don't run on their own: their code would run on the emulator with this
-# repository's caches. The job summary says which flows would run; a maintainer who has read the
-# PR's code presses Actions > "Affected flows (annotated video)" > Run workflow with its number and
-# the commit they read (the run stops if the PR has moved on). That run gets a read-only token,
-# pushes no results branch, saves no caches and loads no local action from the PR; the flows are
-# picked by the base branch's copy of affected.py. Code on a runner can still reach the runner's
-# cache token, so only run code you have read.
+# On every PR, annotated videos (tb --record --annotate) of the flows the PR affects, as picked
+# by e2e/ci/affected.py: changed flows whole, and one cut flow per other change, at most 6. Not a
+# required check; android-e2e.yml still runs every flow. A fork's PR runs only from Run workflow,
+# with the full sha of the commit you read, a read-only token and no caches saved.
+# How it picks flows and how fork runs are kept apart: docs/testing/ci-flows.md.
 on:
   pull_request:
     branches: [ master, release* ]
@@ -99,7 +89,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.pr.outputs.sha }}
-          fetch-depth: 0
           persist-credentials: false
 
       # A fork's copy of affected.py is code nobody has vouched for yet: pick its flows with the
@@ -123,7 +112,8 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
           set -euo pipefail
-          git fetch -q --no-tags origin "$BASE"
+          # Full history of the base and the PR head (the checkout is shallow), for their merge base.
+          git fetch -q --no-tags --unshallow origin "+refs/heads/$BASE:refs/remotes/origin/$BASE" "$SHA"
           # A PR branch from before this workflow has no flow cuts in its run-flows.sh (and no
           # affected.py): nothing to run until it merges the base branch.
           if [[ ! -f e2e/ci/cut_flow.py ]]; then
@@ -143,13 +133,13 @@ jobs:
               echo "table=" >> "$GITHUB_OUTPUT"
               exit 0
             fi
-          elif [[ -n $(git diff --name-only FETCH_HEAD..."$SHA" -- e2e/ci) ]]; then
+          elif [[ -n $(git diff --name-only "origin/$BASE...$SHA" -- e2e/ci) ]]; then
             # The PR changes the selector: its tests must pass before it picks anything. (Only
             # then, since RealRepoTest also reads the app, which other PRs may change.)
-            python3 -m unittest discover -s e2e/ci -p 'test_*.py' 
+            python3 -m unittest discover -s e2e/ci -p 'test_*.py'
           fi
           mkdir -p build
-          FLOWS=$(python3 "$CI/affected.py" --root . --base FETCH_HEAD --head "$SHA" --max "$MAX_FLOWS" \
+          FLOWS=$(python3 "$CI/affected.py" --root . --base "origin/$BASE" --head "$SHA" --max "$MAX_FLOWS" \
             --json build/affected.json --md build/affected.md)
           # Selectors are flow paths: anything else (a file name a PR chose, with a newline) stops here.
           if [[ ! $FLOWS =~ ^[A-Za-z0-9_./@\ -]*$ ]]; then
@@ -184,7 +174,7 @@ jobs:
   annotated:
     name: annotated videos
     needs: select
-    if: needs.select.outputs.run == 'true' && needs.select.outputs.fork == 'false' && needs.select.outputs.flows != ''
+    if: needs.select.outputs.fork == 'false' && needs.select.outputs.flows != ''
     permissions:
       contents: write
     uses: ./.github/workflows/flow-runner-job.yml

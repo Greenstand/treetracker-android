@@ -75,6 +75,7 @@ TOP_DECL_RE = re.compile(r"^" + MODIFIERS + r"(?:fun|val|var|typealias)\s+(?:<[^
                          r"(?:[\w.<>?, *]+\.)?(\w+)", re.M)
 PRIVATE_RE = re.compile(r"^\s*private\b")
 WORD_RE = re.compile(r"[A-Za-z_]\w*")
+REF_RE = re.compile(r"\b(?:TestTags|R\.\w+)\.\w+")
 RES_VALUE_RE = re.compile(
     r'<(string|color|dimen|plurals|string-array|integer-array|array|integer|bool|style)\b[^>]*'
     r'\bname="([\w.]+)"')
@@ -106,10 +107,6 @@ class Flow:
     def cost_to(self, n):
         return sum(s.cost for s in self.steps[:n])
 
-    @property
-    def total(self):
-        return self.cost_to(len(self.steps))
-
 
 def without_absent(block):
     """The lines of a step without comments and without assertNotVisible checks, whose ids are
@@ -130,10 +127,6 @@ def without_absent(block):
     return out
 
 
-def flow_tags(text):
-    return flowfile.tags(text)
-
-
 def without_comments(block):
     return [l for l in block if l.strip() and not l.lstrip().startswith("#")]
 
@@ -147,7 +140,7 @@ class FlowIndex:
             if p.name.startswith(".ci-") or p.name == "inline.yaml":
                 continue
             text = p.read_text(encoding="utf-8")
-            tags = flow_tags(text)
+            tags = flowfile.tags(text)
             path = rel(p.relative_to(self.root))
             self.flows[path] = Flow(path, p.stem, tags, self._steps(p, text, set()))
 
@@ -198,8 +191,10 @@ class KtFile:
     imports: set
     star_imports: set
     words: set
-    text: str
+    refs: set                    # "TestTags.X" and "R.string.x" references
     declared: set = field(default_factory=set)
+    consts: list = field(default_factory=list)
+    tag_funs: list = field(default_factory=list)
 
 
 class CodeIndex:
@@ -213,8 +208,8 @@ class CodeIndex:
             for name, star in IMPORT_RE.findall(text):
                 (stars if star else imports).add(name)
             f = KtFile(rel(p.relative_to(self.root)), m.group(1) if m else "", imports, stars,
-                       set(WORD_RE.findall(text)), text)
-            f.declared = self._declared(text)
+                       set(WORD_RE.findall(text)), set(REF_RE.findall(text)), self._declared(text),
+                       CONST_RE.findall(text), TAG_FUN_RE.findall(text))
             self.files[f.path] = f
         self._tag_keys(flow_ids)
         # file -> tag keys it uses; key -> files using it
@@ -233,22 +228,20 @@ class CodeIndex:
         # CaptureButton), and how many files show each tag, own or through a component.
         # A file that uses many tagged files (Host.kt) is a navigation hub, not a screen: it
         # isn't shown by itself, and the search for screens doesn't go through it.
+        used = {}
+        for other in self.file_tags:
+            for u in self.users(other):
+                used.setdefault(u, []).append(other)
         self.comp_tags, comp_count, self.hubs = {}, {}, set()
-        for f in self.files.values():
-            if f.path == TEST_TAGS:
+        for path, others in used.items():
+            if path == TEST_TAGS:
                 continue
-            comp, used = set(), 0
-            for other in self.file_tags:
-                o = self.files[other]
-                if other != f.path and any(self.uses(f, o.package, n) for n in o.declared):
-                    comp |= self.file_tags[other]
-                    used += 1
-            if used >= HUB_MIN_COMPONENTS:
-                self.hubs.add(f.path)
+            if len(others) >= HUB_MIN_COMPONENTS:
+                self.hubs.add(path)
                 continue
-            comp -= self.file_tags.get(f.path, set())
+            comp = set().union(*(self.file_tags[o] for o in others)) - self.file_tags.get(path, set())
             if comp:
-                self.comp_tags[f.path] = comp
+                self.comp_tags[path] = comp
                 for k in comp:
                     comp_count[k] = comp_count.get(k, 0) + 1
         self.comp_count = comp_count
@@ -283,11 +276,11 @@ class CodeIndex:
         self.tag_symbols = {}
         for f in self.files.values():
             owner = "TestTags" if f.path == TEST_TAGS else None
-            for name, value in CONST_RE.findall(f.text):
+            for name, value in f.consts:
                 if value in exact:
                     self.tag_symbols[(f.package, owner, name)] = value
             if f.path == TEST_TAGS:
-                for name, prefix in TAG_FUN_RE.findall(f.text):
+                for name, prefix in f.tag_funs:
                     if prefix in prefixes or any(i.startswith(prefix) for i in exact):
                         self.tag_symbols[(f.package, owner, name)] = prefix + "*"
 
@@ -295,7 +288,7 @@ class CodeIndex:
         """Whether file f can see and names the symbol `name` declared in package pkg (as a
         member of object `owner`, when given)."""
         if owner:
-            if re.search(rf"\b{owner}\.{name}\b", f.text):
+            if f"{owner}.{name}" in f.refs:
                 return (f.package == pkg or f"{pkg}.{owner}" in f.imports
                         or pkg in f.star_imports)
             return f"{pkg}.{owner}.{name}" in f.imports and name in f.words
@@ -318,14 +311,14 @@ class CodeIndex:
         """Nearest screen files from the given files (themselves if they are), with the hops
         taken, following users() up to MAX_HOPS. Returns ({screen file: route}, hops). direct:
         the files are the change itself, so any ids of theirs count."""
-        found = {p: [p] for p in start if p in self.screens}
+        found = {p: [p] for p in sorted(start) if p in self.screens}
         if found:
             # A file reached through others only counts with ids of its own (not Root.kt's
             # Snackbar, which every screen shows).
             found = {p: r for p, r in found.items() if direct or p in self.specific}
         if found:
             return found, 0
-        frontier = {p: [p] for p in start if p in self.files}
+        frontier = {p: [p] for p in sorted(start) if p in self.files}
         seen = set(frontier)
         for hop in range(1, MAX_HOPS + 1):
             nxt = {}
@@ -341,8 +334,8 @@ class CodeIndex:
         return {}, None
 
     def files_using_resource(self, kind, name):
-        pat = re.compile(r"\bR\." + re.escape(kind) + r"\." + re.escape(name) + r"\b")
-        return {f.path for f in self.files.values() if pat.search(f.text)}
+        ref = f"R.{kind}.{name}"
+        return {f.path for f in self.files.values() if ref in f.refs}
 
     def _screen(self, path):
         """How a flow shows this file: (ids, after), or None when no flow can tell it is on it.
@@ -409,9 +402,6 @@ class Pick:
     cut: int = None              # top-level steps to run; None = whole flow
     reasons: list = field(default_factory=list)
 
-    def steps_run(self):
-        return len(self.flow.steps) if self.cut is None else self.cut
-
 
 def short(path):
     return printable(path.rsplit("/", 1)[-1])
@@ -421,7 +411,7 @@ def cost(flow, n):
     return flow.cost_to(n) + (SETUP_COST if flow.tags & SEEDED_TAGS else 0)
 
 
-def show(flow, target, code):
+def show(flow, target):
     """Where flow shows target: (cut, cost, step, screen), the cheapest over the target's
     screens, or None when it never does."""
     best = None
@@ -498,7 +488,7 @@ def targets_for(changes, flows, code):
             for kind, name in res:
                 files |= code.files_using_resource(kind, name)
             label = ", ".join(f"R.{k}.{n}" for k, n in sorted(res)[:4]) + (" ..." if len(res) > 4 else "")
-            add_code_target(targets, unmapped, p, files, code, label or None)
+            add_code_target(targets, unmapped, p, files, code, label)
         else:
             unmapped.append((p, "not app code or a flow"))
     return targets, unmapped, whole
@@ -561,7 +551,7 @@ def select(changes, root=ROOT, max_flows=6):
     candidates = flows.candidates()
     options = {}
     for t in targets:
-        options[id(t)] = [(f, s) for f in candidates if (s := show(f, t, code))]
+        options[id(t)] = [(f, s) for f in candidates if (s := show(f, t))]
     targets.sort(key=lambda t: (t.order, len(options[id(t)]), t.change))
     for t in targets:
         opts = options[id(t)]
@@ -576,7 +566,7 @@ def select(changes, root=ROOT, max_flows=6):
         for f, (cut, c, step, screen) in opts:
             pick = picks.get(f.path)
             if pick:
-                extra = 0 if pick.cut is None or cut <= pick.cut else c - cost(f, pick.steps_run())
+                extra = 0 if pick.cut is None or cut <= pick.cut else c - cost(f, pick.cut)
             else:
                 extra = c
             key = (extra, 0 if pick else 1, c, f.name)
@@ -644,9 +634,8 @@ def printable(text):
     return re.sub(r"[\x00-\x1f\x7f]", lambda m: f"\\x{ord(m.group()):02x}", text)
 
 
-def capped(lines, n=None):
-    """At most n lines (MAX_LISTED), so the PR comment stays under GitHub's size limit."""
-    n = n or MAX_LISTED
+def capped(lines, n=MAX_LISTED):
+    """At most n lines, so the PR comment stays under GitHub's size limit."""
     return lines[:n] + ([f"- and {len(lines) - n} more"] if len(lines) > n else [])
 
 

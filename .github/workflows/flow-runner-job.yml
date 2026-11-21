@@ -1,9 +1,9 @@
 name: Flow runner job
 
-# The job behind flow-runner.yml (see there and docs/testing/ci-flows.md): builds the debug app and
-# tb, boots the emulator, runs the flows and publishes the results. It declares no permissions, so
-# it gets the caller's token: flow-runner.yml grants contents: write (to push the results branch);
-# e2e-affected.yml grants only contents: read for a PR from a fork, whose code then can't push.
+# Runs chosen flows on an emulator: builds the debug app and tb, boots the emulator, runs the flows
+# and publishes the results (docs/testing/ci-flows.md). Called by flow-runner.yml (by hand),
+# flow-runner-pr.yml and e2e-affected.yml. It declares no permissions, so it gets the caller's
+# token: contents: write to push the results branch, or contents: read for a fork's PR.
 on:
   workflow_call:
     inputs:
@@ -164,22 +164,14 @@ jobs:
           path: bin/tb
           key: tb-${{ env.TESTBUDDY_REF }}-linux-x64
 
-      - name: Setup build environment
-        if: inputs.save_caches
-        uses: ./.github/workflows/actions/setup-build-environment
-        with:
-          use_dummy_keys: true
-      # For code that isn't trusted: the composite action above would be the PR's own copy (it is
-      # loaded from the checkout), and its Gradle cache is saved after the build. The same JDK
-      # and dummy keys, with no cache.
-      - name: Set up JDK 25 (no cache)
-        if: ${{ !inputs.save_caches }}
-        uses: actions/setup-java@v4
+      # What the setup-build-environment action does, inline: a local action would be the PR's
+      # own copy (a fork's could save any cache). No Gradle cache for code that isn't trusted.
+      - uses: actions/setup-java@v4
         with:
           java-version: 25
           distribution: temurin
-      - name: Dummy property file
-        if: ${{ !inputs.save_caches }}
+          cache: ${{ inputs.save_caches && 'gradle' || '' }}
+      - name: Dummy property file (as setup-property-file writes it)
         run: |
           cat > treetracker.keys.properties <<'KEYS'
           #Treetracker API Keys

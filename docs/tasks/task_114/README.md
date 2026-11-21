@@ -8,125 +8,39 @@ noise: nearly every flow passes the Dashboard.
 
 ## Decisions
 
-Three ways to pick the flows were weighed (a hand-kept map of paths to flows; deriving it from the
-test tags flows and screens share; recording runtime coverage nightly). Chosen: derived from test
-tags, with a small overrides file. Also decided:
-
-- At most 6 flows per PR.
-- PRs from forks run only when a maintainer presses Run workflow (workflow_dispatch with the PR
-  number), never on their own.
+- Flows are picked from the test tag ids flows and screens share, with a small overrides file
+  (weighed against a hand-kept map of paths to flows, and nightly runtime coverage).
+- Changed flows run whole; any other change gets one flow, cut soon after it shows the change.
+  At most 6 flows per PR.
+- PRs from forks run only from Run workflow, with the full sha of the reviewed commit: read-only
+  token, no caches saved, no local action or selector code from the fork.
 - No fallback flow when a change reaches no screen: "Android end-to-end" covers it.
-- Not a required check for now.
-- "Android end-to-end" keeps running every flow, on Test Buddy v0.6.0, without `--annotate`.
+- Not a required check for now. "Android end-to-end" keeps running every flow, on Test Buddy
+  v0.6.0, without `--annotate`.
+- Videos stay on the `flow-results/affected-pr-<N>` branch, so the comment can link them and a
+  cloud session can fetch them.
 
 ## Change
 
-- `.github/workflows/e2e-affected.yml` (new): on PRs, `select` (no emulator) runs
-  `e2e/ci/affected.py` on the PR's diff; `annotated` runs the picked flows through
-  `flow-runner-job.yml` with `annotate: true`; `comment` keeps one PR comment with why each flow
-  ran and links to the videos. A fork's PR runs only by workflow_dispatch, in `annotated-fork`:
-  read-only token, no results branch, no caches saved.
-- `e2e/ci/affected.py` (new): indexes each flow's steps and the ids they use (through sub-flows),
-  and which app files use which test tags (own tags, and tags of components only they use). A
-  changed file maps to screen files (itself; for other code the files using it, up to 3 away, not
-  through navigation hubs; for resources the files using `R.<type>.<name>`; for `TestTags.kt` the
-  files using the changed tags; for a sub-flow the flows running it). Each change gets one flow:
-  the one that shows it in the fewest steps, cut a few steps after; a flow already picked is reused
-  when it shows the change too. Changed flows run whole. Writes the selectors
-  (`e2e/flows/x.yaml@N`), a markdown table and JSON.
-- `e2e/ci/join_recording.py` (new): joins tb's 3-minute recording parts and their captions.
-- `e2e/ci/affected-overrides.json` (new): ids and "after" anchors for screens built only from
-  shared components (capture, image review, selfie, user/wallet/profile select), and ignore globs.
-- `e2e/ci/cut_flow.py`, `e2e/ci/flowfile.py` (new): cut a flow after N top-level steps; the step
-  splitter `step_shots.py` used, now shared (same output on every flow).
-- `e2e/ci/run-flows.sh`: `name@N` selectors; `ANNOTATE=1|TIME` runs `tb test --record --annotate`
-  and keeps tb's video and captions as `videos/<flow>.mp4` and `.srt`. `summarize.py`: a cut flow's
-  steps and the captions file.
-- `.github/workflows/flow-runner.yml` now only holds the triggers and a write token; its job moved to
-  `flow-runner-job.yml` (no permissions of its own, so a fork's run can get a read-only token),
-  which gained `annotate`, `label` (artifact and branch names: `flow-results/affected-pr-<N>`),
-  `save_caches` and a `results_sha` output. The checkout no longer leaves a token in `.git`, and
-  the tb and emulator caches are saved before the app's code builds (since the second review).
-- Test Buddy v0.6.0 (`8220d90`) in `android-e2e.yml` and `flow-runner-job.yml`.
-- `cloud-flows.sh fetch --affected <N>`.
-- `docs/testing/ci-flows.md`: "Flows a PR affects".
-
-## Review fixes
-
-A review of the first version found:
-
-- A fork run by hand could still save caches: the build setup is a local composite action, loaded
-  from the PR's own checkout, and its `setup-java` saved the Gradle cache after the build. With
-  `save_caches: false`, flow-runner-job.yml now sets up the JDK and dummy keys inline, without a
-  cache, and turns off setup-go's cache. A fork's flows are picked by the base branch's copy of
-  `affected.py` (`--root`), and its tests aren't run.
-- Run workflow took only a PR number, so a push after the review would run unread code. It now
-  also takes the reviewed commit and stops when the PR's head differs.
-- tb splits recordings over 3 minutes into `recording-part2.mp4`, ...; only the first part was
-  kept, sometimes with another part's captions. `e2e/ci/join_recording.py` joins the parts with
-  ffmpeg and shifts each part's captions.
-- The comment could pass GitHub's 65536-character limit on a huge PR: lists are capped at 50 and
-  the body at 60000 characters.
-- `TestTags.X` matched as a prefix (`SYNC_OVERLAY` in `SYNC_OVERLAY_SWITCH`); now whole words.
-- `git diff -z` for paths with unusual characters; deleted, renamed-only and unknown flows, and
-  values files with no names in the diff, are listed instead of dropped; any flow in a folder
-  under e2e/flows counts as a sub-flow; block-style `tags:` lists are read.
-
-A second review found, and these were fixed:
-
-- `run-flows.sh` used an associative array, which macOS's bash 3.2 lacks, so it broke for every
-  local run on a Mac. Cuts are now kept in plain arrays; a test checks for bash-4-only features.
-- Tags written with a trailing comment, as an unindented list or with comments in the list were
-  missed, so a `known-bug` flow could be picked. `flowfile.tags()` reads them all, and
-  `run-flows.sh` now uses it too (same result as before on every current flow).
-- At the 6-flow limit a change was skipped when a new flow was cheapest, though a picked flow
-  could have run further to show it. Now a picked flow takes it.
-- `/run-flows` and the `run-flows:` line refused `name@N`.
-- The app was built before the emulator snapshot was saved, so the build could change what went
-  into the cache. It now builds after. The Test Buddy checkout keeps no token in `.git`.
-- PR events (a push, a reopen) cancelled a maintainer's run by hand: runs by hand now have their
-  own concurrency group.
-- File names (which a PR chooses) could break the select job's outputs: a random delimiter,
-  selectors checked, control characters escaped in the table. The comment script takes only the
-  expected fields from `summary.json`, as text, without @mentions, and survives a broken file.
-- `join_recording.py` left its list file behind when joining failed; parts kept apart are now in
-  `summary.json` (`videoParts`) and linked from the comment.
-- A fork's PR into a base branch without `affected.py` (an older `release*`) now says so instead
-  of failing.
-- `@0` and `@08` are refused instead of running the whole flow.
-- Tests for all of the above, `run-flows.sh` selectors (stand-in adb and tb), joining real videos
-  with ffmpeg, and summarize.py's results.
-
-A third review found, and these were fixed:
-
-- Open PR branches from before this change had no `affected.py` or flow cuts, so "pick flows"
-  failed on their next push (and a fork's run by hand would have run its old `run-flows.sh`).
-  Such a branch now gets a notice to merge the base branch, and no flows.
-- The reviewed commit could be given as 7 characters, which a fork can match with a made-up
-  commit. Run workflow now needs the full 40-character sha.
-- The head commit comes from the pull_request event when there is one (the API can lag a push).
-- The selector's unit tests gate the pick only on PRs that change `e2e/ci` (their real-repo test
-  reads the app, which other PRs may change).
-
-A fourth review found it merge-ready, with two small fixes made after it: the selector's test
-output is no longer cut to 3 lines when they fail, and `summarize.py` no longer takes another
-flow's video (`capture-partial.mp4`) for a part of `capture`'s (it crashed on it). An uppercase or
-space-padded sha on Run workflow is accepted.
-
-Kept: videos stay on the `flow-results/affected-pr-<N>` branch, so the comment can link them and a
-cloud session can fetch them, at the cost of a heavier branch.
+- `.github/workflows/e2e-affected.yml` (new): `select` runs `e2e/ci/affected.py` on the diff,
+  `annotated` / `annotated-fork` run the flows through `flow-runner-job.yml` with `annotate: true`,
+  `comment` keeps one PR comment with the reasons and video links.
+- `e2e/ci/affected.py`, `affected-overrides.json`, `cut_flow.py`, `join_recording.py`,
+  `flowfile.py` (new); `run-flows.sh` gained `name@N` and `ANNOTATE`.
+- `flow-runner-job.yml` (new) holds the job, with no permissions of its own; `flow-runner.yml` only
+  starts it by hand with a write token, and `flow-runner-pr.yml` calls it directly.
+- How it works and how to use it: `docs/testing/ci-flows.md`, "Flows a PR affects".
 
 ## Checks
 
-- `python3 -m unittest discover -s e2e/ci -p 'test_*.py'`: 39 tests (made-up app: screen,
-  ViewModel, two hops, resources, TestTags, sub-flow, shared component, override, limit, known-bug;
-  and this repo: a Dashboard change picks one cut flow).
-- `affected.py` on recent merged PRs: #1441 → 3 flows (session note whole, wallet select cut at
-  16, add org cut at 6); #1439 → 2; #1433 → 1; #1452 → `debug-overlays` cut at 6.
-- `run-flows.sh` with stand-in `adb` and `tb`: cut copies, a cut and whole pick of one flow run
-  whole, tb's video and captions moved, copies removed.
-- tb v0.6.0 built locally: `tb check` passes on cut copies of every flow (3 cut points each), and
-  `tb test ... --record --annotate` parses.
-- actionlint on the changed workflows: clean.
-- Not run here: the workflows themselves (no emulator in a cloud session). The first PR run shows
-  whether v0.6.0 passes every flow in "Android end-to-end".
+- `python3 -m unittest discover -s e2e/ci -p 'test_*.py'` (selector rules on a made-up app and on
+  this repo, `run-flows.sh` selectors with stand-in adb and tb, joining videos, summaries).
+- Five review rounds (four for correctness and security, one for cleanup); the fixes are in the
+  commit messages.
+- `affected.py` on recent merged PRs gives sensible picks (#1441: 3 flows; #1452: `debug-overlays`
+  cut at 6), and the same picks before and after the cleanup on 729 inputs.
+- tb v0.6.0 `tb check` passes on cut copies of every flow; actionlint is clean.
+- Not run here (no emulator in a cloud session): the workflows themselves. The first PR shows
+  whether Test Buddy v0.6.0 passes every flow in "Android end-to-end".
+- Known limit: only `app/src/main` is indexed; once screens move into KMP modules, `affected.py`
+  needs to index them too.

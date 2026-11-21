@@ -2,7 +2,7 @@
 # Runs Test Buddy flows one at a time on a disposable emulator and saves what an agent or person
 # needs to check them later: a screenshot after each step, the step log, logcat and, optionally, a
 # video. Writes summary.json and summary.md at the top of OUT. Used by
-# .github/workflows/flow-runner.yml (see docs/testing/ci-flows.md); works locally too.
+# .github/workflows/flow-runner-job.yml (see docs/testing/ci-flows.md); works locally too.
 #
 # Flows are picked by selectors: a path (e2e/flows/a.yaml), a name (settings-logout), a glob
 # (settings-*) or a tag (tag:settings). Names, globs and tags look in e2e/flows only (not its

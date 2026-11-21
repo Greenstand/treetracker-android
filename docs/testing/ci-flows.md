@@ -7,8 +7,8 @@ writing a one-off CI script per PR.
 
 | File | What it does |
 | --- | --- |
-| `.github/workflows/flow-runner.yml` | The reusable workflow: builds the debug app, boots the emulator, runs the flows, publishes the results. `workflow_call` and `workflow_dispatch`. Grants the job a token that can push the results branch. |
-| `.github/workflows/flow-runner-job.yml` | Its job, with no permissions of its own, so a caller can give it a read-only token (a fork's PR). |
+| `.github/workflows/flow-runner-job.yml` | The reusable workflow (`workflow_call`): builds the debug app, boots the emulator, runs the flows, publishes the results. No permissions of its own: the caller grants `contents: write` to push the results branch, or read-only for a fork's PR. |
+| `.github/workflows/flow-runner.yml` | Starts that job by hand (`workflow_dispatch`), with a token that can push the results. |
 | `.github/workflows/e2e-affected.yml` | On every PR: annotated videos of the flows the PR affects (below). |
 | `e2e/ci/affected.py` | Picks those flows from the PR's diff; `affected-overrides.json` holds its hints. |
 | `e2e/ci/cut_flow.py` | Copies a flow cut after its first N steps (`name@N` selectors). |
@@ -81,7 +81,7 @@ Branches nobody updated for 14 days are deleted by the next run.
     flows:
       permissions:
         contents: write
-      uses: ./.github/workflows/flow-runner.yml
+      uses: ./.github/workflows/flow-runner-job.yml
       with:
         flows: settings-logout tag:signup
         pr: ${{ github.event.pull_request.number }}
