@@ -37,8 +37,8 @@ android {
         applicationId "org.greenstand.android.TreeTracker"
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.targetSdk.get().toInteger()
-        versionCode 202
-        versionName "2.2.1"
+        versionCode 205
+        versionName "2.2.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         buildConfigField "String", "OBJECT_STORAGE_IDENTITY_POOL_ID", "\"${s3_production_identity_pool_id}\""
