@@ -153,7 +153,8 @@ class DevOptionsOrgOverridesTest {
     fun `resetting one override makes the step follow the org again`() {
         val viewModel = createViewModel()
         viewModel.handleAction(DevOptionsAction.SetFeatureOverride(forceNoteKey, false))
-        assertFalse(viewModel.orgLink.features.row(forceNoteKey).value)
+        val overridden = viewModel.orgLink.features.row(forceNoteKey)
+        assertFalse(overridden.value)
 
         viewModel.handleAction(DevOptionsAction.SetFeatureOverride(forceNoteKey, null))
 
