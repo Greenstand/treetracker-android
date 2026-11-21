@@ -46,6 +46,7 @@ For every unit of work, create a task folder in `docs/tasks/` named `task_{id}` 
 - [Agent App Functions](docs/testing/agent-app-functions.md)
 - [App Distribution Testing](docs/testing/app-distribution-testing.md)
 - [End-to-End Flow Test Plan](docs/testing/e2e-flow-test-plan.md)
+- [Running Flows on CI from a Cloud Session](docs/testing/ci-flows.md)
 - [Releases](docs/release/releases.md)
 
 ### Collaboration
