@@ -431,7 +431,7 @@ class SummarizeTest(unittest.TestCase):
             for name in ["a", "b"]:
                 Path(out, "flows", name).mkdir(parents=True)
             Path(out, "videos").mkdir()
-            for f in ["b.mp4", "b-part2.mp4", "b-part10.mp4", "b.srt"]:
+            for f in ["b.mp4", "b-part2.mp4", "b-part10.mp4", "b.srt", "b-partial.mp4"]:
                 Path(out, "videos", f).write_text("")
             Path(out, "results.tsv").write_text("a\te2e/flows/a.yaml\tpassed\t3\n"
                                                 "b\te2e/flows/b.yaml\tfailed\t4\t7\n")

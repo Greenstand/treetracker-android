@@ -75,6 +75,7 @@ jobs:
           # A run by hand runs only the commit the maintainer read: the full sha, since a short
           # one can be matched by a commit made to look like it.
           if [[ $EVENT == workflow_dispatch ]]; then
+            REVIEWED=$(tr '[:upper:]' '[:lower:]' <<<"$REVIEWED" | tr -d '[:space:]')
             [[ $REVIEWED =~ ^[0-9a-f]{40}$ ]] || { echo "::error::sha: the full 40-character commit sha you reviewed"; exit 1; }
             if [[ $SHA != "$REVIEWED" ]]; then
               echo "::error::PR #$PR is at ${SHA:0:12} now, not ${REVIEWED:0:12}: read the new commits, then run it with the new sha"
@@ -145,7 +146,7 @@ jobs:
           elif [[ -n $(git diff --name-only FETCH_HEAD..."$SHA" -- e2e/ci) ]]; then
             # The PR changes the selector: its tests must pass before it picks anything. (Only
             # then, since RealRepoTest also reads the app, which other PRs may change.)
-            python3 -m unittest discover -s e2e/ci -p 'test_*.py' 2>&1 | tail -n 3
+            python3 -m unittest discover -s e2e/ci -p 'test_*.py' 
           fi
           mkdir -p build
           FLOWS=$(python3 "$CI/affected.py" --root . --base FETCH_HEAD --head "$SHA" --max "$MAX_FLOWS" \

@@ -108,6 +108,11 @@ A third review found, and these were fixed:
 - The selector's unit tests gate the pick only on PRs that change `e2e/ci` (their real-repo test
   reads the app, which other PRs may change).
 
+A fourth review found it merge-ready, with two small fixes made after it: the selector's test
+output is no longer cut to 3 lines when they fail, and `summarize.py` no longer takes another
+flow's video (`capture-partial.mp4`) for a part of `capture`'s (it crashed on it). An uppercase or
+space-padded sha on Run workflow is accepted.
+
 Kept: videos stay on the `flow-results/affected-pr-<N>` branch, so the comment can link them and a
 cloud session can fetch them, at the cost of a heavier branch.
 
