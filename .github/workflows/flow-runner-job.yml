@@ -136,6 +136,7 @@ jobs:
           repository: Elforama/testbuddy
           ref: ${{ env.TESTBUDDY_REF }}
           path: .testbuddy
+          persist-credentials: false
       - if: steps.tb-cache.outputs.cache-hit != 'true'
         uses: actions/setup-java@v4
         with:
@@ -190,8 +191,6 @@ jobs:
           prod_treetracker_client_secret=dummy-prod-secret
           s3_production_identity_pool_id=dummy-pool-id-prod
           KEYS
-      - name: Build the debug app
-        run: bash ./gradlew :app:assembleDebug --stacktrace
 
       - name: Enable KVM
         run: |
@@ -231,6 +230,10 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ env.API_LEVEL }}-google_apis-x86_64-cameras
+
+      # After the caches are saved, so nothing the app's build does can end up in them.
+      - name: Build the debug app
+        run: bash ./gradlew :app:assembleDebug --stacktrace
 
       # The runner script's exit status is kept in a file, so the results are always uploaded and
       # the last step fails the job for a failed flow.

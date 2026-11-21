@@ -99,7 +99,7 @@ jobs:
               --screenshots) i=$((i + 1)); SHOTS=${WORDS[$i]} ;;
               --screenshots=*) SHOTS=${W#--screenshots=} ;;
               -*) echo "::warning::Unknown option $W" ;;
-              *) [[ $W =~ ^[A-Za-z0-9_./*:-]+$ ]] || { echo "::error::Bad selector '$W'"; exit 1; }
+              *) [[ $W =~ ^[A-Za-z0-9_./*:@-]+$ ]] || { echo "::error::Bad selector '$W'"; exit 1; }
                  FLOWS="$FLOWS $W" ;;
             esac
           done

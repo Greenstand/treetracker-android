@@ -3,16 +3,23 @@
 Run: python3 -m unittest discover -s e2e/ci -p 'test_*.py'
 """
 import json
+import os
+import shutil
+import subprocess
 import tempfile
 import textwrap
 import unittest
 from pathlib import Path
 
+import sys
+
 import affected
 from affected import Change, select, selectors
 from cut_flow import cut
 import join_recording
+import flowfile
 
+CI = Path(__file__).resolve().parent
 PKG = "app/src/main/java/org/greenstand/android/TreeTracker"
 
 FILES = {
@@ -132,6 +139,14 @@ FILES = {
         - back
         - back
         - back
+        - back
+        - back
+        - back
+        - back
+        - back
+        - back
+        - back
+        - tapOn: {id: SettingsLogout}
     """,
     # Settings with fewer steps, but a known bug: never picked for a changed screen.
     "e2e/flows/settings-bug.yaml": """
@@ -258,9 +273,35 @@ class AffectedTest(unittest.TestCase):
         self.assertFalse(code.uses(f, "org.greenstand.android.TreeTracker.view", "SETTINGS", "TestTags"))
         self.assertTrue(code.uses(f, "org.greenstand.android.TreeTracker.view", "SETTINGS_LOGOUT", "TestTags"))
 
-    def test_block_style_tags(self):
-        self.assertEqual(affected.flow_tags("appId: x\ntags:\n  - a\n  - known-bug\n---\n"), {"a", "known-bug"})
-        self.assertEqual(affected.flow_tags("appId: x\ntags: [a, b]\nname: y\n---\n"), {"a", "b"})
+    def test_tag_forms(self):
+        cases = {
+            "tags: [a, b]\nname: y": {"a", "b"},
+            "tags: [a, known-bug] # until #12 is fixed": {"a", "known-bug"},
+            "tags: a": {"a"},
+            "tags:\n  - a\n  - known-bug": {"a", "known-bug"},
+            "tags:\n- dev-tools\n- known-bug\nname: y": {"dev-tools", "known-bug"},
+            "tags:\n  - a\n  # the bug\n  - known-bug": {"a", "known-bug"},
+            "tags:\n  - 'a'\n  - \"b\"  # quoted": {"a", "b"},
+            "name: y": set(),
+        }
+        for header, want in cases.items():
+            self.assertEqual(affected.flow_tags(f"appId: x\n{header}\n---\n- back\n"), want, header)
+
+    def test_at_the_limit_a_picked_flow_runs_further(self):
+        # User select is only in capture (cut at 5). Settings is cheaper in settings-logout, but
+        # with room for one flow, capture runs on to its own settings step.
+        r = self.pick(f"{PKG}/userselect/UserSelectScreen.kt", f"{PKG}/settings/SettingsScreen.kt",
+                      max_flows=1)
+        self.assertEqual(selectors(r), ["e2e/flows/capture.yaml"])
+        self.assertEqual(r["skipped"], [])
+        # With room, each gets its own short flow.
+        r = self.pick(f"{PKG}/userselect/UserSelectScreen.kt", f"{PKG}/settings/SettingsScreen.kt")
+        self.assertEqual(sorted(selectors(r)),
+                         ["e2e/flows/capture.yaml@5", "e2e/flows/settings-logout.yaml@4"])
+
+    def test_control_characters_in_paths_stay_on_one_line(self):
+        md = affected.markdown(select([Change("docs/a\nb.txt")], self.root, 6), 6)
+        self.assertIn("`docs/a\\x0ab.txt`", md)
 
     def test_long_lists_are_capped(self):
         changes = [Change(f"docs/file{i}.txt") for i in range(80)]
@@ -326,6 +367,81 @@ class JoinRecordingTest(unittest.TestCase):
             join_recording.keep_apart(join_recording.parts(Path(d, "tb")), Path(d, "out"))
             self.assertEqual(Path(d, "out.mp4").read_text(), "v")
             self.assertEqual(Path(d, "out.srt").read_text(), "s")
+
+
+class JoinRecordingMainTest(unittest.TestCase):
+    """join_recording.py on real (tiny) videos."""
+
+    def make(self, d, names):
+        for i, name in enumerate(names):
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i",
+                            "color=c=red:s=32x32:d=1:r=30", "-c:v", "libx264", "-pix_fmt",
+                            "yuv420p", str(Path(d, name + ".mp4"))], check=True)
+            Path(d, name + ".srt").write_text(f"1\n00:00:00,100 --> 00:00:00,900\nstep {i + 1}\n")
+
+    def run_main(self, src, out, env=None):
+        return subprocess.run([sys.executable, "-B", str(Path(join_recording.__file__)), src, out],
+                              capture_output=True, text=True, env=env)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "needs ffmpeg")
+    def test_parts_joined(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d, "tb", "flow")
+            src.mkdir(parents=True)
+            self.make(src, ["recording", "recording-part2"])
+            r = self.run_main(str(Path(d, "tb")), str(Path(d, "out", "f")))
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertEqual(sorted(p.name for p in Path(d, "out").iterdir()), ["f.mp4", "f.srt"])
+            self.assertIn("00:00:01,100 --> 00:00:01,900\nstep 2", Path(d, "out", "f.srt").read_text())
+            self.assertEqual(list(src.iterdir()), [])
+
+    @unittest.skipUnless(shutil.which("ffmpeg"), "needs ffmpeg")
+    def test_without_ffmpeg_parts_stay_apart(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d, "tb")
+            src.mkdir()
+            self.make(src, ["recording", "recording-part2"])
+            env = dict(os.environ, PATH=str(Path(sys.executable).parent))
+            r = self.run_main(str(src), str(Path(d, "f")), env)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            for name in ["f.mp4", "f.srt", "f-part2.mp4", "f-part2.srt"]:
+                self.assertTrue(Path(d, name).exists(), name)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "needs ffmpeg")
+    def test_unreadable_parts_stay_apart_and_nothing_is_left(self):
+        with tempfile.TemporaryDirectory() as d, tempfile.TemporaryDirectory() as tmp:
+            src = Path(d, "tb")
+            src.mkdir()
+            for name in ["recording.mp4", "recording-part2.mp4"]:
+                Path(src, name).write_text("not a video")
+            r = self.run_main(str(src), str(Path(d, "f")), dict(os.environ, TMPDIR=tmp))
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertTrue(Path(d, "f.mp4").exists() and Path(d, "f-part2.mp4").exists())
+            self.assertEqual(list(Path(tmp).iterdir()), [])
+
+    def test_no_recording(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(self.run_main(d, str(Path(d, "f"))).returncode, 1)
+
+
+class SummarizeTest(unittest.TestCase):
+    def test_four_and_five_columns_and_video_parts(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d)
+            for name in ["a", "b"]:
+                Path(out, "flows", name).mkdir(parents=True)
+            Path(out, "videos").mkdir()
+            for f in ["b.mp4", "b-part2.mp4", "b-part10.mp4", "b.srt"]:
+                Path(out, "videos", f).write_text("")
+            Path(out, "results.tsv").write_text("a\te2e/flows/a.yaml\tpassed\t3\n"
+                                                "b\te2e/flows/b.yaml\tfailed\t4\t7\n")
+            subprocess.run([sys.executable, "-B", str(CI / "summarize.py"), d], check=True,
+                           capture_output=True)
+            flows = json.loads(Path(out, "summary.json").read_text())["flows"]
+            self.assertEqual([f["steps"] for f in flows], [None, 7])
+            self.assertEqual(flows[1]["videoParts"], ["videos/b-part2.mp4", "videos/b-part10.mp4"])
+            self.assertEqual(flows[1]["captions"], "videos/b.srt")
+            self.assertIn("`b` (steps 1–7)", Path(out, "summary.md").read_text())
 
 
 class CutFlowTest(unittest.TestCase):

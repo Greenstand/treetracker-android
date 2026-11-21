@@ -28,8 +28,10 @@ on:
         description: "The PR's head commit you reviewed (full or the first 7+ characters); the run stops if the PR has moved on"
         required: true
 
+# A push cancels the run for the commit before it. A run by hand is in a group of its own, so the
+# PR's own events (a push, a close and reopen) don't cancel what a maintainer started.
 concurrency:
-  group: e2e-affected-${{ github.event.pull_request.number || inputs.pr }}
+  group: e2e-affected-${{ github.event.pull_request.number || inputs.pr }}-${{ github.event_name }}
   cancel-in-progress: true
 
 permissions:
@@ -121,17 +123,30 @@ jobs:
           CI=e2e/ci
           if [[ $FORK == true ]]; then
             CI=.trusted/e2e/ci
+            if [[ ! -f $CI/affected.py ]]; then
+              echo "::notice::$BASE has no e2e/ci/affected.py (it was cut before it), so no flows are picked for a fork's PR into it"
+              echo "The base branch, \`$BASE\`, has no \`e2e/ci/affected.py\`: nothing to pick flows with for a fork's PR." >> "$GITHUB_STEP_SUMMARY"
+              echo "flows=" >> "$GITHUB_OUTPUT"
+              echo "table=" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           else
             python3 -m unittest discover -s e2e/ci -p 'test_*.py' 2>&1 | tail -n 3
           fi
           mkdir -p build
           FLOWS=$(python3 "$CI/affected.py" --root . --base FETCH_HEAD --head "$SHA" --max "$MAX_FLOWS" \
             --json build/affected.json --md build/affected.md)
+          # Selectors are flow paths: anything else (a file name a PR chose, with a newline) stops here.
+          if [[ ! $FLOWS =~ ^[A-Za-z0-9_./@\ -]*$ ]]; then
+            echo "::error::Unexpected characters in the selectors: $FLOWS"; exit 1
+          fi
           echo "flows=$FLOWS" >> "$GITHUB_OUTPUT"
+          # A delimiter no file name in the table can contain.
+          EOF_MARK="AFFECTED_$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
           {
-            echo "table<<AFFECTED_EOF"
+            echo "table<<$EOF_MARK"
             cat build/affected.md
-            echo "AFFECTED_EOF"
+            echo "$EOF_MARK"
           } >> "$GITHUB_OUTPUT"
           cat build/affected.md >> "$GITHUB_STEP_SUMMARY"
           echo "Selectors: \`${FLOWS:-none}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -216,25 +231,42 @@ jobs:
             const fs = require('fs');
             const env = process.env;
             const marker = '<!-- e2e-affected -->';
-            const lines = [marker, '## Annotated flow videos', '', env.TABLE.trim(), ''];
+            // summary.json and the table come from the PR's code and file names (a fork's, on a
+            // run by hand): take only what is expected, as text, with no mentions or table breaks.
+            const text = (v, max = 300) => String(v ?? '').split('\n')[0].slice(0, max)
+              .replace(/[|<>]/g, c => '\\' + c).replace(/@/g, '@\u200b');
+            const noMentions = v => String(v ?? '').replace(/@/g, '@\u200b');
+            const safePath = v => /^[A-Za-z0-9_./-]+$/.test(String(v ?? '')) ? String(v) : null;
+            const lines = [marker, '## Annotated flow videos', '', noMentions(env.TABLE).trim(), ''];
             if (env.FLOWS.trim()) {
-              const summary = fs.existsSync('results/summary.json')
-                ? JSON.parse(fs.readFileSync('results/summary.json', 'utf8')) : null;
+              let summary = null;
+              try {
+                summary = JSON.parse(fs.readFileSync('results/summary.json', 'utf8'));
+                if (!Array.isArray(summary.flows)) summary = null;
+              } catch (e) {
+                summary = null;
+              }
               if (!summary) {
                 lines.push('The run stopped before the flows ran: see the [run](' + env.RUN_URL + ').');
               } else {
                 const repoUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}`;
                 lines.push('| Flow | Result | Video |', '|---|---|---|');
-                for (const f of summary.flows) {
-                  const name = '`' + f.name + '`' + (f.steps ? ` (steps 1–${f.steps})` : '');
-                  const result = f.status === 'passed' ? '✅ passed' : '❌ ' + f.status;
+                const flows = summary.flows.filter(f => f && typeof f === 'object').slice(0, 20);
+                for (const f of flows) {
+                  const name = '`' + text(f.name, 80).replace(/`/g, '') + '`' +
+                    (Number.isInteger(f.steps) ? ` (steps 1–${f.steps})` : '');
+                  const result = f.status === 'passed' ? '✅ passed' : '❌ ' + text(f.status, 20);
+                  const videos = [f.video, ...(Array.isArray(f.videoParts) ? f.videoParts : [])].map(safePath).filter(Boolean);
                   let video = '—';
-                  if (f.video && env.RESULTS_SHA) video = `[${f.name}.mp4](${repoUrl}/blob/${env.RESULTS_SHA}/${f.video})`;
-                  else if (f.video) video = 'in the artifact';
+                  if (videos.length && env.RESULTS_SHA) {
+                    video = videos.map((v, i) => `[${i ? 'part ' + (i + 1) : 'video'}](${repoUrl}/blob/${env.RESULTS_SHA}/${v})`).join(', ');
+                  } else if (videos.length) {
+                    video = 'in the artifact';
+                  }
                   lines.push(`| ${name} | ${result} | ${video} |`);
                 }
-                for (const f of summary.flows.filter(f => f.error)) {
-                  lines.push('', `**\`${f.name}\`** failed: ${f.error.split('\n')[0].slice(0, 300)}`);
+                for (const f of flows.filter(f => f.error)) {
+                  lines.push('', `**\`${text(f.name, 80).replace(/`/g, '')}\`** failed: ${text(f.error)}`);
                 }
               }
               lines.push('', `[Run](${env.RUN_URL}) at \`${env.SHA.slice(0, 7)}\`. Videos, captions (.srt) and logs: ` +

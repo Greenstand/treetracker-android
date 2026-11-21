@@ -48,15 +48,39 @@ shift 2
 cd "$ROOT" || exit 2
 
 # Selectors to flow files, in order, without repeats.
-header() { awk '/^---[[:space:]]*$/{exit} {print}' "$1"; }
-has_tag() { header "$1" | grep -qE "^tags:.*[^A-Za-z0-9_-]$2([^A-Za-z0-9_-]|$)"; }
+# Tags as affected.py reads them (inline or block list, comments allowed).
+has_tag() { python3 e2e/ci/flowfile.py has-tag "$1" "$2"; }
 FLOWS=()
-declare -A CUT=()
-add() { local f; for f in "$@"; do [[ " ${FLOWS[*]-} " == *" $f "* ]] || FLOWS+=("$f"); done; }
+# Steps to run per flow, in FLOWS order: empty for the whole flow. (Plain arrays, not
+# associative ones, so this runs on macOS's bash 3.2 too.)
+CUTS=()
+index_of() {  # $1 flow: its index in FLOWS, or nothing
+  local i
+  for ((i = 0; i < ${#FLOWS[@]}; i++)); do [[ ${FLOWS[$i]} == "$1" ]] && { echo "$i"; return; }; done
+}
+add() {  # $1 steps (empty: whole), then flows. Whole wins over a cut; of two cuts, the longer.
+  local n=$1 f i
+  shift
+  for f in "$@"; do
+    i=$(index_of "$f")
+    if [[ -z $i ]]; then
+      FLOWS+=("$f")
+      CUTS+=("$n")
+    elif [[ -z $n ]]; then
+      CUTS[$i]=
+    elif [[ -n ${CUTS[$i]} ]] && (( n > CUTS[i] )); then
+      CUTS[$i]=$n
+    fi
+  done
+}
 for SEL in "$@"; do
   N=
-  if [[ $SEL =~ ^(.+)@([0-9]+)$ ]]; then
-    SEL=${BASH_REMATCH[1]} N=${BASH_REMATCH[2]}
+  if [[ $SEL == *@* ]]; then
+    N=${SEL##*@} SEL=${SEL%@*}
+    if [[ ! $N =~ ^[1-9][0-9]*$ ]]; then
+      echo "@N takes a step count from 1, without leading zeros: '$SEL@$N'" >&2
+      exit 2
+    fi
     [[ $SEL == tag:* || $SEL == *[*?[]* ]] && { echo "@N only goes on one flow: '$SEL@$N'" >&2; exit 2; }
   fi
   case "$SEL" in
@@ -75,14 +99,7 @@ for SEL in "$@"; do
     echo "No flow matches '$SEL'" >&2
     exit 2
   fi
-  add "${MATCHED[@]}"
-  # A flow picked whole and cut runs whole; cut twice, the longer cut.
-  if [[ -n $N ]] && (( N > 0 )); then
-    f=${MATCHED[0]}
-    if [[ -z ${CUT[$f]+x} ]]; then CUT[$f]=$N; elif [[ -n ${CUT[$f]} ]] && (( N > CUT[$f] )); then CUT[$f]=$N; fi
-  else
-    for f in "${MATCHED[@]}"; do CUT[$f]=; done
-  fi
+  add "$N" "${MATCHED[@]}"
 done
 echo "Flows: ${FLOWS[*]}"
 
@@ -129,7 +146,8 @@ stop_recording() {  # $1: flow name
 
 FAILED=0
 : > "$OUT/results.tsv"
-for FLOW in "${FLOWS[@]}"; do
+for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
+  FLOW=${FLOWS[$FI]}
   NAME=$(basename "$FLOW" .yaml)
   DIR="$OUT/flows/$NAME"
   SHOTS="$OUT/screens/$NAME"
@@ -147,7 +165,7 @@ for FLOW in "${FLOWS[@]}"; do
   fi
 
   RUN="$FLOW"
-  STEPS=${CUT[$FLOW]:-}
+  STEPS=${CUTS[$FI]}
   if [[ -n $STEPS ]]; then
     # Copies go next to the flow, so its runFlow paths still resolve.
     RUN="$(dirname "$FLOW")/.ci-cut-$NAME.yaml"

@@ -39,6 +39,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import flowfile
 from flowfile import steps as flow_steps
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -62,7 +63,6 @@ SPECIFIC_MAX_FILES = 2
 
 ID_RE = re.compile(r'\bid:\s*"?((?:[A-Za-z0-9_.-]|\$\{\w+\})+)')
 FILE_RE = re.compile(r'(?:\bfile:|runFlow:)\s*"?([A-Za-z0-9_./-]+\.yaml)')
-TAGS_RE = re.compile(r"^tags:[ \t]*\[?([^\]\n]*)\]?[ \t]*\n((?:[ \t]+-[^\n]*\n)*)", re.M)
 CONST_RE = re.compile(r'\bconst\s+val\s+(\w+)\s*=\s*"([^"$]+)"')
 TAG_FUN_RE = re.compile(r'\bfun\s+(\w+)\([^)]*\)\s*=\s*"([^"$]*)\$')
 PACKAGE_RE = re.compile(r"^package\s+([\w.]+)", re.M)
@@ -131,13 +131,7 @@ def without_absent(block):
 
 
 def flow_tags(text):
-    """The tags in a flow's header: `tags: [a, b]`, or a block list under `tags:`."""
-    m = TAGS_RE.search(text.split("\n---", 1)[0] + "\n")
-    if not m:
-        return set()
-    inline = [t.strip() for t in m.group(1).split(",")]
-    block = [l.strip()[1:].strip() for l in m.group(2).splitlines()]
-    return {t.strip("'\"") for t in inline + block if t.strip()}
+    return flowfile.tags(text)
 
 
 def without_comments(block):
@@ -420,7 +414,7 @@ class Pick:
 
 
 def short(path):
-    return path.rsplit("/", 1)[-1]
+    return printable(path.rsplit("/", 1)[-1])
 
 
 def cost(flow, n):
@@ -575,6 +569,9 @@ def select(changes, root=ROOT, max_flows=6):
             no_flow.append((t.change, t.why()))
             continue
         # Reuse a picked flow when it shows this at no or little extra cost; else the cheapest.
+        # At the limit, only flows already picked can take it (run further if need be).
+        if len(picks) >= max_flows and any(f.path in picks for f, _ in opts):
+            opts = [(f, o) for f, o in opts if f.path in picks]
         best = None
         for f, (cut, c, step, screen) in opts:
             pick = picks.get(f.path)
@@ -630,16 +627,21 @@ def markdown(result, max_flows):
         md.append("No changed flows, and no changed screen any flow shows.")
     if result["skipped"]:
         md += ["", f"**Not run, over the limit of {max_flows} flows:**", ""]
-        md += [f"- `{short(f)}`: {why}" for f, why, _ in result["skipped"]]
+        md += [f"- `{short(f)}`: {why}" for f, why, _ in result["skipped"]]  # short() escapes
     if result["no_flow"]:
         md += ["", "**Changed screens no flow reaches** (worth a new flow?):", ""]
         md += capped([f"- {why}" for _, why in result["no_flow"]])
     if result["unmapped"]:
         md += ["", "<details><summary>Changed files with no screen to show "
                f"({len(result['unmapped'])}): the full end-to-end check covers them</summary>", ""]
-        md += capped([f"- `{p}`: {why}" for p, why in result["unmapped"]])
+        md += capped([f"- `{printable(p)}`: {why}" for p, why in result["unmapped"]])
         md += ["", "</details>"]
     return "\n".join(md) + "\n"
+
+
+def printable(text):
+    """Control characters (a newline in a file name) shown escaped, so one path stays one line."""
+    return re.sub(r"[\x00-\x1f\x7f]", lambda m: f"\\x{ord(m.group()):02x}", text)
 
 
 def capped(lines, n=None):

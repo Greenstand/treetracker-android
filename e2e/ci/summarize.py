@@ -38,6 +38,9 @@ def main():
             "screenshots": shots,
             "video": video.relative_to(out).as_posix() if video.exists() else None,
             "captions": captions.relative_to(out).as_posix() if captions.exists() else None,
+            # A recording whose parts could not be joined (join_recording.py): part 2 on.
+            "videoParts": sorted((p.relative_to(out).as_posix() for p in (out / "videos").glob(f"{name}-part*.mp4")),
+                                 key=lambda p: int(p.rsplit("-part", 1)[1].split(".")[0])),
             "files": sorted(p.relative_to(out).as_posix() for p in d.iterdir() if p.is_file()),
         })
     env = os.environ.get

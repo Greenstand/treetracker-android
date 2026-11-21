@@ -46,7 +46,7 @@ tags, with a small overrides file. Also decided:
   `flow-runner-job.yml` (no permissions of its own, so a fork's run can get a read-only token),
   which gained `annotate`, `label` (artifact and branch names: `flow-results/affected-pr-<N>`),
   `save_caches` and a `results_sha` output. The checkout no longer leaves a token in `.git`, and
-  the tb and emulator caches are saved before the app's code builds.
+  the tb and emulator caches are saved before the app's code builds (since the second review).
 - Test Buddy v0.6.0 (`8220d90`) in `android-e2e.yml` and `flow-runner-job.yml`.
 - `cloud-flows.sh fetch --affected <N>`.
 - `docs/testing/ci-flows.md`: "Flows a PR affects".
@@ -72,12 +72,37 @@ A review of the first version found:
   values files with no names in the diff, are listed instead of dropped; any flow in a folder
   under e2e/flows counts as a sub-flow; block-style `tags:` lists are read.
 
+A second review found, and these were fixed:
+
+- `run-flows.sh` used an associative array, which macOS's bash 3.2 lacks, so it broke for every
+  local run on a Mac. Cuts are now kept in plain arrays; a test checks for bash-4-only features.
+- Tags written with a trailing comment, as an unindented list or with comments in the list were
+  missed, so a `known-bug` flow could be picked. `flowfile.tags()` reads them all, and
+  `run-flows.sh` now uses it too (same result as before on every current flow).
+- At the 6-flow limit a change was skipped when a new flow was cheapest, though a picked flow
+  could have run further to show it. Now a picked flow takes it.
+- `/run-flows` and the `run-flows:` line refused `name@N`.
+- The app was built before the emulator snapshot was saved, so the build could change what went
+  into the cache. It now builds after. The Test Buddy checkout keeps no token in `.git`.
+- PR events (a push, a reopen) cancelled a maintainer's run by hand: runs by hand now have their
+  own concurrency group.
+- File names (which a PR chooses) could break the select job's outputs: a random delimiter,
+  selectors checked, control characters escaped in the table. The comment script takes only the
+  expected fields from `summary.json`, as text, without @mentions, and survives a broken file.
+- `join_recording.py` left its list file behind when joining failed; parts kept apart are now in
+  `summary.json` (`videoParts`) and linked from the comment.
+- A fork's PR into a base branch without `affected.py` (an older `release*`) now says so instead
+  of failing.
+- `@0` and `@08` are refused instead of running the whole flow.
+- Tests for all of the above, `run-flows.sh` selectors (stand-in adb and tb), joining real videos
+  with ffmpeg, and summarize.py's results.
+
 Kept: videos stay on the `flow-results/affected-pr-<N>` branch, so the comment can link them and a
 cloud session can fetch them, at the cost of a heavier branch.
 
 ## Checks
 
-- `python3 -m unittest discover -s e2e/ci -p 'test_*.py'`: 27 tests (made-up app: screen,
+- `python3 -m unittest discover -s e2e/ci -p 'test_*.py'`: 39 tests (made-up app: screen,
   ViewModel, two hops, resources, TestTags, sub-flow, shared component, override, limit, known-bug;
   and this repo: a Dashboard change picks one cut flow).
 - `affected.py` on recent merged PRs: #1441 → 3 flows (session note whole, wallet select cut at

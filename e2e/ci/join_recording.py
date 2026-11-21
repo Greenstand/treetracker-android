@@ -90,23 +90,26 @@ def main():
         print("ffmpeg missing: keeping the recording's parts apart", file=sys.stderr)
         keep_apart(videos, out)
         return
+    listing = None
     try:
         offsets, total = [], 0.0
         for v in videos:
             offsets.append(total)
             total += duration(v)
         with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            listing = f.name
             for v in videos:
                 f.write("file '%s'\n" % str(v.resolve()).replace("'", "'\\''"))
-            listing = f.name
         subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
                         "-i", listing, "-c", "copy", f"{out}.mp4"], check=True)
-        Path(listing).unlink()
-    except (subprocess.CalledProcessError, ValueError) as e:
+    except (subprocess.CalledProcessError, ValueError, OSError) as e:
         print(f"joining the parts failed ({e}): keeping them apart", file=sys.stderr)
         Path(f"{out}.mp4").unlink(missing_ok=True)
         keep_apart(videos, out)
         return
+    finally:
+        if listing:
+            Path(listing).unlink(missing_ok=True)
     srt = join_captions(videos, offsets)
     if srt:
         Path(f"{out}.srt").write_text(srt, encoding="utf-8")
