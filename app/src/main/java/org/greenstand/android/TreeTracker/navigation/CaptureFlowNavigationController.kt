@@ -93,6 +93,17 @@ class CaptureFlowNavigationController(
     }
 
     /**
+     * Leaves capture for the screen under it (the last setup step) and ends the session, e.g. when
+     * the user cancels a permission dialog. The setup scope stays open: the setup screens are
+     * still on the back stack and Next there starts a new session (#1421).
+     */
+    fun leaveToSetup(navigator: Navigator) {
+        if (navigator.throttledPopBackStack()) {
+            endSession(closeSetupScope = false)
+        }
+    }
+
+    /**
      * Picks the capture flow up at [route] after Android killed the app there: points the flow at
      * that step and restarts the session [sessionId] and the sensors that only lived in memory.
      * Returns false, and changes nothing, when [route] isn't in this flow or [sessionId] isn't the
@@ -134,10 +145,12 @@ class CaptureFlowNavigationController(
         }
     }
 
-    private fun endSession() {
+    private fun endSession(closeSetupScope: Boolean = true) {
         treeCapturer.discardPendingTree()
         CaptureFlowScopeManager.close()
-        CaptureSetupScopeManager.close()
+        if (closeSetupScope) {
+            CaptureSetupScopeManager.close()
+        }
         scope.launch {
             try {
                 sessionTracker.endSession()

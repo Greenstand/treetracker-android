@@ -42,6 +42,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale
 import org.greenstand.android.TreeTracker.R
+import org.greenstand.android.TreeTracker.models.captureflowdata.CaptureFlowScopeManager
 import org.greenstand.android.TreeTracker.permissions.PermissionAction
 import org.greenstand.android.TreeTracker.permissions.PermissionViewModel
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
@@ -55,6 +56,15 @@ fun PermissionRequest(
     viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val navigator = LocalNavigator.current
+    // The dialogs below leave capture, so they end the capture session too. Without a capture
+    // scope (already closed, e.g. by a second tap) there is no session to end: just pop.
+    val leaveCapture: () -> Unit = {
+        if (CaptureFlowScopeManager.isOpen) {
+            CaptureFlowScopeManager.nav.leaveToSetup(navigator)
+        } else {
+            navigator.throttledPopBackStack()
+        }
+    }
     val state by viewModel.state.collectAsState()
     val permissions =
         buildList {
@@ -96,17 +106,15 @@ fun PermissionRequest(
                             backgroundModifier = Modifier.testTag(TestTags.CAMERA_RATIONALE_DIALOG),
                             title = stringResource(R.string.accept_camera_permission_header),
                             textContent = stringResource(R.string.accept_camera_permission_message),
-                            onNegativeClick = {
-                                navigator.throttledPopBackStack()
-                            },
+                            onNegativeClick = leaveCapture,
                             onPositiveClick = {
                                 perm.launchPermissionRequest()
-                                navigator.throttledPopBackStack()
+                                leaveCapture()
                             },
                         )
                     }
                     else -> {
-                        PermissionDeniedPermanentlyDialog(navigator)
+                        PermissionDeniedPermanentlyDialog(navigator, onLeave = leaveCapture)
                     }
                 }
             }
@@ -119,10 +127,10 @@ fun PermissionRequest(
                         }
                     }
                     perm.status.shouldShowRationale -> {
-                        LocationRationaleDialog(navigator = navigator, perm = perm)
+                        LocationRationaleDialog(navigator = navigator, perm = perm, onLeave = leaveCapture)
                     }
                     else -> {
-                        PermissionDeniedPermanentlyDialog(navigator)
+                        PermissionDeniedPermanentlyDialog(navigator, onLeave = leaveCapture)
                     }
                 }
             }
@@ -135,10 +143,10 @@ fun PermissionRequest(
                         }
                     }
                     perm.status.shouldShowRationale -> {
-                        LocationRationaleDialog(navigator = navigator, perm = perm)
+                        LocationRationaleDialog(navigator = navigator, perm = perm, onLeave = leaveCapture)
                     }
                     else -> {
-                        PermissionDeniedPermanentlyDialog(navigator)
+                        PermissionDeniedPermanentlyDialog(navigator, onLeave = leaveCapture)
                     }
                 }
             }
@@ -151,17 +159,16 @@ fun PermissionRequest(
 fun LocationRationaleDialog(
     navigator: Navigator,
     perm: PermissionState,
+    onLeave: () -> Unit = { navigator.throttledPopBackStack() },
 ) {
     CustomDialog(
         backgroundModifier = Modifier.testTag(TestTags.LOCATION_RATIONALE_DIALOG),
         title = stringResource(R.string.accept_location_permission_header),
         textContent = stringResource(R.string.accept_location_permission_message),
-        onNegativeClick = {
-            navigator.throttledPopBackStack()
-        },
+        onNegativeClick = onLeave,
         onPositiveClick = {
             perm.launchPermissionRequest()
-            navigator.throttledPopBackStack()
+            onLeave()
         },
     )
 }
@@ -174,16 +181,17 @@ fun enableLocation() {
 }
 
 @Composable
-fun PermissionDeniedPermanentlyDialog(navigator: Navigator) {
+fun PermissionDeniedPermanentlyDialog(
+    navigator: Navigator,
+    onLeave: () -> Unit = { navigator.throttledPopBackStack() },
+) {
     val activity: Context = LocalContext.current as Activity
 
     CustomDialog(
         backgroundModifier = Modifier.testTag(TestTags.PERMISSION_SETTINGS_DIALOG),
         title = stringResource(R.string.open_settings_header),
         textContent = stringResource(R.string.open_settings_message),
-        onNegativeClick = {
-            navigator.throttledPopBackStack()
-        },
+        onNegativeClick = onLeave,
         onPositiveClick = {
             val intent =
                 Intent(
