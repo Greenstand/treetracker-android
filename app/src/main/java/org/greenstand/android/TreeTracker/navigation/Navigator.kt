@@ -107,6 +107,12 @@ class Navigator private constructor(
     /** When the stack last changed, shared by this navigator and every [scopedTo] view of it. */
     private class LastNavigation {
         var at: Long? = null
+
+        /** Event uptime of the latest touch (down or release) passed to [recordPress]. */
+        var lastPressUptime: Long? = null
+
+        /** [lastPressUptime] as it was when the stack last changed. */
+        var pressBeforeNavigation: Long? = null
     }
 
     // Start outside the throttle window so the first navigation is never dropped.
@@ -130,6 +136,22 @@ class Navigator private constructor(
      */
     val millisSinceLastNavigation: Long
         get() = lastNavigation.at?.let { clock() - it } ?: Long.MAX_VALUE
+
+    /**
+     * Records a finger down or release anywhere in the navigation host, by its event uptime
+     * (`PointerInputChange.uptimeMillis`). Lets [DoubleTapGuard] judge a tap against the tap that
+     * led to the current screen rather than against when the screen appeared.
+     */
+    fun recordPress(uptimeMs: Long) {
+        lastNavigation.lastPressUptime = uptimeMs
+    }
+
+    /**
+     * Event uptime of the last touch recorded before the stack last changed, or null if none had
+     * been recorded by then (or the stack has not changed yet).
+     */
+    val pressBeforeLastNavigation: Long?
+        get() = lastNavigation.pressBeforeNavigation
 
     /** Push [route], honoring [NavOptions] (popUpTo / popUpToRoot / launchSingleTop). */
     fun navigate(
@@ -227,6 +249,7 @@ class Navigator private constructor(
         Snapshot.withMutableSnapshot(block)
         lastMutationTime = clock()
         lastNavigation.at = lastMutationTime
+        lastNavigation.pressBeforeNavigation = lastNavigation.lastPressUptime
     }
 
     private companion object {
