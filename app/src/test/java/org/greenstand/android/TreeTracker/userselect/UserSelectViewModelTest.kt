@@ -238,7 +238,7 @@ class UserSelectViewModelTest {
     // Delete
 
     @Test
-    fun `GIVEN a selected user WHEN delete succeeds THEN marks deleted locally and asks admin to delete the account`() =
+    fun `GIVEN a selected user WHEN delete succeeds THEN deletes locally, queues the admin message and syncs it`() =
         runTest {
             coEvery { userRepo.deleteUser("0712345678") } returns true
             val viewModel = createViewModel()
@@ -246,7 +246,7 @@ class UserSelectViewModelTest {
 
             viewModel.handleAction(UserSelectAction.DeleteUser)
 
-            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+            // The resulting state is checked by the ACCOUNTDELETEDANDADMINREQUESTED test below.
             coVerifyOrder {
                 userRepo.deleteUser("0712345678")
                 messagesRepo.saveMessage(
@@ -280,6 +280,42 @@ class UserSelectViewModelTest {
                 )
                 messagesRepo.syncMessages()
             }
+        }
+
+    @Test
+    fun `GIVEN a selected user WHEN the admin request uploads after delete THEN state is ACCOUNTDELETEDANDADMINREQUESTED`() =
+        runTest {
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            coEvery { messagesRepo.syncMessages() } returns Unit
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            coVerify(exactly = 1) { messagesRepo.syncMessages() }
+            // ACCOUNTDELETEDLOCALLY must mean "the admin request is still queued"; without this state
+            // a successful upload and a failed one leave the screen in the same state.
+            assertEquals(
+                DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED,
+                viewModel.state.value.deleteProfileState,
+                "Admin delete request uploaded, but deleteProfileState was not set to ACCOUNTDELETEDANDADMINREQUESTED " +
+                    "(success and failed upload are indistinguishable)",
+            )
+        }
+
+    @Test
+    fun `GIVEN the delete state changes while the admin request uploads WHEN the upload finishes THEN the newer state is kept`() =
+        runTest {
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            val viewModel = createViewModel()
+            coEvery { messagesRepo.syncMessages() } coAnswers {
+                viewModel.handleAction(UserSelectAction.UpdateDeleteProfileState(DeleteProfileState.SHOWDIALOG))
+            }
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(DeleteProfileState.SHOWDIALOG, viewModel.state.value.deleteProfileState)
         }
 
     @Test
