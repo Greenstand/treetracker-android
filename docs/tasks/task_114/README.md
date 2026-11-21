@@ -97,6 +97,17 @@ A second review found, and these were fixed:
 - Tests for all of the above, `run-flows.sh` selectors (stand-in adb and tb), joining real videos
   with ffmpeg, and summarize.py's results.
 
+A third review found, and these were fixed:
+
+- Open PR branches from before this change had no `affected.py` or flow cuts, so "pick flows"
+  failed on their next push (and a fork's run by hand would have run its old `run-flows.sh`).
+  Such a branch now gets a notice to merge the base branch, and no flows.
+- The reviewed commit could be given as 7 characters, which a fork can match with a made-up
+  commit. Run workflow now needs the full 40-character sha.
+- The head commit comes from the pull_request event when there is one (the API can lag a push).
+- The selector's unit tests gate the pick only on PRs that change `e2e/ci` (their real-repo test
+  reads the app, which other PRs may change).
+
 Kept: videos stay on the `flow-results/affected-pr-<N>` branch, so the comment can link them and a
 cloud session can fetch them, at the cost of a heavier branch.
 

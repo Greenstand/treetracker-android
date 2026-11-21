@@ -91,13 +91,13 @@ jobs:
         run: |
           if [[ -n $PR && ! $PR =~ ^[0-9]+$ ]]; then echo "::error::pr must be a number"; exit 1; fi
           if [[ -n $LABEL && ! $LABEL =~ ^[a-z0-9-]+$ ]]; then echo "::error::label: lowercase letters, digits and -"; exit 1; fi
-          A=${LABEL:+$LABEL-} B=${LABEL:+$LABEL-}
+          L=${LABEL:+$LABEL-}
           if [[ -n $PR ]]; then
-            echo "artifact=flow-results-${A}pr$PR-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
-            echo "branch=flow-results/${B}pr-$PR" >> "$GITHUB_OUTPUT"
+            echo "artifact=flow-results-${L}pr$PR-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
+            echo "branch=flow-results/${L}pr-$PR" >> "$GITHUB_OUTPUT"
           else
-            echo "artifact=flow-results-${A}$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
-            echo "branch=flow-results/${B}run-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
+            echo "artifact=flow-results-${L}$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
+            echo "branch=flow-results/${L}run-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
           fi
 
       # No token left in .git: the code checked out may not be trusted (a PR from a fork).

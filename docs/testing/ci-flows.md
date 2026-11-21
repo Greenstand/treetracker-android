@@ -142,8 +142,8 @@ python3 -m unittest discover -s e2e/ci -p 'test_*.py'
 **PRs from forks** don't run on their own: their code would run on the emulator with this
 repository's caches. The "pick flows" job still lists what would run (picked by the base branch's
 copy of `affected.py`, not the fork's). After reading the PR's code, a maintainer runs it from
-Actions > "Affected flows (annotated video)" > Run workflow, with the PR's number and the commit they
-read; the run stops if the PR has moved on since. That run has a read-only token, saves no caches
+Actions > "Affected flows (annotated video)" > Run workflow, with the PR's number and the full sha
+of the commit they read; the run stops if the PR has moved on since. That run has a read-only token, saves no caches
 (tb, emulator, Go, Gradle), loads no local action from the PR and pushes no results branch; the
 videos are in the artifact, linked from the PR comment. Code on a runner can still reach the
 runner's cache token, so only run code you have read. The same button re-runs a PR from this
