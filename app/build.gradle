@@ -17,7 +17,7 @@ def loadExtraProperties(String fileName) {
     }
 }
 
-loadExtraProperties("treetracker.keys.properties")
+loadExtraProperties(rootProject.file("treetracker.keys.properties").path)
 
 android {
     signingConfigs {
