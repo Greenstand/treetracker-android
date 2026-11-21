@@ -19,11 +19,11 @@ jobs:
     timeout-minutes: 45
     env:
       API_LEVEL: "35"
-      # The Test Buddy commit tb is built from: v0.6.0. Bump it to pick up a newer tb, here and in
+      # The Test Buddy commit tb is built from: v0.6.3. Bump it to pick up a newer tb, here and in
       # flow-runner-job.yml. (v0.5.2 and later: killApp ends the process like Android does and keeps
       # the saved state, which the process death flows, H7 and H10, need.)
       # This check runs every flow without recording; e2e-affected.yml records annotated videos.
-      TESTBUDDY_REF: 8220d90ca0ff220f9614da00baab9ee88ec0dceb
+      TESTBUDDY_REF: 447f360efb307b348925825c434b1e4cf3271ebb
     steps:
       - uses: actions/checkout@v4
 

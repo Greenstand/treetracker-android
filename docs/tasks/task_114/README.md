@@ -16,7 +16,7 @@ noise: nearly every flow passes the Dashboard.
   token, no caches saved, no local action or selector code from the fork.
 - No fallback flow when a change reaches no screen: "Android end-to-end" covers it.
 - Not a required check for now. "Android end-to-end" keeps running every flow, on Test Buddy
-  v0.6.0, without `--annotate`.
+  v0.6.3, without `--annotate`.
 - Videos stay on the `flow-results/affected-pr-<N>` branch, so the comment can link them and a
   cloud session can fetch them.
 
@@ -39,8 +39,8 @@ noise: nearly every flow passes the Dashboard.
   commit messages.
 - `affected.py` on recent merged PRs gives sensible picks (#1441: 3 flows; #1452: `debug-overlays`
   cut at 6), and the same picks before and after the cleanup on 729 inputs.
-- tb v0.6.0 `tb check` passes on cut copies of every flow; actionlint is clean.
+- tb v0.6.3 `tb check` passes on cut copies of every flow; actionlint is clean.
 - Not run here (no emulator in a cloud session): the workflows themselves. The first PR shows
-  whether Test Buddy v0.6.0 passes every flow in "Android end-to-end".
+  whether Test Buddy v0.6.3 passes every flow in "Android end-to-end".
 - Known limit: only `app/src/main` is indexed; once screens move into KMP modules, `affected.py`
   needs to index them too.

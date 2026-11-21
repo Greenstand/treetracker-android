@@ -97,7 +97,7 @@ since the branch moves on with the next run.
 ## Flows a PR affects (annotated videos)
 
 `e2e-affected.yml` runs on every PR next to "Android end-to-end" (which still runs every flow, without
-video). It records each flow it picks with `tb test --record --annotate` (Test Buddy v0.6.0): every
+video). It records each flow it picks with `tb test --record --annotate` (Test Buddy v0.6.3): every
 step held about a second, a ring where each tap landed and a band under the video naming the step.
 The PR gets one comment, updated on each push, with why each flow ran and a link to each video. It
 is not a required check.

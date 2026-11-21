@@ -80,8 +80,8 @@ jobs:
       failed: ${{ steps.result.outputs.failed }}
     env:
       API_LEVEL: ${{ inputs.api_level || '35' }}
-      # Test Buddy v0.6.0. Keep in step with android-e2e.yml.
-      TESTBUDDY_REF: 8220d90ca0ff220f9614da00baab9ee88ec0dceb
+      # Test Buddy v0.6.3. Keep in step with android-e2e.yml.
+      TESTBUDDY_REF: 447f360efb307b348925825c434b1e4cf3271ebb
     steps:
       - name: Names
         id: names
