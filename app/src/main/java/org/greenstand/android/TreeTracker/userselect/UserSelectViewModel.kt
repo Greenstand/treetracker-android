@@ -86,6 +86,9 @@ class UserSelectViewModel(
     private val locationDataCapturer: LocationDataCapturer,
     private val prefs: Preferences,
 ) : BaseViewModel<UserSelectState, UserSelectAction>(UserSelectState()) {
+    // The user SelectUser last made the current user, so deleting them can clear it again.
+    private var currentUserId: Long? = null
+
     init {
         startSetup()
         userRepo
@@ -126,6 +129,7 @@ class UserSelectViewModel(
         when (action) {
             is UserSelectAction.SelectUser -> {
                 prefs.setUserId(action.user.id)
+                currentUserId = action.user.id
                 CaptureSetupScopeManager.getData().user = action.user
                 updateState { copy(selectedUser = action.user) }
             }
@@ -149,7 +153,9 @@ class UserSelectViewModel(
 
     private fun deleteUser() {
         viewModelScope.launch {
-            if (userRepo.deleteUser(currentState.selectedUser?.wallet ?: "")) {
+            val deletedUser = currentState.selectedUser
+            if (userRepo.deleteUser(deletedUser?.wallet ?: "")) {
+                deletedUser?.let { clearCurrentUser(it) }
                 updateState { copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDLOCALLY) }
                 messageRepo.saveMessage(
                     wallet = currentState.selectedUser?.wallet ?: "",
@@ -166,6 +172,22 @@ class UserSelectViewModel(
                     Timber.e(e, "Message sync after deleting a user failed")
                 }
             }
+        }
+    }
+
+    /** A deleted user must not stay the current user that SelectUser set. */
+    private fun clearCurrentUser(deletedUser: User) {
+        // Only clear the id this ViewModel set. Today only DeleteProfileScreen deletes, and it
+        // always sends SelectUser first, so this is a defensive check.
+        if (currentUserId == deletedUser.id) {
+            prefs.setUserId(null)
+            currentUserId = null
+        }
+        // The delete suspended, so the setup scope may have closed since; getData() would throw.
+        if (!CaptureSetupScopeManager.isOpen) return
+        val setupData = CaptureSetupScopeManager.getData()
+        if (setupData.user?.id == deletedUser.id) {
+            setupData.user = null
         }
     }
 
