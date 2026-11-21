@@ -35,6 +35,7 @@ class OrgRepo(
     private val dao: TreeTrackerDAO,
     private val prefs: Preferences,
     private val json: Json,
+    private val overrideStore: OrgOverrideStore? = null,
 ) {
     private var currentOrg: Org? = null
 
@@ -105,7 +106,17 @@ class OrgRepo(
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
-    fun currentOrg(): Org =
+    /**
+     * The current org with any dev options overrides (debug builds only) applied on top.
+     * Everything that runs the org's flows, features or wallet reads it through here.
+     */
+    fun currentOrg(): Org {
+        val org = baseCurrentOrg()
+        return overrideStore?.active?.applyTo(org) ?: org
+    }
+
+    /** The current org exactly as its org link (or the default org) configured it. */
+    fun baseCurrentOrg(): Org =
         currentOrg ?: error(
             "OrgRepo not initialized. Call init() before accessing currentOrg().",
         )

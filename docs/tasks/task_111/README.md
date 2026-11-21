@@ -1,54 +1,48 @@
-# Task 111 - Double-tap guard drops a quick first tap after signup (#1450)
+# Task 111 - Org link overrides on the dev options screen
 
-## Bug
+## Goal
 
-After adding a new user in capture setup (user select, signup, selfie, Approve), signup opens
-Add org. A tap on Add org's Next within ~300 ms of the screen appearing was silently ignored. The
-e2e flow B6 (`e2e/flows/capture-new-user.yaml`) failed intermittently on master because tb taps
-Next as soon as `OrgNameField` shows.
+Try different org link setups (flow steps, features, wallet) on a debug build without making
+a new org link for each one. The dev options screen shows what the current org's link (or the
+default Greenstand org) sets, and lets each setting be overridden. Overrides win over the org,
+and are kept across app restarts.
 
-`DoubleTapGuard` (#1427) dropped any press within the double-tap timeout of the last navigation.
-That works when a tap navigates straight away (user select's Next onto Add org's Next, H8). After
-signup, though, the navigation follows the camera activity's result and a DB write, so the last
-tap in the app's window was the selfie button, long before. No double tap was possible.
+## Change
 
-## Fix
+- `models/organization/OrgOverrides.kt`
+  - `OrgOverrideCatalog`: the settings that can be overridden, in canonical order.
+    - Setup flow: user select (required), wallet select, add org, session note.
+    - Capture flow: tree capture (required), image review, tree height.
+    - Features: `forceNote` on image review.
+    - Required steps can't be turned off: the dashboard always opens user select, and the
+      setup flow ends on, and the capture flow loops back to, tree capture.
+  - `OrgOverrides`: a master switch plus per-setting on/off maps and a wallet ID. Only changed
+    settings are stored, so everything else follows the org. `applyTo(org)` removes steps
+    turned off, inserts steps turned on after the nearest earlier step in canonical order
+    (keeping the org's own order), and adds or removes features. Aliased routes
+    (`image-review`, `tree-capture`) count as their canonical route.
+  - `OrgOverrideStore`: keeps the overrides as JSON in preferences under
+    `system-settings/org-link-overrides`. Release builds ignore whatever is stored.
+- `OrgRepo.currentOrg()` returns the org with active overrides applied. Everything that runs the
+  flows, checks features or reads the wallet goes through it (the two flow navigation
+  controllers, `FeatureResolver`, `SessionTracker`). `OrgRepo.baseCurrentOrg()` is the org
+  without overrides, used by dev options to show the org's own values.
+- Dev options (`DevOptionsViewModel`, `OrgLinkOverridesSection.kt`): below the existing params, an "Org Link Overrides"
+  section with the current org, the "Apply overrides" switch, one switch per step/feature with
+  its org value ("Org: On") and an "Overridden" note plus a per-row Reset, a wallet ID field,
+  the flows in use, and "Reset all org overrides". The section is hidden when no org is loaded.
 
-- `Navigator.recordPress` keeps the event uptime of the latest finger down or release, and each
-  stack change remembers it (`pressBeforeLastNavigation`). The navigators an entry gets share this state with
-  `scopedTo`.
-- `Modifier.recordPressesFor(navigator)` on the root `Box` in `Host.kt` records every finger down
-  in the app's navigation host once, in the Initial pass, without consuming it. This is the least
-  invasive place: one line covers every screen, whether or not it has a guard. The alternative was
-  hooking `MainActivity.dispatchTouchEvent`, which has no navigator and sees non-Compose touches.
-- `DoubleTapGuard.isSecondTapOfDoubleTap` judges a press against that tap when it is known: a
-  double tap's second tap goes down within the double-tap timeout of the first tap's release
-  (as in Android's `GestureDetector`). When no tap is
-  known (tests, other hosts), it keeps the old rule (time since the navigation).
+Overrides are keyed by route, not by org, so they keep applying after switching orgs or opening
+another org link. Flow changes apply from the next capture session (the navigation controllers
+read the flow when the setup scope opens); features and wallet apply at once.
 
 ## Tests
 
-- `DoubleTapGuardTest`: new cases for a quick first tap after a navigation no recent tap caused
-  (allowed), a real double tap with the first tap known (dropped), a double tap whose navigation
-  waited on async work (dropped), and a keyboard action after such a navigation (allowed). All
-  existing cases are unchanged.
-- `DoubleTapGuardUiTest` (Compose, real touch events through `recordPressesFor` and the guard):
-  a quick double tap is dropped, a double tap whose first tap was held is dropped (the timeout
-  runs from the release), and a slow second tap goes through.
-- e2e: B6 (`capture-new-user.yaml`) and the H8 double-tap flows run in "Android end-to-end". B6 was
-  intermittent, so one green run doesn't prove the fix; the unit tests do.
+- `OrgOverridesTest`: merge rules (remove, insert in order, aliases, required steps, custom org
+  order, features, wallet, master switch off).
+- `OrgOverrideStoreTest` (Robolectric): kept across a restart, cleared, ignored on release
+  builds and when unreadable; `OrgRepo.currentOrg()` vs `baseCurrentOrg()`.
+- `DevOptionsOrgOverridesTest`: view model rows, actions, reset, persisted values.
+- `DevOptionsUiTest`: section hidden without an org, shows org values, sends actions.
 
-## Review (independent subagent)
-
-- Fixed: the window ran from the first tap's down rather than its up, so a held first tap made a
-  real double tap slip through. The recorder now also records the release (test first:
-  `DoubleTapGuardUiTest`).
-- Fixed (nit): a redundant `millisSinceLastNavigation` check in the guard.
-- Not fixed, by design: presses in other windows (dialogs, the camera activity) aren't recorded;
-  the dialog buttons that navigate don't sit where the next screen's guarded button is. Multi-touch:
-  only a gesture's first pointer is recorded, as in the existing guard.
-- Not added: a test through the real `Host` that fails by assertion on master. It needs the signup
-  screen, a fake activity result registry and Robolectric's `SystemClock` kept in step with the
-  Compose test clock; on master the guard can't know the earlier tap at all. `DoubleTapGuardUiTest`
-  covers the recorder and guard together; `Host.kt`'s one-line install is covered by the B6 and H8
-  e2e flows.
+The container has no Android SDK, so the build and tests were checked on CI only.

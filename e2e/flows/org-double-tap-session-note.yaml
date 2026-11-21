@@ -1,0 +1,39 @@
+# H8 (org). Needs the org from `bash e2e/seed-org.sh -s <serial> session-note`.
+# Setup flow: user select -> session note. Every setup screen's Next is the bottom bar's right
+# arrow, so the second tap of a double tap on user select's Next lands on the session note's Next.
+# The session note screen drops it (DoubleTapGuard, #1442), so the note isn't skipped and no
+# capture session starts behind it. A single tap on Next then continues to capture.
+appId: org.greenstand.android.TreeTracker.debug
+name: H8 Double tap Next onto the session note
+tags: [org-config, sad-path]
+---
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- doubleTapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: SessionNoteField}
+    timeout: 15000
+# The bug: the second tap moved setup on again, skipping the note and opening capture.
+- assertNotVisible: {id: TutorialDoneButton}
+- assertNotVisible: {id: CaptureButton}
+- assertVisible: {id: SessionNoteField}
+# The note step still works with a single tap.
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000

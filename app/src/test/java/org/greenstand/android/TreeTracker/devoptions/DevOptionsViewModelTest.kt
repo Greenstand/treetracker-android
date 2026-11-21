@@ -66,7 +66,7 @@ class DevOptionsViewModelTest {
             every { configurator.getInt(any()) } returns 100
             every { configurator.getFloat(any()) } returns 0.5f
 
-            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
 
             val state = viewModel.state.first()
             assertEquals(ConfigKeys.configList.size, state.params.size)
@@ -79,7 +79,7 @@ class DevOptionsViewModelTest {
             every { configurator.getInt(any()) } returns 100
             every { configurator.getFloat(any()) } returns 0.5f
 
-            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
 
             val booleanParam = ConfigKeys.FORCE_IMAGE_SIZE
             viewModel.handleAction(DevOptionsAction.UpdateParam(booleanParam, true))
@@ -101,7 +101,7 @@ class DevOptionsViewModelTest {
             every { configurator.getInt(any()) } returns 100
             every { configurator.getFloat(any()) } returns 0.5f
 
-            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+            val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
             viewModel.handleAction(DevOptionsAction.NavigateBack)
 
             val event = viewModel.events.first().getContentIfNotConsumed()
@@ -126,7 +126,7 @@ class DevOptionsViewModelTest {
     fun `WHEN init THEN each config keeps its order and shows the stored value`() {
         stubStoredValues()
 
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
 
         assertEquals(
             listOf(
@@ -145,7 +145,7 @@ class DevOptionsViewModelTest {
     @Test
     fun `WHEN updateParam called with IntConfig THEN only that param changes`() {
         stubStoredValues()
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
         val heightParam = viewModel.param<IntConfig>(ConfigKeys.IMAGE_CAPTURE_HEIGHT)
         val before = viewModel.state.value.params
 
@@ -162,7 +162,7 @@ class DevOptionsViewModelTest {
     @Test
     fun `WHEN updateParam called with FloatConfig THEN configurator and state are updated`() {
         stubStoredValues()
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
         val latParam = viewModel.param<FloatConfig>(ConfigKeys.LAT_STD_DEV_THRESHOLD)
 
         viewModel.handleAction(DevOptionsAction.UpdateParam(latParam, 0.75f))
@@ -174,7 +174,7 @@ class DevOptionsViewModelTest {
     @Test
     fun `WHEN BooleanConfig is toggled twice THEN state follows the latest value`() {
         stubStoredValues()
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
 
         val first = viewModel.param<BooleanConfig>(ConfigKeys.FORCE_IMAGE_SIZE)
         viewModel.handleAction(DevOptionsAction.UpdateParam(first, false))
@@ -189,7 +189,7 @@ class DevOptionsViewModelTest {
     @Test
     fun `WHEN NavigateBack THEN pops dev options without saving anything`() {
         stubStoredValues()
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
         val navigator = fakeNavigator(DashboardRoute, SettingsRoute, DevOptionsRoute)
 
         viewModel.handleAction(DevOptionsAction.NavigateBack)
@@ -209,7 +209,7 @@ class DevOptionsViewModelTest {
     @Test
     fun `WHEN view model is cleared THEN convergence configuration is refreshed`() {
         stubStoredValues()
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
         val store = ViewModelStore()
         val factory =
             object : ViewModelProvider.Factory {

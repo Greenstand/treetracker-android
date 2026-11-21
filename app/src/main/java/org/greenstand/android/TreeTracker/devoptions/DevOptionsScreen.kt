@@ -130,6 +130,10 @@ fun DevOptionsScreen(
                         onHandleAction(DevOptionsAction.UpdateParam(param, newValue))
                     }
                 }
+                // Below the params, so the screen still opens on the overlay toggles and params.
+                state.orgLink?.let { orgLink ->
+                    orgLinkOverridesSection(orgLink, onHandleAction)
+                }
             }
         }
     }

@@ -27,6 +27,7 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
@@ -47,6 +48,7 @@ class SessionNoteScreenUiTest : ComposeUiTest() {
     @Before
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { CaptureSetupScopeManager.nav } returns setupNav
         every { captureSetupData.user } returns
@@ -60,7 +62,7 @@ class SessionNoteScreenUiTest : ComposeUiTest() {
                 isPowerUser = true,
                 unreadMessagesAvailable = false,
             )
-        val viewModel = SessionNoteViewModel()
+        val viewModel = SessionNoteViewModel(CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
         setContent(inspectionMode = false) {
             SessionNoteScreen(viewModel = viewModel)
         }

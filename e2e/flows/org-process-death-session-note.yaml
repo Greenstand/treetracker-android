@@ -1,0 +1,30 @@
+# C5. Needs the org from `bash e2e/seed-org.sh -s <serial> session-note`.
+# Process death on an org's session note setup step (#1447). On session note the app goes to the
+# background, Android kills its process and the user reopens it from recents. Session note comes
+# back without a crash, and Next still finishes setup and opens capture: the step reopens the
+# capture setup scope and reloads the setup user it saved before the process died.
+appId: org.greenstand.android.TreeTracker.debug
+name: C5 Process death on the session note step
+tags: [org-config, sad-path]
+---
+- launchApp
+- runFlow:
+    file: subflows/org-capture-setup.yaml
+- assertVisible: {id: SessionNoteField}
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: SessionNoteField}
+    timeout: 15000
+- tapOn: {id: SessionNoteField}
+- inputText: After process death
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000
