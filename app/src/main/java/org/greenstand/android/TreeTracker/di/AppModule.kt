@@ -66,6 +66,7 @@ import org.greenstand.android.TreeTracker.models.organization.InstallReferrerDat
 import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.PlayInstallReferrerDataSource
+import org.greenstand.android.TreeTracker.models.organization.OrgOverrideStore
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
@@ -120,7 +121,7 @@ val appModule =
 
         viewModel { UserSelectViewModel(null, get(), get(), get(), get()) }
 
-        viewModel { DevOptionsViewModel(get(), get()) }
+        viewModel { DevOptionsViewModel(get(), get(), get(), get()) }
 
         viewModel {
             // After process death Nav3 restores tree height without the in-memory capture scope.
@@ -163,7 +164,9 @@ val appModule =
 
         single { DeviceConfigUpdater(get(), get()) }
 
-        single { OrgRepo(get(), get(), get()) }
+        single { OrgOverrideStore(get(), get()) }
+
+        single { OrgRepo(get(), get(), get(), get()) }
 
         single<InstallReferrerDataSource> { PlayInstallReferrerDataSource(androidContext()) }
 

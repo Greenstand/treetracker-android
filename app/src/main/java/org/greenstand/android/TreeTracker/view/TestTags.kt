@@ -134,6 +134,11 @@ object TestTags {
     const val SYNC_OVERLAY = "SyncOverlay"
     const val SYNC_OVERLAY_ERROR = "SyncOverlayError"
     const val SENSOR_OVERLAY = "SensorOverlay"
+    const val ORG_OVERRIDES_SWITCH = "OrgOverridesSwitch"
+    const val ORG_OVERRIDES_RESET = "OrgOverridesReset"
+    const val ORG_OVERRIDE_WALLET = "OrgOverrideWallet"
+    const val ORG_OVERRIDES_SETUP_FLOW = "OrgOverridesSetupFlow"
+    const val ORG_OVERRIDES_CAPTURE_FLOW = "OrgOverridesCaptureFlow"
 
     /** A language on the language picker, by its enum name: `LanguageOption_ENGLISH`. */
     fun languageOption(name: String) = "LanguageOption_$name"
@@ -158,4 +163,10 @@ object TestTags {
 
     /** A dev options parameter, by its config name. */
     fun devParam(name: String) = "DevParam_$name"
+
+    /** An org link override switch on dev options, by step route or feature key. */
+    fun orgOverride(id: String) = "OrgOverride_$id"
+
+    /** The reset button of one org link override on dev options, by step route or feature key. */
+    fun orgOverrideReset(id: String) = "OrgOverrideReset_$id"
 }
