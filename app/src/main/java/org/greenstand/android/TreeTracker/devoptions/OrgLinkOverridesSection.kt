@@ -47,6 +47,12 @@ fun LazyListScope.orgLinkOverridesSection(
     state: OrgLinkOverridesState,
     onHandleAction: (DevOptionsAction) -> Unit,
 ) {
+    item {
+        Divider(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            color = AppColors.DeepGray,
+        )
+    }
     item { SectionHeader("Org Link Overrides") }
     item {
         Text(
@@ -139,12 +145,6 @@ fun LazyListScope.orgLinkOverridesSection(
         ) {
             Text("Reset all org overrides", color = AppColors.Orange)
         }
-    }
-    item {
-        Divider(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            color = AppColors.DeepGray,
-        )
     }
 }
 

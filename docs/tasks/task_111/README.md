@@ -27,7 +27,7 @@ and are kept across app restarts.
   flows, checks features or reads the wallet goes through it (the two flow navigation
   controllers, `FeatureResolver`, `SessionTracker`). `OrgRepo.baseCurrentOrg()` is the org
   without overrides, used by dev options to show the org's own values.
-- Dev options (`DevOptionsViewModel`, `OrgLinkOverridesSection.kt`): an "Org Link Overrides"
+- Dev options (`DevOptionsViewModel`, `OrgLinkOverridesSection.kt`): below the existing params, an "Org Link Overrides"
   section with the current org, the "Apply overrides" switch, one switch per step/feature with
   its org value ("Org: On") and an "Overridden" note plus a per-row Reset, a wallet ID field,
   the flows in use, and "Reset all org overrides". The section is hidden when no org is loaded.

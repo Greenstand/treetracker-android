@@ -125,13 +125,14 @@ fun DevOptionsScreen(
                         color = AppColors.DeepGray,
                     )
                 }
-                state.orgLink?.let { orgLink ->
-                    orgLinkOverridesSection(orgLink, onHandleAction)
-                }
                 items(state.params) { param ->
                     ParamListItem(param) { newValue ->
                         onHandleAction(DevOptionsAction.UpdateParam(param, newValue))
                     }
+                }
+                // Below the params, so the screen still opens on the overlay toggles and params.
+                state.orgLink?.let { orgLink ->
+                    orgLinkOverridesSection(orgLink, onHandleAction)
                 }
             }
         }
