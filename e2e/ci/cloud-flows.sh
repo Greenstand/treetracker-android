@@ -5,7 +5,8 @@
 #   bash e2e/ci/cloud-flows.sh run [options] <selector>...   start flow-runner.yml, wait, fetch
 #   bash e2e/ci/cloud-flows.sh pr <PR> [selector...]         run on a PR via the run-flows label
 #   bash e2e/ci/cloud-flows.sh wait <run id>                 wait for a run to finish
-#   bash e2e/ci/cloud-flows.sh fetch [--pr N | --branch B] [--out DIR]
+#   bash e2e/ci/cloud-flows.sh fetch [--pr N | --affected N | --branch B] [--out DIR]
+#                                    (--affected: the annotated videos e2e-affected.yml made)
 #
 # Selectors: a path, a flow name, a glob (settings-*) or tag:<tag>.
 # run options: --ref BRANCH (default: the current branch, which must be pushed), --pr N (names
@@ -161,6 +162,7 @@ case ${1:-} in
     while (($#)); do
       case $1 in
         --pr) b="flow-results/pr-$2"; shift ;;
+        --affected) b="flow-results/affected-pr-$2"; shift ;;
         --branch) b=$2; shift ;;
         --out) OUT=$2; shift ;;
         *) die "Unknown option $1" ;;

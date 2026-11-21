@@ -6,7 +6,8 @@
 #
 # Flows are picked by selectors: a path (e2e/flows/a.yaml), a name (settings-logout), a glob
 # (settings-*) or a tag (tag:settings). Names, globs and tags look in e2e/flows only (not its
-# sub-flows), and include known-bug flows that match.
+# sub-flows), and include known-bug flows that match. A path or name ending in @N runs only the
+# flow's first N top-level steps (capture-first-tree@7), as affected.py picks them.
 # A failing flow doesn't stop the run. Exit status: 0 all passed, 1 a flow failed, 2 bad input.
 #
 # Usage: TB=tb OUT=build/flow-results bash e2e/ci/run-flows.sh -s emulator-5554 <selector>...
@@ -14,6 +15,9 @@
 # Env:
 #   SCREENSHOTS=steps|end|none  after each step that can change the screen (default), last only, none
 #   RECORD=1                    record a video of each flow (videos/<flow>.mp4)
+#   ANNOTATE=1|TIME             record with `tb test --record --annotate[=TIME]` instead: each step
+#                               held about a second (or TIME), taps drawn, a caption band naming
+#                               the step (videos/<flow>.mp4 and .srt; needs ffmpeg)
 #   ONLINE=1                    leave the network on (by default flows run offline, as run.sh does)
 set -uo pipefail
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
@@ -22,6 +26,10 @@ TB=${TB:-tb}
 OUT=${OUT:-build/flow-results}
 SCREENSHOTS=${SCREENSHOTS:-steps}
 RECORD=${RECORD:-0}
+ANNOTATE=${ANNOTATE:-}
+[[ $ANNOTATE == 0 ]] && ANNOTATE=
+# tb records the annotated video itself, so screenrecord stays off.
+[[ -n $ANNOTATE ]] && RECORD=0
 ONLINE=${ONLINE:-0}
 APP=org.greenstand.android.TreeTracker.debug
 if [[ $# == 2 && -n ${FLOW_SELECTORS:-} ]]; then
@@ -43,8 +51,14 @@ cd "$ROOT" || exit 2
 header() { awk '/^---[[:space:]]*$/{exit} {print}' "$1"; }
 has_tag() { header "$1" | grep -qE "^tags:.*[^A-Za-z0-9_-]$2([^A-Za-z0-9_-]|$)"; }
 FLOWS=()
+declare -A CUT=()
 add() { local f; for f in "$@"; do [[ " ${FLOWS[*]-} " == *" $f "* ]] || FLOWS+=("$f"); done; }
 for SEL in "$@"; do
+  N=
+  if [[ $SEL =~ ^(.+)@([0-9]+)$ ]]; then
+    SEL=${BASH_REMATCH[1]} N=${BASH_REMATCH[2]}
+    [[ $SEL == tag:* || $SEL == *[*?[]* ]] && { echo "@N only goes on one flow: '$SEL@$N'" >&2; exit 2; }
+  fi
   case "$SEL" in
     tag:*)
       MATCHED=()
@@ -62,6 +76,13 @@ for SEL in "$@"; do
     exit 2
   fi
   add "${MATCHED[@]}"
+  # A flow picked whole and cut runs whole; cut twice, the longer cut.
+  if [[ -n $N ]] && (( N > 0 )); then
+    f=${MATCHED[0]}
+    if [[ -z ${CUT[$f]+x} ]]; then CUT[$f]=$N; elif [[ -n ${CUT[$f]} ]] && (( N > CUT[$f] )); then CUT[$f]=$N; fi
+  else
+    for f in "${MATCHED[@]}"; do CUT[$f]=; done
+  fi
 done
 echo "Flows: ${FLOWS[*]}"
 
@@ -126,10 +147,21 @@ for FLOW in "${FLOWS[@]}"; do
   fi
 
   RUN="$FLOW"
+  STEPS=${CUT[$FLOW]:-}
+  if [[ -n $STEPS ]]; then
+    # Copies go next to the flow, so its runFlow paths still resolve.
+    RUN="$(dirname "$FLOW")/.ci-cut-$NAME.yaml"
+    python3 e2e/ci/cut_flow.py "$FLOW" "$STEPS" > "$RUN"
+  fi
   if [[ $SCREENSHOTS != none ]]; then
-    # A copy next to the flow, so its runFlow paths still resolve.
+    python3 e2e/ci/step_shots.py --mode "$SCREENSHOTS" "$RUN" > "$(dirname "$FLOW")/.ci-$NAME.yaml"
+    [[ $RUN != "$FLOW" ]] && rm -f "$RUN"
     RUN="$(dirname "$FLOW")/.ci-$NAME.yaml"
-    python3 e2e/ci/step_shots.py --mode "$SCREENSHOTS" "$FLOW" > "$RUN"
+  fi
+  REC_ARGS=()
+  if [[ -n $ANNOTATE ]]; then
+    REC_ARGS=(--record "--annotate")
+    [[ $ANNOTATE != 1 ]] && REC_ARGS=(--record "--annotate=$ANNOTATE")
   fi
   "$ADB" -s "$SERIAL" logcat -b all -c || true
   [[ $RECORD == 1 ]] && start_recording
@@ -138,7 +170,7 @@ for FLOW in "${FLOWS[@]}"; do
     STATUS=failed
     echo "Setup failed: see setup.txt" > "$DIR/error.txt"
   elif "$TB" test "$RUN" -p android --device "$SERIAL" --format junit --output "$DIR/report.xml" \
-      --debug-output "$DIR/tb" --flatten-debug-output </dev/null 2>&1 | tee "$DIR/console.txt"; then
+      --debug-output "$DIR/tb" --flatten-debug-output ${REC_ARGS[@]+"${REC_ARGS[@]}"} </dev/null 2>&1 | tee "$DIR/console.txt"; then
     STATUS=passed
   else
     STATUS=failed
@@ -160,6 +192,19 @@ for FLOW in "${FLOWS[@]}"; do
   # tb writes into a folder named after the flow: the steps' screenshots (takeScreenshot/), its
   # log and, for a failure, the screen it saw then. Move them where the summary points.
   find "$DIR/tb" -path '*/takeScreenshot/*.png' -exec mv {} "$SHOTS/" \; 2>/dev/null
+  # tb's own recording (with --annotate): recording.mp4 and its captions, recording.srt.
+  if [[ -n $ANNOTATE ]]; then
+    VIDEO=$(find "$DIR/tb" -name 'recording.mp4' -o -name 'recording-part1.mp4' 2>/dev/null | head -n1)
+    [[ -z $VIDEO ]] && VIDEO=$(find "$DIR/tb" -name 'recording*.mp4' 2>/dev/null | sort | head -n1)
+    if [[ -n $VIDEO ]]; then
+      mkdir -p "$OUT/videos"
+      mv "$VIDEO" "$OUT/videos/$NAME.mp4"
+      SRT=$(find "$DIR/tb" -name 'recording*.srt' 2>/dev/null | sort | head -n1)
+      [[ -n $SRT ]] && mv "$SRT" "$OUT/videos/$NAME.srt"
+    else
+      echo "No recording from tb for $NAME" >&2
+    fi
+  fi
   for f in "$DIR"/tb/*/screenshot*.png; do
     [[ -f $f ]] && mv "$f" "$SHOTS/failure$(basename "$f" .png | sed 's/^screenshot//').png"
   done
@@ -168,7 +213,7 @@ for FLOW in "${FLOWS[@]}"; do
   done
   find "$DIR/tb" -type d -empty -delete 2>/dev/null
   [[ $STATUS == failed ]] && FAILED=1
-  printf '%s\t%s\t%s\t%s\n' "$NAME" "$FLOW" "$STATUS" "$SECONDS_TAKEN" >> "$OUT/results.tsv"
+  printf '%s\t%s\t%s\t%s\t%s\n' "$NAME" "$FLOW" "$STATUS" "$SECONDS_TAKEN" "$STEPS" >> "$OUT/results.tsv"
   echo "::endgroup::"
   echo "$NAME $STATUS (${SECONDS_TAKEN}s, $(ls "$SHOTS" | wc -l) screenshots)"
 done

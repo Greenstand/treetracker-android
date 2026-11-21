@@ -18,21 +18,26 @@ def main():
     flows = []
     tsv = out / "results.tsv"
     for line in tsv.read_text().splitlines() if tsv.exists() else []:
-        name, file, status, seconds = line.split("\t")
+        # A fifth column, when run-flows.sh cut the flow: the top-level steps it ran.
+        name, file, status, seconds, *rest = line.split("\t")
+        cut = int(rest[0]) if rest and rest[0].isdigit() else None
         d = out / "flows" / name
         shots = sorted(p.relative_to(out).as_posix() for p in (out / "screens" / name).glob("*.png"))
         # Failure screenshots last, after the steps.
         shots.sort(key=lambda p: Path(p).name.startswith("failure"))
         error = (d / "error.txt").read_text().strip() if (d / "error.txt").exists() else None
         video = out / "videos" / f"{name}.mp4"
+        captions = out / "videos" / f"{name}.srt"
         flows.append({
             "name": name,
             "file": file,
             "status": status,
             "seconds": int(seconds),
+            "steps": cut,
             "error": error,
             "screenshots": shots,
             "video": video.relative_to(out).as_posix() if video.exists() else None,
+            "captions": captions.relative_to(out).as_posix() if captions.exists() else None,
             "files": sorted(p.relative_to(out).as_posix() for p in d.iterdir() if p.is_file()),
         })
     env = os.environ.get
@@ -57,7 +62,8 @@ def main():
         md += [f"App at `{summary['sha'][:10]}`, API {summary['apiLevel'] or '?'}.", ""]
     md += ["| Flow | Result | Time | Screenshots |", "|---|---|---|---|"]
     for f in flows:
-        md.append(f"| `{f['name']}` | {icon.get(f['status'], '')} {f['status']} | {f['seconds']}s | {len(f['screenshots'])} |")
+        label = f"`{f['name']}`" + (f" (steps 1–{f['steps']})" if f["steps"] else "")
+        md.append(f"| {label} | {icon.get(f['status'], '')} {f['status']} | {f['seconds']}s | {len(f['screenshots'])} |")
     for f in flows:
         if f["error"]:
             first = f["error"].splitlines()[0][:300]

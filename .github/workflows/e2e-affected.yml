@@ -1,0 +1,217 @@
+name: Affected flows (annotated video)
+
+# On every PR, records annotated videos (tb --record --annotate: slowed down, each tap drawn, a
+# caption band naming the step) of the flows the PR affects, so a reviewer can see what changed
+# even when every flow still passes. e2e/ci/affected.py picks them: flows the PR adds or edits,
+# whole, and for each changed screen (or code and resources a screen uses) one flow, cut soon after
+# it has shown that screen. At most 6 flows. See docs/testing/ci-flows.md.
+#
+# Not a required check; "Android end-to-end" (android-e2e.yml) still runs every flow on every PR.
+#
+# PRs from forks don't run on their own: their code would run on the emulator with this
+# repository's caches. The job summary says which flows would run; a maintainer who has read the
+# PR's code presses Actions > "Affected flows (annotated video)" > Run workflow with its number.
+# That run gets a read-only token, pushes no results branch and saves no caches.
+on:
+  pull_request:
+    branches: [ master, release* ]
+    types: [ opened, synchronize, reopened, ready_for_review ]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "PR number (from this repository or a fork)"
+        required: true
+
+concurrency:
+  group: e2e-affected-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  MAX_FLOWS: "6"
+
+jobs:
+  select:
+    name: pick flows
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      flows: ${{ steps.pick.outputs.flows }}
+      pr: ${{ steps.pr.outputs.pr }}
+      sha: ${{ steps.pr.outputs.sha }}
+      fork: ${{ steps.pr.outputs.fork }}
+      run: ${{ steps.pr.outputs.run }}
+      table: ${{ steps.pick.outputs.table }}
+    steps:
+      - name: The PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
+        run: |
+          set -euo pipefail
+          [[ $PR =~ ^[0-9]+$ ]] || { echo "::error::pr must be a number"; exit 1; }
+          PRJ=$(gh api "repos/$REPO/pulls/$PR")
+          [[ $(jq -r .state <<<"$PRJ") == open ]] || { echo "::error::PR #$PR is not open"; exit 1; }
+          HEAD_REPO=$(jq -r '.head.repo.full_name // ""' <<<"$PRJ")
+          FORK=false
+          [[ $HEAD_REPO == "$REPO" ]] || FORK=true
+          # A fork's flows only run when someone presses Run workflow.
+          RUN=true
+          [[ $FORK == true && $EVENT == pull_request ]] && RUN=false
+          {
+            echo "pr=$PR"
+            echo "sha=$(jq -r .head.sha <<<"$PRJ")"
+            echo "base=$(jq -r .base.ref <<<"$PRJ")"
+            echo "fork=$FORK"
+            echo "run=$RUN"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Only reads files: picking flows runs none of the PR's app code.
+      - name: Pick the flows
+        id: pick
+        env:
+          BASE: ${{ steps.pr.outputs.base }}
+          SHA: ${{ steps.pr.outputs.sha }}
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          git fetch -q --no-tags origin "$BASE"
+          python3 -m unittest discover -s e2e/ci -p 'test_*.py' 2>&1 | tail -n 3
+          mkdir -p build
+          FLOWS=$(python3 e2e/ci/affected.py --base FETCH_HEAD --head "$SHA" --max "$MAX_FLOWS" \
+            --json build/affected.json --md build/affected.md)
+          echo "flows=$FLOWS" >> "$GITHUB_OUTPUT"
+          {
+            echo "table<<AFFECTED_EOF"
+            cat build/affected.md
+            echo "AFFECTED_EOF"
+          } >> "$GITHUB_OUTPUT"
+          cat build/affected.md >> "$GITHUB_STEP_SUMMARY"
+          echo "Selectors: \`${FLOWS:-none}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: How to run it for a fork
+        if: steps.pr.outputs.run == 'false' && steps.pick.outputs.flows != ''
+        env:
+          PR: ${{ steps.pr.outputs.pr }}
+        run: |
+          {
+            echo
+            echo "**From a fork, so nothing ran.** After reading the PR's code, a maintainer can run these"
+            echo "flows: Actions > \"Affected flows (annotated video)\" > Run workflow, with PR \`$PR\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice::PR from a fork: run the annotated flows by hand (Actions > Affected flows > Run workflow, PR $PR)"
+
+  # A PR from this repository: results also go to the flow-results/affected-pr-<N> branch.
+  annotated:
+    name: annotated videos
+    needs: select
+    if: needs.select.outputs.run == 'true' && needs.select.outputs.fork == 'false' && needs.select.outputs.flows != ''
+    permissions:
+      contents: write
+    uses: ./.github/workflows/flow-runner-job.yml
+    with:
+      flows: ${{ needs.select.outputs.flows }}
+      ref: ${{ needs.select.outputs.sha }}
+      pr: ${{ needs.select.outputs.pr }}
+      screenshots: end
+      annotate: true
+      label: affected
+
+  # A fork's PR, run by hand: a read-only token, no results branch, no caches saved.
+  annotated-fork:
+    name: annotated videos (fork)
+    needs: select
+    if: needs.select.outputs.run == 'true' && needs.select.outputs.fork == 'true' && needs.select.outputs.flows != ''
+    permissions:
+      contents: read
+    uses: ./.github/workflows/flow-runner-job.yml
+    with:
+      flows: ${{ needs.select.outputs.flows }}
+      ref: ${{ needs.select.outputs.sha }}
+      pr: ${{ needs.select.outputs.pr }}
+      screenshots: end
+      annotate: true
+      label: affected
+      publish_branch: false
+      save_caches: false
+
+  # One comment per PR, updated by each run. Runs none of the PR's code. A fork's PR gets one only
+  # from a run by hand (a pull_request run from a fork can't comment).
+  comment:
+    name: comment on the PR
+    needs: [ select, annotated, annotated-fork ]
+    if: >-
+      !cancelled() && needs.select.result == 'success' && needs.select.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v4
+        if: needs.annotated.outputs.artifact != '' || needs.annotated-fork.outputs.artifact != ''
+        continue-on-error: true
+        with:
+          name: ${{ needs.annotated.outputs.artifact || needs.annotated-fork.outputs.artifact }}
+          path: results
+      - uses: actions/github-script@v7
+        env:
+          PR: ${{ needs.select.outputs.pr }}
+          SHA: ${{ needs.select.outputs.sha }}
+          TABLE: ${{ needs.select.outputs.table }}
+          FLOWS: ${{ needs.select.outputs.flows }}
+          ARTIFACT: ${{ needs.annotated.outputs.artifact || needs.annotated-fork.outputs.artifact }}
+          BRANCH: ${{ needs.annotated.outputs.results_branch }}
+          RESULTS_SHA: ${{ needs.annotated.outputs.results_sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const env = process.env;
+            const marker = '<!-- e2e-affected -->';
+            const lines = [marker, '## Annotated flow videos', '', env.TABLE.trim(), ''];
+            if (env.FLOWS.trim()) {
+              const summary = fs.existsSync('results/summary.json')
+                ? JSON.parse(fs.readFileSync('results/summary.json', 'utf8')) : null;
+              if (!summary) {
+                lines.push('The run stopped before the flows ran: see the [run](' + env.RUN_URL + ').');
+              } else {
+                const repoUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}`;
+                lines.push('| Flow | Result | Video |', '|---|---|---|');
+                for (const f of summary.flows) {
+                  const name = '`' + f.name + '`' + (f.steps ? ` (steps 1–${f.steps})` : '');
+                  const result = f.status === 'passed' ? '✅ passed' : '❌ ' + f.status;
+                  let video = '—';
+                  if (f.video && env.RESULTS_SHA) video = `[${f.name}.mp4](${repoUrl}/blob/${env.RESULTS_SHA}/${f.video})`;
+                  else if (f.video) video = 'in the artifact';
+                  lines.push(`| ${name} | ${result} | ${video} |`);
+                }
+                for (const f of summary.flows.filter(f => f.error)) {
+                  lines.push('', `**\`${f.name}\`** failed: ${f.error.split('\n')[0].slice(0, 300)}`);
+                }
+              }
+              lines.push('', `[Run](${env.RUN_URL}) at \`${env.SHA.slice(0, 7)}\`. Videos, captions (.srt) and logs: ` +
+                `the \`${env.ARTIFACT}\` artifact` + (env.BRANCH ? ` and the \`${env.BRANCH}\` branch.` : '.'));
+            }
+            lines.push('', '<sub>Not a required check. Every flow still runs, without video, in "Android end-to-end".</sub>');
+            const body = lines.join('\n');
+            const issue_number = Number(env.PR);
+            const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
+            const mine = comments.find(c => c.user.type === 'Bot' && c.body.startsWith(marker));
+            if (mine) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });
+            } else if (env.FLOWS.trim()) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }

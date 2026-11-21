@@ -12,13 +12,14 @@ Usage: step_shots.py [--mode steps|end] FLOW.yaml > COPY.yaml
 import re
 import sys
 
+from flowfile import is_step, split
+
 # Steps that leave the screen as it was.
 NO_SHOT = {
     "assertVisible", "assertNotVisible", "assertTrue", "assertWithAI", "assertNoDefectsWithAI",
     "assertScreenshot", "takeScreenshot", "evalScript", "copyTextFrom", "startRecording",
     "stopRecording",
 }
-STEP = re.compile(r"^- ")
 KEY = re.compile(r"^- ([A-Za-z]+)\s*(?::\s*(.*))?$")
 
 
@@ -47,25 +48,13 @@ def main():
         sys.exit(2)
     lines = open(args[0], encoding="utf-8").read().splitlines()
     # The commands are the document after the header's "---"; a file without one is all commands.
-    start = next((i + 1 for i, l in enumerate(lines) if l.rstrip() == "---"), 0)
-    out = lines[:start]
-    # Split the commands into steps: a step's line, then the indented or blank lines under it.
-    # Comments at column 0 stay where they are, before the step they describe.
-    blocks, cur = [], None
-    for line in lines[start:]:
-        if STEP.match(line):
-            cur = [line]
-            blocks.append(cur)
-        elif cur is not None and (line.startswith((" ", "\t")) or not line.strip()):
-            cur.append(line)
-        else:
-            cur = None
-            blocks.append([line])
-    steps = [b for b in blocks if STEP.match(b[0])]
+    out, blocks = split(lines)
+    out = list(out)
+    steps = [b for b in blocks if is_step(b)]
     n = 0
     for b in blocks:
         out.extend(b)
-        if not STEP.match(b[0]):
+        if not is_step(b):
             continue
         n += 1
         name, wanted = label(b)
