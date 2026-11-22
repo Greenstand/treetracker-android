@@ -21,8 +21,11 @@ while read -r VARIANT FLOW; do
 done <<'EOF'
 session-note org-session-note.yaml
 session-note org-double-tap-session-note.yaml
+session-note org-process-death-session-note.yaml
 tree-height org-tree-height.yaml
 force-note org-force-note.yaml
 wallet-select org-wallet-select.yaml
+wallet-select org-process-death-wallet-select.yaml
+wallet-select org-process-death-add-wallet.yaml
 EOF
 exit $FAILED

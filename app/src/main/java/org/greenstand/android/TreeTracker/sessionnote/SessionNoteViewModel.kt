@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.sessionnote
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
@@ -24,6 +25,10 @@ import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 data class SessionNoteState(
     val note: String = "",
     val userImagePath: String = "",
+    /** True while the screen, restored after process death, reloads its setup user. Next and Back wait. */
+    val restoring: Boolean = false,
+    /** True when the screen came back after process death and its user could not be found again. */
+    val setupLost: Boolean = false,
 )
 
 sealed class SessionNoteAction : Action {
@@ -36,16 +41,28 @@ sealed class SessionNoteAction : Action {
     object NavigateNext : SessionNoteAction()
 }
 
-class SessionNoteViewModel : BaseViewModel<SessionNoteState, SessionNoteAction>(SessionNoteState()) {
+class SessionNoteViewModel(
+    private val restorer: CaptureSetupRestorer,
+) : BaseViewModel<SessionNoteState, SessionNoteAction>(SessionNoteState()) {
     init {
+        // After process death Nav3 restores this screen with the capture setup scope closed (#1447).
+        val restored = restorer.reopenScopeIfClosed()
+        if (restored) updateState { copy(restoring = true) }
         viewModelScope.launch {
+            val user = restorer.setupUser(restored)
             updateState {
-                copy(userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath)
+                copy(
+                    restoring = false,
+                    setupLost = restored && user == null,
+                    userImagePath = user?.photoPath ?: "",
+                )
             }
         }
     }
 
     override fun handleAction(action: SessionNoteAction) {
+        // The setup scope is closed once setup is lost; the screen is on its way to the Dashboard.
+        if (currentState.setupLost) return
         when (action) {
             is SessionNoteAction.UpdateNote -> {
                 CaptureSetupScopeManager.getData().sessionNote = action.note

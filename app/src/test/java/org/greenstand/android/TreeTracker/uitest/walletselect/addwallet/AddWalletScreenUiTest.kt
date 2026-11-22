@@ -27,6 +27,7 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
@@ -41,16 +42,19 @@ import org.junit.Test
 
 /** Tests for the [AddWalletScreen] root: ViewModel wiring and capture setup navigation. */
 class AddWalletScreenUiTest : ComposeUiTest() {
+    private val restorer = CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true))
+
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
 
     @Before
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { CaptureSetupScopeManager.nav } returns setupNav
         every { captureSetupData.user } returns walletTestCurrentUser
-        val viewModel = AddWalletViewModel()
+        val viewModel = AddWalletViewModel(restorer)
         setContent(inspectionMode = false) {
             AddWalletScreen(viewModel = viewModel)
         }

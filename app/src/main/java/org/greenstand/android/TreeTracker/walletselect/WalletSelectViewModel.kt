@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.models.UserRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.viewmodel.Action
@@ -30,6 +31,10 @@ data class WalletSelectState(
     val currentUser: User? = null,
     val alternateUsers: List<User> = emptyList(),
     val selectedUser: User? = null,
+    /** True while the screen, restored after process death, reloads its setup user. Next and Back wait. */
+    val restoring: Boolean = false,
+    /** True when the screen came back after process death and its user could not be found again. */
+    val setupLost: Boolean = false,
 )
 
 sealed class WalletSelectAction : Action {
@@ -48,10 +53,19 @@ sealed class WalletSelectAction : Action {
 
 class WalletSelectViewModel(
     private val userRepo: UserRepo,
+    private val restorer: CaptureSetupRestorer,
 ) : BaseViewModel<WalletSelectState, WalletSelectAction>(WalletSelectState()) {
     init {
+        // After process death Nav3 restores this screen with the capture setup scope closed (#1447).
+        val restored = restorer.reopenScopeIfClosed()
+        if (restored) updateState { copy(restoring = true) }
         viewModelScope.launch {
-            val currentUser = CaptureSetupScopeManager.getData().user
+            val currentUser = restorer.setupUser(restored)
+            if (restored && currentUser == null) {
+                updateState { copy(restoring = false, setupLost = true) }
+                return@launch
+            }
+            updateState { copy(restoring = false) }
             userRepo
                 .users()
                 .map { users -> users.filter { it.id != currentUser?.id } }
@@ -64,6 +78,8 @@ class WalletSelectViewModel(
     }
 
     override fun handleAction(action: WalletSelectAction) {
+        // The setup scope is closed once setup is lost; the screen is on its way to the Dashboard.
+        if (currentState.setupLost) return
         when (action) {
             is WalletSelectAction.SelectPlanter -> {
                 viewModelScope.launch {

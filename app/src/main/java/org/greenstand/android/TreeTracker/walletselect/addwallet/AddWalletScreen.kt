@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.SetupLostEffect
 import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
@@ -57,16 +58,20 @@ fun AddWalletScreen(
     val state by viewModel.state.collectAsState()
     val doubleTapGuard = rememberDoubleTapGuard()
 
+    SetupLostEffect(state.setupLost)
+
     Box(doubleTapGuard.modifier) {
         AddWallet(
             state = state,
             onHandleAction = { action ->
+                // Until a restored screen has its user back, leaving it would continue setup without one.
+                val canLeave = !state.restoring && !state.setupLost
                 when (action) {
-                    is AddWalletAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
+                    is AddWalletAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
                     is AddWalletAction.NavigateNext -> {
                         // Like every setup screen's Next, this one sits where the previous screen's
                         // Next was. Drop the second tap of a double tap that opened it (#1442).
-                        if (!doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
+                        if (canLeave && !doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
                             scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                         }
                     }

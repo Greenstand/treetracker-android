@@ -20,10 +20,18 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.runs
 import io.mockk.unmockkObject
 import io.mockk.verify
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -32,19 +40,23 @@ import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class WalletSelectViewModelTest {
+    private val preferences = mockk<Preferences>(relaxed = true)
+
+    // Declared lazily: userRepo is set up after this property.
+    private val restorer by lazy { CaptureSetupRestorer(preferences, userRepo) }
+
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -61,6 +73,7 @@ class WalletSelectViewModelTest {
         MockKAnnotations.init(this)
         mockkObject(CaptureSetupScopeManager)
         captureSetupData = mockk(relaxed = true)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
     }
 
@@ -79,7 +92,7 @@ class WalletSelectViewModelTest {
             every { userRepo.users() } returns flowOf(users)
             coEvery { userRepo.getUserList() } returns users
 
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(targetUser.id))
 
@@ -98,7 +111,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other, third))
 
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
 
             val state = viewModel.state.value
             assertEquals(current, state.currentUser)
@@ -113,7 +126,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns null
             every { userRepo.users() } returns flowOf(listOf(current, other))
 
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
 
             assertNull(viewModel.state.value.currentUser)
             assertEquals(listOf(current, other), viewModel.state.value.alternateUsers)
@@ -125,7 +138,7 @@ class WalletSelectViewModelTest {
             val users = MutableStateFlow(listOf(current, other))
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns users
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
             assertEquals(listOf(other), viewModel.state.value.alternateUsers)
 
             users.value = listOf(current, other, third)
@@ -140,7 +153,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other))
             coEvery { userRepo.getUserList() } returns listOf(current, other)
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
 
@@ -154,7 +167,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other, third))
             coEvery { userRepo.getUserList() } returns listOf(current, other, third)
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
             viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(third.id))
@@ -169,7 +182,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other))
             coEvery { userRepo.getUserList() } returns listOf(current, other)
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
             viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(-99L))
@@ -183,7 +196,7 @@ class WalletSelectViewModelTest {
         runTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other))
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
             val before = viewModel.state.value
 
             viewModel.handleAction(WalletSelectAction.NavigateToUserSelect)
@@ -194,5 +207,59 @@ class WalletSelectViewModelTest {
             assertEquals(before, viewModel.state.value)
             assertTrue(viewModel.events.replayCache.isEmpty())
             verify(exactly = 0) { captureSetupData.destinationWallet = any() }
+        }
+
+    // --- Process death restore (#1447) ---
+
+    private fun stubClosedScope() {
+        every { CaptureSetupScopeManager.isOpen } returns false
+        every { CaptureSetupScopeManager.open() } just runs
+        every { CaptureSetupScopeManager.close() } just runs
+        every { userRepo.users() } returns flowOf(emptyList())
+    }
+
+    @Test
+    fun `WHEN init after process death THEN reopens the scope with the saved user`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            stubClosedScope()
+            every { preferences.getLong(CaptureSetupRestorer.SETUP_USER_ID_KEY, any()) } returns fakeUser.id
+            coEvery { userRepo.getUser(fakeUser.id) } returns fakeUser
+
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
+
+            verify { CaptureSetupScopeManager.open() }
+            verify { captureSetupData.user = fakeUser }
+            assertFalse(viewModel.state.value.restoring)
+            assertFalse(viewModel.state.value.setupLost)
+        }
+
+    @Test
+    fun `WHEN a restored screen is still reloading its user THEN it is restoring`() =
+        runTest {
+            val reload = CompletableDeferred<User?>()
+            stubClosedScope()
+            coEvery { userRepo.getUser(any()) } coAnswers { reload.await() }
+
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
+            assertTrue(viewModel.state.value.restoring)
+
+            reload.complete(FakeFileGenerator.fakeUsers.first())
+            assertFalse(viewModel.state.value.restoring)
+        }
+
+    @Test
+    fun `WHEN init after process death and the saved user is gone THEN setup is lost and input is ignored`() =
+        runTest {
+            stubClosedScope()
+            coEvery { userRepo.getUser(any()) } returns null
+
+            val viewModel = WalletSelectViewModel(userRepo, restorer)
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(1L))
+
+            assertTrue(viewModel.state.value.setupLost)
+            assertFalse(viewModel.state.value.restoring)
+            verify { CaptureSetupScopeManager.close() }
+            assertNull(viewModel.state.value.selectedUser)
         }
 }
