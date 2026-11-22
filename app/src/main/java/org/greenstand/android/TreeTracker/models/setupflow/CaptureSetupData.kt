@@ -18,30 +18,59 @@ package org.greenstand.android.TreeTracker.models.setupflow
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.models.user.User
 
+/**
+ * The choices made in a capture setup. Each change is also written to [store] (when there is
+ * one), so [CaptureSetupScopeManager] can bring the setup back after process death.
+ */
 class CaptureSetupData(
     private val exceptionDataCollector: ExceptionDataCollector,
+    private val store: CaptureSetupStore? = null,
 ) {
     var user: User? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.USER_WALLET, value?.wallet)
             field = value
+            save()
         }
 
     var destinationWallet: String? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.DESTINATION_WALLET, value)
             field = value
+            save()
         }
 
     var sessionNote: String? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.SESSION_NOTE, value)
             field = value
+            save()
         }
 
     var organizationName: String? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.ORG_NAME, value)
             field = value
+            save()
         }
+
+    /** Writes the current (for a new setup: empty) choices to [store], marking a setup as in progress. */
+    fun save() {
+        store?.save(
+            SavedCaptureSetup(
+                user = user?.let { SavedUser.from(it) },
+                destinationWallet = destinationWallet,
+                sessionNote = sessionNote,
+                organizationName = organizationName,
+            ),
+        )
+    }
+
+    /** Takes over the choices of a setup that was in progress when the process died. */
+    fun restore(saved: SavedCaptureSetup) {
+        saved.user?.let { user = it.toUser() }
+        saved.destinationWallet?.let { destinationWallet = it }
+        saved.sessionNote?.let { sessionNote = it }
+        saved.organizationName?.let { organizationName = it }
+    }
 }

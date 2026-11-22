@@ -68,6 +68,7 @@ import org.greenstand.android.TreeTracker.models.organization.PlayInstallReferre
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupStore
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
@@ -270,8 +271,10 @@ val appModule =
 
         single { OrgConfigProvider(get()) }
 
+        single { CaptureSetupStore(get()) }
+
         scope<CaptureSetupScope> {
-            scoped { CaptureSetupData(get()) }
+            scoped { CaptureSetupData(get(), get<CaptureSetupStore>()) }
             scoped { CaptureSetupNavigationController(get(), get(), get(), get(), get()) }
         }
 

@@ -133,6 +133,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 | H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`, `sad-camera-rationale-next.yaml`) |
 | H3 | No GPS fix | No mock location → capture → bad GPS dialog → retry, then exit → Dashboard | Field reality, timeout path | Per-screen only (needs host adb to remove the GPS fix) |
 | H4 | Location services off | Location toggle off → capture → redirected to system location settings → enable → back to capture | `enableLocation()` redirect | No (needs host adb to turn location off) |
+| H5 | Process death on Add org | Track → pick user → Next → on Add org: background → kill → reopen → Add org is back, Next opens capture | Setup scope only lived in memory (finding 3) | Yes (`sad-process-death-add-org.yaml`) |
 | H6 | Process death mid capture | On image review → background → kill → reopen → tree not duplicated, can capture again | Same scope issue, data integrity | Known bug (`sad-process-death-review.yaml`, `sad-capture-after-process-death.yaml`) |
 | H7 | Process death on dashboard/settings | Background → kill → reopen → same screen, no crash | Nav3 saved back stack | Yes (`sad-process-death-screens.yaml`) |
 | H8 | Double taps | Double-tap Capture, Next, Settings → only one screen pushed | `Navigator` throttle | Yes (`sad-double-tap.yaml`, `sad-double-tap-setup.yaml`) |
@@ -176,7 +177,8 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
      picking a user; CI's e2e run is offline for that reason.
    - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed) (#1417).
    - H5: process death on Add org crashes on reopen: `CaptureSetupScope not open` from
-     `AddOrgViewModel` init (finding 3 confirmed) (#1418).
+     `AddOrgViewModel` init (finding 3 confirmed) (#1418). Fixed: the setup in progress is saved
+     to preferences and the scope is restored from it.
    - H6: process death on image review crashes on reopen: `CaptureFlowScope not open` while
      creating `TreeImageReviewViewModel` (#1419). Restoring onto the capture screen works, but GPS updates
      are not restarted, so the next capture always shows the bad GPS dialog (#1420).

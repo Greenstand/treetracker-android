@@ -1,0 +1,41 @@
+# H5: process death on Add org. The user picks a planter on user select and taps Next; with Add
+# org on screen the app goes to the background, Android kills its process (killApp, like
+# `am kill`), and the user reopens it from recents (launchApp with stopApp: false keeps the saved
+# state). Add org comes back without a crash, and Next starts the session for the picked planter
+# and opens capture.
+#
+# Guards #1418: Navigation 3 restores Add org, but the capture setup scope only lived in memory,
+# so AddOrgViewModel's init threw "CaptureSetupScope not open" and the app crashed on reopen.
+appId: org.greenstand.android.TreeTracker.debug
+name: H5 Process death on Add org
+tags: [sad-path]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+# Add org is back (before the fix the app crashed here).
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+# Next continues to capture with the planter picked before the kill.
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000

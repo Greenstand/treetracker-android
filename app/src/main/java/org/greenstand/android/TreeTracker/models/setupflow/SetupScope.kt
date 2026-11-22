@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.models.setupflow
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.koin.core.component.KoinScopeComponent
 import org.koin.core.component.createScope
+import org.koin.core.context.GlobalContext
 import org.koin.core.scope.Scope
 import timber.log.Timber
 
@@ -32,22 +33,45 @@ object CaptureSetupScopeManager {
             close()
         }
         currentScope = CaptureSetupScope().scope
-        currentScope?.get<CaptureSetupData>()
+        // A new setup starts empty; saving it marks a setup as in progress (see restoreScope).
+        currentScope?.get<CaptureSetupData>()?.save()
     }
 
     fun getData(): CaptureSetupData =
-        currentScope?.get()
+        (currentScope ?: restoreScope())?.get()
             ?: error("CaptureSetupScope not open. Call open() before getData().")
 
     val nav: CaptureSetupNavigationController
         get() =
-            currentScope?.get()
+            (currentScope ?: restoreScope())?.get()
                 ?: error("CaptureSetupScope not open. Call open() before accessing nav.")
 
     fun close() {
         currentScope?.close()
         currentScope = null
+        store()?.clear()
     }
+
+    /**
+     * Reopens the scope of a setup that was in progress when Android killed the process.
+     *
+     * Navigation 3 restores the setup screen the user was on (e.g. Add org) without the user
+     * select screen under it, so nothing calls [open] before that screen asks for the scope
+     * (#1418). The choices made so far come back from [CaptureSetupStore]; the navigation
+     * controller finds its step from the back stack on the next `navForward`.
+     *
+     * Returns null when no setup was in progress ([open] was never called, or [close] ended it).
+     */
+    private fun restoreScope(): Scope? {
+        val saved = store()?.load() ?: return null
+        Timber.tag("CaptureSetupScope").i("Restoring the capture setup that was in progress")
+        val scope = CaptureSetupScope().scope
+        scope.get<CaptureSetupData>().restore(saved)
+        currentScope = scope
+        return scope
+    }
+
+    private fun store(): CaptureSetupStore? = GlobalContext.getOrNull()?.getOrNull<CaptureSetupStore>()
 }
 
 class CaptureSetupScope : KoinScopeComponent {
