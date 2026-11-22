@@ -1,0 +1,64 @@
+# Deleting a user while the device is offline (#1416). The runners keep the emulator in airplane
+# mode, so the request to the admin that follows the local delete can't be uploaded. The app must
+# stay up: the "Account Deleted" dialog shows, closing it returns to Settings, and the Delete
+# account list then has only the admin.
+#
+# Before the fix UserSelectViewModel.deleteUser let the upload's AmazonClientException (Cognito
+# unreachable) escape from messageRepo.syncMessages(), and the app closed a moment after the
+# confirm tap, with Bob already deleted. The flow reads the whole dialog before closing it, as a
+# user would, and keeps using the app afterwards.
+appId: org.greenstand.android.TreeTracker.debug
+name: E7 Delete non-admin user offline
+tags: [settings]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# Add a second user, Bob, who is not the admin.
+- tapOn: {id: TrackButton}
+- tapOn: {id: OrangeAddButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PhoneField}
+- inputText: "5551230002"
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: FirstNameField}
+- inputText: Bob
+- tapOn: {id: LastNameField}
+- inputText: Builder
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: CaptureButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+- back
+- back
+- extendedWaitUntil:
+    visible: {id: SettingsButton}
+    timeout: 15000
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsDeleteAccount}
+- tapOn: {id: "UserButton_5551230002"}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: DialogTitle, text: "Delete Account"}
+# Confirm deletes Bob. The app stays up and says so.
+- tapOn: {id: DialogPositiveButton}
+- assertVisible: {id: DialogTitle, text: "Account Deleted"}
+- assertVisible: {id: DialogMessage, text: "All your Data has been deleted"}
+- assertVisible: {id: DialogUserButton}
+- assertNotVisible: {id: DialogNegativeButton}
+# Closing the dialog returns to Settings, and back from there to the Dashboard.
+- tapOn: {id: DialogPositiveButton}
+- assertVisible: {id: SettingsDeleteAccount}
+- assertNotVisible: {id: DialogTitle}
+# Bob is gone, the admin is still there.
+- tapOn: {id: SettingsDeleteAccount}
+- assertVisible: {id: "UserButton_5551230001"}
+- assertNotVisible: {id: "UserButton_5551230002"}
+- back
+- assertVisible: {id: SettingsDeleteAccount}
+- back
+- assertVisible: {id: TrackButton}

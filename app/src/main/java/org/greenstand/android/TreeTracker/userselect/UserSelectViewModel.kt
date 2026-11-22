@@ -18,6 +18,7 @@ package org.greenstand.android.TreeTracker.userselect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,6 +33,7 @@ import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import timber.log.Timber
 import java.util.Collections.emptyList
 
 data class UserSelectState(
@@ -134,7 +136,15 @@ class UserSelectViewModel(
                     to = "admin",
                     body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost.",
                 )
-                messageRepo.syncMessages()
+                try {
+                    messageRepo.syncMessages()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    // Offline, or the upload failed. The request stays queued (shouldUpload) and goes
+                    // out with the next sync; the local delete is already done.
+                    Timber.e(e, "Could not send the account deletion request")
+                }
             }
         }
     }

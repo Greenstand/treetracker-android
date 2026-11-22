@@ -259,6 +259,23 @@ class UserSelectViewModelTest {
         }
 
     @Test
+    fun `GIVEN the device is offline WHEN delete succeeds THEN the failed message sync does not escape (#1416)`() =
+        runTest {
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            coEvery { messagesRepo.syncMessages() } throws IllegalStateException("Unable to reach Cognito")
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            // Without the catch the exception is uncaught in viewModelScope: runTest reports it and
+            // fails this test, and on a device it closes the app.
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+            coVerify { messagesRepo.saveMessage(wallet = "0712345678", to = "admin", body = any()) }
+            coVerify { messagesRepo.syncMessages() }
+        }
+
+    @Test
     fun `GIVEN a selected user WHEN delete fails THEN state is unchanged and no admin message is sent`() =
         runTest {
             coEvery { userRepo.deleteUser("0712345678") } returns false

@@ -12,6 +12,7 @@ YAML and drives the installed debug app on an emulator or device.
   an emulator started with `-camera-back emulated -camera-front emulated`.
 - `flows/returning-user-relaunch.yaml`, `flows/settings-*.yaml` (tag `settings`): returning user,
   language and Settings, E1–E9. They start from a fresh install and sign up through the sub-flow.
+  `settings-delete-user-offline.yaml` checks that deleting a user offline keeps the app up (#1416).
 - `flows/sad-*.yaml` (tag `sad-path`): permissions, process death (`killApp` after `pressKey:
   Home`), double taps and system back, H1–H10.
 - Flows also tagged `known-bug` assert the fixed behaviour of a confirmed bug (section 4 of the
