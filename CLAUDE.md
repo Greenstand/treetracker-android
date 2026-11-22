@@ -10,10 +10,6 @@ For a bug-fix or feature PR, follow the
 [`pr-validating-flow` skill](.claude/skills/pr-validating-flow/SKILL.md): a new end-to-end flow that
 fails before the change and passes after it, with both annotated videos in the PR description.
 
-For a bug-fix or feature PR, follow the
-[`pr-validating-flow` skill](.claude/skills/pr-validating-flow/SKILL.md): a new end-to-end flow that
-fails before the change and passes after it, with both annotated videos in the PR description.
-
 ## Documentation Index
 
 - [Docs Home](docs/README.md)
@@ -52,7 +48,6 @@ fails before the change and passes after it, with both annotated videos in the P
 
 - [Testing](docs/testing/testing.md)
 - [Agent App Functions](docs/testing/agent-app-functions.md)
-- [Validating Flow for a Fix or Feature PR (skill)](.claude/skills/pr-validating-flow/SKILL.md)
 - [Validating Flow for a Fix or Feature PR (skill)](.claude/skills/pr-validating-flow/SKILL.md)
 - [App Distribution Testing](docs/testing/app-distribution-testing.md)
 - [End-to-End Flow Test Plan](docs/testing/e2e-flow-test-plan.md)
