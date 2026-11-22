@@ -78,6 +78,7 @@ import org.greenstand.android.TreeTracker.navigation.TreeImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.TreeListRoute
 import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.WalletSelectRoute
+import org.greenstand.android.TreeTracker.navigation.dropSetupStepsWithoutUser
 import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
@@ -112,7 +113,14 @@ fun Host(
     // Persists across configuration changes and process death; on restore, the
     // saved stack wins over startRoute — same as Nav2's restored NavController state.
     val backStack = rememberNavBackStack(*initialBackStack.toTypedArray())
-    val navigator = remember(backStack) { Navigator(backStack) }
+    val navigator =
+        remember(backStack) {
+            // Root has reopened the capture setup scope by now if it was saved. If a restored
+            // setup step still has no user to show, fall back to the screen below it before
+            // anything is rendered.
+            backStack.dropSetupStepsWithoutUser()
+            Navigator(backStack)
+        }
     TreeTrackerTheme {
         CompositionLocalProvider(LocalNavigator provides navigator) {
             Box(modifier = Modifier.fillMaxSize()) {

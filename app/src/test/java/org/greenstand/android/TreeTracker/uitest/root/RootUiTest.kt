@@ -18,6 +18,8 @@ package org.greenstand.android.TreeTracker.uitest.root
 import android.Manifest
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.StateRestorationTester
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -37,19 +39,37 @@ import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
+import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
+import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
+import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
+import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
 import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsState
 import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsTracker
 import org.greenstand.android.TreeTracker.overlay.SyncProgressTracker
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.root.Host
 import org.greenstand.android.TreeTracker.root.Root
+import org.greenstand.android.TreeTracker.theme.CustomTheme
 import org.greenstand.android.TreeTracker.uitest.support.RootScreenUiTest
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
+import org.greenstand.android.TreeTracker.view.TestTags
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.compose.KoinContext
+import org.koin.core.context.GlobalContext
 import org.koin.dsl.module
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
@@ -72,9 +92,16 @@ class RootUiTest : RootScreenUiTest() {
 
     private val orgLoaded = CompletableDeferred<Unit>()
 
+    /** Set to drop the in-memory capture setup scope when Root starts again, as process death does. */
+    private var processKilled = false
+
     @Before
     fun setUp() {
-        coEvery { orgRepo.ensureInitialized() } coAnswers { orgLoaded.await() }
+        CaptureSetupScopeManager.close()
+        coEvery { orgRepo.ensureInitialized() } coAnswers {
+            if (processKilled) CaptureSetupScopeManager.close()
+            orgLoaded.await()
+        }
         coEvery { checkForInternetUseCase.execute(Unit) } returns false
         coEvery { installReferrerOrgProvider.consume() } returns null
         coEvery { orgConfigProvider.fetchOrgConfig(any()) } returns null
@@ -100,8 +127,18 @@ class RootUiTest : RootScreenUiTest() {
                 single { DebugOverlayManager() }
                 single { SyncProgressTracker() }
                 single { sensorDiagnosticsTracker }
+                single { mockk<Preferences>(relaxed = true) }
+                viewModel { AddOrgViewModel(get(), get()) }
+                scope<CaptureSetupScope> {
+                    scoped { CaptureSetupData(get()) }
+                }
             },
         )
+    }
+
+    @After
+    fun closeCaptureSetup() {
+        CaptureSetupScopeManager.close()
     }
 
     private fun grantStartupPermissions() {
@@ -174,7 +211,72 @@ class RootUiTest : RootScreenUiTest() {
         coVerify(exactly = 0) { installReferrerOrgProvider.consume() }
     }
 
+    @Test
+    fun `add org comes back with its capture setup data after process death`() {
+        val user =
+            User(
+                id = USER_ID,
+                wallet = "5551230001",
+                numberOfTrees = 0,
+                firstName = "Ada",
+                lastName = "Admin",
+                photoPath = "",
+                isPowerUser = true,
+                unreadMessagesAvailable = false,
+            )
+        coEvery { userRepo.getUser(USER_ID) } returns user
+        every { orgRepo.currentOrg() } returns
+            Org(
+                id = "1",
+                name = "Greenstand",
+                walletId = "",
+                logoPath = "",
+                captureSetupFlow = emptyList(),
+                captureFlow = emptyList(),
+            )
+        orgLoaded.complete(Unit)
+        // The user picked themselves on user select and typed nothing yet on Add org.
+        CaptureSetupScopeManager.open()
+        CaptureSetupScopeManager.getData().user = user
+        CaptureSetupScopeManager.getData().sessionNote = SESSION_NOTE
+        val restorationTester = StateRestorationTester(composeTestRule)
+        restorationTester.setContent {
+            KoinContext(context = GlobalContext.get()) {
+                CustomTheme {
+                    Root(
+                        viewModelFactory = TreeTrackerViewModelFactory(),
+                        initialBackStack = listOf(DashboardRoute, UserSelectRoute, AddOrgRoute),
+                    )
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag(TestTags.ORG_NAME_FIELD).assertExists()
+
+        // The state is saved while the scope is open; the scope is closed before Root restores.
+        processKilled = true
+        restorationTester.emulateSavedInstanceStateRestore()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.waitUntil(WAIT_TIMEOUT_MS) { CaptureSetupScopeManager.isOpen }
+        processKilled = false
+        assertEquals(user, CaptureSetupScopeManager.getData().user)
+        assertEquals(SESSION_NOTE, CaptureSetupScopeManager.getData().sessionNote)
+        composeTestRule.onNodeWithTag(TestTags.ORG_NAME_FIELD).assertExists()
+    }
+
+    @Test
+    fun `root does not open capture setup when none was saved`() {
+        orgLoaded.complete(Unit)
+
+        renderRoot()
+
+        assertFalse(CaptureSetupScopeManager.isOpen)
+    }
+
     private companion object {
+        const val USER_ID = 7L
+        const val SESSION_NOTE = "planted near the river"
         const val DEBUG_TOGGLE = "D"
         const val SPLASH_SCREEN = "SplashRoute"
         const val LANGUAGE_SCREEN = "LanguageRoute"

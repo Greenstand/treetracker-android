@@ -32,6 +32,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +43,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupSnapshot
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.splash.Splash
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -72,8 +77,14 @@ fun Root(
     // Re-hydrate it once per process before rendering the (possibly restored) back stack.
     val orgRepo = koinInject<OrgRepo>()
     var isOrgReady by remember { mutableStateOf(false) }
+    // The capture setup scope (selected user, org name, ...) is in memory only as well, while
+    // the back stack is restored. Its data is saved with the activity's state and the scope is
+    // reopened here, so a restored setup screen (e.g. Add org) finds it.
+    val userRepo = koinInject<UserRepo>()
+    val savedCaptureSetup = rememberSaveable(saver = savedCaptureSetupSaver) { SavedCaptureSetup(null) }
     LaunchedEffect(Unit) {
         orgRepo.ensureInitialized()
+        savedCaptureSetup.snapshot?.let { CaptureSetupScopeManager.restore(it, userRepo) }
         isOrgReady = true
     }
 
@@ -126,3 +137,18 @@ fun Root(
         }
     }
 }
+
+/** The capture setup data that came back with the activity's saved state, if any. */
+private class SavedCaptureSetup(
+    val snapshot: CaptureSetupSnapshot?,
+)
+
+/**
+ * Saves the capture setup scope as it is when the state is saved (not the restored value), and
+ * nothing while the scope is closed.
+ */
+private val savedCaptureSetupSaver =
+    Saver<SavedCaptureSetup, CaptureSetupSnapshot>(
+        save = { CaptureSetupScopeManager.snapshot() },
+        restore = { SavedCaptureSetup(it) },
+    )

@@ -15,12 +15,17 @@
  */
 package org.greenstand.android.TreeTracker.models.setupflow
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
+import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
+import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.navigation.orgRepoWith
 import org.junit.After
@@ -42,6 +47,18 @@ class CaptureSetupScopeManagerTest {
     private val sessionTracker = mockk<SessionTracker>(relaxed = true)
     private val locationDataCapturer = mockk<LocationDataCapturer>(relaxed = true)
     private val deviceOrientation = mockk<DeviceOrientation>(relaxed = true)
+    private val userRepo = mockk<UserRepo>()
+    private val user =
+        User(
+            id = 7L,
+            wallet = "5551230001",
+            numberOfTrees = 0,
+            firstName = "Ada",
+            lastName = "Admin",
+            photoPath = "/photos/ada.jpg",
+            isPowerUser = true,
+            unreadMessagesAvailable = false,
+        )
 
     @Before
     fun setUp() {
@@ -163,4 +180,99 @@ class CaptureSetupScopeManagerTest {
 
         assertFalse(CaptureSetupScopeManager.isOpen)
     }
+
+    @Test
+    fun `snapshot is null while the scope is closed`() {
+        assertNull(CaptureSetupScopeManager.snapshot())
+    }
+
+    @Test
+    fun `snapshot holds the user id and the other setup data`() {
+        CaptureSetupScopeManager.open()
+        CaptureSetupScopeManager.getData().apply {
+            user = this@CaptureSetupScopeManagerTest.user
+            destinationWallet = "wallet-2"
+            sessionNote = "planted near the river"
+            organizationName = "Acme Forestry"
+        }
+
+        assertEquals(
+            CaptureSetupSnapshot(
+                userId = 7L,
+                destinationWallet = "wallet-2",
+                sessionNote = "planted near the river",
+                organizationName = "Acme Forestry",
+            ),
+            CaptureSetupScopeManager.snapshot(),
+        )
+    }
+
+    @Test
+    fun `snapshot of a scope with nothing set is empty`() {
+        CaptureSetupScopeManager.open()
+
+        assertEquals(CaptureSetupSnapshot(), CaptureSetupScopeManager.snapshot())
+    }
+
+    @Test
+    fun `restore after process death reopens the scope with the saved data`() =
+        runTest {
+            coEvery { userRepo.getUser(7L) } returns user
+            CaptureSetupScopeManager.open()
+            CaptureSetupScopeManager.getData().apply {
+                user = this@CaptureSetupScopeManagerTest.user
+                destinationWallet = "wallet-2"
+                sessionNote = "planted near the river"
+                organizationName = "Acme Forestry"
+            }
+            val snapshot = CaptureSetupScopeManager.snapshot()!!
+            // Process death: the scope is gone, only the snapshot survives.
+            CaptureSetupScopeManager.close()
+
+            CaptureSetupScopeManager.restore(snapshot, userRepo)
+
+            assertTrue(CaptureSetupScopeManager.isOpen)
+            val data = CaptureSetupScopeManager.getData()
+            assertEquals(user, data.user)
+            assertEquals("wallet-2", data.destinationWallet)
+            assertEquals("planted near the river", data.sessionNote)
+            assertEquals("Acme Forestry", data.organizationName)
+        }
+
+    @Test
+    fun `restore leaves an open scope alone`() =
+        runTest {
+            CaptureSetupScopeManager.open()
+            val data = CaptureSetupScopeManager.getData()
+            data.organizationName = "Typed after the state was saved"
+
+            CaptureSetupScopeManager.restore(CaptureSetupSnapshot(userId = 7L, organizationName = "Saved"), userRepo)
+
+            assertSame(data, CaptureSetupScopeManager.getData())
+            assertEquals("Typed after the state was saved", data.organizationName)
+            assertNull(data.user)
+            coVerify(exactly = 0) { userRepo.getUser(any()) }
+        }
+
+    @Test
+    fun `restore opens the scope without a user when the user is gone`() =
+        runTest {
+            coEvery { userRepo.getUser(7L) } returns null
+
+            CaptureSetupScopeManager.restore(CaptureSetupSnapshot(userId = 7L, sessionNote = "note"), userRepo)
+
+            assertTrue(CaptureSetupScopeManager.isOpen)
+            assertNull(CaptureSetupScopeManager.getData().user)
+            assertEquals("note", CaptureSetupScopeManager.getData().sessionNote)
+        }
+
+    @Test
+    fun `restore without a selected user does not read the database`() =
+        runTest {
+            CaptureSetupScopeManager.restore(CaptureSetupSnapshot(), userRepo)
+
+            assertTrue(CaptureSetupScopeManager.isOpen)
+            assertNull(CaptureSetupScopeManager.getData().user)
+            coVerify(exactly = 0) { userRepo.getUser(any()) }
+        }
 }
