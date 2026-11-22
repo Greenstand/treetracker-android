@@ -1,0 +1,97 @@
+{
+  "name": "flow-results-affected-pr1460-44992938534",
+  "ref": "d33a123248e51ccf4d95f2359c25976effabab86",
+  "sha": "d33a123248e51ccf4d95f2359c25976effabab86",
+  "pr": 1460,
+  "apiLevel": "35",
+  "runId": "44992938534",
+  "runUrl": "https://github.com/Greenstand/treetracker-android/actions/runs/44992938534",
+  "passed": 1,
+  "failed": 2,
+  "recordingsLost": 0,
+  "flows": [
+    {
+      "name": "settings-delete-user-offline",
+      "file": "e2e/flows/settings-delete-user-offline.yaml",
+      "status": "failed",
+      "seconds": 71,
+      "steps": null,
+      "error": "Assertion is false: \"Account Deleted\", id: DialogTitle is visible",
+      "screenshots": [
+        "screens/settings-delete-user-offline/failure.png"
+      ],
+      "video": "videos/settings-delete-user-offline.mp4",
+      "captions": "videos/settings-delete-user-offline.srt",
+      "videoParts": [],
+      "recording": "saved",
+      "recordingError": null,
+      "tries": 1,
+      "files": [
+        "flows/settings-delete-user-offline/commands.json",
+        "flows/settings-delete-user-offline/console.txt",
+        "flows/settings-delete-user-offline/crash.txt",
+        "flows/settings-delete-user-offline/error.txt",
+        "flows/settings-delete-user-offline/hierarchy.json",
+        "flows/settings-delete-user-offline/log.txt",
+        "flows/settings-delete-user-offline/logcat-app.txt",
+        "flows/settings-delete-user-offline/logcat.txt",
+        "flows/settings-delete-user-offline/report.xml",
+        "flows/settings-delete-user-offline/screen.txt"
+      ]
+    },
+    {
+      "name": "org-process-death-session-note",
+      "file": "e2e/flows/org-process-death-session-note.yaml",
+      "status": "failed",
+      "seconds": 29,
+      "steps": null,
+      "error": "Assertion is false: id: SessionNoteField is visible",
+      "screenshots": [
+        "screens/org-process-death-session-note/failure.png"
+      ],
+      "video": "videos/org-process-death-session-note.mp4",
+      "captions": "videos/org-process-death-session-note.srt",
+      "videoParts": [],
+      "recording": "saved",
+      "recordingError": null,
+      "tries": 1,
+      "files": [
+        "flows/org-process-death-session-note/commands.json",
+        "flows/org-process-death-session-note/console.txt",
+        "flows/org-process-death-session-note/crash.txt",
+        "flows/org-process-death-session-note/error.txt",
+        "flows/org-process-death-session-note/hierarchy.json",
+        "flows/org-process-death-session-note/log.txt",
+        "flows/org-process-death-session-note/logcat-app.txt",
+        "flows/org-process-death-session-note/logcat.txt",
+        "flows/org-process-death-session-note/report.xml",
+        "flows/org-process-death-session-note/screen.txt",
+        "flows/org-process-death-session-note/setup.txt"
+      ]
+    },
+    {
+      "name": "first-screen",
+      "file": "e2e/flows/first-screen.yaml",
+      "status": "passed",
+      "seconds": 6,
+      "steps": null,
+      "error": null,
+      "screenshots": [
+        "screens/first-screen/step-02-end-extendedWaitUntil-ENGLISH.png"
+      ],
+      "video": "videos/first-screen.mp4",
+      "captions": "videos/first-screen.srt",
+      "videoParts": [],
+      "recording": "saved",
+      "recordingError": null,
+      "tries": 1,
+      "files": [
+        "flows/first-screen/console.txt",
+        "flows/first-screen/log.txt",
+        "flows/first-screen/logcat-app.txt",
+        "flows/first-screen/logcat.txt",
+        "flows/first-screen/report.xml"
+      ]
+    }
+  ]
+}

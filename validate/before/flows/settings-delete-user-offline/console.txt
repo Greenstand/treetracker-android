@@ -1,0 +1,58 @@
+▶ Delete user offline on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  6.1s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  3.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  377ms
+    ✓ Tap on id: ArrowForwardButton  419ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  300ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  386ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.3s
+    ✓ Input text 5551230001  1.1s
+    ✓ Hide keyboard  121ms
+    ✓ Tap on id: ArrowForwardButton  321ms
+    ✓ Tap on id: FirstNameField  273ms
+    ✓ Input text Ada  703ms
+    ✓ Tap on id: LastNameField  236ms
+    ✓ Input text Admin  336ms
+    ✓ Hide keyboard  79ms
+    ✓ Tap on id: ArrowForwardButton  176ms
+    ✓ Tap on id: TutorialDoneButton  1.3s
+    ✓ Tap on id: CaptureButton  583ms
+    ✓ Wait until id: ApproveButton is visible  16ms
+    ✓ Tap on id: ApproveButton  183ms
+    ✓ Wait until id: TrackButton is visible  24ms
+  ✓ Run Sign up  22.9s
+  ✓ Tap on id: TrackButton  130ms
+  ✓ Tap on id: OrangeAddButton  167ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  126ms
+  ✓ Tap on id: PhoneField  206ms
+  ✓ Input text 5551230002  530ms
+  ✓ Hide keyboard  62ms
+  ✓ Tap on id: ArrowForwardButton  95ms
+  ✓ Tap on id: FirstNameField  156ms
+  ✓ Input text Bob  270ms
+  ✓ Tap on id: LastNameField  209ms
+  ✓ Input text Builder  376ms
+  ✓ Hide keyboard  55ms
+  ✓ Tap on id: ArrowForwardButton  173ms
+  ✓ Tap on id: CaptureButton  650ms
+  ✓ Tap on id: ApproveButton  141ms
+  ✓ Wait until id: OrgNameField is visible  8ms
+  ✓ Press back  55ms
+  ✓ Press back  91ms
+  ✓ Wait until id: SettingsButton is visible  9ms
+  ✓ Tap on id: SettingsButton  121ms
+  ✓ Tap on id: SettingsDeleteAccount  160ms
+  ✓ Tap on id: UserButton_5551230002  123ms
+  ✓ Tap on id: ArrowForwardButton  117ms
+  ✓ Tap on id: DialogPositiveButton  136ms
+    log: the screen changed without the device reporting it (found by a re-read after 3s of silence); waits on this app may be slower
+  ✗ Wait until "Account Deleted", id: DialogTitle is visible  10.0s
+      Assertion is false: "Account Deleted", id: DialogTitle is visible
+✗ Delete user offline failed in 1m7s on sdk gphone64 x86 64
+  Assertion is false: "Account Deleted", id: DialogTitle is visible
+  debug: build/flow-results/validate/before/flows/settings-delete-user-offline/tb/Delete_user_offline (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/settings-delete-user-offline/tb/Delete_user_offline/recording.mp4
+
+0 passed, 1 failed in 1m11s

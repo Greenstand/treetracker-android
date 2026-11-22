@@ -1,0 +1,99 @@
+{
+  "beforeSha": "6b8dea0e1eaeb04fb2161aa89d285cd467c0b882",
+  "beforeMissing": null,
+  "counts": {
+    "validated": 2,
+    "not-demonstrated": 1,
+    "broken": 0,
+    "inconclusive": 0
+  },
+  "flows": [
+    {
+      "name": "settings-delete-user-offline",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 71,
+        "error": "Assertion is false: \"Account Deleted\", id: DialogTitle is visible",
+        "ran": true,
+        "video": "before/videos/settings-delete-user-offline.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/settings-delete-user-offline/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 53,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/settings-delete-user-offline.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/settings-delete-user-offline/step-32-end-assertNotVisible-UserButton_5551230002.png"
+        ]
+      }
+    },
+    {
+      "name": "org-process-death-session-note",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 29,
+        "error": "Assertion is false: id: SessionNoteField is visible",
+        "ran": true,
+        "video": "before/videos/org-process-death-session-note.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/org-process-death-session-note/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 26,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/org-process-death-session-note.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/org-process-death-session-note/step-13-end-extendedWaitUntil-CaptureButton.png"
+        ]
+      }
+    },
+    {
+      "name": "first-screen",
+      "verdict": "not-demonstrated",
+      "why": null,
+      "before": {
+        "status": "passed",
+        "seconds": 6,
+        "error": null,
+        "ran": true,
+        "video": "before/videos/first-screen.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/first-screen/step-02-end-extendedWaitUntil-ENGLISH.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 6,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/first-screen.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/first-screen/step-02-end-extendedWaitUntil-ENGLISH.png"
+        ]
+      }
+    }
+  ]
+}
