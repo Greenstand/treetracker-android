@@ -37,5 +37,20 @@ cleared and `viewModelScope` is cancelled. On a slow database, the `getPowerUser
 `withContext(NonCancellable)`, or an app-scoped write. It is left for a separate issue, as is process
 death before the write commits.
 
-There is no e2e flow for this task. Reaching the bug needs Logout to be confirmed before the Room query
-returns, a window of a few milliseconds that a UI flow can't hit deterministically.
+There is no validating e2e flow for this task (`pr-validating-flow` skill, "When no flow can show the
+change"). What was tried:
+
+1. A consequence a user can see: yes. With the flag left set, a relaunch after logout opens the
+   Dashboard as the previous power user (`SplashScreenViewModel.isInitialSetupRequired()` is
+   `getPowerUser() == null`) instead of the language picker.
+2. Reachable offline: yes, sign-up and logout need no server.
+3. Hit reliably by a driven UI: no. Logout only clears the cached `state.powerUser`, so the bug needs
+   Logout to be confirmed (two taps: Logout, then the dialog's OK) before the `getPowerUser()` Room
+   query that starts when Settings opens returns, which takes milliseconds. Nothing reachable from
+   Settings changes who the power user is, so the cache can't go stale any other way.
+4. Candidate flow "Logout then relaunch opens setup" (sign up, Settings, Logout, OK, kill, relaunch,
+   expect the language picker), run with the Flow runner on the app at 4edc726 (before) and at
+   7580725 (after): passed on both, verdict "does not demonstrate the change"
+   (https://github.com/Greenstand/treetracker-android/actions/runs/45073108272).
+
+The proof is the unit test, which fails without the fix and passes with it.
