@@ -85,7 +85,12 @@ screen that used to be skipped, the value that used to be lost. Check three thin
 - **It asserts through the UI**, at the end of a path a user can take. `launchApp`, `tapOn`,
   `inputText`, `back`, `pressKey: Home` + `killApp` (process death) and the like.
 
-Where the flow runs:
+Where the flow runs depends on whether your session has an emulator. Check, don't assume:
+
+```bash
+adb devices 2>/dev/null | grep -w device || echo "no emulator here: use CI"
+```
+
 
 - **With an emulator** (your own machine): `./gradlew :app:installDebug`, then follow the tb skill
   (`tb test e2e/flows/<name>.yaml`). For both apps and the verdict in one go, see "Locally" under
