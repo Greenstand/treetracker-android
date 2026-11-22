@@ -16,7 +16,36 @@ This task fixes 1 (part A) and plans 2 and 3 (parts B to D, [plan.md](plan.md)).
 
 ## A. Why the recordings were lost
 
-TO BE FILLED FROM THE CI REPRODUCTION.
+Not tb's recording, and not timing against screenrecord: **the emulator's adb connection drops in
+the middle of the `adb pull`**, and tb then throws the device's copy away.
+
+Evidence:
+
+- `logcat.txt` of the failed run on #1435 (artifact `flow-results-affected-pr1435-44970826171`),
+  both flows: screenrecord finishes cleanly (`MPEG4Writer: final fsync() ... file size 1245030`,
+  `ScreenRecord: success`), and 88 ms later, as tb starts its pull, the device logs
+  `adbd: host-17: connection terminated: write failed`, `host-17: offline`,
+  `destroying transport host-17`; a new transport comes up half a second later. tb's console line
+  ends in `exit status 1:` with nothing after it, or with `[  6%] /sdcard/tb-recording-1.mp4`:
+  adb died after at most one 64 KB chunk and printed no error.
+- Reproduced without tb (draft PR #1458, a throwaway workflow on the same emulator setup): a
+  plain `adb pull` of a 1.2 MB file from `/sdcard` failed the same way (exit 1, no output) once
+  in the first 10 pulls; the host's adb server log has
+  `emulator-5554: connection terminated: read failed` at that second. SECOND RUN RESULTS TO ADD.
+- So each side sees the other hang up: the connection is cut in between, in the emulator's adb
+  bridge. Screenrecord's file size, the 3-minute cap, the stop signal and the pull's timing are
+  all fine (the file is complete on the device before the pull starts).
+
+What tb does with it (Test Buddy v0.6.3, the pinned `447f360`, also its newest commit):
+`internal/driver/android/recording.go`, `StopRecording`: one `d.adb.Run(ctx, "pull", remote, local)`
+(line 279) with no retry, and a deferred `rm -f /sdcard/tb-recording-*.mp4` (line 261) that runs
+whether or not the pull worked. `internal/engine/recording.go`, `recordStop` (line 98) then logs
+"the recording could not be saved" and the flow still passes. tb is not the cause of the drop,
+but it turns a retryable pull into a lost video. Worth reporting upstream: pull again after
+`adb wait-for-device`, and keep the device's file when the pull fails.
+
+Because tb has deleted the file by the time it returns, nothing in this repository can pull it
+again: the clean workaround here is to run the flow again.
 
 ## Change (part A)
 

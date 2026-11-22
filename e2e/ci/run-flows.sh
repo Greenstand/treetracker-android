@@ -127,6 +127,19 @@ start_recording() {
   REC=$!
   sleep 2
 }
+# CI's emulator now and then drops its adb connection in the middle of a pull (see
+# docs/testing/ci-flows.md, "Lost recordings"): the file is still on the device, so pull again.
+pull_video() {  # $1 file on the device, $2 where to save it
+  local try
+  for try in 1 2 3; do
+    "$ADB" -s "$SERIAL" pull "$1" "$2" >/dev/null 2>&1 && return 0
+    echo "adb pull $1 failed (try $try)" >&2
+    rm -f "$2"
+    "$ADB" -s "$SERIAL" wait-for-device
+    sleep 1
+  done
+  return 1
+}
 stop_recording() {  # $1: flow name
   sleep 1
   "$ADB" -s "$SERIAL" shell touch "$REC_DIR/stop"
@@ -140,7 +153,7 @@ stop_recording() {  # $1: flow name
   local parts=() i
   for i in 1 2 3 4 5 6; do
     "$ADB" -s "$SERIAL" shell "[ -f $REC_DIR/part-$i.mp4 ]" || break
-    "$ADB" -s "$SERIAL" pull "$REC_DIR/part-$i.mp4" "$OUT/videos/$1-part-$i.mp4" >/dev/null && parts+=("$OUT/videos/$1-part-$i.mp4")
+    pull_video "$REC_DIR/part-$i.mp4" "$OUT/videos/$1-part-$i.mp4" && parts+=("$OUT/videos/$1-part-$i.mp4")
   done
   if (( ${#parts[@]} == 1 )) || { (( ${#parts[@]} > 1 )) && ! command -v ffmpeg >/dev/null; }; then
     mv "${parts[0]}" "$OUT/videos/$1.mp4"
