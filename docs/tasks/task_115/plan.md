@@ -96,13 +96,27 @@ For those the honest output is "no validating flow" and a unit or instrumented t
 
 ## D. Inline playback
 
-To check on a draft PR before recommending (nothing assumed):
+Tried in a real comment (on the throwaway PR #1458, with a recording from a results branch):
 
-| Option | Plays inline? | Needs | Notes |
-|---|---|---|---|
-| `gh pr comment --attach video.mp4` | Yes, GitHub's own player | gh ≥ 2.99 (runners must install it) and a **user** token with push access: GitHub's changelog names the `gh auth login` OAuth token or a classic PAT. The built-in token was refused in #1424. | A maintainer secret (`E2E_ATTACH_TOKEN`) in a job that handles PR-produced files; classic PATs are broad. 10 MB per video on the Free plan. |
-| GIF on the results branch, `<img>` in the comment | Yes, autoplays, no controls | Nothing new (built-in token, public repo) | Lower quality; size to be measured (#1424 used 8 fps, 270 px, double speed). The MP4 link stays next to it. |
-| MP4 link to the results branch (today) | No | Nothing | |
+| Way | Result |
+|---|---|
+| GIF on a results branch, `<img src="https://raw.githubusercontent.com/...gif">` | **Plays inline**, in GitHub's animated-image player (with a pause button). Built-in token, nothing new. |
+| `<video src="...mp4">` pointing at the results branch | Stripped from the comment: nothing is shown. |
+| The MP4's URL on a line of its own | A plain link. GitHub only turns its own `user-attachments` URLs into a player. |
 
-Likely recommendation, to be confirmed by trying both: GIF by default (works for every PR with
-no secret), and the attachment path only when `E2E_ATTACH_TOKEN` exists.
+Sizes: a 32 s annotated clip (320x690) is 0.23 MB as MP4 and 0.56 MB as a GIF at full speed,
+8 fps, 270 px wide, 64 colours (the #1424 settings without the double speed); a 20 s one is
+0.40 MB.
+
+Not tried, because it needs a maintainer's secret: `gh pr comment --attach video.mp4`, which
+gives GitHub's real video player. It needs gh 2.99 or newer on the runner and a **user** token
+with push access: GitHub's changelog names the `gh auth login` OAuth token or a classic PAT, and
+#1424 found the built-in token is refused. A classic PAT is broad (the whole `repo` scope, for
+every repository its owner can push to), and it would sit in a job that handles files a PR's
+code produced. Videos are capped at 10 MB on the Free plan.
+
+**Recommendation:** GIF by default, next to the MP4 link (it works for every PR from this
+repository with the built-in token, and it is what a reviewer sees without clicking). Add the
+attachment path later only if maintainers want a real player enough to keep an
+`E2E_ATTACH_TOKEN`; the job that uses it must run no PR code and only upload the files.
+For a fork's PR (run by hand, no results branch) the comment keeps linking the artifact.
