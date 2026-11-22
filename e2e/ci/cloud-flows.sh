@@ -54,6 +54,7 @@ fetch() {  # $1 branch, $2 expected run id (optional)
   got=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("runId") or "")' "$OUT/summary.json")
   [[ -z $want || $got == "$want" ]] || echo "Note: $b holds run $got, not $want (a newer run replaced it?)" >&2
   echo
+  if [[ -f $OUT/validate/verdict.md ]]; then cat "$OUT/validate/verdict.md"; echo; fi
   cat "$OUT/summary.md"
   echo
   echo "Results in $OUT: summary.json, screens/<flow>/*.png, flows/<flow>/ (console.txt, logcat-app.txt, error.txt)"
