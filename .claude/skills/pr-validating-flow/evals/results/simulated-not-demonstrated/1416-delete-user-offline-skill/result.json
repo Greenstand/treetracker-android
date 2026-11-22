@@ -1,0 +1,200 @@
+{
+  "case": "1416-delete-user-offline",
+  "kind": "flow",
+  "arm": "skill",
+  "simulated_verdict": "not-demonstrated",
+  "base": "419e20bda8c593203b49c701a6a2d81bec76a4bb",
+  "branch": "skill-eval/1122c/1416-delete-user-offline-skill",
+  "skill_commit": "1f4a45305b7be4bcfc166acdb68ff6429a68b410",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [
+        "settings-delete-user-offline"
+      ],
+      "claimed_flows": [
+        "settings-delete-user-offline"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/settings-delete-user-offline.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": true,
+          "scored": true,
+          "detail": "validates: settings-delete-user-offline"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": true,
+          "scored": true,
+          "detail": "the transcript shows Test Buddy's skill loaded or its files read"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": null,
+          "scored": true,
+          "detail": "CI did not run"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        }
+      ],
+      "score": [
+        8,
+        8
+      ],
+      "round": 1,
+      "cost_usd": 1.8824326000000002,
+      "turns": 13,
+      "model": "claude-fable-5-2",
+      "head": "d400707777ede75d4823d3e45792329eb4bba1c6"
+    },
+    {
+      "kind": "flow",
+      "added_flows": [
+        "settings-delete-user-offline"
+      ],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/settings-delete-user-offline.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": false,
+          "scored": false,
+          "detail": "validates: (no line)"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": true,
+          "scored": true,
+          "detail": "the transcript shows Test Buddy's skill loaded or its files read"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": null,
+          "scored": false,
+          "detail": "CI did not run"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        },
+        {
+          "id": "reacted_to_not_demonstrated",
+          "pass": true,
+          "scored": true,
+          "detail": "the description or the flow changed"
+        },
+        {
+          "id": "handles_not_demonstrated",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The agent withdrew the claim outright: it removed the `validates:` line, stated in the description and flow header that the flow passes on the unfixed app and is not proof, included CI's verdict table, left the fix and flow steps unchanged, and left the merge call to the maintainers."
+        }
+      ],
+      "score": [
+        9,
+        9
+      ],
+      "round": 2,
+      "cost_usd": 2.1503238000000002,
+      "turns": 2,
+      "model": "claude-fable-5-2",
+      "head": "268aec6c40e096d24bfcb66ba7a166ec931dc112"
+    }
+  ]
+}

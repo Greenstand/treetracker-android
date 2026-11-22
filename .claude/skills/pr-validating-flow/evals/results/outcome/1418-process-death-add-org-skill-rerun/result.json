@@ -1,0 +1,195 @@
+{
+  "case": "1418-process-death-add-org",
+  "kind": "flow",
+  "arm": "skill",
+  "base": "05f4f50fba93aed4cc404b152f5b4a434e54ff99",
+  "branch": "skill-eval/1122b/1418-process-death-add-org-skill",
+  "skill_commit": "dfc1d3db6a2020ea18f45248a8898db3f42a6a0a",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [
+        "sad-process-death-add-org"
+      ],
+      "claimed_flows": [
+        "sad-process-death-add-org"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupProcessDeathTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/di/AppModule.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupData.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupStore.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/SetupScope.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/sad-process-death-add-org.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": true,
+          "scored": true,
+          "detail": "validates: sad-process-death-add-org"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": true,
+          "scored": true,
+          "detail": "the transcript shows Test Buddy's skill loaded or its files read"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": null,
+          "scored": true,
+          "detail": "CI did not run"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        }
+      ],
+      "score": [
+        8,
+        8
+      ],
+      "round": 1,
+      "cost_usd": 2.7003421999999997,
+      "turns": 19,
+      "model": "claude-fable-5-2",
+      "head": "482c1a27d6c0d964ded43719814c971a37cbde99"
+    },
+    {
+      "kind": "flow",
+      "added_flows": [
+        "sad-process-death-add-org"
+      ],
+      "claimed_flows": [
+        "sad-process-death-add-org"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupProcessDeathTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/di/AppModule.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupData.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupStore.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/SetupScope.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/sad-process-death-add-org.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": true,
+          "scored": true,
+          "detail": "validates: sad-process-death-add-org"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": true,
+          "scored": true,
+          "detail": "the transcript shows Test Buddy's skill loaded or its files read"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": true,
+          "scored": true,
+          "detail": "{\"sad-process-death-add-org\": \"validated\"}"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        },
+        {
+          "id": "before_fails_for_the_bug",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The flow stopped on an OrgNameField visibility wait, which matches the app crashing on reopen instead of restoring Add org, though the error text alone does not rule out the identical wait before the kill."
+        }
+      ],
+      "score": [
+        10,
+        10
+      ],
+      "round": 2,
+      "cost_usd": 2.7644881999999997,
+      "turns": 1,
+      "model": "claude-fable-5-2",
+      "head": "482c1a27d6c0d964ded43719814c971a37cbde99"
+    }
+  ]
+}

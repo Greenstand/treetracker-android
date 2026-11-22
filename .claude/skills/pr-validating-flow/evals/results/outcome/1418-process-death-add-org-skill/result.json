@@ -1,0 +1,109 @@
+{
+  "case": "1418-process-death-add-org",
+  "kind": "flow",
+  "arm": "skill",
+  "base": "7f5cfa03c08f42964130ee36daaa3c6e1cefe47a",
+  "branch": "skill-eval/1122a/1418-process-death-add-org-skill",
+  "skill_commit": "e987f82de9467a46f8f6434ea94fc29509216ab9",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [
+        "sad-process-death-add-org"
+      ],
+      "claimed_flows": [
+        "sad-process-death-add-org"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorerTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupStoreTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/navigation/RestoredBackStackTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/root/RootUiTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/di/AppModule.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupData.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorer.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupStore.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/SetupScope.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/sad-process-death-add-org.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": true,
+          "scored": true,
+          "detail": "validates: sad-process-death-add-org"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": false,
+          "scored": true,
+          "detail": "no Skill tb call and no read of plugin/skills/tb in the transcript"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": true,
+          "scored": true,
+          "detail": "{\"sad-process-death-add-org\": \"validated\"}"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        },
+        {
+          "id": "before_fails_for_the_bug",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The error is Maestro's message for a failed wait on OrgNameField being visible, which matches the wait after the kill-and-reopen where the unfixed app crashes instead of restoring Add org, though the message alone does not rule out the identical wait before the kill."
+        }
+      ],
+      "score": [
+        9,
+        10
+      ],
+      "round": 1,
+      "cost_usd": 3.3186666,
+      "turns": 23,
+      "model": "claude-fable-5-2",
+      "head": "9ac132ddeb16b00b5943219087f44f641d04fce8"
+    }
+  ]
+}
