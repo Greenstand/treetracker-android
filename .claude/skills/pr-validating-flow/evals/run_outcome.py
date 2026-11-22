@@ -115,21 +115,21 @@ def make_base(case, arm, src):
     git("worktree", "add", "-q", "--detach", tmp, start)
     try:
         for path in CI_FILES:
-            git("rm", "-rq", "--ignore-unmatch", path, cwd=tmp)
+            git("rm", "-rfq", "--ignore-unmatch", path, cwd=tmp)
             git("checkout", src, "--", path, cwd=tmp)
         if arm == "skill":
             for path in [SKILL] + ARM_FILES:
                 git("checkout", src, "--", path, cwd=tmp)
             # The eval's own files are not part of what an agent gets.
-            git("rm", "-rq", "--ignore-unmatch", SKILL + "/evals", cwd=tmp)
+            git("rm", "-rfq", "--ignore-unmatch", SKILL + "/evals", cwd=tmp)
         else:
-            git("rm", "-rq", "--ignore-unmatch", SKILL, cwd=tmp)
+            git("rm", "-rfq", "--ignore-unmatch", SKILL, cwd=tmp)
             for path in ARM_FILES:
                 if not (tmp / path).exists():
                     git("checkout", "origin/master", "--", path, cwd=tmp, check=False)
         names = [Path(p).name for p in case.get("remove", [])]
         for path in case.get("remove", []):
-            git("rm", "-q", "--ignore-unmatch", path, cwd=tmp)
+            git("rm", "-fq", "--ignore-unmatch", path, cwd=tmp)
         # Lines elsewhere that name a removed file would point at a file that is not there.
         for top in case.get("scrub", []):
             for f in ([tmp / top] if (tmp / top).is_file() else sorted((tmp / top).rglob("*.md"))):
