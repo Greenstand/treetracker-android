@@ -28,8 +28,10 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.round
@@ -50,11 +52,16 @@ object ImageUtils {
         return f
     }
 
-    @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
     fun createImageFile(context: Context): File {
+        val now = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val timeStamp = "%04d%02d%02d_%02d%02d%02d".format(
+            now.year, now.monthNumber, now.dayOfMonth,
+            now.hour, now.minute, now.second
+        )
         // Create an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = JPEG_FILE_PREFIX + timeStamp + "_"
         val directory = context.getDir("treeImages", Context.MODE_PRIVATE)
 
