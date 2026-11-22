@@ -259,6 +259,29 @@ class UserSelectViewModelTest {
         }
 
     @Test
+    fun `GIVEN the admin request cannot be sent WHEN delete succeeds THEN the failure is contained and the account is marked deleted`() =
+        runTest {
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            coEvery { messagesRepo.syncMessages() } throws IllegalStateException("Unable to reach Cognito")
+            val uncaught = mutableListOf<Throwable>()
+            val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
+            Thread.setDefaultUncaughtExceptionHandler { _, e -> uncaught += e }
+            try {
+                val viewModel = createViewModel()
+                viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+                viewModel.handleAction(UserSelectAction.DeleteUser)
+
+                assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
+                coVerify { messagesRepo.saveMessage(wallet = "0712345678", to = "admin", body = any()) }
+                coVerify { messagesRepo.syncMessages() }
+            } finally {
+                Thread.setDefaultUncaughtExceptionHandler(previousHandler)
+            }
+            assertTrue(uncaught.isEmpty(), "deleteUser let an exception escape: $uncaught")
+        }
+
+    @Test
     fun `GIVEN a selected user WHEN delete fails THEN state is unchanged and no admin message is sent`() =
         runTest {
             coEvery { userRepo.deleteUser("0712345678") } returns false

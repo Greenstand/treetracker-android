@@ -1,9 +1,9 @@
-# E8: delete the admin. After a relaunch there is no admin, so the app starts over on the language
-# picker, as on a fresh install.
+# E8: delete the admin. Confirming shows the "Account Deleted" dialog, and closing it opens Signup as
+# the only screen: back from it exits the app. After a relaunch there is no admin, so the app
+# starts over on the language picker, as on a fresh install.
 #
-# KNOWN BUG: confirming a delete while the device is offline crashes the app, so the "Account
-# Deleted" dialog and the clean Signup stack (back from Signup should exit the app) cannot be
-# checked here. See the note in settings-delete-user.yaml for the cause and file:line.
+# The run is offline, so the request to the admin cannot be uploaded. That used to crash the app
+# (#1416); the request now stays queued for the next sync.
 appId: org.greenstand.android.TreeTracker.debug
 name: E8 Delete admin
 tags: [settings]
@@ -18,6 +18,17 @@ tags: [settings]
 - tapOn: {id: ArrowForwardButton}
 - assertVisible: {id: DialogUserButton}
 - tapOn: {id: DialogPositiveButton}
+- assertVisible: {id: DialogTitle, text: "Account Deleted"}
+- tapOn: {id: DialogPositiveButton}
+# Signup opens with the privacy policy dialog over the credential step.
+- tapOn: {id: PrivacyPolicyCloseButton}
+- assertVisible: {id: PhoneField}
+- assertNotVisible: {id: SettingsDeleteAccount}
+# Signup is the only screen, so back exits the app.
+- back
+- assertNotVisible: {id: PhoneField}
+- assertNotVisible: {id: SettingsDeleteAccount}
+- assertNotVisible: {id: TrackButton}
 - stopApp
 - launchApp
 - extendedWaitUntil:
