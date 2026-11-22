@@ -1,0 +1,16 @@
+   0.000s tb 0.6.3: "First screen" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-first-screen.yaml)
+   0.001s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.002s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-first-screen.yaml:6)
+   4.493s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4490 ms
+   4.493s ▶ Take screenshot step-01-launchApp  (.ci-first-screen.yaml:8)
+   4.904s ✓ Take screenshot step-01-launchApp  411 ms
+   4.904s ▶ Wait until "ENGLISH" is visible  (.ci-first-screen.yaml:9)
+   5.741s   snapshot history: screen context changed; discarding 1 snapshots
+   7.494s   no change reported by the device for 1.5s while looking for "ENGLISH": reading the screen again
+   8.121s   snapshot history: screen context changed; discarding 1 snapshots
+   8.121s   log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+   8.149s   found "ENGLISH": TextView "ENGLISH" [129,251][191,269], after 3244 ms and 3 reads
+   8.149s ✓ Wait until "ENGLISH" is visible  3244 ms
+   8.149s ▶ Take screenshot step-02-end-extendedWaitUntil-ENGLISH  (.ci-first-screen.yaml:12)
+   8.180s ✓ Take screenshot step-02-end-extendedWaitUntil-ENGLISH  31 ms
+   8.180s PASSED in 8.179s
