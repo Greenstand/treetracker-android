@@ -258,7 +258,8 @@ def cmd_run(a):
     branch = f"skill-eval/{stamp}/{name}"
     repo = run_dir / "repo"
     git("init", "-q", "-b", branch, repo)
-    git("fetch", "-q", ROOT, f"refs/skill-eval/base/{name}", cwd=repo)
+    # --update-shallow: ROOT is "shallow" once cloud-flows.sh has fetched a results branch at depth 1.
+    git("fetch", "-q", "--update-shallow", ROOT, f"refs/skill-eval/base/{name}", cwd=repo)
     git("reset", "-q", "--hard", "FETCH_HEAD", cwd=repo)
     git("config", "user.name", "eval-agent", cwd=repo)
     git("config", "user.email", "eval-agent@invalid", cwd=repo)
