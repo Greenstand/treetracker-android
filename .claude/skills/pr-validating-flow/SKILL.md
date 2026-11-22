@@ -50,7 +50,7 @@ flow that is subtly wrong costs a 15-minute CI run to find out.
 What is specific to this repo, on top of that skill:
 
 - **Read `e2e/README.md`** and two or three flows near yours before writing. Ids come from
-  `TestTags` (`app/.../view/TestTags.kt`); a control without a tag gets one in your PR.
+  `TestTags` (`app/src/main/java/org/greenstand/android/TreeTracker/view/TestTags.kt`); a control without a tag gets one in your PR.
 - **Reuse the sub-flows** in `e2e/flows/subflows/` (`signup.yaml`, `start-capture.yaml`,
   `org-capture-setup.yaml`, ...) instead of copying their steps.
 - **The emulator is offline and the app has dummy keys**, in CI and in `e2e/run.sh`. A flow can't
