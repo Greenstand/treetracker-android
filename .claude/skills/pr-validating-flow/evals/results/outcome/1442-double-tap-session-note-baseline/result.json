@@ -1,0 +1,108 @@
+{
+  "case": "1442-double-tap-session-note",
+  "kind": "flow",
+  "arm": "baseline",
+  "base": "38097b4a553448617bcc0606f64d01843029ae99",
+  "branch": "skill-eval/1122a/1442-double-tap-session-note-baseline",
+  "skill_commit": "e987f82de9467a46f8f6434ea94fc29509216ab9",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [
+        "org-session-note-double-tap"
+      ],
+      "claimed_flows": [
+        "org-session-note-double-tap"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/sessionnote/SessionNoteScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/WalletSelectScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/addwallet/AddWalletScreenUiTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/navigation/DoubleTapGuard.kt, app/src/main/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteScreen.kt, app/src/main/java/org/greenstand/android/TreeTracker/walletselect/WalletSelectScreen.kt, app/src/main/java/org/greenstand/android/TreeTracker/walletselect/addwallet/AddWalletScreen.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/org-session-note-double-tap.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": true,
+          "scored": true,
+          "detail": "validates: org-session-note-double-tap"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": false,
+          "scored": true,
+          "detail": "no Skill tb call and no read of plugin/skills/tb in the transcript"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": true,
+          "scored": true,
+          "detail": "{\"org-session-note-double-tap\": \"validated\"}"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "before_fails_for_the_bug",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The flow got through launch, Track, user pick and the double tap on Next without any id or setup error, then failed on the first assertion that the session note is visible, which is exactly the bug's symptom of the session note being skipped by the second tap."
+        }
+      ],
+      "score": [
+        10,
+        11
+      ],
+      "round": 1,
+      "cost_usd": 2.2842464000000002,
+      "turns": 16,
+      "model": "claude-fable-5-2",
+      "head": "1931dde8643dea1ce12f4930050b3b3feeb2a380"
+    }
+  ]
+}
