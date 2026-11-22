@@ -87,14 +87,25 @@ again: the clean workaround here is to run the flow again.
   ("1 of 3 recordings lost" and "recording lost (try 3)" in the PR comment, a Video column in
   the summary, the job failed with "Every flow passed, but a recording was lost"), and
   `signup-back` was saved first time.
-- WARM-UP RUN TO ADD.
+- In CI on #1459 with the warm-up, four flows touched by a temporary commit (since reverted),
+  among them the two that lost their videos on #1435
+  ([run 44991989853](https://github.com/Greenstand/treetracker-android/actions/runs/44991989853)):
+  all four videos saved on the first try. The warm-up ran (`adb pull warm-up: 0 dropped before 5
+  in a row worked`) but that emulator dropped nothing, so **the warm-up absorbing a real drop
+  has not been seen in CI**: it rests on the two debug runs, where every drop was among the
+  first pulls. The re-run of a flow covers the case where that pattern does not hold.
 - Not seen in CI: the `RECORD=1` pull retry firing (unit-tested only), and a `partial` recording.
 
 ## Other things found
+
+- "code analysis" and "screenshot tests" failed on #1459 while this was being checked, on
+  downloads, not on code: Maven Central answered Gradle with 429 Too Many Requests, and
+  Robolectric could not fetch its Android jar. Several pushes close together (each starts every
+  workflow) may have set that off.
 
 - GitHub Models was retired on 30 July 2026, which changes part C ([plan.md](plan.md)).
 - "test and assemble" failed once on #1458, which changes no app code:
   `DashboardViewModelSyncTest > enqueued work shows sync preparing` and
   `DashboardViewModelTest > observeTreeCounts reacts to Flow changes`, both
-  `IllegalStateException at TestMainDispatcher.kt:72`. It passed on the next push. Looks like a
+  `IllegalStateException at TestMainDispatcher.kt:72`. It passed on the next push of the same PR. Looks like a
   flaky test on master; not looked into here.
