@@ -1,0 +1,42 @@
+▶ H5 Process death on Add org on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.1s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.7s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.2s
+    ✓ Tap on id: ArrowForwardButton  338ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.6s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  981ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.4s
+    ✓ Input text 5551230001  1.2s
+    ✓ Hide keyboard  183ms
+    ✓ Tap on id: ArrowForwardButton  132ms
+    ✓ Tap on id: FirstNameField  524ms
+    ✓ Input text Ada  747ms
+    ✓ Tap on id: LastNameField  1.1s
+    ✓ Input text Admin  448ms
+    ✓ Hide keyboard  67ms
+    ✓ Tap on id: ArrowForwardButton  155ms
+    ✓ Tap on id: TutorialDoneButton  856ms
+    ✓ Tap on id: CaptureButton  706ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  130ms
+    ✓ Wait until id: TrackButton is visible  43ms
+  ✓ Run Sign up  22.6s
+  ✓ Tap on id: TrackButton  156ms
+  ✓ Wait until id: UserButton_5551230001 is visible  11ms
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Wait until id: OrgNameField is visible  8ms
+  ✓ Press Home key  97ms
+  ✓ Kill app "org.greenstand.android.TreeTracker.debug"  58ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.8s
+  ✗ Wait until id: OrgNameField is visible  15.0s
+      Assertion is false: id: OrgNameField is visible
+✗ H5 Process death on Add org failed in 51.2s on sdk gphone64 x86 64
+  Assertion is false: id: OrgNameField is visible
+  debug: build/flow-results/validate/before/flows/sad-process-death-add-org/tb/H5_Process_death_on_Add_org (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/sad-process-death-add-org/tb/H5_Process_death_on_Add_org/recording.mp4
+
+0 passed, 1 failed in 54.3s
