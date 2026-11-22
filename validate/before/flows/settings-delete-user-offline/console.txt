@@ -1,0 +1,60 @@
+▶ Delete user offline on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.7s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  290ms
+    ✓ Tap on id: ArrowForwardButton  211ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  178ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  11ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  135ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  533ms
+    ✓ Hide keyboard  54ms
+    ✓ Tap on id: ArrowForwardButton  85ms
+    ✓ Tap on id: FirstNameField  133ms
+    ✓ Input text Ada  255ms
+    ✓ Tap on id: LastNameField  152ms
+    ✓ Input text Admin  294ms
+    ✓ Hide keyboard  53ms
+    ✓ Tap on id: ArrowForwardButton  138ms
+    ✓ Tap on id: TutorialDoneButton  585ms
+    ✓ Tap on id: CaptureButton  511ms
+    ✓ Wait until id: ApproveButton is visible  5ms
+    ✓ Tap on id: ApproveButton  105ms
+    ✓ Wait until id: TrackButton is visible  54ms
+  ✓ Run Sign up  20.8s
+  ✓ Tap on id: TrackButton  116ms
+  ✓ Tap on id: OrangeAddButton  149ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  124ms
+  ✓ Tap on id: PhoneField  143ms
+  ✓ Input text 5551230002  537ms
+  ✓ Hide keyboard  56ms
+  ✓ Tap on id: ArrowForwardButton  79ms
+  ✓ Tap on id: FirstNameField  137ms
+  ✓ Input text Bob  242ms
+  ✓ Tap on id: LastNameField  148ms
+  ✓ Input text Builder  314ms
+  ✓ Hide keyboard  66ms
+  ✓ Tap on id: ArrowForwardButton  128ms
+  ✓ Tap on id: CaptureButton  506ms
+  ✓ Tap on id: ApproveButton  128ms
+  ✓ Wait until id: OrgNameField is visible  8ms
+  ✓ Press back  42ms
+  ✓ Press back  59ms
+  ✓ Wait until id: SettingsButton is visible  6ms
+  ✓ Tap on id: SettingsButton  104ms
+  ✓ Tap on id: SettingsDeleteAccount  151ms
+  ✓ Tap on id: UserButton_5551230002  157ms
+  ✓ Tap on id: ArrowForwardButton  171ms
+  ✓ Tap on id: DialogPositiveButton  131ms
+  ✓ Wait until "Account Deleted", id: DialogTitle is visible  5ms
+  ✓ Tap on id: DialogPositiveButton  139ms
+  ✓ Assert that id: SettingsDeleteAccount is visible  6ms
+  ✓ Tap on id: SettingsDeleteAccount  130ms
+  ✓ Assert that id: UserButton_5551230001 is visible  7ms
+  ✓ Assert that id: UserButton_5551230002 is not visible  5ms
+  ✓ Take screenshot step-32-end-assertNotVisible-UserButton_5551230002  98ms
+✓ Delete user offline passed in 52.6s
+  video: build/flow-results/validate/before/flows/settings-delete-user-offline/tb/Delete_user_offline/recording.mp4
+
+1 passed in 54.2s
