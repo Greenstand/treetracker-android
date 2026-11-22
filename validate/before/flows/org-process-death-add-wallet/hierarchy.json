@@ -1,0 +1,813 @@
+{
+ "attributes": {
+  "bounds": "[0,0][320,640]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "bounds": "[0,0][320,24]",
+    "package": "com.android.systemui",
+    "window": "system"
+   },
+   "children": [
+    {
+     "attributes": {
+      "bounds": "[0,0][320,24]",
+      "class": "android.widget.FrameLayout"
+     },
+     "children": [
+      {
+       "attributes": {
+        "bounds": "[0,0][320,24]",
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/status_bar_launch_animation_container"
+       },
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      },
+      {
+       "attributes": {
+        "bounds": "[0,0][320,24]",
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/status_bar_container"
+       },
+       "children": [
+        {
+         "attributes": {
+          "bounds": "[0,0][320,24]",
+          "class": "android.widget.FrameLayout",
+          "resource-id": "com.android.systemui:id/status_bar"
+         },
+         "children": [
+          {
+           "attributes": {
+            "bounds": "[0,0][300,24]",
+            "class": "android.widget.LinearLayout",
+            "resource-id": "com.android.systemui:id/status_bar_contents"
+           },
+           "children": [
+            {
+             "attributes": {
+              "bounds": "[4,0][150,24]",
+              "class": "android.widget.FrameLayout",
+              "resource-id": "com.android.systemui:id/status_bar_start_side_container"
+             },
+             "children": [
+              {
+               "attributes": {
+                "bounds": "[4,0][65,24]",
+                "class": "android.widget.FrameLayout",
+                "resource-id": "com.android.systemui:id/status_bar_start_side_content"
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "bounds": "[4,0][65,24]",
+                  "class": "android.widget.LinearLayout",
+                  "resource-id": "com.android.systemui:id/status_bar_start_side_except_heads_up"
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "accessibilityText": "7:40 PM",
+                    "bounds": "[4,4][43,20]",
+                    "class": "android.widget.TextView",
+                    "resource-id": "com.android.systemui:id/clock",
+                    "text": "7:40"
+                   },
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  },
+                  {
+                   "attributes": {
+                    "bounds": "[43,0][65,24]",
+                    "class": "android.widget.FrameLayout",
+                    "resource-id": "com.android.systemui:id/notification_icon_area"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "bounds": "[43,0][65,24]",
+                      "class": "android.view.ViewGroup",
+                      "resource-id": "com.android.systemui:id/notificationIcons"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "accessibilityText": "Android System notification: ",
+                        "bounds": "[43,0][65,24]",
+                        "class": "android.widget.ImageView"
+                       },
+                       "clickable": false,
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "clickable": false,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "clickable": false,
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "clickable": false,
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "clickable": false,
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            },
+            {
+             "attributes": {
+              "bounds": "[150,0][296,24]",
+              "class": "android.widget.FrameLayout",
+              "resource-id": "com.android.systemui:id/status_bar_end_side_container"
+             },
+             "children": [
+              {
+               "attributes": {
+                "bounds": "[257,0][296,24]",
+                "class": "android.widget.LinearLayout",
+                "resource-id": "com.android.systemui:id/status_bar_end_side_content"
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "bounds": "[257,1][296,23]",
+                  "class": "android.widget.LinearLayout",
+                  "resource-id": "com.android.systemui:id/system_icons"
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "bounds": "[260,1][284,23]",
+                    "class": "android.widget.LinearLayout",
+                    "resource-id": "com.android.systemui:id/statusIcons"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "accessibilityText": "Airplane mode.",
+                      "bounds": "[260,1][278,23]",
+                      "class": "android.widget.ImageView"
+                     },
+                     "clickable": false,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  },
+                  {
+                   "attributes": {
+                    "accessibilityText": "Battery charging, 100 percent.",
+                    "bounds": "[284,5][292,19]",
+                    "class": "android.widget.LinearLayout",
+                    "resource-id": "com.android.systemui:id/battery"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "bounds": "[284,5][292,17]",
+                      "class": "android.widget.ImageView"
+                     },
+                     "clickable": false,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "clickable": false,
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "clickable": false,
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "clickable": false,
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "clickable": false,
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "clickable": false,
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "clickable": false,
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ]
+  },
+  {
+   "attributes": {
+    "bounds": "[0,0][320,640]",
+    "package": "org.greenstand.android.TreeTracker.debug",
+    "window": "app"
+   },
+   "children": [
+    {
+     "attributes": {
+      "bounds": "[0,0][320,640]",
+      "class": "android.widget.FrameLayout"
+     },
+     "children": [
+      {
+       "attributes": {
+        "bounds": "[0,0][320,640]",
+        "class": "android.view.View"
+       },
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      },
+      {
+       "attributes": {
+        "bounds": "[0,0][320,640]",
+        "class": "android.widget.LinearLayout"
+       },
+       "children": [
+        {
+         "attributes": {
+          "bounds": "[0,0][320,640]",
+          "class": "android.widget.FrameLayout"
+         },
+         "children": [
+          {
+           "attributes": {
+            "bounds": "[0,0][320,640]",
+            "class": "android.widget.LinearLayout",
+            "resource-id": "org.greenstand.android.TreeTracker.debug:id/action_bar_root"
+           },
+           "children": [
+            {
+             "attributes": {
+              "bounds": "[0,0][320,640]",
+              "class": "android.widget.FrameLayout",
+              "resource-id": "android:id/content"
+             },
+             "children": [
+              {
+               "attributes": {
+                "bounds": "[0,0][320,640]",
+                "class": "androidx.compose.ui.platform.ComposeView"
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "bounds": "[0,0][320,640]",
+                  "class": "android.view.View"
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "bounds": "[0,0][320,640]",
+                    "class": "android.view.View"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "bounds": "[0,0][320,640]",
+                      "class": "android.view.View"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "bounds": "[0,0][320,640]",
+                        "class": "android.view.View"
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "bounds": "[132,117][162,147]",
+                          "class": "android.widget.ImageView"
+                         },
+                         "clickable": false,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "bounds": "[172,120][189,149]",
+                          "class": "android.widget.TextView",
+                          "resource-id": "TreesSyncedCount",
+                          "text": "0"
+                         },
+                         "clickable": false,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "bounds": "[20,167][152,233]",
+                          "class": "android.widget.ProgressBar"
+                         },
+                         "clickable": false,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "bounds": "[82,233][91,300]",
+                          "class": "android.widget.TextView",
+                          "resource-id": "TreesToSyncCount",
+                          "text": "2"
+                         },
+                         "clickable": false,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "bounds": "[168,167][300,299]",
+                          "class": "android.view.View",
+                          "resource-id": "UploadButton"
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "bounds": "[176,175][300,299]",
+                            "class": "android.view.View"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[176,167][300,291]",
+                            "class": "android.view.View"
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "bounds": "[219,192][257,251]",
+                              "class": "android.view.View"
+                             },
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            },
+                            {
+                             "attributes": {
+                              "bounds": "[176,252][300,271]",
+                              "class": "android.widget.TextView",
+                              "text": "UPLOAD"
+                             },
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[168,167][300,299]",
+                            "class": "android.widget.Button"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "clickable": true,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "bounds": "[20,320][300,453]",
+                          "class": "android.view.View",
+                          "resource-id": "MessagesButton"
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "bounds": "[20,328][300,453]",
+                            "class": "android.view.View"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[20,320][300,445]",
+                            "class": "android.view.View"
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "bounds": "[133,353][187,397]",
+                              "class": "android.view.View"
+                             },
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            },
+                            {
+                             "attributes": {
+                              "bounds": "[20,406][300,425]",
+                              "class": "android.widget.TextView",
+                              "text": "MESSAGES"
+                             },
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[20,320][300,453]",
+                            "class": "android.widget.Button"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "clickable": true,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "bounds": "[20,473][300,606]",
+                          "class": "android.view.View",
+                          "resource-id": "TrackButton"
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "bounds": "[20,481][300,606]",
+                            "class": "android.view.View"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[20,473][300,598]",
+                            "class": "android.view.View"
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "bounds": "[130,498][190,558]",
+                              "class": "android.view.View"
+                             },
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            },
+                            {
+                             "attributes": {
+                              "bounds": "[20,559][300,578]",
+                              "class": "android.widget.TextView",
+                              "text": "TRACK"
+                             },
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[20,473][300,606]",
+                            "class": "android.widget.Button"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "clickable": true,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "accessibilityText": "SETTINGS",
+                          "bounds": "[14,43][64,93]",
+                          "class": "android.widget.ImageView",
+                          "resource-id": "SettingsButton"
+                         },
+                         "clickable": true,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "accessibilityText": "Treetracker icon",
+                          "bounds": "[125,43][195,93]",
+                          "class": "android.widget.ImageView",
+                          "resource-id": "TopBarLogo"
+                         },
+                         "clickable": false,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        },
+                        {
+                         "attributes": {
+                          "bounds": "[214,38][314,98]",
+                          "class": "android.view.View",
+                          "resource-id": "TopBarLanguageButton"
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "bounds": "[214,46][314,98]",
+                            "class": "android.view.View"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[214,38][314,90]",
+                            "class": "android.view.View"
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "bounds": "[254,55][274,73]",
+                              "class": "android.widget.TextView",
+                              "text": "EN"
+                             },
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          },
+                          {
+                           "attributes": {
+                            "bounds": "[214,38][314,98]",
+                            "class": "android.widget.Button"
+                           },
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "clickable": true,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "clickable": false,
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "clickable": false,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    },
+                    {
+                     "attributes": {
+                      "bounds": "[266,562][314,610]",
+                      "class": "android.view.View",
+                      "resource-id": "DebugOverlayMenuButton"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "bounds": "[285,574][295,598]",
+                        "class": "android.widget.TextView",
+                        "text": "D"
+                       },
+                       "clickable": false,
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "clickable": true,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "clickable": false,
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "clickable": false,
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "clickable": false,
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "clickable": false,
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "clickable": false,
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      },
+      {
+       "attributes": {
+        "bounds": "[0,0][320,640]",
+        "class": "android.widget.FrameLayout"
+       },
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "clickable": false,
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ]
+  }
+ ]
+}
