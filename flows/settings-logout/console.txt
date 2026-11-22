@@ -1,0 +1,65 @@
+▶ E6 Logout on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.0s
+  ✓ Take screenshot step-01-launchApp  268ms
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  328ms
+    ✓ Tap on id: ArrowForwardButton  381ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  701ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  227ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  268ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  1.6s
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  258ms
+    ✓ Tap on id: FirstNameField  476ms
+    ✓ Input text Ada  650ms
+    ✓ Tap on id: LastNameField  254ms
+    ✓ Input text Admin  437ms
+    ✓ Hide keyboard  73ms
+    ✓ Tap on id: ArrowForwardButton  279ms
+    ✓ Tap on id: TutorialDoneButton  2.1s
+    ✓ Tap on id: CaptureButton  843ms
+    ✓ Wait until id: ApproveButton is visible  68ms
+    ✓ Tap on id: ApproveButton  347ms
+    ✓ Wait until id: TrackButton is visible  266ms
+  ✓ Run Sign up  12.6s
+  ✓ Take screenshot step-02-runFlow-signup  170ms
+  ✓ Tap on id: SettingsButton  184ms
+  ✓ Take screenshot step-03-tapOn-SettingsButton  46ms
+  ✓ Tap on id: SettingsLogout  674ms
+  ✓ Take screenshot step-04-tapOn-SettingsLogout  42ms
+  ✓ Assert that id: DialogUserButton is visible  8ms
+  ✓ Tap on id: DialogNegativeButton  386ms
+  ✓ Take screenshot step-06-tapOn-DialogNegativeButton  188ms
+  ✓ Assert that id: DialogTitle is not visible  81ms
+  ✓ Assert that id: SettingsLogout is visible  14ms
+  ✓ Tap on id: SettingsLogout  158ms
+  ✓ Take screenshot step-09-tapOn-SettingsLogout  205ms
+  ✓ Tap on id: DialogPositiveButton  228ms
+  ✓ Take screenshot step-10-tapOn-DialogPositiveButton  284ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  152ms
+  ✓ Take screenshot step-11-tapOn-PrivacyPolicyCloseButton  233ms
+  ✓ Assert that id: PhoneField is visible  7ms
+  ✓ Assert that id: TrackButton is not visible  6ms
+  ✓ Assert that id: SettingsButton is not visible  6ms
+  ✓ Tap on id: PhoneField  96ms
+  ✓ Take screenshot step-15-tapOn-PhoneField  231ms
+  ✓ Input text 5551230001  386ms
+  ✓ Take screenshot step-16-inputText-5551230001  20ms
+  ✓ Hide keyboard  103ms
+  ✓ Take screenshot step-17-hideKeyboard  17ms
+  ✓ Tap on id: ArrowForwardButton  170ms
+  ✓ Take screenshot step-18-tapOn-ArrowForwardButton  273ms
+  ✓ Tap on id: ExistingUserButton  300ms
+  ✓ Take screenshot step-19-tapOn-ExistingUserButton  214ms
+  ✓ Wait until id: TrackButton is visible  7ms
+  ✓ Take screenshot step-20-extendedWaitUntil-TrackButton  13ms
+  ✓ Press back  56ms
+  ✓ Take screenshot step-21-back  310ms
+  ✓ Assert that id: TrackButton is not visible  8ms
+  ✓ Assert that id: ExistingUserButton is not visible  5ms
+  ✓ Take screenshot step-23-end-assertNotVisible-ExistingUserButton  91ms
+✓ E6 Logout passed in 20.3s
+
+1 passed in 22.0s
