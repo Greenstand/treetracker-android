@@ -255,7 +255,7 @@ jobs:
           disable-animations: true
           script: |
             adb install -r app/build/outputs/apk/debug/app-debug.apk
-            TB="$GITHUB_WORKSPACE/e2e/ci/tmp-lossy-tb.sh" bash e2e/ci/run-flows.sh -s "$(adb get-serialno)"; echo $? > build/flow-runner-exit
+            TB="$GITHUB_WORKSPACE/bin/tb" bash e2e/ci/run-flows.sh -s "$(adb get-serialno)"; echo $? > build/flow-runner-exit
 
       - name: Summary
         id: result
