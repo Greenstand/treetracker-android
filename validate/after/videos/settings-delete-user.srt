@@ -1,0 +1,268 @@
+1
+00:00:00,000 --> 00:00:02,044
+Launch app "org.greenstand.android.TreeTracker.debug"
+
+2
+00:00:02,044 --> 00:00:03,957
+Wait until id: LanguageOption_ENGLISH is visible
+
+3
+00:00:03,957 --> 00:00:05,159
+Tap on id: LanguageOption_ENGLISH
+
+4
+00:00:05,159 --> 00:00:06,293
+Tap on id: ArrowForwardButton
+
+5
+00:00:06,293 --> 00:00:07,432
+Tap on id: PrivacyPolicyCloseButton
+
+6
+00:00:07,432 --> 00:00:08,516
+Tap on id: PhoneCredentialButton
+
+7
+00:00:08,516 --> 00:00:09,585
+Tap on id: PhoneField
+
+8
+00:00:09,585 --> 00:00:10,585
+Input text 5551230001
+
+9
+00:00:10,585 --> 00:00:11,585
+Hide keyboard
+
+10
+00:00:11,585 --> 00:00:12,640
+Tap on id: ArrowForwardButton
+
+11
+00:00:12,640 --> 00:00:13,756
+Tap on id: FirstNameField
+
+12
+00:00:13,756 --> 00:00:14,757
+Input text Ada
+
+13
+00:00:14,757 --> 00:00:15,914
+Tap on id: LastNameField
+
+14
+00:00:15,914 --> 00:00:16,914
+Input text Admin
+
+15
+00:00:16,914 --> 00:00:17,915
+Hide keyboard
+
+16
+00:00:17,915 --> 00:00:18,968
+Tap on id: ArrowForwardButton
+
+17
+00:00:18,968 --> 00:00:20,510
+Tap on id: TutorialDoneButton
+
+18
+00:00:20,510 --> 00:00:21,675
+Tap on id: CaptureButton
+
+19
+00:00:21,675 --> 00:00:21,686
+Wait until id: ApproveButton is visible
+
+20
+00:00:21,686 --> 00:00:22,792
+Tap on id: ApproveButton
+
+21
+00:00:22,792 --> 00:00:22,806
+Wait until id: TrackButton is visible
+
+22
+00:00:22,806 --> 00:00:23,892
+Tap on id: TrackButton
+
+23
+00:00:23,892 --> 00:00:25,014
+Tap on id: OrangeAddButton
+
+24
+00:00:25,014 --> 00:00:26,128
+Tap on id: PrivacyPolicyCloseButton
+
+25
+00:00:26,128 --> 00:00:27,252
+Tap on id: PhoneField
+
+26
+00:00:27,252 --> 00:00:28,253
+Input text 5551230002
+
+27
+00:00:28,253 --> 00:00:29,253
+Hide keyboard
+
+28
+00:00:29,253 --> 00:00:30,306
+Tap on id: ArrowForwardButton
+
+29
+00:00:30,306 --> 00:00:31,424
+Tap on id: FirstNameField
+
+30
+00:00:31,424 --> 00:00:32,424
+Input text Bob
+
+31
+00:00:32,424 --> 00:00:33,498
+Tap on id: LastNameField
+
+32
+00:00:33,498 --> 00:00:34,499
+Input text Builder
+
+33
+00:00:34,499 --> 00:00:35,499
+Hide keyboard
+
+34
+00:00:35,499 --> 00:00:36,551
+Tap on id: ArrowForwardButton
+
+35
+00:00:36,551 --> 00:00:37,725
+Tap on id: CaptureButton
+
+36
+00:00:37,725 --> 00:00:38,843
+Tap on id: ApproveButton
+
+37
+00:00:38,843 --> 00:00:38,854
+Wait until id: OrgNameField is visible
+
+38
+00:00:38,854 --> 00:00:39,854
+Press back
+
+39
+00:00:39,854 --> 00:00:40,855
+Press back
+
+40
+00:00:40,855 --> 00:00:40,864
+Wait until id: SettingsButton is visible
+
+41
+00:00:40,864 --> 00:00:41,976
+Tap on id: SettingsButton
+
+42
+00:00:41,976 --> 00:00:43,094
+Tap on id: SettingsDeleteAccount
+
+43
+00:00:43,094 --> 00:00:43,109
+Assert that id: UserButton_5551230001 is visible
+
+44
+00:00:43,109 --> 00:00:43,122
+Assert that id: UserButton_5551230002 is visible
+
+45
+00:00:43,122 --> 00:00:44,222
+Tap on id: UserButton_5551230002
+
+46
+00:00:44,222 --> 00:00:45,343
+Tap on id: ArrowForwardButton
+
+47
+00:00:45,343 --> 00:00:45,351
+Assert that id: DialogUserButton is visible
+
+48
+00:00:45,351 --> 00:00:46,455
+Tap on id: DialogNegativeButton
+
+49
+00:00:46,455 --> 00:00:46,475
+Assert that id: DialogTitle is not visible
+
+50
+00:00:46,475 --> 00:00:46,487
+Assert that id: UserButton_5551230002 is visible
+
+51
+00:00:46,487 --> 00:00:47,591
+Tap on id: ArrowForwardButton
+
+52
+00:00:47,591 --> 00:00:48,706
+Tap on id: DialogPositiveButton
+
+53
+00:00:48,706 --> 00:00:48,717
+Assert that "Account Deleted", id: DialogTitle is visible
+
+54
+00:00:48,717 --> 00:00:49,818
+Tap on id: DialogPositiveButton
+
+55
+00:00:49,818 --> 00:00:49,830
+Assert that id: SettingsDeleteAccount is visible
+
+56
+00:00:49,830 --> 00:00:49,843
+Assert that id: DialogTitle is not visible
+
+57
+00:00:49,843 --> 00:00:50,948
+Tap on id: SettingsDeleteAccount
+
+58
+00:00:50,948 --> 00:00:50,960
+Assert that id: UserButton_5551230001 is visible
+
+59
+00:00:50,960 --> 00:00:50,972
+Assert that id: UserButton_5551230002 is not visible
+
+60
+00:00:50,972 --> 00:00:51,972
+Stop app "org.greenstand.android.TreeTracker.debug"
+
+61
+00:00:51,972 --> 00:00:53,638
+Launch app "org.greenstand.android.TreeTracker.debug"
+
+62
+00:00:53,638 --> 00:00:55,715
+Wait until id: TrackButton is visible
+
+63
+00:00:55,715 --> 00:00:56,874
+Tap on id: SettingsButton
+
+64
+00:00:56,874 --> 00:00:58,005
+Tap on id: SettingsDeleteAccount
+
+65
+00:00:58,005 --> 00:00:58,020
+Assert that id: UserButton_5551230001 is visible
+
+66
+00:00:58,020 --> 00:00:58,031
+Assert that id: UserButton_5551230002 is not visible
+
+67
+00:00:58,031 --> 00:00:58,165
+Take screenshot step-47-end-assertNotVisible-UserButton_5551230002
+

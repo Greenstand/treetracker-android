@@ -1,0 +1,70 @@
+{
+  "beforeSha": "eeeb413047610e96682c3786c10ace7689c4e1c1",
+  "beforeMissing": null,
+  "counts": {
+    "validated": 2,
+    "not-demonstrated": 0,
+    "broken": 0,
+    "inconclusive": 0
+  },
+  "flows": [
+    {
+      "name": "settings-delete-user",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 77,
+        "error": "Assertion is false: \"Account Deleted\", id: DialogTitle is visible",
+        "ran": true,
+        "video": "before/videos/settings-delete-user.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/settings-delete-user/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 64,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/settings-delete-user.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/settings-delete-user/step-47-end-assertNotVisible-UserButton_5551230002.png"
+        ]
+      }
+    },
+    {
+      "name": "settings-delete-admin",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 50,
+        "error": "Assertion is false: \"Account Deleted\", id: DialogTitle is visible",
+        "ran": true,
+        "video": "before/videos/settings-delete-admin.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/settings-delete-admin/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 39,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/settings-delete-admin.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/settings-delete-admin/step-21-end-assertNotVisible-TrackButton.png"
+        ]
+      }
+    }
+  ]
+}

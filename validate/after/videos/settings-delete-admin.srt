@@ -1,0 +1,164 @@
+1
+00:00:00,000 --> 00:00:01,940
+Launch app "org.greenstand.android.TreeTracker.debug"
+
+2
+00:00:01,940 --> 00:00:03,816
+Wait until id: LanguageOption_ENGLISH is visible
+
+3
+00:00:03,816 --> 00:00:05,014
+Tap on id: LanguageOption_ENGLISH
+
+4
+00:00:05,014 --> 00:00:06,147
+Tap on id: ArrowForwardButton
+
+5
+00:00:06,147 --> 00:00:07,280
+Tap on id: PrivacyPolicyCloseButton
+
+6
+00:00:07,280 --> 00:00:08,359
+Tap on id: PhoneCredentialButton
+
+7
+00:00:08,359 --> 00:00:09,428
+Tap on id: PhoneField
+
+8
+00:00:09,428 --> 00:00:10,429
+Input text 5551230001
+
+9
+00:00:10,429 --> 00:00:11,430
+Hide keyboard
+
+10
+00:00:11,430 --> 00:00:12,485
+Tap on id: ArrowForwardButton
+
+11
+00:00:12,485 --> 00:00:13,604
+Tap on id: FirstNameField
+
+12
+00:00:13,604 --> 00:00:14,604
+Input text Ada
+
+13
+00:00:14,604 --> 00:00:15,772
+Tap on id: LastNameField
+
+14
+00:00:15,772 --> 00:00:16,773
+Input text Admin
+
+15
+00:00:16,773 --> 00:00:17,773
+Hide keyboard
+
+16
+00:00:17,773 --> 00:00:18,824
+Tap on id: ArrowForwardButton
+
+17
+00:00:18,824 --> 00:00:20,258
+Tap on id: TutorialDoneButton
+
+18
+00:00:20,258 --> 00:00:21,408
+Tap on id: CaptureButton
+
+19
+00:00:21,408 --> 00:00:21,425
+Wait until id: ApproveButton is visible
+
+20
+00:00:21,425 --> 00:00:22,526
+Tap on id: ApproveButton
+
+21
+00:00:22,526 --> 00:00:22,543
+Wait until id: TrackButton is visible
+
+22
+00:00:22,543 --> 00:00:23,649
+Tap on id: SettingsButton
+
+23
+00:00:23,649 --> 00:00:24,774
+Tap on id: SettingsDeleteAccount
+
+24
+00:00:24,774 --> 00:00:25,891
+Tap on id: UserButton_5551230001
+
+25
+00:00:25,891 --> 00:00:27,005
+Tap on id: ArrowForwardButton
+
+26
+00:00:27,005 --> 00:00:27,016
+Assert that id: DialogUserButton is visible
+
+27
+00:00:27,016 --> 00:00:28,116
+Tap on id: DialogPositiveButton
+
+28
+00:00:28,116 --> 00:00:28,128
+Assert that "Account Deleted", id: DialogTitle is visible
+
+29
+00:00:28,128 --> 00:00:29,228
+Tap on id: DialogPositiveButton
+
+30
+00:00:29,228 --> 00:00:30,343
+Tap on id: PrivacyPolicyCloseButton
+
+31
+00:00:30,343 --> 00:00:30,359
+Assert that id: PhoneField is visible
+
+32
+00:00:30,359 --> 00:00:30,371
+Assert that id: SettingsDeleteAccount is not visible
+
+33
+00:00:30,371 --> 00:00:31,371
+Press back
+
+34
+00:00:31,371 --> 00:00:31,393
+Assert that id: PhoneField is not visible
+
+35
+00:00:31,393 --> 00:00:31,404
+Assert that id: SettingsDeleteAccount is not visible
+
+36
+00:00:31,404 --> 00:00:31,415
+Assert that id: TrackButton is not visible
+
+37
+00:00:31,415 --> 00:00:32,416
+Stop app "org.greenstand.android.TreeTracker.debug"
+
+38
+00:00:32,416 --> 00:00:34,024
+Launch app "org.greenstand.android.TreeTracker.debug"
+
+39
+00:00:34,024 --> 00:00:35,894
+Wait until id: LanguageOption_ENGLISH is visible
+
+40
+00:00:35,894 --> 00:00:36,115
+Assert that id: TrackButton is not visible
+
+41
+00:00:36,115 --> 00:00:36,257
+Take screenshot step-21-end-assertNotVisible-TrackButton
+

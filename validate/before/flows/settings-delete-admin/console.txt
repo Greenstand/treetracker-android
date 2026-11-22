@@ -1,0 +1,57 @@
+▶ E8 Delete admin on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.0s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  280ms
+    ✓ Tap on id: ArrowForwardButton  239ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  166ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  168ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.2s
+    ✓ Input text 5551230001  564ms
+    ✓ Hide keyboard  77ms
+    ✓ Tap on id: ArrowForwardButton  141ms
+    ✓ Tap on id: FirstNameField  166ms
+    ✓ Input text Ada  270ms
+    ✓ Tap on id: LastNameField  221ms
+    ✓ Input text Admin  308ms
+    ✓ Hide keyboard  122ms
+    ✓ Tap on id: ArrowForwardButton  167ms
+    ✓ Tap on id: TutorialDoneButton  555ms
+    ✓ Tap on id: CaptureButton  573ms
+    ✓ Wait until id: ApproveButton is visible  9ms
+    ✓ Tap on id: ApproveButton  135ms
+    ✓ Wait until id: TrackButton is visible  10ms
+  ✓ Run Sign up  20.8s
+  ✓ Tap on id: SettingsButton  265ms
+  ✓ Tap on id: SettingsDeleteAccount  176ms
+  ✓ Tap on id: UserButton_5551230001  244ms
+  ✓ Tap on id: ArrowForwardButton  141ms
+  ✓ Assert that id: DialogUserButton is visible  10ms
+  ✓ Tap on id: DialogPositiveButton  189ms
+  ✗ Assert that "Account Deleted", id: DialogTitle is visible  17.0s
+      Assertion is false: "Account Deleted", id: DialogTitle is visible
+✗ E8 Delete admin failed in 47.4s on sdk gphone64 x86 64
+  Assertion is false: "Account Deleted", id: DialogTitle is visible
+  screen was:
+    android 320x640 com.google.android.apps.nexuslauncher, 13 elements
+    column scrollable:
+      @1 Button "At a glance" #smartspace_card_pager
+        @2 Button "Sun, Nov 22" #base_template_card_with_date
+          @3 Button "Sun, Nov 22" #date
+    @4 View "Home"
+    row:
+      @5 Button "Phone"
+      @6 Button "Messages"
+      @7 Button "Tree Tracker(debug)"
+      @8 Button "Chrome"
+      @9 Button "Camera"
+    @10 Button "Google search" #search_container_hotseat
+      row:
+        @11 Button "Google app" #g_icon
+        @12 Button "Voice search" #mic_icon
+        @13 Button "Google Lens" #lens_icon
+  debug: build/flow-results/validate/before/flows/settings-delete-admin/tb/E8_Delete_admin (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/settings-delete-admin/tb/E8_Delete_admin/recording.mp4
+
+0 passed, 1 failed in 49.0s

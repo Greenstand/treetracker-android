@@ -1,0 +1,49 @@
+▶ E8 Delete admin on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  273ms
+    ✓ Tap on id: ArrowForwardButton  253ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  170ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  165ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  595ms
+    ✓ Hide keyboard  93ms
+    ✓ Tap on id: ArrowForwardButton  138ms
+    ✓ Tap on id: FirstNameField  171ms
+    ✓ Input text Ada  263ms
+    ✓ Tap on id: LastNameField  188ms
+    ✓ Input text Admin  324ms
+    ✓ Hide keyboard  69ms
+    ✓ Tap on id: ArrowForwardButton  183ms
+    ✓ Tap on id: TutorialDoneButton  614ms
+    ✓ Tap on id: CaptureButton  583ms
+    ✓ Wait until id: ApproveButton is visible  17ms
+    ✓ Tap on id: ApproveButton  129ms
+    ✓ Wait until id: TrackButton is visible  16ms
+  ✓ Run Sign up  20.6s
+  ✓ Tap on id: SettingsButton  225ms
+  ✓ Tap on id: SettingsDeleteAccount  177ms
+  ✓ Tap on id: UserButton_5551230001  246ms
+  ✓ Tap on id: ArrowForwardButton  149ms
+  ✓ Assert that id: DialogUserButton is visible  10ms
+  ✓ Tap on id: DialogPositiveButton  120ms
+  ✓ Assert that "Account Deleted", id: DialogTitle is visible  11ms
+  ✓ Tap on id: DialogPositiveButton  188ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  143ms
+  ✓ Assert that id: PhoneField is visible  15ms
+  ✓ Assert that id: SettingsDeleteAccount is not visible  12ms
+  ✓ Press back  75ms
+  ✓ Assert that id: PhoneField is not visible  21ms
+  ✓ Assert that id: SettingsDeleteAccount is not visible  11ms
+  ✓ Assert that id: TrackButton is not visible  10ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  56ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.6s
+  ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+  ✓ Assert that id: TrackButton is not visible  220ms
+  ✓ Take screenshot step-21-end-assertNotVisible-TrackButton  142ms
+✓ E8 Delete admin passed in 38.5s
+  video: build/flow-results/validate/after/flows/settings-delete-admin/tb/E8_Delete_admin/recording.mp4
+
+1 passed in 39.8s

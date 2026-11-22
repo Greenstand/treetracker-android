@@ -1,0 +1,72 @@
+{
+  "name": "flow-results-45060529908",
+  "ref": "refs/heads/skill-eval/1122a/1416-delete-user-offline-baseline",
+  "sha": "d07660c8f3503201ecca2867c426286a26260795",
+  "pr": null,
+  "apiLevel": "35",
+  "runId": "45060529908",
+  "runUrl": "https://github.com/Greenstand/treetracker-android/actions/runs/45060529908",
+  "passed": 0,
+  "failed": 2,
+  "recordingsLost": 0,
+  "flows": [
+    {
+      "name": "settings-delete-user",
+      "file": "e2e/flows/settings-delete-user.yaml",
+      "status": "failed",
+      "seconds": 77,
+      "steps": null,
+      "error": "Assertion is false: \"Account Deleted\", id: DialogTitle is visible",
+      "screenshots": [
+        "screens/settings-delete-user/failure.png"
+      ],
+      "video": "videos/settings-delete-user.mp4",
+      "captions": "videos/settings-delete-user.srt",
+      "videoParts": [],
+      "recording": "saved",
+      "recordingError": null,
+      "tries": 1,
+      "files": [
+        "flows/settings-delete-user/commands.json",
+        "flows/settings-delete-user/console.txt",
+        "flows/settings-delete-user/crash.txt",
+        "flows/settings-delete-user/error.txt",
+        "flows/settings-delete-user/hierarchy.json",
+        "flows/settings-delete-user/log.txt",
+        "flows/settings-delete-user/logcat-app.txt",
+        "flows/settings-delete-user/logcat.txt",
+        "flows/settings-delete-user/report.xml",
+        "flows/settings-delete-user/screen.txt"
+      ]
+    },
+    {
+      "name": "settings-delete-admin",
+      "file": "e2e/flows/settings-delete-admin.yaml",
+      "status": "failed",
+      "seconds": 50,
+      "steps": null,
+      "error": "Assertion is false: \"Account Deleted\", id: DialogTitle is visible",
+      "screenshots": [
+        "screens/settings-delete-admin/failure.png"
+      ],
+      "video": "videos/settings-delete-admin.mp4",
+      "captions": "videos/settings-delete-admin.srt",
+      "videoParts": [],
+      "recording": "saved",
+      "recordingError": null,
+      "tries": 1,
+      "files": [
+        "flows/settings-delete-admin/commands.json",
+        "flows/settings-delete-admin/console.txt",
+        "flows/settings-delete-admin/crash.txt",
+        "flows/settings-delete-admin/error.txt",
+        "flows/settings-delete-admin/hierarchy.json",
+        "flows/settings-delete-admin/log.txt",
+        "flows/settings-delete-admin/logcat-app.txt",
+        "flows/settings-delete-admin/logcat.txt",
+        "flows/settings-delete-admin/report.xml",
+        "flows/settings-delete-admin/screen.txt"
+      ]
+    }
+  ]
+}

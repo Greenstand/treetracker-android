@@ -1,0 +1,75 @@
+▶ E7 Delete non-admin user on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.0s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  271ms
+    ✓ Tap on id: ArrowForwardButton  245ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  186ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  144ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.2s
+    ✓ Input text 5551230001  533ms
+    ✓ Hide keyboard  81ms
+    ✓ Tap on id: ArrowForwardButton  110ms
+    ✓ Tap on id: FirstNameField  194ms
+    ✓ Input text Ada  284ms
+    ✓ Tap on id: LastNameField  220ms
+    ✓ Input text Admin  356ms
+    ✓ Hide keyboard  103ms
+    ✓ Tap on id: ArrowForwardButton  199ms
+    ✓ Tap on id: TutorialDoneButton  602ms
+    ✓ Tap on id: CaptureButton  568ms
+    ✓ Wait until id: ApproveButton is visible  11ms
+    ✓ Tap on id: ApproveButton  148ms
+    ✓ Wait until id: TrackButton is visible  14ms
+  ✓ Run Sign up  20.8s
+  ✓ Tap on id: TrackButton  200ms
+  ✓ Tap on id: OrangeAddButton  189ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  139ms
+  ✓ Tap on id: PhoneField  178ms
+  ✓ Input text 5551230002  516ms
+  ✓ Hide keyboard  84ms
+  ✓ Tap on id: ArrowForwardButton  100ms
+  ✓ Tap on id: FirstNameField  203ms
+  ✓ Input text Bob  250ms
+  ✓ Tap on id: LastNameField  92ms
+  ✓ Input text Builder  388ms
+  ✓ Hide keyboard  104ms
+  ✓ Tap on id: ArrowForwardButton  151ms
+  ✓ Tap on id: CaptureButton  595ms
+  ✓ Tap on id: ApproveButton  154ms
+  ✓ Wait until id: OrgNameField is visible  10ms
+  ✓ Press back  50ms
+  ✓ Press back  96ms
+  ✓ Wait until id: SettingsButton is visible  9ms
+  ✓ Tap on id: SettingsButton  162ms
+  ✓ Tap on id: SettingsDeleteAccount  168ms
+  ✓ Assert that id: UserButton_5551230001 is visible  14ms
+  ✓ Assert that id: UserButton_5551230002 is visible  12ms
+  ✓ Tap on id: UserButton_5551230002  126ms
+  ✓ Tap on id: ArrowForwardButton  144ms
+  ✓ Assert that id: DialogUserButton is visible  8ms
+  ✓ Tap on id: DialogNegativeButton  162ms
+  ✓ Assert that id: DialogTitle is not visible  19ms
+  ✓ Assert that id: UserButton_5551230002 is visible  12ms
+  ✓ Tap on id: ArrowForwardButton  166ms
+  ✓ Tap on id: DialogPositiveButton  140ms
+  ✓ Assert that "Account Deleted", id: DialogTitle is visible  11ms
+  ✓ Tap on id: DialogPositiveButton  206ms
+  ✓ Assert that id: SettingsDeleteAccount is visible  11ms
+  ✓ Assert that id: DialogTitle is not visible  13ms
+  ✓ Tap on id: SettingsDeleteAccount  165ms
+  ✓ Assert that id: UserButton_5551230001 is visible  11ms
+  ✓ Assert that id: UserButton_5551230002 is not visible  12ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  243ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.7s
+  ✓ Wait until id: TrackButton is visible  2.1s
+  ✓ Tap on id: SettingsButton  187ms
+  ✓ Tap on id: SettingsDeleteAccount  275ms
+  ✓ Assert that id: UserButton_5551230001 is visible  14ms
+  ✓ Assert that id: UserButton_5551230002 is not visible  11ms
+  ✓ Take screenshot step-47-end-assertNotVisible-UserButton_5551230002  133ms
+✓ E7 Delete non-admin user passed in 1m3s
+  video: build/flow-results/validate/after/flows/settings-delete-user/tb/E7_Delete_non-admin_user/recording.mp4
+
+1 passed in 1m4s
