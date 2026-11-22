@@ -28,13 +28,22 @@ Evidence:
   `destroying transport host-17`; a new transport comes up half a second later. tb's console line
   ends in `exit status 1:` with nothing after it, or with `[  6%] /sdcard/tb-recording-1.mp4`:
   adb died after at most one 64 KB chunk and printed no error.
-- Reproduced without tb (draft PR #1458, a throwaway workflow on the same emulator setup): a
-  plain `adb pull` of a 1.2 MB file from `/sdcard` failed the same way (exit 1, no output) once
-  in the first 10 pulls; the host's adb server log has
-  `emulator-5554: connection terminated: read failed` at that second. SECOND RUN RESULTS TO ADD.
+- Reproduced without tb (draft PR #1458, a throwaway workflow on the same emulator setup, two
+  runs). A plain `adb pull` of a 1.2 MB file fails the same way (exit 1, no output, or one
+  progress line), and the host's adb server logs `emulator-5554: connection terminated: read
+  failed` at that second:
+  - run 1: the 7th pull after boot failed (from `/sdcard`); the other 19 plain pulls, 6 plain
+    screenrecord-and-pull rounds and 8 tb recordings after it all worked;
+  - run 2: the first two pulls after boot failed (one from `/sdcard`, one from
+    `/data/local/tmp`, so it is not the sdcard's FUSE layer); the next 238 pulls, 240
+    `adb exec-out cat` copies and 12 tb recordings all worked.
+- The trial PRs fit: each lost video was the first or second pull of its emulator session (both
+  flows of #1435, the one flow of #1451).
 - So each side sees the other hang up: the connection is cut in between, in the emulator's adb
-  bridge. Screenrecord's file size, the 3-minute cap, the stop signal and the pull's timing are
-  all fine (the file is complete on the device before the pull starts).
+  bridge, on one or two of the first pulls after boot, and (in every run looked at) not after.
+  Why the emulator does that was not found. Screenrecord's file size, the 3-minute cap, the stop
+  signal and the pull's timing are all fine: the file is complete on the device before the pull
+  starts.
 
 What tb does with it (Test Buddy v0.6.3, the pinned `447f360`, also its newest commit):
 `internal/driver/android/recording.go`, `StopRecording`: one `d.adb.Run(ctx, "pull", remote, local)`
@@ -49,10 +58,14 @@ again: the clean workaround here is to run the flow again.
 
 ## Change (part A)
 
-- `e2e/ci/run-flows.sh`: with `ANNOTATE`, a flow whose recording tb could not save runs again, up
-  to `RECORD_TRIES` times in all (default 3). tb removes the device's copy when its one `adb pull`
-  fails, so a second pull is not possible: only a new run records again. The lost try keeps its
-  log (`console-try<N>.txt`, `logcat-try<N>.txt`, `attempts.txt`).
+- `e2e/ci/run-flows.sh`, when a video is asked for:
+  - before the first flow, a throwaway file is pulled until 5 pulls in a row work, so the
+    emulator's early drops are spent there and not on a recording;
+  - with `ANNOTATE`, a flow whose recording tb still could not save runs again, up to
+    `RECORD_TRIES` times in all (default 3). The lost try keeps its log (`console-try<N>.txt`,
+    `logcat-try<N>.txt`, `attempts.txt`);
+  - with `RECORD=1` (plain screenrecord, where the file is still on the device), the pull itself
+    is tried three times.
 - A video that was asked for and is still missing is **lost**, and said so: `results.tsv` and
   `summary.json` (`recording`: `saved` / `partial` / `lost`, `recordingError`, `tries`,
   `recordingsLost`), a Video column and a line in `summary.md`, a `::warning::` on the run, and
@@ -65,4 +78,23 @@ again: the clean workaround here is to run the flow again.
 
 ## Checks
 
-TO BE FILLED.
+- `python3 -m unittest discover -s e2e/ci -p 'test_*.py'`: 43 tests, with stand-in adb and tb for
+  a lost-then-saved recording, a recording lost every time (exit 3, summary, warning), the
+  warm-up and `RECORD_TRIES=1`.
+- In CI on #1459, with a temporary commit (since reverted) whose tb wrapper threw recordings
+  away ([run 44990639135](https://github.com/Greenstand/treetracker-android/actions/runs/44990639135)):
+  `first-screen` was saved on its second try, `settings-logout` was reported lost after three
+  ("1 of 3 recordings lost" and "recording lost (try 3)" in the PR comment, a Video column in
+  the summary, the job failed with "Every flow passed, but a recording was lost"), and
+  `signup-back` was saved first time.
+- WARM-UP RUN TO ADD.
+- Not seen in CI: the `RECORD=1` pull retry firing (unit-tested only), and a `partial` recording.
+
+## Other things found
+
+- GitHub Models was retired on 30 July 2026, which changes part C ([plan.md](plan.md)).
+- "test and assemble" failed once on #1458, which changes no app code:
+  `DashboardViewModelSyncTest > enqueued work shows sync preparing` and
+  `DashboardViewModelTest > observeTreeCounts reacts to Flow changes`, both
+  `IllegalStateException at TestMainDispatcher.kt:72`. It passed on the next push. Looks like a
+  flaky test on master; not looked into here.
