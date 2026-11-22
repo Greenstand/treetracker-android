@@ -1,0 +1,44 @@
+▶ H5 Process death on Add org on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.4s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  278ms
+    ✓ Tap on id: ArrowForwardButton  248ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  208ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  165ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  571ms
+    ✓ Hide keyboard  68ms
+    ✓ Tap on id: ArrowForwardButton  121ms
+    ✓ Tap on id: FirstNameField  208ms
+    ✓ Input text Ada  281ms
+    ✓ Tap on id: LastNameField  207ms
+    ✓ Input text Admin  323ms
+    ✓ Hide keyboard  73ms
+    ✓ Tap on id: ArrowForwardButton  168ms
+    ✓ Tap on id: TutorialDoneButton  1.2s
+    ✓ Tap on id: CaptureButton  568ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  159ms
+    ✓ Wait until id: TrackButton is visible  9ms
+  ✓ Run Sign up  21.5s
+  ✓ Tap on id: TrackButton  135ms
+  ✓ Wait until id: UserButton_5551230001 is visible  9ms
+  ✓ Tap on id: UserButton_5551230001  132ms
+  ✓ Tap on id: ArrowForwardButton  166ms
+  ✓ Wait until id: OrgNameField is visible  7ms
+  ✓ Press Home key  41ms
+  ✓ Kill app "org.greenstand.android.TreeTracker.debug"  54ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+  ✓ Wait until id: OrgNameField is visible  1.1s
+  ✓ Tap on id: ArrowForwardButton  301ms
+    ✓ Tap on id: TutorialDoneButton  168ms
+  ✓ Run flow when id: TutorialDoneButton is visible  2.1s
+  ✓ Wait until id: CaptureButton is visible  78ms
+  ✓ Assert that id: OrgNameField is not visible  41ms
+  ✓ Take screenshot step-15-end-assertNotVisible-OrgNameField  214ms
+✓ H5 Process death on Add org passed in 39.3s
+  video: build/flow-results/validate/after/flows/sad-process-death-add-org/tb/H5_Process_death_on_Add_org/recording.mp4
+
+1 passed in 41.2s

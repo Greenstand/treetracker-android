@@ -1,0 +1,41 @@
+▶ H5 Process death on Add org on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  6.0s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  3.2s
+    ✓ Tap on id: LanguageOption_ENGLISH  362ms
+    ✓ Tap on id: ArrowForwardButton  425ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  422ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  393ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.3s
+    ✓ Input text 5551230001  1.3s
+    ✓ Hide keyboard  169ms
+    ✓ Tap on id: ArrowForwardButton  149ms
+    ✓ Tap on id: FirstNameField  248ms
+    ✓ Input text Ada  316ms
+    ✓ Tap on id: LastNameField  153ms
+    ✓ Input text Admin  331ms
+    ✓ Hide keyboard  79ms
+    ✓ Tap on id: ArrowForwardButton  285ms
+    ✓ Tap on id: TutorialDoneButton  2.1s
+    ✓ Tap on id: CaptureButton  650ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  128ms
+    ✓ Wait until id: TrackButton is visible  12ms
+  ✓ Run Sign up  24.1s
+  ✓ Tap on id: TrackButton  152ms
+  ✓ Wait until id: UserButton_5551230001 is visible  9ms
+  ✓ Tap on id: UserButton_5551230001  122ms
+  ✓ Tap on id: ArrowForwardButton  211ms
+  ✓ Wait until id: OrgNameField is visible  8ms
+  ✓ Press Home key  57ms
+  ✓ Kill app "org.greenstand.android.TreeTracker.debug"  48ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.1s
+  ✗ Wait until id: OrgNameField is visible  15.0s
+      Assertion is false: id: OrgNameField is visible
+✗ H5 Process death on Add org failed in 56.1s on sdk gphone64 x86 64
+  Assertion is false: id: OrgNameField is visible
+  debug: build/flow-results/validate/before/flows/sad-process-death-add-org/tb/H5_Process_death_on_Add_org (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/sad-process-death-add-org/tb/H5_Process_death_on_Add_org/recording.mp4
+
+0 passed, 1 failed in 59.6s
