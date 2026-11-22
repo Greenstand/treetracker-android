@@ -1,0 +1,17 @@
+android 320x640 com.google.android.apps.nexuslauncher, 13 elements
+column scrollable:
+  @1 Button "At a glance" #smartspace_card_pager
+    @2 Button "Sun, Nov 22" #base_template_card_with_date
+      @3 Button "Sun, Nov 22" #date
+@4 View "Home"
+row:
+  @5 Button "Phone"
+  @6 Button "Messages"
+  @7 Button "Tree Tracker(debug)"
+  @8 Button "Chrome"
+  @9 Button "Camera"
+@10 Button "Google search" #search_container_hotseat
+  row:
+    @11 Button "Google app" #g_icon
+    @12 Button "Voice search" #mic_icon
+    @13 Button "Google Lens" #lens_icon
