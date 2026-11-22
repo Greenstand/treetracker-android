@@ -1,0 +1,43 @@
+▶ H5 Process death on Add org on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.2s
+    ✓ Tap on id: LanguageOption_ENGLISH  321ms
+    ✓ Tap on id: ArrowForwardButton  293ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  186ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  171ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  607ms
+    ✓ Hide keyboard  63ms
+    ✓ Tap on id: ArrowForwardButton  130ms
+    ✓ Tap on id: FirstNameField  176ms
+    ✓ Input text Ada  268ms
+    ✓ Tap on id: LastNameField  169ms
+    ✓ Input text Admin  338ms
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  176ms
+    ✓ Tap on id: TutorialDoneButton  1.4s
+    ✓ Tap on id: CaptureButton  623ms
+    ✓ Wait until id: ApproveButton is visible  7ms
+    ✓ Tap on id: ApproveButton  178ms
+    ✓ Wait until id: TrackButton is visible  12ms
+  ✓ Run Sign up  21.6s
+  ✓ Tap on id: TrackButton  140ms
+  ✓ Wait until id: UserButton_5551230001 is visible  13ms
+  ✓ Tap on id: UserButton_5551230001  143ms
+  ✓ Tap on id: ArrowForwardButton  166ms
+  ✓ Wait until id: OrgNameField is visible  8ms
+  ✓ Press Home key  31ms
+  ✓ Kill app "org.greenstand.android.TreeTracker.debug"  45ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+  ✓ Wait until id: OrgNameField is visible  1.2s
+  ✓ Tap on id: ArrowForwardButton  297ms
+    ✓ Tap on id: TutorialDoneButton  258ms
+  ✓ Run flow when id: TutorialDoneButton is visible  2.4s
+  ✓ Wait until id: CaptureButton is visible  35ms
+  ✓ Take screenshot step-14-end-extendedWaitUntil-CaptureButton  217ms
+✓ H5 Process death on Add org passed in 40.1s
+  video: build/flow-results/validate/after/flows/sad-process-death-add-org/tb/H5_Process_death_on_Add_org/recording.mp4
+
+1 passed in 41.6s
