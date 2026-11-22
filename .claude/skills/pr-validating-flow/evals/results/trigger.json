@@ -1,0 +1,150 @@
+{
+  "summary": {
+    "passed": 20,
+    "total": 20,
+    "should_trigger_rate": 1.0,
+    "should_not_trigger_rate": 0.03333333333333333
+  },
+  "queries": [
+    {
+      "query": "Fix issue #1416: deleting a user while offline crashes the app (AmazonClientException out of UserSelectViewModel.deleteUser). Open a PR when you're done.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "the session note gets skipped when you double tap next on user select in an org that has a session note step. can you fix that and put up a pull request",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Add a 'tree species' text field to the capture review screen for orgs that turn it on, and open a draft PR.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "I've finished the fix for the wallet select crash on this branch. Get the PR ready for review.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "My bug fix PR got a bot comment saying its flow 'does not demonstrate the change'. What do I need to do about that?",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "The 'Check for screenshot & video' check is failing on my bug fix PR for the logout crash. Add whatever it needs.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Implement issue #1447 (the app crashes when Android kills it on the session note step and you come back). Usual workflow.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Write a regression e2e flow for the delete-account fix on this branch so reviewers can see it failing before and passing after.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Planters say the Dashboard upload count stays at 0 after they capture trees. Find the bug, fix it and ship a PR.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Make the profile edit screen keep the phone number when only the name is changed, then PR it to master.",
+      "should_trigger": true,
+      "triggered": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Update docs/getting-started/environment-setup.md to say the build needs JDK 25 and open a PR.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "How does the upload worker decide which trees to sync first? Just explain it, don't change anything.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Bump the Test Buddy pin in .github/workflows/android-e2e.yml and flow-runner-job.yml to the newest commit and open a PR.",
+      "should_trigger": false,
+      "triggered": 1,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Rename CaptureSetupScopeManager to SetupScopeManager everywhere. Pure refactor, no behaviour change. PR it.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Seed the emulator with three users and 50 trees so I can look at the dashboard counts.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Run the settings flows on CI for the branch claude/profile-edit-keeps-contact and show me the step screenshots.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Review PR #1444 for correctness bugs and tell me what you find.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "e2e/flows/capture-loop.yaml fails about one run in five on API 35. Work out why. Diagnosis only, no changes yet.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Add unit tests for navigation/DoubleTapGuard.kt. No production code changes. Open a PR.",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "query": "Which TestTags does the session note screen expose, and where are they set?",
+      "should_trigger": false,
+      "triggered": 0,
+      "runs": 3,
+      "pass": true
+    }
+  ]
+}

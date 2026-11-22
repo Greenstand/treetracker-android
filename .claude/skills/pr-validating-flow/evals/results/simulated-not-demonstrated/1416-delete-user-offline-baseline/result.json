@@ -1,0 +1,200 @@
+{
+  "case": "1416-delete-user-offline",
+  "kind": "flow",
+  "arm": "baseline",
+  "simulated_verdict": "not-demonstrated",
+  "base": "791b37a7361fc78cba00dc21aba9bab902edf068",
+  "branch": "skill-eval/1122c/1416-delete-user-offline-baseline",
+  "skill_commit": "1f4a45305b7be4bcfc166acdb68ff6429a68b410",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [],
+      "claimed_flows": [
+        "settings-delete-user",
+        "settings-delete-admin"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": false,
+          "scored": true,
+          "detail": "no new file in e2e/flows/"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": false,
+          "scored": true,
+          "detail": "validates: settings-delete-user settings-delete-admin"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": false,
+          "scored": true,
+          "detail": "no Skill tb call and no read of plugin/skills/tb in the transcript"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": false,
+          "scored": true,
+          "detail": "no flow to run"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        }
+      ],
+      "score": [
+        4,
+        8
+      ],
+      "round": 1,
+      "cost_usd": 1.7247911999999996,
+      "turns": 15,
+      "model": "claude-fable-5-2",
+      "head": "f5a215359582da85ce2ba55df2c5f7f2afc5806b"
+    },
+    {
+      "kind": "flow",
+      "added_flows": [],
+      "claimed_flows": [
+        "settings-delete-user",
+        "settings-delete-admin"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": false,
+          "scored": true,
+          "detail": "no new file in e2e/flows/"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": false,
+          "scored": false,
+          "detail": "validates: settings-delete-user settings-delete-admin"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": false,
+          "scored": true,
+          "detail": "no Skill tb call and no read of plugin/skills/tb in the transcript"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": false,
+          "scored": false,
+          "detail": "no flow to run"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "reacted_to_not_demonstrated",
+          "pass": true,
+          "scored": true,
+          "detail": "the description or the flow changed"
+        },
+        {
+          "id": "handles_not_demonstrated",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The agent stated plainly in both the reply and the PR description that the flows passed on master and did not demonstrate the fix, gave a specific (and labelled as unconfirmed) reason they missed the crash, changed the flows to dwell on the dialog so the failed upload can land rather than faking a f"
+        }
+      ],
+      "score": [
+        6,
+        8
+      ],
+      "round": 2,
+      "cost_usd": 2.4168127999999993,
+      "turns": 7,
+      "model": "claude-fable-5-2",
+      "head": "98a73525cf99ae52ccb9828250ba6f5c5c9f99aa"
+    }
+  ]
+}

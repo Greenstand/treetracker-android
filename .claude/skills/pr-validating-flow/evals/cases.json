@@ -1,0 +1,19 @@
+{
+  "_doc": "Outcome cases for run_outcome.py. kind 'flow': a merged fix replayed from the commit before it; the right outcome is a new validating flow. kind 'fallback': a bug with no on-screen symptom a flow can assert; the right outcome is 'no validating flow' plus a test. fix: the fix's commit on master (the base is its parent). remove: files deleted from the base because they give the answer away. scrub: files whose lines naming those files are dropped.",
+  "cases": [
+    {"id": "1416-delete-user-offline", "kind": "flow", "issue": "issues/1416.md", "fix": "a8ec2549",
+     "remove": ["e2e/flows/settings-delete-user-offline.yaml"], "scrub": ["docs", "e2e/README.md"],
+     "reference": "settings-delete-user-offline (PR #1429)"},
+    {"id": "1418-process-death-add-org", "kind": "flow", "issue": "issues/1418.md", "fix": "459f710c",
+     "remove": ["e2e/flows/sad-process-death-setup.yaml"], "scrub": ["docs", "e2e/README.md"],
+     "reference": "sad-process-death-setup (PR #1431)"},
+    {"id": "1442-double-tap-session-note", "kind": "flow", "issue": "issues/1442.md", "fix": "6d2d303b",
+     "remove": [], "scrub": [], "reference": "org-double-tap-session-note (PR #1439)"},
+    {"id": "1447-process-death-session-note", "kind": "flow", "issue": "issues/1447.md", "fix": "a95d2ff6",
+     "remove": [], "scrub": [], "reference": "org-process-death-session-note (PR #1441)"},
+    {"id": "1436-logout-power-user-race", "kind": "fallback", "issue": "issues/1436.md", "base": "31458bb8",
+     "remove": [], "scrub": [], "reference": "PR #1434: unit test in SettingsViewModelTest, no flow"},
+    {"id": "1448-deleted-user-stays-current", "kind": "fallback", "issue": "issues/1448.md", "base": "31458bb8",
+     "remove": [], "scrub": [], "reference": "PR #1444: unit test in UserSelectViewModelTest, no flow"}
+  ]
+}

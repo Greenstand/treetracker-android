@@ -139,6 +139,69 @@ python3 e2e/ci/affected.py --files app/src/main/java/org/greenstand/android/Tree
 python3 -m unittest discover -s e2e/ci -p 'test_*.py'
 ```
 
+### Before and after: does the PR's change work?
+
+A clip of the PR's app near the changed code does not show that a fix fixes anything. A
+**validating flow** does: a flow that fails on the app without the change and passes on the app
+with it. The same workflow runs each validating flow twice, recorded and annotated both times: on
+the app built from the PR's merge base ("before") and on the PR's app ("after"). The flow files,
+sub-flows and seeding scripts are the PR's for both runs; only the app differs.
+
+Which flows (`e2e/ci/validating.py`, at most 3):
+
+1. Named in the PR description, on a line `validates: <flow> [<flow> ...]` (a flow's name;
+   `.yaml` and `e2e/flows/` are optional). Use it for a flow that exists already.
+2. Flows the PR adds or edits, unless still tagged `known-bug`. A fix PR that drops `known-bug`
+   from its flow needs nothing else.
+
+The verdict (`e2e/ci/verdict.py`), in the PR comment with both videos side by side:
+
+| Before (base app) | After (PR's app) | Verdict |
+|---|---|---|
+| fails | passes | ✅ validated |
+| passes | passes | ⚠️ does not demonstrate the change (it passes without it too) |
+| fails | fails | ❌ broken |
+| passes | fails | ❌ broken (the PR makes it fail) |
+| a side did not run: the base app did not build, seeding failed | | ❔ inconclusive, with the reason |
+
+The same table, with both videos, is also written into the PR **description**, between
+`<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->` (the PR template has the markers; without
+them the block is added at the end when validating flows ran). Only the text between the markers
+is replaced, on every run. An edit by the workflow's token does not start other workflows, so
+"Check for screenshot & video" sees the videos the next time a person or an agent saves the
+description. How an agent writes such a flow and what it does with each verdict:
+[`pr-validating-flow`](../../.claude/skills/pr-validating-flow/SKILL.md).
+
+Only **broken** fails the job. The comment also quotes the error each failing run stopped at:
+read it, since a flow can fail on the base app for a reason that is not the bug (a test tag the
+PR adds is a fair reason for a new feature; a seeding error is not). Each side runs once, so a
+flaky flow can give a wrong verdict. A PR with no validating flow says so in its comment: its
+clips only show screens near the change.
+
+What a validating flow cannot show, so don't expect one: a fix with nothing to see on screen (a
+leak, stale state behind the UI), a race a driven tap can't hit reliably (double-tap guards), and
+states an offline emulator can't reach (a server error). Those need a unit or instrumented test.
+
+Results are in `validate/before/` and `validate/after/` (each laid out as below) with
+`validate/verdict.json` and `verdict.md`. Every video also gets a GIF beside it
+(`videos/<flow>.gif`), which the PR comment embeds, since a comment plays a GIF inline but only
+links an MP4.
+
+Without a PR, for any pushed branch (the "before" app defaults to the merge base with
+`origin/master`; Actions > Flow runner > Run workflow has the same two inputs):
+
+```bash
+bash e2e/ci/cloud-flows.sh run --validate settings-delete-user-offline [--before <sha>]
+cat build/flow-results/validate/verdict.md
+```
+
+Locally, with both APKs built:
+
+```bash
+TB=tb VALIDATE_FLOWS="settings-delete-user-offline" BEFORE_APK=before.apk AFTER_APK=after.apk \
+  bash e2e/ci/run-job.sh -s emulator-5554
+```
+
 **PRs from forks** don't run on their own: their code would run on the emulator with this
 repository's caches. The "pick flows" job still lists what would run (picked by the base branch's
 copy of `affected.py`, not the fork's). After reading the PR's code, a maintainer runs it from
@@ -166,9 +229,13 @@ screens/<flow>/step-23-end-....png                the screen the flow ended on
 screens/<flow>/failure.png                        the screen at a failure
 flows/<flow>/  console.txt log.txt error.txt screen.txt hierarchy.json commands.json
                logcat.txt (artifact only) logcat-app.txt crash.txt report.xml setup.txt
+               attempts.txt console-try<N>.txt (tries whose recording was lost)
 videos/<flow>.mp4                                 with --video, or annotated (ANNOTATE=1)
 videos/<flow>.srt                                 annotated: the step captions (tb's 3-minute
                                                   parts joined into one video and one .srt)
+videos/<flow>.gif                                 on CI: the video as a GIF, for the PR comment
+validate/before/ validate/after/                  validating flows on the base app and the PR's
+validate/verdict.json verdict.md                  app (each folder laid out like this one)
 ```
 
 Steps that only check the screen (`assertVisible` and the like) get no screenshot, since the screen
@@ -176,7 +243,32 @@ is the one before them. `--screenshots end` keeps only the last screen, `none` t
 screenshot takes a moment, so a flow that depends on tight timing can behave differently with
 `steps`; use `end` for it.
 
-The job fails when a flow fails, after uploading everything.
+`summary.json` also says what became of each video that was asked for: `recording` is `saved`,
+`partial` (tb kept what the device had when stopping the recording failed) or `lost`, with tb's
+reason in `recordingError`, and `tries` is how many times the flow ran to get it.
+
+The job fails when a flow fails, or when a video that was asked for was lost, after uploading
+everything.
+
+### Lost recordings
+
+On CI's emulator the adb connection sometimes drops at the moment tb copies its recording off the
+device (the device's log has `adbd: host-N: connection terminated: write failed`; tb says
+`--record: the recording could not be saved: adb pull /sdcard/tb-recording-1.mp4 ... exit status 1`).
+The flow's result is not affected, but tb then deletes the device's copy, so the video is gone.
+It is the emulator, not tb: a plain `adb pull` of any file fails the same way, on one or two of
+the first pulls after the emulator boots and, as far as it was measured (task 115), not after.
+
+`run-flows.sh` does two things about it when a video is asked for. Before the first flow it pulls
+a throwaway file until 5 pulls in a row work ("adb pull warm-up: N dropped ..." in the log), so
+the early drops are spent there. And a flow whose recording was still lost runs again, up to
+`RECORD_TRIES` times in all (default 3), keeping the log of each try that lost its video
+(`flows/<flow>/attempts.txt`, `console-try<N>.txt`, `logcat-try<N>.txt`). The result and the
+screenshots are the last try's.
+
+A video still missing after that is reported as **lost**, never as a plain pass: a warning on the
+run, "N recordings lost" and a Video column in the summary, "recording lost" with tb's reason in
+the PR comment, exit status 3 from `run-flows.sh` and a failed job. Re-run the job to record it.
 
 ## Adding a flow
 

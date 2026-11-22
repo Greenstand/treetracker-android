@@ -1,0 +1,38 @@
+name: Skill and flow-proof tests
+
+# Fast, pure-code tests of what the pr-validating-flow skill relies on: that SKILL.md still names
+# files, options and markers that exist, the eval's grader, the before/after block CI writes into
+# a PR description, and cloud-flows.sh's before/after run. No emulator, no model, no secrets.
+on:
+  pull_request:
+    branches: [ master, release* ]
+    paths:
+      - ".claude/skills/**"
+      - "e2e/ci/**"
+      - "e2e/flows/**"
+      - "e2e/run-org.sh"
+      - ".github/workflows/**"
+      - ".github/pull_request_template.md"
+      - "docs/testing/ci-flows.md"
+      - "docs/README.md"
+      - "CLAUDE.md"
+      - "AGENTS.md"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: skill tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: The skill matches the repository; the eval's grader
+        run: python3 -m unittest discover -v -s .claude/skills/pr-validating-flow/evals -p 'test_*.py'
+      - name: The description block and the before/after run
+        run: |
+          cd e2e/ci
+          python3 -m unittest -v test_description_block test_cloud_flows test_validation
