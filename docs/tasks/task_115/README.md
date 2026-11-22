@@ -96,7 +96,45 @@ again: the clean workaround here is to run the flow again.
   first pulls. The re-run of a flow covers the case where that pattern does not hold.
 - Not seen in CI: the `RECORD=1` pull retry firing (unit-tested only), and a `partial` recording.
 
+## B. Before and after (built; second PR, on top of part A)
+
+As planned in [plan.md](plan.md), with part D's GIF embed as the comment's default:
+
+- `e2e/ci/validating.py` picks the validating flows: a `validates:` line in the PR description,
+  then flows the PR adds or edits (not `known-bug` ones), at most 3. Words from the description
+  are only ever flow names, checked against a pattern and the checkout.
+- `flow-runner-job.yml` (inputs `validate_flows`, `before_ref`) builds the base app from the
+  merge base in a worktree; `e2e/ci/run-job.sh` runs the chosen flows, then each validating flow
+  on the base app and on the PR's app (`run-flows.sh` each time, so seeding, the warm-up and the
+  lost-recording retry apply), `e2e/ci/verdict.py` gives the verdict, and every video gets a GIF.
+- `e2e-affected.yml` passes the flows and the merge base, and its comment shows the verdict table
+  with both videos as inline GIFs (MP4 link under each) and the error each failing run stopped at.
+  Clips of other affected flows get a GIF too. A PR with no validating flow says so.
+- Only **broken** fails the job. Fork PRs keep their rules (by hand, read-only token, no caches,
+  base branch's copy of `validating.py`).
+- How to use it: `docs/testing/ci-flows.md`, "Before and after".
+
+Checks:
+
+- 58 unit tests: the `validates:` line (spellings, refused words, limit, known-bug), the four
+  outcomes and the inconclusive ones, `run-job.sh` with stand-in adb and tb.
+- In CI, on the throwaway PR #1460
+  ([run 44992938534](https://github.com/Greenstand/treetracker-android/actions/runs/44992938534), 13 minutes,
+  of which 40 seconds for the base app), with a temporary commit making the base the commit
+  before #1429 so merged fixes had something to fail on, and the three flows named on a
+  `validates:` line:
+  - `settings-delete-user-offline`: failed before ("Account Deleted" dialog never shown: the
+    crash #1429 fixed), passed after: **validated**;
+  - `org-process-death-session-note` (org-seeded): failed before (`SessionNoteField` not visible
+    after process death: what #1441 fixed), passed after: **validated**;
+  - `first-screen`: passed on both: **does not demonstrate the change**;
+  - the job was green, all six videos were saved and all six GIFs play in the comment.
+- Not seen in CI: a **broken** verdict failing the job, an **inconclusive** one (a base that does
+  not build), picking from changed flow files (the proof named its flows), and a fork PR's run.
+  These are unit-tested only.
+
 ## Other things found
+
 
 - "code analysis" and "screenshot tests" failed on #1459 while this was being checked, on
   downloads, not on code: Maven Central answered Gradle with 429 Too Many Requests, and
