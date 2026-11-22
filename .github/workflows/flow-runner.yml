@@ -52,6 +52,14 @@ on:
         description: "Annotated video instead (tb --record --annotate): slowed down, taps and step captions"
         type: boolean
         default: false
+      validate_flows:
+        description: "Before and after: flows to run, recorded and annotated, on the app at before_ref and on the app at ref, with a verdict each"
+        required: false
+        default: ""
+      before_ref:
+        description: "With validate_flows: the full sha of the commit whose app is the 'before'"
+        required: false
+        default: ""
       publish_branch:
         description: "Push the results to a flow-results/ branch too"
         type: boolean
@@ -72,4 +80,6 @@ jobs:
       screenshots: ${{ inputs.screenshots }}
       record_video: ${{ inputs.record_video }}
       annotate: ${{ inputs.annotate }}
+      validate_flows: ${{ inputs.validate_flows }}
+      before_ref: ${{ inputs.before_ref }}
       publish_branch: ${{ inputs.publish_branch }}

@@ -1,0 +1,118 @@
+{
+  "case": "1447-process-death-session-note",
+  "kind": "flow",
+  "arm": "baseline",
+  "base": "ecbb5ab7995104d2190c80c36154ed54f245d50b",
+  "branch": "skill-eval/1122a/1447-process-death-session-note-baseline",
+  "skill_commit": "e987f82de9467a46f8f6434ea94fc29509216ab9",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [
+        "org-process-death-add-wallet",
+        "org-process-death-session-note",
+        "org-process-death-wallet-select"
+      ],
+      "claimed_flows": [
+        "org-process-death-session-note",
+        "org-process-death-wallet-select",
+        "org-process-death-add-wallet"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorerTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteViewModelTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/navigation/SetupNextDoubleTapUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/navigation/SetupStepRestoreUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/sessionnote/SessionNoteScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/WalletSelectScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/addwallet/AddWalletScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/walletselect/WalletSelectViewModelTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/walletselect/addwallet/AddWalletViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/di/AppModule.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorer.kt, app/src/main/java/org/greenstand/android/TreeTracker/navigation/LeaveLostSetupEffect.kt, app/src/main/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteScreen.kt, app/src/main/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/org-process-death-add-wallet.yaml, e2e/flows/org-process-death-session-note.yaml, e2e/flows/org-process-death-wallet-select.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": true,
+          "scored": true,
+          "detail": "validates: org-process-death-session-note org-process-death-wallet-select org-process-death-add-wallet"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": false,
+          "scored": true,
+          "detail": "no Skill tb call and no read of plugin/skills/tb in the transcript"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": true,
+          "scored": true,
+          "detail": "{\"org-process-death-session-note\": \"validated\", \"org-process-death-wallet-select\": \"validated\", \"org-process-death-add-wallet\": \"validated\"}"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "before_fails_for_the_bug",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The error matches the post-kill wait for SessionNoteField, where the restore crash would leave the field missing, but the pre-kill assertVisible on the same id would print the identical message and the error text alone does not rule it out."
+        }
+      ],
+      "score": [
+        10,
+        11
+      ],
+      "round": 1,
+      "cost_usd": 4.8932358,
+      "turns": 33,
+      "model": "claude-fable-5-2",
+      "head": "b287e3fbf5ee434f39145599cfaf407f7e5427c8"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "case": "1436-logout-power-user-race",
+  "kind": "fallback",
+  "arm": "baseline",
+  "base": "f1905a478ac42980cdb38c53f04438cb1d6c0667",
+  "branch": "skill-eval/1122a/1436-logout-power-user-race-baseline",
+  "skill_commit": "e987f82de9467a46f8f6434ea94fc29509216ab9",
+  "rounds": [
+    {
+      "kind": "fallback",
+      "added_flows": [],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/settings/SettingsViewmodel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_flow_claimed_as_proof",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "test_added",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+        },
+        {
+          "id": "description_names_the_test",
+          "pass": true,
+          "scored": true,
+          "detail": "SettingsViewModelTest"
+        },
+        {
+          "id": "says_no_validating_flow",
+          "pass": true,
+          "scored": false,
+          "detail": "the skill's own wording; the judge checks the meaning"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "fallback_is_honest",
+          "pass": false,
+          "scored": true,
+          "judge": true,
+          "detail": "It plainly says there is no validating flow, gives a bug-specific reason (a driven tap can't beat the Room query, so any flow passes on master too), names the SettingsViewModelTest unit test as proof and doesn't present the settings-logout recording as proof of the fix, but it declares the omission "
+        }
+      ],
+      "score": [
+        7,
+        8
+      ],
+      "round": 1,
+      "cost_usd": 1.2443288,
+      "turns": 11,
+      "model": "claude-fable-5-2",
+      "head": "bdaf9de4f47a1548ad4067c59b33ace6e9dfd15b"
+    },
+    {
+      "kind": "fallback",
+      "added_flows": [],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/settings/SettingsViewmodel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_flow_claimed_as_proof",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "test_added",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+        },
+        {
+          "id": "description_names_the_test",
+          "pass": true,
+          "scored": true,
+          "detail": "SettingsViewModelTest"
+        },
+        {
+          "id": "says_no_validating_flow",
+          "pass": true,
+          "scored": false,
+          "detail": "the skill's own wording; the judge checks the meaning"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "fallback_is_honest",
+          "pass": false,
+          "scored": true,
+          "judge": true,
+          "detail": "The description plainly says there is no validating flow, gives a bug-specific reason, names the SettingsViewModelTest unit test as evidence and does not pass off the settings-logout recording as proof, but it fails condition 5 because it declares the omission \"deliberate\" by citing the docs rather "
+        }
+      ],
+      "score": [
+        7,
+        8
+      ],
+      "round": 2,
+      "cost_usd": 1.2907879999999998,
+      "turns": 1,
+      "model": "claude-fable-5-2",
+      "head": "bdaf9de4f47a1548ad4067c59b33ace6e9dfd15b"
+    }
+  ]
+}

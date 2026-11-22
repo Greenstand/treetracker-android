@@ -1,0 +1,217 @@
+{
+  "case": "1447-process-death-session-note",
+  "kind": "flow",
+  "arm": "skill",
+  "simulated_verdict": "not-demonstrated",
+  "base": "9acc17a3aaa39f8c706a51041cca5cdd260fedf2",
+  "branch": "skill-eval/1122c/1447-process-death-session-note-skill",
+  "skill_commit": "1f4a45305b7be4bcfc166acdb68ff6429a68b410",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [
+        "org-process-death-session-note",
+        "org-process-death-wallet-select"
+      ],
+      "claimed_flows": [
+        "org-process-death-session-note",
+        "org-process-death-wallet-select"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorerTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteViewModelTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/navigation/SetupNextDoubleTapUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/sessionnote/SessionNoteScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/WalletSelectScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/addwallet/AddWalletScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/walletselect/WalletSelectViewModelTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/walletselect/addwallet/AddWalletViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/di/AppModule.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorer.kt, app/src/main/java/org/greenstand/android/TreeTracker/orgpicker/AddOrgViewModel.kt, app/src/main/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteScreen.kt, app/src/main/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/org-process-death-session-note.yaml, e2e/flows/org-process-death-wallet-select.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": true,
+          "scored": true,
+          "detail": "validates: org-process-death-session-note org-process-death-wallet-select"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": true,
+          "scored": true,
+          "detail": "the transcript shows Test Buddy's skill loaded or its files read"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": null,
+          "scored": true,
+          "detail": "CI did not run"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        }
+      ],
+      "score": [
+        9,
+        9
+      ],
+      "round": 1,
+      "cost_usd": 4.4799012,
+      "turns": 33,
+      "model": "claude-fable-5-2",
+      "head": "8ca25fb24f8aa26f7027f0597af397e073d7213f"
+    },
+    {
+      "kind": "flow",
+      "added_flows": [
+        "org-process-death-session-note",
+        "org-process-death-wallet-select"
+      ],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorerTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteViewModelTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/navigation/SetupNextDoubleTapUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/sessionnote/SessionNoteScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/WalletSelectScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/uitest/walletselect/addwallet/AddWalletScreenUiTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/walletselect/WalletSelectViewModelTest.kt",
+        "app/src/test/java/org/greenstand/android/TreeTracker/walletselect/addwallet/AddWalletViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/di/AppModule.kt, app/src/main/java/org/greenstand/android/TreeTracker/models/setupflow/CaptureSetupRestorer.kt, app/src/main/java/org/greenstand/android/TreeTracker/orgpicker/AddOrgViewModel.kt, app/src/main/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteScreen.kt, app/src/main/java/org/greenstand/android/TreeTracker/sessionnote/SessionNoteViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": true,
+          "scored": true,
+          "detail": "e2e/flows/org-process-death-session-note.yaml, e2e/flows/org-process-death-wallet-select.yaml"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": false,
+          "scored": false,
+          "detail": "validates: (no line)"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": true,
+          "scored": true,
+          "detail": "the transcript shows Test Buddy's skill loaded or its files read"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": null,
+          "scored": false,
+          "detail": "CI did not run"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        },
+        {
+          "id": "reacted_to_not_demonstrated",
+          "pass": true,
+          "scored": true,
+          "detail": "the description or the flow changed"
+        },
+        {
+          "id": "handles_not_demonstrated",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The agent withdrew the validation claim outright\u2014removing the `validates:` line, showing the passed/passed verdict table in the description, relabeling the flows as regression flows rather than proof, leaving the fix unchanged and the flows un-rigged, and plainly handing the merge decision to the ma"
+        }
+      ],
+      "score": [
+        10,
+        10
+      ],
+      "round": 2,
+      "cost_usd": 5.7010238,
+      "turns": 8,
+      "model": "claude-fable-5-2",
+      "head": "413ed93a95e30ccc88790418bbc4e9d00441b260"
+    }
+  ]
+}

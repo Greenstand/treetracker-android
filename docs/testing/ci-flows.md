@@ -164,6 +164,14 @@ The verdict (`e2e/ci/verdict.py`), in the PR comment with both videos side by si
 | passes | fails | ❌ broken (the PR makes it fail) |
 | a side did not run: the base app did not build, seeding failed | | ❔ inconclusive, with the reason |
 
+The same table, with both videos, is also written into the PR **description**, between
+`<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->` (the PR template has the markers; without
+them the block is added at the end when validating flows ran). Only the text between the markers
+is replaced, on every run. An edit by the workflow's token does not start other workflows, so
+"Check for screenshot & video" sees the videos the next time a person or an agent saves the
+description. How an agent writes such a flow and what it does with each verdict:
+[`pr-validating-flow`](../../.claude/skills/pr-validating-flow/SKILL.md).
+
 Only **broken** fails the job. The comment also quotes the error each failing run stopped at:
 read it, since a flow can fail on the base app for a reason that is not the bug (a test tag the
 PR adds is a fair reason for a new feature; a seeding error is not). Each side runs once, so a
@@ -178,6 +186,14 @@ Results are in `validate/before/` and `validate/after/` (each laid out as below)
 `validate/verdict.json` and `verdict.md`. Every video also gets a GIF beside it
 (`videos/<flow>.gif`), which the PR comment embeds, since a comment plays a GIF inline but only
 links an MP4.
+
+Without a PR, for any pushed branch (the "before" app defaults to the merge base with
+`origin/master`; Actions > Flow runner > Run workflow has the same two inputs):
+
+```bash
+bash e2e/ci/cloud-flows.sh run --validate settings-delete-user-offline [--before <sha>]
+cat build/flow-results/validate/verdict.md
+```
 
 Locally, with both APKs built:
 
