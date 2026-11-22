@@ -46,13 +46,23 @@ echo "1 passed"
 exit ${FAKE_EXIT:-0}
 """
 
+# An adb whose first two pulls fail, as CI's emulator's do.
+FAKE_ADB_DROPPING = """#!/bin/sh
+case " $* " in
+  *" pull "*)
+    echo pull >> "$FAKE_LOG.pulls"
+    [ "$(wc -l < "$FAKE_LOG.pulls")" -le 2 ] && exit 1 ;;
+esac
+exit 0
+"""
+
 
 class RunFlowsTest(unittest.TestCase):
-    def run_flows(self, *selectors, tb=FAKE_TB, read=None, **env):
+    def run_flows(self, *selectors, tb=FAKE_TB, adb=FAKE_ADB, read=None, **env):
         with tempfile.TemporaryDirectory() as d:
             bin_dir = Path(d, "bin")
             bin_dir.mkdir()
-            for name, text in [("adb", FAKE_ADB), ("tb", tb)]:
+            for name, text in [("adb", adb), ("tb", tb)]:
                 Path(bin_dir, name).write_text(text)
                 Path(bin_dir, name).chmod(0o755)
             log = Path(d, "log")
@@ -144,6 +154,14 @@ class RunFlowsTest(unittest.TestCase):
         r, lines, (summary, md, files) = self.run_flows("signup-back@2", read=self.summary)
         self.assertEqual(summary["flows"][0]["recording"], None)
         self.assertNotIn("Video", md)
+
+    def test_early_adb_drops_are_spent_on_a_warm_up_file(self):
+        r, lines = self.run_flows("signup-back@2", tb=FAKE_TB_RECORDING, adb=FAKE_ADB_DROPPING, ANNOTATE="1")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("adb pull warm-up: 2 dropped before 5 in a row worked", r.stdout)
+        # No video asked for: no warm-up.
+        r, lines = self.run_flows("signup-back@2", adb=FAKE_ADB_DROPPING)
+        self.assertNotIn("warm-up", r.stdout)
 
     def test_without_new_options_tb_gets_the_old_arguments(self):
         r, lines = self.run_flows("tag:settings")

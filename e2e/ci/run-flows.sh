@@ -119,6 +119,28 @@ if [[ $ONLINE != 1 ]]; then
 fi
 "$ADB" -s "$SERIAL" emu geo fix 37.3 -3.5 >/dev/null || true
 
+# CI's emulator drops its adb connection on one or two of the first `adb pull`s after it boots,
+# and then no more (docs/testing/ci-flows.md, "Lost recordings"). tb pulls its recording once and
+# deletes the device's copy when that fails, so let those drops happen here, on a file nobody
+# needs: pull until 5 in a row work. Running a flow again (RECORD_TRIES) stays as the safety net.
+warm_up_pulls() {
+  local tmp=/data/local/tmp/flow-warm-up.bin row=0 drops=0 i
+  "$ADB" -s "$SERIAL" shell "dd if=/dev/urandom of=$tmp bs=1024 count=1024 2>/dev/null" || return 0
+  for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+    if "$ADB" -s "$SERIAL" pull "$tmp" "$OUT/.warm-up.bin" >/dev/null 2>&1; then
+      row=$((row + 1))
+      (( row >= 5 )) && break
+    else
+      row=0 drops=$((drops + 1))
+      "$ADB" -s "$SERIAL" wait-for-device
+    fi
+  done
+  rm -f "$OUT/.warm-up.bin"
+  "$ADB" -s "$SERIAL" shell rm -f "$tmp" || true
+  echo "adb pull warm-up: $drops dropped before $row in a row worked"
+}
+[[ -n $ANNOTATE || $RECORD == 1 ]] && warm_up_pulls
+
 start_recording() {
   REC_DIR=/sdcard/flow-rec
   "$ADB" -s "$SERIAL" shell "rm -rf $REC_DIR; mkdir -p $REC_DIR"

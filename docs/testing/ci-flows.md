@@ -190,9 +190,15 @@ On CI's emulator the adb connection sometimes drops at the moment tb copies its 
 device (the device's log has `adbd: host-N: connection terminated: write failed`; tb says
 `--record: the recording could not be saved: adb pull /sdcard/tb-recording-1.mp4 ... exit status 1`).
 The flow's result is not affected, but tb then deletes the device's copy, so the video is gone.
-`run-flows.sh` therefore runs such a flow again, up to `RECORD_TRIES` times in all (default 3),
-and keeps the log of each try that lost its video (`flows/<flow>/attempts.txt`,
-`console-try<N>.txt`, `logcat-try<N>.txt`). The result and the screenshots are the last try's.
+It is the emulator, not tb: a plain `adb pull` of any file fails the same way, on one or two of
+the first pulls after the emulator boots and, as far as it was measured (task 115), not after.
+
+`run-flows.sh` does two things about it when a video is asked for. Before the first flow it pulls
+a throwaway file until 5 pulls in a row work ("adb pull warm-up: N dropped ..." in the log), so
+the early drops are spent there. And a flow whose recording was still lost runs again, up to
+`RECORD_TRIES` times in all (default 3), keeping the log of each try that lost its video
+(`flows/<flow>/attempts.txt`, `console-try<N>.txt`, `logcat-try<N>.txt`). The result and the
+screenshots are the last try's.
 
 A video still missing after that is reported as **lost**, never as a plain pass: a warning on the
 run, "N recordings lost" and a Video column in the summary, "recording lost" with tb's reason in
