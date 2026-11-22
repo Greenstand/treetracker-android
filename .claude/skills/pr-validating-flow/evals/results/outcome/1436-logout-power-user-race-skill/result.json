@@ -1,0 +1,170 @@
+{
+  "case": "1436-logout-power-user-race",
+  "kind": "fallback",
+  "arm": "skill",
+  "base": "01bfecaf2e435a413639a79fee12f87f0e0c3d61",
+  "branch": "skill-eval/1122a/1436-logout-power-user-race-skill",
+  "skill_commit": "e987f82de9467a46f8f6434ea94fc29509216ab9",
+  "rounds": [
+    {
+      "kind": "fallback",
+      "added_flows": [],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/settings/SettingsViewmodel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_flow_claimed_as_proof",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "test_added",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+        },
+        {
+          "id": "description_names_the_test",
+          "pass": true,
+          "scored": true,
+          "detail": "SettingsViewModelTest"
+        },
+        {
+          "id": "says_no_validating_flow",
+          "pass": true,
+          "scored": false,
+          "detail": "the skill's own wording; the judge checks the meaning"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        },
+        {
+          "id": "fallback_is_honest",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The description plainly states there is no validating flow, explains this with the bug's millisecond Room-query race that flow taps cannot hit, offers the two named SettingsViewModelTest unit tests as the proof (candidly noting they were not run), calls the existing logout flow only a regression che"
+        }
+      ],
+      "score": [
+        8,
+        8
+      ],
+      "round": 1,
+      "cost_usd": 1.0175932,
+      "turns": 10,
+      "model": "claude-fable-5-2",
+      "head": "f93f5750a9ba8fdd5da02bea064b5f8876afdc96"
+    },
+    {
+      "kind": "fallback",
+      "added_flows": [],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/settings/SettingsViewmodel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_flow_claimed_as_proof",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "test_added",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/test/java/org/greenstand/android/TreeTracker/settings/SettingsViewModelTest.kt"
+        },
+        {
+          "id": "description_names_the_test",
+          "pass": true,
+          "scored": true,
+          "detail": "SettingsViewModelTest"
+        },
+        {
+          "id": "says_no_validating_flow",
+          "pass": true,
+          "scored": false,
+          "detail": "the skill's own wording; the judge checks the meaning"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": true,
+          "scored": false,
+          "detail": "pr-validating-flow"
+        },
+        {
+          "id": "fallback_is_honest",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The description states plainly there is no validating flow, explains the bug-specific reason (logout must be confirmed within the few-millisecond window of a single Room query, which flow taps cannot hit), names two SettingsViewModelTest unit tests as the proof (while honestly noting they have not b"
+        }
+      ],
+      "score": [
+        8,
+        8
+      ],
+      "round": 2,
+      "cost_usd": 1.0523608,
+      "turns": 1,
+      "model": "claude-fable-5-2",
+      "head": "f93f5750a9ba8fdd5da02bea064b5f8876afdc96"
+    }
+  ]
+}

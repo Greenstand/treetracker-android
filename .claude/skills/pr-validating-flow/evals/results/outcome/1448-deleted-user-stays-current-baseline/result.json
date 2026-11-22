@@ -1,0 +1,170 @@
+{
+  "case": "1448-deleted-user-stays-current",
+  "kind": "fallback",
+  "arm": "baseline",
+  "base": "861dd9a21ad084837cfc8ab9fc4019ab323bfe3e",
+  "branch": "skill-eval/1122a/1448-deleted-user-stays-current-baseline",
+  "skill_commit": "e987f82de9467a46f8f6434ea94fc29509216ab9",
+  "rounds": [
+    {
+      "kind": "fallback",
+      "added_flows": [],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/preferences/Preferences.kt, app/src/main/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_flow_claimed_as_proof",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "test_added",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+        },
+        {
+          "id": "description_names_the_test",
+          "pass": true,
+          "scored": true,
+          "detail": "UserSelectViewModelTest"
+        },
+        {
+          "id": "says_no_validating_flow",
+          "pass": true,
+          "scored": false,
+          "detail": "the skill's own wording; the judge checks the meaning"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "fallback_is_honest",
+          "pass": false,
+          "scored": true,
+          "judge": true,
+          "detail": "It plainly states there is no validating flow, gives a bug-specific reason, names the UserSelectViewModelTest unit tests as evidence and offers no flow or video as proof, but it never asks or flags for the maintainer to decide on merging without a validating flow \u2014 it simply declares the case exempt"
+        }
+      ],
+      "score": [
+        7,
+        8
+      ],
+      "round": 1,
+      "cost_usd": 1.483497,
+      "turns": 13,
+      "model": "claude-fable-5-2",
+      "head": "0c7c93cfa3a3f946b81b02e4318bb63555c719ee"
+    },
+    {
+      "kind": "fallback",
+      "added_flows": [],
+      "claimed_flows": [],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/preferences/Preferences.kt, app/src/main/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_flow_claimed_as_proof",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "test_added",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+        },
+        {
+          "id": "description_names_the_test",
+          "pass": true,
+          "scored": true,
+          "detail": "UserSelectViewModelTest"
+        },
+        {
+          "id": "says_no_validating_flow",
+          "pass": true,
+          "scored": false,
+          "detail": "the skill's own wording; the judge checks the meaning"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "fallback_is_honest",
+          "pass": false,
+          "scored": true,
+          "judge": true,
+          "detail": "It plainly says no e2e flow validates the fix, gives a bug-specific reason, names the UserSelectViewModelTest unit tests as evidence and presents no flow as proof, but it simply declares the case exempt under the docs rather than asking or flagging the merge-without-a-flow decision for the maintaine"
+        }
+      ],
+      "score": [
+        7,
+        8
+      ],
+      "round": 2,
+      "cost_usd": 1.5375996,
+      "turns": 1,
+      "model": "claude-fable-5-2",
+      "head": "0c7c93cfa3a3f946b81b02e4318bb63555c719ee"
+    }
+  ]
+}
