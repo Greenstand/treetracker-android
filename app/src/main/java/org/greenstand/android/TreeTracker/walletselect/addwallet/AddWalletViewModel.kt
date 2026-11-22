@@ -17,6 +17,7 @@ package org.greenstand.android.TreeTracker.walletselect.addwallet
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
@@ -24,6 +25,10 @@ import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 data class AddWalletState(
     val walletName: String = "",
     val userImagePath: String = "",
+    /** True while the screen, restored after process death, reloads its setup user. Next and Back wait. */
+    val restoring: Boolean = false,
+    /** True when the screen came back after process death and its user could not be found again. */
+    val setupLost: Boolean = false,
 )
 
 sealed class AddWalletAction : Action {
@@ -36,19 +41,35 @@ sealed class AddWalletAction : Action {
     object NavigateNext : AddWalletAction()
 }
 
-class AddWalletViewModel : BaseViewModel<AddWalletState, AddWalletAction>(AddWalletState()) {
+class AddWalletViewModel(
+    private val setupRestorer: CaptureSetupRestorer,
+) : BaseViewModel<AddWalletState, AddWalletAction>(AddWalletState()) {
     init {
+        // After process death Nav3 restores add wallet, but the capture setup scope only lived in
+        // memory. Reopen it from the copy on disk before reading it (#1447). The wallet name
+        // field starts empty again: the saved destination wallet may be one picked on wallet
+        // select, not a name typed here.
+        val restoring = setupRestorer.reopenIfClosed()
+        if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
+            if (restoring && !setupRestorer.reloadUser()) {
+                updateState { copy(restoring = false, setupLost = true) }
+                return@launch
+            }
+            setupRestorer.save()
             updateState {
-                copy(userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath)
+                copy(restoring = false, userImagePath = CaptureSetupScopeManager.getData().user!!.photoPath)
             }
         }
     }
 
     override fun handleAction(action: AddWalletAction) {
+        // The setup scope is closed once setup is lost; the screen is on its way to the Dashboard.
+        if (currentState.setupLost) return
         when (action) {
             is AddWalletAction.UpdateWalletName -> {
                 CaptureSetupScopeManager.getData().destinationWallet = action.destinationWallet
+                setupRestorer.save()
                 updateState { copy(walletName = action.destinationWallet) }
             }
             else -> { }

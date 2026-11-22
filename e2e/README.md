@@ -17,7 +17,8 @@ YAML and drives the installed debug app on an emulator or device.
 - Flows also tagged `known-bug` assert the fixed behaviour of a confirmed bug (section 4 of the
   plan), so they fail until it's fixed. `run.sh` skips them; run them with
   `tb test e2e/flows/ --include-tags known-bug`, and drop the tag in the PR that fixes the bug.
-- `flows/org-*.yaml` (tag `org-config`): org-configured setup and capture steps, C1–C4. Org config
+- `flows/org-*.yaml` (tag `org-config`): org-configured setup and capture steps, C1–C4, and
+  the sad paths that need such an org (`org-double-tap-*`, `org-process-death-*`). Org config
   normally comes from Firebase Remote Config, so `seed-org.sh -s <serial> <variant>` writes the org
   into the app's database and makes it current; `run-org.sh` seeds before each flow. The flows
   start with a plain `launchApp`.

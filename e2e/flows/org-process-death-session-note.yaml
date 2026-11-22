@@ -1,0 +1,31 @@
+# H5 (org). Needs the org from `bash e2e/seed-org.sh -s <serial> session-note`.
+# Process death on the session note setup step: the app goes to the background, Android kills its
+# process and the user reopens it from recents. The session note comes back without a crash, with
+# the note typed before, and Next still finishes setup and opens capture: SessionNoteViewModel
+# reopens the capture setup scope from the copy CaptureSetupRestorer saved (#1447).
+appId: org.greenstand.android.TreeTracker.debug
+name: H5 Process death on the session note
+tags: [org-config, sad-path]
+---
+- launchApp
+- runFlow:
+    file: subflows/org-capture-setup.yaml
+- assertVisible: {id: SessionNoteField}
+- tapOn: {id: SessionNoteField}
+- inputText: Planting day
+- hideKeyboard
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: SessionNoteField}
+    timeout: 15000
+- assertVisible: {id: SessionNoteField, text: "Planting day"}
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000

@@ -1,0 +1,30 @@
+# H5 (org). Needs the org from `bash e2e/seed-org.sh -s <serial> wallet-select`.
+# Process death on the wallet select setup step: the app goes to the background, Android kills its
+# process and the user reopens it from recents. Wallet select comes back without a crash and
+# lists the wallets again; picking one and Next finishes setup and opens capture:
+# WalletSelectViewModel reopens the capture setup scope and reloads the setup user (#1447).
+# Next opening capture also shows the restored screen is wallet select: from user select, which
+# looks alike, Next would open wallet select instead.
+appId: org.greenstand.android.TreeTracker.debug
+name: H5 Process death on wallet select
+tags: [org-config, sad-path]
+---
+- launchApp
+- runFlow:
+    file: subflows/org-capture-setup.yaml
+- assertVisible: {id: OrangeAddButton}
+- pressKey: Home
+- killApp
+- launchApp: {stopApp: false}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000

@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.navigation.LeaveLostSetupEffect
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
@@ -57,16 +58,20 @@ fun SessionNoteScreen(viewModel: SessionNoteViewModel = viewModel(factory = Loca
     val scope = rememberCoroutineScope()
     val doubleTapGuard = rememberDoubleTapGuard()
 
+    LeaveLostSetupEffect(state.setupLost)
+
     Box(doubleTapGuard.modifier) {
         SessionNote(
             state = state,
             onHandleAction = { action ->
+                // Until a restored session note has its user back, leaving it would start setup without one.
+                val canLeave = !state.restoring && !state.setupLost
                 when (action) {
-                    is SessionNoteAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
+                    is SessionNoteAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
                     is SessionNoteAction.NavigateNext -> {
                         // Next sits where the previous setup screen's Next was, so the second tap of a
                         // double tap there lands here and would skip the note (#1442). Drop it.
-                        if (!doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
+                        if (canLeave && !doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
                             scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                         }
                     }
