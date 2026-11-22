@@ -8,6 +8,14 @@ on:
         required: true
         type: string
         default: master
+      build_type:
+        description: "Build to deploy"
+        required: true
+        type: choice
+        options:
+          - beta
+          - dev
+        default: beta
       group:
         description: "Tester group to deploy to"
         required: true
@@ -24,10 +32,10 @@ on:
 
 jobs:
   build:
-    name: Build beta APK
+    name: Build ${{ inputs.build_type }} APK
     uses: ./.github/workflows/build.yml
     with:
-      build_variant: beta
+      build_variant: ${{ inputs.build_type }}
       source_ref: ${{ inputs.branch }}
       upload_artifact: true
     secrets: inherit
@@ -47,7 +55,7 @@ jobs:
       - name: Download APK artifact
         uses: actions/download-artifact@v4
         with:
-          name: app-beta
+          name: app-${{ inputs.build_type }}
 
       - name: Resolve APK path
         id: resolve-apk
@@ -69,10 +77,29 @@ jobs:
             exit 1
           fi
 
+      # Each build type is its own Firebase app, because each has its own application id
+      # (see app/google-services.json): beta is ...TreeTracker.test, dev is ...TreeTracker.dev.
+      - name: Resolve Firebase app id
+        id: firebase-app
+        shell: bash
+        env:
+          BUILD_TYPE: ${{ inputs.build_type }}
+        run: |
+          case "$BUILD_TYPE" in
+            beta) APP_ID="1:422699885542:android:aab16ef8fc4e5968a0ec27" ;;
+            dev)  APP_ID="1:422699885542:android:0d0fe64a4522d006a0ec27" ;;
+            *)
+              echo "No Firebase app id is configured for build type '$BUILD_TYPE'."
+              exit 1
+              ;;
+          esac
+          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+          echo "Deploying the $BUILD_TYPE build to Firebase app $APP_ID"
+
       - name: Deploy to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          appId: 1:422699885542:android:aab16ef8fc4e5968a0ec27
+          appId: ${{ steps.firebase-app.outputs.app_id }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           groups: ${{ inputs.group }}
           releaseNotes: ${{ github.event.inputs.release_notes }}
