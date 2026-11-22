@@ -1,0 +1,26 @@
+▶ C6 Double tap into the session note step on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.8s
+  ✓ Wait until id: TrackButton is visible  3.1s
+  ✓ Tap on id: TrackButton  407ms
+  ✓ Wait until id: UserButton_5551230001 is visible  157ms
+  ✓ Tap on id: UserButton_5551230001  498ms
+  ✓ Double tap on id: ArrowForwardButton  575ms
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+  ✗ Assert that id: SessionNoteField is visible  17.0s
+      Assertion is false: id: SessionNoteField is visible
+✗ C6 Double tap into the session note step failed in 31.2s on sdk gphone64 x86 64
+  Assertion is false: id: SessionNoteField is visible
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 6 elements
+    row:
+      @1 Button #UserImageButton
+      @2 Button #CreateFakeTreesButton
+    row:
+      @3 Button #ArrowBackButton
+      @4 Button #CaptureButton
+      @5 Button #InfoButton
+    @6 Button "D" #DebugOverlayMenuButton
+  debug: build/flow-results/validate/before/flows/org-double-tap-session-note/tb/C6_Double_tap_into_the_session_note_step (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/org-double-tap-session-note/tb/C6_Double_tap_into_the_session_note_step/recording.mp4
+
+0 passed, 1 failed in 34.5s
