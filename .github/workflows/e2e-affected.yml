@@ -1,0 +1,440 @@
+name: Affected flows (annotated video)
+
+# On every PR, annotated videos (tb --record --annotate) of the flows the PR affects, as picked
+# by e2e/ci/affected.py: changed flows whole, and one cut flow per other change, at most 6. Not a
+# required check; android-e2e.yml still runs every flow.
+# Flows meant to prove the PR's change (e2e/ci/validating.py: named on a `validates:` line of the
+# description, or added or edited by the PR; at most 3) run twice instead, on the app at the PR's
+# merge base and on the PR's app, and get a verdict: validated when the flow fails before and
+# passes after. A fork's PR runs only from Run workflow,
+# with the full sha of the commit you read, a read-only token and no caches saved.
+# How it picks flows and how fork runs are kept apart: docs/testing/ci-flows.md.
+on:
+  pull_request:
+    branches: [ master, release* ]
+    types: [ opened, synchronize, reopened, ready_for_review ]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "PR number (from this repository or a fork)"
+        required: true
+      sha:
+        description: "The full 40-character sha of the PR's head commit you reviewed; the run stops if the PR has moved on"
+        required: true
+
+# A push cancels the run for the commit before it. A run by hand is in a group of its own, so the
+# PR's own events (a push, a close and reopen) don't cancel what a maintainer started.
+concurrency:
+  group: e2e-affected-${{ github.event.pull_request.number || inputs.pr }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  MAX_FLOWS: "6"
+  MAX_VALIDATING: "3"
+
+jobs:
+  select:
+    name: pick flows
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      flows: ${{ steps.pick.outputs.flows }}
+      validate: ${{ steps.pick.outputs.validate }}
+      before: ${{ steps.pick.outputs.before }}
+      pr: ${{ steps.pr.outputs.pr }}
+      sha: ${{ steps.pr.outputs.sha }}
+      fork: ${{ steps.pr.outputs.fork }}
+      run: ${{ steps.pr.outputs.run }}
+      table: ${{ steps.pick.outputs.table }}
+    steps:
+      - name: The PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
+          REVIEWED: ${{ inputs.sha }}
+          EVENT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          [[ $PR =~ ^[0-9]+$ ]] || { echo "::error::pr must be a number"; exit 1; }
+          PRJ=$(gh api "repos/$REPO/pulls/$PR")
+          [[ $(jq -r .state <<<"$PRJ") == open ]] || { echo "::error::PR #$PR is not open"; exit 1; }
+          # The event's own head commit, exact even when the API lags a push.
+          SHA=${EVENT_SHA:-$(jq -r .head.sha <<<"$PRJ")}
+          # A run by hand runs only the commit the maintainer read: the full sha, since a short
+          # one can be matched by a commit made to look like it.
+          if [[ $EVENT == workflow_dispatch ]]; then
+            REVIEWED=$(tr '[:upper:]' '[:lower:]' <<<"$REVIEWED" | tr -d '[:space:]')
+            [[ $REVIEWED =~ ^[0-9a-f]{40}$ ]] || { echo "::error::sha: the full 40-character commit sha you reviewed"; exit 1; }
+            if [[ $SHA != "$REVIEWED" ]]; then
+              echo "::error::PR #$PR is at ${SHA:0:12} now, not ${REVIEWED:0:12}: read the new commits, then run it with the new sha"
+              exit 1
+            fi
+          fi
+          HEAD_REPO=$(jq -r '.head.repo.full_name // ""' <<<"$PRJ")
+          FORK=false
+          [[ $HEAD_REPO == "$REPO" ]] || FORK=true
+          # A fork's flows only run when someone presses Run workflow.
+          RUN=true
+          [[ $FORK == true && $EVENT == pull_request ]] && RUN=false
+          {
+            echo "pr=$PR"
+            echo "sha=$SHA"
+            echo "base=$(jq -r .base.ref <<<"$PRJ")"
+            echo "fork=$FORK"
+            echo "run=$RUN"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.sha }}
+          persist-credentials: false
+
+      # A fork's copy of affected.py is code nobody has vouched for yet: pick its flows with the
+      # base branch's copy, reading the fork's files as data.
+      - name: The base branch's selector
+        if: steps.pr.outputs.fork == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.base }}
+          path: .trusted
+          sparse-checkout: e2e/ci
+          persist-credentials: false
+
+      # Only reads files: picking flows runs none of the PR's app code.
+      - name: Pick the flows
+        id: pick
+        env:
+          BASE: ${{ steps.pr.outputs.base }}
+          SHA: ${{ steps.pr.outputs.sha }}
+          FORK: ${{ steps.pr.outputs.fork }}
+          PR: ${{ steps.pr.outputs.pr }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          # Set on every way out of this step, so the jobs after it see empty values, not none.
+          echo "validate=" >> "$GITHUB_OUTPUT"
+          echo "before=" >> "$GITHUB_OUTPUT"
+          # Full history of the base and the PR head (the checkout is shallow), for their merge base.
+          git fetch -q --no-tags --unshallow origin "+refs/heads/$BASE:refs/remotes/origin/$BASE" "$SHA"
+          # A PR branch from before this workflow has no flow cuts in its run-flows.sh (and no
+          # affected.py): nothing to run until it merges the base branch.
+          if [[ ! -f e2e/ci/cut_flow.py ]]; then
+            echo "::notice::This PR's branch is older than the annotated-video check: merge $BASE into it to get videos"
+            echo "This PR's branch is older than the annotated-video check: merge \`$BASE\` into it to get videos." >> "$GITHUB_STEP_SUMMARY"
+            echo "flows=" >> "$GITHUB_OUTPUT"
+            echo "table=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          CI=e2e/ci
+          if [[ $FORK == true ]]; then
+            CI=.trusted/e2e/ci
+            if [[ ! -f $CI/affected.py ]]; then
+              echo "::notice::$BASE has no e2e/ci/affected.py (it was cut before it), so no flows are picked for a fork's PR into it"
+              echo "The base branch, \`$BASE\`, has no \`e2e/ci/affected.py\`: nothing to pick flows with for a fork's PR." >> "$GITHUB_STEP_SUMMARY"
+              echo "flows=" >> "$GITHUB_OUTPUT"
+              echo "table=" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          elif [[ -n $(git diff --name-only "origin/$BASE...$SHA" -- e2e/ci) ]]; then
+            # The PR changes the selector: its tests must pass before it picks anything. (Only
+            # then, since RealRepoTest also reads the app, which other PRs may change.)
+            python3 -m unittest discover -s e2e/ci -p 'test_*.py'
+          fi
+          mkdir -p build
+          FLOWS=$(python3 "$CI/affected.py" --root . --base "origin/$BASE" --head "$SHA" --max "$MAX_FLOWS" \
+            --json build/affected.json --md build/affected.md)
+          # Selectors are flow paths: anything else (a file name a PR chose, with a newline) stops here.
+          if [[ ! $FLOWS =~ ^[A-Za-z0-9_./@\ -]*$ ]]; then
+            echo "::error::Unexpected characters in the selectors: $FLOWS"; exit 1
+          fi
+          # Validating flows: named in the description (read as data, from a file) or changed by
+          # the PR. They run before and after, so they leave the list above. Needs run-job.sh in
+          # the PR's checkout (and, for a fork, validating.py on the base branch).
+          VALIDATE=""
+          : > build/validating.md
+          if [[ -f e2e/ci/run-job.sh && -f $CI/validating.py ]]; then
+            gh api "repos/$REPO/pulls/$PR" --jq '.body // ""' > build/pr-body.txt
+            VALIDATE=$(python3 "$CI/validating.py" --root . --base "origin/$BASE" --head "$SHA" \
+              --body-file build/pr-body.txt --max "$MAX_VALIDATING" --json build/validating.json --md build/validating.md)
+            if [[ ! $VALIDATE =~ ^[A-Za-z0-9_./\ -]*$ ]]; then
+              echo "::error::Unexpected characters in the validating flows: $VALIDATE"; exit 1
+            fi
+          fi
+          if [[ -n $VALIDATE ]]; then
+            KEPT=""
+            for F in $FLOWS; do
+              [[ " $VALIDATE " == *" ${F%@*} "* ]] || KEPT="$KEPT $F"
+            done
+            FLOWS=${KEPT# }
+            echo "validate=$VALIDATE" >> "$GITHUB_OUTPUT"
+            echo "before=$(git merge-base "origin/$BASE" "$SHA")" >> "$GITHUB_OUTPUT"
+          fi
+          echo "flows=$FLOWS" >> "$GITHUB_OUTPUT"
+          # A delimiter no file name in the table can contain.
+          EOF_MARK="AFFECTED_$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+          {
+            echo "table<<$EOF_MARK"
+            cat build/validating.md
+            echo
+            cat build/affected.md
+            echo "$EOF_MARK"
+          } >> "$GITHUB_OUTPUT"
+          cat build/validating.md build/affected.md >> "$GITHUB_STEP_SUMMARY"
+          echo "Selectors: \`${FLOWS:-none}\`; validating: \`${VALIDATE:-none}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: How to run it for a fork
+        if: steps.pr.outputs.run == 'false' && (steps.pick.outputs.flows != '' || steps.pick.outputs.validate != '')
+        env:
+          PR: ${{ steps.pr.outputs.pr }}
+          SHA: ${{ steps.pr.outputs.sha }}
+        run: |
+          {
+            echo
+            echo "**From a fork, so nothing ran.** After reading the PR's code, a maintainer can run these"
+            echo "flows: Actions > \"Affected flows (annotated video)\" > Run workflow, with PR \`$PR\`"
+            echo "and the commit they read (the full sha), \`$SHA\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice::PR from a fork: run the annotated flows by hand (Actions > Affected flows > Run workflow, PR $PR)"
+
+  # A PR from this repository: results also go to the flow-results/affected-pr-<N> branch.
+  annotated:
+    name: annotated videos
+    needs: select
+    if: needs.select.outputs.fork == 'false' && (needs.select.outputs.flows != '' || needs.select.outputs.validate != '')
+    permissions:
+      contents: write
+    uses: ./.github/workflows/flow-runner-job.yml
+    with:
+      flows: ${{ needs.select.outputs.flows }}
+      validate_flows: ${{ needs.select.outputs.validate }}
+      before_ref: ${{ needs.select.outputs.before }}
+      ref: ${{ needs.select.outputs.sha }}
+      pr: ${{ needs.select.outputs.pr }}
+      screenshots: end
+      annotate: true
+      label: affected
+
+  # A fork's PR, run by hand: a read-only token, no results branch, no caches saved.
+  annotated-fork:
+    name: annotated videos (fork)
+    needs: select
+    if: needs.select.outputs.run == 'true' && needs.select.outputs.fork == 'true' && (needs.select.outputs.flows != '' || needs.select.outputs.validate != '')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/flow-runner-job.yml
+    with:
+      flows: ${{ needs.select.outputs.flows }}
+      validate_flows: ${{ needs.select.outputs.validate }}
+      before_ref: ${{ needs.select.outputs.before }}
+      ref: ${{ needs.select.outputs.sha }}
+      pr: ${{ needs.select.outputs.pr }}
+      screenshots: end
+      annotate: true
+      label: affected
+      publish_branch: false
+      save_caches: false
+
+  # One comment per PR, updated by each run, and the before/after table in the PR's description
+  # (between the e2e-videos markers). Runs none of the PR's code. A fork's PR gets them only from
+  # a run by hand (a pull_request run from a fork can't comment).
+  comment:
+    name: comment on the PR
+    needs: [ select, annotated, annotated-fork ]
+    if: >-
+      !cancelled() && needs.select.result == 'success' && needs.select.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v4
+        if: needs.annotated.outputs.artifact != '' || needs.annotated-fork.outputs.artifact != ''
+        continue-on-error: true
+        with:
+          name: ${{ needs.annotated.outputs.artifact || needs.annotated-fork.outputs.artifact }}
+          path: results
+      - uses: actions/github-script@v7
+        env:
+          PR: ${{ needs.select.outputs.pr }}
+          SHA: ${{ needs.select.outputs.sha }}
+          TABLE: ${{ needs.select.outputs.table }}
+          FLOWS: ${{ needs.select.outputs.flows }}
+          VALIDATE: ${{ needs.select.outputs.validate }}
+          BEFORE: ${{ needs.select.outputs.before }}
+          ARTIFACT: ${{ needs.annotated.outputs.artifact || needs.annotated-fork.outputs.artifact }}
+          BRANCH: ${{ needs.annotated.outputs.results_branch }}
+          RESULTS_SHA: ${{ needs.annotated.outputs.results_sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const env = process.env;
+            const marker = '<!-- e2e-affected -->';
+            // summary.json and the table come from the PR's code and file names (a fork's, on a
+            // run by hand): take only what is expected, as text, with no mentions or table breaks.
+            const text = (v, max = 300) => String(v ?? '').split('\n')[0].slice(0, max)
+              .replace(/[|<>]/g, c => '\\' + c).replace(/@/g, '@\u200b');
+            const noMentions = v => String(v ?? '').replace(/@/g, '@\u200b');
+            const safePath = v => /^[A-Za-z0-9_./-]+$/.test(String(v ?? '')) ? String(v) : null;
+            const lines = [marker, '## Annotated flow videos', '', noMentions(env.TABLE).trim(), ''];
+            const repoUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}`;
+            const rawUrl = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}`;
+            // A video on the results branch: its GIF, which a comment plays inline, and a link to
+            // the MP4. Without a results branch (a fork's PR), the artifact has it.
+            const media = (video, width = 200) => {
+              const v = safePath(video);
+              if (!v) return null;
+              if (!env.RESULTS_SHA) return 'video in the artifact';
+              const gif = v.replace(/\.mp4$/, '.gif');
+              const link = `[mp4](${repoUrl}/blob/${env.RESULTS_SHA}/${v})`;
+              return fs.existsSync('results/' + gif)
+                ? `<img src="${rawUrl}/${env.RESULTS_SHA}/${gif}" width="${width}" alt=""><br>${link}`
+                : link;
+            };
+            const anyRan = env.FLOWS.trim() || env.VALIDATE.trim();
+            // Before and after: the validating flows on the base app and on this PR's app.
+            const proofStart = lines.length;
+            if (env.VALIDATE.trim()) {
+              let verdict = null;
+              try {
+                verdict = JSON.parse(fs.readFileSync('results/validate/verdict.json', 'utf8'));
+                if (!Array.isArray(verdict.flows)) verdict = null;
+              } catch (e) {
+                verdict = null;
+              }
+              const words = {
+                'validated': '✅ **Validated**: fails without this change, passes with it',
+                'not-demonstrated': '⚠️ **Does not demonstrate the change**: passes without it too',
+                'broken': '❌ **Broken**: fails on this PR\'s app',
+                'inconclusive': '❔ **Inconclusive**',
+              };
+              if (!verdict) {
+                lines.push('### Before and after', '', 'The run stopped before the validating flows ran: see the [run](' + env.RUN_URL + ').', '');
+              } else {
+                const base = /^[0-9a-f]{40}$/.test(env.BEFORE) ? ` \`${env.BEFORE.slice(0, 7)}\`` : '';
+                lines.push('### Before and after', '',
+                  `| Flow | Before: base app${base} | After: this PR's app | Verdict |`, '|---|---|---|---|');
+                const vflows = verdict.flows.filter(f => f && typeof f === 'object').slice(0, 10);
+                const sideCell = side => {
+                  if (!side || side.ran === false) return 'did not run';
+                  const result = side.status === 'passed' ? '✅ passed' : '❌ failed';
+                  // verdict.json's paths start at the validate folder.
+                  const video = media(side.video ? 'validate/' + side.video : null) || (side.recording === 'lost' ? '⚠️ **recording lost**' : 'no video');
+                  return `${result}<br>${video}`;
+                };
+                for (const f of vflows) {
+                  const name = '`' + text(f.name, 80).replace(/`/g, '') + '`';
+                  const word = words[f.verdict] || text(f.verdict, 30);
+                  lines.push(`| ${name} | ${sideCell(f.before)} | ${sideCell(f.after)} | ${word}${f.why ? ': ' + text(f.why) : ''} |`);
+                }
+                for (const f of vflows) {
+                  for (const [label, side] of [['on the base app', f.before], ['on this PR\'s app', f.after]]) {
+                    if (side && side.error) {
+                      lines.push('', `**\`${text(f.name, 80).replace(/`/g, '')}\`** ${label}: ${text(side.error)}`);
+                    }
+                  }
+                }
+                lines.push('', '<sub>Each flow ran once on each app, with this PR\'s flow files. A flow can fail on the base app ' +
+                  'for a reason other than the bug: read the failing step above.</sub>', '');
+              }
+            }
+            const proof = lines.slice(proofStart);
+            if (env.FLOWS.trim()) {
+              let summary = null;
+              try {
+                summary = JSON.parse(fs.readFileSync('results/summary.json', 'utf8'));
+                if (!Array.isArray(summary.flows)) summary = null;
+              } catch (e) {
+                summary = null;
+              }
+              if (!summary) {
+                lines.push('The run stopped before the flows ran: see the [run](' + env.RUN_URL + ').');
+              } else {
+                const flows = summary.flows.filter(f => f && typeof f === 'object').slice(0, 20);
+                // A video that was not saved is said first, and in its row: a passed flow without
+                // its video is not what this check is for.
+                const lost = flows.filter(f => f.recording === 'lost' ||
+                  (f.recording == null && !safePath(f.video)));
+                if (lost.length) {
+                  lines.push(`> ⚠️ **${lost.length} of ${flows.length} recording${flows.length > 1 ? 's' : ''} lost.** ` +
+                    'The flow ran, but its video could not be saved: re-run the job to record it again.', '');
+                }
+                lines.push('| Flow | Result | Video |', '|---|---|---|');
+                for (const f of flows) {
+                  const name = '`' + text(f.name, 80).replace(/`/g, '') + '`' +
+                    (Number.isInteger(f.steps) ? ` (steps 1–${f.steps})` : '');
+                  const result = f.status === 'passed' ? '✅ passed' : '❌ ' + text(f.status, 20);
+                  const videos = [f.video, ...(Array.isArray(f.videoParts) ? f.videoParts : [])].map(safePath).filter(Boolean);
+                  let video = '⚠️ **recording lost**';
+                  if (videos.length && env.RESULTS_SHA) {
+                    video = videos.length === 1 ? media(videos[0], 160)
+                      : videos.map((v, i) => `[${i ? 'part ' + (i + 1) : 'video'}](${repoUrl}/blob/${env.RESULTS_SHA}/${v})`).join(', ');
+                  } else if (videos.length) {
+                    video = 'in the artifact';
+                  }
+                  if (videos.length && f.recording === 'partial') video += ' (⚠️ may be incomplete)';
+                  if (Number.isInteger(f.tries) && f.tries > 1) video += ` (try ${f.tries})`;
+                  lines.push(`| ${name} | ${result} | ${video} |`);
+                }
+                for (const f of flows.filter(f => f.error)) {
+                  lines.push('', `**\`${text(f.name, 80).replace(/`/g, '')}\`** failed: ${text(f.error)}`);
+                }
+                for (const f of lost.concat(flows.filter(f => f.recording === 'partial'))) {
+                  lines.push('', `**\`${text(f.name, 80).replace(/`/g, '')}\`** recording ` +
+                    `${f.recording === 'partial' ? 'may be incomplete' : 'lost'}: ${text(f.recordingError || 'no video file was saved')}`);
+                }
+              }
+            }
+            if (anyRan) {
+              lines.push('', `[Run](${env.RUN_URL}) at \`${env.SHA.slice(0, 7)}\`. Videos, captions (.srt) and logs: ` +
+                `the \`${env.ARTIFACT}\` artifact` + (env.BRANCH ? ` and the \`${env.BRANCH}\` branch.` : '.'));
+            }
+            lines.push('', '<sub>Not a required check. Every flow still runs, without video, in "Android end-to-end".</sub>');
+            // GitHub refuses a comment over 65536 characters.
+            let body = lines.join('\n');
+            if (body.length > 60000) {
+              body = body.slice(0, 60000) + `\n\n… cut short: the [run](${env.RUN_URL}) has the full list.`;
+            }
+            const issue_number = Number(env.PR);
+            const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
+            const mine = comments.find(c => c.user.type === 'Bot' && c.body.startsWith(marker));
+            if (mine) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });
+            } else if (anyRan) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }
+
+            // The same before/after table goes in the PR description, between two markers, so
+            // the proof is where a reviewer reads first (and where "Check for screenshot & video"
+            // looks). Only the text between the markers is replaced; without markers the block
+            // is added at the end, and only when validating flows ran.
+            const START = '<!-- e2e-videos:start -->', END = '<!-- e2e-videos:end -->';
+            const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: issue_number });
+            const old = pr.body || '';
+            const from = old.indexOf(START), to = old.indexOf(END);
+            const marked = from !== -1 && to > from;
+            if (proof.length || marked) {
+              const inner = proof.length
+                ? [...proof, `<sub>Recorded by CI with \`tb test --record --annotate\` at \`${env.SHA.slice(0, 7)}\` ([run](${env.RUN_URL})). ` +
+                    'This block is rewritten on every push: write outside it.</sub>']
+                : [`No validating flow ran at \`${env.SHA.slice(0, 7)}\` ([run](${env.RUN_URL})).`];
+              const block = [START, ...inner, END].join('\n');
+              const next = marked
+                ? old.slice(0, from) + block + old.slice(to + END.length)
+                : old.replace(/\s+$/, '') + '\n\n' + block + '\n';
+              if (next.length > 65000) {
+                core.warning('The PR description is too long to add the before/after videos to: they are in the comment.');
+              } else if (next !== old) {
+                await github.rest.pulls.update({ ...context.repo, pull_number: issue_number, body: next });
+              }
+            }

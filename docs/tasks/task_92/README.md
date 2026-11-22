@@ -28,7 +28,6 @@ Test Buddy flows in `e2e/flows/`, selecting by test-tag ids, with no sleeps.
 | C4 | `org-wallet-select.yaml` | Pick a wallet, then add a wallet |
 
 Known-bug flows (tag `known-bug`, skipped by `run.sh`): `sad-location-denied.yaml` (H1),
-`sad-process-death-setup.yaml` (H5), `sad-process-death-review.yaml` and
 `sad-capture-after-process-death.yaml` (H6), `sad-camera-rationale-next.yaml` (H2),
 `sad-back-add-org.yaml` (H9), `sad-double-tap-setup.yaml` (H8).
 Also `settings-logout-back.yaml` (E6) and `settings-delete-user-offline.yaml` (E7), which assert
@@ -60,7 +59,6 @@ issue counts as fixed only when its flow passes; the fix PR removes the `known-b
 | Back after logout returns to Signup | #1415 | `settings-logout-back.yaml` |
 | Offline user delete crashes | #1416 | `settings-delete-user-offline.yaml` |
 | Location denied: stuck on splash | #1417 | `sad-location-denied.yaml` |
-| Process death on Add org crashes | #1418 | `sad-process-death-setup.yaml` |
 | Process death on image review crashes | #1419 | `sad-process-death-review.yaml` |
 | GPS not restarted after process death | #1420 | `sad-capture-after-process-death.yaml` |
 | Next after camera rationale cancel crashes | #1421 | `sad-camera-rationale-next.yaml` |
