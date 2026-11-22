@@ -45,8 +45,7 @@ the capture session" assertion. Issue #1438.
 
 Extra tests: `CaptureFlowNavigationControllerTest` (`leaveToSetup` pops, ends the session and
 keeps the setup scope; a throttled pop ends nothing) and `PermissionRequestUiTest` (no capture
-scope still leaves the screen). The two camera e2e flows only got comment updates, so the video
-workflow records them still passing.
+scope still leaves the screen). No e2e flow is changed.
 
 ## Review (independent subagent)
 
@@ -61,3 +60,22 @@ Not changed:
   `SessionTracker` (serialize start/end), outside this bug.
 - `onLeave` keeps its plain-pop default so the dialogs still work on their own (PermissionDialogsUiTest).
 - Leaving capture stops the GPS warm-up started on User select; Next restarts it.
+
+## Validating flow (pr-validating-flow skill)
+
+No validating flow: the leaked session has no on-screen consequence a flow can assert. Tried,
+following the wrong state forward on master's app:
+
+- Dashboard counts: read live from the database (`DashboardViewModel.observeTreeCounts`), not
+  from the session, so they are right either way.
+- Next on Add org, or a new setup from the Dashboard: `startSession()` ends the current session
+  first, so the next capture behaves the same.
+- User select (#1437) keys on the setup scope, which this fix keeps open too.
+- Process-death restore (#1432, #1433) keys on the pending tree / current session, which match
+  either way; a cold start only recounts trees to sync (same count).
+- The leaked GPS writes location rows for the session and the session row keeps no end time:
+  visible only in a real sync (the e2e emulator is offline) or debug overlays.
+
+Proof instead: the `PermissionRequestUiTest` tests fail on the test-only commit dba6c22
+("... left capture without ending the capture session") and pass from the fix (7bd69c6) on.
+The comment-only edits to the two camera flows were dropped, so CI doesn't present them as proof.
