@@ -1,0 +1,46 @@
+▶ H2 Next after camera rationale cancel on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.5s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  228ms
+    ✓ Tap on id: ArrowForwardButton  180ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  156ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  149ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  479ms
+    ✓ Hide keyboard  62ms
+    ✓ Tap on id: ArrowForwardButton  144ms
+    ✓ Tap on id: FirstNameField  170ms
+    ✓ Input text Ada  251ms
+    ✓ Tap on id: LastNameField  132ms
+    ✓ Input text Admin  292ms
+    ✓ Hide keyboard  84ms
+    ✓ Tap on id: ArrowForwardButton  127ms
+    ✓ Tap on id: TutorialDoneButton  267ms
+    ✓ Tap on id: CaptureButton  500ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  110ms
+    ✓ Wait until id: TrackButton is visible  53ms
+  ✓ Run Sign up  20.1s
+  ✓ Set permissions  1.6s
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+  ✓ Wait until id: permission_deny_button is visible  1.0s
+  ✓ Tap on id: permission_deny_button  322ms
+  ✓ Wait until id: TrackButton is visible  719ms
+  ✓ Tap on id: TrackButton  406ms
+  ✓ Tap on id: UserButton_5551230001  251ms
+  ✓ Tap on id: ArrowForwardButton  218ms
+  ✓ Tap on id: ArrowForwardButton  165ms
+  ✓ Wait until id: permission_deny_and_dont_ask_again_button is visible  222ms
+  ✓ Press back  13ms
+  ✓ Tap on id: TutorialDoneButton  120ms
+  ✓ Tap on id: DialogNegativeButton  199ms
+  ✓ Assert that id: OrgNameField is visible  7ms
+  ✓ Tap on id: ArrowForwardButton  185ms
+  ✓ Wait until id: permission_deny_and_dont_ask_again_button is visible  5ms
+  ✓ Take screenshot step-18-end-extendedWaitUntil-permission_deny_and_dont_ask_a  131ms
+✓ H2 Next after camera rationale cancel passed in 38.8s
+  video: build/flow-results/flows/sad-camera-rationale-next/tb/H2_Next_after_camera_rationale_cancel/recording.mp4
+
+1 passed in 39.9s

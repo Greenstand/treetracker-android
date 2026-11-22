@@ -1,0 +1,302 @@
+   0.000s tb 0.6.3: "H2 Camera denied on capture" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-sad-camera-denied.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.290s recording the screen to recording.mp4
+   0.290s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-sad-camera-denied.yaml:15)
+   2.438s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2147 ms
+   2.438s ▶ Run Sign up  (.ci-sad-camera-denied.yaml:16)
+   2.438s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   2.530s     snapshot history: screen context changed; discarding 1 snapshots
+   2.737s     snapshot history: screen context changed; discarding 1 snapshots
+   4.129s     snapshot history: screen context changed; discarding 1 snapshots
+   4.129s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 1690 ms and 4 reads
+   4.129s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 19
+   4.129s   ✓ Wait until id: LanguageOption_ENGLISH is visible  1690 ms
+   4.129s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   4.138s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.307s     waited 168 ms for a still screen
+   4.318s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.416s     tap at (160, 264): the screen changed (sent in 18 ms, waited 35 ms)
+   4.416s   ✓ Tap on id: LanguageOption_ENGLISH  287 ms
+   4.416s     --annotate: holding the screen 900ms for the recording
+   5.319s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   5.330s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.378s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.427s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.503s     tap at (264, 572): the screen changed (sent in 7 ms, waited 63 ms)
+   5.503s   ✓ Tap on id: ArrowForwardButton  183 ms
+   5.503s     --annotate: holding the screen 920ms for the recording
+   6.428s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   6.451s     snapshot history: screen context changed; discarding 2 snapshots
+   6.451s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.512s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.581s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.682s     tap at (160, 571): the screen changed (sent in 5 ms, waited 56 ms)
+   6.682s   ✓ Tap on id: PrivacyPolicyCloseButton  254 ms
+   6.682s     --annotate: holding the screen 900ms for the recording
+   7.582s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+   7.590s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+   7.590s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  7 ms
+   7.590s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+   7.590s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+   7.599s       snapshot history: screen context changed; discarding 1 snapshots
+   7.599s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   7.645s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   8.655s       tap at (88, 244): nothing changed (sent in 7 ms, waited 1000 ms)
+   8.655s     ✓ Tap on id: PhoneCredentialButton  1064 ms
+   8.655s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+   8.662s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   8.708s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   8.776s       tap at (160, 313): the screen changed (sent in 20 ms, waited 46 ms)
+   8.776s     ✓ Tap on id: PhoneField  121 ms
+   8.776s       --annotate: holding the screen 930ms for the recording
+   9.708s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2118 ms
+   9.708s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+   9.710s     typing 10 characters
+  10.253s     typed with device verification: the screen changed (sent in 391 ms, waited 149 ms)
+  10.253s   ✓ Input text 5551230001  544 ms
+  10.253s     --annotate: holding the screen 460ms for the recording
+  10.710s   ▶ Hide keyboard  (signup.yaml:23)
+  10.825s     snapshot history: screen context changed; discarding 1 snapshots
+  10.825s   ✓ Hide keyboard  115 ms
+  10.825s     --annotate: holding the screen 880ms for the recording
+  11.710s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+  11.710s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.761s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.826s     tap at (264, 572): the screen changed (sent in 4 ms, waited 55 ms)
+  11.826s   ✓ Tap on id: ArrowForwardButton  116 ms
+  11.826s     --annotate: holding the screen 930ms for the recording
+  12.762s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+  12.768s     snapshot history: screen context changed; discarding 1 snapshots
+  12.768s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.814s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.859s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.899s     tap at (160, 227): the screen changed (sent in 8 ms, waited 28 ms)
+  12.899s   ✓ Tap on id: FirstNameField  137 ms
+  12.899s     --annotate: holding the screen 960ms for the recording
+  13.859s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+  13.860s     typing 3 characters
+  14.109s     typed with device verification: the screen changed (sent in 46 ms, waited 200 ms)
+  14.109s   ✓ Input text Ada  249 ms
+  14.109s     --annotate: holding the screen 750ms for the recording
+  14.859s   ▶ Tap on id: LastNameField  (signup.yaml:27)
+  14.886s     snapshot history: screen context changed; discarding 1 snapshots
+  14.886s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.903s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.976s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  15.050s     tap at (160, 315): the screen changed (sent in 7 ms, waited 21 ms)
+  15.050s   ✓ Tap on id: LastNameField  191 ms
+  15.050s     --annotate: holding the screen 930ms for the recording
+  15.977s   ▶ Input text ${LAST_NAME}  (signup.yaml:28)
+  16.023s     typing 5 characters
+  16.279s     typed with device verification: the screen changed (sent in 51 ms, waited 202 ms)
+  16.279s   ✓ Input text Admin  301 ms
+  16.279s     --annotate: holding the screen 700ms for the recording
+  16.977s   ▶ Hide keyboard  (signup.yaml:29)
+  17.073s     snapshot history: screen context changed; discarding 2 snapshots
+  17.073s   ✓ Hide keyboard  96 ms
+  17.073s     --annotate: holding the screen 900ms for the recording
+  17.978s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:30)
+  17.978s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.027s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.113s     tap at (264, 572): the screen changed (sent in 10 ms, waited 74 ms)
+  18.113s   ✓ Tap on id: ArrowForwardButton  134 ms
+  18.113s     --annotate: holding the screen 910ms for the recording
+  19.028s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:31)
+  19.409s     snapshot history: screen context changed; discarding 1 snapshots
+  19.409s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.458s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.516s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.572s     tap at (160, 474): the screen changed (sent in 5 ms, waited 48 ms)
+  19.572s   ✓ Tap on id: TutorialDoneButton  544 ms
+  19.572s     --annotate: holding the screen 940ms for the recording
+  20.516s   ▶ Tap on id: CaptureButton  (signup.yaml:32)
+  20.535s     snapshot history: screen context changed; discarding 1 snapshots
+  20.536s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.600s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.664s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  21.046s     tap at (160, 572): the screen changed (sent in 13 ms, waited 366 ms)
+  21.046s   ✓ Tap on id: CaptureButton  529 ms
+  21.046s     --annotate: holding the screen 620ms for the recording
+  21.665s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:33)
+  21.670s     snapshot history: screen context changed; discarding 1 snapshots
+  21.670s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.670s   ✓ Wait until id: ApproveButton is visible  5 ms
+  21.670s   ▶ Tap on id: ApproveButton  (signup.yaml:36)
+  21.671s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.715s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.759s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.793s     tap at (202, 574): the screen changed (sent in 5 ms, waited 24 ms)
+  21.793s   ✓ Tap on id: ApproveButton  122 ms
+  21.793s     --annotate: holding the screen 970ms for the recording
+  22.760s   ▶ Wait until id: TrackButton is visible  (signup.yaml:37)
+  22.776s     snapshot history: screen context changed; discarding 1 snapshots
+  22.776s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  22.776s   ✓ Wait until id: TrackButton is visible  16 ms
+  22.776s ✓ Run Sign up  20338 ms
+  22.776s ▶ Set permissions  (.ci-sad-camera-denied.yaml:19)
+  24.220s ✓ Set permissions  1443 ms
+  24.220s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-sad-camera-denied.yaml:20)
+  26.289s   the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 24
+  26.289s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2068 ms
+  26.289s ▶ Wait until id: permission_deny_button is visible  (.ci-sad-camera-denied.yaml:21)
+  26.673s   snapshot history: screen context changed; discarding 1 snapshots
+  26.817s   snapshot history: screen context changed; discarding 1 snapshots
+  27.046s   snapshot history: screen context changed; discarding 1 snapshots
+  27.046s   found id: permission_deny_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_button [48,437][272,493], after 756 ms and 4 reads
+  27.046s   the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 27
+  27.046s ✓ Wait until id: permission_deny_button is visible  756 ms
+  27.046s ▶ Tap on id: permission_deny_button  (.ci-sad-camera-denied.yaml:24)
+  27.046s   found id: permission_deny_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_button [48,437][272,493]
+  27.089s   found id: permission_deny_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_button [48,437][272,493]
+  27.299s   tap at (160, 465): the screen changed (sent in 2 ms, waited 36 ms, held 148 ms for its new window to take input)
+  27.299s ✓ Tap on id: permission_deny_button  253 ms
+  27.299s   --annotate: holding the screen 790ms for the recording
+  28.090s ▶ Wait until id: TrackButton is visible  (.ci-sad-camera-denied.yaml:25)
+  28.097s   snapshot history: screen context changed; discarding 1 snapshots
+  28.769s   snapshot history: screen context changed; discarding 1 snapshots
+  28.769s   found id: TrackButton: View #TrackButton [20,473][300,606], after 678 ms and 2 reads
+  28.769s ✓ Wait until id: TrackButton is visible  678 ms
+  28.769s ▶ Tap on id: TrackButton  (.ci-sad-camera-denied.yaml:29)
+  28.870s   waited 101 ms for the last action's change to settle
+  28.880s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  28.930s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  28.983s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  29.102s   tap at (160, 539): the screen changed (sent in 16 ms, waited 97 ms)
+  29.102s ✓ Tap on id: TrackButton  333 ms
+  29.102s   --annotate: holding the screen 880ms for the recording
+  29.983s ▶ Tap on id: UserButton_5551230001  (.ci-sad-camera-denied.yaml:30)
+  29.993s   snapshot history: screen context changed; discarding 1 snapshots
+  29.993s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  30.041s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  30.090s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  30.219s   tap at (84, 177): the screen changed (sent in 7 ms, waited 119 ms)
+  30.219s ✓ Tap on id: UserButton_5551230001  235 ms
+  30.219s   --annotate: holding the screen 870ms for the recording
+  31.091s ▶ Tap on id: ArrowForwardButton  (.ci-sad-camera-denied.yaml:31)
+  31.099s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  31.146s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  31.194s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  31.301s   tap at (264, 572): the screen changed (sent in 5 ms, waited 96 ms)
+  31.301s ✓ Tap on id: ArrowForwardButton  209 ms
+  31.301s   --annotate: holding the screen 890ms for the recording
+  32.195s ▶ Tap on id: ArrowForwardButton  (.ci-sad-camera-denied.yaml:32)
+  32.202s   snapshot history: screen context changed; discarding 2 snapshots
+  32.202s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  32.251s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  32.299s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  32.371s   tap at (264, 572): the screen changed (sent in 5 ms, waited 64 ms)
+  32.371s ✓ Tap on id: ArrowForwardButton  175 ms
+  32.371s   --annotate: holding the screen 930ms for the recording
+  33.300s ▶ Wait until id: permission_deny_and_dont_ask_again_button is visible  (.ci-sad-camera-denied.yaml:33)
+  33.373s   snapshot history: screen context changed; discarding 1 snapshots
+  33.373s   found id: permission_deny_and_dont_ask_again_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_and_dont_ask_again_button [48,437][272,493]
+  33.373s   the device's window list lacked window 30, which had just opened, and held the screen before it; a read past the accessibility cache found it
+  33.373s ✓ Wait until id: permission_deny_and_dont_ask_again_button is visible  73 ms
+  33.373s ▶ Press back  (.ci-sad-camera-denied.yaml:36)
+  33.461s   waited 87 ms for the last action's change to settle
+  33.517s   the screen changed (sent in 7 ms, waited 5 ms)
+  33.517s ✓ Press back  144 ms
+  33.517s   --annotate: holding the screen 860ms for the recording
+  34.373s ▶ Tap on id: TutorialDoneButton  (.ci-sad-camera-denied.yaml:37)
+  34.378s   found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  34.423s   found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  34.467s   found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  34.480s   tap at (160, 469): the screen changed (sent in 3 ms, waited 7 ms)
+  34.481s ✓ Tap on id: TutorialDoneButton  107 ms
+  34.481s   --annotate: holding the screen 990ms for the recording
+  35.468s ▶ Assert that id: CameraRationaleDialog is visible  (.ci-sad-camera-denied.yaml:38)
+  35.472s   snapshot history: screen context changed; discarding 1 snapshots
+  35.473s   found id: CameraRationaleDialog: View #CameraRationaleDialog [0,208][320,431]
+  35.473s ✓ Assert that id: CameraRationaleDialog is visible  5 ms
+  35.473s ▶ Tap on id: DialogNegativeButton  (.ci-sad-camera-denied.yaml:39)
+  35.474s   found id: DialogNegativeButton: View #DialogNegativeButton [104,373][152,421]
+  35.519s   found id: DialogNegativeButton: View #DialogNegativeButton [104,373][152,421]
+  35.564s   found id: DialogNegativeButton: View #DialogNegativeButton [104,373][152,421]
+  35.674s   tap at (128, 397): the screen changed (sent in 3 ms, waited 66 ms)
+  35.674s ✓ Tap on id: DialogNegativeButton  201 ms
+  35.674s   --annotate: holding the screen 890ms for the recording
+  36.565s ▶ Assert that id: OrgNameField is visible  (.ci-sad-camera-denied.yaml:40)
+  36.570s   snapshot history: screen context changed; discarding 1 snapshots
+  36.570s   found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  36.570s ✓ Assert that id: OrgNameField is visible  5 ms
+  36.570s ▶ Assert that id: CaptureButton is not visible  (.ci-sad-camera-denied.yaml:41)
+  36.575s   gone: id: CaptureButton (checked on a settled screen, 4 ms)
+  36.575s ✓ Assert that id: CaptureButton is not visible  4 ms
+  36.575s ▶ Press back  (.ci-sad-camera-denied.yaml:43)
+  36.637s   the screen changed (sent in 2 ms, waited 54 ms)
+  36.637s ✓ Press back  62 ms
+  36.637s   --annotate: holding the screen 940ms for the recording
+  37.576s ▶ Assert that id: UserButton_5551230001 is visible  (.ci-sad-camera-denied.yaml:44)
+  37.584s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  37.584s ✓ Assert that id: UserButton_5551230001 is visible  8 ms
+  37.584s ▶ Press back  (.ci-sad-camera-denied.yaml:45)
+  37.640s   the screen changed (sent in 2 ms, waited 52 ms)
+  37.641s ✓ Press back  56 ms
+  37.641s   --annotate: holding the screen 940ms for the recording
+  38.585s ▶ Assert that id: TrackButton is visible  (.ci-sad-camera-denied.yaml:46)
+  38.592s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  38.592s ✓ Assert that id: TrackButton is visible  6 ms
+  38.592s ▶ Tap on id: TrackButton  (.ci-sad-camera-denied.yaml:47)
+  38.592s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  38.638s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  38.684s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  38.733s   tap at (160, 539): the screen changed (sent in 3 ms, waited 44 ms)
+  38.733s ✓ Tap on id: TrackButton  140 ms
+  38.733s   --annotate: holding the screen 950ms for the recording
+  39.684s ▶ Tap on id: UserButton_5551230001  (.ci-sad-camera-denied.yaml:48)
+  39.690s   snapshot history: screen context changed; discarding 1 snapshots
+  39.690s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  39.739s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  39.784s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  39.804s   tap at (84, 177): the screen changed (sent in 3 ms, waited 14 ms)
+  39.804s ✓ Tap on id: UserButton_5551230001  119 ms
+  39.804s   --annotate: holding the screen 980ms for the recording
+  40.785s ▶ Tap on id: ArrowForwardButton  (.ci-sad-camera-denied.yaml:49)
+  40.792s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  40.837s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  40.882s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  40.931s   tap at (264, 572): the screen changed (sent in 3 ms, waited 44 ms)
+  40.931s ✓ Tap on id: ArrowForwardButton  146 ms
+  40.931s   --annotate: holding the screen 950ms for the recording
+  41.883s ▶ Tap on id: ArrowForwardButton  (.ci-sad-camera-denied.yaml:50)
+  41.893s   snapshot history: screen context changed; discarding 2 snapshots
+  41.893s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  41.938s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  41.983s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  42.080s   tap at (264, 572): the screen changed (sent in 2 ms, waited 51 ms)
+  42.080s ✓ Tap on id: ArrowForwardButton  197 ms
+  42.080s   --annotate: holding the screen 900ms for the recording
+  42.984s ▶ Wait until id: permission_deny_and_dont_ask_again_button is visible  (.ci-sad-camera-denied.yaml:51)
+  42.988s   snapshot history: screen context changed; discarding 1 snapshots
+  42.988s   found id: permission_deny_and_dont_ask_again_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_and_dont_ask_again_button [48,437][272,493]
+  42.988s ✓ Wait until id: permission_deny_and_dont_ask_again_button is visible  4 ms
+  42.988s ▶ Tap on id: permission_deny_and_dont_ask_again_button  (.ci-sad-camera-denied.yaml:54)
+  42.989s   found id: permission_deny_and_dont_ask_again_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_and_dont_ask_again_button [48,437][272,493]
+  43.033s   found id: permission_deny_and_dont_ask_again_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_and_dont_ask_again_button [48,437][272,493]
+  43.076s   found id: permission_deny_and_dont_ask_again_button: Button "Don’t allow" #com.android.permissioncontroller:id/permission_deny_and_dont_ask_again_button [48,437][272,493]
+  43.093s   tap at (160, 465): the screen changed (sent in 1 ms, waited 14 ms)
+  43.093s ✓ Tap on id: permission_deny_and_dont_ask_again_button  104 ms
+  43.093s   --annotate: holding the screen 980ms for the recording
+  44.077s ▶ Assert that id: PermissionSettingsDialog is visible  (.ci-sad-camera-denied.yaml:56)
+  44.082s   snapshot history: screen context changed; discarding 1 snapshots
+  44.082s   found id: PermissionSettingsDialog: View #PermissionSettingsDialog [0,199][320,440]
+  44.082s ✓ Assert that id: PermissionSettingsDialog is visible  5 ms
+  44.082s ▶ Tap on id: DialogNegativeButton  (.ci-sad-camera-denied.yaml:57)
+  44.083s   found id: DialogNegativeButton: View #DialogNegativeButton [104,382][152,430]
+  44.127s   found id: DialogNegativeButton: View #DialogNegativeButton [104,382][152,430]
+  44.171s   found id: DialogNegativeButton: View #DialogNegativeButton [104,382][152,430]
+  44.237s   tap at (128, 406): the screen changed (sent in 3 ms, waited 61 ms)
+  44.237s ✓ Tap on id: DialogNegativeButton  155 ms
+  44.237s   --annotate: holding the screen 930ms for the recording
+  45.171s ▶ Assert that id: OrgNameField is visible  (.ci-sad-camera-denied.yaml:58)
+  45.178s   snapshot history: screen context changed; discarding 1 snapshots
+  45.178s   found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  45.178s ✓ Assert that id: OrgNameField is visible  6 ms
+  45.178s ▶ Assert that id: PermissionSettingsDialog is not visible  (.ci-sad-camera-denied.yaml:59)
+  45.183s   gone: id: PermissionSettingsDialog (checked on a settled screen, 5 ms)
+  45.183s ✓ Assert that id: PermissionSettingsDialog is not visible  5 ms
+  45.183s ▶ Take screenshot step-32-end-assertNotVisible-PermissionSettingsDialog  (.ci-sad-camera-denied.yaml:60)
+  45.281s ✓ Take screenshot step-32-end-assertNotVisible-PermissionSettingsDialog  97 ms
+  45.493s --annotate: recording.mp4 is in sync (its frame times say so, within -52 ms)
+  47.328s --annotate: drew 52 captions and 25 touches on recording.mp4 in 1834 ms
+  47.328s PASSED in 47.328s
