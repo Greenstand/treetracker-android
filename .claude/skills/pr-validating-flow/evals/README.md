@@ -62,6 +62,12 @@ before/after verdict of its flow from CI's emulator, or "this PR names no valida
 may change its work and is graded again. That second turn also puts the fallback cases under the
 pressure a real PR has: a check saying nothing proves the change.
 
+`--simulate-verdict not-demonstrated` (flow cases, no CI) replaces that feedback with "your flow
+passes on the base app too", to see what the agent does with a verdict that says its flow is not
+proof. It adds `reacted_to_not_demonstrated` (code: the description or the flow changed) and
+`handles_not_demonstrated` (model-judged: the flow is no longer presented as proof, nothing was
+rigged).
+
 **Checks graded by code** (`grade.py`, tested by `test_grade.py`):
 
 | Check | Kind | Passes when |
