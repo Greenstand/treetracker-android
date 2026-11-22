@@ -2,7 +2,8 @@
 
 Goal: a PR check whose output shows whether the PR's fix or feature works: a flow that **fails on
 the base branch's app and passes on the PR's app**, recorded both ways, with an honest result when
-that is not possible. Separate PRs, in this order. Nothing here is built yet.
+that is not possible. Separate PRs, in this order. B is built, with D's GIF embed (see the
+README's "B. Before and after" for what was checked); C is on hold for a maintainers' decision.
 
 ## B. Before/after, in pure code
 
