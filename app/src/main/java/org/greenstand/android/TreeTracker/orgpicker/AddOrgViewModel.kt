@@ -17,8 +17,8 @@ package org.greenstand.android.TreeTracker.orgpicker
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
@@ -53,32 +53,18 @@ sealed class AddOrgAction : Action {
 class AddOrgViewModel(
     private val preferences: Preferences,
     private val orgRepo: OrgRepo,
-    private val userRepo: UserRepo,
+    setupRestorer: CaptureSetupRestorer,
 ) : BaseViewModel<AddOrgState, AddOrgAction>(AddOrgState()) {
     init {
-        // After process death Nav3 restores Add org, but the capture setup scope only lived in
-        // memory. Reopen it and reload the user saved below before reading it. The setup step
-        // index needs nothing: navForward re-derives it from the restored back stack.
-        val restoring = !CaptureSetupScopeManager.isOpen
-        if (restoring) {
-            CaptureSetupScopeManager.open()
-            updateState { copy(restoring = true) }
-        }
+        // After process death Nav3 restores Add org with the capture setup scope closed.
+        val restoring = setupRestorer.reopenIfClosed()
+        if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
-            val user =
-                if (restoring) {
-                    userRepo
-                        .getUser(preferences.getLong(SETUP_USER_ID_KEY))
-                        ?.also { CaptureSetupScopeManager.getData().user = it }
-                } else {
-                    CaptureSetupScopeManager.getData().user
-                }
+            val user = setupRestorer.loadUser(restoring)
             if (user == null) {
-                CaptureSetupScopeManager.close()
                 updateState { copy(restoring = false, setupLost = true) }
                 return@launch
             }
-            preferences.edit().putLong(SETUP_USER_ID_KEY, user.id).apply()
             val currentOrgName =
                 orgRepo
                     .currentOrg()
@@ -121,8 +107,5 @@ class AddOrgViewModel(
 
     companion object {
         private val PREV_ORG_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("autofill-org")
-
-        /** The capture setup user, kept on disk so Add org can be restored after process death. */
-        internal val SETUP_USER_ID_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("add-org-user-id")
     }
 }
