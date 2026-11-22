@@ -36,7 +36,8 @@ wait_run() {  # $1 run id; prints progress, returns 0 when it finished (pass or 
   local id=$1 last="" state
   echo "Waiting for https://github.com/$REPO/actions/runs/$id"
   for _ in $(seq 1 $((90 * 60 / POLL))); do
-    state=$(gh api "repos/$REPO/actions/runs/$id" --jq '"\(.status) \(.conclusion // "")"')
+    # A run that was just started can be "Not Found" for a moment, and the API can hiccup.
+    state=$(gh api "repos/$REPO/actions/runs/$id" --jq '"\(.status) \(.conclusion // "")"' 2>/dev/null) || { sleep "$POLL"; continue; }
     if [[ $state != "$last" ]]; then echo "  $(date +%H:%M:%S) $state"; last=$state; fi
     [[ $state == completed* ]] && return 0
     sleep "$POLL"
