@@ -56,3 +56,17 @@ maintainer).
 - The existing failure test (sync throws → `ACCOUNTDELETEDLOCALLY`, no crash) is unchanged.
 - `e2e/flows/settings-delete-user-offline.yaml` is unchanged; the dialog it checks shows for both
   states.
+
+## Validating flow
+
+None: no flow can show this change (`pr-validating-flow`, "When no flow can show the change").
+
+- No screen reads the difference. The only reader is `DeleteProfileScreen.kt:86`, which shows the
+  same "Account Deleted" dialog for both states. OK navigates by `isPowerUser`, and the fix
+  persists nothing, so no later screen, relaunch or user select differs.
+- `ACCOUNTDELETEDANDADMINREQUESTED` needs the admin message's S3 upload to succeed. The e2e
+  runners are offline with dummy keys (`e2e/run.sh`, `e2e/ci/run-flows.sh`), so it can't be reached.
+- The nearest flow, `settings-delete-user-offline`, passes on both the merge base (which has #1429)
+  and this branch, so it is not proof.
+
+Proof is the unit test above, which failed on 7b46414 and passes with the fix.
