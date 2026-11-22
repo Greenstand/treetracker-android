@@ -20,7 +20,8 @@ YAML and drives the installed debug app on an emulator or device.
 - `flows/org-*.yaml` (tag `org-config`): org-configured setup and capture steps, C1–C4. Org config
   normally comes from Firebase Remote Config, so `seed-org.sh -s <serial> <variant>` writes the org
   into the app's database and makes it current; `run-org.sh` seeds before each flow. The flows
-  start with a plain `launchApp`.
+  start with a plain `launchApp`. `org-session-note-double-tap.yaml` is H8 on the session note
+  step (same seed as C1).
 - `flows/dev-options.yaml`, `flows/debug-overlays.yaml` (tag `dev-tools`): run after
   `setup-device.sh` seeds a user and two trees.
 

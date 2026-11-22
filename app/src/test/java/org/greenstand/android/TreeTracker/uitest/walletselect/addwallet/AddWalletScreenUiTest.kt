@@ -28,7 +28,9 @@ import io.mockk.unmockkObject
 import io.mockk.verify
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
+import org.greenstand.android.TreeTracker.navigation.DoubleTapGuard
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.uitest.walletselect.walletTestCurrentUser
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
@@ -44,6 +46,10 @@ class AddWalletScreenUiTest : ComposeUiTest() {
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
 
+    // A guard whose clock never moves and whose double-tap timeout is a minute, so only the
+    // navigator's clock (one second per read, see ComposeUiTest) decides what it drops.
+    private val doubleTapGuard = DoubleTapGuard(uptimeMillis = { 0L }, doubleTapTimeoutMs = { 60_000L })
+
     @Before
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
@@ -52,7 +58,7 @@ class AddWalletScreenUiTest : ComposeUiTest() {
         every { captureSetupData.user } returns walletTestCurrentUser
         val viewModel = AddWalletViewModel()
         setContent(inspectionMode = false) {
-            AddWalletScreen(viewModel = viewModel)
+            AddWalletScreen(viewModel = viewModel, doubleTapGuard = doubleTapGuard)
         }
     }
 
@@ -93,5 +99,31 @@ class AddWalletScreenUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
 
         verify { setupNav.navBackward(navigator) }
+    }
+
+    // --- Second tap of a double tap on the previous screen's Next (#1442) ---
+
+    @Test
+    fun `forward arrow pressed right after arriving is dropped as the second tap of a double tap`() {
+        composeTestRule.onNode(hasSetTextAction()).performTextInput(WALLET_NAME)
+        navigator.navigate(AddWalletRoute)
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        coVerify(exactly = 0) { setupNav.navForward(any()) }
+    }
+
+    @Test
+    fun `forward arrow pressed a while after arriving continues the setup flow`() {
+        composeTestRule.onNode(hasSetTextAction()).performTextInput(WALLET_NAME)
+        navigator.navigate(AddWalletRoute)
+        // Each read moves the navigator's clock on a second: well past the guard's timeout.
+        repeat(100) { navigator.millisSinceLastNavigation }
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        coVerify(exactly = 1) { setupNav.navForward(navigator) }
     }
 }

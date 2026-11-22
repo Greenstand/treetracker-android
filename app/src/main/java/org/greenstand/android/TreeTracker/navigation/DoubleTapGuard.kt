@@ -28,8 +28,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 /**
  * Tells a tap meant for a screen from the second tap of a double tap on the button that opened
  * it. On small screens the next screen's button can sit where the previous screen's button was
- * (Track -> user select's add-user, user select's Next -> Add org's Next), and the origin throttle
- * in [Navigator] lets a first tap from a new screen through.
+ * (Track -> user select's add-user, one capture setup screen's Next -> the next one's Next), and
+ * the origin throttle in [Navigator] lets a first tap from a new screen through.
  *
  * Put [modifier] on the screen's root so it sees every finger down, then check
  * [isSecondTapOfDoubleTap] before acting on a click.

@@ -40,7 +40,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.navigation.DoubleTapGuard
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.ArrowButton
@@ -50,21 +52,30 @@ import org.greenstand.android.TreeTracker.view.TestTags
 @Composable
 fun AddWalletScreen(
     viewModel: AddWalletViewModel = viewModel(factory = LocalViewModelFactory.current),
+    doubleTapGuard: DoubleTapGuard = rememberDoubleTapGuard(),
 ) {
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
     val state by viewModel.state.collectAsState()
 
-    AddWallet(
-        state = state,
-        onHandleAction = { action ->
-            when (action) {
-                is AddWalletAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
-                is AddWalletAction.NavigateNext -> scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
-                else -> viewModel.handleAction(action)
-            }
-        },
-    )
+    Box(doubleTapGuard.modifier) {
+        AddWallet(
+            state = state,
+            onHandleAction = { action ->
+                when (action) {
+                    is AddWalletAction.NavigateBack -> CaptureSetupScopeManager.nav.navBackward(navigator)
+                    is AddWalletAction.NavigateNext -> {
+                        // Next sits where the previous setup screen's Next was, so the second tap
+                        // of a double tap there lands here (#1442). Drop it.
+                        if (!doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
+                            scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
+                        }
+                    }
+                    else -> viewModel.handleAction(action)
+                }
+            },
+        )
+    }
 }
 
 @Composable

@@ -30,6 +30,8 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
+import org.greenstand.android.TreeTracker.navigation.DoubleTapGuard
+import org.greenstand.android.TreeTracker.navigation.SessionNoteRoute
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteScreen
 import org.greenstand.android.TreeTracker.sessionnote.SessionNoteViewModel
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
@@ -43,6 +45,10 @@ import org.junit.Test
 class SessionNoteScreenUiTest : ComposeUiTest() {
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
+
+    // A guard whose clock never moves and whose double-tap timeout is a minute, so only the
+    // navigator's clock (one second per read, see ComposeUiTest) decides what it drops.
+    private val doubleTapGuard = DoubleTapGuard(uptimeMillis = { 0L }, doubleTapTimeoutMs = { 60_000L })
 
     @Before
     fun setUp() {
@@ -62,7 +68,7 @@ class SessionNoteScreenUiTest : ComposeUiTest() {
             )
         val viewModel = SessionNoteViewModel()
         setContent(inspectionMode = false) {
-            SessionNoteScreen(viewModel = viewModel)
+            SessionNoteScreen(viewModel = viewModel, doubleTapGuard = doubleTapGuard)
         }
     }
 
@@ -94,5 +100,29 @@ class SessionNoteScreenUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
 
         verify { setupNav.navBackward(navigator) }
+    }
+
+    // --- Second tap of a double tap on the previous screen's Next (#1442) ---
+
+    @Test
+    fun `forward arrow pressed right after arriving is dropped as the second tap of a double tap`() {
+        navigator.navigate(SessionNoteRoute)
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        coVerify(exactly = 0) { setupNav.navForward(any()) }
+    }
+
+    @Test
+    fun `forward arrow pressed a while after arriving continues the setup flow`() {
+        navigator.navigate(SessionNoteRoute)
+        // Each read moves the navigator's clock on a second: well past the guard's timeout.
+        repeat(100) { navigator.millisSinceLastNavigation }
+
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        coVerify(exactly = 1) { setupNav.navForward(navigator) }
     }
 }

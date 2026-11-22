@@ -1,0 +1,33 @@
+# H8 on an org's own setup step: a double tap on user select's Next opens the session note and
+# stays on it. Needs the org from `bash e2e/seed-org.sh -s <serial> session-note`.
+#
+# On small screens (320x640, as on CI) the session note's Next sits where user select's Next was,
+# and it is always enabled. The second tap is a first tap from the new screen, so it gets past the
+# origin throttle in Navigator and navForward's same-screen guard; before #1442 it skipped the
+# note, started the session and opened capture. navigation/DoubleTapGuard.kt now drops it.
+# A single tap on Next afterwards still moves on to capture.
+appId: org.greenstand.android.TreeTracker.debug
+name: H8 Double tap onto the session note
+tags: [org-config, sad-path]
+---
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- doubleTapOn: {id: ArrowForwardButton}
+- assertVisible: {id: SessionNoteField}
+- assertNotVisible: {id: CaptureButton}
+# The note's own Next still works.
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000
