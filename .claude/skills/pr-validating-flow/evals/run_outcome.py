@@ -329,6 +329,11 @@ def cmd_run(a):
                             f"## PR description before\n{snapshot['desc']}\n\n## PR description after\n{now_desc}\n\n"
                             f"## Flow(s) before\n{json.dumps(snapshot['flows'], indent=1)}\n\n## Flow(s) after\n{json.dumps(now_flows, indent=1)}")
                 result["checks"].append(judge("handles_not_demonstrated", material, run_dir))
+            # After this verdict, taking the flow off the validates: line is a right answer, and
+            # there is no real verdict: neither check says anything about the reaction.
+            for c in result["checks"]:
+                if c["id"] in ("validates_line_names_new_flow", "ci_verdict_validated"):
+                    c["scored"] = False
             result["score"] = list(grader.score(result))
         result.update(round=rnd, cost_usd=res.get("total_cost_usd"), turns=res.get("num_turns"),
                       model=next(iter(res.get("modelUsage") or {}), None), head=git("rev-parse", "HEAD", cwd=repo))
