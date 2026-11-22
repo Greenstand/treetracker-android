@@ -133,6 +133,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 | H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`, `sad-camera-rationale-next.yaml`) |
 | H3 | No GPS fix | No mock location → capture → bad GPS dialog → retry, then exit → Dashboard | Field reality, timeout path | Per-screen only (needs host adb to remove the GPS fix) |
 | H4 | Location services off | Location toggle off → capture → redirected to system location settings → enable → back to capture | `enableLocation()` redirect | No (needs host adb to turn location off) |
+| H5 | Process death in capture setup | Track → pick user → Next → on Add org → background → kill → reopen → Add org, Next opens capture | Setup scope is in memory, Nav3 back stack is saved | Yes (`sad-process-death-add-org.yaml`) |
 | H6 | Process death mid capture | On image review → background → kill → reopen → tree not duplicated, can capture again | Same scope issue, data integrity | Known bug (`sad-process-death-review.yaml`, `sad-capture-after-process-death.yaml`) |
 | H7 | Process death on dashboard/settings | Background → kill → reopen → same screen, no crash | Nav3 saved back stack | Yes (`sad-process-death-screens.yaml`) |
 | H8 | Double taps | Double-tap Capture, Next, Settings → only one screen pushed | `Navigator` throttle | Yes (`sad-double-tap.yaml`, `sad-double-tap-setup.yaml`) |
@@ -150,7 +151,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 
 1. Splash only advanced when location was granted (`SplashScreen.kt`, `onResult`). If the user denied, the app sat on the splash image with no message; after "don't ask again" it never moved. Fixed in #1417: splash now moves on whatever the user answers, and capture starts GPS once location is granted there.
 2. After logout or deleting the admin, the stack is cleared to `SignupFlowRoute`. Signup then navigated to Dashboard with `popUpTo<LanguageRoute>`, which was not on the stack, so Signup stayed under Dashboard and back from Dashboard returned to Signup. Fixed in #1415 for both paths: Signup clears the whole stack when it goes to the Dashboard. E6 and `settings-logout-back.yaml` check the logout path; E8 can't check the delete-admin path yet (offline crash, #1416).
-3. `CaptureSetupScopeManager` and `CaptureFlowScopeManager` are in-memory singletons, but the Nav3 back stack survives process death. Restoring onto Add org calls `CaptureSetupScopeManager.getData()` before any `open()`, which throws. H5 likely crashes; H6 may too.
+3. `CaptureSetupScopeManager` and `CaptureFlowScopeManager` are in-memory singletons, but the Nav3 back stack survives process death. Restoring onto Add org calls `CaptureSetupScopeManager.getData()` before any `open()`, which throws. H5 likely crashes; H6 may too. Fixed for the setup scope in #1418: the setup is saved as it is entered (`CaptureSetupStore`) and `Root` restores it before showing the back stack (`CaptureSetupRestorer`). The capture flow scope is still open (#1419).
 4. The org deep link is parsed only at cold start and the activity is `singleTask` with no `onNewIntent`, so a link tapped while the app is alive is ignored. Decide whether that's intended before writing G4.
 5. Seen while writing the A and B flows (tb, API 35):
    - Next on the credential step is never disabled. An invalid phone or email shows an error snackbar and stays on the step. Names drop digits and symbols as they are typed, so the name errors only show for fewer than 2 characters. A3 asserts this. Issue #1413.
@@ -176,7 +177,8 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
      picking a user; CI's e2e run is offline for that reason.
    - H1: denying location at first launch leaves the app on the splash (finding 1 confirmed) (#1417).
    - H5: process death on Add org crashes on reopen: `CaptureSetupScope not open` from
-     `AddOrgViewModel` init (finding 3 confirmed) (#1418).
+     `AddOrgViewModel` init (finding 3 confirmed) (#1418). Fixed: the setup is saved and restored;
+     `sad-process-death-add-org.yaml` checks it.
    - H6: process death on image review crashes on reopen: `CaptureFlowScope not open` while
      creating `TreeImageReviewViewModel` (#1419). Restoring onto the capture screen works, but GPS updates
      are not restarted, so the next capture always shows the bad GPS dialog (#1420).

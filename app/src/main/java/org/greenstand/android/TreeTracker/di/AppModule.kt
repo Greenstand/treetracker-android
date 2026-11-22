@@ -67,7 +67,9 @@ import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.PlayInstallReferrerDataSource
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScope
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupStore
 import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationController
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgViewModel
@@ -202,6 +204,10 @@ val appModule =
 
         single { Preferences(get()) }
 
+        single { CaptureSetupStore(get()) }
+
+        factory { CaptureSetupRestorer(get(), get(), get(), get()) }
+
         single {
             ContextCompat.getSystemService(androidContext(), SensorManager::class.java) as SensorManager
         }
@@ -271,7 +277,7 @@ val appModule =
         single { OrgConfigProvider(get()) }
 
         scope<CaptureSetupScope> {
-            scoped { CaptureSetupData(get()) }
+            scoped { CaptureSetupData(get(), get()) }
             scoped { CaptureSetupNavigationController(get(), get(), get(), get(), get()) }
         }
 

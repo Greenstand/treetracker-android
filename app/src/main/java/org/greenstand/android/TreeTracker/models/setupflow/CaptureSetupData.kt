@@ -18,30 +18,57 @@ package org.greenstand.android.TreeTracker.models.setupflow
 import org.greenstand.android.TreeTracker.analytics.ExceptionDataCollector
 import org.greenstand.android.TreeTracker.models.user.User
 
+/**
+ * What the user has chosen so far in the capture setup flow. With a [store], every change is
+ * also saved so the setup can be restored after process death (see [CaptureSetupRestorer]).
+ */
 class CaptureSetupData(
     private val exceptionDataCollector: ExceptionDataCollector,
+    private val store: CaptureSetupStore? = null,
 ) {
     var user: User? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.USER_WALLET, value?.wallet)
             field = value
+            save()
         }
 
     var destinationWallet: String? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.DESTINATION_WALLET, value)
             field = value
+            save()
         }
 
     var sessionNote: String? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.SESSION_NOTE, value)
             field = value
+            save()
         }
 
     var organizationName: String? = null
         set(value) {
             exceptionDataCollector.set(ExceptionDataCollector.ORG_NAME, value)
             field = value
+            save()
         }
+
+    /** Forgets the saved copy: this setup is over, or a new one is starting. */
+    fun clearSaved() {
+        store?.clear()
+    }
+
+    private fun save() {
+        // Nothing to restore before a user is picked: user select itself starts a new setup.
+        val userId = user?.id ?: return
+        store?.save(
+            SavedCaptureSetup(
+                userId = userId,
+                destinationWallet = destinationWallet,
+                sessionNote = sessionNote,
+                organizationName = organizationName,
+            ),
+        )
+    }
 }

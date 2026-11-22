@@ -38,6 +38,7 @@ import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
 import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
 import org.greenstand.android.TreeTracker.overlay.SensorDiagnosticsState
@@ -87,6 +88,7 @@ class RootUiTest : RootScreenUiTest() {
             languageButtonModule(),
             module {
                 single { orgRepo }
+                single { mockk<CaptureSetupRestorer>(relaxed = true) }
                 single { exceptionDataCollector }
                 single { userRepo }
                 single { treesToSyncHelper }

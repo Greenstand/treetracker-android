@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.splash.Splash
 import org.greenstand.android.TreeTracker.theme.CustomTheme
@@ -72,8 +73,12 @@ fun Root(
     // Re-hydrate it once per process before rendering the (possibly restored) back stack.
     val orgRepo = koinInject<OrgRepo>()
     var isOrgReady by remember { mutableStateOf(false) }
+    // The capture setup scope is in memory only as well. If the process died during capture
+    // setup, reopen it from its saved copy before a restored setup screen reads it (#1418).
+    val captureSetupRestorer = koinInject<CaptureSetupRestorer>()
     LaunchedEffect(Unit) {
         orgRepo.ensureInitialized()
+        captureSetupRestorer.restoreIfNeeded()
         isOrgReady = true
     }
 

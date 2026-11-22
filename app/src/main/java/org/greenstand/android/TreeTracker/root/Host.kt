@@ -45,6 +45,7 @@ import org.greenstand.android.TreeTracker.messages.announcementmessage.Announcem
 import org.greenstand.android.TreeTracker.messages.individualmeassagelist.IndividualMessageListScreen
 import org.greenstand.android.TreeTracker.messages.survey.SurveyScreen
 import org.greenstand.android.TreeTracker.models.FeatureFlags
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.AddOrgRoute
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.AnnouncementRoute
@@ -78,6 +79,7 @@ import org.greenstand.android.TreeTracker.navigation.TreeImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.TreeListRoute
 import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.WalletSelectRoute
+import org.greenstand.android.TreeTracker.navigation.dropSetupScreensWithoutSetup
 import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
@@ -112,6 +114,9 @@ fun Host(
     // Persists across configuration changes and process death; on restore, the
     // saved stack wins over startRoute — same as Nav2's restored NavController state.
     val backStack = rememberNavBackStack(*initialBackStack.toTypedArray())
+    // Root restores the capture setup before this runs. If it could not (nothing saved, or the
+    // user is gone), a restored setup screen on top would crash on its first read (#1418).
+    remember(backStack) { backStack.dropSetupScreensWithoutSetup(CaptureSetupScopeManager.isOpen) }
     val navigator = remember(backStack) { Navigator(backStack) }
     TreeTrackerTheme {
         CompositionLocalProvider(LocalNavigator provides navigator) {

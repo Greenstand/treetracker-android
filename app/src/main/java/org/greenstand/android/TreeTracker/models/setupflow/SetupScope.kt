@@ -23,16 +23,31 @@ import timber.log.Timber
 
 object CaptureSetupScopeManager {
     private var currentScope: Scope? = null
+    private var currentData: CaptureSetupData? = null
 
     val isOpen: Boolean get() = currentScope != null
 
+    /** Starts a new setup. Any setup saved for restoring after process death is forgotten. */
     fun open() {
+        openScope().clearSaved()
+    }
+
+    /**
+     * Opens the scope for a setup that was in progress when the process died and fills its data
+     * with [fill]. Unlike [open] it keeps the saved copy, so a second process death restores too.
+     */
+    fun restore(fill: CaptureSetupData.() -> Unit) {
+        openScope().fill()
+    }
+
+    private fun openScope(): CaptureSetupData {
         if (currentScope != null) {
             Timber.tag("CaptureSetupScope").w("Scope already open, closing previous before reopening")
             close()
         }
-        currentScope = CaptureSetupScope().scope
-        currentScope?.get<CaptureSetupData>()
+        val scope = CaptureSetupScope().scope
+        currentScope = scope
+        return scope.get<CaptureSetupData>().also { currentData = it }
     }
 
     fun getData(): CaptureSetupData =
@@ -44,7 +59,10 @@ object CaptureSetupScopeManager {
             currentScope?.get()
                 ?: error("CaptureSetupScope not open. Call open() before accessing nav.")
 
+    /** Ends the setup: closes the scope and forgets the copy saved for process death. */
     fun close() {
+        currentData?.clearSaved()
+        currentData = null
         currentScope?.close()
         currentScope = null
     }
