@@ -44,7 +44,8 @@ def run_one(query, repo):
                 ev = json.loads(line)
             except ValueError:
                 continue
-            for block in (ev.get("message") or {}).get("content") or []:
+            msg = ev.get("message") if isinstance(ev, dict) else None
+            for block in (msg.get("content") if isinstance(msg, dict) else None) or []:
                 if not (isinstance(block, dict) and block.get("type") == "tool_use"):
                     continue
                 tools += 1

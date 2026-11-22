@@ -71,7 +71,8 @@ def transcript_facts(paths):
                 ev = json.loads(line)
             except ValueError:
                 continue
-            for block in (ev.get("message") or {}).get("content") or []:
+            msg = ev.get("message") if isinstance(ev, dict) else None
+            for block in (msg.get("content") if isinstance(msg, dict) else None) or []:
                 if isinstance(block, dict) and block.get("type") == "tool_use":
                     inp = block.get("input") or {}
                     if block.get("name") == "Skill":
