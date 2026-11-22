@@ -1,0 +1,51 @@
+{
+  "_comment": [
+    "Hints for affected.py (docs/testing/ci-flows.md, 'Flows a PR affects').",
+    "screens: for a screen file (matched by the end of its path) whose own test tags don't say a",
+    "flow is on it, because it is built from shared components (user cards, the capture button).",
+    "  ids: the flow is on the screen at a step that uses one of these ids ('Prefix_*' for ids",
+    "       built by a TestTags function),",
+    "  after: but only from the first step that uses one of these ids (that step counts too), or",
+    "       runs one of these sub-flows (from the step after it).",
+    "ignore: path globs (fnmatch) that never select a flow."
+  ],
+  "screens": {
+    "capture/TreeCaptureScreen.kt": {
+      "ids": ["CaptureButton", "OrangeAddButton", "BadGpsDialog"],
+      "after": ["OrgNameField", "SessionNoteField", "WalletNameField"]
+    },
+    "capture/TreeImageReviewScreen.kt": {
+      "ids": ["ApproveButton", "DeclineButton", "NoteButton"],
+      "after": ["OrgNameField", "SessionNoteField", "WalletNameField"]
+    },
+    "camera/SelfieScreen.kt": {
+      "ids": ["CaptureButton"],
+      "after": ["FirstNameField", "LastNameField"]
+    },
+    "camera/ImageReviewScreen.kt": {
+      "ids": ["ApproveButton", "DeclineButton"],
+      "after": ["FirstNameField", "LastNameField"]
+    },
+    "userselect/UserSelectScreen.kt": {
+      "ids": ["UserButton_*", "OrangeAddButton"],
+      "after": ["TrackButton"]
+    },
+    "walletselect/WalletSelectScreen.kt": {
+      "ids": ["UserButton_*", "OrangeAddButton"],
+      "after": ["e2e/flows/subflows/org-capture-setup.yaml"]
+    },
+    "profile/ProfileSelectScreen.kt": {
+      "ids": ["UserButton_*"],
+      "after": ["SettingsProfile"]
+    },
+    "treeedit/TreeEditUserSelectScreen.kt": {
+      "ids": ["UserButton_*"],
+      "after": ["SettingsEditTrees"]
+    },
+    "messages/MessagesUserSelectScreen.kt": {
+      "ids": ["UserButton_*"],
+      "after": ["MessagesButton"]
+    }
+  },
+  "ignore": []
+}
