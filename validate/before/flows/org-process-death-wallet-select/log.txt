@@ -1,0 +1,66 @@
+   0.000s tb 0.6.3: "H5 Process death on wallet select" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-org-process-death-wallet-select.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.177s recording the screen to recording.mp4
+   0.177s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-wallet-select.yaml:12)
+   1.949s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1772 ms
+   1.949s ▶ Run Org capture setup  (.ci-org-process-death-wallet-select.yaml:13)
+   1.949s   ▶ Wait until id: TrackButton is visible  (org-capture-setup.yaml:7)
+   2.269s     snapshot history: screen context changed; discarding 1 snapshots
+   2.317s     snapshot history: screen context changed; discarding 1 snapshots
+   4.210s     snapshot history: screen context changed; discarding 1 snapshots
+   4.210s     found id: TrackButton: View #TrackButton [20,473][300,606], after 2261 ms and 4 reads
+   4.210s     the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+   4.210s   ✓ Wait until id: TrackButton is visible  2261 ms
+   4.210s   ▶ Tap on id: TrackButton  (org-capture-setup.yaml:10)
+   4.264s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   4.391s     waited 126 ms for a still screen
+   4.413s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   4.573s     tap at (160, 539): the screen changed (sent in 27 ms, waited 126 ms)
+   4.573s   ✓ Tap on id: TrackButton  362 ms
+   4.573s     --annotate: holding the screen 840ms for the recording
+   5.413s   ▶ Wait until id: UserButton_5551230001 is visible  (org-capture-setup.yaml:11)
+   5.433s     snapshot history: screen context changed; discarding 1 snapshots
+   5.433s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.433s   ✓ Wait until id: UserButton_5551230001 is visible  19 ms
+   5.433s   ▶ Tap on id: UserButton_5551230001  (org-capture-setup.yaml:14)
+   5.434s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.488s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.541s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.701s     tap at (84, 177): the screen changed (sent in 9 ms, waited 149 ms)
+   5.701s   ✓ Tap on id: UserButton_5551230001  268 ms
+   5.701s     --annotate: holding the screen 840ms for the recording
+   6.541s   ▶ Tap on id: ArrowForwardButton  (org-capture-setup.yaml:15)
+   6.552s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.605s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.656s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.753s     tap at (264, 572): the screen changed (sent in 7 ms, waited 87 ms)
+   6.753s   ✓ Tap on id: ArrowForwardButton  211 ms
+   6.753s     --annotate: holding the screen 900ms for the recording
+   7.656s ✓ Run Org capture setup  5707 ms
+   7.656s ▶ Assert that id: OrangeAddButton is visible  (.ci-org-process-death-wallet-select.yaml:15)
+   7.669s   snapshot history: screen context changed; discarding 2 snapshots
+   7.669s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+   7.669s ✓ Assert that id: OrangeAddButton is visible  12 ms
+   7.669s ▶ Press Home key  (.ci-org-process-death-wallet-select.yaml:16)
+   7.715s   the screen changed (sent in 1 ms, waited 41 ms)
+   7.715s ✓ Press Home key  46 ms
+   7.715s   --annotate: holding the screen 950ms for the recording
+   8.669s ▶ Kill app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-wallet-select.yaml:17)
+   8.708s ✓ Kill app "org.greenstand.android.TreeTracker.debug"  38 ms
+   8.708s   --annotate: holding the screen 960ms for the recording
+   9.670s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-wallet-select.yaml:18)
+  11.238s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1568 ms
+  11.239s ▶ Wait until id: UserButton_5551230001 is visible  (.ci-org-process-death-wallet-select.yaml:19)
+  16.330s   snapshot history: screen context changed; discarding 1 snapshots
+  16.330s   system dialog: Tree Tracker(debug) keeps stopping: tapping "Close app"
+  16.752s   snapshot history: screen context changed; discarding 1 snapshots
+  18.253s   no change reported by the device for 1.5s while looking for id: UserButton_5551230001: reading the screen again
+  21.260s   no change reported by the device for 3s while looking for id: UserButton_5551230001: reading the screen again
+  24.273s   no change reported by the device for 3s while looking for id: UserButton_5551230001: reading the screen again
+  26.240s   deadline reached 1.959s after the last read: reading the screen once more
+  26.247s   not found: id: UserButton_5551230001, after 15008 ms and 8 reads (screen: com.google.android.apps.nexuslauncher, 49 elements, allowed 15s)
+  26.247s ✗ Wait until id: UserButton_5551230001 is visible  15008 ms: Assertion is false: id: UserButton_5551230001 is visible
+  26.558s --annotate: recording.mp4 is in sync (its frame times say so, within -27 ms)
+  27.089s --annotate: drew 11 captions and 4 touches on recording.mp4 in 531 ms
+  27.307s FAILED in 27.089s: Assertion is false: id: UserButton_5551230001 is visible
+  27.307s the screen at the failure: screen*.txt, screenshot*.png, hierarchy*.json in this folder

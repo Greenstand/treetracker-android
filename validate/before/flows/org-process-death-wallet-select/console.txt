@@ -1,0 +1,20 @@
+▶ H5 Process death on wallet select on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.8s
+    ✓ Wait until id: TrackButton is visible  2.3s
+    ✓ Tap on id: TrackButton  362ms
+    ✓ Wait until id: UserButton_5551230001 is visible  19ms
+    ✓ Tap on id: UserButton_5551230001  268ms
+    ✓ Tap on id: ArrowForwardButton  211ms
+  ✓ Run Org capture setup  5.7s
+  ✓ Assert that id: OrangeAddButton is visible  12ms
+  ✓ Press Home key  46ms
+  ✓ Kill app "org.greenstand.android.TreeTracker.debug"  38ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.6s
+  ✗ Wait until id: UserButton_5551230001 is visible  15.0s
+      Assertion is false: id: UserButton_5551230001 is visible
+✗ H5 Process death on wallet select failed in 27.1s on sdk gphone64 x86 64
+  Assertion is false: id: UserButton_5551230001 is visible
+  debug: build/flow-results/validate/before/flows/org-process-death-wallet-select/tb/H5_Process_death_on_wallet_select (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/org-process-death-wallet-select/tb/H5_Process_death_on_wallet_select/recording.mp4
+
+0 passed, 1 failed in 28.8s

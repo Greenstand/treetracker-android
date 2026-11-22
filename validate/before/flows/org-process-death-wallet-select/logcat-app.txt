@@ -1,0 +1,434 @@
+--------- beginning of main
+11-22 19:39:51.233  4945  4945 I eeTracker.debug: Late-enabling -Xcheck:jni
+11-22 19:39:51.271  4945  4945 I eeTracker.debug: Using CollectorTypeCMC GC.
+11-22 19:39:51.271  4945  4945 W eeTracker.debug: Unexpected CPU variant for x86: x86_64.
+11-22 19:39:51.271  4945  4945 W eeTracker.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-22 19:39:51.319  4945  4945 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-22 19:39:51.375  4945  4945 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-22 19:39:51.375  4945  4945 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-22 19:39:51.376  4945  4945 W ziparchive: Unable to open '/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.dm': No such file or directory
+11-22 19:39:51.376  4945  4945 W ziparchive: Unable to open '/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.dm': No such file or directory
+11-22 19:39:51.816  4945  4945 D nativeloader: Configuring clns-7 for other apk /data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/lib/x86_64:/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/org.greenstand.android.TreeTracker.debug
+11-22 19:39:51.823  4945  4945 V GraphicsEnvironment: Currently set values for:
+11-22 19:39:51.823  4945  4945 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-22 19:39:51.824  4945  4945 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-22 19:39:51.824  4945  4945 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+11-22 19:39:51.824  4945  4945 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-22 19:39:51.828  4945  4945 I MultiDex: VM with version 2.1.0 has multidex support
+11-22 19:39:51.828  4945  4945 I MultiDex: Installing application
+11-22 19:39:51.828  4945  4945 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+11-22 19:39:51.847  4945  4945 D SessionsDependencies: Dependency to CRASHLYTICS added.
+11-22 19:39:51.854  4945  4945 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+11-22 19:39:51.895  4945  4945 D FirebaseSessions: Initializing Firebase Sessions SDK.
+11-22 19:39:51.908  4945  4945 I FirebaseCrashlytics: Initializing Firebase Crashlytics 18.6.3 for org.greenstand.android.TreeTracker.debug
+11-22 19:39:51.915  4945  4945 D SessionsDependencies: Subscriber CRASHLYTICS registered.
+11-22 19:39:51.915  4945  4981 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-22 19:39:51.915  4945  4981 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-22 19:39:51.922  4945  4981 I DynamiteModule: Considering local module com.google.android.gms.measurement.dynamite:105 and remote module com.google.android.gms.measurement.dynamite:115
+11-22 19:39:51.923  4945  4981 I DynamiteModule: Selected remote version of com.google.android.gms.measurement.dynamite, version >= 115
+11-22 19:39:51.923  4945  4981 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+11-22 19:39:51.940  4945  4981 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-22 19:39:51.940  4945  4981 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-22 19:39:51.973  4945  4945 I FirebaseInitProvider: FirebaseApp initialization successful
+11-22 19:39:51.985  4945  4945 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+11-22 19:39:51.990  4945  4987 E FirebaseCrashlytics: Settings request failed.
+11-22 19:39:52.010  4945  4945 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-22 19:39:52.010  4945  4945 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+11-22 19:39:52.019  4945  4945 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-22 19:39:52.019  4945  4992 I FA      : App measurement initialized, version: 95014
+11-22 19:39:52.020  4945  4945 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-22 19:39:52.020  4945  4992 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE
+11-22 19:39:52.020  4945  4992 I FA      : To enable faster debug mode event logging run:
+11-22 19:39:52.020  4945  4992 I FA      :   adb shell setprop debug.firebase.analytics.app org.greenstand.android.TreeTracker.debug
+11-22 19:39:52.058  4945  4985 I FirebaseCrashlytics: No version control information found
+11-22 19:39:52.061  4945  4945 I AWSKeyValueStore: Detected Android API Level = 35
+11-22 19:39:52.061  4945  4945 I AWSKeyValueStore: Creating the AWSKeyValueStore with key for sharedPreferencesForData = com.amazonaws.android.auth
+11-22 19:39:52.062  4945  4945 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:39:52.062  4945  4945 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:39:52.062  4945  4945 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.identityId
+11-22 19:39:52.062  4945  4945 D CognitoCachingCredentia: Loading credentials from SharedPreferences
+11-22 19:39:52.063  4945  4945 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:39:52.063  4945  4945 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:39:52.065  4945  4945 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.expirationDate
+11-22 19:39:52.079  4945  4945 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-22 19:39:52.081  4945  4945 D AmazonS3Client: initialized with endpoint = https://s3.eu-central-1.amazonaws.com
+11-22 19:39:52.089  4945  4988 W InstallationId: Error getting authentication token.
+11-22 19:39:52.089  4945  4988 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-22 19:39:52.089  4945  4988 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-22 19:39:52.105  4945  4986 D SessionConfigFetcher: Fetching settings from server.
+11-22 19:39:52.114  4945  4982 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-22 19:39:52.141  4945  4945 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+11-22 19:39:52.143  4945  4988 D LifecycleServiceBinder: Binding service to application.
+11-22 19:39:52.184  4945  4945 W eeTracker.debug: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+11-22 19:39:52.193  4945  4988 D SessionLifecycleClient: Queued message 1. Queue size 1
+11-22 19:39:52.196  4945  4945 W HWUI    : Unknown dataspace 0
+11-22 19:39:52.196  4945  4992 I FA      : Tag Manager is not found and thus will not be used
+11-22 19:39:52.207  4945  4945 D SessionLifecycleService: Service bound to new client on process 4945
+11-22 19:39:52.209  4945  5001 D SessionLifecycleService: App has not yet foregrounded. Using previously stored session: null
+11-22 19:39:52.213  4945  5001 D SessionLifecycleService: Client android.os.Messenger@55ab45f bound at 105276. Clients: 1
+11-22 19:39:52.338  4945  4945 W eeTracker.debug: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+11-22 19:39:52.403  4945  4997 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-22 19:39:52.403  4945  4997 I EGL_emulation: Opening libGLESv2_emulation.so
+11-22 19:39:52.420  4945  4997 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-22 19:39:52.438  4945  4997 I Gralloc4: mapper 4.x is not supported
+11-22 19:39:52.764  4945  4945 D SessionLifecycleClient: Connected to SessionLifecycleService. Queue size 1
+11-22 19:39:52.786  4945  4984 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-22 19:39:52.786  4945  5001 D SessionLifecycleService: Activity foregrounding at 105855.
+11-22 19:39:52.786  4945  5001 D SessionLifecycleService: Cold start detected.
+11-22 19:39:52.787  4945  4945 I Choreographer: Skipped 31 frames!  The application may be doing too much work on its main thread.
+11-22 19:39:52.788  4945  5001 D SessionLifecycleService: Generated new session 6165a8086bd64086b3a53e197a98c666
+11-22 19:39:52.788  4945  5001 D SessionLifecycleService: Broadcasting new session: SessionDetails(sessionId=6165a8086bd64086b3a53e197a98c666, firstSessionId=6165a8086bd64086b3a53e197a98c666, sessionIndex=0, sessionStartTimestampUs=1795376392787000)
+11-22 19:39:52.789  4945  4988 D SessionFirelogPublisher: Data Collection is enabled for at least one Subscriber
+11-22 19:39:52.840  4945  4945 D SessionLifecycleClient: Session update received: 6165a8086bd64086b3a53e197a98c666
+11-22 19:39:52.868  4945  4986 D SessionLifecycleClient: Notified CRASHLYTICS of new session 6165a8086bd64086b3a53e197a98c666
+11-22 19:39:52.896  4945  4945 D OrgRepo : Org set to: E2E wallet-select
+11-22 19:39:52.896  4945  4945 D OrgRepo : Org settings: Org(id=e2e-wallet-select, name=E2E wallet-select, walletId=, logoPath=, captureSetupFlow=[Destination(route=user-select, features=null), Destination(route=wallet-select, features=null)], captureFlow=[Destination(route=capture/{profilePicUrl}, features=null), Destination(route=tree-image-review/{photoPath}, features=null)])
+11-22 19:39:53.006  4945  4984 W InstallationId: Error getting authentication token.
+11-22 19:39:53.006  4945  4984 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-22 19:39:53.006  4945  4984 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-22 19:39:53.007  4945  4984 D SessionConfigFetcher: Fetching settings from server.
+11-22 19:39:53.013  4945  4982 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-22 19:39:53.019  4945  4988 W InstallationId: Error getting authentication token.
+11-22 19:39:53.019  4945  4988 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-22 19:39:53.019  4945  4988 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-22 19:39:53.029  4945  4977 D EventGDTLogger: Session Event: {"eventType":1,"sessionData":{"sessionId":"6165a8086bd64086b3a53e197a98c666","firstSessionId":"6165a8086bd64086b3a53e197a98c666","sessionIndex":0,"eventTimestampUs":1795376392787000,"dataCollectionStatus":{"performance":1,"crashlytics":2,"sessionSamplingRate":1.0},"firebaseInstallationId":"fmtZLTEgR8S_oYFjamxaUG","firebaseAuthenticationToken":""},"applicationInfo":{"appId":"1:422699885542:android:11ddac217a11a7f4a0ec27","deviceModel":"sdk_gphone64_x86_64","sessionSdkVersion":"1.2.3","osVersion":"15","logEnvironment":3,"androidAppInfo":{"packageName":"org.greenstand.android.TreeTracker.debug","versionName":"2.2.0","appBuildVersion":"197","deviceManufacturer":"Google","currentProcessDetails":{"processName":"org.greenstand.android.TreeTracker.debug","pid":4945,"importance":100,"defaultProcess":true},"appProcessDetails":[{"processName":"org.greenstand.android.TreeTracker.debug","pid":4945,"importance":100,"defaultProcess":true}]}}}
+11-22 19:39:53.029  4945  4977 D SessionFirelogPublisher: Successfully logged Session Start event: 6165a8086bd64086b3a53e197a98c666
+11-22 19:39:53.147  4945  4945 D BuildVariant: build variant: debug
+11-22 19:39:53.168  4945  4974 W OrgLink : Install referrer not supported on this device
+11-22 19:39:53.194  4945  4955 I eeTracker.debug: Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+11-22 19:39:53.244  4945  4945 D OrgLink : No org deeplink, using existing org
+11-22 19:39:54.520  4945  4997 D EGL_emulation: app_time_stats: avg=586.01ms min=49.41ms max=1173.51ms count=3
+11-22 19:39:54.546  4945  5022 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;->getThreadSession()Landroid/database/sqlite/SQLiteSession; (unsupported, reflection, allowed)
+11-22 19:39:54.558  4945  5022 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteSession;->beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (unsupported, reflection, allowed)
+11-22 19:39:55.653  4945  4997 D EGL_emulation: app_time_stats: avg=187.76ms min=7.76ms max=466.78ms count=6
+11-22 19:39:57.460  4945  5076 D ProfileInstaller: Installing profile for org.greenstand.android.TreeTracker.debug
+11-22 19:39:57.613  4945  4997 D EGL_emulation: app_time_stats: avg=239.28ms min=3.35ms max=1018.14ms count=8
+11-22 19:39:58.558  4945  4986 D SessionLifecycleClient: Sending lifecycle 2 to service
+11-22 19:39:58.561  4945  5001 D SessionLifecycleService: Activity backgrounding at 111627
+11-22 19:39:58.655  4945  4945 D VRI[TreeTrackerActivity]: visibilityChanged oldVisibility=true newVisibility=false
+11-22 19:40:00.617  5145  5145 I eeTracker.debug: Late-enabling -Xcheck:jni
+11-22 19:40:00.647  5145  5145 I eeTracker.debug: Using CollectorTypeCMC GC.
+11-22 19:40:00.648  5145  5145 W eeTracker.debug: Unexpected CPU variant for x86: x86_64.
+11-22 19:40:00.648  5145  5145 W eeTracker.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-22 19:40:00.657  5145  5145 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-22 19:40:00.685  5145  5145 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-22 19:40:00.686  5145  5145 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-22 19:40:00.687  5145  5145 W ziparchive: Unable to open '/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.dm': No such file or directory
+11-22 19:40:00.687  5145  5145 W ziparchive: Unable to open '/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.dm': No such file or directory
+11-22 19:40:01.119  5145  5145 D nativeloader: Configuring clns-7 for other apk /data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/lib/x86_64:/data/app/~~l_qBQoFw_9XHjUF4GPuy1Q==/org.greenstand.android.TreeTracker.debug-1neAv3tzKEY9miixs9nYQw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/org.greenstand.android.TreeTracker.debug
+11-22 19:40:01.127  5145  5145 V GraphicsEnvironment: Currently set values for:
+11-22 19:40:01.127  5145  5145 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-22 19:40:01.127  5145  5145 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-22 19:40:01.127  5145  5145 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+11-22 19:40:01.127  5145  5145 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-22 19:40:01.131  5145  5145 I MultiDex: VM with version 2.1.0 has multidex support
+11-22 19:40:01.131  5145  5145 I MultiDex: Installing application
+11-22 19:40:01.131  5145  5145 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+11-22 19:40:01.149  5145  5145 D SessionsDependencies: Dependency to CRASHLYTICS added.
+11-22 19:40:01.156  5145  5145 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+11-22 19:40:01.197  5145  5145 D FirebaseSessions: Initializing Firebase Sessions SDK.
+11-22 19:40:01.212  5145  5145 I FirebaseCrashlytics: Initializing Firebase Crashlytics 18.6.3 for org.greenstand.android.TreeTracker.debug
+11-22 19:40:01.224  5145  5145 D SessionsDependencies: Subscriber CRASHLYTICS registered.
+11-22 19:40:01.227  5145  5171 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-22 19:40:01.227  5145  5171 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-22 19:40:01.234  5145  5171 I DynamiteModule: Considering local module com.google.android.gms.measurement.dynamite:105 and remote module com.google.android.gms.measurement.dynamite:115
+11-22 19:40:01.239  5145  5171 I DynamiteModule: Selected remote version of com.google.android.gms.measurement.dynamite, version >= 115
+11-22 19:40:01.239  5145  5171 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+11-22 19:40:01.261  5145  5171 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-22 19:40:01.261  5145  5171 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-22 19:40:01.264  5145  5145 I FirebaseInitProvider: FirebaseApp initialization successful
+11-22 19:40:01.268  5145  5145 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+11-22 19:40:01.270  5145  5178 E FirebaseCrashlytics: Settings request failed.
+11-22 19:40:01.286  5145  5145 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-22 19:40:01.286  5145  5145 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+11-22 19:40:01.297  5145  5145 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-22 19:40:01.298  5145  5145 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-22 19:40:01.323  5145  5145 I AWSKeyValueStore: Detected Android API Level = 35
+11-22 19:40:01.323  5145  5145 I AWSKeyValueStore: Creating the AWSKeyValueStore with key for sharedPreferencesForData = com.amazonaws.android.auth
+11-22 19:40:01.327  5145  5145 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:40:01.327  5145  5145 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:40:01.327  5145  5145 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.identityId
+11-22 19:40:01.327  5145  5145 D CognitoCachingCredentia: Loading credentials from SharedPreferences
+11-22 19:40:01.327  5145  5145 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:40:01.327  5145  5145 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-22 19:40:01.328  5145  5145 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.expirationDate
+11-22 19:40:01.337  5145  5145 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-22 19:40:01.338  5145  5145 D AmazonS3Client: initialized with endpoint = https://s3.eu-central-1.amazonaws.com
+11-22 19:40:01.351  5145  5176 I FirebaseCrashlytics: No version control information found
+11-22 19:40:01.469  5145  5145 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+11-22 19:40:01.490  5145  5168 W InstallationId: Error getting authentication token.
+11-22 19:40:01.490  5145  5168 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-22 19:40:01.490  5145  5168 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-22 19:40:01.495  5145  5175 D SessionConfigFetcher: Fetching settings from server.
+11-22 19:40:01.503  5145  5173 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-22 19:40:01.505  5145  5145 W eeTracker.debug: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+11-22 19:40:01.506  5145  5175 D LifecycleServiceBinder: Binding service to application.
+11-22 19:40:01.510  5145  5179 D SessionLifecycleClient: Queued message 1. Queue size 1
+11-22 19:40:01.511  5145  5186 I FA      : App measurement initialized, version: 95014
+11-22 19:40:01.511  5145  5186 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE
+11-22 19:40:01.513  5145  5145 W HWUI    : Unknown dataspace 0
+11-22 19:40:01.513  5145  5186 I FA      : To enable faster debug mode event logging run:
+11-22 19:40:01.513  5145  5186 I FA      :   adb shell setprop debug.firebase.analytics.app org.greenstand.android.TreeTracker.debug
+11-22 19:40:01.519  5145  5145 D SessionLifecycleService: Service bound to new client on process 5145
+11-22 19:40:01.521  5145  5199 D SessionLifecycleService: App has not yet foregrounded. Using previously stored session: null
+11-22 19:40:01.521  5145  5199 D SessionLifecycleService: Client android.os.Messenger@c54b74d bound at 114589. Clients: 1
+11-22 19:40:01.587  5145  5186 I FA      : Tag Manager is not found and thus will not be used
+11-22 19:40:01.653  5145  5145 W eeTracker.debug: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+11-22 19:40:01.719  5145  5187 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-22 19:40:01.720  5145  5187 I EGL_emulation: Opening libGLESv2_emulation.so
+11-22 19:40:01.744  5145  5187 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-22 19:40:01.771  5145  5187 I Gralloc4: mapper 4.x is not supported
+11-22 19:40:02.032  5145  5145 D SessionLifecycleClient: Connected to SessionLifecycleService. Queue size 1
+11-22 19:40:02.035  5145  5175 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-22 19:40:02.057  5145  5199 D SessionLifecycleService: Activity foregrounding at 115126.
+11-22 19:40:02.057  5145  5199 D SessionLifecycleService: Cold start detected.
+11-22 19:40:02.064  5145  5199 D SessionLifecycleService: Generated new session c681de9819d84b19baf706decea24e1b
+11-22 19:40:02.064  5145  5199 D SessionLifecycleService: Broadcasting new session: SessionDetails(sessionId=c681de9819d84b19baf706decea24e1b, firstSessionId=c681de9819d84b19baf706decea24e1b, sessionIndex=0, sessionStartTimestampUs=1795376402064000)
+11-22 19:40:02.069  5145  5179 D SessionFirelogPublisher: Data Collection is enabled for at least one Subscriber
+11-22 19:40:02.087  5145  5145 I Choreographer: Skipped 31 frames!  The application may be doing too much work on its main thread.
+11-22 19:40:02.121  5145  5145 D SessionLifecycleClient: Session update received: c681de9819d84b19baf706decea24e1b
+11-22 19:40:02.128  5145  5175 D SessionLifecycleClient: Notified CRASHLYTICS of new session c681de9819d84b19baf706decea24e1b
+11-22 19:40:02.162  5145  5145 D OrgRepo : Org set to: E2E wallet-select
+11-22 19:40:02.162  5145  5145 D OrgRepo : Org settings: Org(id=e2e-wallet-select, name=E2E wallet-select, walletId=, logoPath=, captureSetupFlow=[Destination(route=user-select, features=null), Destination(route=wallet-select, features=null)], captureFlow=[Destination(route=capture/{profilePicUrl}, features=null), Destination(route=tree-image-review/{photoPath}, features=null)])
+11-22 19:40:02.164  5145  5175 W InstallationId: Error getting authentication token.
+11-22 19:40:02.164  5145  5175 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-22 19:40:02.164  5145  5175 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-22 19:40:02.168  5145  5179 D SessionConfigFetcher: Fetching settings from server.
+11-22 19:40:02.169  5145  5173 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-22 19:40:02.262  5145  5180 W InstallationId: Error getting authentication token.
+11-22 19:40:02.262  5145  5180 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-22 19:40:02.262  5145  5180 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-22 19:40:02.272  5145  5175 D EventGDTLogger: Session Event: {"eventType":1,"sessionData":{"sessionId":"c681de9819d84b19baf706decea24e1b","firstSessionId":"c681de9819d84b19baf706decea24e1b","sessionIndex":0,"eventTimestampUs":1795376402064000,"dataCollectionStatus":{"performance":1,"crashlytics":2,"sessionSamplingRate":1.0},"firebaseInstallationId":"fmtZLTEgR8S_oYFjamxaUG","firebaseAuthenticationToken":""},"applicationInfo":{"appId":"1:422699885542:android:11ddac217a11a7f4a0ec27","deviceModel":"sdk_gphone64_x86_64","sessionSdkVersion":"1.2.3","osVersion":"15","logEnvironment":3,"androidAppInfo":{"packageName":"org.greenstand.android.TreeTracker.debug","versionName":"2.2.0","appBuildVersion":"197","deviceManufacturer":"Google","currentProcessDetails":{"processName":"org.greenstand.android.TreeTracker.debug","pid":5145,"importance":100,"defaultProcess":true},"appProcessDetails":[{"processName":"org.greenstand.android.TreeTracker.debug","pid":5145,"importance":100,"defaultProcess":true}]}}}
+11-22 19:40:02.275  5145  5175 D SessionFirelogPublisher: Successfully logged Session Start event: c681de9819d84b19baf706decea24e1b
+11-22 19:40:02.366  5145  5153 I eeTracker.debug: Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+11-22 19:40:05.380  5145  5145 E FirebaseCrashlytics: Cannot send reports. Timed out while fetching settings.
+--------- beginning of crash
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: FATAL EXCEPTION: main
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: Process: org.greenstand.android.TreeTracker.debug, PID: 5145
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: java.lang.IllegalStateException: CaptureSetupScope not open. Call open() before getData().
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager.getData(SetupScope.kt:40)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel$1.invokeSuspend(WalletSelectViewModel.kt:54)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.internal.DispatchedContinuationKt.resumeCancellableWith(DispatchedContinuation.kt:359)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.intrinsics.CancellableKt.startCoroutineCancellable(Cancellable.kt:26)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.CoroutineStart.invoke(CoroutineStart.kt:358)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.AbstractCoroutine.start(AbstractCoroutine.kt:124)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt__Builders_commonKt.launch(Builders.common.kt:52)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt.launch(Unknown Source:1)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt__Builders_commonKt.launch$default(Builders.common.kt:43)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt.launch$default(Unknown Source:1)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.walletselect.WalletSelectViewModel.<init>(WalletSelectViewModel.kt:53)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.di.AppModuleKt.appModule$lambda$0$10(AppModule.kt:135)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.di.AppModuleKt.$r8$lambda$pHEyNqVgjsFm-Y8FG5vU6iaTMMA(Unknown Source:0)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.di.AppModuleKt$$ExternalSyntheticLambda33.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.koin.core.instance.InstanceFactory.create(InstanceFactory.kt:50)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.koin.core.instance.FactoryInstanceFactory.get(FactoryInstanceFactory.kt:38)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.koin.core.registry.InstanceRegistry.resolveInstance$koin_core(InstanceRegistry.kt:109)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.koin.core.scope.Scope.resolveValue(Scope.kt:248)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.koin.core.scope.Scope.resolveInstance(Scope.kt:234)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.koin.core.scope.Scope.get(Scope.kt:213)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory.create(TreeTrackerViewModelFactory.kt:117)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.ViewModelProvider$NewInstanceFactory.create(ViewModelProvider.android.kt:186)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.ViewModelProvider$NewInstanceFactory.create(ViewModelProvider.android.kt:191)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.internal.ViewModelProviderImpl_androidKt.createViewModel(ViewModelProviderImpl.android.kt:35)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.internal.ViewModelProviderImpl.getViewModel$lifecycle_viewmodel(ViewModelProviderImpl.kt:59)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.internal.ViewModelProviderImpl.getViewModel$lifecycle_viewmodel$default(ViewModelProviderImpl.kt:43)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.ViewModelProvider.get(ViewModelProvider.android.kt:90)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.compose.ViewModelKt__ViewModelKt.get(ViewModel.kt:172)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.compose.ViewModelKt.get(Unknown Source:1)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.compose.ViewModelKt__ViewModelKt.viewModel(ViewModel.kt:106)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.compose.ViewModelKt.viewModel(Unknown Source:1)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.walletselect.WalletSelectScreenKt.WalletSelectScreen(WalletSelectScreen.kt:219)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.root.ComposableSingletons$HostKt.lambda__494077641$lambda$0(Host.kt:146)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.root.ComposableSingletons$HostKt$$ExternalSyntheticLambda17.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.NavEntry.Content(NavEntry.kt:65)
+11-22 19:40:05.381  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.navigation.ScreenTrackingNavEntryDecoratorKt.rememberScreenTrackingNavEntryDecorator$lambda$0$0$2(ScreenTrackingNavEntryDecorator.kt:78)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.navigation.ScreenTrackingNavEntryDecoratorKt.$r8$lambda$hDrayLZNMFmrAGHRKata-z_KuGY(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.navigation.ScreenTrackingNavEntryDecoratorKt$$ExternalSyntheticLambda1.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:122)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.CompositionLocalKt.CompositionLocalProvider(CompositionLocal.kt:378)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.navigation.ScreenTrackingNavEntryDecoratorKt.rememberScreenTrackingNavEntryDecorator$lambda$0$0(ScreenTrackingNavEntryDecorator.kt:74)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.navigation.ScreenTrackingNavEntryDecoratorKt.$r8$lambda$gXR4P6vQeTenVUND_DywAW2GYEU(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at org.greenstand.android.TreeTracker.navigation.ScreenTrackingNavEntryDecoratorKt$$ExternalSyntheticLambda2.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.decorateEntry$lambda$1$1$0(DecoratedNavEntries.kt:227)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.$r8$lambda$Xq5HM5jYZbE9jtCj-H7XFYyibQo(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt$$ExternalSyntheticLambda4.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.NavEntry.Content(NavEntry.kt:65)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator._init_$lambda$1$1(ViewModelStoreNavEntryDecorator.kt:134)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator.$r8$lambda$13u-eMW1iH632z1iKFQx72NlgA0(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator$$ExternalSyntheticLambda2.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:122)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.CompositionLocalKt.CompositionLocalProvider(CompositionLocal.kt:398)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator._init_$lambda$1(ViewModelStoreNavEntryDecorator.kt:133)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator$$ExternalSyntheticLambda1.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.decorateEntry$lambda$1$1$0(DecoratedNavEntries.kt:227)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.$r8$lambda$Xq5HM5jYZbE9jtCj-H7XFYyibQo(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt$$ExternalSyntheticLambda4.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.NavEntry.Content(NavEntry.kt:65)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator._init_$lambda$1$0(SaveableStateHolderNavEntryDecorator.kt:57)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator.$r8$lambda$5AEs6Y8xjT-m9rz_14ajr7_PkrE(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator$$ExternalSyntheticLambda2.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:122)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.CompositionLocalKt.CompositionLocalProvider(CompositionLocal.kt:378)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.saveable.SaveableStateHolderImpl.SaveableStateProvider(SaveableStateHolder.kt:82)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator._init_$lambda$1(SaveableStateHolderNavEntryDecorator.kt:57)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator$$ExternalSyntheticLambda1.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.decorateEntry$lambda$1$1$0(DecoratedNavEntries.kt:227)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.$r8$lambda$Xq5HM5jYZbE9jtCj-H7XFYyibQo(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt$$ExternalSyntheticLambda4.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.NavEntry.Content(NavEntry.kt:65)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.decorateEntry$lambda$1(DecoratedNavEntries.kt:229)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.NavEntry.Content(NavEntry.kt:65)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.BackStackAwareLifecycleNavEntryDecoratorKt.rememberBackStackAwareLifecycleNavEntryDecorator$lambda$1$1(BackStackAwareLifecycleNavEntryDecorator.kt:47)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.BackStackAwareLifecycleNavEntryDecoratorKt.$r8$lambda$vI4ZnmsdoV1XTWHdr3sldRncpkc(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.BackStackAwareLifecycleNavEntryDecoratorKt$$ExternalSyntheticLambda1.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:122)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.CompositionLocalKt.CompositionLocalProvider(CompositionLocal.kt:398)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.BackStackAwareLifecycleNavEntryDecoratorKt.rememberBackStackAwareLifecycleNavEntryDecorator$lambda$1(BackStackAwareLifecycleNavEntryDecorator.kt:47)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.BackStackAwareLifecycleNavEntryDecoratorKt$$ExternalSyntheticLambda2.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.decorateEntry$lambda$1$1$0(DecoratedNavEntries.kt:227)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt.$r8$lambda$Xq5HM5jYZbE9jtCj-H7XFYyibQo(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.DecoratedNavEntriesKt$$ExternalSyntheticLambda4.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.runtime.NavEntry.Content(NavEntry.kt:65)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.SceneSetupNavEntryDecorator._init_$lambda$1$1(SceneSetupNavEntryDecorator.kt:80)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.SceneSetupNavEntryDecorator.$r8$lambda$A7KhiYu20ZRPtXFcpYFpxRFD2zc(Unknown Source:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.SceneSetupNavEntryDecorator$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.382  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:122)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.ComposableSingletons$SceneSetupNavEntryDecoratorKt.lambda__51699941$lambda$0(SceneSetupNavEntryDecorator.kt:75)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.navigation3.scene.ComposableSingletons$SceneSetupNavEntryDecoratorKt$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:131)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.invokeMovableContentLambda$lambda$0(ComposerImpl.kt:2279)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:122)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.ComposableLambdaImpl.invoke(ComposableLambda.kt:52)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.internal.Expect_jvmKt.invokeComposable(Expect.jvm.kt:24)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.invokeMovableContentLambda(ComposerImpl.kt:2279)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.insertMovableContentGuarded$lambda$0$0$0$0(ComposerImpl.kt:2345)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.$r8$lambda$bii9cKLYCVCrssiTmo54qQ7pQRk(Unknown Source:0)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl$$ExternalSyntheticLambda2.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.recomposeMovableContent(ComposerImpl.kt:2465)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.recomposeMovableContent$default(ComposerImpl.kt:2446)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.insertMovableContentGuarded(ComposerImpl.kt:2341)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.ComposerImpl.insertMovableContentReferences(ComposerImpl.kt:2299)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.CompositionImpl.insertMovableContent(Composition.kt:1092)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.Recomposer.performInsertValues(Recomposer.kt:1497)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.Recomposer.access$performInsertValues(Recomposer.kt:159)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.Recomposer$runRecomposeAndApplyChanges$2.invokeSuspend$lambda$2(Recomposer.kt:687)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.runtime.Recomposer$runRecomposeAndApplyChanges$2$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.ui.platform.AndroidUiFrameClock$withFrameNanos$2$callback$1.doFrame(AndroidUiFrameClock.android.kt:39)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.ui.platform.AndroidUiDispatcher.performFrameDispatch(AndroidUiDispatcher.android.kt:108)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.ui.platform.AndroidUiDispatcher.access$performFrameDispatch(AndroidUiDispatcher.android.kt:41)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at androidx.compose.ui.platform.AndroidUiDispatcher$dispatchCallback$1.doFrame(AndroidUiDispatcher.android.kt:69)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1404)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1415)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.view.Choreographer.doCallbacks(Choreographer.java:1015)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.view.Choreographer.doFrame(Choreographer.java:941)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1389)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:959)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:100)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:232)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:317)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8705)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)
+11-22 19:40:05.383  5145  5145 E AndroidRuntime: 	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@496da51, Dispatchers.Main.immediate]

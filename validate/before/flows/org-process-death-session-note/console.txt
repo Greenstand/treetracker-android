@@ -1,0 +1,23 @@
+▶ H5 Process death on the session note on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.8s
+    ✓ Wait until id: TrackButton is visible  2.7s
+    ✓ Tap on id: TrackButton  440ms
+    ✓ Wait until id: UserButton_5551230001 is visible  9ms
+    ✓ Tap on id: UserButton_5551230001  178ms
+    ✓ Tap on id: ArrowForwardButton  257ms
+  ✓ Run Org capture setup  6.2s
+  ✓ Assert that id: SessionNoteField is visible  9ms
+  ✓ Tap on id: SessionNoteField  222ms
+  ✓ Input text Planting day  854ms
+  ✓ Hide keyboard  60ms
+  ✓ Press Home key  48ms
+  ✓ Kill app "org.greenstand.android.TreeTracker.debug"  70ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.7s
+  ✗ Wait until id: SessionNoteField is visible  15.0s
+      Assertion is false: id: SessionNoteField is visible
+✗ H5 Process death on the session note failed in 34.4s on sdk gphone64 x86 64
+  Assertion is false: id: SessionNoteField is visible
+  debug: build/flow-results/validate/before/flows/org-process-death-session-note/tb/H5_Process_death_on_the_session_note (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/org-process-death-session-note/tb/H5_Process_death_on_the_session_note/recording.mp4
+
+0 passed, 1 failed in 36.9s

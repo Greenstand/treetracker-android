@@ -1,0 +1,79 @@
+   0.000s tb 0.6.3: "H5 Process death on the session note" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-org-process-death-session-note.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.527s recording the screen to recording.mp4
+   0.527s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-session-note.yaml:10)
+   5.306s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4778 ms
+   5.306s ▶ Run Org capture setup  (.ci-org-process-death-session-note.yaml:11)
+   5.306s   ▶ Wait until id: TrackButton is visible  (org-capture-setup.yaml:7)
+   6.021s     snapshot history: screen context changed; discarding 1 snapshots
+   7.990s     snapshot history: screen context changed; discarding 1 snapshots
+   7.991s     found id: TrackButton: View #TrackButton [20,473][300,606], after 2684 ms and 3 reads
+   7.991s   ✓ Wait until id: TrackButton is visible  2684 ms
+   7.991s   ▶ Tap on id: TrackButton  (org-capture-setup.yaml:10)
+   8.075s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   8.154s     waited 79 ms for a still screen
+   8.216s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   8.431s     tap at (160, 539): the screen changed (sent in 46 ms, waited 148 ms)
+   8.431s   ✓ Tap on id: TrackButton  440 ms
+   8.431s     --annotate: holding the screen 780ms for the recording
+   9.217s   ▶ Wait until id: UserButton_5551230001 is visible  (org-capture-setup.yaml:11)
+   9.227s     snapshot history: screen context changed; discarding 1 snapshots
+   9.227s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   9.227s   ✓ Wait until id: UserButton_5551230001 is visible  9 ms
+   9.227s   ▶ Tap on id: UserButton_5551230001  (org-capture-setup.yaml:14)
+   9.277s     waited 50 ms for the last action's change to settle
+   9.277s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   9.328s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   9.379s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   9.405s     tap at (84, 177): the screen changed (sent in 6 ms, waited 18 ms)
+   9.405s   ✓ Tap on id: UserButton_5551230001  178 ms
+   9.405s     --annotate: holding the screen 970ms for the recording
+  10.380s   ▶ Tap on id: ArrowForwardButton  (org-capture-setup.yaml:15)
+  10.391s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.440s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.489s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.637s     tap at (264, 572): the screen changed (sent in 5 ms, waited 140 ms)
+  10.637s   ✓ Tap on id: ArrowForwardButton  257 ms
+  10.637s     --annotate: holding the screen 850ms for the recording
+  11.490s ✓ Run Org capture setup  6184 ms
+  11.490s ▶ Assert that id: SessionNoteField is visible  (.ci-org-process-death-session-note.yaml:13)
+  11.499s   snapshot history: screen context changed; discarding 2 snapshots
+  11.499s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+  11.499s ✓ Assert that id: SessionNoteField is visible  9 ms
+  11.499s ▶ Tap on id: SessionNoteField  (.ci-org-process-death-session-note.yaml:14)
+  11.500s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+  11.548s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+  11.596s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+  11.721s   tap at (160, 324): the screen changed (sent in 28 ms, waited 94 ms)
+  11.721s ✓ Tap on id: SessionNoteField  222 ms
+  11.721s   --annotate: holding the screen 870ms for the recording
+  12.597s ▶ Input text Planting day  (.ci-org-process-death-session-note.yaml:15)
+  12.598s   typing 12 characters
+  13.452s   typed with device verification: the screen changed (sent in 801 ms, waited 50 ms)
+  13.452s ✓ Input text Planting day  854 ms
+  13.452s   --annotate: holding the screen 150ms for the recording
+  13.597s ▶ Hide keyboard  (.ci-org-process-death-session-note.yaml:16)
+  13.657s   snapshot history: screen context changed; discarding 1 snapshots
+  13.657s ✓ Hide keyboard  60 ms
+  13.657s   --annotate: holding the screen 940ms for the recording
+  14.597s ▶ Press Home key  (.ci-org-process-death-session-note.yaml:17)
+  14.646s   the screen changed (sent in 3 ms, waited 41 ms)
+  14.646s ✓ Press Home key  48 ms
+  14.646s   --annotate: holding the screen 950ms for the recording
+  15.599s ▶ Kill app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-session-note.yaml:18)
+  15.669s ✓ Kill app "org.greenstand.android.TreeTracker.debug"  70 ms
+  15.669s   --annotate: holding the screen 930ms for the recording
+  16.599s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-session-note.yaml:19)
+  18.268s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1669 ms
+  18.268s ▶ Wait until id: SessionNoteField is visible  (.ci-org-process-death-session-note.yaml:20)
+  23.372s   snapshot history: screen context changed; discarding 1 snapshots
+  24.872s   no change reported by the device for 1.5s while looking for id: SessionNoteField: reading the screen again
+  27.882s   no change reported by the device for 3s while looking for id: SessionNoteField: reading the screen again
+  30.891s   no change reported by the device for 3s while looking for id: SessionNoteField: reading the screen again
+  33.270s   deadline reached 2.371s after the last read: reading the screen once more
+  33.278s   not found: id: SessionNoteField, after 15009 ms and 7 reads (screen: com.google.android.apps.nexuslauncher, 49 elements, allowed 15s)
+  33.278s ✗ Wait until id: SessionNoteField is visible  15010 ms: Assertion is false: id: SessionNoteField is visible
+  33.488s --annotate: recording.mp4 is in sync (its frame times say so, within -113 ms)
+  34.374s --annotate: drew 14 captions and 4 touches on recording.mp4 in 886 ms
+  34.613s FAILED in 34.374s: Assertion is false: id: SessionNoteField is visible
+  34.613s the screen at the failure: screen*.txt, screenshot*.png, hierarchy*.json in this folder
