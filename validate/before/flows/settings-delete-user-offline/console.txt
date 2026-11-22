@@ -1,0 +1,77 @@
+▶ E7 Delete non-admin user offline on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  5.0s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  3.4s
+    ✓ Tap on id: LanguageOption_ENGLISH  376ms
+    ✓ Tap on id: ArrowForwardButton  383ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  376ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  358ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.3s
+    ✓ Input text 5551230001  1.5s
+    ✓ Hide keyboard  189ms
+    ✓ Tap on id: ArrowForwardButton  212ms
+    ✓ Tap on id: FirstNameField  242ms
+    ✓ Input text Ada  552ms
+    ✓ Tap on id: LastNameField  777ms
+    ✓ Input text Admin  407ms
+    ✓ Hide keyboard  166ms
+    ✓ Tap on id: ArrowForwardButton  311ms
+    ✓ Tap on id: TutorialDoneButton  2.3s
+    ✓ Tap on id: CaptureButton  674ms
+    ✓ Wait until id: ApproveButton is visible  10ms
+    ✓ Tap on id: ApproveButton  152ms
+    ✓ Wait until id: TrackButton is visible  11ms
+  ✓ Run Sign up  25.2s
+  ✓ Tap on id: TrackButton  140ms
+  ✓ Tap on id: OrangeAddButton  219ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  151ms
+  ✓ Tap on id: PhoneField  215ms
+  ✓ Input text 5551230002  597ms
+  ✓ Hide keyboard  87ms
+  ✓ Tap on id: ArrowForwardButton  116ms
+  ✓ Tap on id: FirstNameField  197ms
+  ✓ Input text Bob  322ms
+  ✓ Tap on id: LastNameField  156ms
+  ✓ Input text Builder  440ms
+  ✓ Hide keyboard  99ms
+  ✓ Tap on id: ArrowForwardButton  192ms
+  ✓ Tap on id: CaptureButton  1.1s
+  ✓ Tap on id: ApproveButton  161ms
+  ✓ Wait until id: OrgNameField is visible  12ms
+  ✓ Press back  59ms
+  ✓ Press back  72ms
+  ✓ Wait until id: SettingsButton is visible  14ms
+  ✓ Tap on id: SettingsButton  172ms
+  ✓ Tap on id: SettingsDeleteAccount  240ms
+  ✓ Tap on id: UserButton_5551230002  217ms
+  ✓ Tap on id: ArrowForwardButton  166ms
+  ✓ Assert that "Delete Account", id: DialogTitle is visible  13ms
+  ✓ Tap on id: DialogPositiveButton  180ms
+  ✗ Assert that "Account Deleted", id: DialogTitle is visible  17.0s
+      Assertion is false: "Account Deleted", id: DialogTitle is visible
+✗ E7 Delete non-admin user offline failed in 1m17s on sdk gphone64 x86 64
+  Assertion is false: "Account Deleted", id: DialogTitle is visible
+  screen was:
+    android 320x640 com.google.android.apps.nexuslauncher, 13 elements
+    column scrollable:
+      @1 Button "At a glance" #smartspace_card_pager
+        @2 Button "Sun, Nov 22" #base_template_card_with_date
+          @3 Button "Sun, Nov 22" #date
+    @4 View "Home"
+    row:
+      @5 Button "Phone"
+      @6 Button "Messages"
+      @7 Button "Tree Tracker(debug)"
+      @8 Button "Chrome"
+      @9 Button "Camera"
+    @10 Button "Google search" #search_container_hotseat
+      row:
+        @11 Button "Google app" #g_icon
+        @12 Button "Voice search" #mic_icon
+        @13 Button "Google Lens" #lens_icon
+  debug: build/flow-results/validate/before/flows/settings-delete-user-offline/tb/E7_Delete_non-admin_user_offline (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/settings-delete-user-offline/tb/E7_Delete_non-admin_user_offline/recording.mp4
+
+0 passed, 1 failed in 1m20s

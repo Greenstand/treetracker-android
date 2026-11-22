@@ -1,0 +1,41 @@
+{
+  "beforeSha": "c61c9ca00bfa88dd8a10e5f860527d4543ce0705",
+  "beforeMissing": null,
+  "counts": {
+    "validated": 1,
+    "not-demonstrated": 0,
+    "broken": 0,
+    "inconclusive": 0
+  },
+  "flows": [
+    {
+      "name": "settings-delete-user-offline",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 80,
+        "error": "Assertion is false: \"Account Deleted\", id: DialogTitle is visible",
+        "ran": true,
+        "video": "before/videos/settings-delete-user-offline.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/settings-delete-user-offline/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 60,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/settings-delete-user-offline.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/settings-delete-user-offline/step-41-end-assertVisible-TrackButton.png"
+        ]
+      }
+    }
+  ]
+}
