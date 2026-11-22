@@ -166,6 +166,7 @@ screens/<flow>/step-23-end-....png                the screen the flow ended on
 screens/<flow>/failure.png                        the screen at a failure
 flows/<flow>/  console.txt log.txt error.txt screen.txt hierarchy.json commands.json
                logcat.txt (artifact only) logcat-app.txt crash.txt report.xml setup.txt
+               attempts.txt console-try<N>.txt (tries whose recording was lost)
 videos/<flow>.mp4                                 with --video, or annotated (ANNOTATE=1)
 videos/<flow>.srt                                 annotated: the step captions (tb's 3-minute
                                                   parts joined into one video and one .srt)
@@ -176,7 +177,26 @@ is the one before them. `--screenshots end` keeps only the last screen, `none` t
 screenshot takes a moment, so a flow that depends on tight timing can behave differently with
 `steps`; use `end` for it.
 
-The job fails when a flow fails, after uploading everything.
+`summary.json` also says what became of each video that was asked for: `recording` is `saved`,
+`partial` (tb kept what the device had when stopping the recording failed) or `lost`, with tb's
+reason in `recordingError`, and `tries` is how many times the flow ran to get it.
+
+The job fails when a flow fails, or when a video that was asked for was lost, after uploading
+everything.
+
+### Lost recordings
+
+On CI's emulator the adb connection sometimes drops at the moment tb copies its recording off the
+device (the device's log has `adbd: host-N: connection terminated: write failed`; tb says
+`--record: the recording could not be saved: adb pull /sdcard/tb-recording-1.mp4 ... exit status 1`).
+The flow's result is not affected, but tb then deletes the device's copy, so the video is gone.
+`run-flows.sh` therefore runs such a flow again, up to `RECORD_TRIES` times in all (default 3),
+and keeps the log of each try that lost its video (`flows/<flow>/attempts.txt`,
+`console-try<N>.txt`, `logcat-try<N>.txt`). The result and the screenshots are the last try's.
+
+A video still missing after that is reported as **lost**, never as a plain pass: a warning on the
+run, "N recordings lost" and a Video column in the summary, "recording lost" with tb's reason in
+the PR comment, exit status 3 from `run-flows.sh` and a failed job. Re-run the job to record it.
 
 ## Adding a flow
 

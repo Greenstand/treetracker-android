@@ -255,23 +255,37 @@ jobs:
                 lines.push('The run stopped before the flows ran: see the [run](' + env.RUN_URL + ').');
               } else {
                 const repoUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}`;
-                lines.push('| Flow | Result | Video |', '|---|---|---|');
                 const flows = summary.flows.filter(f => f && typeof f === 'object').slice(0, 20);
+                // A video that was not saved is said first, and in its row: a passed flow without
+                // its video is not what this check is for.
+                const lost = flows.filter(f => f.recording === 'lost' ||
+                  (f.recording == null && !safePath(f.video)));
+                if (lost.length) {
+                  lines.push(`> ⚠️ **${lost.length} of ${flows.length} recording${flows.length > 1 ? 's' : ''} lost.** ` +
+                    'The flow ran, but its video could not be saved: re-run the job to record it again.', '');
+                }
+                lines.push('| Flow | Result | Video |', '|---|---|---|');
                 for (const f of flows) {
                   const name = '`' + text(f.name, 80).replace(/`/g, '') + '`' +
                     (Number.isInteger(f.steps) ? ` (steps 1–${f.steps})` : '');
                   const result = f.status === 'passed' ? '✅ passed' : '❌ ' + text(f.status, 20);
                   const videos = [f.video, ...(Array.isArray(f.videoParts) ? f.videoParts : [])].map(safePath).filter(Boolean);
-                  let video = '—';
+                  let video = '⚠️ **recording lost**';
                   if (videos.length && env.RESULTS_SHA) {
                     video = videos.map((v, i) => `[${i ? 'part ' + (i + 1) : 'video'}](${repoUrl}/blob/${env.RESULTS_SHA}/${v})`).join(', ');
                   } else if (videos.length) {
                     video = 'in the artifact';
                   }
+                  if (videos.length && f.recording === 'partial') video += ' (⚠️ may be incomplete)';
+                  if (Number.isInteger(f.tries) && f.tries > 1) video += ` (try ${f.tries})`;
                   lines.push(`| ${name} | ${result} | ${video} |`);
                 }
                 for (const f of flows.filter(f => f.error)) {
                   lines.push('', `**\`${text(f.name, 80).replace(/`/g, '')}\`** failed: ${text(f.error)}`);
+                }
+                for (const f of lost.concat(flows.filter(f => f.recording === 'partial'))) {
+                  lines.push('', `**\`${text(f.name, 80).replace(/`/g, '')}\`** recording ` +
+                    `${f.recording === 'partial' ? 'may be incomplete' : 'lost'}: ${text(f.recordingError || 'no video file was saved')}`);
                 }
               }
               lines.push('', `[Run](${env.RUN_URL}) at \`${env.SHA.slice(0, 7)}\`. Videos, captions (.srt) and logs: ` +

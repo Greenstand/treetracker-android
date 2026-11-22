@@ -8,7 +8,8 @@
 # (settings-*) or a tag (tag:settings). Names, globs and tags look in e2e/flows only (not its
 # sub-flows), and include known-bug flows that match. A path or name ending in @N runs only the
 # flow's first N top-level steps (capture-first-tree@7), as affected.py picks them.
-# A failing flow doesn't stop the run. Exit status: 0 all passed, 1 a flow failed, 2 bad input.
+# A failing flow doesn't stop the run. Exit status: 0 all passed, 1 a flow failed, 2 bad input,
+# 3 every flow passed but a recording that was asked for was lost.
 #
 # Usage: TB=tb OUT=build/flow-results bash e2e/ci/run-flows.sh -s emulator-5554 <selector>...
 #    or: FLOW_SELECTORS="a b" ... bash e2e/ci/run-flows.sh -s emulator-5554  (no shell globbing)
@@ -18,6 +19,10 @@
 #   ANNOTATE=1|TIME             record with `tb test --record --annotate[=TIME]` instead: each step
 #                               held about a second (or TIME), taps drawn, a caption band naming
 #                               the step (videos/<flow>.mp4 and .srt; needs ffmpeg)
+#   RECORD_TRIES=N              with ANNOTATE: run a flow again, up to N times in all (default 3),
+#                               when tb could not save its recording (it deletes the device's
+#                               copy when its one `adb pull` fails, which CI's emulator makes
+#                               happen now and then: see docs/testing/ci-flows.md)
 #   ONLINE=1                    leave the network on (by default flows run offline, as run.sh does)
 set -uo pipefail
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
@@ -30,6 +35,8 @@ ANNOTATE=${ANNOTATE:-}
 [[ $ANNOTATE == 0 ]] && ANNOTATE=
 # tb records the annotated video itself, so screenrecord stays off.
 [[ -n $ANNOTATE ]] && RECORD=0
+RECORD_TRIES=${RECORD_TRIES:-3}
+[[ $RECORD_TRIES =~ ^[1-9][0-9]*$ ]] || { echo "RECORD_TRIES takes a number from 1" >&2; exit 2; }
 ONLINE=${ONLINE:-0}
 APP=org.greenstand.android.TreeTracker.debug
 if [[ $# == 2 && -n ${FLOW_SELECTORS:-} ]]; then
@@ -144,28 +151,22 @@ stop_recording() {  # $1: flow name
   rm -f "$OUT/videos/$1"-part-*.mp4 "$OUT/videos/$1-parts.txt"
 }
 
-FAILED=0
-: > "$OUT/results.tsv"
-for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
-  FLOW=${FLOWS[$FI]}
-  NAME=$(basename "$FLOW" .yaml)
-  DIR="$OUT/flows/$NAME"
-  SHOTS="$OUT/screens/$NAME"
-  mkdir -p "$DIR" "$SHOTS"
-  echo "::group::$NAME"
+# Runs flow FLOW (NAME, cut to STEPS when set) once: sets STATUS and SECONDS_TAKEN, and leaves
+# tb's files in $DIR/tb.
+run_once() {
   "$ADB" -s "$SERIAL" shell am force-stop "$APP" || true
-  SETUP_OK=1
+  local setup_ok=1 variant
+  SETUP_FAILED=0
   # Org-config flows need their org seeded (the variant run-org.sh uses for the flow); dev-tools
   # flows need the seeded user and trees from setup-device.sh.
-  VARIANT=$(awk -v f="$NAME.yaml" '$2 == f {print $1}' e2e/run-org.sh)
-  if [[ -n $VARIANT ]]; then
-    bash e2e/seed-org.sh -s "$SERIAL" "$VARIANT" </dev/null > "$DIR/setup.txt" 2>&1 || SETUP_OK=0
+  variant=$(awk -v f="$NAME.yaml" '$2 == f {print $1}' e2e/run-org.sh)
+  if [[ -n $variant ]]; then
+    bash e2e/seed-org.sh -s "$SERIAL" "$variant" </dev/null > "$DIR/setup.txt" 2>&1 || setup_ok=0
   elif has_tag "$FLOW" dev-tools; then
-    bash e2e/setup-device.sh -s "$SERIAL" </dev/null > "$DIR/setup.txt" 2>&1 || SETUP_OK=0
+    bash e2e/setup-device.sh -s "$SERIAL" </dev/null > "$DIR/setup.txt" 2>&1 || setup_ok=0
   fi
 
   RUN="$FLOW"
-  STEPS=${CUTS[$FI]}
   if [[ -n $STEPS ]]; then
     # Copies go next to the flow, so its runFlow paths still resolve.
     RUN="$(dirname "$FLOW")/.ci-cut-$NAME.yaml"
@@ -176,26 +177,67 @@ for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
     [[ $RUN != "$FLOW" ]] && rm -f "$RUN"
     RUN="$(dirname "$FLOW")/.ci-$NAME.yaml"
   fi
-  REC_ARGS=()
+  local rec_args=()
   if [[ -n $ANNOTATE ]]; then
-    REC_ARGS=(--record "--annotate")
-    [[ $ANNOTATE != 1 ]] && REC_ARGS=(--record "--annotate=$ANNOTATE")
+    rec_args=(--record "--annotate")
+    [[ $ANNOTATE != 1 ]] && rec_args=(--record "--annotate=$ANNOTATE")
   fi
   "$ADB" -s "$SERIAL" logcat -b all -c || true
   [[ $RECORD == 1 ]] && start_recording
-  BEGIN=$(date +%s)
-  if (( SETUP_OK == 0 )); then
+  local begin
+  begin=$(date +%s)
+  rm -f "$DIR/error.txt"
+  if (( setup_ok == 0 )); then
     STATUS=failed
+    SETUP_FAILED=1
     echo "Setup failed: see setup.txt" > "$DIR/error.txt"
   elif "$TB" test "$RUN" -p android --device "$SERIAL" --format junit --output "$DIR/report.xml" \
-      --debug-output "$DIR/tb" --flatten-debug-output ${REC_ARGS[@]+"${REC_ARGS[@]}"} </dev/null 2>&1 | tee "$DIR/console.txt"; then
+      --debug-output "$DIR/tb" --flatten-debug-output ${rec_args[@]+"${rec_args[@]}"} </dev/null 2>&1 | tee "$DIR/console.txt"; then
     STATUS=passed
   else
     STATUS=failed
   fi
-  SECONDS_TAKEN=$(( $(date +%s) - BEGIN ))
+  SECONDS_TAKEN=$(( $(date +%s) - begin ))
   [[ $RECORD == 1 ]] && stop_recording "$NAME"
   "$ADB" -s "$SERIAL" logcat -d > "$DIR/logcat.txt" 2>/dev/null || true
+  [[ $RUN != "$FLOW" ]] && rm -f "$RUN"
+  return 0
+}
+# tb's own words when its recording did not reach the debug folder ("--record: the recording could
+# not be saved: ...", "--record: the screen is not recorded: ..."), or nothing.
+record_trouble() { grep -a -m1 -o -- '--record: .*' "$DIR/console.txt" 2>/dev/null | tr -d '\r' | tr '\t' ' ' | cut -c1-300; }
+tb_recorded() { [[ -n $(find "$DIR/tb" -name 'recording*.mp4' -size +0c 2>/dev/null | head -n 1) ]]; }
+
+FAILED=0
+LOST=0
+: > "$OUT/results.tsv"
+for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
+  FLOW=${FLOWS[$FI]}
+  NAME=$(basename "$FLOW" .yaml)
+  DIR="$OUT/flows/$NAME"
+  SHOTS="$OUT/screens/$NAME"
+  STEPS=${CUTS[$FI]}
+  mkdir -p "$DIR" "$SHOTS"
+  echo "::group::$NAME"
+  TRY=1
+  : > "$DIR/attempts.txt"
+  while :; do
+    run_once
+    [[ -z $ANNOTATE || $SETUP_FAILED == 1 ]] && break
+    tb_recorded && break
+    # No video from tb, and tb has already removed the device's copy: only running the flow
+    # again records it again. Each try that lost its video stays on the record.
+    WHY=$(record_trouble)
+    echo "try $TRY ($STATUS): ${WHY:-no recording}" | tee -a "$DIR/attempts.txt"
+    (( TRY >= RECORD_TRIES )) && break
+    for f in console logcat; do
+      [[ -f $DIR/$f.txt ]] && cp "$DIR/$f.txt" "$DIR/$f-try$TRY.txt"
+    done
+    TRY=$((TRY + 1))
+    echo "Running $NAME again for its recording (try $TRY of $RECORD_TRIES)"
+    rm -rf "$DIR/tb" "$DIR/report.xml"
+  done
+  [[ -s $DIR/attempts.txt ]] || rm -f "$DIR/attempts.txt"
   # The app's own lines (by its uid) are the ones worth reading first; crash.txt only when the
   # app crashed (the emulator's own services crash now and then too).
   APP_UID=$("$ADB" -s "$SERIAL" shell cmd package list packages -U "$APP" | tr -d '\r' | sed -n "s/^package:$APP uid:\([0-9]*\).*/\1/p")
@@ -205,7 +247,6 @@ for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
   [[ -s $DIR/logcat-app.txt ]] || grep -E 'TreeTracker|greenstand|AndroidRuntime' "$DIR/logcat.txt" > "$DIR/logcat-app.txt" 2>/dev/null || true
   "$ADB" -s "$SERIAL" logcat -d -b crash > "$DIR/crash.txt" 2>/dev/null || true
   grep -q "$APP" "$DIR/crash.txt" 2>/dev/null || rm -f "$DIR/crash.txt"
-  [[ $RUN != "$FLOW" ]] && rm -f "$RUN"
 
   # tb writes into a folder named after the flow: the steps' screenshots (takeScreenshot/), its
   # log and, for a failure, the screen it saw then. Move them where the summary points.
@@ -215,6 +256,23 @@ for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
   if [[ -n $ANNOTATE ]]; then
     python3 e2e/ci/join_recording.py "$DIR/tb" "$OUT/videos/$NAME" || echo "No recording from tb for $NAME" >&2
   fi
+  # Was the video that was asked for saved? "lost" is said out loud: in the summary, the PR
+  # comment and the exit status, so a run without its video does not pass for one with it.
+  RECORDING= RECORDING_WHY=
+  if [[ -n $ANNOTATE || $RECORD == 1 ]]; then
+    if [[ -s $OUT/videos/$NAME.mp4 ]]; then
+      RECORDING=saved
+      RECORDING_WHY=$(record_trouble)   # "the recording may be incomplete: ..."
+      [[ -n $RECORDING_WHY ]] && RECORDING=partial
+    else
+      RECORDING=lost
+      RECORDING_WHY=$(record_trouble)
+      [[ $SETUP_FAILED == 1 ]] && RECORDING_WHY="the flow did not run"
+      [[ -n $RECORDING_WHY ]] || RECORDING_WHY="no video file was saved"
+      LOST=$((LOST + 1))
+      echo "::warning::$NAME: the recording was lost ($RECORDING_WHY)"
+    fi
+  fi
   for f in "$DIR"/tb/*/screenshot*.png; do
     [[ -f $f ]] && mv "$f" "$SHOTS/failure$(basename "$f" .png | sed 's/^screenshot//').png"
   done
@@ -223,9 +281,9 @@ for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
   done
   find "$DIR/tb" -type d -empty -delete 2>/dev/null
   [[ $STATUS == failed ]] && FAILED=1
-  printf '%s\t%s\t%s\t%s\t%s\n' "$NAME" "$FLOW" "$STATUS" "$SECONDS_TAKEN" "$STEPS" >> "$OUT/results.tsv"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$NAME" "$FLOW" "$STATUS" "$SECONDS_TAKEN" "$STEPS" "$RECORDING" "$TRY" "$RECORDING_WHY" >> "$OUT/results.tsv"
   echo "::endgroup::"
-  echo "$NAME $STATUS (${SECONDS_TAKEN}s, $(ls "$SHOTS" | wc -l) screenshots)"
+  echo "$NAME $STATUS (${SECONDS_TAKEN}s, $(ls "$SHOTS" | wc -l) screenshots${RECORDING:+, recording $RECORDING})"
 done
 
 "$ADB" -s "$SERIAL" shell am force-stop "$APP" || true
@@ -234,4 +292,6 @@ if [[ $ONLINE != 1 ]]; then
   "$ADB" -s "$SERIAL" shell svc wifi enable || true
 fi
 python3 e2e/ci/summarize.py "$OUT"
-exit $FAILED
+(( FAILED )) && exit 1
+(( LOST )) && exit 3
+exit 0

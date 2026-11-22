@@ -66,6 +66,9 @@ on:
         value: ${{ jobs.run.outputs.passed }}
       failed:
         value: ${{ jobs.run.outputs.failed }}
+      recordings_lost:
+        description: "Flows whose video was asked for and not saved (the job fails for these too)"
+        value: ${{ jobs.run.outputs.recordings_lost }}
 
 jobs:
   run:
@@ -78,6 +81,7 @@ jobs:
       results_sha: ${{ steps.publish.outputs.sha }}
       passed: ${{ steps.result.outputs.passed }}
       failed: ${{ steps.result.outputs.failed }}
+      recordings_lost: ${{ steps.result.outputs.recordings_lost }}
     env:
       API_LEVEL: ${{ inputs.api_level || '35' }}
       # Test Buddy v0.6.3. Keep in step with android-e2e.yml.
@@ -228,7 +232,7 @@ jobs:
         run: bash ./gradlew :app:assembleDebug --stacktrace
 
       # The runner script's exit status is kept in a file, so the results are always uploaded and
-      # the last step fails the job for a failed flow.
+      # the last step fails the job for a failed flow, or for a video that was asked for and lost.
       - name: Run the flows
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -265,6 +269,7 @@ jobs:
           if [[ -f $S ]]; then
             echo "passed=$(jq .passed "$S")" >> "$GITHUB_OUTPUT"
             echo "failed=$(jq .failed "$S")" >> "$GITHUB_OUTPUT"
+            echo "recordings_lost=$(jq '.recordingsLost // 0' "$S")" >> "$GITHUB_OUTPUT"
             cat build/flow-results/summary.md >> "$GITHUB_STEP_SUMMARY"
           else
             echo "No flows ran: see the steps above." >> "$GITHUB_STEP_SUMMARY"
@@ -297,8 +302,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           rm -rf /tmp/results && mkdir /tmp/results
-          # No full logcat (large): the artifact has it. Videos stay, so a PR can link one.
-          (cd build/flow-results && tar -cf - --exclude='logcat.txt' --exclude='.git' .) | tar -xf - -C /tmp/results
+          # No full logcats (large): the artifact has them. Videos stay, so a PR can link one.
+          (cd build/flow-results && tar -cf - --exclude='logcat.txt' --exclude='logcat-try*.txt' --exclude='.git' .) | tar -xf - -C /tmp/results
           cd /tmp/results
           git init -q -b "$BRANCH"
           git config user.name "github-actions[bot]"
@@ -320,9 +325,14 @@ jobs:
               fi
             done || true
 
-      - name: Fail for a failed flow
+      # A video that was asked for and not saved fails the job too (run-flows.sh's status 3): a
+      # green run means every flow passed and every video is there.
+      - name: Fail for a failed flow or a lost recording
         if: always()
         run: |
           CODE=$(cat build/flow-runner-exit 2>/dev/null || echo 1)
           rm -f treetracker.keys.properties
+          if [[ $CODE == 3 ]]; then
+            echo "::error::Every flow passed, but a recording was lost: see the summary"; exit 1
+          fi
           [[ $CODE == 0 ]] || { echo "::error::A flow failed (or none ran): see the summary"; exit 1; }
