@@ -139,6 +139,53 @@ python3 e2e/ci/affected.py --files app/src/main/java/org/greenstand/android/Tree
 python3 -m unittest discover -s e2e/ci -p 'test_*.py'
 ```
 
+### Before and after: does the PR's change work?
+
+A clip of the PR's app near the changed code does not show that a fix fixes anything. A
+**validating flow** does: a flow that fails on the app without the change and passes on the app
+with it. The same workflow runs each validating flow twice, recorded and annotated both times: on
+the app built from the PR's merge base ("before") and on the PR's app ("after"). The flow files,
+sub-flows and seeding scripts are the PR's for both runs; only the app differs.
+
+Which flows (`e2e/ci/validating.py`, at most 3):
+
+1. Named in the PR description, on a line `validates: <flow> [<flow> ...]` (a flow's name;
+   `.yaml` and `e2e/flows/` are optional). Use it for a flow that exists already.
+2. Flows the PR adds or edits, unless still tagged `known-bug`. A fix PR that drops `known-bug`
+   from its flow needs nothing else.
+
+The verdict (`e2e/ci/verdict.py`), in the PR comment with both videos side by side:
+
+| Before (base app) | After (PR's app) | Verdict |
+|---|---|---|
+| fails | passes | ✅ validated |
+| passes | passes | ⚠️ does not demonstrate the change (it passes without it too) |
+| fails | fails | ❌ broken |
+| passes | fails | ❌ broken (the PR makes it fail) |
+| a side did not run: the base app did not build, seeding failed | | ❔ inconclusive, with the reason |
+
+Only **broken** fails the job. The comment also quotes the error each failing run stopped at:
+read it, since a flow can fail on the base app for a reason that is not the bug (a test tag the
+PR adds is a fair reason for a new feature; a seeding error is not). Each side runs once, so a
+flaky flow can give a wrong verdict. A PR with no validating flow says so in its comment: its
+clips only show screens near the change.
+
+What a validating flow cannot show, so don't expect one: a fix with nothing to see on screen (a
+leak, stale state behind the UI), a race a driven tap can't hit reliably (double-tap guards), and
+states an offline emulator can't reach (a server error). Those need a unit or instrumented test.
+
+Results are in `validate/before/` and `validate/after/` (each laid out as below) with
+`validate/verdict.json` and `verdict.md`. Every video also gets a GIF beside it
+(`videos/<flow>.gif`), which the PR comment embeds, since a comment plays a GIF inline but only
+links an MP4.
+
+Locally, with both APKs built:
+
+```bash
+TB=tb VALIDATE_FLOWS="settings-delete-user-offline" BEFORE_APK=before.apk AFTER_APK=after.apk \
+  bash e2e/ci/run-job.sh -s emulator-5554
+```
+
 **PRs from forks** don't run on their own: their code would run on the emulator with this
 repository's caches. The "pick flows" job still lists what would run (picked by the base branch's
 copy of `affected.py`, not the fork's). After reading the PR's code, a maintainer runs it from
@@ -170,6 +217,9 @@ flows/<flow>/  console.txt log.txt error.txt screen.txt hierarchy.json commands.
 videos/<flow>.mp4                                 with --video, or annotated (ANNOTATE=1)
 videos/<flow>.srt                                 annotated: the step captions (tb's 3-minute
                                                   parts joined into one video and one .srt)
+videos/<flow>.gif                                 on CI: the video as a GIF, for the PR comment
+validate/before/ validate/after/                  validating flows on the base app and the PR's
+validate/verdict.json verdict.md                  app (each folder laid out like this one)
 ```
 
 Steps that only check the screen (`assertVisible` and the like) get no screenshot, since the screen
