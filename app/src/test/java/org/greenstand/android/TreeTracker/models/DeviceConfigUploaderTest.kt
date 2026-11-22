@@ -35,7 +35,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
 import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.md5
@@ -60,7 +60,7 @@ class DeviceConfigUploaderTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var dao: DeviceConfigDAO
 
     @MockK(relaxed = true)
     private lateinit var objectStorageClient: ObjectStorageClient

@@ -27,7 +27,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.MainCoroutineRule
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
 import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.junit.Before
@@ -51,7 +51,7 @@ class DeviceConfigUpdaterTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     @MockK(relaxed = true)
-    private lateinit var dao: TreeTrackerDAO
+    private lateinit var dao: DeviceConfigDAO
 
     @MockK(relaxed = true)
     private lateinit var timeProvider: TimeProvider

@@ -17,22 +17,18 @@ package org.greenstand.android.TreeTracker.models
 
 import android.os.Build
 import org.greenstand.android.TreeTracker.BuildConfig
-import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
+import org.greenstand.android.TreeTracker.database.dao.DeviceConfigDAO
 import org.greenstand.android.TreeTracker.database.entity.DeviceConfigEntity
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 class DeviceConfigUpdater(
-    private val dao: TreeTrackerDAO,
+    private val dao: DeviceConfigDAO,
     private val timeProvider: TimeProvider,
 ) {
     suspend fun saveLatestConfig() {
         val config = dao.getLatestDeviceConfig() ?: saveNewDeviceConfig()
-        if (config.appVersion != BuildConfig.VERSION_NAME ||
-            config.appBuild != BuildConfig.VERSION_CODE ||
-            config.osVersion != Build.VERSION.RELEASE ||
-            config.sdkVersion != Build.VERSION.SDK_INT
-        ) {
+        if (config.appVersion != BuildConfig.VERSION_NAME || config.appBuild != BuildConfig.VERSION_CODE || config.osVersion != Build.VERSION.RELEASE || config.sdkVersion != Build.VERSION.SDK_INT) {
             saveNewDeviceConfig()
         }
     }
