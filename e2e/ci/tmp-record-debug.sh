@@ -33,40 +33,36 @@ name: dbg
 - takeScreenshot: end
 Y
 
-echo "== E3: plain adb pull of a 1.2 MB file, 10 times each from /sdcard and /data/local/tmp"
-adb -s "$SERIAL" shell 'dd if=/dev/urandom of=/sdcard/dbg.bin bs=1024 count=1200 2>/dev/null; cp /sdcard/dbg.bin /data/local/tmp/dbg.bin'
-for where in /sdcard /data/local/tmp; do
-  ok=0
-  for i in 1 2 3 4 5 6 7 8 9 10; do
-    if adb -s "$SERIAL" pull $where/dbg.bin $OUT/dbg.bin >$OUT/pull.txt 2>&1; then ok=$((ok+1)); else echo "  $where pull $i FAILED: $(tr '\r' '\n' < $OUT/pull.txt | tail -2)"; sleep 2; fi
+echo "== E3: 120 rounds; each round pulls a 1.2 MB file four ways"
+adb -s "$SERIAL" shell 'dd if=/dev/urandom of=/sdcard/dbg.bin bs=1024 count=1200 2>/dev/null; cp /sdcard/dbg.bin /data/local/tmp/dbg.bin; ls -la /sdcard/dbg.bin /data/local/tmp/dbg.bin'
+SUM=$(adb -s "$SERIAL" shell md5sum /data/local/tmp/dbg.bin | cut -d' ' -f1)
+declare -A OK FAIL
+T0=$(date +%s)
+for i in $(seq 1 120); do
+  for way in pull-sdcard pull-data cat-sdcard cat-data; do
+    rm -f $OUT/dbg.bin
+    case $way in
+      pull-sdcard) adb -s "$SERIAL" pull /sdcard/dbg.bin $OUT/dbg.bin >$OUT/pull.txt 2>&1 ;;
+      pull-data) adb -s "$SERIAL" pull /data/local/tmp/dbg.bin $OUT/dbg.bin >$OUT/pull.txt 2>&1 ;;
+      cat-sdcard) adb -s "$SERIAL" exec-out cat /sdcard/dbg.bin >$OUT/dbg.bin 2>$OUT/pull.txt ;;
+      cat-data) adb -s "$SERIAL" exec-out cat /data/local/tmp/dbg.bin >$OUT/dbg.bin 2>$OUT/pull.txt ;;
+    esac
+    CODE=$?
+    if [[ $CODE == 0 && $(md5sum < $OUT/dbg.bin | cut -d' ' -f1) == "$SUM" ]]; then
+      OK[$way]=$(( ${OK[$way]:-0} + 1 ))
+    else
+      FAIL[$way]=$(( ${FAIL[$way]:-0} + 1 ))
+      echo "  round $i $way FAILED at +$(( $(date +%s) - T0 ))s: exit $CODE, got $(stat -c %s $OUT/dbg.bin 2>/dev/null || echo 0) bytes: $(tr '\r' '\n' < $OUT/pull.txt | tail -1)"
+      adb -s "$SERIAL" wait-for-device
+    fi
   done
-  echo "  $where: $ok/10 pulled"
 done
+for way in pull-sdcard pull-data cat-sdcard cat-data; do echo "  $way: ${OK[$way]:-0} ok, ${FAIL[$way]:-0} failed"; done
+grep -c 'connection terminated' "$ADBLOG" | sed 's/^/  host adb log: connections terminated so far: /'
 
-echo "== E2: plain screenrecord (no tb), stop with SIGINT, pull at once; 6 times"
-for i in 1 2 3 4 5 6; do
-  adb -s "$SERIAL" logcat -c; M=$(mark)
-  adb -s "$SERIAL" shell 'rm -f /sdcard/dbg-rec.mp4'
-  adb -s "$SERIAL" shell 'screenrecord --verbose --time-limit 0 --bit-rate 4000000 /sdcard/dbg-rec.mp4' >$OUT/rec.txt 2>&1 &
-  REC=$!
-  sleep 3
-  adb -s "$SERIAL" shell am start -n org.greenstand.android.TreeTracker.debug/org.greenstand.android.TreeTracker.activities.TreeTrackerActivity >/dev/null 2>&1
-  adb -s "$SERIAL" shell 'for n in 1 2 3 4 5 6 7 8; do input swipe 100 400 100 200 200; input keyevent 4; done' >/dev/null 2>&1
-  sleep 10
-  adb -s "$SERIAL" shell "pkill -INT -f '^[^ ]*screenrecord .*dbg-re[c]'"
-  wait $REC
-  if adb -s "$SERIAL" pull /sdcard/dbg-rec.mp4 $OUT/rec-$i.mp4 >$OUT/pull.txt 2>&1; then
-    echo "  E2 run $i: pulled $(stat -c %s $OUT/rec-$i.mp4) bytes"
-  else
-    echo "  E2 run $i: PULL FAILED: $(tr '\r' '\n' < $OUT/pull.txt | tail -2)"; drops; since "$M"
-    sleep 2
-    adb -s "$SERIAL" pull /sdcard/dbg-rec.mp4 $OUT/rec-$i.mp4 >$OUT/pull.txt 2>&1 && echo "    second pull worked: $(stat -c %s $OUT/rec-$i.mp4) bytes" || echo "    second pull failed too"
-  fi
-done
-
-echo "== E1: tb test --record --annotate, as run-flows.sh does; 8 times"
+echo "== E1: tb test --record --annotate, as run-flows.sh does; 12 times"
 LOST=0
-for i in 1 2 3 4 5 6 7 8; do
+for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
   adb -s "$SERIAL" logcat -c; M=$(mark)
   "$TB" test e2e/flows/.dbg.yaml -p android --device "$SERIAL" --debug-output $OUT/tb-$i --flatten-debug-output --record --annotate </dev/null >$OUT/console-$i.txt 2>&1
   CODE=$?
@@ -78,6 +74,6 @@ for i in 1 2 3 4 5 6 7 8; do
     adb -s "$SERIAL" logcat -d | grep -a -E 'MPEG4Writer: final' | tail -1 | sed 's/^/    dev: /'
   fi
 done
-echo "E1: lost $LOST of 8"
+echo "E1: lost $LOST of 12"
 echo "== adb server log (last 60 lines)"; tail -60 "$ADBLOG" 2>&1
 pgrep -a adb
