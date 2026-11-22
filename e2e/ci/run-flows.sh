@@ -262,8 +262,9 @@ for ((FI = 0; FI < ${#FLOWS[@]}; FI++)); do
   if [[ -n $ANNOTATE || $RECORD == 1 ]]; then
     if [[ -s $OUT/videos/$NAME.mp4 ]]; then
       RECORDING=saved
-      RECORDING_WHY=$(record_trouble)   # "the recording may be incomplete: ..."
-      [[ -n $RECORDING_WHY ]] && RECORDING=partial
+      # tb kept what the device had when stopping its recording failed.
+      RECORDING_WHY=$(record_trouble)
+      if [[ $RECORDING_WHY == *"may be incomplete"* ]]; then RECORDING=partial; else RECORDING_WHY=; fi
     else
       RECORDING=lost
       RECORDING_WHY=$(record_trouble)
