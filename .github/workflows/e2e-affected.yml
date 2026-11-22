@@ -178,7 +178,7 @@ jobs:
             done
             FLOWS=${KEPT# }
             echo "validate=$VALIDATE" >> "$GITHUB_OUTPUT"
-            echo "before=$(git merge-base "origin/$BASE" "$SHA")" >> "$GITHUB_OUTPUT"
+            echo "before=6b8dea0e1eaeb04fb2161aa89d285cd467c0b882" >> "$GITHUB_OUTPUT"  # TEMP (proof PR only): the commit before #1429
           fi
           echo "flows=$FLOWS" >> "$GITHUB_OUTPUT"
           # A delimiter no file name in the table can contain.
