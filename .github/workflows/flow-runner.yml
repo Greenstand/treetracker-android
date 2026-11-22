@@ -13,62 +13,10 @@ name: Flow runner
 #     fetch it;
 #   - the run's summary page.
 #
-# Start it from another workflow (workflow_call, as flow-runner-pr.yml does), by hand or with
-# `gh workflow run flow-runner.yml` (workflow_dispatch). The job fails when a flow fails.
+# Start it by hand or with `gh workflow run flow-runner.yml`. The job fails when a flow fails.
+# The job itself is flow-runner-job.yml, which other workflows call directly; this file gives it a
+# token that can push the results.
 on:
-  workflow_call:
-    inputs:
-      flows:
-        description: "Flow selectors, space or comma separated: paths, names, globs (settings-*) or tags (tag:settings)"
-        type: string
-        required: false
-        default: ""
-      inline_flow:
-        description: "A whole flow's YAML to run as e2e/flows/inline.yaml, besides the selected flows"
-        type: string
-        required: false
-        default: ""
-      ref:
-        description: "Branch, tag or SHA whose app and flows to run (default: the caller's)"
-        type: string
-        required: false
-        default: ""
-      pr:
-        description: "PR number, used to name the artifact and results branch"
-        type: string
-        required: false
-        default: ""
-      api_level:
-        description: "Emulator API level"
-        type: string
-        required: false
-        default: "35"
-      screenshots:
-        description: "steps (after each step that can change the screen), end (last screen only) or none"
-        type: string
-        required: false
-        default: steps
-      record_video:
-        description: "Record a video of each flow"
-        type: boolean
-        required: false
-        default: false
-      publish_branch:
-        description: "Push the results to a flow-results/ branch too"
-        type: boolean
-        required: false
-        default: true
-    outputs:
-      artifact:
-        description: "Name of the uploaded artifact"
-        value: ${{ jobs.run.outputs.artifact }}
-      results_branch:
-        description: "Branch the results were pushed to (empty if not pushed)"
-        value: ${{ jobs.run.outputs.results_branch }}
-      passed:
-        value: ${{ jobs.run.outputs.passed }}
-      failed:
-        value: ${{ jobs.run.outputs.failed }}
   workflow_dispatch:
     inputs:
       flows:
@@ -100,6 +48,10 @@ on:
         description: "Record a video of each flow"
         type: boolean
         default: false
+      annotate:
+        description: "Annotated video instead (tb --record --annotate): slowed down, taps and step captions"
+        type: boolean
+        default: false
       publish_branch:
         description: "Push the results to a flow-results/ branch too"
         type: boolean
@@ -110,215 +62,14 @@ permissions:
 
 jobs:
   run:
-    name: run flows
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    outputs:
-      artifact: ${{ steps.names.outputs.artifact }}
-      results_branch: ${{ steps.publish.outputs.branch }}
-      passed: ${{ steps.result.outputs.passed }}
-      failed: ${{ steps.result.outputs.failed }}
-    env:
-      API_LEVEL: ${{ inputs.api_level || '35' }}
-      # Keep in step with android-e2e.yml.
-      TESTBUDDY_REF: ab598c27daa9784f026229c9322adba69b11f8b5
-    steps:
-      - name: Names
-        id: names
-        env:
-          PR: ${{ inputs.pr }}
-        run: |
-          if [[ -n $PR && ! $PR =~ ^[0-9]+$ ]]; then echo "::error::pr must be a number"; exit 1; fi
-          if [[ -n $PR ]]; then
-            echo "artifact=flow-results-pr$PR-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
-            echo "branch=flow-results/pr-$PR" >> "$GITHUB_OUTPUT"
-          else
-            echo "artifact=flow-results-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
-            echo "branch=flow-results/run-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
-          fi
-
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref }}
-
-      - name: Pick the flows
-        id: flows
-        env:
-          FLOWS: ${{ inputs.flows }}
-          INLINE: ${{ inputs.inline_flow }}
-        run: |
-          SELECTORS=$FLOWS
-          if [[ -n $INLINE ]]; then
-            printf '%s\n' "$INLINE" > e2e/flows/inline.yaml
-            SELECTORS="$SELECTORS e2e/flows/inline.yaml"
-          fi
-          if [[ -z ${SELECTORS//[ ,]/} ]]; then echo "::error::Give flows or inline_flow"; exit 1; fi
-          echo "selectors=$SELECTORS" >> "$GITHUB_OUTPUT"
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      # tb (with its Android agent inside) only changes with TESTBUDDY_REF, so build it once.
-      - name: tb cache
-        id: tb-cache
-        uses: actions/cache@v4
-        with:
-          path: bin/tb
-          key: tb-${{ env.TESTBUDDY_REF }}-linux-x64
-      - name: Check out Test Buddy
-        if: steps.tb-cache.outputs.cache-hit != 'true'
-        uses: actions/checkout@v4
-        with:
-          repository: Elforama/testbuddy
-          ref: ${{ env.TESTBUDDY_REF }}
-          path: .testbuddy
-      - if: steps.tb-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-      - if: steps.tb-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: .testbuddy/go.mod
-          cache-dependency-path: .testbuddy/go.sum
-      - name: Build tb
-        if: steps.tb-cache.outputs.cache-hit != 'true'
-        working-directory: .testbuddy
-        run: |
-          (cd agents/android && ./gradlew assembleDebug)
-          cp agents/android/app/build/outputs/apk/debug/app-debug.apk internal/driver/android/assets/tb-agent.apk
-          go build -o "$GITHUB_WORKSPACE/bin/tb" ./cmd/tb
-
-      - name: Setup build environment
-        uses: ./.github/workflows/actions/setup-build-environment
-        with:
-          use_dummy_keys: true
-      - name: Build the debug app
-        run: bash ./gradlew :app:assembleDebug --stacktrace
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-      - name: Install ffmpeg
-        if: inputs.record_video
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-
-      # The same snapshot as android-e2e.yml for API 35 (same key), so either workflow can save it.
-      - name: Emulator snapshot cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}-google_apis-x86_64-cameras
-      - name: Create the emulator snapshot
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ env.API_LEVEL }}
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
-          disable-animations: true
-          script: echo "snapshot saved"
-
-      # The runner script's exit status is kept in a file, so the results are always uploaded and
-      # the last step fails the job for a failed flow.
-      - name: Run the flows
-        uses: reactivecircus/android-emulator-runner@v2
-        env:
-          FLOW_SELECTORS: ${{ steps.flows.outputs.selectors }}
-          OUT: build/flow-results
-          SCREENSHOTS: ${{ inputs.screenshots || 'steps' }}
-          RECORD: ${{ inputs.record_video && '1' || '0' }}
-          FLOW_RUN_NAME: ${{ steps.names.outputs.artifact }}
-          FLOW_RUN_REF: ${{ inputs.ref || github.ref }}
-          FLOW_RUN_SHA: ${{ steps.flows.outputs.sha }}
-          FLOW_RUN_PR: ${{ inputs.pr }}
-          FLOW_RUN_API_LEVEL: ${{ env.API_LEVEL }}
-        with:
-          api-level: ${{ env.API_LEVEL }}
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
-          disable-animations: true
-          script: |
-            adb install -r app/build/outputs/apk/debug/app-debug.apk
-            TB="$GITHUB_WORKSPACE/bin/tb" bash e2e/ci/run-flows.sh -s "$(adb get-serialno)"; echo $? > build/flow-runner-exit
-
-      - name: Summary
-        id: result
-        if: always()
-        env:
-          ARTIFACT: ${{ steps.names.outputs.artifact }}
-          BRANCH: ${{ steps.names.outputs.branch }}
-          PUBLISH: ${{ inputs.publish_branch }}
-        run: |
-          S=build/flow-results/summary.json
-          if [[ -f $S ]]; then
-            echo "passed=$(jq .passed "$S")" >> "$GITHUB_OUTPUT"
-            echo "failed=$(jq .failed "$S")" >> "$GITHUB_OUTPUT"
-            cat build/flow-results/summary.md >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "No flows ran: see the steps above." >> "$GITHUB_STEP_SUMMARY"
-          fi
-          {
-            echo
-            echo "Results: the \`$ARTIFACT\` artifact of this run."
-            if [[ $PUBLISH != false ]]; then
-              echo "From a Claude Code cloud session: \`bash e2e/ci/cloud-flows.sh fetch --branch $BRANCH\`"
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload the results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.names.outputs.artifact }}
-          path: build/flow-results/
-          if-no-files-found: ignore
-          retention-days: 14
-
-      # One commit, replaced on each run, so fetching the branch only fetches the last run. Fails
-      # quietly where the token can't push (a PR from a fork).
-      - name: Push the results to a branch
-        id: publish
-        if: always() && inputs.publish_branch != false && hashFiles('build/flow-results/summary.json') != ''
-        continue-on-error: true
-        env:
-          BRANCH: ${{ steps.names.outputs.branch }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          rm -rf /tmp/results && mkdir /tmp/results
-          # No full logcat (large): the artifact has it. Videos stay, so a PR can link one.
-          (cd build/flow-results && tar -cf - --exclude='logcat.txt' .) | tar -xf - -C /tmp/results
-          cd /tmp/results
-          git init -q -b "$BRANCH"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -q -m "Flow results: run $GITHUB_RUN_ID"
-          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$BRANCH"
-          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
-          echo "Pushed the results to $BRANCH"
-          # Results branches nobody has updated for 14 days go.
-          CUTOFF=$(date -u -d '14 days ago' +%s)
-          gh api --paginate "repos/$GITHUB_REPOSITORY/git/matching-refs/heads/flow-results/" --jq '.[] | "\(.ref) \(.object.sha)"' |
-            while read -r REF SHA; do
-              [[ $REF == "refs/heads/$BRANCH" ]] && continue
-              WHEN=$(gh api "repos/$GITHUB_REPOSITORY/git/commits/$SHA" --jq .committer.date) || continue
-              if (( $(date -u -d "$WHEN" +%s) < CUTOFF )); then
-                gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/${REF#refs/}" && echo "Deleted old ${REF#refs/heads/}"
-              fi
-            done || true
-
-      - name: Fail for a failed flow
-        if: always()
-        run: |
-          CODE=$(cat build/flow-runner-exit 2>/dev/null || echo 1)
-          rm -f treetracker.keys.properties
-          [[ $CODE == 0 ]] || { echo "::error::A flow failed (or none ran): see the summary"; exit 1; }
+    uses: ./.github/workflows/flow-runner-job.yml
+    with:
+      flows: ${{ inputs.flows }}
+      inline_flow: ${{ inputs.inline_flow }}
+      ref: ${{ inputs.ref }}
+      pr: ${{ inputs.pr }}
+      api_level: ${{ inputs.api_level }}
+      screenshots: ${{ inputs.screenshots }}
+      record_video: ${{ inputs.record_video }}
+      annotate: ${{ inputs.annotate }}
+      publish_branch: ${{ inputs.publish_branch }}

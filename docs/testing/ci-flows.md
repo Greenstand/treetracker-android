@@ -7,7 +7,11 @@ writing a one-off CI script per PR.
 
 | File | What it does |
 | --- | --- |
-| `.github/workflows/flow-runner.yml` | The reusable workflow: builds the debug app, boots the emulator, runs the flows, publishes the results. `workflow_call` and `workflow_dispatch`. |
+| `.github/workflows/flow-runner-job.yml` | The reusable workflow (`workflow_call`): builds the debug app, boots the emulator, runs the flows, publishes the results. No permissions of its own: the caller grants `contents: write` to push the results branch, or read-only for a fork's PR. |
+| `.github/workflows/flow-runner.yml` | Starts that job by hand (`workflow_dispatch`), with a token that can push the results. |
+| `.github/workflows/e2e-affected.yml` | On every PR: annotated videos of the flows the PR affects (below). |
+| `e2e/ci/affected.py` | Picks those flows from the PR's diff; `affected-overrides.json` holds its hints. |
+| `e2e/ci/cut_flow.py` | Copies a flow cut after its first N steps (`name@N` selectors). |
 | `.github/workflows/flow-runner-pr.yml` | Starts it on a PR from the `run-flows` label or a `/run-flows` comment, and keeps one summary comment on the PR up to date. |
 | `e2e/ci/run-flows.sh` | Runs the flows on an emulator (CI's or yours) and writes the results folder. |
 | `e2e/ci/step_shots.py` | Copies a flow with a `takeScreenshot` after each step. |
@@ -22,6 +26,7 @@ Selectors, space or comma separated, in any of the ways below:
 - `settings-*`: a glob of names
 - `tag:signup`: every flow with that tag
 - `e2e/flows/subflows/signup.yaml`: a path
+- `capture-first-tree@7`: only the flow's first 7 top-level steps (a name or path, not a glob or tag)
 - a flow that isn't committed: `--inline my-flow.yaml` (run) or the `inline_flow` input. It runs
   as `e2e/flows/inline.yaml`, so `runFlow: {file: subflows/signup.yaml}` works.
 
@@ -76,7 +81,7 @@ Branches nobody updated for 14 days are deleted by the next run.
     flows:
       permissions:
         contents: write
-      uses: ./.github/workflows/flow-runner.yml
+      uses: ./.github/workflows/flow-runner-job.yml
       with:
         flows: settings-logout tag:signup
         pr: ${{ github.event.pull_request.number }}
@@ -88,6 +93,65 @@ smoke test.
 A video on the results branch can go in a PR description for the "Check for screenshot & video"
 check: link it at the results commit (`https://github.com/<repo>/blob/<commit>/videos/<flow>.mp4`),
 since the branch moves on with the next run.
+
+## Flows a PR affects (annotated videos)
+
+`e2e-affected.yml` runs on every PR next to "Android end-to-end" (which still runs every flow, without
+video). It records each flow it picks with `tb test --record --annotate` (Test Buddy v0.6.3): every
+step held about a second, a ring where each tap landed and a band under the video naming the step.
+The PR gets one comment, updated on each push, with why each flow ran and a link to each video. It
+is not a required check.
+
+What runs (`e2e/ci/affected.py`, at most 6 flows):
+
+1. Flows the PR adds or edits, whole.
+2. For each other change a flow can show, **one** flow, cut a few steps after it has shown it. A
+   Dashboard change does not run the dozens of flows that pass the Dashboard: it runs the one that gets
+   there in the fewest steps, and stops it there. A flow already picked is reused when it shows the
+   change too.
+
+How a change is traced to a flow, through the `TestTags` ids flows and screens share:
+
+| Change | Shown by |
+|---|---|
+| A screen file (uses test tags itself, or a tagged component only it uses) | the flow steps that use its ids |
+| Other app code (ViewModel, use case, repository) | the screens that use it, up to 3 files away |
+| A resource (`res/values*/` entries changed, drawables, ...) | the screens whose code uses `R.<type>.<name>` |
+| `TestTags.kt` | the screens using the tags the change touched |
+| A sub-flow | the flow that reaches it soonest, cut after it |
+| Build files, tests, docs, code no screen reaches | nothing (the full check covers them) |
+
+Navigation hubs (`Host.kt`) are not screens, and the search for screens does not go through them.
+Org-config and dev-tools flows count 5 extra steps for their seeding. `known-bug` flows are only run
+when the PR edits them.
+
+Screens built only from shared components (user cards, the capture button) can't be told apart by
+their ids. `e2e/ci/affected-overrides.json` names the ids that show such a screen, and the step it
+comes after (user select: `UserButton_*` after `TrackButton`). Add one when a new screen is like
+that, or `ignore` globs for paths that should never pick a flow. The job summary lists changed
+screens no flow reaches: candidates for a new flow.
+
+Try it locally:
+
+```bash
+python3 e2e/ci/affected.py --base origin/master            # the table on stderr, selectors on stdout
+python3 e2e/ci/affected.py --files app/src/main/java/org/greenstand/android/TreeTracker/dashboard/DashboardScreen.kt
+python3 -m unittest discover -s e2e/ci -p 'test_*.py'
+```
+
+**PRs from forks** don't run on their own: their code would run on the emulator with this
+repository's caches. The "pick flows" job still lists what would run (picked by the base branch's
+copy of `affected.py`, not the fork's). After reading the PR's code, a maintainer runs it from
+Actions > "Affected flows (annotated video)" > Run workflow, with the PR's number and the full sha
+of the commit they read; the run stops if the PR has moved on since. That run has a read-only token, saves no caches
+(tb, emulator, Go, Gradle), loads no local action from the PR and pushes no results branch; the
+videos are in the artifact, linked from the PR comment. Code on a runner can still reach the
+runner's cache token, so only run code you have read. The same button re-runs a PR from this
+repository.
+
+Results are as below, in the `flow-results-affected-pr<N>-<run id>` artifact and, for a PR from this
+repository, the `flow-results/affected-pr-<N>` branch (`cloud-flows.sh fetch --affected <N>`), with
+`videos/<flow>.mp4` and its captions, `videos/<flow>.srt`.
 
 ## Results
 
@@ -102,7 +166,9 @@ screens/<flow>/step-23-end-....png                the screen the flow ended on
 screens/<flow>/failure.png                        the screen at a failure
 flows/<flow>/  console.txt log.txt error.txt screen.txt hierarchy.json commands.json
                logcat.txt (artifact only) logcat-app.txt crash.txt report.xml setup.txt
-videos/<flow>.mp4                                 with --video
+videos/<flow>.mp4                                 with --video, or annotated (ANNOTATE=1)
+videos/<flow>.srt                                 annotated: the step captions (tb's 3-minute
+                                                  parts joined into one video and one .srt)
 ```
 
 Steps that only check the screen (`assertVisible` and the like) get no screenshot, since the screen
@@ -128,6 +194,8 @@ With a disposable emulator and `tb` on PATH:
 ```bash
 ./gradlew :app:installDebug
 TB=tb OUT=build/flow-results bash e2e/ci/run-flows.sh -s emulator-5554 settings-logout
+# Annotated video of the first 7 steps (needs ffmpeg):
+TB=tb ANNOTATE=1 SCREENSHOTS=end bash e2e/ci/run-flows.sh -s emulator-5554 capture-first-tree@7
 ```
 
 ## What only a maintainer can do

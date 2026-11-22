@@ -1,6 +1,6 @@
 name: Flow runner (PR)
 
-# Runs chosen flows on a PR through flow-runner.yml and puts a summary comment on the PR. Two ways
+# Runs chosen flows on a PR through flow-runner-job.yml and puts a summary comment on the PR. Two ways
 # to start it (docs/testing/ci-flows.md):
 #
 #   - Add the `run-flows` label. While the label is on, each push re-runs. The flows are the ones
@@ -99,7 +99,7 @@ jobs:
               --screenshots) i=$((i + 1)); SHOTS=${WORDS[$i]} ;;
               --screenshots=*) SHOTS=${W#--screenshots=} ;;
               -*) echo "::warning::Unknown option $W" ;;
-              *) [[ $W =~ ^[A-Za-z0-9_./*:-]+$ ]] || { echo "::error::Bad selector '$W'"; exit 1; }
+              *) [[ $W =~ ^[A-Za-z0-9_./*:@-]+$ ]] || { echo "::error::Bad selector '$W'"; exit 1; }
                  FLOWS="$FLOWS $W" ;;
             esac
           done
@@ -127,7 +127,7 @@ jobs:
       cancel-in-progress: true
     permissions:
       contents: write
-    uses: ./.github/workflows/flow-runner.yml
+    uses: ./.github/workflows/flow-runner-job.yml
     with:
       flows: ${{ needs.pick.outputs.flows }}
       ref: ${{ needs.pick.outputs.ref }}
