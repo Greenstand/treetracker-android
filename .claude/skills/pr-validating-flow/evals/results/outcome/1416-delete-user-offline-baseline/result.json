@@ -1,0 +1,105 @@
+{
+  "case": "1416-delete-user-offline",
+  "kind": "flow",
+  "arm": "baseline",
+  "base": "eeeb413047610e96682c3786c10ace7689c4e1c1",
+  "branch": "skill-eval/1122a/1416-delete-user-offline-baseline",
+  "skill_commit": "e987f82de9467a46f8f6434ea94fc29509216ab9",
+  "rounds": [
+    {
+      "kind": "flow",
+      "added_flows": [],
+      "claimed_flows": [
+        "settings-delete-user",
+        "settings-delete-admin"
+      ],
+      "tests": [
+        "app/src/test/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModelTest.kt"
+      ],
+      "checks": [
+        {
+          "id": "description_written",
+          "pass": true,
+          "scored": true,
+          "detail": "PR_DESCRIPTION.md"
+        },
+        {
+          "id": "app_code_changed",
+          "pass": true,
+          "scored": true,
+          "detail": "app/src/main/java/org/greenstand/android/TreeTracker/userselect/UserSelectViewModel.kt"
+        },
+        {
+          "id": "existing_flow_assertions_untouched",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "no_test_only_app_code",
+          "pass": true,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "new_flow_added",
+          "pass": false,
+          "scored": true,
+          "detail": "no new file in e2e/flows/"
+        },
+        {
+          "id": "validates_line_names_new_flow",
+          "pass": false,
+          "scored": true,
+          "detail": "validates: settings-delete-user settings-delete-admin"
+        },
+        {
+          "id": "new_flow_not_known_bug",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "org_flow_listed_in_run_org",
+          "pass": null,
+          "scored": true,
+          "detail": ""
+        },
+        {
+          "id": "used_tb_skill",
+          "pass": false,
+          "scored": true,
+          "detail": "no Skill tb call and no read of plugin/skills/tb in the transcript"
+        },
+        {
+          "id": "ci_verdict_validated",
+          "pass": true,
+          "scored": true,
+          "detail": "{\"settings-delete-user\": \"validated\", \"settings-delete-admin\": \"validated\"}"
+        },
+        {
+          "id": "loaded_this_skill",
+          "pass": false,
+          "scored": false,
+          "detail": ""
+        },
+        {
+          "id": "before_fails_for_the_bug",
+          "pass": true,
+          "scored": true,
+          "judge": true,
+          "detail": "The flow got through signup, adding Bob, the cancel path and the confirm tap, then failed on the assertion for the \"Account Deleted\" dialog, which is exactly where the offline delete crash prevents the dialog from showing."
+        }
+      ],
+      "score": [
+        6,
+        9
+      ],
+      "round": 1,
+      "cost_usd": 1.8953088,
+      "turns": 14,
+      "model": "claude-fable-5-2",
+      "head": "d07660c8f3503201ecca2867c426286a26260795"
+    }
+  ]
+}

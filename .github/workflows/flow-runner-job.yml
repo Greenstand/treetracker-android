@@ -40,6 +40,16 @@ on:
         type: boolean
         required: false
         default: false
+      validate_flows:
+        description: "Flows that should prove a PR's change: each runs, recorded, on the app at before_ref and on the app at ref, and gets a verdict (e2e/ci/verdict.py)"
+        type: string
+        required: false
+        default: ""
+      before_ref:
+        description: "With validate_flows: the commit whose app is the 'before' (a PR's merge base). Only its app is built; flows and scripts stay ref's."
+        type: string
+        required: false
+        default: ""
       publish_branch:
         type: boolean
         required: false
@@ -66,6 +76,9 @@ on:
         value: ${{ jobs.run.outputs.passed }}
       failed:
         value: ${{ jobs.run.outputs.failed }}
+      recordings_lost:
+        description: "Flows whose video was asked for and not saved (the job fails for these too)"
+        value: ${{ jobs.run.outputs.recordings_lost }}
 
 jobs:
   run:
@@ -78,6 +91,7 @@ jobs:
       results_sha: ${{ steps.publish.outputs.sha }}
       passed: ${{ steps.result.outputs.passed }}
       failed: ${{ steps.result.outputs.failed }}
+      recordings_lost: ${{ steps.result.outputs.recordings_lost }}
     env:
       API_LEVEL: ${{ inputs.api_level || '35' }}
       # Test Buddy v0.6.3. Keep in step with android-e2e.yml.
@@ -111,13 +125,16 @@ jobs:
         env:
           FLOWS: ${{ inputs.flows }}
           INLINE: ${{ inputs.inline_flow }}
+          VALIDATE: ${{ inputs.validate_flows }}
         run: |
           SELECTORS=$FLOWS
           if [[ -n $INLINE ]]; then
             printf '%s\n' "$INLINE" > e2e/flows/inline.yaml
             SELECTORS="$SELECTORS e2e/flows/inline.yaml"
           fi
-          if [[ -z ${SELECTORS//[ ,]/} ]]; then echo "::error::Give flows or inline_flow"; exit 1; fi
+          if [[ -z ${SELECTORS//[ ,]/} && -z ${VALIDATE//[ ,]/} ]]; then echo "::error::Give flows or inline_flow"; exit 1; fi
+          # Flow paths and names only: these reach a command line.
+          if [[ ! $VALIDATE =~ ^[A-Za-z0-9_./\ ,-]*$ ]]; then echo "::error::Unexpected characters in validate_flows"; exit 1; fi
           echo "selectors=$SELECTORS" >> "$GITHUB_OUTPUT"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
@@ -191,7 +208,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       # tb's --annotate draws the taps and captions with ffmpeg.
       - name: Install ffmpeg
-        if: inputs.record_video || inputs.annotate
+        if: inputs.record_video || inputs.annotate || inputs.validate_flows != ''
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
 
       # The same snapshot as android-e2e.yml for API 35 (same key), so either workflow can save it.
@@ -227,8 +244,35 @@ jobs:
       - name: Build the debug app
         run: bash ./gradlew :app:assembleDebug --stacktrace
 
+      # The "before" app for validating flows: the app's code at before_ref, built in a worktree of
+      # its own, so the flows, scripts and workflows in use stay ref's. A base that does not build
+      # is not this job's failure: the verdicts say "inconclusive" and why.
+      - name: Build the base app
+        if: inputs.validate_flows != ''
+        env:
+          BEFORE: ${{ inputs.before_ref }}
+        run: |
+          mkdir -p build
+          if [[ ! $BEFORE =~ ^[0-9a-f]{40}$ ]]; then
+            echo "no base commit was given" > build/before-missing.txt; exit 0
+          fi
+          if ! git fetch -q --no-tags --depth 1 origin "$BEFORE" ||
+             ! git worktree add -q --detach "$RUNNER_TEMP/base" FETCH_HEAD; then
+            echo "the base commit ${BEFORE:0:10} could not be fetched" > build/before-missing.txt; exit 0
+          fi
+          cp treetracker.keys.properties "$RUNNER_TEMP/base/"
+          if (cd "$RUNNER_TEMP/base" && bash ./gradlew :app:assembleDebug --stacktrace); then
+            cp "$RUNNER_TEMP/base/app/build/outputs/apk/debug/app-debug.apk" build/before.apk
+            echo "Base app built at ${BEFORE:0:10}"
+          else
+            echo "the base app (${BEFORE:0:10}) did not build" > build/before-missing.txt
+            echo "::warning::The base app at ${BEFORE:0:10} did not build: validating flows will be inconclusive"
+          fi
+          rm -f "$RUNNER_TEMP/base/treetracker.keys.properties"
+
       # The runner script's exit status is kept in a file, so the results are always uploaded and
-      # the last step fails the job for a failed flow.
+      # the last step fails the job for a failed flow, or for a video that was asked for and lost.
+      # (run-job.sh, or run-flows.sh alone on a branch from before run-job.sh.)
       - name: Run the flows
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -242,6 +286,9 @@ jobs:
           FLOW_RUN_SHA: ${{ steps.flows.outputs.sha }}
           FLOW_RUN_PR: ${{ inputs.pr }}
           FLOW_RUN_API_LEVEL: ${{ env.API_LEVEL }}
+          VALIDATE_FLOWS: ${{ inputs.validate_flows }}
+          FLOW_BEFORE_SHA: ${{ inputs.before_ref }}
+          BEFORE_APK: build/before.apk
         with:
           api-level: ${{ env.API_LEVEL }}
           target: google_apis
@@ -251,7 +298,7 @@ jobs:
           disable-animations: true
           script: |
             adb install -r app/build/outputs/apk/debug/app-debug.apk
-            TB="$GITHUB_WORKSPACE/bin/tb" bash e2e/ci/run-flows.sh -s "$(adb get-serialno)"; echo $? > build/flow-runner-exit
+            S=e2e/ci/run-job.sh; [ -f $S ] || S=e2e/ci/run-flows.sh; BEFORE_MISSING="$(cat build/before-missing.txt 2>/dev/null)" TB="$GITHUB_WORKSPACE/bin/tb" bash $S -s "$(adb get-serialno)"; echo $? > build/flow-runner-exit
 
       - name: Summary
         id: result
@@ -265,6 +312,10 @@ jobs:
           if [[ -f $S ]]; then
             echo "passed=$(jq .passed "$S")" >> "$GITHUB_OUTPUT"
             echo "failed=$(jq .failed "$S")" >> "$GITHUB_OUTPUT"
+            echo "recordings_lost=$(jq '.recordingsLost // 0' "$S")" >> "$GITHUB_OUTPUT"
+            if [[ -f build/flow-results/validate/verdict.md ]]; then
+              { cat build/flow-results/validate/verdict.md; echo; } >> "$GITHUB_STEP_SUMMARY"
+            fi
             cat build/flow-results/summary.md >> "$GITHUB_STEP_SUMMARY"
           else
             echo "No flows ran: see the steps above." >> "$GITHUB_STEP_SUMMARY"
@@ -297,8 +348,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           rm -rf /tmp/results && mkdir /tmp/results
-          # No full logcat (large): the artifact has it. Videos stay, so a PR can link one.
-          (cd build/flow-results && tar -cf - --exclude='logcat.txt' --exclude='.git' .) | tar -xf - -C /tmp/results
+          # No full logcats (large): the artifact has them. Videos stay, so a PR can link one.
+          (cd build/flow-results && tar -cf - --exclude='logcat.txt' --exclude='logcat-try*.txt' --exclude='.git' .) | tar -xf - -C /tmp/results
           cd /tmp/results
           git init -q -b "$BRANCH"
           git config user.name "github-actions[bot]"
@@ -320,9 +371,14 @@ jobs:
               fi
             done || true
 
-      - name: Fail for a failed flow
+      # A video that was asked for and not saved fails the job too (run-flows.sh's status 3): a
+      # green run means every flow passed and every video is there.
+      - name: Fail for a failed flow, a broken validating flow or a lost recording
         if: always()
         run: |
           CODE=$(cat build/flow-runner-exit 2>/dev/null || echo 1)
           rm -f treetracker.keys.properties
-          [[ $CODE == 0 ]] || { echo "::error::A flow failed (or none ran): see the summary"; exit 1; }
+          if [[ $CODE == 3 ]]; then
+            echo "::error::Every flow passed, but a recording was lost: see the summary"; exit 1
+          fi
+          [[ $CODE == 0 ]] || { echo "::error::A flow failed, a validating flow is broken, or none ran: see the summary"; exit 1; }
