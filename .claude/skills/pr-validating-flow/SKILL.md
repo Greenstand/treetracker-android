@@ -31,6 +31,12 @@ Flows are written and debugged with Test Buddy (`tb`), and its skill is the refe
 syntax, selectors, waits, `tb look`, `tb check --lint` and failure diagnosis. Load it and follow
 it; this file repeats none of it.
 
+**Do this before you write any YAML, every time**, also when a neighbouring flow looks close
+enough to copy. The flows already here were written against older tb versions and don't show
+what the skill knows: which waits a step already does, how `killApp` and `launchApp` behave, why
+a selector that works in one flow is ambiguous in another. A copied flow that is subtly wrong
+costs a 15-minute CI run to find out.
+
 - If your session lists a skill named `tb` (or `test-buddy:tb`, from the Test Buddy plugin), load
   that.
 - Otherwise (Claude Code cloud sessions don't have the plugin) read the same files from source,
@@ -184,6 +190,8 @@ If nothing holds up, say so in the PR and give other proof:
 
 ## Checklist before asking for review
 
+- [ ] Test Buddy's skill was loaded (or its files read at the pinned commit) before the flow was
+      written.
 - [ ] New flow in `e2e/flows/`, tagged, not `known-bug`, with a header comment; `run-org.sh` line
       if it is an org flow.
 - [ ] `validates:` line and the `e2e-videos` markers in the description.
