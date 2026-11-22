@@ -77,6 +77,7 @@ Seed each variant with an org deep link carrying the config (see the test link i
 | C2 | Tree height step | Org with capture `capture → image-review → tree-height` → pick colour → loops | Optional capture step | Yes (`org-tree-height.yaml`) |
 | C3 | Force note | Org with `forceNote` on image review → approve with blank note → dialog → add note → continues | Org feature gate | Yes (`org-force-note.yaml`) |
 | C4 | Wallet select / add wallet | Org with `wallet-select` → pick wallet or add wallet → continue | Legacy branch, easy to break silently | Yes (`org-wallet-select.yaml`) |
+| C6 | Double tap into an org setup step | Org with setup `user-select → session-note` → double-tap Next on user select → session note stays open → note → capture | The next step's Next sits under the second tap (#1442) | Yes (`org-double-tap-session-note.yaml`) |
 | C5 | Unknown route in config | Org config with a bad route name → app drops it and flow still works | `RouteRegistry` validation | Unit only (see finding 6) |
 | C6 | Switch org from dashboard | Two orgs linked → Dashboard org button → pick other org → capture uses that org's steps | Org picker plus per-org flow | No (no entry point, see finding 6) |
 

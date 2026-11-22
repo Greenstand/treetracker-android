@@ -1,0 +1,38 @@
+# C6. Needs the org from `bash e2e/seed-org.sh -s <serial> session-note`.
+#
+# A double tap on user select's Next opens the org's session note step and leaves it open: the
+# note can still be typed, and a later tap on Next starts the session.
+#
+# Every setup screen's Next is the bottom bar's right arrow, so on small screens (320x640, as on
+# CI) the second tap lands on the session note's Next. It used to go through, skip the note,
+# start the session and open capture (#1442). navigation/DoubleTapGuard.kt now drops a press
+# there that went down within the double-tap timeout of the navigation.
+appId: org.greenstand.android.TreeTracker.debug
+name: C6 Double tap into the session note step
+tags: [org-config]
+---
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- doubleTapOn: {id: ArrowForwardButton}
+# The session note is open and capture did not open over it.
+- assertVisible: {id: SessionNoteField}
+- assertNotVisible: {id: CaptureButton}
+# The step still works: type a note, and a tap of its own on Next moves on to capture.
+- tapOn: {id: SessionNoteField}
+- inputText: Planting day at the school
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000

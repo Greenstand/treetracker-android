@@ -44,6 +44,7 @@ import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeMana
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -60,31 +61,38 @@ fun WalletSelectScreen(
     val state by viewModel.state.collectAsState()
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
+    val doubleTapGuard = rememberDoubleTapGuard()
 
-    WalletSelect(
-        state = state,
-        onHandleAction = { action ->
-            when (action) {
-                is WalletSelectAction.NavigateToUserSelect -> {
-                    CaptureSetupScopeManager.nav.navToUserSelect(navigator)
-                }
-                is WalletSelectAction.NavigateForward -> {
-                    scope.launch {
-                        state.currentUser?.let {
-                            CaptureSetupScopeManager.nav.navForward(navigator)
+    Box(doubleTapGuard.modifier) {
+        WalletSelect(
+            state = state,
+            onHandleAction = { action ->
+                when (action) {
+                    is WalletSelectAction.NavigateToUserSelect -> {
+                        CaptureSetupScopeManager.nav.navToUserSelect(navigator)
+                    }
+                    is WalletSelectAction.NavigateForward -> {
+                        // Next sits where the previous setup screen's Next was, so the second tap of
+                        // a double tap there lands here (#1442). Drop it.
+                        if (!doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
+                            scope.launch {
+                                state.currentUser?.let {
+                                    CaptureSetupScopeManager.nav.navForward(navigator)
+                                }
+                            }
                         }
                     }
+                    is WalletSelectAction.NavigateToAddWallet -> {
+                        navigator.throttledNavigate(AddWalletRoute)
+                    }
+                    is WalletSelectAction.NavigateBack -> {
+                        CaptureSetupScopeManager.nav.navBackward(navigator)
+                    }
+                    else -> viewModel.handleAction(action)
                 }
-                is WalletSelectAction.NavigateToAddWallet -> {
-                    navigator.throttledNavigate(AddWalletRoute)
-                }
-                is WalletSelectAction.NavigateBack -> {
-                    CaptureSetupScopeManager.nav.navBackward(navigator)
-                }
-                else -> viewModel.handleAction(action)
-            }
-        },
-    )
+            },
+        )
+    }
 }
 
 @Composable
