@@ -133,7 +133,6 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 | H2 | Camera denied on capture | Revoke camera → Dashboard → Capture → rationale dialog → cancel returns; "don't ask again" → settings dialog | Permission branches on capture | Yes (`sad-camera-denied.yaml`, `sad-camera-rationale-next.yaml`) |
 | H3 | No GPS fix | No mock location → capture → bad GPS dialog → retry, then exit → Dashboard | Field reality, timeout path | Per-screen only (needs host adb to remove the GPS fix) |
 | H4 | Location services off | Location toggle off → capture → redirected to system location settings → enable → back to capture | `enableLocation()` redirect | No (needs host adb to turn location off) |
-| H5 | Process death mid setup | On Add org (or session note) → background → `am kill` → reopen | See finding 3 | Known bug (`sad-process-death-setup.yaml`) |
 | H6 | Process death mid capture | On image review → background → kill → reopen → tree not duplicated, can capture again | Same scope issue, data integrity | Known bug (`sad-process-death-review.yaml`, `sad-capture-after-process-death.yaml`) |
 | H7 | Process death on dashboard/settings | Background → kill → reopen → same screen, no crash | Nav3 saved back stack | Yes (`sad-process-death-screens.yaml`) |
 | H8 | Double taps | Double-tap Capture, Next, Settings → only one screen pushed | `Navigator` throttle | Yes (`sad-double-tap.yaml`, `sad-double-tap-setup.yaml`) |
