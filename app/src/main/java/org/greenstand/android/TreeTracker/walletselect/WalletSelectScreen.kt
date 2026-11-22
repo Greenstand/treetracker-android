@@ -41,9 +41,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.setupflow.LeaveLostSetupEffect
 import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
+import org.greenstand.android.TreeTracker.navigation.rememberDoubleTapGuard
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.view.ActionBar
 import org.greenstand.android.TreeTracker.view.AppButtonColors
@@ -60,31 +62,42 @@ fun WalletSelectScreen(
     val state by viewModel.state.collectAsState()
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
+    val doubleTapGuard = rememberDoubleTapGuard()
 
-    WalletSelect(
-        state = state,
-        onHandleAction = { action ->
-            when (action) {
-                is WalletSelectAction.NavigateToUserSelect -> {
-                    CaptureSetupScopeManager.nav.navToUserSelect(navigator)
-                }
-                is WalletSelectAction.NavigateForward -> {
-                    scope.launch {
-                        state.currentUser?.let {
-                            CaptureSetupScopeManager.nav.navForward(navigator)
+    LeaveLostSetupEffect(state.setupLost)
+
+    Box(doubleTapGuard.modifier) {
+        WalletSelect(
+            state = state,
+            onHandleAction = { action ->
+                // Until a restored wallet select has its user back, leaving it would continue setup without one.
+                val canLeave = !state.restoring && !state.setupLost
+                when (action) {
+                    is WalletSelectAction.NavigateToUserSelect -> {
+                        if (canLeave) CaptureSetupScopeManager.nav.navToUserSelect(navigator)
+                    }
+                    is WalletSelectAction.NavigateForward -> {
+                        // Next sits where user select's Next was. Drop the second tap of a double
+                        // tap that opened this screen (#1442).
+                        if (canLeave && !doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
+                            scope.launch {
+                                state.currentUser?.let {
+                                    CaptureSetupScopeManager.nav.navForward(navigator)
+                                }
+                            }
                         }
                     }
+                    is WalletSelectAction.NavigateToAddWallet -> {
+                        if (canLeave) navigator.throttledNavigate(AddWalletRoute)
+                    }
+                    is WalletSelectAction.NavigateBack -> {
+                        if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
+                    }
+                    else -> viewModel.handleAction(action)
                 }
-                is WalletSelectAction.NavigateToAddWallet -> {
-                    navigator.throttledNavigate(AddWalletRoute)
-                }
-                is WalletSelectAction.NavigateBack -> {
-                    CaptureSetupScopeManager.nav.navBackward(navigator)
-                }
-                else -> viewModel.handleAction(action)
-            }
-        },
-    )
+            },
+        )
+    }
 }
 
 @Composable

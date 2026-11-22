@@ -26,6 +26,8 @@ import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsRoot
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsViewModel
+import org.greenstand.android.TreeTracker.devoptions.orgRepoWithoutOrg
+import org.greenstand.android.TreeTracker.devoptions.unusedOrgOverrideStore
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.DevOptionsRoute
@@ -45,7 +47,7 @@ class DevOptionsRootUiTest : RootScreenUiTest() {
 
     @Before
     fun setUp() {
-        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration)
+        val viewModel = DevOptionsViewModel(configurator, convergenceConfiguration, orgRepoWithoutOrg(), unusedOrgOverrideStore())
         startKoinWith(
             module {
                 single { viewModel }

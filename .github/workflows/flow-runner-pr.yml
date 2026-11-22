@@ -1,0 +1,182 @@
+name: Flow runner (PR)
+
+# Runs chosen flows on a PR through flow-runner-job.yml and puts a summary comment on the PR. Two ways
+# to start it (docs/testing/ci-flows.md):
+#
+#   - Add the `run-flows` label. While the label is on, each push re-runs. The flows are the ones
+#     on a `run-flows:` line in the PR description (e.g. `run-flows: settings-logout tag:signup
+#     --video`); without that line, the flows the PR adds or changes, else first-screen. Editing
+#     the line re-runs too.
+#   - Comment `/run-flows <selectors> [--video] [--api 34] [--screenshots end]` (repo members
+#     and collaborators, PRs from this repo only). This trigger only works once this file is on
+#     master, as GitHub runs comment workflows from the default branch.
+#
+# A PR that changes the runner itself runs a smoke test (first-screen and settings-logout, with videos).
+on:
+  pull_request:
+    branches: [ master, release* ]
+    types: [ opened, synchronize, reopened, labeled, edited ]
+  issue_comment:
+    types: [ created ]
+
+permissions:
+  contents: read
+
+jobs:
+  pick:
+    name: pick flows
+    runs-on: ubuntu-latest
+    # Cheap filters first, so ordinary comments and edits don't start a runner.
+    if: >-
+      (github.event_name == 'pull_request' &&
+        (github.event.action != 'labeled' || github.event.label.name == 'run-flows') &&
+        (github.event.action != 'edited' || github.event.changes.body != null)) ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+        startsWith(github.event.comment.body, '/run-flows') &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run: ${{ steps.pick.outputs.run }}
+      flows: ${{ steps.pick.outputs.flows }}
+      ref: ${{ steps.pick.outputs.ref }}
+      pr: ${{ steps.pick.outputs.pr }}
+      api_level: ${{ steps.pick.outputs.api_level }}
+      screenshots: ${{ steps.pick.outputs.screenshots }}
+      video: ${{ steps.pick.outputs.video }}
+    steps:
+      - id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          COMMENT: ${{ github.event.comment.body }}
+          ACTION: ${{ github.event.action }}
+          OLD_BODY: ${{ github.event.changes.body.from }}
+        run: |
+          set -euo pipefail
+          PRJ=$(gh api "repos/$REPO/pulls/$PR")
+          HEAD_REPO=$(jq -r .head.repo.full_name <<<"$PRJ")
+          SHA=$(jq -r .head.sha <<<"$PRJ")
+          BODY=$(jq -r '.body // ""' <<<"$PRJ")
+          LABELED=$(jq -r '[.labels[].name] | index("run-flows") != null' <<<"$PRJ")
+          FILES=$(gh api --paginate "repos/$REPO/pulls/$PR/files" --jq '.[] | select(.status != "removed") | .filename')
+          SELF=false
+          grep -qE '^(e2e/ci/|\.github/workflows/flow-runner)' <<<"$FILES" && SELF=true
+
+          if [[ $EVENT == issue_comment ]]; then
+            # The comment workflow runs with the base repo's token: never on a fork's code.
+            if [[ $HEAD_REPO != "$REPO" ]]; then
+              echo "::notice::/run-flows only runs on PRs from $REPO"; echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            ARGS=$(head -n1 <<<"$COMMENT" | sed -E 's|^/run-flows||')
+          elif [[ $LABELED == true ]]; then
+            line() { grep -m1 -oiE '^[[:space:]>*-]*run-flows:.*' <<<"$1" | sed -E 's/^[^:]*://' || true; }
+            ARGS=$(line "$BODY")
+            # An edit re-runs only when it changed the run-flows line.
+            if [[ $ACTION == edited && "$ARGS" == "$(line "$OLD_BODY")" ]]; then
+              echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+          elif [[ $SELF == true && $ACTION != edited ]]; then
+            ARGS="first-screen settings-logout --video"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+
+          # Options from the selectors' line.
+          API=35 SHOTS=steps VIDEO=false FLOWS=""
+          set -f
+          read -ra WORDS <<<"${ARGS//,/ }"
+          set +f
+          for ((i = 0; i < ${#WORDS[@]}; i++)); do
+            W=${WORDS[$i]//[$'\r']/}
+            case "$W" in
+              --video) VIDEO=true ;;
+              --api) i=$((i + 1)); API=${WORDS[$i]} ;;
+              --api=*) API=${W#--api=} ;;
+              --screenshots) i=$((i + 1)); SHOTS=${WORDS[$i]} ;;
+              --screenshots=*) SHOTS=${W#--screenshots=} ;;
+              -*) echo "::warning::Unknown option $W" ;;
+              *) [[ $W =~ ^[A-Za-z0-9_./*:@-]+$ ]] || { echo "::error::Bad selector '$W'"; exit 1; }
+                 FLOWS="$FLOWS $W" ;;
+            esac
+          done
+          [[ $API =~ ^[0-9]+$ ]] || { echo "::error::--api takes a number"; exit 1; }
+          if [[ -z ${FLOWS// } ]]; then
+            FLOWS=$(grep -E '^e2e/flows/[^/]+\.yaml$' <<<"$FILES" | tr '\n' ' ' || true)
+            [[ -n ${FLOWS// } ]] || FLOWS="first-screen"
+          fi
+          echo "Flows: $FLOWS (API $API, screenshots $SHOTS, video $VIDEO) at $SHA"
+          {
+            echo "run=true"
+            echo "flows=$FLOWS"
+            echo "ref=$SHA"
+            echo "pr=$PR"
+            echo "api_level=$API"
+            echo "screenshots=$SHOTS"
+            echo "video=$VIDEO"
+          } >> "$GITHUB_OUTPUT"
+
+  run:
+    needs: pick
+    if: needs.pick.outputs.run == 'true'
+    concurrency:
+      group: flow-runner-pr-${{ needs.pick.outputs.pr }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+    uses: ./.github/workflows/flow-runner-job.yml
+    with:
+      flows: ${{ needs.pick.outputs.flows }}
+      ref: ${{ needs.pick.outputs.ref }}
+      pr: ${{ needs.pick.outputs.pr }}
+      api_level: ${{ needs.pick.outputs.api_level }}
+      screenshots: ${{ needs.pick.outputs.screenshots }}
+      record_video: ${{ needs.pick.outputs.video == 'true' }}
+
+  # One comment per PR, updated by each run. Skipped for PRs from forks, whose token can't comment.
+  comment:
+    name: comment on the PR
+    needs: [ pick, run ]
+    if: >-
+      !cancelled() && needs.pick.outputs.run == 'true' &&
+      (github.event_name == 'issue_comment' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: ${{ needs.run.outputs.artifact }}
+          path: results
+      - uses: actions/github-script@v7
+        env:
+          PR: ${{ needs.pick.outputs.pr }}
+          SHA: ${{ needs.pick.outputs.ref }}
+          ARTIFACT: ${{ needs.run.outputs.artifact }}
+          BRANCH: ${{ needs.run.outputs.results_branch }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- flow-runner -->';
+            const md = fs.existsSync('results/summary.md')
+              ? fs.readFileSync('results/summary.md', 'utf8')
+              : '### Flow run\n\nNo flows ran: the run stopped before them.\n';
+            const lines = [marker, md.trim(), '',
+              `[Run](${process.env.RUN_URL}) at \`${process.env.SHA.slice(0, 7)}\`. ` +
+              `Screenshots and logs: the \`${process.env.ARTIFACT}\` artifact` +
+              (process.env.BRANCH ? ` and the \`${process.env.BRANCH}\` branch` +
+                ` (\`bash e2e/ci/cloud-flows.sh fetch --branch ${process.env.BRANCH}\`).` : '.')];
+            const body = lines.join('\n');
+            const issue_number = Number(process.env.PR);
+            const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
+            const mine = comments.find(c => c.user.type === 'Bot' && c.body.startsWith(marker));
+            if (mine) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }

@@ -33,6 +33,9 @@ Sub-flows in `flows/subflows/` have no `tags` and are only run through `runFlow`
 CI runs them in the "Android end-to-end" check (`.github/workflows/android-e2e.yml`). A failed
 step makes `tb` exit non-zero, which fails the check.
 
+To run chosen flows on CI from a session without an emulator, with a screenshot after each step,
+use the Flow runner: [docs/testing/ci-flows.md](../docs/testing/ci-flows.md).
+
 Run locally with `adb` and `tb` on PATH and a **disposable emulator** running.
 The runner clears this emulator's debug app, grants runtime permissions, seeds
 the fixtures, and restores airplane mode and Wi-Fi when it exits. Other devices
