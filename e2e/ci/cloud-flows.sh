@@ -11,7 +11,10 @@
 # Selectors: a path, a flow name, a glob (settings-*) or tag:<tag>.
 # run options: --ref BRANCH (default: the current branch, which must be pushed), --pr N (names
 #   the results; default: the open PR for the branch), --inline FILE (a flow file that isn't
-#   committed), --video, --api N, --screenshots steps|end|none, --out DIR, --no-wait.
+#   committed), --video, --api N, --screenshots steps|end|none, --out DIR, --no-wait,
+#   --validate "FLOW..." [--before SHA] (before and after: each flow, recorded and annotated, on
+#   the app at SHA, default the merge base with origin/master, and on the branch's app; the
+#   verdicts land in OUT/validate/verdict.md).
 # Results land in --out (default build/flow-results): read summary.md, then summary.json, which
 # lists each flow's screenshots in step order.
 #
@@ -57,13 +60,15 @@ fetch() {  # $1 branch, $2 expected run id (optional)
 }
 
 cmd_run() {
-  local ref="" pr="" inline="" video=false api=35 shots=steps nowait=false sel=()
+  local ref="" pr="" inline="" video=false api=35 shots=steps nowait=false validate="" before="" sel=()
   while (($#)); do
     case $1 in
       --ref) ref=$2; shift ;;
       --pr) pr=$2; shift ;;
       --inline) inline=$2; shift ;;
       --video) video=true ;;
+      --validate) validate=$2; shift ;;
+      --before) before=$2; shift ;;
       --api) api=$2; shift ;;
       --screenshots) shots=$2; shift ;;
       --out) OUT=$2; shift ;;
@@ -73,7 +78,11 @@ cmd_run() {
     esac
     shift
   done
-  [[ ${#sel[@]} -gt 0 || -n $inline ]] || die "Give flow selectors or --inline FILE"
+  [[ ${#sel[@]} -gt 0 || -n $inline || -n $validate ]] || die "Give flow selectors, --inline FILE or --validate FLOWS"
+  if [[ -n $validate ]]; then
+    before=$(git rev-parse --verify -q "${before:-$(git merge-base origin/master "${ref:-HEAD}")}^{commit}") ||
+      die "--before: a commit whose app is the 'before' (default: the merge base with origin/master)"
+  fi
   ref=${ref:-$(branch)}
   git ls-remote --exit-code origin "refs/heads/$ref" >/dev/null || die "Push $ref first: CI runs what is on GitHub"
   pr=${pr:-$(pr_for_branch "$ref")}
@@ -81,6 +90,7 @@ cmd_run() {
     -f "ref=$ref" -f "inputs[flows]=${sel[*]-}" -f "inputs[pr]=$pr" -f "inputs[api_level]=$api"
     -f "inputs[screenshots]=$shots" -F "inputs[record_video]=$video")
   [[ -n $inline ]] && args+=(-f "inputs[inline_flow]=$(cat "$inline")")
+  [[ -n $validate ]] && args+=(-f "inputs[validate_flows]=$validate" -f "inputs[before_ref]=$before")
   local t0 id=""
   t0=$(now)
   # return_run_details makes GitHub answer with the new run's id. Where it isn't taken, dispatch

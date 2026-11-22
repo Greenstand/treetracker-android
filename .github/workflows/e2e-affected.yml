@@ -245,8 +245,9 @@ jobs:
       publish_branch: false
       save_caches: false
 
-  # One comment per PR, updated by each run. Runs none of the PR's code. A fork's PR gets one only
-  # from a run by hand (a pull_request run from a fork can't comment).
+  # One comment per PR, updated by each run, and the before/after table in the PR's description
+  # (between the e2e-videos markers). Runs none of the PR's code. A fork's PR gets them only from
+  # a run by hand (a pull_request run from a fork can't comment).
   comment:
     name: comment on the PR
     needs: [ select, annotated, annotated-fork ]
@@ -302,6 +303,7 @@ jobs:
             };
             const anyRan = env.FLOWS.trim() || env.VALIDATE.trim();
             // Before and after: the validating flows on the base app and on this PR's app.
+            const proofStart = lines.length;
             if (env.VALIDATE.trim()) {
               let verdict = null;
               try {
@@ -346,6 +348,7 @@ jobs:
                   'for a reason other than the bug: read the failing step above.</sub>', '');
               }
             }
+            const proof = lines.slice(proofStart);
             if (env.FLOWS.trim()) {
               let summary = null;
               try {
@@ -409,4 +412,29 @@ jobs:
               await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });
             } else if (anyRan) {
               await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }
+
+            // The same before/after table goes in the PR description, between two markers, so
+            // the proof is where a reviewer reads first (and where "Check for screenshot & video"
+            // looks). Only the text between the markers is replaced; without markers the block
+            // is added at the end, and only when validating flows ran.
+            const START = '<!-- e2e-videos:start -->', END = '<!-- e2e-videos:end -->';
+            const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: issue_number });
+            const old = pr.body || '';
+            const from = old.indexOf(START), to = old.indexOf(END);
+            const marked = from !== -1 && to > from;
+            if (proof.length || marked) {
+              const inner = proof.length
+                ? [...proof, `<sub>Recorded by CI with \`tb test --record --annotate\` at \`${env.SHA.slice(0, 7)}\` ([run](${env.RUN_URL})). ` +
+                    'This block is rewritten on every push: write outside it.</sub>']
+                : [`No validating flow ran at \`${env.SHA.slice(0, 7)}\` ([run](${env.RUN_URL})).`];
+              const block = [START, ...inner, END].join('\n');
+              const next = marked
+                ? old.slice(0, from) + block + old.slice(to + END.length)
+                : old.replace(/\s+$/, '') + '\n\n' + block + '\n';
+              if (next.length > 65000) {
+                core.warning('The PR description is too long to add the before/after videos to: they are in the comment.');
+              } else if (next !== old) {
+                await github.rest.pulls.update({ ...context.repo, pull_number: issue_number, body: next });
+              }
             }

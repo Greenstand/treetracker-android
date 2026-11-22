@@ -16,6 +16,14 @@ Before submitting your PR, there are a few things you can do to make sure it goe
 ### 🎥 Screen recording / video (always required)
 
 <!-- Drag a short screen recording (.mp4 / .mov / .webm) here, or paste a Loom/YouTube link. -->
+<!-- Bug fix or feature: add an e2e flow that fails without your change and passes with it
+     (.claude/skills/pr-validating-flow/SKILL.md), and name it on the line below. CI then records
+     it before and after and puts both videos between the two markers. Otherwise delete the line. -->
+
+validates:
+
+<!-- e2e-videos:start -->
+<!-- e2e-videos:end -->
 
 ### 🖼️ Screenshots (required for any UI change)
 
