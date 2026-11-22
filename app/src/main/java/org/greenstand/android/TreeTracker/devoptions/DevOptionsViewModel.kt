@@ -16,11 +16,52 @@
 package org.greenstand.android.TreeTracker.devoptions
 
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
+import org.greenstand.android.TreeTracker.models.organization.Destination
+import org.greenstand.android.TreeTracker.models.organization.Org
+import org.greenstand.android.TreeTracker.models.organization.OrgFeature
+import org.greenstand.android.TreeTracker.models.organization.OrgFlow
+import org.greenstand.android.TreeTracker.models.organization.OrgOverrideCatalog
+import org.greenstand.android.TreeTracker.models.organization.OrgOverrideStore
+import org.greenstand.android.TreeTracker.models.organization.OrgOverrides
+import org.greenstand.android.TreeTracker.models.organization.OrgRepo
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
+import timber.log.Timber
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class DevOptionsState(
     val params: List<Config> = emptyList(),
+    /** Null when there is no current org to show (the section is hidden). */
+    val orgLink: OrgLinkOverridesState? = null,
+)
+
+/** One org link setting: what the org says, and what the dev options override it to. */
+data class OrgSettingRow(
+    /** The step's route, or the feature's [org.greenstand.android.TreeTracker.models.organization.OrgFeatureOption.key]. */
+    val id: String,
+    val label: String,
+    val orgDefault: Boolean,
+    val override: Boolean? = null,
+    val required: Boolean = false,
+) {
+    val value: Boolean get() = if (required) orgDefault else override ?: orgDefault
+    val isOverridden: Boolean get() = !required && override != null
+}
+
+data class OrgLinkOverridesState(
+    val orgId: String,
+    val orgName: String,
+    /** Master switch for applying the overrides. */
+    val enabled: Boolean,
+    val setupSteps: List<OrgSettingRow>,
+    val captureSteps: List<OrgSettingRow>,
+    val features: List<OrgSettingRow>,
+    val orgWalletId: String,
+    val walletIdOverride: String?,
+    /** Step labels of the flows the app runs now, overrides included. */
+    val effectiveSetupFlow: List<String>,
+    val effectiveCaptureFlow: List<String>,
+    val hasOverrides: Boolean,
 )
 
 sealed class DevOptionsAction : Action {
@@ -30,11 +71,37 @@ sealed class DevOptionsAction : Action {
     ) : DevOptionsAction()
 
     object NavigateBack : DevOptionsAction()
+
+    data class SetOrgOverridesEnabled(
+        val enabled: Boolean,
+    ) : DevOptionsAction()
+
+    /** [enabled] null removes the override, so the step follows the org again. */
+    data class SetStepOverride(
+        val flow: OrgFlow,
+        val route: String,
+        val enabled: Boolean?,
+    ) : DevOptionsAction()
+
+    /** [enabled] null removes the override, so the feature follows the org again. */
+    data class SetFeatureOverride(
+        val key: String,
+        val enabled: Boolean?,
+    ) : DevOptionsAction()
+
+    /** Blank or null removes the override. */
+    data class SetWalletIdOverride(
+        val walletId: String?,
+    ) : DevOptionsAction()
+
+    object ResetOrgOverrides : DevOptionsAction()
 }
 
 class DevOptionsViewModel(
     private val configurator: Configurator,
     private val convergenceConfiguration: ConvergenceConfiguration,
+    private val orgRepo: OrgRepo,
+    private val orgOverrideStore: OrgOverrideStore,
 ) : BaseViewModel<DevOptionsState, DevOptionsAction>(DevOptionsState()) {
     init {
         val updatedParams =
@@ -54,14 +121,106 @@ class DevOptionsViewModel(
                         )
                 }
             }
-        updateState { copy(params = updatedParams) }
+        updateState { copy(params = updatedParams, orgLink = buildOrgLinkState()) }
     }
 
     override fun handleAction(action: DevOptionsAction) {
         when (action) {
             is DevOptionsAction.UpdateParam -> updateParam(action.param, action.newValue)
             is DevOptionsAction.NavigateBack -> popBackStack()
+            is DevOptionsAction.SetOrgOverridesEnabled ->
+                updateOrgOverrides { it.copy(enabled = action.enabled) }
+            is DevOptionsAction.SetStepOverride ->
+                updateOrgOverrides { it.withStep(action.flow, action.route, action.enabled) }
+            is DevOptionsAction.SetFeatureOverride ->
+                updateOrgOverrides { it.withFeature(action.key, action.enabled) }
+            is DevOptionsAction.SetWalletIdOverride ->
+                updateOrgOverrides { it.copy(walletId = action.walletId?.takeIf { id -> id.isNotBlank() }) }
+            is DevOptionsAction.ResetOrgOverrides -> {
+                orgOverrideStore.clear()
+                updateState { copy(orgLink = buildOrgLinkState()) }
+            }
         }
+    }
+
+    private fun updateOrgOverrides(transform: (OrgOverrides) -> OrgOverrides) {
+        orgOverrideStore.update(transform)
+        updateState { copy(orgLink = buildOrgLinkState()) }
+    }
+
+    private fun buildOrgLinkState(): OrgLinkOverridesState? {
+        val org =
+            try {
+                orgRepo.baseCurrentOrg()
+            } catch (e: IllegalStateException) {
+                Timber.tag("DevOptions").w(e, "No current org, hiding org link overrides")
+                return null
+            }
+        val overrides = orgOverrideStore.overrides.value
+        val effective = overrides.applyTo(org)
+        return OrgLinkOverridesState(
+            orgId = org.id,
+            orgName = org.name,
+            enabled = overrides.enabled,
+            setupSteps = stepRows(OrgFlow.SETUP, org.captureSetupFlow, overrides),
+            captureSteps = stepRows(OrgFlow.CAPTURE, org.captureFlow, overrides),
+            features = featureRows(org, overrides),
+            orgWalletId = org.walletId,
+            walletIdOverride = overrides.walletId,
+            effectiveSetupFlow = effective.captureSetupFlow.map(::stepLabel),
+            effectiveCaptureFlow = effective.captureFlow.map(::stepLabel),
+            hasOverrides = overrides.hasOverrides,
+        )
+    }
+
+    private fun stepRows(
+        flow: OrgFlow,
+        orgFlow: List<Destination>,
+        overrides: OrgOverrides,
+    ): List<OrgSettingRow> {
+        val orgRoutes = orgFlow.map { RouteRegistry.normalize(it.route) }.toSet()
+        return OrgOverrideCatalog.steps(flow).map { step ->
+            OrgSettingRow(
+                id = step.route,
+                label = step.label,
+                orgDefault = step.route in orgRoutes,
+                override = overrides.steps(flow)[step.route],
+                required = step.required,
+            )
+        }
+    }
+
+    private fun featureRows(
+        org: Org,
+        overrides: OrgOverrides,
+    ): List<OrgSettingRow> =
+        OrgOverrideCatalog.features.map { option ->
+            val flow =
+                when (option.flow) {
+                    OrgFlow.SETUP -> org.captureSetupFlow
+                    OrgFlow.CAPTURE -> org.captureFlow
+                }
+            val orgDefault =
+                flow
+                    .find { RouteRegistry.normalize(it.route) == option.route }
+                    ?.features
+                    ?.any { OrgFeature.fromKey(it) == option.feature }
+                    ?: false
+            OrgSettingRow(
+                id = option.key,
+                label = option.label,
+                orgDefault = orgDefault,
+                override = overrides.features[option.key],
+            )
+        }
+
+    private fun stepLabel(destination: Destination): String {
+        val route = RouteRegistry.normalize(destination.route)
+        val label =
+            (OrgOverrideCatalog.setupSteps + OrgOverrideCatalog.captureSteps)
+                .find { it.route == route }
+                ?.label ?: route
+        return if (destination.features.isNullOrEmpty()) label else "$label (${destination.features.joinToString()})"
     }
 
     private fun updateParam(

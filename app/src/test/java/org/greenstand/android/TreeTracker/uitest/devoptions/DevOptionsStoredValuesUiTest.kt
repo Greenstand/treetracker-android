@@ -34,6 +34,8 @@ import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.Configurator
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsRoot
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsViewModel
+import org.greenstand.android.TreeTracker.devoptions.orgRepoWithoutOrg
+import org.greenstand.android.TreeTracker.devoptions.unusedOrgOverrideStore
 import org.greenstand.android.TreeTracker.devoptions.FloatConfig
 import org.greenstand.android.TreeTracker.devoptions.IntConfig
 import org.greenstand.android.TreeTracker.models.ConvergenceConfiguration
@@ -59,7 +61,13 @@ class DevOptionsStoredValuesUiTest : RootScreenUiTest() {
         every { configurator.getBoolean(ConfigKeys.FORCE_IMAGE_SIZE) } returns true
         every { configurator.getInt(ConfigKeys.IMAGE_CAPTURE_HEIGHT) } returns STORED_HEIGHT
 
-        val viewModel = DevOptionsViewModel(configurator, mockk<ConvergenceConfiguration>(relaxed = true))
+        val viewModel =
+            DevOptionsViewModel(
+                configurator,
+                mockk<ConvergenceConfiguration>(relaxed = true),
+                orgRepoWithoutOrg(),
+                unusedOrgOverrideStore(),
+            )
         startKoinWith(
             module {
                 single { viewModel }

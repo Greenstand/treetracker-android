@@ -1,0 +1,75 @@
+name: Flow runner
+
+# Runs chosen Test Buddy flows on an Android emulator against the debug app, for any branch or PR,
+# and saves a screenshot after each step plus logs (and optionally a video) for later review by a
+# person or an agent. Made for Claude Code cloud sessions, which have no emulator: see
+# docs/testing/ci-flows.md for how to start a run and read its results.
+#
+# Results, in the same layout everywhere (summary.json lists every file):
+#   - the artifact named by the `artifact` output (flow-results-pr<N>-<run id> or
+#     flow-results-<run id>), with the full logcat;
+#   - the flow-results/pr-<N> (or flow-results/run-<run id>) branch, one commit replaced on each
+#     run, without the full logcat, so a session that can only reach GitHub through git can
+#     fetch it;
+#   - the run's summary page.
+#
+# Start it by hand or with `gh workflow run flow-runner.yml`. The job fails when a flow fails.
+# The job itself is flow-runner-job.yml, which other workflows call directly; this file gives it a
+# token that can push the results.
+on:
+  workflow_dispatch:
+    inputs:
+      flows:
+        description: "Flow selectors, space or comma separated: paths, names, globs (settings-*) or tags (tag:settings)"
+        required: false
+        default: ""
+      inline_flow:
+        description: "A whole flow's YAML to run as e2e/flows/inline.yaml"
+        required: false
+        default: ""
+      ref:
+        description: "Branch, tag or SHA whose app and flows to run (default: the branch picked above)"
+        required: false
+        default: ""
+      pr:
+        description: "PR number, used to name the artifact and results branch"
+        required: false
+        default: ""
+      api_level:
+        description: "Emulator API level"
+        required: false
+        default: "35"
+      screenshots:
+        description: "Screenshots"
+        type: choice
+        options: [ steps, end, none ]
+        default: steps
+      record_video:
+        description: "Record a video of each flow"
+        type: boolean
+        default: false
+      annotate:
+        description: "Annotated video instead (tb --record --annotate): slowed down, taps and step captions"
+        type: boolean
+        default: false
+      publish_branch:
+        description: "Push the results to a flow-results/ branch too"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/flow-runner-job.yml
+    with:
+      flows: ${{ inputs.flows }}
+      inline_flow: ${{ inputs.inline_flow }}
+      ref: ${{ inputs.ref }}
+      pr: ${{ inputs.pr }}
+      api_level: ${{ inputs.api_level }}
+      screenshots: ${{ inputs.screenshots }}
+      record_video: ${{ inputs.record_video }}
+      annotate: ${{ inputs.annotate }}
+      publish_branch: ${{ inputs.publish_branch }}

@@ -20,10 +20,13 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.runs
 import io.mockk.unmockkObject
 import io.mockk.verify
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -32,13 +35,17 @@ import kotlinx.coroutines.test.runTest
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
+import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -60,6 +67,7 @@ class WalletSelectViewModelTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(CaptureSetupScopeManager)
+        every { CaptureSetupScopeManager.isOpen } returns true
         captureSetupData = mockk(relaxed = true)
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
     }
@@ -79,7 +87,7 @@ class WalletSelectViewModelTest {
             every { userRepo.users() } returns flowOf(users)
             coEvery { userRepo.getUserList() } returns users
 
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(targetUser.id))
 
@@ -98,7 +106,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other, third))
 
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
 
             val state = viewModel.state.value
             assertEquals(current, state.currentUser)
@@ -108,15 +116,16 @@ class WalletSelectViewModelTest {
         }
 
     @Test
-    fun `GIVEN no current user WHEN created THEN every user is an alternate`() =
+    fun `GIVEN no current user WHEN created THEN setup is lost and no users are listed`() =
         runTest {
             every { captureSetupData.user } returns null
             every { userRepo.users() } returns flowOf(listOf(current, other))
 
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
 
+            assertTrue(viewModel.state.value.setupLost)
             assertNull(viewModel.state.value.currentUser)
-            assertEquals(listOf(current, other), viewModel.state.value.alternateUsers)
+            assertEquals(emptyList(), viewModel.state.value.alternateUsers)
         }
 
     @Test
@@ -125,7 +134,7 @@ class WalletSelectViewModelTest {
             val users = MutableStateFlow(listOf(current, other))
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns users
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
             assertEquals(listOf(other), viewModel.state.value.alternateUsers)
 
             users.value = listOf(current, other, third)
@@ -140,7 +149,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other))
             coEvery { userRepo.getUserList() } returns listOf(current, other)
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
 
@@ -154,7 +163,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other, third))
             coEvery { userRepo.getUserList() } returns listOf(current, other, third)
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
             viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(third.id))
@@ -169,7 +178,7 @@ class WalletSelectViewModelTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other))
             coEvery { userRepo.getUserList() } returns listOf(current, other)
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
             viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
 
             viewModel.handleAction(WalletSelectAction.SelectPlanter(-99L))
@@ -183,7 +192,7 @@ class WalletSelectViewModelTest {
         runTest {
             every { captureSetupData.user } returns current
             every { userRepo.users() } returns flowOf(listOf(current, other))
-            val viewModel = WalletSelectViewModel(userRepo)
+            val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
             val before = viewModel.state.value
 
             viewModel.handleAction(WalletSelectAction.NavigateToUserSelect)
@@ -194,5 +203,60 @@ class WalletSelectViewModelTest {
             assertEquals(before, viewModel.state.value)
             assertTrue(viewModel.events.replayCache.isEmpty())
             verify(exactly = 0) { captureSetupData.destinationWallet = any() }
+        }
+
+    // --- Restored after process death ---
+
+    private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
+    private val restoreUserRepo = mockk<UserRepo>(relaxed = true)
+
+    private fun restoredViewModel(): WalletSelectViewModel {
+        every { CaptureSetupScopeManager.isOpen } returns false
+        every { CaptureSetupScopeManager.open() } just runs
+        every { CaptureSetupScopeManager.close() } just runs
+        every { CaptureSetupScopeManager.nav } returns setupNav
+        return WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), restoreUserRepo))
+    }
+
+    @Test
+    fun `WHEN restored after process death THEN reopens setup with the saved user`() =
+        runTest {
+            val fakeUser = FakeFileGenerator.fakeUsers.first()
+            coEvery { restoreUserRepo.getUser(any()) } returns fakeUser
+
+            val viewModel = restoredViewModel()
+
+            verify { captureSetupData.user = fakeUser }
+            assertEquals(fakeUser, viewModel.state.value.currentUser)
+            assertFalse(viewModel.state.value.restoring)
+            assertFalse(viewModel.state.value.setupLost)
+        }
+
+    @Test
+    fun `WHEN restored and still reloading the user THEN it is restoring`() =
+        runTest {
+            val reload = CompletableDeferred<User?>()
+            coEvery { restoreUserRepo.getUser(any()) } coAnswers { reload.await() }
+
+            val viewModel = restoredViewModel()
+            assertTrue(viewModel.state.value.restoring)
+
+            reload.complete(FakeFileGenerator.fakeUsers.first())
+            assertFalse(viewModel.state.value.restoring)
+        }
+
+    @Test
+    fun `WHEN restored and the saved user is gone THEN setup is lost and input does not touch the closed scope`() =
+        runTest {
+            coEvery { restoreUserRepo.getUser(any()) } returns null
+
+            val viewModel = restoredViewModel()
+            viewModel.handleAction(WalletSelectAction.SelectPlanter(other.id))
+
+            assertTrue(viewModel.state.value.setupLost)
+            assertFalse(viewModel.state.value.restoring)
+            verify { CaptureSetupScopeManager.close() }
+            verify(exactly = 0) { captureSetupData.destinationWallet = any() }
+            assertNull(viewModel.state.value.selectedUser)
         }
 }

@@ -28,6 +28,7 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupData
+import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupRestorer
 import org.greenstand.android.TreeTracker.models.setupflow.CaptureSetupScopeManager
 import org.greenstand.android.TreeTracker.navigation.AddWalletRoute
 import org.greenstand.android.TreeTracker.navigation.CaptureSetupNavigationController
@@ -53,6 +54,7 @@ class WalletSelectScreenUiTest : ComposeUiTest() {
     @Before
     fun setUp() {
         mockkObject(CaptureSetupScopeManager)
+        every { CaptureSetupScopeManager.isOpen } returns true
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { CaptureSetupScopeManager.nav } returns setupNav
         every { captureSetupData.user } returns walletTestCurrentUser
@@ -67,7 +69,7 @@ class WalletSelectScreenUiTest : ComposeUiTest() {
     }
 
     private fun render() {
-        val viewModel = WalletSelectViewModel(userRepo)
+        val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
         setContent(inspectionMode = false) {
             WalletSelectScreen(viewModel = viewModel)
         }

@@ -22,7 +22,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasScrollToIndexAction
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -33,9 +35,14 @@ import org.greenstand.android.TreeTracker.devoptions.ConfigKeys
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsAction
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsScreen
 import org.greenstand.android.TreeTracker.devoptions.DevOptionsState
+import org.greenstand.android.TreeTracker.devoptions.OrgLinkOverridesState
+import org.greenstand.android.TreeTracker.devoptions.OrgSettingRow
+import org.greenstand.android.TreeTracker.models.organization.OrgFlow
+import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import org.greenstand.android.TreeTracker.overlay.DebugOverlayManager
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
+import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -198,5 +205,74 @@ class DevOptionsUiTest : ComposeUiTest() {
         composeTestRule.onNodeWithTag(ARROW_BACK_BUTTON_TAG).performClick()
 
         assertEquals(listOf<DevOptionsAction>(DevOptionsAction.NavigateBack), actions)
+    }
+
+    private val orgLinkState =
+        OrgLinkOverridesState(
+            orgId = "42",
+            orgName = "Kasiki Hai",
+            enabled = true,
+            setupSteps =
+                listOf(
+                    OrgSettingRow(RouteRegistry.ROUTE_USER_SELECT, "User select", orgDefault = true, required = true),
+                    OrgSettingRow(RouteRegistry.ROUTE_SESSION_NOTE, "Session note", orgDefault = false),
+                ),
+            captureSteps =
+                listOf(
+                    OrgSettingRow(RouteRegistry.ROUTE_TREE_HEIGHT, "Tree height", orgDefault = true, override = false),
+                ),
+            features = emptyList(),
+            orgWalletId = "org-wallet",
+            walletIdOverride = null,
+            effectiveSetupFlow = listOf("User select"),
+            effectiveCaptureFlow = listOf("Tree capture"),
+            hasOverrides = true,
+        )
+
+    private fun scrollTo(tag: String) {
+        composeTestRule.onNode(hasScrollToIndexAction()).performScrollToNode(hasTestTag(tag))
+    }
+
+    @Test
+    fun `org link overrides are hidden without an org`() {
+        setDevOptions(DevOptionsState())
+
+        composeTestRule.onNodeWithText("Org Link Overrides").assertDoesNotExist()
+    }
+
+    @Test
+    fun `org link overrides show the org value and the override`() {
+        setDevOptions(DevOptionsState(orgLink = orgLinkState))
+
+        composeTestRule.onNodeWithText("Current org: Kasiki Hai (42)").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTags.ORG_OVERRIDES_SWITCH).assertIsOn()
+        scrollTo(TestTags.orgOverride(RouteRegistry.ROUTE_USER_SELECT))
+        composeTestRule.onNodeWithTag(TestTags.orgOverride(RouteRegistry.ROUTE_USER_SELECT)).assertIsOn().assertIsNotEnabled()
+        scrollTo(TestTags.orgOverride(RouteRegistry.ROUTE_TREE_HEIGHT))
+        composeTestRule.onNodeWithTag(TestTags.orgOverride(RouteRegistry.ROUTE_TREE_HEIGHT)).assertIsOff()
+        composeTestRule.onNodeWithText("Org: On · Overridden: Off").assertIsDisplayed()
+    }
+
+    @Test
+    fun `org link override switches and reset send their actions`() {
+        setDevOptions(DevOptionsState(orgLink = orgLinkState))
+
+        composeTestRule.onNodeWithTag(TestTags.ORG_OVERRIDES_SWITCH).performClick()
+        scrollTo(TestTags.orgOverride(RouteRegistry.ROUTE_SESSION_NOTE))
+        composeTestRule.onNodeWithTag(TestTags.orgOverride(RouteRegistry.ROUTE_SESSION_NOTE)).performClick()
+        scrollTo(TestTags.orgOverrideReset(RouteRegistry.ROUTE_TREE_HEIGHT))
+        composeTestRule.onNodeWithTag(TestTags.orgOverrideReset(RouteRegistry.ROUTE_TREE_HEIGHT)).performClick()
+        scrollTo(TestTags.ORG_OVERRIDES_RESET)
+        composeTestRule.onNodeWithTag(TestTags.ORG_OVERRIDES_RESET).performClick()
+
+        assertEquals(
+            listOf(
+                DevOptionsAction.SetOrgOverridesEnabled(false),
+                DevOptionsAction.SetStepOverride(OrgFlow.SETUP, RouteRegistry.ROUTE_SESSION_NOTE, true),
+                DevOptionsAction.SetStepOverride(OrgFlow.CAPTURE, RouteRegistry.ROUTE_TREE_HEIGHT, null),
+                DevOptionsAction.ResetOrgOverrides,
+            ),
+            actions,
+        )
     }
 }
