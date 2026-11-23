@@ -38,6 +38,7 @@ are outside this bug.
 ## Review follow-ups not done here
 
 - Online, a failed admin-request upload after a delete is now only logged; the user sees the same
-  "Account Deleted" dialog. `DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED` exists but is never set.
+  "Account Deleted" dialog. `DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED` existed but was never set (set on a successful
+  upload since #1443, task_108).
 - `DeleteProfileScreen` calls `SelectUser` on the user being deleted, which stores their id as the
   current user id (`prefs.setUserId`) after they're gone. Older code, separate from this bug.

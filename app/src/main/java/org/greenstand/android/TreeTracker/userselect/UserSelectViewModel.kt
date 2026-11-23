@@ -160,6 +160,13 @@ class UserSelectViewModel(
                 // (for example offline) must not crash the app; the next sync uploads it.
                 try {
                     messageRepo.syncMessages()
+                    updateState {
+                        if (deleteProfileState == DeleteProfileState.ACCOUNTDELETEDLOCALLY) {
+                            copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED)
+                        } else {
+                            this
+                        }
+                    }
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
