@@ -1,0 +1,93 @@
+   0.000s tb 0.6.3: "C5 Process death on the session note step" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-org-process-death-session-note.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.132s recording the screen to recording.mp4
+   0.132s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-session-note.yaml:10)
+   1.800s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1667 ms
+   1.800s ▶ Run Org capture setup  (.ci-org-process-death-session-note.yaml:11)
+   1.800s   ▶ Wait until id: TrackButton is visible  (org-capture-setup.yaml:7)
+   2.071s     snapshot history: screen context changed; discarding 1 snapshots
+   3.690s     snapshot history: screen context changed; discarding 1 snapshots
+   3.690s     found id: TrackButton: View #TrackButton [20,473][300,606], after 1890 ms and 4 reads
+   3.690s   ✓ Wait until id: TrackButton is visible  1890 ms
+   3.690s   ▶ Tap on id: TrackButton  (org-capture-setup.yaml:10)
+   3.702s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   3.834s     waited 131 ms for a still screen
+   3.846s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   3.980s     tap at (160, 539): the screen changed (sent in 14 ms, waited 116 ms)
+   3.981s   ✓ Tap on id: TrackButton  290 ms
+   3.981s     --annotate: holding the screen 870ms for the recording
+   4.847s   ▶ Wait until id: UserButton_5551230001 is visible  (org-capture-setup.yaml:11)
+   4.857s     snapshot history: screen context changed; discarding 1 snapshots
+   4.857s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   4.857s   ✓ Wait until id: UserButton_5551230001 is visible  10 ms
+   4.857s   ▶ Tap on id: UserButton_5551230001  (org-capture-setup.yaml:14)
+   4.858s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   4.911s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   4.965s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.113s     tap at (84, 177): the screen changed (sent in 7 ms, waited 96 ms)
+   5.113s   ✓ Tap on id: UserButton_5551230001  256 ms
+   5.113s     --annotate: holding the screen 850ms for the recording
+   5.966s   ▶ Tap on id: ArrowForwardButton  (org-capture-setup.yaml:15)
+   5.981s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.031s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.079s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.200s     tap at (264, 572): the screen changed (sent in 7 ms, waited 111 ms)
+   6.200s   ✓ Tap on id: ArrowForwardButton  233 ms
+   6.200s     --annotate: holding the screen 880ms for the recording
+   7.080s ✓ Run Org capture setup  5280 ms
+   7.080s ▶ Assert that id: SessionNoteField is visible  (.ci-org-process-death-session-note.yaml:13)
+   7.087s   snapshot history: screen context changed; discarding 2 snapshots
+   7.087s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+   7.087s ✓ Assert that id: SessionNoteField is visible  7 ms
+   7.087s ▶ Press Home key  (.ci-org-process-death-session-note.yaml:14)
+   7.119s   the screen changed (sent in 1 ms, waited 28 ms)
+   7.119s ✓ Press Home key  32 ms
+   7.119s   --annotate: holding the screen 970ms for the recording
+   8.087s ▶ Kill app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-session-note.yaml:15)
+   8.123s ✓ Kill app "org.greenstand.android.TreeTracker.debug"  36 ms
+   8.123s   --annotate: holding the screen 960ms for the recording
+   9.088s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-process-death-session-note.yaml:16)
+  10.463s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1374 ms
+  10.463s ▶ Wait until id: SessionNoteField is visible  (.ci-org-process-death-session-note.yaml:17)
+  11.234s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+  11.234s   the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 46
+  11.234s ✓ Wait until id: SessionNoteField is visible  771 ms
+  11.234s ▶ Tap on id: SessionNoteField  (.ci-org-process-death-session-note.yaml:20)
+  11.243s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+  11.303s   waited 59 ms for a still screen
+  11.353s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+  11.464s   tap at (160, 324): the screen changed (sent in 25 ms, waited 83 ms)
+  11.464s ✓ Tap on id: SessionNoteField  229 ms
+  11.464s   --annotate: holding the screen 890ms for the recording
+  12.354s ▶ Input text After process death  (.ci-org-process-death-session-note.yaml:21)
+  12.355s   typing 19 characters
+  13.033s   typed with device verification: the screen changed (sent in 562 ms, waited 114 ms)
+  13.033s ✓ Input text After process death  679 ms
+  13.033s   --annotate: holding the screen 320ms for the recording
+  13.354s ▶ Hide keyboard  (.ci-org-process-death-session-note.yaml:22)
+  13.425s   snapshot history: screen context changed; discarding 1 snapshots
+  13.425s ✓ Hide keyboard  70 ms
+  13.425s   --annotate: holding the screen 930ms for the recording
+  14.354s ▶ Tap on id: ArrowForwardButton  (.ci-org-process-death-session-note.yaml:23)
+  14.355s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  14.404s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  14.532s   tap at (264, 572): the screen changed (sent in 8 ms, waited 113 ms)
+  14.532s ✓ Tap on id: ArrowForwardButton  177 ms
+  14.532s   --annotate: holding the screen 870ms for the recording
+  15.404s ▶ Run flow when id: TutorialDoneButton is visible  (.ci-org-process-death-session-note.yaml:24)
+  15.608s   snapshot history: screen context changed; discarding 1 snapshots
+  17.109s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  17.133s   log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+  21.218s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  22.405s   deadline reached 1.171s after the last read: reading the screen once more
+  22.421s   not found: id: TutorialDoneButton, after 7012 ms and 6 reads (screen: org.greenstand.android.TreeTracker.debug, 64 elements, allowed 6.996s)
+  22.421s   condition not met (id: TutorialDoneButton is visible): skipped
+  22.421s ○ Run flow when id: TutorialDoneButton is visible  7014 ms
+  22.421s ▶ Wait until id: CaptureButton is visible  (.ci-org-process-death-session-note.yaml:28)
+  22.436s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  22.436s ✓ Wait until id: CaptureButton is visible  15 ms
+  22.436s ▶ Take screenshot step-13-end-extendedWaitUntil-CaptureButton  (.ci-org-process-death-session-note.yaml:31)
+  22.593s ✓ Take screenshot step-13-end-extendedWaitUntil-CaptureButton  156 ms
+  22.841s --annotate: recording.mp4 is in sync (its frame times say so, within -21 ms)
+  23.597s --annotate: drew 17 captions and 5 touches on recording.mp4 in 755 ms
+  23.597s PASSED in 23.597s

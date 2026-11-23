@@ -1,0 +1,34 @@
+▶ H9 Next after back from Add org on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.8s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  255ms
+    ✓ Tap on id: ArrowForwardButton  264ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  186ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  195ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  533ms
+    ✓ Hide keyboard  72ms
+    ✓ Tap on id: ArrowForwardButton  112ms
+    ✓ Tap on id: FirstNameField  143ms
+    ✓ Input text Ada  271ms
+    ✓ Tap on id: LastNameField  161ms
+    ✓ Input text Admin  363ms
+    ✓ Hide keyboard  61ms
+    ✓ Tap on id: ArrowForwardButton  219ms
+    ✓ Tap on id: TutorialDoneButton  657ms
+    ✓ Tap on id: CaptureButton  535ms
+    ✓ Wait until id: ApproveButton is visible  6ms
+    ✓ Tap on id: ApproveButton  122ms
+    ✓ Wait until id: TrackButton is visible  7ms
+  ✓ Run Sign up  20.5s
+  ✓ Tap on id: TrackButton  259ms
+  ✓ Tap on id: UserButton_5551230001  129ms
+  ✓ Tap on id: ArrowForwardButton  170ms
+  ✓ Assert that id: OrgNameField is visible  6ms
+  ✓ Take screenshot step-06-end-assertVisible-OrgNameField  127ms
+✓ H9 Next after back from Add org passed in 27.5s
+  video: build/flow-results/flows/sad-back-add-org/tb/H9_Next_after_back_from_Add_org/recording.mp4
+
+1 passed in 28.8s

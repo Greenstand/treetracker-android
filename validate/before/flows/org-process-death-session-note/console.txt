@@ -1,0 +1,20 @@
+▶ C5 Process death on the session note step on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+    ✓ Wait until id: TrackButton is visible  1.9s
+    ✓ Tap on id: TrackButton  335ms
+    ✓ Wait until id: UserButton_5551230001 is visible  11ms
+    ✓ Tap on id: UserButton_5551230001  248ms
+    ✓ Tap on id: ArrowForwardButton  270ms
+  ✓ Run Org capture setup  5.3s
+  ✓ Assert that id: SessionNoteField is visible  6ms
+  ✓ Press Home key  85ms
+  ✓ Kill app "org.greenstand.android.TreeTracker.debug"  33ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.5s
+  ✗ Wait until id: SessionNoteField is visible  15.0s
+      Assertion is false: id: SessionNoteField is visible
+✗ C5 Process death on the session note step failed in 26.5s on sdk gphone64 x86 64
+  Assertion is false: id: SessionNoteField is visible
+  debug: build/flow-results/validate/before/flows/org-process-death-session-note/tb/C5_Process_death_on_the_session_note_step (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/org-process-death-session-note/tb/C5_Process_death_on_the_session_note_step/recording.mp4
+
+0 passed, 1 failed in 27.9s
