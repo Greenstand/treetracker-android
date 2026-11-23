@@ -15,7 +15,13 @@ CI = Path(__file__).resolve().parent
 ROOT = CI.parents[1]
 SCRIPT = CI / "run-flows.sh"
 
-FAKE_ADB = "#!/bin/sh\nexit 0\n"
+# An emulator that has tb's helper app already, so warm-up-tb.sh has nothing to do.
+FAKE_ADB = """#!/bin/sh
+case " $* " in *" pm path "*) echo "package:/data/app/tb-helper/base.apk" ;; esac
+exit 0
+"""
+# A freshly booted emulator: no helper until a tb session has installed it.
+FAKE_ADB_FRESH = "#!/bin/sh\nexit 0\n"
 # Logs the flow it was given, the step count of that copy and its other arguments.
 FAKE_TB = """#!/bin/sh
 flow=$2
@@ -49,6 +55,7 @@ exit ${FAKE_EXIT:-0}
 # An adb whose first two pulls fail, as CI's emulator's do.
 FAKE_ADB_DROPPING = """#!/bin/sh
 case " $* " in
+  *" pm path "*) echo "package:/data/app/tb-helper/base.apk" ;;
   *" pull "*)
     echo pull >> "$FAKE_LOG.pulls"
     [ "$(wc -l < "$FAKE_LOG.pulls")" -le 2 ] && exit 1 ;;
@@ -89,6 +96,14 @@ class RunFlowsTest(unittest.TestCase):
             ".ci-cut-capture-exit.yaml steps=2",
         ])
         self.assertEqual(list(ROOT.glob("e2e/flows/**/.ci-*.yaml")), [])
+
+    def test_a_fresh_emulator_gets_one_tb_session_before_the_flows(self):
+        # tb's first session after boot can run without its accessibility service (warm-up-tb.sh).
+        r, lines = self.run_flows("signup-back@2", adb=FAKE_ADB_FRESH)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual([l.split(" ")[0] for l in lines], ["first-screen.yaml", ".ci-cut-signup-back.yaml"])
+        r, lines = self.run_flows("signup-back@2")
+        self.assertEqual([l.split(" ")[0] for l in lines], [".ci-cut-signup-back.yaml"])
 
     def test_bad_cuts_are_refused(self):
         for sel in ["signup-back@0", "signup-back@08", "tag:settings@3", "settings-*@3", "signup-back@x"]:

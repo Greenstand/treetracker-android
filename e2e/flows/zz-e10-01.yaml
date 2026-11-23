@@ -22,11 +22,13 @@ tags: [zz]
 - tapOn: {id: ProfileFirstName}
 - eraseText
 - inputText: Grace
+- assertVisible: {id: ProfileFirstName, text: "Grace"}
 - scrollUntilVisible:
     element: {id: ProfileLastName}
 - tapOn: {id: ProfileLastName}
 - eraseText
 - inputText: Hopper
+- assertVisible: {id: ProfileLastName, text: "Hopper"}
 - hideKeyboard
 - scrollUntilVisible:
     element: {id: SaveProfileButton}

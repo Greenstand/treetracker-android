@@ -123,6 +123,8 @@ if [[ $ONLINE != 1 ]]; then
   "$ADB" -s "$SERIAL" shell svc wifi disable
 fi
 "$ADB" -s "$SERIAL" emu geo fix 37.3 -3.5 >/dev/null || true
+# The first tb session after boot can run without its accessibility service (warm-up-tb.sh).
+TB="$TB" ADB="$ADB" bash e2e/warm-up-tb.sh -s "$SERIAL" > "$OUT/tb-warm-up.txt" 2>&1 || true
 # TEMP (baseline branch only): the copies in ONE tb process straight after boot, as
 # android-e2e runs its suite (e2e/run.sh). Logs land in OUT/suite, the console in OUT.
 if [[ $(cat e2e/ci/suite.txt 2>/dev/null) == 1 ]]; then
