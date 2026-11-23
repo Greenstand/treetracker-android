@@ -133,8 +133,10 @@ block and each KDoc section. The message tells the author what to do instead.
 - `build.gradle` adds `src/debug/java` and `src/testDebug/java` to detekt's sources. detekt
   skipped them before, which is where the AppFunctions are. No other detekt rule fires there.
 
-Tried: on master's sources this configuration reports all 839 comments that are not headers.
-On this branch it reports none. One planted comment of each kind, one per source set (line in
+Tried: on master's sources this configuration reports 848 findings and no header: 450 in main
+and 357 in test, which is exactly the inventory's count there, and 36 in debug and 5 in
+testDebug (27 and 5 comments; a KDoc with tags is reported once per section). On this branch it
+reports none. One planted comment of each kind, one per source set (line in
 main, block in test, KDoc in debug, trailing in testDebug), fails the task with four findings.
 
 What it does not cover: `*.kts` files (the repo has none; detekt does not read build scripts)
