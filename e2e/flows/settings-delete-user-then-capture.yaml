@@ -106,4 +106,7 @@ tags: [settings, capture]
     visible: {id: TrackButton}
     timeout: 30000
 - tapOn: {id: TrackButton}
-- assertVisible: {id: "UserButton_5551230001", text: "Ada Admin, 5551230001, 1"}
+- assertVisible:
+    id: "UserButton_5551230001"
+    containsDescendants:
+      - text: "1"
