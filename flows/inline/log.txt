@@ -1,0 +1,499 @@
+   0.000s tb 0.6.3: "Delete user then capture for the highlighted user" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-inline.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.000s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-inline.yaml:13)
+   4.109s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4108 ms
+   4.109s ▶ Take screenshot step-01-launchApp  (.ci-inline.yaml:14)
+   4.457s ✓ Take screenshot step-01-launchApp  348 ms
+   4.457s ▶ Run Sign up  (.ci-inline.yaml:15)
+   4.457s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   5.148s     snapshot history: screen context changed; discarding 1 snapshots
+   6.694s     no change reported by the device for 1.5s while looking for id: LanguageOption_ENGLISH: reading the screen again
+   7.012s     snapshot history: screen context changed; discarding 1 snapshots
+   7.012s     log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+   7.013s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 2555 ms and 3 reads
+   7.013s   ✓ Wait until id: LanguageOption_ENGLISH is visible  2555 ms
+   7.013s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   7.013s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   7.160s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   7.160s     it was moving: at rest after 144 ms at [82,224][238,304]
+   8.259s     tap at (160, 264): nothing changed (sent in 76 ms, waited 1001 ms)
+   8.259s   ✓ Tap on id: LanguageOption_ENGLISH  1245 ms
+   8.259s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   8.299s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.397s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.398s     it was moving: at rest after 97 ms at [233,541][295,603]
+   8.893s     tap at (264, 572): the screen changed (sent in 71 ms, waited 365 ms)
+   8.894s   ✓ Tap on id: ArrowForwardButton  635 ms
+   8.894s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   9.050s     waited 155 ms for the last action's change to settle
+   9.320s     snapshot history: screen context changed; discarding 2 snapshots
+   9.320s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   9.531s     waited 210 ms for a still screen
+   9.595s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  10.763s     tap at (160, 571): nothing changed (sent in 9 ms, waited 1152 ms)
+  10.763s   ✓ Tap on id: PrivacyPolicyCloseButton  1868 ms
+  10.763s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+  10.764s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+  10.764s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1 ms
+  10.764s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+  10.764s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+  10.793s       snapshot history: screen context changed; discarding 1 snapshots
+  10.793s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  10.866s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  11.897s       tap at (88, 244): nothing changed (sent in 22 ms, waited 1000 ms)
+  11.897s     ✓ Tap on id: PhoneCredentialButton  1132 ms
+  11.897s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+  11.934s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  11.996s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  13.027s       tap at (160, 313): the screen changed (sent in 66 ms, waited 956 ms)
+  13.027s     ✓ Tap on id: PhoneField  1130 ms
+  13.027s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2263 ms
+  13.027s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+  13.315s     waited 288 ms for the last action's change to settle
+  13.316s     typing 10 characters
+  14.475s     typed with device verification: nothing changed (sent in 814 ms, waited 300 ms)
+  14.475s   ✓ Input text 5551230001  1447 ms
+  14.475s   ▶ Hide keyboard  (signup.yaml:23)
+  14.627s     snapshot history: screen context changed; discarding 1 snapshots
+  14.627s   ✓ Hide keyboard  151 ms
+  14.627s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+  14.727s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  14.806s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  14.955s     tap at (264, 572): the screen changed (sent in 31 ms, waited 97 ms)
+  14.955s   ✓ Tap on id: ArrowForwardButton  328 ms
+  14.955s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+  15.111s     waited 156 ms for the last action's change to settle
+  15.133s     snapshot history: screen context changed; discarding 1 snapshots
+  15.133s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  15.206s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  15.272s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  15.755s     tap at (160, 227): the screen changed (sent in 16 ms, waited 460 ms)
+  15.755s   ✓ Tap on id: FirstNameField  799 ms
+  15.755s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+  15.887s     waited 131 ms for the last action's change to settle
+  15.887s     typing 3 characters
+  16.457s     typed with device verification: nothing changed (sent in 213 ms, waited 300 ms)
+  16.457s   ✓ Input text Ada  701 ms
+  16.457s   ▶ Tap on id: LastNameField  (signup.yaml:27)
+  16.539s     snapshot history: screen context changed; discarding 1 snapshots
+  16.539s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  16.633s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  17.711s     tap at (160, 315): nothing changed (sent in 15 ms, waited 1059 ms)
+  17.711s   ✓ Tap on id: LastNameField  1254 ms
+  17.711s   ▶ Input text ${LAST_NAME}  (signup.yaml:28)
+  17.763s     typing 5 characters
+  18.128s     typed with device verification: nothing changed (sent in 62 ms, waited 300 ms)
+  18.128s   ✓ Input text Admin  417 ms
+  18.128s   ▶ Hide keyboard  (signup.yaml:29)
+  18.195s     snapshot history: screen context changed; discarding 2 snapshots
+  18.196s   ✓ Hide keyboard  67 ms
+  18.196s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:30)
+  18.196s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.308s     waited 112 ms for a still screen
+  18.357s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.543s     tap at (264, 572): the screen changed (sent in 26 ms, waited 113 ms)
+  18.543s   ✓ Tap on id: ArrowForwardButton  347 ms
+  18.543s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:31)
+  18.669s     waited 125 ms for the last action's change to settle
+  18.902s     snapshot history: screen context changed; discarding 1 snapshots
+  20.096s     snapshot history: screen context changed; discarding 1 snapshots
+  20.577s     snapshot history: screen context changed; discarding 1 snapshots
+  20.577s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498], after 1908 ms and 3 reads
+  20.752s     waited 174 ms for a still screen
+  20.770s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  20.840s     tap at (160, 474): the screen changed (sent in 16 ms, waited 18 ms)
+  20.840s     the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+  20.840s   ✓ Tap on id: TutorialDoneButton  2297 ms
+  20.840s   ▶ Tap on id: CaptureButton  (signup.yaml:32)
+  20.963s     waited 122 ms for the last action's change to settle
+  21.004s     snapshot history: screen context changed; discarding 1 snapshots
+  21.005s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  21.068s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  21.122s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  21.702s     tap at (160, 572): the screen changed (sent in 25 ms, waited 429 ms, held 81 ms for its new window to take input)
+  21.702s   ✓ Tap on id: CaptureButton  861 ms
+  21.702s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:33)
+  21.710s     snapshot history: screen context changed; discarding 1 snapshots
+  21.711s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.711s   ✓ Wait until id: ApproveButton is visible  8 ms
+  21.711s   ▶ Tap on id: ApproveButton  (signup.yaml:36)
+  21.808s     waited 97 ms for the last action's change to settle
+  21.808s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.855s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.903s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.985s     tap at (202, 574): the screen changed (sent in 6 ms, waited 62 ms)
+  21.985s   ✓ Tap on id: ApproveButton  274 ms
+  21.985s   ▶ Wait until id: TrackButton is visible  (signup.yaml:37)
+  22.065s     snapshot history: screen context changed; discarding 1 snapshots
+  22.242s     snapshot history: screen context changed; discarding 1 snapshots
+  22.242s     found id: TrackButton: View #TrackButton [20,473][300,606], after 256 ms and 2 reads
+  22.242s     the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+  22.242s   ✓ Wait until id: TrackButton is visible  256 ms
+  22.242s ✓ Run Sign up  17784 ms
+  22.242s ▶ Take screenshot step-02-runFlow-signup  (.ci-inline.yaml:18)
+  22.334s   waited 92 ms for the last action's change to settle
+  22.354s ✓ Take screenshot step-02-runFlow-signup  112 ms
+  22.355s ▶ Tap on id: TrackButton  (.ci-inline.yaml:20)
+  22.362s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  22.409s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  23.431s   tap at (160, 539): nothing changed (sent in 3 ms, waited 1002 ms, held 11 ms for its new window to take input)
+  23.431s ✓ Tap on id: TrackButton  1076 ms
+  23.431s ▶ Take screenshot step-03-tapOn-TrackButton  (.ci-inline.yaml:21)
+  23.457s ✓ Take screenshot step-03-tapOn-TrackButton  25 ms
+  23.457s ▶ Tap on id: OrangeAddButton  (.ci-inline.yaml:22)
+  23.493s   snapshot history: screen context changed; discarding 2 snapshots
+  23.493s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  23.625s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  23.625s   it was moving: at rest after 125 ms at [125,537][195,607]
+  24.117s   tap at (160, 572): the screen changed (sent in 3 ms, waited 485 ms)
+  24.117s ✓ Tap on id: OrangeAddButton  659 ms
+  24.117s ▶ Take screenshot step-04-tapOn-OrangeAddButton  (.ci-inline.yaml:23)
+  24.279s   waited 162 ms for the last action's change to settle
+  24.303s ✓ Take screenshot step-04-tapOn-OrangeAddButton  185 ms
+  24.303s ▶ Tap on id: PrivacyPolicyCloseButton  (.ci-inline.yaml:24)
+  24.320s   snapshot history: screen context changed; discarding 2 snapshots
+  24.320s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  24.374s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  25.397s   tap at (160, 571): nothing changed (sent in 8 ms, waited 1000 ms)
+  25.397s ✓ Tap on id: PrivacyPolicyCloseButton  1094 ms
+  25.397s ▶ Take screenshot step-05-tapOn-PrivacyPolicyCloseButton  (.ci-inline.yaml:25)
+  25.411s ✓ Take screenshot step-05-tapOn-PrivacyPolicyCloseButton  14 ms
+  25.411s ▶ Tap on id: PhoneField  (.ci-inline.yaml:26)
+  25.422s   snapshot history: screen context changed; discarding 1 snapshots
+  25.422s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  25.470s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  25.620s   tap at (160, 313): the screen changed (sent in 11 ms, waited 134 ms)
+  25.620s ✓ Tap on id: PhoneField  208 ms
+  25.620s ▶ Take screenshot step-06-tapOn-PhoneField  (.ci-inline.yaml:27)
+  25.744s   waited 123 ms for the last action's change to settle
+  25.763s ✓ Take screenshot step-06-tapOn-PhoneField  142 ms
+  25.763s ▶ Input text 5551230002  (.ci-inline.yaml:28)
+  25.763s   typing 10 characters
+  25.771s   the focused field is unavailable through the device focus API: using screen verification
+  25.829s   snapshot history: screen context changed; discarding 1 snapshots
+  26.178s   snapshot history: screen context changed; discarding 1 snapshots
+  26.511s   typed: nothing changed (sent in 29 ms, waited 301 ms)
+  26.511s ✓ Input text 5551230002  748 ms
+  26.511s ▶ Take screenshot step-07-inputText-5551230002  (.ci-inline.yaml:29)
+  26.526s ✓ Take screenshot step-07-inputText-5551230002  14 ms
+  26.526s ▶ Hide keyboard  (.ci-inline.yaml:30)
+  26.596s   snapshot history: screen context changed; discarding 1 snapshots
+  26.596s ✓ Hide keyboard  70 ms
+  26.596s ▶ Take screenshot step-08-hideKeyboard  (.ci-inline.yaml:31)
+  26.608s ✓ Take screenshot step-08-hideKeyboard  12 ms
+  26.608s ▶ Tap on id: ArrowForwardButton  (.ci-inline.yaml:32)
+  26.609s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  26.708s   waited 99 ms for a still screen
+  26.760s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  26.809s   tap at (264, 572): the screen changed (sent in 8 ms, waited 39 ms)
+  26.809s ✓ Tap on id: ArrowForwardButton  200 ms
+  26.809s ▶ Take screenshot step-09-tapOn-ArrowForwardButton  (.ci-inline.yaml:33)
+  26.999s   waited 189 ms for the last action's change to settle
+  27.030s ✓ Take screenshot step-09-tapOn-ArrowForwardButton  220 ms
+  27.030s ▶ Tap on id: FirstNameField  (.ci-inline.yaml:34)
+  27.047s   snapshot history: screen context changed; discarding 1 snapshots
+  27.047s   found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  27.095s   found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  27.294s   tap at (160, 227): the screen changed (sent in 8 ms, waited 147 ms)
+  27.294s ✓ Tap on id: FirstNameField  264 ms
+  27.294s ▶ Take screenshot step-10-tapOn-FirstNameField  (.ci-inline.yaml:35)
+  27.416s   waited 121 ms for the last action's change to settle
+  27.432s ✓ Take screenshot step-10-tapOn-FirstNameField  137 ms
+  27.432s ▶ Input text Bob  (.ci-inline.yaml:36)
+  27.432s   typing 3 characters
+  27.436s   the focused field is unavailable through the device focus API: using screen verification
+  27.485s   snapshot history: screen context changed; discarding 1 snapshots
+  27.846s   snapshot history: screen context changed; discarding 1 snapshots
+  28.153s   typed: nothing changed (sent in 5 ms, waited 301 ms)
+  28.153s ✓ Input text Bob  721 ms
+  28.153s ▶ Take screenshot step-11-inputText-Bob  (.ci-inline.yaml:37)
+  28.167s ✓ Take screenshot step-11-inputText-Bob  13 ms
+  28.167s ▶ Tap on id: LastNameField  (.ci-inline.yaml:38)
+  28.216s   snapshot history: screen context changed; discarding 1 snapshots
+  28.216s   found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  28.248s   found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  28.328s   found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  29.348s   tap at (160, 315): nothing changed (sent in 9 ms, waited 1006 ms)
+  29.348s ✓ Tap on id: LastNameField  1180 ms
+  29.348s ▶ Take screenshot step-12-tapOn-LastNameField  (.ci-inline.yaml:39)
+  29.364s ✓ Take screenshot step-12-tapOn-LastNameField  16 ms
+  29.364s ▶ Input text Builder  (.ci-inline.yaml:40)
+  29.364s   typing 7 characters
+  29.799s   typed with device verification: nothing changed (sent in 127 ms, waited 301 ms)
+  29.799s ✓ Input text Builder  434 ms
+  29.799s ▶ Take screenshot step-13-inputText-Builder  (.ci-inline.yaml:41)
+  29.812s ✓ Take screenshot step-13-inputText-Builder  13 ms
+  29.812s ▶ Hide keyboard  (.ci-inline.yaml:42)
+  29.887s   snapshot history: screen context changed; discarding 1 snapshots
+  29.889s ✓ Hide keyboard  76 ms
+  29.889s ▶ Take screenshot step-14-hideKeyboard  (.ci-inline.yaml:43)
+  29.942s ✓ Take screenshot step-14-hideKeyboard  53 ms
+  29.942s ▶ Tap on id: ArrowForwardButton  (.ci-inline.yaml:44)
+  29.943s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  30.032s   waited 89 ms for a still screen
+  30.080s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  30.183s   tap at (264, 572): the screen changed (sent in 10 ms, waited 49 ms)
+  30.183s ✓ Tap on id: ArrowForwardButton  240 ms
+  30.183s ▶ Take screenshot step-15-tapOn-ArrowForwardButton  (.ci-inline.yaml:45)
+  30.515s   waited 331 ms for the last action's change to settle
+  30.616s ✓ Take screenshot step-15-tapOn-ArrowForwardButton  432 ms
+  30.616s ▶ Tap on id: CaptureButton  (.ci-inline.yaml:46)
+  30.827s   snapshot history: screen context changed; discarding 1 snapshots
+  30.827s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  30.881s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  31.253s   tap at (160, 572): the screen changed (sent in 4 ms, waited 363 ms)
+  31.253s ✓ Tap on id: CaptureButton  637 ms
+  31.253s ▶ Take screenshot step-16-tapOn-CaptureButton  (.ci-inline.yaml:47)
+  31.434s   waited 181 ms for the last action's change to settle
+  31.459s ✓ Take screenshot step-16-tapOn-CaptureButton  205 ms
+  31.459s ▶ Tap on id: ApproveButton  (.ci-inline.yaml:48)
+  31.479s   snapshot history: screen context changed; discarding 2 snapshots
+  31.479s   found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  31.526s   found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  31.604s   tap at (202, 574): the screen changed (sent in 5 ms, waited 43 ms)
+  31.604s ✓ Tap on id: ApproveButton  145 ms
+  31.604s ▶ Take screenshot step-17-tapOn-ApproveButton  (.ci-inline.yaml:49)
+  31.748s   waited 143 ms for the last action's change to settle
+  31.761s ✓ Take screenshot step-17-tapOn-ApproveButton  156 ms
+  31.761s ▶ Wait until id: OrgNameField is visible  (.ci-inline.yaml:50)
+  31.767s   snapshot history: screen context changed; discarding 1 snapshots
+  31.767s   found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  31.767s ✓ Wait until id: OrgNameField is visible  6 ms
+  31.767s ▶ Take screenshot step-18-extendedWaitUntil-OrgNameField  (.ci-inline.yaml:53)
+  31.779s ✓ Take screenshot step-18-extendedWaitUntil-OrgNameField  12 ms
+  31.780s ▶ Press back  (.ci-inline.yaml:54)
+  32.790s   nothing changed (sent in 3 ms, waited 1000 ms)
+  32.790s ✓ Press back  1010 ms
+  32.790s ▶ Take screenshot step-19-back  (.ci-inline.yaml:55)
+  32.805s ✓ Take screenshot step-19-back  14 ms
+  32.805s ▶ Press back  (.ci-inline.yaml:56)
+  33.810s   nothing changed (sent in 2 ms, waited 1000 ms)
+  33.810s ✓ Press back  1005 ms
+  33.810s ▶ Take screenshot step-20-back  (.ci-inline.yaml:57)
+  33.824s ✓ Take screenshot step-20-back  13 ms
+  33.824s ▶ Wait until id: TrackButton is visible  (.ci-inline.yaml:58)
+  33.832s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  33.832s ✓ Wait until id: TrackButton is visible  8 ms
+  33.832s ▶ Take screenshot step-21-extendedWaitUntil-TrackButton  (.ci-inline.yaml:61)
+  33.845s ✓ Take screenshot step-21-extendedWaitUntil-TrackButton  12 ms
+  33.845s ▶ Run Start capture  (.ci-inline.yaml:63)
+  33.845s   ▶ Tap on id: TrackButton  (start-capture.yaml:6)
+  33.845s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  33.956s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  33.956s     it was moving: at rest after 110 ms at [20,473][300,606]
+  34.532s     tap at (160, 539): the screen changed (sent in 4 ms, waited 529 ms)
+  34.532s   ✓ Tap on id: TrackButton  687 ms
+  34.532s   ▶ Wait until id: UserButton_${WALLET} is visible  (start-capture.yaml:7)
+  34.546s     snapshot history: screen context changed; discarding 2 snapshots
+  34.546s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  34.546s   ✓ Wait until id: UserButton_${WALLET} is visible  13 ms
+  34.546s   ▶ Tap on id: UserButton_${WALLET}  (start-capture.yaml:10)
+  34.613s     waited 66 ms for the last action's change to settle
+  34.613s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  34.703s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  34.751s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  35.759s     tap at (84, 177): nothing changed (sent in 4 ms, waited 1000 ms)
+  35.759s   ✓ Tap on id: UserButton_5551230001  1212 ms
+  35.759s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:11)
+  35.770s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  35.852s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  35.852s     it was moving: at rest after 81 ms at [233,541][295,603]
+  36.861s     tap at (264, 572): nothing changed (sent in 4 ms, waited 1001 ms)
+  36.861s   ✓ Tap on id: ArrowForwardButton  1101 ms
+  36.861s   ▶ Wait until id: OrgNameField is visible  (start-capture.yaml:12)
+  36.871s     snapshot history: screen context changed; discarding 2 snapshots
+  36.871s     found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  36.872s   ✓ Wait until id: OrgNameField is visible  10 ms
+  36.872s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:15)
+  36.872s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  36.919s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  36.987s     tap at (264, 572): the screen changed (sent in 3 ms, waited 61 ms)
+  36.987s   ✓ Tap on id: ArrowForwardButton  115 ms
+  36.987s   ▶ Run flow when id: TutorialDoneButton is visible  (start-capture.yaml:16)
+  37.124s     waited 136 ms for the last action's change to settle
+  37.232s     snapshot history: screen context changed; discarding 1 snapshots
+  37.418s     snapshot history: screen context changed; discarding 1 snapshots
+  37.690s     snapshot history: screen context changed; discarding 1 snapshots
+  37.691s     found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493], after 566 ms and 3 reads
+  37.691s     ▶ Tap on id: TutorialDoneButton  (start-capture.yaml:19)
+  37.708s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  37.870s       waited 161 ms for a still screen
+  37.876s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  37.929s       tap at (160, 469): the screen changed (sent in 3 ms, waited 8 ms)
+  37.929s     ✓ Tap on id: TutorialDoneButton  238 ms
+  37.929s   ✓ Run flow when id: TutorialDoneButton is visible  942 ms
+  37.929s   ▶ Wait until id: CaptureButton is visible  (start-capture.yaml:20)
+  37.948s     snapshot history: screen context changed; discarding 1 snapshots
+  37.948s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  37.948s   ✓ Wait until id: CaptureButton is visible  19 ms
+  37.948s ✓ Run Start capture  4103 ms
+  37.949s ▶ Take screenshot step-22-runFlow-start-capture  (.ci-inline.yaml:66)
+  38.078s   waited 129 ms for the last action's change to settle
+  38.093s ✓ Take screenshot step-22-runFlow-start-capture  144 ms
+  38.093s ▶ Tap on id: UserImageButton  (.ci-inline.yaml:67)
+  38.113s   found id: UserImageButton: View #UserImageButton [21,31][96,106]
+  38.176s   found id: UserImageButton: View #UserImageButton [21,31][96,106]
+  38.327s   tap at (58, 68): the screen changed (sent in 3 ms, waited 18 ms, held 116 ms for its new window to take input)
+  38.327s ✓ Tap on id: UserImageButton  234 ms
+  38.327s ▶ Take screenshot step-23-tapOn-UserImageButton  (.ci-inline.yaml:68)
+  38.575s   waited 248 ms for the last action's change to settle
+  38.588s ✓ Take screenshot step-23-tapOn-UserImageButton  261 ms
+  38.588s ▶ Wait until id: UserButton_5551230001 is visible  (.ci-inline.yaml:69)
+  38.597s   snapshot history: screen context changed; discarding 1 snapshots
+  38.597s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  38.597s ✓ Wait until id: UserButton_5551230001 is visible  8 ms
+  38.597s ▶ Take screenshot step-24-extendedWaitUntil-UserButton_5551230001  (.ci-inline.yaml:72)
+  38.609s ✓ Take screenshot step-24-extendedWaitUntil-UserButton_5551230001  12 ms
+  38.609s ▶ Tap on id: UserButton_5551230001  (.ci-inline.yaml:73)
+  38.609s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  38.658s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  39.672s   tap at (84, 177): nothing changed (sent in 4 ms, waited 1002 ms)
+  39.672s ✓ Tap on id: UserButton_5551230001  1062 ms
+  39.672s ▶ Take screenshot step-25-tapOn-UserButton_5551230001  (.ci-inline.yaml:74)
+  39.686s ✓ Take screenshot step-25-tapOn-UserButton_5551230001  14 ms
+  39.686s ▶ Tap on id: ArrowBackButton  (.ci-inline.yaml:75)
+  39.695s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  39.745s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  39.791s   tap at (56, 572): the screen changed (sent in 3 ms, waited 37 ms)
+  39.791s ✓ Tap on id: ArrowBackButton  104 ms
+  39.791s ▶ Take screenshot step-26-tapOn-ArrowBackButton  (.ci-inline.yaml:76)
+  40.012s   waited 221 ms for the last action's change to settle
+  40.025s ✓ Take screenshot step-26-tapOn-ArrowBackButton  234 ms
+  40.025s ▶ Wait until id: TrackButton is visible  (.ci-inline.yaml:77)
+  40.034s   snapshot history: screen context changed; discarding 2 snapshots
+  40.034s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  40.034s ✓ Wait until id: TrackButton is visible  8 ms
+  40.034s ▶ Take screenshot step-27-extendedWaitUntil-TrackButton  (.ci-inline.yaml:80)
+  40.047s ✓ Take screenshot step-27-extendedWaitUntil-TrackButton  12 ms
+  40.047s ▶ Tap on id: SettingsButton  (.ci-inline.yaml:82)
+  40.047s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  40.095s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  40.105s   tap at (39, 68): the screen changed (sent in 4 ms, waited 2 ms)
+  40.105s ✓ Tap on id: SettingsButton  58 ms
+  40.105s ▶ Take screenshot step-28-tapOn-SettingsButton  (.ci-inline.yaml:83)
+  40.225s   waited 120 ms for the last action's change to settle
+  40.267s ✓ Take screenshot step-28-tapOn-SettingsButton  162 ms
+  40.267s ▶ Tap on id: SettingsDeleteAccount  (.ci-inline.yaml:84)
+  40.326s   snapshot history: screen context changed; discarding 1 snapshots
+  40.327s   found id: SettingsDeleteAccount: View #SettingsDeleteAccount [20,483][300,531]
+  40.425s   waited 98 ms for a still screen
+  40.433s   found id: SettingsDeleteAccount: View #SettingsDeleteAccount [20,483][300,531]
+  40.476s   tap at (160, 507): the screen changed (sent in 2 ms, waited 37 ms)
+  40.476s ✓ Tap on id: SettingsDeleteAccount  208 ms
+  40.476s ▶ Take screenshot step-29-tapOn-SettingsDeleteAccount  (.ci-inline.yaml:85)
+  40.698s   waited 221 ms for the last action's change to settle
+  40.709s ✓ Take screenshot step-29-tapOn-SettingsDeleteAccount  233 ms
+  40.709s ▶ Tap on id: UserButton_5551230002  (.ci-inline.yaml:86)
+  40.718s   snapshot history: screen context changed; discarding 1 snapshots
+  40.718s   found id: UserButton_5551230002: View #UserButton_5551230002 [168,42][304,312]
+  40.771s   found id: UserButton_5551230002: View #UserButton_5551230002 [168,42][304,312]
+  41.781s   tap at (236, 177): nothing changed (sent in 3 ms, waited 1000 ms)
+  41.781s ✓ Tap on id: UserButton_5551230002  1071 ms
+  41.781s ▶ Take screenshot step-30-tapOn-UserButton_5551230002  (.ci-inline.yaml:87)
+  41.795s ✓ Take screenshot step-30-tapOn-UserButton_5551230002  13 ms
+  41.795s ▶ Tap on id: ArrowForwardButton  (.ci-inline.yaml:88)
+  41.804s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  41.852s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  41.919s   tap at (264, 572): the screen changed (sent in 4 ms, waited 20 ms)
+  41.919s ✓ Tap on id: ArrowForwardButton  124 ms
+  41.919s ▶ Take screenshot step-31-tapOn-ArrowForwardButton  (.ci-inline.yaml:89)
+  42.064s   waited 144 ms for the last action's change to settle
+  42.083s ✓ Take screenshot step-31-tapOn-ArrowForwardButton  163 ms
+  42.083s ▶ Tap on id: DialogPositiveButton  (.ci-inline.yaml:90)
+  42.129s   snapshot history: screen context changed; discarding 2 snapshots
+  42.130s   found id: DialogPositiveButton: View #DialogPositiveButton [168,534][216,582]
+  42.309s   waited 179 ms for a still screen
+  42.316s   found id: DialogPositiveButton: View #DialogPositiveButton [168,534][216,582]
+  42.402s   tap at (192, 558): the screen changed (sent in 10 ms, waited 43 ms, held 25 ms for its new window to take input)
+  42.402s ✓ Tap on id: DialogPositiveButton  319 ms
+  42.402s ▶ Take screenshot step-32-tapOn-DialogPositiveButton  (.ci-inline.yaml:91)
+  42.547s   waited 144 ms for the last action's change to settle
+  42.560s ✓ Take screenshot step-32-tapOn-DialogPositiveButton  158 ms
+  42.560s ▶ Wait until "Account Deleted", id: DialogTitle is visible  (.ci-inline.yaml:92)
+  42.606s   snapshot history: screen context changed; discarding 1 snapshots
+  42.606s   found "Account Deleted", id: DialogTitle: TextView "Account Deleted" #DialogTitle [47,119][185,138]
+  42.607s ✓ Wait until "Account Deleted", id: DialogTitle is visible  46 ms
+  42.607s ▶ Take screenshot step-33-extendedWaitUntil-DialogTitle  (.ci-inline.yaml:95)
+  42.620s ✓ Take screenshot step-33-extendedWaitUntil-DialogTitle  13 ms
+  42.620s ▶ Tap on id: DialogPositiveButton  (.ci-inline.yaml:96)
+  42.622s   found id: DialogPositiveButton: View #DialogPositiveButton [136,489][184,537]
+  42.787s   waited 164 ms for a still screen
+  42.793s   found id: DialogPositiveButton: View #DialogPositiveButton [136,489][184,537]
+  42.874s   tap at (160, 513): the screen changed (sent in 3 ms, waited 47 ms, held 27 ms for its new window to take input)
+  42.874s ✓ Tap on id: DialogPositiveButton  254 ms
+  42.874s ▶ Take screenshot step-34-tapOn-DialogPositiveButton  (.ci-inline.yaml:97)
+  43.025s   waited 150 ms for the last action's change to settle
+  43.038s ✓ Take screenshot step-34-tapOn-DialogPositiveButton  163 ms
+  43.038s ▶ Assert that id: SettingsDeleteAccount is visible  (.ci-inline.yaml:98)
+  43.045s   snapshot history: screen context changed; discarding 1 snapshots
+  43.045s   found id: SettingsDeleteAccount: View #SettingsDeleteAccount [20,483][300,531]
+  43.045s ✓ Assert that id: SettingsDeleteAccount is visible  7 ms
+  43.045s ▶ Press back  (.ci-inline.yaml:99)
+  44.051s   nothing changed (sent in 1 ms, waited 1000 ms)
+  44.051s ✓ Press back  1006 ms
+  44.051s ▶ Take screenshot step-36-back  (.ci-inline.yaml:100)
+  44.066s ✓ Take screenshot step-36-back  15 ms
+  44.066s ▶ Wait until id: TrackButton is visible  (.ci-inline.yaml:101)
+  44.076s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  44.076s ✓ Wait until id: TrackButton is visible  9 ms
+  44.076s ▶ Take screenshot step-37-extendedWaitUntil-TrackButton  (.ci-inline.yaml:104)
+  44.088s ✓ Take screenshot step-37-extendedWaitUntil-TrackButton  12 ms
+  44.089s ▶ Tap on id: TrackButton  (.ci-inline.yaml:106)
+  44.089s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  44.139s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  45.147s   tap at (160, 539): nothing changed (sent in 3 ms, waited 1001 ms)
+  45.147s ✓ Tap on id: TrackButton  1058 ms
+  45.147s ▶ Take screenshot step-38-tapOn-TrackButton  (.ci-inline.yaml:107)
+  45.160s ✓ Take screenshot step-38-tapOn-TrackButton  13 ms
+  45.160s ▶ Wait until id: UserButton_5551230001 is visible  (.ci-inline.yaml:108)
+  45.169s   snapshot history: screen context changed; discarding 1 snapshots
+  45.169s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  45.169s ✓ Wait until id: UserButton_5551230001 is visible  8 ms
+  45.169s ▶ Take screenshot step-39-extendedWaitUntil-UserButton_5551230001  (.ci-inline.yaml:111)
+  45.181s ✓ Take screenshot step-39-extendedWaitUntil-UserButton_5551230001  12 ms
+  45.181s ▶ Assert that id: UserButton_5551230002 is not visible  (.ci-inline.yaml:112)
+  45.188s   gone: id: UserButton_5551230002 (checked on a settled screen, 7 ms)
+  45.188s ✓ Assert that id: UserButton_5551230002 is not visible  7 ms
+  45.188s ▶ Tap on id: ArrowForwardButton  (.ci-inline.yaml:113)
+  45.188s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  45.236s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  46.243s   tap at (264, 572): nothing changed (sent in 3 ms, waited 1000 ms)
+  46.243s ✓ Tap on id: ArrowForwardButton  1055 ms
+  46.243s ▶ Take screenshot step-41-tapOn-ArrowForwardButton  (.ci-inline.yaml:114)
+  46.256s ✓ Take screenshot step-41-tapOn-ArrowForwardButton  12 ms
+  46.256s ▶ Wait until id: OrgNameField is visible  (.ci-inline.yaml:115)
+  46.264s   snapshot history: screen context changed; discarding 1 snapshots
+  46.264s   found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  46.264s ✓ Wait until id: OrgNameField is visible  7 ms
+  46.264s ▶ Take screenshot step-42-extendedWaitUntil-OrgNameField  (.ci-inline.yaml:118)
+  46.276s ✓ Take screenshot step-42-extendedWaitUntil-OrgNameField  11 ms
+  46.276s ▶ Tap on id: ArrowForwardButton  (.ci-inline.yaml:119)
+  46.276s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  46.328s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  47.335s   tap at (264, 572): nothing changed (sent in 3 ms, waited 1000 ms)
+  47.335s ✓ Tap on id: ArrowForwardButton  1058 ms
+  47.335s ▶ Take screenshot step-43-tapOn-ArrowForwardButton  (.ci-inline.yaml:120)
+  47.347s ✓ Take screenshot step-43-tapOn-ArrowForwardButton  12 ms
+  47.347s ▶ Run flow when id: TutorialDoneButton is visible  (.ci-inline.yaml:121)
+  52.361s   snapshot history: screen context changed; discarding 1 snapshots
+  53.864s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  54.335s   deadline reached 463ms after the last read: reading the screen once more
+  54.342s   not found: id: TutorialDoneButton, after 6994 ms and 5 reads (screen: com.google.android.apps.nexuslauncher, 50 elements, allowed 6.987s)
+  54.342s   condition not met (id: TutorialDoneButton is visible): skipped
+  54.342s   the device's window list had no readable app window (1 windows without a root); a read past the accessibility cache found app window 1
+  54.342s ○ Run flow when id: TutorialDoneButton is visible  6994 ms
+  54.342s ▶ Take screenshot step-44-runFlow-TutorialDoneButton  (.ci-inline.yaml:125)
+  54.433s ✓ Take screenshot step-44-runFlow-TutorialDoneButton  91 ms
+  54.433s ▶ Wait until id: CaptureButton is visible  (.ci-inline.yaml:126)
+  55.940s   no change reported by the device for 1.5s while looking for id: CaptureButton: reading the screen again
+  58.951s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  61.961s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  64.969s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  67.979s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  70.988s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  73.998s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  77.007s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  77.335s   not found: id: CaptureButton, after 22902 ms and 10 reads (screen: com.google.android.apps.nexuslauncher, 50 elements, allowed 22.901s)
+  77.335s ✗ Wait until id: CaptureButton is visible  22902 ms: Assertion is false: id: CaptureButton is visible
+  77.429s FAILED in 1m17.335s: Assertion is false: id: CaptureButton is visible
+  77.429s the screen at the failure: screen*.txt, screenshot*.png, hierarchy*.json in this folder

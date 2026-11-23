@@ -1,0 +1,126 @@
+▶ Delete user then capture for the highlighted user on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.1s
+  ✓ Take screenshot step-01-launchApp  348ms
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.6s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.2s
+    ✓ Tap on id: ArrowForwardButton  634ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.9s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  1.1s
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.3s
+    ✓ Input text 5551230001  1.4s
+    ✓ Hide keyboard  151ms
+    ✓ Tap on id: ArrowForwardButton  328ms
+    ✓ Tap on id: FirstNameField  799ms
+    ✓ Input text Ada  701ms
+    ✓ Tap on id: LastNameField  1.3s
+    ✓ Input text Admin  417ms
+    ✓ Hide keyboard  67ms
+    ✓ Tap on id: ArrowForwardButton  347ms
+    ✓ Tap on id: TutorialDoneButton  2.3s
+    ✓ Tap on id: CaptureButton  861ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  274ms
+    ✓ Wait until id: TrackButton is visible  256ms
+  ✓ Run Sign up  17.8s
+  ✓ Take screenshot step-02-runFlow-signup  112ms
+  ✓ Tap on id: TrackButton  1.1s
+  ✓ Take screenshot step-03-tapOn-TrackButton  25ms
+  ✓ Tap on id: OrangeAddButton  659ms
+  ✓ Take screenshot step-04-tapOn-OrangeAddButton  185ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  1.1s
+  ✓ Take screenshot step-05-tapOn-PrivacyPolicyCloseButton  14ms
+  ✓ Tap on id: PhoneField  208ms
+  ✓ Take screenshot step-06-tapOn-PhoneField  142ms
+  ✓ Input text 5551230002  748ms
+  ✓ Take screenshot step-07-inputText-5551230002  14ms
+  ✓ Hide keyboard  70ms
+  ✓ Take screenshot step-08-hideKeyboard  12ms
+  ✓ Tap on id: ArrowForwardButton  200ms
+  ✓ Take screenshot step-09-tapOn-ArrowForwardButton  220ms
+  ✓ Tap on id: FirstNameField  264ms
+  ✓ Take screenshot step-10-tapOn-FirstNameField  137ms
+  ✓ Input text Bob  721ms
+  ✓ Take screenshot step-11-inputText-Bob  13ms
+  ✓ Tap on id: LastNameField  1.2s
+  ✓ Take screenshot step-12-tapOn-LastNameField  16ms
+  ✓ Input text Builder  434ms
+  ✓ Take screenshot step-13-inputText-Builder  13ms
+  ✓ Hide keyboard  74ms
+  ✓ Take screenshot step-14-hideKeyboard  53ms
+  ✓ Tap on id: ArrowForwardButton  240ms
+  ✓ Take screenshot step-15-tapOn-ArrowForwardButton  432ms
+  ✓ Tap on id: CaptureButton  637ms
+  ✓ Take screenshot step-16-tapOn-CaptureButton  205ms
+  ✓ Tap on id: ApproveButton  145ms
+  ✓ Take screenshot step-17-tapOn-ApproveButton  156ms
+  ✓ Wait until id: OrgNameField is visible  6ms
+  ✓ Take screenshot step-18-extendedWaitUntil-OrgNameField  12ms
+  ✓ Press back  1.0s
+  ✓ Take screenshot step-19-back  14ms
+  ✓ Press back  1.0s
+  ✓ Take screenshot step-20-back  13ms
+  ✓ Wait until id: TrackButton is visible  8ms
+  ✓ Take screenshot step-21-extendedWaitUntil-TrackButton  12ms
+    ✓ Tap on id: TrackButton  687ms
+    ✓ Wait until id: UserButton_${WALLET} is visible  13ms
+    ✓ Tap on id: UserButton_5551230001  1.2s
+    ✓ Tap on id: ArrowForwardButton  1.1s
+    ✓ Wait until id: OrgNameField is visible  10ms
+    ✓ Tap on id: ArrowForwardButton  115ms
+      ✓ Tap on id: TutorialDoneButton  238ms
+    ✓ Run flow when id: TutorialDoneButton is visible  942ms
+    ✓ Wait until id: CaptureButton is visible  19ms
+  ✓ Run Start capture  4.1s
+  ✓ Take screenshot step-22-runFlow-start-capture  144ms
+  ✓ Tap on id: UserImageButton  234ms
+  ✓ Take screenshot step-23-tapOn-UserImageButton  261ms
+  ✓ Wait until id: UserButton_5551230001 is visible  8ms
+  ✓ Take screenshot step-24-extendedWaitUntil-UserButton_5551230001  12ms
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Take screenshot step-25-tapOn-UserButton_5551230001  14ms
+  ✓ Tap on id: ArrowBackButton  104ms
+  ✓ Take screenshot step-26-tapOn-ArrowBackButton  234ms
+  ✓ Wait until id: TrackButton is visible  8ms
+  ✓ Take screenshot step-27-extendedWaitUntil-TrackButton  12ms
+  ✓ Tap on id: SettingsButton  58ms
+  ✓ Take screenshot step-28-tapOn-SettingsButton  162ms
+  ✓ Tap on id: SettingsDeleteAccount  208ms
+  ✓ Take screenshot step-29-tapOn-SettingsDeleteAccount  233ms
+  ✓ Tap on id: UserButton_5551230002  1.1s
+  ✓ Take screenshot step-30-tapOn-UserButton_5551230002  13ms
+  ✓ Tap on id: ArrowForwardButton  124ms
+  ✓ Take screenshot step-31-tapOn-ArrowForwardButton  163ms
+  ✓ Tap on id: DialogPositiveButton  319ms
+  ✓ Take screenshot step-32-tapOn-DialogPositiveButton  158ms
+  ✓ Wait until "Account Deleted", id: DialogTitle is visible  46ms
+  ✓ Take screenshot step-33-extendedWaitUntil-DialogTitle  13ms
+  ✓ Tap on id: DialogPositiveButton  254ms
+  ✓ Take screenshot step-34-tapOn-DialogPositiveButton  163ms
+  ✓ Assert that id: SettingsDeleteAccount is visible  7ms
+  ✓ Press back  1.0s
+  ✓ Take screenshot step-36-back  15ms
+  ✓ Wait until id: TrackButton is visible  9ms
+  ✓ Take screenshot step-37-extendedWaitUntil-TrackButton  12ms
+  ✓ Tap on id: TrackButton  1.1s
+  ✓ Take screenshot step-38-tapOn-TrackButton  13ms
+  ✓ Wait until id: UserButton_5551230001 is visible  8ms
+  ✓ Take screenshot step-39-extendedWaitUntil-UserButton_5551230001  12ms
+  ✓ Assert that id: UserButton_5551230002 is not visible  7ms
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Take screenshot step-41-tapOn-ArrowForwardButton  12ms
+  ✓ Wait until id: OrgNameField is visible  7ms
+  ✓ Take screenshot step-42-extendedWaitUntil-OrgNameField  11ms
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Take screenshot step-43-tapOn-ArrowForwardButton  12ms
+  ○ Run flow when id: TutorialDoneButton is visible  7.0s
+  ✓ Take screenshot step-44-runFlow-TutorialDoneButton  91ms
+  ✗ Wait until id: CaptureButton is visible  22.9s
+      Assertion is false: id: CaptureButton is visible
+✗ Delete user then capture for the highlighted user failed in 1m17s on sdk gphone64 x86 64
+  Assertion is false: id: CaptureButton is visible
+  debug: build/flow-results/flows/inline/tb/Delete_user_then_capture_for_the_highlighted_user (log.txt: what tb did, step by step)
+
+0 passed, 1 failed in 1m22s
