@@ -1,0 +1,330 @@
+   0.000s tb 0.6.3: "B4 rep 03" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/zz-b4-03.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.000s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (zz-b4-03.yaml:5)
+   2.556s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2556 ms
+   2.556s ▶ Run Sign up  (zz-b4-03.yaml:6)
+   2.556s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   2.899s     snapshot history: screen context changed; discarding 1 snapshots
+   2.950s     snapshot history: screen context changed; discarding 1 snapshots
+   4.586s     snapshot history: screen context changed; discarding 1 snapshots
+   4.586s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 2029 ms and 4 reads
+   4.586s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 36
+   4.586s   ✓ Wait until id: LanguageOption_ENGLISH is visible  2029 ms
+   4.586s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   4.609s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.767s     waited 158 ms for a still screen
+   4.786s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.871s     tap at (160, 264): the screen changed (sent in 22 ms, waited 56 ms)
+   4.871s   ✓ Tap on id: LanguageOption_ENGLISH  284 ms
+   4.871s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   5.016s     waited 144 ms for the last action's change to settle
+   5.057s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.118s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.178s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.312s     tap at (264, 572): the screen changed (sent in 19 ms, waited 107 ms)
+   5.312s   ✓ Tap on id: ArrowForwardButton  441 ms
+   5.312s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   5.482s     waited 169 ms for the last action's change to settle
+   5.969s     snapshot history: screen context changed; discarding 2 snapshots
+   5.969s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.067s     waited 97 ms for a still screen
+   6.085s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.154s     tap at (160, 571): the screen changed (sent in 9 ms, waited 56 ms)
+   6.154s   ✓ Tap on id: PrivacyPolicyCloseButton  841 ms
+   6.154s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+   6.376s     waited 222 ms for the last action's change to settle
+   6.377s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+   6.377s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  222 ms
+   6.377s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+   6.377s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+   6.392s       snapshot history: screen context changed; discarding 1 snapshots
+   6.392s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   6.447s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   7.463s       tap at (88, 244): nothing changed (sent in 7 ms, waited 1004 ms)
+   7.463s     ✓ Tap on id: PhoneCredentialButton  1085 ms
+   7.463s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+   7.477s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   7.534s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   7.651s       tap at (160, 313): the screen changed (sent in 24 ms, waited 88 ms)
+   7.651s     ✓ Tap on id: PhoneField  187 ms
+   7.651s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1273 ms
+   7.651s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+   7.887s     waited 236 ms for the last action's change to settle
+   7.888s     typing 10 characters
+   8.285s     typed with device verification: the screen changed (sent in 393 ms, waited 0 ms)
+   8.286s   ✓ Input text 5551230001  634 ms
+   8.286s   ▶ Hide keyboard  (signup.yaml:23)
+   8.392s     snapshot history: screen context changed; discarding 1 snapshots
+   8.392s   ✓ Hide keyboard  106 ms
+   8.392s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+   8.392s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.488s     waited 95 ms for a still screen
+   8.543s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.635s     tap at (264, 572): the screen changed (sent in 6 ms, waited 81 ms)
+   8.635s   ✓ Tap on id: ArrowForwardButton  242 ms
+   8.635s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+   8.955s     waited 319 ms for the last action's change to settle
+   8.968s     snapshot history: screen context changed; discarding 1 snapshots
+   8.968s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+   9.019s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+   9.069s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+   9.137s     tap at (160, 227): the screen changed (sent in 10 ms, waited 52 ms)
+   9.137s   ✓ Tap on id: FirstNameField  502 ms
+   9.137s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+   9.353s     waited 216 ms for the last action's change to settle
+   9.353s     typing 3 characters
+   9.628s     typed with device verification: the screen changed (sent in 91 ms, waited 179 ms)
+   9.628s   ✓ Input text Ada  490 ms
+   9.628s   ▶ Assert that "${FIRST_NAME}", id: FirstNameField is visible  (signup.yaml:27)
+   9.680s     snapshot history: screen context changed; discarding 1 snapshots
+   9.680s     found "Ada", id: FirstNameField: EditText "Ada" #FirstNameField [12,199][308,255]
+   9.680s   ✓ Assert that "Ada", id: FirstNameField is visible  51 ms
+   9.680s   ▶ Tap on id: LastNameField  (signup.yaml:28)
+   9.780s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+   9.818s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+   9.902s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+   9.902s     it was moving: at rest after 83 ms at [12,287][308,343]
+  10.020s     tap at (160, 315): the screen changed (sent in 13 ms, waited 56 ms)
+  10.020s   ✓ Tap on id: LastNameField  339 ms
+  10.020s   ▶ Input text ${LAST_NAME}  (signup.yaml:29)
+  10.138s     waited 118 ms for the last action's change to settle
+  10.216s     typing 5 characters
+  10.493s     typed with device verification: the screen changed (sent in 119 ms, waited 155 ms)
+  10.494s   ✓ Input text Admin  473 ms
+  10.494s   ▶ Assert that "${LAST_NAME}", id: LastNameField is visible  (signup.yaml:30)
+  10.546s     snapshot history: screen context changed; discarding 3 snapshots
+  10.546s     found "Admin", id: LastNameField: EditText "Admin" #LastNameField [12,287][308,343]
+  10.547s   ✓ Assert that "Admin", id: LastNameField is visible  52 ms
+  10.547s   ▶ Hide keyboard  (signup.yaml:31)
+  10.606s     snapshot history: screen context changed; discarding 1 snapshots
+  10.606s   ✓ Hide keyboard  59 ms
+  10.606s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:32)
+  10.606s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.716s     waited 109 ms for a still screen
+  10.773s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.903s     tap at (264, 572): the screen changed (sent in 16 ms, waited 107 ms)
+  10.903s   ✓ Tap on id: ArrowForwardButton  297 ms
+  10.904s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:33)
+  11.034s     waited 130 ms for the last action's change to settle
+  11.280s     snapshot history: screen context changed; discarding 1 snapshots
+  12.530s     snapshot history: screen context changed; discarding 1 snapshots
+  12.573s     snapshot history: screen context changed; discarding 1 snapshots
+  12.573s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498], after 1539 ms and 3 reads
+  12.575s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  12.666s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  12.768s     tap at (160, 474): the screen changed (sent in 4 ms, waited 30 ms, held 42 ms for its new window to take input)
+  12.768s     the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+  12.768s   ✓ Tap on id: TutorialDoneButton  1864 ms
+  12.768s   ▶ Tap on id: CaptureButton  (signup.yaml:34)
+  12.902s     waited 133 ms for the last action's change to settle
+  12.923s     snapshot history: screen context changed; discarding 1 snapshots
+  12.923s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  12.984s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  13.047s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  13.598s     tap at (160, 572): the screen changed (sent in 13 ms, waited 418 ms, held 112 ms for its new window to take input)
+  13.598s   ✓ Tap on id: CaptureButton  829 ms
+  13.598s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:35)
+  13.669s     snapshot history: screen context changed; discarding 1 snapshots
+  13.669s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  13.669s   ✓ Wait until id: ApproveButton is visible  71 ms
+  13.669s   ▶ Tap on id: ApproveButton  (signup.yaml:38)
+  13.823s     waited 154 ms for the last action's change to settle
+  13.834s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  13.885s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  13.935s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  14.009s     tap at (202, 574): the screen changed (sent in 6 ms, waited 30 ms)
+  14.009s   ✓ Tap on id: ApproveButton  339 ms
+  14.009s   ▶ Wait until id: TrackButton is visible  (signup.yaml:39)
+  14.331s     snapshot history: screen context changed; discarding 1 snapshots
+  14.331s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  14.331s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 37
+  14.331s   ✓ Wait until id: TrackButton is visible  322 ms
+  14.331s ✓ Run Sign up  11774 ms
+  14.331s ▶ Run Start capture  (zz-b4-03.yaml:9)
+  14.426s   waited 94 ms for the last action's change to settle
+  14.426s   ▶ Tap on id: TrackButton  (start-capture.yaml:6)
+  14.442s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  14.494s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  14.566s     tap at (160, 539): the screen changed (sent in 4 ms, waited 62 ms)
+  14.566s   ✓ Tap on id: TrackButton  140 ms
+  14.566s   ▶ Wait until id: UserButton_${WALLET} is visible  (start-capture.yaml:7)
+  14.593s     snapshot history: screen context changed; discarding 1 snapshots
+  14.999s     snapshot history: screen context changed; discarding 1 snapshots
+  14.999s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312], after 432 ms and 2 reads
+  15.000s   ✓ Wait until id: UserButton_${WALLET} is visible  433 ms
+  15.000s   ▶ Tap on id: UserButton_${WALLET}  (start-capture.yaml:10)
+  15.133s     waited 133 ms for the last action's change to settle
+  15.133s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  15.218s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  15.417s     tap at (84, 177): the screen changed (sent in 7 ms, waited 188 ms)
+  15.417s   ✓ Tap on id: UserButton_5551230001  417 ms
+  15.417s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:11)
+  15.582s     waited 164 ms for the last action's change to settle
+  15.624s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  15.679s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  15.736s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  15.845s     tap at (264, 572): the screen changed (sent in 4 ms, waited 67 ms)
+  15.845s   ✓ Tap on id: ArrowForwardButton  427 ms
+  15.845s   ▶ Wait until id: OrgNameField is visible  (start-capture.yaml:12)
+  15.856s     snapshot history: screen context changed; discarding 3 snapshots
+  15.856s     found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  15.856s   ✓ Wait until id: OrgNameField is visible  11 ms
+  15.856s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:15)
+  16.032s     waited 175 ms for the last action's change to settle
+  16.041s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  16.094s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  16.144s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  16.263s     tap at (264, 572): the screen changed (sent in 5 ms, waited 69 ms)
+  16.263s   ✓ Tap on id: ArrowForwardButton  406 ms
+  16.263s   ▶ Run flow when id: TutorialDoneButton is visible  (start-capture.yaml:16)
+  16.367s     waited 104 ms for the last action's change to settle
+  17.384s     snapshot history: screen context changed; discarding 1 snapshots
+  17.598s     snapshot history: screen context changed; discarding 1 snapshots
+  17.598s     found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493], after 1231 ms and 2 reads
+  17.598s     ▶ Tap on id: TutorialDoneButton  (start-capture.yaml:19)
+  17.603s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  17.694s       waited 90 ms for a still screen
+  17.816s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  17.817s       it was moving: at rest after 122 ms at [136,445][184,493]
+  17.842s       tap at (160, 469): the screen changed (sent in 8 ms, waited 12 ms)
+  17.842s     ✓ Tap on id: TutorialDoneButton  243 ms
+  17.842s   ✓ Run flow when id: TutorialDoneButton is visible  1578 ms
+  17.842s   ▶ Wait until id: CaptureButton is visible  (start-capture.yaml:20)
+  17.860s     snapshot history: screen context changed; discarding 1 snapshots
+  17.946s     snapshot history: screen context changed; discarding 1 snapshots
+  17.946s     found id: CaptureButton: View #CaptureButton [125,537][195,607], after 104 ms and 2 reads
+  17.946s     the device could not read the root of an app window (1 windows without a root)
+  17.946s   ✓ Wait until id: CaptureButton is visible  104 ms
+  17.946s ✓ Run Start capture  3615 ms
+  17.946s ▶ Tap on id: CaptureButton  (zz-b4-03.yaml:12)
+  18.004s   waited 57 ms for the last action's change to settle
+  18.004s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  18.082s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  18.168s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  18.168s   it was moving: at rest after 160 ms at [125,537][195,607]
+  18.300s   tap at (160, 572): the screen changed (sent in 6 ms, waited 30 ms, held 81 ms for its new window to take input)
+  18.300s ✓ Tap on id: CaptureButton  353 ms
+  18.300s ▶ Wait until id: TutorialDoneButton is visible  (zz-b4-03.yaml:13)
+  18.639s   snapshot history: screen context changed; discarding 1 snapshots
+  20.244s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  23.298s   no change reported by the device for 3s while looking for id: TutorialDoneButton: reading the screen again
+  25.699s   snapshot history: screen context changed; discarding 1 snapshots
+  25.699s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487], after 7398 ms and 5 reads
+  25.699s ✓ Wait until id: TutorialDoneButton is visible  7398 ms
+  25.699s ▶ Tap on id: TutorialDoneButton  (zz-b4-03.yaml:16)
+  25.700s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487]
+  25.750s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487]
+  25.799s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487]
+  25.910s   tap at (160, 463): the screen changed (sent in 3 ms, waited 5 ms, held 96 ms for its new window to take input)
+  25.910s ✓ Tap on id: TutorialDoneButton  211 ms
+  25.910s ▶ Tap on id: NoteButton  (zz-b4-03.yaml:17)
+  26.068s   waited 158 ms for the last action's change to settle
+  26.077s   snapshot history: screen context changed; discarding 1 snapshots
+  26.078s   found id: NoteButton: View #NoteButton [110,38][210,98]
+  26.132s   found id: NoteButton: View #NoteButton [110,38][210,98]
+  26.182s   found id: NoteButton: View #NoteButton [110,38][210,98]
+  26.333s   tap at (160, 68): the screen changed (sent in 3 ms, waited 13 ms, held 127 ms for its new window to take input)
+  26.333s ✓ Tap on id: NoteButton  423 ms
+  26.333s ▶ Tap on id: DialogTextField  (zz-b4-03.yaml:18)
+  26.534s   waited 201 ms for the last action's change to settle
+  26.543s   snapshot history: screen context changed; discarding 1 snapshots
+  26.543s   found id: DialogTextField: EditText #DialogTextField [26,274][294,330]
+  26.593s   found id: DialogTextField: EditText #DialogTextField [26,274][294,330]
+  26.643s   found id: DialogTextField: EditText #DialogTextField [26,274][294,330]
+  26.895s   tap at (160, 302): the screen changed (sent in 8 ms, waited 42 ms, held 166 ms for its new window to take input)
+  26.895s ✓ Tap on id: DialogTextField  561 ms
+  26.895s ▶ Input text Oak by the gate  (zz-b4-03.yaml:19)
+  27.086s   waited 191 ms for the last action's change to settle
+  27.086s   typing 15 characters
+  27.629s   typed with device verification: the screen changed (sent in 535 ms, waited 0 ms)
+  27.629s ✓ Input text Oak by the gate  733 ms
+  27.629s ▶ Assert that "Oak by the gate", id: DialogTextField is visible  (zz-b4-03.yaml:20)
+  27.709s   snapshot history: screen context changed; discarding 1 snapshots
+  27.709s   found "Oak by the gate", id: DialogTextField: EditText "Oak by the gate" #DialogTextField [26,157][294,213]
+  27.709s ✓ Assert that "Oak by the gate", id: DialogTextField is visible  80 ms
+  27.709s ▶ Hide keyboard  (zz-b4-03.yaml:21)
+  27.832s   snapshot history: screen context changed; discarding 1 snapshots
+  27.833s ✓ Hide keyboard  123 ms
+  27.833s ▶ Tap on id: DialogPositiveButton  (zz-b4-03.yaml:22)
+  27.833s   found id: DialogPositiveButton: View #DialogPositiveButton [168,354][216,402]
+  27.903s   waited 70 ms for a still screen
+  27.964s   found id: DialogPositiveButton: View #DialogPositiveButton [168,354][216,402]
+  27.993s   tap at (192, 378): the screen changed (sent in 13 ms, waited 10 ms)
+  27.993s ✓ Tap on id: DialogPositiveButton  160 ms
+  27.993s ▶ Tap on id: ApproveButton  (zz-b4-03.yaml:23)
+  28.154s   waited 161 ms for the last action's change to settle
+  28.165s   snapshot history: screen context changed; discarding 1 snapshots
+  28.165s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  28.215s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  28.269s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  28.459s   tap at (160, 574): the screen changed (sent in 6 ms, waited 47 ms, held 134 ms for its new window to take input)
+  28.459s ✓ Tap on id: ApproveButton  466 ms
+  28.459s ▶ Wait until id: CaptureButton is visible  (zz-b4-03.yaml:24)
+  28.567s   snapshot history: screen context changed; discarding 1 snapshots
+  28.567s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  28.567s ✓ Wait until id: CaptureButton is visible  108 ms
+  28.567s ▶ Tap on id: ArrowBackButton  (zz-b4-03.yaml:27)
+  28.705s   waited 138 ms for the last action's change to settle
+  29.314s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  29.395s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  29.467s   tap at (56, 572): the screen changed (sent in 4 ms, waited 63 ms)
+  29.467s ✓ Tap on id: ArrowBackButton  899 ms
+  29.467s ▶ Wait until id: SettingsButton is visible  (zz-b4-03.yaml:28)
+  29.545s   snapshot history: screen context changed; discarding 2 snapshots
+  29.546s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  29.546s ✓ Wait until id: SettingsButton is visible  78 ms
+  29.546s ▶ Tap on id: SettingsButton  (zz-b4-03.yaml:31)
+  29.687s   waited 141 ms for the last action's change to settle
+  29.698s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  29.749s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  29.800s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  29.810s   tap at (39, 68): the screen changed (sent in 3 ms, waited 2 ms)
+  29.810s ✓ Tap on id: SettingsButton  264 ms
+  29.810s ▶ Tap on id: SettingsEditTrees  (zz-b4-03.yaml:32)
+  29.932s   waited 121 ms for the last action's change to settle
+  30.021s   snapshot history: screen context changed; discarding 1 snapshots
+  30.021s   found id: SettingsEditTrees: View #SettingsEditTrees [20,209][300,257]
+  30.218s   waited 197 ms for a still screen
+  30.228s   found id: SettingsEditTrees: View #SettingsEditTrees [20,209][300,257]
+  30.289s   tap at (160, 233): the screen changed (sent in 5 ms, waited 47 ms)
+  30.289s ✓ Tap on id: SettingsEditTrees  478 ms
+  30.289s ▶ Tap on id: UserButton_5551230001  (zz-b4-03.yaml:33)
+  30.511s   waited 222 ms for the last action's change to settle
+  30.522s   snapshot history: screen context changed; discarding 1 snapshots
+  30.522s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  30.572s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  30.622s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  30.691s   tap at (84, 177): the screen changed (sent in 3 ms, waited 20 ms)
+  30.691s ✓ Tap on id: UserButton_5551230001  402 ms
+  30.691s ▶ Tap on id: ArrowForwardButton  (zz-b4-03.yaml:34)
+  30.857s   waited 165 ms for the last action's change to settle
+  30.868s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  30.921s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  30.972s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  31.037s   tap at (264, 572): the screen changed (sent in 4 ms, waited 56 ms)
+  31.037s ✓ Tap on id: ArrowForwardButton  346 ms
+  31.037s ▶ Tap on id: TreeButton_0  (zz-b4-03.yaml:35)
+  31.257s   waited 219 ms for the last action's change to settle
+  31.299s   snapshot history: screen context changed; discarding 2 snapshots
+  31.299s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  31.351s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  31.403s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  31.437s   tap at (84, 265): the screen changed (sent in 6 ms, waited 24 ms)
+  31.437s ✓ Tap on id: TreeButton_0  399 ms
+  31.437s ▶ Tap on id: ArrowForwardButton  (zz-b4-03.yaml:36)
+  31.599s   waited 161 ms for the last action's change to settle
+  31.641s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  31.694s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  31.745s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  31.794s   tap at (264, 572): the screen changed (sent in 3 ms, waited 41 ms)
+  31.794s ✓ Tap on id: ArrowForwardButton  356 ms
+  31.794s ▶ Scroll DOWN until id: TreeNoteField is visible  (zz-b4-03.yaml:37)
+  32.049s   waited 254 ms for the last action's change to settle
+  32.057s   snapshot history: screen context changed; discarding 2 snapshots
+  32.143s   drag 1: (160, 487) -> (160, 153); target not on screen yet, 6 texts seen
+  32.355s   in view after 1 swipes, 306 ms: EditText "Oak by the gate" #TreeNoteField [20,339][300,459]
+  32.355s ✓ Scroll DOWN until id: TreeNoteField is visible  561 ms
+  32.355s ▶ Assert that "Oak by the gate", id: TreeNoteField is visible  (zz-b4-03.yaml:39)
+  32.443s   found "Oak by the gate", id: TreeNoteField: EditText "Oak by the gate" #TreeNoteField [20,339][300,459]
+  32.443s ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  88 ms
+  32.443s PASSED in 32.443s
