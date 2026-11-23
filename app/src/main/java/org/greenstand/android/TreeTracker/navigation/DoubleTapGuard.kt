@@ -57,12 +57,6 @@ class DoubleTapGuard(
      * Whether the latest press is the second half of a double tap that navigated to this screen.
      * Each check uses up the recorded press, so an action with no press of its own (the keyboard's
      * Go) is judged as happening now rather than by an older tap on the screen.
-     *
-     * When the navigator knows the last touch before it navigated ([recordPressesFor] on the
-     * navigation host), the press is judged against it: a double tap's second tap goes down within
-     * the double-tap timeout of the first tap's release. So a quick first tap after a navigation
-     * that no recent tap caused (signup returning from the camera to Add org, #1450) is let
-     * through. Without that, it falls back to the time since the navigation.
      */
     fun isSecondTapOfDoubleTap(navigator: Navigator): Boolean {
         val pressUptimeMs = lastPressUptimeMs
@@ -80,13 +74,6 @@ class DoubleTapGuard(
 @Composable
 fun rememberDoubleTapGuard(): DoubleTapGuard = remember { DoubleTapGuard() }
 
-/**
- * Records every finger down, and its release, inside it with [Navigator.recordPress], without
- * consuming anything. Put it once on the root that hosts the navigation, so [DoubleTapGuard] knows
- * the tap that led to each navigation, on any screen. The release counts because Android's
- * double-tap timeout runs from the first tap's up; a click navigates on that up, after this has
- * seen it (Initial pass).
- */
 fun Modifier.recordPressesFor(navigator: Navigator): Modifier =
     pointerInput(navigator) {
         awaitEachGesture {

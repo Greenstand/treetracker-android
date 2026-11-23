@@ -92,12 +92,8 @@ class DoubleTapGuardTest {
         assertTrue(guard.isSecondTapOfDoubleTap(nav))
     }
 
-    // --- The tap that led to the navigation is known (#1450) ---
-
     @Test
     fun `a first tap soon after a navigation that no recent tap caused is meant for the screen`() {
-        // Signup: the selfie button is the last tap in the app, then the camera and a DB write
-        // run before signup opens Add org. Next goes down 100 ms after Add org appears.
         val clock = FakeClockForGuard()
         val nav = Navigator(mutableListOf(UserSelectRoute, SignupFlowRoute), clock = clock::now)
         val guard = DoubleTapGuard(uptimeMillis = clock::now, doubleTapTimeoutMs = { 300L })
@@ -112,7 +108,6 @@ class DoubleTapGuardTest {
 
     @Test
     fun `the second tap of a double tap is still dropped when the tap that navigated is known`() {
-        // User select's Next navigates at once; the second tap lands on Add org's Next 120 ms later.
         val clock = FakeClockForGuard()
         val nav = Navigator(mutableListOf(UserSelectRoute), clock = clock::now)
         val guard = DoubleTapGuard(uptimeMillis = clock::now, doubleTapTimeoutMs = { 300L })
@@ -128,8 +123,6 @@ class DoubleTapGuardTest {
 
     @Test
     fun `a double tap whose navigation waited on async work is judged from the first tap`() {
-        // The first tap went down, the screen took 250 ms to navigate, and the second tap went
-        // down 280 ms after the first: within the timeout of the tap, so it is still dropped.
         val clock = FakeClockForGuard()
         val nav = Navigator(mutableListOf(UserSelectRoute), clock = clock::now)
         val guard = DoubleTapGuard(uptimeMillis = clock::now, doubleTapTimeoutMs = { 300L })

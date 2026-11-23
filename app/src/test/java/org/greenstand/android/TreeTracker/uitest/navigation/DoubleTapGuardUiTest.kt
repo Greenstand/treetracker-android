@@ -35,11 +35,6 @@ import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/**
- * [recordPressesFor] and [rememberDoubleTapGuard] together, with real touch events: a button that
- * navigates sits above a guarded "Next" button, inside a root that records presses (like Host).
- * Each test injects both taps as one gesture sequence, so their event times are exact.
- */
 class DoubleTapGuardUiTest : ComposeUiTest() {
     private var guardedClicks = 0
 
@@ -67,7 +62,6 @@ class DoubleTapGuardUiTest : ComposeUiTest() {
             .fetchSemanticsNode()
             .boundsInRoot.center
 
-    /** Taps GO (held [holdMs]), waits [gapMs] after releasing it, then taps NEXT. */
     private fun tapGoThenNext(
         holdMs: Long,
         gapMs: Long,
@@ -97,8 +91,6 @@ class DoubleTapGuardUiTest : ComposeUiTest() {
 
     @Test
     fun `the double-tap timeout runs from the first tap's release, so a held first tap still counts`() {
-        // Down to down is 400 ms, but the second tap goes down 250 ms after the first is released:
-        // still a double tap (Android's double-tap timeout runs from the first tap's up).
         tapGoThenNext(holdMs = 150, gapMs = 250)
 
         assertEquals(0, guardedClicks)
