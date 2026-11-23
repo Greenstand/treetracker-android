@@ -113,6 +113,7 @@ class CaptureFlowNavigationControllerTest {
         CaptureFlowScopeManager.close()
         CaptureSetupScopeManager.close()
         stopKoin()
+        assertEquals("Session ends still running after the test", 0, sessionEndsInFlight.get())
     }
 
     private fun controllerFor(captureFlow: List<Destination>) =
