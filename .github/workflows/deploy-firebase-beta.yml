@@ -8,6 +8,14 @@ on:
         required: true
         type: string
         default: master
+      build_variant:
+        description: "App variant to ship: beta = test environment, dev = dev environment"
+        required: true
+        type: choice
+        options:
+          - beta
+          - dev
+        default: beta
       group:
         description: "Tester group to deploy to"
         required: true
@@ -24,10 +32,10 @@ on:
 
 jobs:
   build:
-    name: Build beta APK
+    name: Build APK
     uses: ./.github/workflows/build.yml
     with:
-      build_variant: beta
+      build_variant: ${{ inputs.build_variant }}
       source_ref: ${{ inputs.branch }}
       upload_artifact: true
     secrets: inherit
@@ -47,7 +55,7 @@ jobs:
       - name: Download APK artifact
         uses: actions/download-artifact@v4
         with:
-          name: app-beta
+          name: app-${{ inputs.build_variant }}
 
       - name: Resolve APK path
         id: resolve-apk
@@ -72,7 +80,9 @@ jobs:
       - name: Deploy to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          appId: 1:422699885542:android:aab16ef8fc4e5968a0ec27
+          # Each variant has its own package name and its own Firebase app (ids from app/google-services.json):
+          # beta -> org.greenstand.android.TreeTracker.test, dev -> org.greenstand.android.TreeTracker.dev
+          appId: ${{ inputs.build_variant == 'dev' && '1:422699885542:android:0d0fe64a4522d006a0ec27' || '1:422699885542:android:aab16ef8fc4e5968a0ec27' }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           groups: ${{ inputs.group }}
           releaseNotes: ${{ github.event.inputs.release_notes }}
