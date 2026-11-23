@@ -222,6 +222,11 @@ run_once() {
     rec_args=(--record "--annotate")
     [[ $ANNOTATE != 1 ]] && rec_args=(--record "--annotate=$ANNOTATE")
   fi
+  # TEMP (baseline branch only): put tb's helper back to "never installed", as on the first
+  # flow after boot, when e2e/ci/fresh-agent.txt says 1.
+  if [[ $(cat e2e/ci/fresh-agent.txt 2>/dev/null) == 1 ]]; then
+    "$ADB" -s "$SERIAL" shell 'pids=$(pidof tb-agent) && kill $pids; pm uninstall dev.testbuddy.agent; settings delete secure enabled_accessibility_services; rm -f /data/local/tmp/tb-agent-*.apk; true' || true
+  fi
   "$ADB" -s "$SERIAL" logcat -b all -c || true
   [[ $RECORD == 1 ]] && start_recording
   local begin
