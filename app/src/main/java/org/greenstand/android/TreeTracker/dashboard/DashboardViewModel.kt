@@ -28,7 +28,6 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.analytics.Analytics
 import org.greenstand.android.TreeTracker.background.NotificationConstants
@@ -206,13 +205,11 @@ class DashboardViewModel(
             val isOrgButtonEnabled = orgRepo.getOrgs().size > 1
             val hasUnreadMessages = messagesRepo.checkForUnreadMessages()
 
-            withContext(Dispatchers.Main) {
-                updateState {
-                    copy(
-                        isOrgButtonEnabled = isOrgButtonEnabled,
-                        showUnreadMessageNotification = hasUnreadMessages,
-                    )
-                }
+            updateState {
+                copy(
+                    isOrgButtonEnabled = isOrgButtonEnabled,
+                    showUnreadMessageNotification = hasUnreadMessages,
+                )
             }
         }
     }
