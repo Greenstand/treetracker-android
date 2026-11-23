@@ -319,6 +319,22 @@ class UserSelectViewModelTest {
         }
 
     @Test
+    fun `GIVEN a selected user WHEN the admin request is still uploading THEN state is already ACCOUNTDELETEDLOCALLY`() =
+        runTest {
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            val viewModel = createViewModel()
+            var stateDuringSync: DeleteProfileState? = null
+            coEvery { messagesRepo.syncMessages() } coAnswers {
+                stateDuringSync = viewModel.state.value.deleteProfileState
+            }
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, stateDuringSync)
+        }
+
+    @Test
     fun `GIVEN a selected user WHEN delete fails THEN state is unchanged and no admin message is sent`() =
         runTest {
             coEvery { userRepo.deleteUser("0712345678") } returns false
