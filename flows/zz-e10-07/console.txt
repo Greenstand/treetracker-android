@@ -1,0 +1,60 @@
+▶ E10 rep 07 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.8s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  3.1s
+    ✓ Tap on id: LanguageOption_ENGLISH  371ms
+    ✓ Tap on id: ArrowForwardButton  611ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.1s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  189ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  409ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.6s
+    ✓ Input text 5551230001  990ms
+    ✓ Hide keyboard  138ms
+    ✓ Tap on id: ArrowForwardButton  418ms
+    ✓ Tap on id: FirstNameField  616ms
+    ✓ Input text Ada  808ms
+    ✓ Tap on id: LastNameField  412ms
+    ✓ Input text Admin  973ms
+    ✓ Hide keyboard  116ms
+    ✓ Tap on id: ArrowForwardButton  710ms
+    ✓ Tap on id: TutorialDoneButton  2.0s
+    ✓ Tap on id: CaptureButton  1.5s
+    ✓ Wait until id: ApproveButton is visible  64ms
+    ✓ Tap on id: ApproveButton  357ms
+    ✓ Wait until id: TrackButton is visible  648ms
+  ✓ Run Sign up  16.8s
+  ✓ Tap on id: SettingsButton  783ms
+  ✓ Tap on id: SettingsProfile  547ms
+  ✓ Tap on id: UserButton_5551230001  1.4s
+  ✓ Tap on id: ArrowForwardButton  497ms
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  202ms
+  ✓ Tap on id: EditProfileButton  467ms
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  492ms
+  ✓ Tap on id: ProfileFirstName  459ms
+  ✓ Erase 50 characters  694ms
+  ✓ Input text Grace  344ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  298ms
+  ✓ Tap on id: ProfileLastName  376ms
+  ✓ Erase 50 characters  812ms
+  ✓ Input text Hopper  344ms
+  ✓ Hide keyboard  117ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  340ms
+  ✓ Tap on id: SaveProfileButton  269ms
+  ✓ Assert that id: SaveProfileButton is not visible  152ms
+  ✓ Scroll UP until "Grace", id: ProfileFirstName is visible  51ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  446ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.4s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+  ✓ Wait until id: TrackButton is visible  3.5s
+  ✓ Tap on id: SettingsButton  161ms
+  ✓ Tap on id: SettingsProfile  986ms
+  ✓ Tap on id: UserButton_5551230001  1.5s
+  ✓ Tap on id: ArrowForwardButton  442ms
+  ✓ Scroll DOWN until "Grace", id: ProfileFirstName is visible  580ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  56ms
+  ✓ Assert that "Hopper", id: ProfileLastName is visible  16ms
+  ✓ Scroll DOWN until id: ProfileWallet is visible  16ms
+  ✓ Assert that "5551230001", id: ProfileWallet is visible  15ms
+✓ E10 rep 07 passed in 42.3s
+
+1 passed in 44.3s

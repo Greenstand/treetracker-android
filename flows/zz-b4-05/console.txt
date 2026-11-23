@@ -1,0 +1,58 @@
+▶ B4 rep 05 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  5.1s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  3.2s
+    ✓ Tap on id: LanguageOption_ENGLISH  384ms
+    ✓ Tap on id: ArrowForwardButton  553ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.2s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  179ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  353ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.5s
+    ✓ Input text 5551230001  1.0s
+    ✓ Hide keyboard  150ms
+    ✓ Tap on id: ArrowForwardButton  258ms
+    ✓ Tap on id: FirstNameField  608ms
+    ✓ Input text Ada  626ms
+    ✓ Tap on id: LastNameField  647ms
+    ✓ Input text Admin  640ms
+    ✓ Hide keyboard  206ms
+    ✓ Tap on id: ArrowForwardButton  345ms
+    ✓ Tap on id: TutorialDoneButton  1.7s
+    ✓ Tap on id: CaptureButton  1.8s
+    ✓ Wait until id: ApproveButton is visible  35ms
+    ✓ Tap on id: ApproveButton  389ms
+    ✓ Wait until id: TrackButton is visible  661ms
+  ✓ Run Sign up  16.2s
+    ✓ Tap on id: TrackButton  269ms
+    ✓ Wait until id: UserButton_${WALLET} is visible  756ms
+    ✓ Tap on id: UserButton_5551230001  492ms
+    ✓ Tap on id: ArrowForwardButton  504ms
+    ✓ Wait until id: OrgNameField is visible  42ms
+    ✓ Tap on id: ArrowForwardButton  433ms
+      ✓ Tap on id: TutorialDoneButton  151ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.6s
+    ✓ Wait until id: CaptureButton is visible  335ms
+  ✓ Run Start capture  4.5s
+  ✓ Tap on id: CaptureButton  722ms
+  ✓ Wait until id: TutorialDoneButton is visible  8.0s
+  ✓ Tap on id: TutorialDoneButton  351ms
+  ✓ Tap on id: NoteButton  596ms
+  ✓ Tap on id: DialogTextField  556ms
+  ✓ Input text Oak by the gate  1.2s
+  ✓ Hide keyboard  224ms
+  ✓ Tap on id: DialogPositiveButton  256ms
+  ✓ Tap on id: ApproveButton  529ms
+  ✓ Wait until id: CaptureButton is visible  273ms
+  ✓ Tap on id: ArrowBackButton  1.5s
+  ✓ Wait until id: SettingsButton is visible  104ms
+  ✓ Tap on id: SettingsButton  341ms
+  ✓ Tap on id: SettingsEditTrees  729ms
+  ✓ Tap on id: UserButton_5551230001  464ms
+  ✓ Tap on id: ArrowForwardButton  464ms
+  ✓ Tap on id: TreeButton_0  661ms
+  ✓ Tap on id: ArrowForwardButton  444ms
+  ✓ Scroll DOWN until id: TreeNoteField is visible  948ms
+  ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  72ms
+✓ B4 rep 05 passed in 44.2s
+
+1 passed in 46.3s
