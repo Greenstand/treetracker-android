@@ -156,6 +156,19 @@ class DoubleTapGuardTest {
         assertFalse(guard.isSecondTapOfDoubleTap(nav))
     }
 
+    @Test
+    fun `a quick first tap after a navigation the recreated host saw no tap before is meant for the screen`() {
+        val clock = FakeClockForGuard()
+        val nav = Navigator(mutableListOf(UserSelectRoute, SignupFlowRoute), clock = clock::now)
+        val guard = DoubleTapGuard(uptimeMillis = clock::now, doubleTapTimeoutMs = { 300L })
+        nav.navigate(AddOrgRoute)
+        clock.time += 100
+        nav.recordPress(clock.time)
+        guard.recordPress(clock.time)
+
+        assertFalse(guard.isSecondTapOfDoubleTap(nav))
+    }
+
     private class FakeClockForGuard {
         var time = 1_000L
 
