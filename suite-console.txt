@@ -1,0 +1,1420 @@
+▶ B4 rep 01 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.5s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  3.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.4s
+    ✓ Tap on id: ArrowForwardButton  998ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.9s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  12ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  880ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  937ms
+    ✓ Hide keyboard  131ms
+    ✓ Tap on id: ArrowForwardButton  250ms
+    ✓ Tap on id: FirstNameField  705ms
+    ✓ Input text Ada  970ms
+    ✓ Tap on id: LastNameField  1.3s
+    ✓ Input text Admin  436ms
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  336ms
+    ✓ Tap on id: TutorialDoneButton  2.0s
+    ✓ Tap on id: CaptureButton  897ms
+    ✓ Wait until id: ApproveButton is visible  66ms
+    ✓ Tap on id: ApproveButton  325ms
+    ✓ Wait until id: TrackButton is visible  369ms
+  ✓ Run Sign up  18.1s
+    ✓ Tap on id: TrackButton  1.2s
+    ✓ Wait until id: UserButton_${WALLET} is visible  102ms
+    ✓ Tap on id: UserButton_5551230001  228ms
+    ✓ Tap on id: ArrowForwardButton  1.3s
+    ✓ Wait until id: OrgNameField is visible  19ms
+    ✓ Tap on id: ArrowForwardButton  174ms
+      ✓ Tap on id: TutorialDoneButton  259ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.2s
+    ✓ Wait until id: CaptureButton is visible  122ms
+  ✓ Run Start capture  4.3s
+  ✓ Tap on id: CaptureButton  1.3s
+  ✓ Wait until id: TutorialDoneButton is visible  6.4s
+  ✓ Tap on id: TutorialDoneButton  214ms
+  ✓ Tap on id: NoteButton  470ms
+  ✓ Tap on id: DialogTextField  586ms
+  ✓ Input text Oak by the gate  2.5s
+  ✓ Hide keyboard  81ms
+  ✓ Tap on id: DialogPositiveButton  199ms
+  ✓ Tap on id: ApproveButton  466ms
+  ✓ Wait until id: CaptureButton is visible  144ms
+  ✓ Tap on id: ArrowBackButton  864ms
+  ✓ Wait until id: SettingsButton is visible  58ms
+  ✓ Tap on id: SettingsButton  223ms
+  ✓ Tap on id: SettingsEditTrees  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  634ms
+  ✓ Tap on id: TreeButton_0  1.2s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  193ms
+  ✗ Assert that "Oak by the gate", id: TreeNoteField is visible  17.0s
+      Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+✗ B4 rep 01 failed in 1m3s on sdk gphone64 x86 64
+  Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+  similar: Field "OOak by the gate" #TreeNoteField
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 16 elements
+    @14 Text "Tree Detail"
+    column scrollable (more above, more below):
+      @1 Text "3fbb3c46-b148-4bb6-9321-11ab4aac2151" #TreeUuid
+      @2 Text "Latitude"
+      @3 Text "-3.5" #TreeLatitude
+      @4 Text "Longitude"
+      @5 Text "37.299998333333335" #TreeLongitude
+      @6 Text "Created"
+      @7 Text "2026-11-23T05:05:16.296Z" #TreeCreatedAt
+      @8 Text "Uploaded"
+      @9 Text "No" #TreeUploaded
+      @10 Text "Note"
+      @11 Field "OOak by the gate" #TreeNoteField
+      @12 Button "Save" #SaveNoteButton
+      @13 Button #DeleteTreeButton partly off-screen
+    @15 Button #ArrowBackButton
+    @16 Button "D" #DebugOverlayMenuButton
+  debug: build/flow-results/suite/2026-11-23_050435/B4_rep_01 (log.txt: what tb did, step by step)
+▶ B4 rep 02 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.9s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  259ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  255ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  905ms
+    ✓ Hide keyboard  130ms
+    ✓ Tap on id: ArrowForwardButton  192ms
+    ✓ Tap on id: FirstNameField  501ms
+    ✓ Input text Ada  884ms
+    ✓ Tap on id: LastNameField  1.1s
+    ✓ Input text Admin  455ms
+    ✓ Hide keyboard  77ms
+    ✓ Tap on id: ArrowForwardButton  288ms
+    ✓ Tap on id: TutorialDoneButton  1.7s
+    ✓ Tap on id: CaptureButton  846ms
+    ✓ Wait until id: ApproveButton is visible  27ms
+    ✓ Tap on id: ApproveButton  259ms
+    ✓ Wait until id: TrackButton is visible  287ms
+  ✓ Run Sign up  14.2s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  19ms
+    ✓ Tap on id: UserButton_5551230001  350ms
+    ✓ Tap on id: ArrowForwardButton  1.4s
+    ✓ Wait until id: OrgNameField is visible  9ms
+    ✓ Tap on id: ArrowForwardButton  135ms
+      ✓ Tap on id: TutorialDoneButton  541ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.1s
+    ✓ Wait until id: CaptureButton is visible  113ms
+  ✓ Run Start capture  4.3s
+  ✓ Tap on id: CaptureButton  1.3s
+  ✓ Wait until id: TutorialDoneButton is visible  7.4s
+  ✓ Tap on id: TutorialDoneButton  247ms
+  ✓ Tap on id: NoteButton  487ms
+  ✓ Tap on id: DialogTextField  599ms
+  ✓ Input text Oak by the gate  742ms
+  ✓ Hide keyboard  86ms
+  ✓ Tap on id: DialogPositiveButton  188ms
+  ✓ Tap on id: ApproveButton  461ms
+  ✓ Wait until id: CaptureButton is visible  126ms
+  ✓ Tap on id: ArrowBackButton  794ms
+  ✓ Wait until id: SettingsButton is visible  9ms
+  ✓ Tap on id: SettingsButton  291ms
+  ✓ Tap on id: SettingsEditTrees  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  711ms
+  ✓ Tap on id: TreeButton_0  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  194ms
+  ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  13ms
+✓ B4 rep 02 passed in 39.9s
+▶ B4 rep 03 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  244ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.7s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  12ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  247ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  857ms
+    ✓ Hide keyboard  87ms
+    ✓ Tap on id: ArrowForwardButton  233ms
+    ✓ Tap on id: FirstNameField  528ms
+    ✓ Input text Ada  866ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  397ms
+    ✓ Hide keyboard  67ms
+    ✓ Tap on id: ArrowForwardButton  281ms
+    ✓ Tap on id: TutorialDoneButton  1.5s
+    ✓ Tap on id: CaptureButton  849ms
+    ✓ Wait until id: ApproveButton is visible  29ms
+    ✓ Tap on id: ApproveButton  354ms
+    ✓ Wait until id: TrackButton is visible  354ms
+  ✓ Run Sign up  14.0s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  46ms
+    ✓ Tap on id: UserButton_5551230001  467ms
+    ✓ Tap on id: ArrowForwardButton  1.2s
+    ✓ Wait until id: OrgNameField is visible  14ms
+    ✓ Tap on id: ArrowForwardButton  125ms
+      ✓ Tap on id: TutorialDoneButton  208ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.1s
+    ✓ Wait until id: CaptureButton is visible  109ms
+  ✓ Run Start capture  4.2s
+  ✓ Tap on id: CaptureButton  1.6s
+  ✓ Wait until id: TutorialDoneButton is visible  7.1s
+  ✓ Tap on id: TutorialDoneButton  246ms
+  ✓ Tap on id: NoteButton  475ms
+  ✓ Tap on id: DialogTextField  581ms
+  ✓ Input text Oak by the gate  669ms
+  ✓ Hide keyboard  102ms
+  ✓ Tap on id: DialogPositiveButton  214ms
+  ✓ Tap on id: ApproveButton  426ms
+  ✓ Wait until id: CaptureButton is visible  99ms
+  ✓ Tap on id: ArrowBackButton  917ms
+  ✓ Wait until id: SettingsButton is visible  10ms
+  ✓ Tap on id: SettingsButton  271ms
+  ✓ Tap on id: SettingsEditTrees  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  623ms
+  ✓ Tap on id: TreeButton_0  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  182ms
+  ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  15ms
+✓ B4 rep 03 passed in 38.8s
+▶ B4 rep 04 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  212ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  252ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  850ms
+    ✓ Hide keyboard  76ms
+    ✓ Tap on id: ArrowForwardButton  246ms
+    ✓ Tap on id: FirstNameField  424ms
+    ✓ Input text Ada  884ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  468ms
+    ✓ Hide keyboard  74ms
+    ✓ Tap on id: ArrowForwardButton  294ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  830ms
+    ✓ Wait until id: ApproveButton is visible  19ms
+    ✓ Tap on id: ApproveButton  319ms
+    ✓ Wait until id: TrackButton is visible  296ms
+  ✓ Run Sign up  13.9s
+    ✓ Tap on id: TrackButton  1.2s
+    ✓ Wait until id: UserButton_${WALLET} is visible  32ms
+    ✓ Tap on id: UserButton_5551230001  371ms
+    ✓ Tap on id: ArrowForwardButton  1.3s
+    ✓ Wait until id: OrgNameField is visible  12ms
+    ✓ Tap on id: ArrowForwardButton  175ms
+      ✓ Tap on id: TutorialDoneButton  470ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.1s
+    ✓ Wait until id: CaptureButton is visible  66ms
+  ✓ Run Start capture  4.2s
+  ✓ Tap on id: CaptureButton  1.3s
+  ✓ Wait until id: TutorialDoneButton is visible  7.4s
+  ✓ Tap on id: TutorialDoneButton  228ms
+  ✓ Tap on id: NoteButton  473ms
+  ✓ Tap on id: DialogTextField  564ms
+  ✓ Input text Oak by the gate  675ms
+  ✓ Hide keyboard  100ms
+  ✓ Tap on id: DialogPositiveButton  197ms
+  ✓ Tap on id: ApproveButton  462ms
+  ✓ Wait until id: CaptureButton is visible  102ms
+  ✓ Tap on id: ArrowBackButton  876ms
+  ✓ Wait until id: SettingsButton is visible  35ms
+  ✓ Tap on id: SettingsButton  244ms
+  ✓ Tap on id: SettingsEditTrees  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  638ms
+  ✓ Tap on id: TreeButton_0  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  184ms
+  ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  13ms
+✓ B4 rep 04 passed in 38.7s
+▶ B4 rep 05 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  250ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  281ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.4s
+    ✓ Input text 5551230001  812ms
+    ✓ Hide keyboard  74ms
+    ✓ Tap on id: ArrowForwardButton  252ms
+    ✓ Tap on id: FirstNameField  471ms
+    ✓ Input text Ada  893ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  430ms
+    ✓ Hide keyboard  89ms
+    ✓ Tap on id: ArrowForwardButton  280ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  856ms
+    ✓ Wait until id: ApproveButton is visible  25ms
+    ✓ Tap on id: ApproveButton  279ms
+    ✓ Wait until id: TrackButton is visible  417ms
+  ✓ Run Sign up  14.1s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  62ms
+    ✓ Tap on id: UserButton_5551230001  369ms
+    ✓ Tap on id: ArrowForwardButton  1.3s
+    ✓ Wait until id: OrgNameField is visible  13ms
+    ✓ Tap on id: ArrowForwardButton  121ms
+      ✓ Tap on id: TutorialDoneButton  352ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.2s
+    ✓ Wait until id: CaptureButton is visible  60ms
+  ✓ Run Start capture  4.2s
+  ✓ Tap on id: CaptureButton  1.3s
+  ✓ Wait until id: TutorialDoneButton is visible  7.4s
+  ✓ Tap on id: TutorialDoneButton  236ms
+  ✓ Tap on id: NoteButton  474ms
+  ✓ Tap on id: DialogTextField  566ms
+  ✓ Input text Oak by the gate  2.2s
+  ✓ Hide keyboard  64ms
+  ✓ Tap on id: DialogPositiveButton  194ms
+  ✓ Tap on id: ApproveButton  464ms
+  ✓ Wait until id: CaptureButton is visible  142ms
+  ✓ Tap on id: ArrowBackButton  861ms
+  ✓ Wait until id: SettingsButton is visible  44ms
+  ✓ Tap on id: SettingsButton  279ms
+  ✓ Tap on id: SettingsEditTrees  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  562ms
+  ✓ Tap on id: TreeButton_0  1.2s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  178ms
+  ✗ Assert that "Oak by the gate", id: TreeNoteField is visible  17.0s
+      Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+✗ B4 rep 05 failed in 57.4s on sdk gphone64 x86 64
+  Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+  similar: Field "OOak by the gate" #TreeNoteField
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 15 elements
+    @13 Text "Tree Detail"
+    column scrollable (more above, 1 more below):
+      @1 Text "22d21d70-d54c-486c-b581-cf418d2e34b4" #TreeUuid
+      @2 Text "Latitude"
+      @3 Text "-3.5" #TreeLatitude
+      @4 Text "Longitude"
+      @5 Text "37.299998333333335" #TreeLongitude
+      @6 Text "Created"
+      @7 Text "2026-11-23T05:08:11.329Z" #TreeCreatedAt
+      @8 Text "Uploaded"
+      @9 Text "No" #TreeUploaded
+      @10 Text "Note"
+      @11 Field "OOak by the gate" #TreeNoteField
+      @12 Button "Save" #SaveNoteButton
+    @14 Button #ArrowBackButton
+    @15 Button "D" #DebugOverlayMenuButton
+  debug: build/flow-results/suite/2026-11-23_050435/B4_rep_05 (log.txt: what tb did, step by step)
+▶ B4 rep 06 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  198ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  250ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  850ms
+    ✓ Hide keyboard  100ms
+    ✓ Tap on id: ArrowForwardButton  244ms
+    ✓ Tap on id: FirstNameField  430ms
+    ✓ Input text Ada  883ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  462ms
+    ✓ Hide keyboard  88ms
+    ✓ Tap on id: ArrowForwardButton  288ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  908ms
+    ✓ Wait until id: ApproveButton is visible  14ms
+    ✓ Tap on id: ApproveButton  331ms
+    ✓ Wait until id: TrackButton is visible  264ms
+  ✓ Run Sign up  14.0s
+    ✓ Tap on id: TrackButton  1.2s
+    ✓ Wait until id: UserButton_${WALLET} is visible  24ms
+    ✓ Tap on id: UserButton_5551230001  416ms
+    ✓ Tap on id: ArrowForwardButton  1.2s
+    ✓ Wait until id: OrgNameField is visible  11ms
+    ✓ Tap on id: ArrowForwardButton  163ms
+      ✓ Tap on id: TutorialDoneButton  406ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.2s
+    ✓ Wait until id: CaptureButton is visible  19ms
+  ✓ Run Start capture  4.2s
+  ✓ Tap on id: CaptureButton  1.4s
+  ✓ Wait until id: TutorialDoneButton is visible  6.3s
+  ✓ Tap on id: TutorialDoneButton  274ms
+  ✓ Tap on id: NoteButton  397ms
+  ✓ Tap on id: DialogTextField  631ms
+  ✓ Input text Oak by the gate  2.6s
+  ✓ Hide keyboard  67ms
+  ✓ Tap on id: DialogPositiveButton  192ms
+  ✓ Tap on id: ApproveButton  461ms
+  ✓ Wait until id: CaptureButton is visible  140ms
+  ✓ Tap on id: ArrowBackButton  964ms
+  ✓ Wait until id: SettingsButton is visible  56ms
+  ✓ Tap on id: SettingsButton  233ms
+  ✓ Tap on id: SettingsEditTrees  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  440ms
+  ✓ Tap on id: TreeButton_0  1.2s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  178ms
+  ✗ Assert that "Oak by the gate", id: TreeNoteField is visible  17.0s
+      Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+✗ B4 rep 06 failed in 56.6s on sdk gphone64 x86 64
+  Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+  similar: Field "OOak by the gate" #TreeNoteField
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 16 elements
+    @14 Text "Tree Detail"
+    column scrollable (more above, more below):
+      @1 Text "d18ecbfc-188f-444f-bde8-3e24b72a1963" #TreeUuid
+      @2 Text "Latitude"
+      @3 Text "-3.5" #TreeLatitude
+      @4 Text "Longitude"
+      @5 Text "37.299998333333335" #TreeLongitude
+      @6 Text "Created"
+      @7 Text "2026-11-23T05:09:07.336Z" #TreeCreatedAt
+      @8 Text "Uploaded"
+      @9 Text "No" #TreeUploaded
+      @10 Text "Note"
+      @11 Field "OOak by the gate" #TreeNoteField
+      @12 Button "Save" #SaveNoteButton
+      @13 Button #DeleteTreeButton partly off-screen
+    @15 Button #ArrowBackButton
+    @16 Button "D" #DebugOverlayMenuButton
+  debug: build/flow-results/suite/2026-11-23_050435/B4_rep_06 (log.txt: what tb did, step by step)
+▶ B4 rep 07 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  193ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  247ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  886ms
+    ✓ Hide keyboard  68ms
+    ✓ Tap on id: ArrowForwardButton  280ms
+    ✓ Tap on id: FirstNameField  359ms
+    ✓ Input text Ada  851ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  436ms
+    ✓ Hide keyboard  64ms
+    ✓ Tap on id: ArrowForwardButton  275ms
+    ✓ Tap on id: TutorialDoneButton  1.4s
+    ✓ Tap on id: CaptureButton  816ms
+    ✓ Wait until id: ApproveButton is visible  25ms
+    ✓ Tap on id: ApproveButton  301ms
+    ✓ Wait until id: TrackButton is visible  297ms
+  ✓ Run Sign up  13.6s
+    ✓ Tap on id: TrackButton  1.2s
+    ✓ Wait until id: UserButton_${WALLET} is visible  13ms
+    ✓ Tap on id: UserButton_5551230001  743ms
+    ✓ Tap on id: ArrowForwardButton  1.2s
+    ✓ Wait until id: OrgNameField is visible  16ms
+    ✓ Tap on id: ArrowForwardButton  114ms
+      ✓ Tap on id: TutorialDoneButton  412ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.2s
+    ✓ Wait until id: CaptureButton is visible  74ms
+  ✓ Run Start capture  4.6s
+  ✓ Tap on id: CaptureButton  1.3s
+  ✓ Wait until id: TutorialDoneButton is visible  6.4s
+  ✓ Tap on id: TutorialDoneButton  231ms
+  ✓ Tap on id: NoteButton  427ms
+  ✓ Tap on id: DialogTextField  628ms
+  ✓ Input text Oak by the gate  2.4s
+  ✓ Hide keyboard  80ms
+  ✓ Tap on id: DialogPositiveButton  191ms
+  ✓ Tap on id: ApproveButton  471ms
+  ✓ Wait until id: CaptureButton is visible  146ms
+  ✓ Tap on id: ArrowBackButton  992ms
+  ✓ Wait until id: SettingsButton is visible  17ms
+  ✓ Tap on id: SettingsButton  304ms
+  ✓ Tap on id: SettingsEditTrees  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  517ms
+  ✓ Tap on id: TreeButton_0  1.2s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  182ms
+  ✗ Assert that "Oak by the gate", id: TreeNoteField is visible  17.0s
+      Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+✗ B4 rep 07 failed in 56.5s on sdk gphone64 x86 64
+  Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+  similar: Field "OOak by the gate" #TreeNoteField
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 15 elements
+    @13 Text "Tree Detail"
+    column scrollable (more above, 1 more below):
+      @1 Text "0964a4e0-4f76-46e9-9ec3-b0979812efa6" #TreeUuid
+      @2 Text "Latitude"
+      @3 Text "-3.5" #TreeLatitude
+      @4 Text "Longitude"
+      @5 Text "37.299998333333335" #TreeLongitude
+      @6 Text "Created"
+      @7 Text "2026-11-23T05:10:04.345Z" #TreeCreatedAt
+      @8 Text "Uploaded"
+      @9 Text "No" #TreeUploaded
+      @10 Text "Note"
+      @11 Field "OOak by the gate" #TreeNoteField
+      @12 Button "Save" #SaveNoteButton
+    @14 Button #ArrowBackButton
+    @15 Button "D" #DebugOverlayMenuButton
+  debug: build/flow-results/suite/2026-11-23_050435/B4_rep_07 (log.txt: what tb did, step by step)
+▶ B4 rep 08 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  203ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.7s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  282ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.4s
+    ✓ Input text 5551230001  783ms
+    ✓ Hide keyboard  74ms
+    ✓ Tap on id: ArrowForwardButton  228ms
+    ✓ Tap on id: FirstNameField  471ms
+    ✓ Input text Ada  904ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  494ms
+    ✓ Hide keyboard  60ms
+    ✓ Tap on id: ArrowForwardButton  245ms
+    ✓ Tap on id: TutorialDoneButton  1.8s
+    ✓ Tap on id: CaptureButton  787ms
+    ✓ Wait until id: ApproveButton is visible  26ms
+    ✓ Tap on id: ApproveButton  354ms
+    ✓ Wait until id: TrackButton is visible  261ms
+  ✓ Run Sign up  14.0s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  67ms
+    ✓ Tap on id: UserButton_5551230001  317ms
+    ✓ Tap on id: ArrowForwardButton  1.2s
+    ✓ Wait until id: OrgNameField is visible  12ms
+    ✓ Tap on id: ArrowForwardButton  118ms
+      ✓ Tap on id: TutorialDoneButton  380ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.3s
+    ✓ Wait until id: CaptureButton is visible  61ms
+  ✓ Run Start capture  4.3s
+  ✓ Tap on id: CaptureButton  1.6s
+  ✓ Wait until id: TutorialDoneButton is visible  6.1s
+  ✓ Tap on id: TutorialDoneButton  233ms
+  ✓ Tap on id: NoteButton  489ms
+  ✓ Tap on id: DialogTextField  570ms
+  ✓ Input text Oak by the gate  1.1s
+  ✓ Hide keyboard  86ms
+  ✓ Tap on id: DialogPositiveButton  183ms
+  ✓ Tap on id: ApproveButton  479ms
+  ✓ Wait until id: CaptureButton is visible  97ms
+  ✓ Tap on id: ArrowBackButton  976ms
+  ✓ Wait until id: SettingsButton is visible  35ms
+  ✓ Tap on id: SettingsButton  202ms
+  ✓ Tap on id: SettingsEditTrees  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  548ms
+  ✓ Tap on id: TreeButton_0  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  181ms
+  ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  12ms
+✓ B4 rep 08 passed in 38.3s
+▶ B4 rep 09 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  204ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  286ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.4s
+    ✓ Input text 5551230001  856ms
+    ✓ Hide keyboard  65ms
+    ✓ Tap on id: ArrowForwardButton  249ms
+    ✓ Tap on id: FirstNameField  436ms
+    ✓ Input text Ada  906ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  423ms
+    ✓ Hide keyboard  64ms
+    ✓ Tap on id: ArrowForwardButton  275ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  873ms
+    ✓ Wait until id: ApproveButton is visible  31ms
+    ✓ Tap on id: ApproveButton  309ms
+    ✓ Wait until id: TrackButton is visible  298ms
+  ✓ Run Sign up  14.1s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  15ms
+    ✓ Tap on id: UserButton_5551230001  374ms
+    ✓ Tap on id: ArrowForwardButton  1.3s
+    ✓ Wait until id: OrgNameField is visible  12ms
+    ✓ Tap on id: ArrowForwardButton  115ms
+      ✓ Tap on id: TutorialDoneButton  313ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.1s
+    ✓ Wait until id: CaptureButton is visible  76ms
+  ✓ Run Start capture  4.1s
+  ✓ Tap on id: CaptureButton  1.3s
+  ✓ Wait until id: TutorialDoneButton is visible  7.4s
+  ✓ Tap on id: TutorialDoneButton  235ms
+  ✓ Tap on id: NoteButton  469ms
+  ✓ Tap on id: DialogTextField  584ms
+  ✓ Input text Oak by the gate  1.0s
+  ✓ Hide keyboard  71ms
+  ✓ Tap on id: DialogPositiveButton  184ms
+  ✓ Tap on id: ApproveButton  466ms
+  ✓ Wait until id: CaptureButton is visible  141ms
+  ✓ Tap on id: ArrowBackButton  793ms
+  ✓ Wait until id: SettingsButton is visible  70ms
+  ✓ Tap on id: SettingsButton  307ms
+  ✓ Tap on id: SettingsEditTrees  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  573ms
+  ✓ Tap on id: TreeButton_0  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  186ms
+  ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  13ms
+✓ B4 rep 09 passed in 39.2s
+▶ B4 rep 10 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  196ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  262ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  855ms
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  281ms
+    ✓ Tap on id: FirstNameField  439ms
+    ✓ Input text Ada  908ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  496ms
+    ✓ Hide keyboard  67ms
+    ✓ Tap on id: ArrowForwardButton  327ms
+    ✓ Tap on id: TutorialDoneButton  1.7s
+    ✓ Tap on id: CaptureButton  826ms
+    ✓ Wait until id: ApproveButton is visible  32ms
+    ✓ Tap on id: ApproveButton  295ms
+    ✓ Wait until id: TrackButton is visible  272ms
+  ✓ Run Sign up  14.1s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  16ms
+    ✓ Tap on id: UserButton_5551230001  370ms
+    ✓ Tap on id: ArrowForwardButton  1.3s
+    ✓ Wait until id: OrgNameField is visible  13ms
+    ✓ Tap on id: ArrowForwardButton  170ms
+      ✓ Tap on id: TutorialDoneButton  399ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.3s
+    ✓ Wait until id: CaptureButton is visible  67ms
+  ✓ Run Start capture  4.4s
+  ✓ Tap on id: CaptureButton  1.6s
+  ✓ Wait until id: TutorialDoneButton is visible  7.1s
+  ✓ Tap on id: TutorialDoneButton  252ms
+  ✓ Tap on id: NoteButton  442ms
+  ✓ Tap on id: DialogTextField  627ms
+  ✓ Input text Oak by the gate  1.0s
+  ✓ Hide keyboard  85ms
+  ✓ Tap on id: DialogPositiveButton  186ms
+  ✓ Tap on id: ApproveButton  467ms
+  ✓ Wait until id: CaptureButton is visible  145ms
+  ✓ Tap on id: ArrowBackButton  960ms
+  ✓ Wait until id: SettingsButton is visible  18ms
+  ✓ Tap on id: SettingsButton  343ms
+  ✓ Tap on id: SettingsEditTrees  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  474ms
+  ✓ Tap on id: TreeButton_0  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  180ms
+  ✓ Assert that "Oak by the gate", id: TreeNoteField is visible  12ms
+✓ B4 rep 10 passed in 39.3s
+▶ B4 rep 11 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  214ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  232ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  868ms
+    ✓ Hide keyboard  73ms
+    ✓ Tap on id: ArrowForwardButton  243ms
+    ✓ Tap on id: FirstNameField  443ms
+    ✓ Input text Ada  902ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  454ms
+    ✓ Hide keyboard  73ms
+    ✓ Tap on id: ArrowForwardButton  287ms
+    ✓ Tap on id: TutorialDoneButton  1.4s
+    ✓ Tap on id: CaptureButton  837ms
+    ✓ Wait until id: ApproveButton is visible  41ms
+    ✓ Tap on id: ApproveButton  299ms
+    ✓ Wait until id: TrackButton is visible  274ms
+  ✓ Run Sign up  13.8s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  13ms
+    ✓ Tap on id: UserButton_5551230001  710ms
+    ✓ Tap on id: ArrowForwardButton  1.3s
+    ✓ Wait until id: OrgNameField is visible  10ms
+    ✓ Tap on id: ArrowForwardButton  169ms
+      ✓ Tap on id: TutorialDoneButton  260ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.0s
+    ✓ Wait until id: CaptureButton is visible  19ms
+  ✓ Run Start capture  4.4s
+  ✓ Tap on id: CaptureButton  1.6s
+  ✓ Wait until id: TutorialDoneButton is visible  6.0s
+  ✓ Tap on id: TutorialDoneButton  297ms
+  ✓ Tap on id: NoteButton  440ms
+  ✓ Tap on id: DialogTextField  633ms
+  ✓ Input text Oak by the gate  2.5s
+  ✓ Hide keyboard  73ms
+  ✓ Tap on id: DialogPositiveButton  222ms
+  ✓ Tap on id: ApproveButton  421ms
+  ✓ Wait until id: CaptureButton is visible  144ms
+  ✓ Tap on id: ArrowBackButton  841ms
+  ✓ Wait until id: SettingsButton is visible  54ms
+  ✓ Tap on id: SettingsButton  285ms
+  ✓ Tap on id: SettingsEditTrees  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  625ms
+  ✓ Tap on id: TreeButton_0  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  168ms
+  ✗ Assert that "Oak by the gate", id: TreeNoteField is visible  17.0s
+      Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+✗ B4 rep 11 failed in 56.6s on sdk gphone64 x86 64
+  Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+  similar: Field "OOak by the gate" #TreeNoteField
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 15 elements
+    @13 Text "Tree Detail"
+    column scrollable (more above, 1 more below):
+      @1 Text "46e40440-009d-4e4e-85bc-39e60cd94fe8" #TreeUuid
+      @2 Text "Latitude"
+      @3 Text "-3.5" #TreeLatitude
+      @4 Text "Longitude"
+      @5 Text "37.299998333333335" #TreeLongitude
+      @6 Text "Created"
+      @7 Text "2026-11-23T05:12:57.380Z" #TreeCreatedAt
+      @8 Text "Uploaded"
+      @9 Text "No" #TreeUploaded
+      @10 Text "Note"
+      @11 Field "OOak by the gate" #TreeNoteField
+      @12 Button "Save" #SaveNoteButton
+    @14 Button #ArrowBackButton
+    @15 Button "D" #DebugOverlayMenuButton
+  debug: build/flow-results/suite/2026-11-23_050435/B4_rep_11 (log.txt: what tb did, step by step)
+▶ B4 rep 12 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.1s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  247ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  249ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  826ms
+    ✓ Hide keyboard  70ms
+    ✓ Tap on id: ArrowForwardButton  247ms
+    ✓ Tap on id: FirstNameField  438ms
+    ✓ Input text Ada  957ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  467ms
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  293ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  826ms
+    ✓ Wait until id: ApproveButton is visible  27ms
+    ✓ Tap on id: ApproveButton  328ms
+    ✓ Wait until id: TrackButton is visible  272ms
+  ✓ Run Sign up  14.0s
+    ✓ Tap on id: TrackButton  1.1s
+    ✓ Wait until id: UserButton_${WALLET} is visible  16ms
+    ✓ Tap on id: UserButton_5551230001  502ms
+    ✓ Tap on id: ArrowForwardButton  1.2s
+    ✓ Wait until id: OrgNameField is visible  13ms
+    ✓ Tap on id: ArrowForwardButton  127ms
+      ✓ Tap on id: TutorialDoneButton  367ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.3s
+    ✓ Wait until id: CaptureButton is visible  64ms
+  ✓ Run Start capture  4.4s
+  ✓ Tap on id: CaptureButton  1.5s
+  ✓ Wait until id: TutorialDoneButton is visible  6.1s
+  ✓ Tap on id: TutorialDoneButton  214ms
+  ✓ Tap on id: NoteButton  481ms
+  ✓ Tap on id: DialogTextField  573ms
+  ✓ Input text Oak by the gate  2.4s
+  ✓ Hide keyboard  71ms
+  ✓ Tap on id: DialogPositiveButton  192ms
+  ✓ Tap on id: ApproveButton  467ms
+  ✓ Wait until id: CaptureButton is visible  98ms
+  ✓ Tap on id: ArrowBackButton  858ms
+  ✓ Wait until id: SettingsButton is visible  54ms
+  ✓ Tap on id: SettingsButton  271ms
+  ✓ Tap on id: SettingsEditTrees  1.5s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  544ms
+  ✓ Tap on id: TreeButton_0  430ms
+  ✓ Tap on id: ArrowForwardButton  1.3s
+  ✓ Scroll DOWN until id: TreeNoteField is visible  173ms
+  ✗ Assert that "Oak by the gate", id: TreeNoteField is visible  17.0s
+      Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+✗ B4 rep 12 failed in 55.9s on sdk gphone64 x86 64
+  Assertion is false: "Oak by the gate", id: TreeNoteField is visible
+  similar: Field "OOak by the gate" #TreeNoteField
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 15 elements
+    @13 Text "Tree Detail"
+    column scrollable (more above, 1 more below):
+      @1 Text "9d8d52fc-ca45-4704-a0c8-c7e706ec3328" #TreeUuid
+      @2 Text "Latitude"
+      @3 Text "-3.5" #TreeLatitude
+      @4 Text "Longitude"
+      @5 Text "37.299998333333335" #TreeLongitude
+      @6 Text "Created"
+      @7 Text "2026-11-23T05:13:54.388Z" #TreeCreatedAt
+      @8 Text "Uploaded"
+      @9 Text "No" #TreeUploaded
+      @10 Text "Note"
+      @11 Field "OOak by the gate" #TreeNoteField
+      @12 Button "Save" #SaveNoteButton
+    @14 Button #ArrowBackButton
+    @15 Button "D" #DebugOverlayMenuButton
+  debug: build/flow-results/suite/2026-11-23_050435/B4_rep_12 (log.txt: what tb did, step by step)
+▶ E10 rep 01 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.5s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  253ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  239ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  873ms
+    ✓ Hide keyboard  70ms
+    ✓ Tap on id: ArrowForwardButton  291ms
+    ✓ Tap on id: FirstNameField  414ms
+    ✓ Input text Ada  896ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  432ms
+    ✓ Hide keyboard  73ms
+    ✓ Tap on id: ArrowForwardButton  284ms
+    ✓ Tap on id: TutorialDoneButton  1.7s
+    ✓ Tap on id: CaptureButton  813ms
+    ✓ Wait until id: ApproveButton is visible  22ms
+    ✓ Tap on id: ApproveButton  358ms
+    ✓ Wait until id: TrackButton is visible  268ms
+  ✓ Run Sign up  14.1s
+  ✓ Tap on id: SettingsButton  308ms
+  ✓ Tap on id: SettingsProfile  1.2s
+  ✓ Tap on id: UserButton_5551230001  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  13ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  192ms
+  ✓ Tap on id: ProfileFirstName  280ms
+  ✓ Erase 50 characters  344ms
+  ✓ Input text Grace  727ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  58ms
+  ✓ Tap on id: ProfileLastName  206ms
+  ✓ Erase 50 characters  1.3s
+  ✗ Input text Hopper  3.0s
+      type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+✗ E10 rep 01 failed in 27.7s on sdk gphone64 x86 64
+  type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_01 (log.txt: what tb did, step by step)
+▶ E10 rep 02 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.0s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  199ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.7s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  222ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  848ms
+    ✓ Hide keyboard  113ms
+    ✓ Tap on id: ArrowForwardButton  232ms
+    ✓ Tap on id: FirstNameField  503ms
+    ✓ Input text Ada  901ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  465ms
+    ✓ Hide keyboard  66ms
+    ✓ Tap on id: ArrowForwardButton  363ms
+    ✓ Tap on id: TutorialDoneButton  1.5s
+    ✓ Tap on id: CaptureButton  796ms
+    ✓ Wait until id: ApproveButton is visible  21ms
+    ✓ Tap on id: ApproveButton  286ms
+    ✓ Wait until id: TrackButton is visible  384ms
+  ✓ Run Sign up  14.0s
+  ✓ Tap on id: SettingsButton  247ms
+  ✓ Tap on id: SettingsProfile  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  11ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  179ms
+  ✓ Tap on id: ProfileFirstName  244ms
+  ✓ Erase 50 characters  389ms
+  ✓ Input text Grace  714ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  49ms
+  ✓ Tap on id: ProfileLastName  262ms
+  ✓ Erase 50 characters  1.3s
+  ✓ Input text Hopper  434ms
+  ✓ Hide keyboard  70ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  177ms
+  ✓ Tap on id: SaveProfileButton  1.1s
+  ✗ Assert that id: SaveProfileButton is not visible  17.0s
+      Assertion is false: id: SaveProfileButton is not visible
+✗ E10 rep 02 failed in 43.0s on sdk gphone64 x86 64
+  Assertion is false: id: SaveProfileButton is not visible
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_02 (log.txt: what tb did, step by step)
+▶ E10 rep 03 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  227ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  286ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.4s
+    ✓ Input text 5551230001  820ms
+    ✓ Hide keyboard  84ms
+    ✓ Tap on id: ArrowForwardButton  234ms
+    ✓ Tap on id: FirstNameField  434ms
+    ✓ Input text Ada  902ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  439ms
+    ✓ Hide keyboard  65ms
+    ✓ Tap on id: ArrowForwardButton  295ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  877ms
+    ✓ Wait until id: ApproveButton is visible  7ms
+    ✓ Tap on id: ApproveButton  282ms
+    ✓ Wait until id: TrackButton is visible  342ms
+  ✓ Run Sign up  14.0s
+  ✓ Tap on id: SettingsButton  325ms
+  ✓ Tap on id: SettingsProfile  1.2s
+  ✓ Tap on id: UserButton_5551230001  1.2s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  11ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  202ms
+  ✓ Tap on id: ProfileFirstName  240ms
+  ✓ Erase 50 characters  382ms
+  ✓ Input text Grace  743ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  58ms
+  ✓ Tap on id: ProfileLastName  235ms
+  ✓ Erase 50 characters  1.3s
+  ✓ Input text Hopper  438ms
+  ✓ Hide keyboard  82ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  179ms
+  ✓ Tap on id: SaveProfileButton  1.1s
+  ✗ Assert that id: SaveProfileButton is not visible  17.0s
+      Assertion is false: id: SaveProfileButton is not visible
+✗ E10 rep 03 failed in 43.1s on sdk gphone64 x86 64
+  Assertion is false: id: SaveProfileButton is not visible
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_03 (log.txt: what tb did, step by step)
+▶ E10 rep 04 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  216ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  241ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  907ms
+    ✓ Hide keyboard  88ms
+    ✓ Tap on id: ArrowForwardButton  257ms
+    ✓ Tap on id: FirstNameField  431ms
+    ✓ Input text Ada  921ms
+    ✓ Tap on id: LastNameField  1.1s
+    ✓ Input text Admin  465ms
+    ✓ Hide keyboard  63ms
+    ✓ Tap on id: ArrowForwardButton  307ms
+    ✓ Tap on id: TutorialDoneButton  1.4s
+    ✓ Tap on id: CaptureButton  887ms
+    ✓ Wait until id: ApproveButton is visible  7ms
+    ✓ Tap on id: ApproveButton  306ms
+    ✓ Wait until id: TrackButton is visible  288ms
+  ✓ Run Sign up  13.7s
+  ✓ Tap on id: SettingsButton  211ms
+  ✓ Tap on id: SettingsProfile  1.4s
+  ✓ Tap on id: UserButton_5551230001  300ms
+  ✓ Tap on id: ArrowForwardButton  1.2s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  13ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  179ms
+  ✓ Tap on id: ProfileFirstName  149ms
+  ✓ Erase 50 characters  478ms
+  ✓ Input text Grace  760ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  51ms
+  ✓ Tap on id: ProfileLastName  241ms
+  ✓ Erase 50 characters  288ms
+  ✓ Input text Hopper  414ms
+  ✓ Hide keyboard  76ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  175ms
+  ✓ Tap on id: SaveProfileButton  88ms
+  ✓ Assert that id: SaveProfileButton is not visible  184ms
+  ✓ Scroll UP until "Grace", id: ProfileFirstName is visible  10ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  214ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+  ✓ Wait until id: TrackButton is visible  2.2s
+  ✓ Tap on id: SettingsButton  95ms
+  ✓ Tap on id: SettingsProfile  1.5s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until "Grace", id: ProfileFirstName is visible  192ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  10ms
+  ✓ Assert that "Hopper", id: ProfileLastName is visible  11ms
+  ✓ Scroll DOWN until id: ProfileWallet is visible  9ms
+  ✓ Assert that "5551230001", id: ProfileWallet is visible  8ms
+✓ E10 rep 04 passed in 31.5s
+▶ E10 rep 05 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.3s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  231ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.7s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  248ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  858ms
+    ✓ Hide keyboard  87ms
+    ✓ Tap on id: ArrowForwardButton  253ms
+    ✓ Tap on id: FirstNameField  418ms
+    ✓ Input text Ada  921ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  478ms
+    ✓ Hide keyboard  72ms
+    ✓ Tap on id: ArrowForwardButton  287ms
+    ✓ Tap on id: TutorialDoneButton  1.4s
+    ✓ Tap on id: CaptureButton  881ms
+    ✓ Wait until id: ApproveButton is visible  9ms
+    ✓ Tap on id: ApproveButton  237ms
+    ✓ Wait until id: TrackButton is visible  371ms
+  ✓ Run Sign up  13.8s
+  ✓ Tap on id: SettingsButton  292ms
+  ✓ Tap on id: SettingsProfile  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  11ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  188ms
+  ✓ Tap on id: ProfileFirstName  257ms
+  ✓ Erase 50 characters  400ms
+  ✓ Input text Grace  409ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  54ms
+  ✓ Tap on id: ProfileLastName  205ms
+  ✓ Erase 50 characters  310ms
+  ✓ Input text Hopper  411ms
+  ✓ Hide keyboard  75ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  241ms
+  ✓ Tap on id: SaveProfileButton  110ms
+  ✓ Assert that id: SaveProfileButton is not visible  152ms
+  ✓ Scroll UP until "Grace", id: ProfileFirstName is visible  54ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  225ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+  ✓ Wait until id: TrackButton is visible  2.2s
+  ✓ Tap on id: SettingsButton  108ms
+  ✓ Tap on id: SettingsProfile  1.5s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until "Grace", id: ProfileFirstName is visible  191ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  9ms
+  ✓ Assert that "Hopper", id: ProfileLastName is visible  11ms
+  ✓ Scroll DOWN until id: ProfileWallet is visible  10ms
+  ✓ Assert that "5551230001", id: ProfileWallet is visible  7ms
+✓ E10 rep 05 passed in 32.2s
+▶ E10 rep 06 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  203ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  263ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.4s
+    ✓ Input text 5551230001  854ms
+    ✓ Hide keyboard  72ms
+    ✓ Tap on id: ArrowForwardButton  252ms
+    ✓ Tap on id: FirstNameField  417ms
+    ✓ Input text Ada  892ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  403ms
+    ✓ Hide keyboard  66ms
+    ✓ Tap on id: ArrowForwardButton  272ms
+    ✓ Tap on id: TutorialDoneButton  1.5s
+    ✓ Tap on id: CaptureButton  865ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  288ms
+    ✓ Wait until id: TrackButton is visible  383ms
+  ✓ Run Sign up  13.9s
+  ✓ Tap on id: SettingsButton  253ms
+  ✓ Tap on id: SettingsProfile  1.3s
+  ✓ Tap on id: UserButton_5551230001  84ms
+  ✓ Tap on id: ArrowForwardButton  1.4s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  16ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  183ms
+  ✓ Tap on id: ProfileFirstName  252ms
+  ✓ Erase 50 characters  405ms
+  ✓ Input text Grace  797ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  50ms
+  ✓ Tap on id: ProfileLastName  235ms
+  ✓ Erase 50 characters  280ms
+  ✓ Input text Hopper  392ms
+  ✓ Hide keyboard  81ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  183ms
+  ✓ Tap on id: SaveProfileButton  81ms
+  ✓ Assert that id: SaveProfileButton is not visible  156ms
+  ✓ Scroll UP until "Grace", id: ProfileFirstName is visible  52ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  202ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.8s
+  ✓ Wait until id: TrackButton is visible  2.2s
+  ✓ Tap on id: SettingsButton  131ms
+  ✓ Tap on id: SettingsProfile  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until "Grace", id: ProfileFirstName is visible  185ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  10ms
+  ✓ Assert that "Hopper", id: ProfileLastName is visible  16ms
+  ✓ Scroll DOWN until id: ProfileWallet is visible  8ms
+  ✓ Assert that "5551230001", id: ProfileWallet is visible  8ms
+✓ E10 rep 06 passed in 31.6s
+▶ E10 rep 07 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  264ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.7s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  287ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.4s
+    ✓ Input text 5551230001  885ms
+    ✓ Hide keyboard  67ms
+    ✓ Tap on id: ArrowForwardButton  257ms
+    ✓ Tap on id: FirstNameField  435ms
+    ✓ Input text Ada  890ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  448ms
+    ✓ Hide keyboard  64ms
+    ✓ Tap on id: ArrowForwardButton  305ms
+    ✓ Tap on id: TutorialDoneButton  1.7s
+    ✓ Tap on id: CaptureButton  830ms
+    ✓ Wait until id: ApproveButton is visible  32ms
+    ✓ Tap on id: ApproveButton  307ms
+    ✓ Wait until id: TrackButton is visible  273ms
+  ✓ Run Sign up  13.9s
+  ✓ Tap on id: SettingsButton  294ms
+  ✓ Tap on id: SettingsProfile  1.3s
+  ✓ Tap on id: UserButton_5551230001  95ms
+  ✓ Tap on id: ArrowForwardButton  1.4s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  13ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  179ms
+  ✓ Tap on id: ProfileFirstName  210ms
+  ✓ Erase 50 characters  385ms
+  ✓ Input text Grace  780ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  51ms
+  ✓ Tap on id: ProfileLastName  207ms
+  ✓ Erase 50 characters  1.3s
+  ✗ Input text Hopper  3.0s
+      type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+✗ E10 rep 07 failed in 26.5s on sdk gphone64 x86 64
+  type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_07 (log.txt: what tb did, step by step)
+▶ E10 rep 08 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.5s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  246ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  227ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  903ms
+    ✓ Hide keyboard  75ms
+    ✓ Tap on id: ArrowForwardButton  243ms
+    ✓ Tap on id: FirstNameField  426ms
+    ✓ Input text Ada  907ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  443ms
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  274ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  859ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  282ms
+    ✓ Wait until id: TrackButton is visible  456ms
+  ✓ Run Sign up  14.1s
+  ✓ Tap on id: SettingsButton  263ms
+  ✓ Tap on id: SettingsProfile  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.2s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  11ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  185ms
+  ✓ Tap on id: ProfileFirstName  223ms
+  ✓ Erase 50 characters  386ms
+  ✓ Input text Grace  383ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  55ms
+  ✓ Tap on id: ProfileLastName  228ms
+  ✓ Erase 50 characters  1.3s
+  ✓ Input text Hopper  421ms
+  ✓ Hide keyboard  69ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  173ms
+  ✓ Tap on id: SaveProfileButton  1.1s
+  ✗ Assert that id: SaveProfileButton is not visible  17.0s
+      Assertion is false: id: SaveProfileButton is not visible
+✗ E10 rep 08 failed in 42.9s on sdk gphone64 x86 64
+  Assertion is false: id: SaveProfileButton is not visible
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_08 (log.txt: what tb did, step by step)
+▶ E10 rep 09 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.1s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  208ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  234ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  856ms
+    ✓ Hide keyboard  72ms
+    ✓ Tap on id: ArrowForwardButton  257ms
+    ✓ Tap on id: FirstNameField  447ms
+    ✓ Input text Ada  934ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  463ms
+    ✓ Hide keyboard  69ms
+    ✓ Tap on id: ArrowForwardButton  301ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  832ms
+    ✓ Wait until id: ApproveButton is visible  44ms
+    ✓ Tap on id: ApproveButton  298ms
+    ✓ Wait until id: TrackButton is visible  276ms
+  ✓ Run Sign up  13.9s
+  ✓ Tap on id: SettingsButton  381ms
+  ✓ Tap on id: SettingsProfile  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  10ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  164ms
+  ✓ Tap on id: ProfileFirstName  228ms
+  ✓ Erase 50 characters  377ms
+  ✓ Input text Grace  399ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  55ms
+  ✓ Tap on id: ProfileLastName  237ms
+  ✓ Erase 50 characters  1.3s
+  ✗ Input text Hopper  3.0s
+      type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+✗ E10 rep 09 failed in 27.0s on sdk gphone64 x86 64
+  type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_09 (log.txt: what tb did, step by step)
+▶ E10 rep 10 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.2s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  200ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  240ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  856ms
+    ✓ Hide keyboard  73ms
+    ✓ Tap on id: ArrowForwardButton  238ms
+    ✓ Tap on id: FirstNameField  470ms
+    ✓ Input text Ada  882ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  444ms
+    ✓ Hide keyboard  75ms
+    ✓ Tap on id: ArrowForwardButton  283ms
+    ✓ Tap on id: TutorialDoneButton  1.6s
+    ✓ Tap on id: CaptureButton  844ms
+    ✓ Wait until id: ApproveButton is visible  9ms
+    ✓ Tap on id: ApproveButton  296ms
+    ✓ Wait until id: TrackButton is visible  324ms
+  ✓ Run Sign up  14.0s
+  ✓ Tap on id: SettingsButton  309ms
+  ✓ Tap on id: SettingsProfile  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.2s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  11ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  184ms
+  ✓ Tap on id: ProfileFirstName  164ms
+  ✓ Erase 50 characters  458ms
+  ✓ Input text Grace  745ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  53ms
+  ✓ Tap on id: ProfileLastName  210ms
+  ✓ Erase 50 characters  1.3s
+  ✗ Input text Hopper  3.0s
+      type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+✗ E10 rep 10 failed in 27.3s on sdk gphone64 x86 64
+  type: the field did not show the first key ("H") within 3000 ms, and its app sent no accessibility event meanwhile that would prove its UI was running (it may be stalled, and show the key later), so the key was not typed again: a key typed again could go in twice
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_10 (log.txt: what tb did, step by step)
+▶ E10 rep 11 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.1s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  191ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  253ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  869ms
+    ✓ Hide keyboard  75ms
+    ✓ Tap on id: ArrowForwardButton  260ms
+    ✓ Tap on id: FirstNameField  395ms
+    ✓ Input text Ada  924ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  490ms
+    ✓ Hide keyboard  101ms
+    ✓ Tap on id: ArrowForwardButton  273ms
+    ✓ Tap on id: TutorialDoneButton  1.5s
+    ✓ Tap on id: CaptureButton  878ms
+    ✓ Wait until id: ApproveButton is visible  43ms
+    ✓ Tap on id: ApproveButton  247ms
+    ✓ Wait until id: TrackButton is visible  348ms
+  ✓ Run Sign up  13.9s
+  ✓ Tap on id: SettingsButton  296ms
+  ✓ Tap on id: SettingsProfile  1.3s
+  ✓ Tap on id: UserButton_5551230001  1.3s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  20ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  186ms
+  ✓ Tap on id: ProfileFirstName  256ms
+  ✓ Erase 50 characters  370ms
+  ✓ Input text Grace  730ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  53ms
+  ✓ Tap on id: ProfileLastName  220ms
+  ✓ Erase 50 characters  1.3s
+  ✓ Input text Hopper  427ms
+  ✓ Hide keyboard  69ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  191ms
+  ✓ Tap on id: SaveProfileButton  1.1s
+  ✗ Assert that id: SaveProfileButton is not visible  17.0s
+      Assertion is false: id: SaveProfileButton is not visible
+✗ E10 rep 11 failed in 42.9s on sdk gphone64 x86 64
+  Assertion is false: id: SaveProfileButton is not visible
+  debug: build/flow-results/suite/2026-11-23_050435/E10_rep_11 (log.txt: what tb did, step by step)
+▶ E10 rep 12 on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.1s
+    log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  1.1s
+    ✓ Tap on id: ArrowForwardButton  203ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  1.8s
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  0ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  247ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.3s
+    ✓ Input text 5551230001  869ms
+    ✓ Hide keyboard  73ms
+    ✓ Tap on id: ArrowForwardButton  266ms
+    ✓ Tap on id: FirstNameField  402ms
+    ✓ Input text Ada  915ms
+    ✓ Tap on id: LastNameField  1.2s
+    ✓ Input text Admin  432ms
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  291ms
+    ✓ Tap on id: TutorialDoneButton  1.5s
+    ✓ Tap on id: CaptureButton  780ms
+    ✓ Wait until id: ApproveButton is visible  20ms
+    ✓ Tap on id: ApproveButton  263ms
+    ✓ Wait until id: TrackButton is visible  357ms
+  ✓ Run Sign up  13.7s
+  ✓ Tap on id: SettingsButton  191ms
+  ✓ Tap on id: SettingsProfile  1.5s
+  ✓ Tap on id: UserButton_5551230001  126ms
+  ✓ Tap on id: ArrowForwardButton  1.4s
+  ✓ Assert that "Ada", id: ProfileFirstName is visible  9ms
+  ✓ Tap on id: EditProfileButton  1.1s
+  ✓ Scroll DOWN until id: ProfileFirstName is visible  183ms
+  ✓ Tap on id: ProfileFirstName  250ms
+  ✓ Erase 50 characters  375ms
+  ✓ Input text Grace  741ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  53ms
+  ✓ Tap on id: ProfileLastName  229ms
+  ✓ Erase 50 characters  294ms
+  ✓ Input text Hopper  392ms
+  ✓ Hide keyboard  72ms
+  ✓ Scroll DOWN until id: SaveProfileButton is visible  174ms
+  ✓ Tap on id: SaveProfileButton  88ms
+  ✓ Assert that id: SaveProfileButton is not visible  145ms
+  ✓ Scroll UP until "Grace", id: ProfileFirstName is visible  51ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  215ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+  ✓ Wait until id: TrackButton is visible  2.2s
+  ✓ Tap on id: SettingsButton  101ms
+  ✓ Tap on id: SettingsProfile  1.4s
+  ✓ Tap on id: UserButton_5551230001  1.1s
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ✓ Scroll DOWN until "Grace", id: ProfileFirstName is visible  182ms
+  ✓ Scroll DOWN until id: ProfileLastName is visible  10ms
+  ✓ Assert that "Hopper", id: ProfileLastName is visible  10ms
+  ✓ Scroll DOWN until id: ProfileWallet is visible  14ms
+  ✓ Assert that "5551230001", id: ProfileWallet is visible  8ms
+✓ E10 rep 12 passed in 31.4s
+
+10 passed, 14 failed in 16m32s
