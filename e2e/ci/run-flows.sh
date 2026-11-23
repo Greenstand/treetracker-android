@@ -127,8 +127,13 @@ fi
 # android-e2e runs its suite (e2e/run.sh). Logs land in OUT/suite, the console in OUT.
 if [[ $(cat e2e/ci/suite.txt 2>/dev/null) == 1 ]]; then
   [[ -f e2e/ci/suite-pre.sh ]] && source e2e/ci/suite-pre.sh
+  "$ADB" -s "$SERIAL" shell 'dumpsys accessibility; settings get secure enabled_accessibility_services; uptime' > "$OUT/a11y-before.txt" 2>&1 || true
+  ( sleep 45; "$ADB" -s "$SERIAL" shell 'dumpsys accessibility; settings get secure enabled_accessibility_services; uptime; ps -A | grep -i -e tb-agent -e testbuddy' > "$OUT/a11y-45s.txt" 2>&1
+    "$ADB" -s "$SERIAL" logcat -d -b all 2>/dev/null | grep -i -e accessib -e NoopService -e testbuddy -e tb-agent -e UiAutomation | tail -400 > "$OUT/a11y-events-45s.txt" ) &
   "$TB" test e2e/flows/ -p android --device "$SERIAL" --include-tags zz \
     --debug-output "$OUT/suite" </dev/null > "$OUT/suite-console.txt" 2>&1 || true
+  "$ADB" -s "$SERIAL" shell 'cat /data/local/tmp/tb-agent.log' > "$OUT/tb-agent-log.txt" 2>&1 || true
+  wait
   find "$OUT/suite" -name '*.png' -delete 2>/dev/null || true
 fi
 
