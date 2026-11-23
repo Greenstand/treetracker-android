@@ -5,6 +5,7 @@ Before submitting your PR, there are a few things you can do to make sure it goe
 - [ ] Ensure the tests are added/updated (if necessary)
 - [ ] Ensure the linter passes (`./codeAnalysis` to automatically apply formatting/linting)
 - [ ] Appropriate docs were updated (if necessary)
+- [ ] No comments added to Kotlin files; the why is in this description (see `docs/engineering/code-conventions.md`)
 
 ## 📸 Proof of change (REQUIRED)
 

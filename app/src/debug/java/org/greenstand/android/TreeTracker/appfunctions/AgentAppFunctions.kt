@@ -47,6 +47,7 @@ abstract class AgentAppFunctions :
      * @param email Email to sign in with, instead of phone.
      * @return The created account.
      */
+    @Suppress("ForbiddenComment")
     @AppFunctionDeclaration(isDescribedByKDoc = true)
     suspend fun createAccount(
         firstName: String? = null,
@@ -72,6 +73,7 @@ abstract class AgentAppFunctions :
      * @param note Note saved on every tree.
      * @return The saved trees.
      */
+    @Suppress("ForbiddenComment")
     @AppFunctionDeclaration(isDescribedByKDoc = true)
     suspend fun captureTrees(
         count: Int,

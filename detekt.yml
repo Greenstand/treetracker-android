@@ -312,7 +312,10 @@ style:
     includeLineWrapping: false
   ForbiddenComment:
     active: true
-    comments: ['FIXME:','STOPSHIP:']
+    comments:
+      - value: '\A'
+        reason: 'Do not add comments. Say it with names and tests, and put the why in the PR description and docs/tasks notes. See docs/engineering/code-conventions.md.'
+    allowedPatterns: '\ACopyright \d{4} Treetracker\n\nLicensed under the Apache License, Version 2\.0'
   ForbiddenImport:
     active: false
     forbiddenImports: []

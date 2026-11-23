@@ -121,6 +121,11 @@ The app opens on the dashboard with 20 trees waiting to upload.
 
 - `app/src/debug/java/.../appfunctions/AgentAppFunctions.kt` declares the functions. The
   AppFunctions compiler (KSP) generates the function index and the XML the system reads.
+- The function and parameter descriptions come from KDoc: `createAccount`, `captureTrees`,
+  `AgentAccount` and `AgentCapturedTrees` are annotated `isDescribedByKDoc = true`, and the
+  compiler copies their KDoc into the generated metadata. This is the only KDoc the repo allows
+  ([Code Conventions](../engineering/code-conventions.md)); those four declarations carry
+  `@Suppress("ForbiddenComment")` for it.
 - `AgentInput` checks and normalizes the arguments, by the sign-up and capture rules.
   `AgentAccountCreator` and `AgentTreeCapturer` do the work. Their tests are in
   `app/src/testDebug` (`AgentInputTest` is table-driven, with about 125 cases).
