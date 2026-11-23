@@ -1,0 +1,55 @@
+# E10: edit a profile name. Settings → Profile → user → Edit → change first and last name → Save.
+# The new name shows at once and survives a relaunch, which is what the next sync uploads (the
+# user row is queued with uploaded = false). CI runs offline, so the upload itself is checked by
+# UserRepoTest and PlanterUploaderTest, not here.
+appId: org.greenstand.android.TreeTracker.debug
+name: E10 rep 02
+tags: [settings]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsProfile}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- assertVisible: {id: ProfileFirstName, text: "Ada"}
+- tapOn: {id: EditProfileButton}
+# The edit fields sit below the photo, off screen on the CI emulator's small display.
+- scrollUntilVisible:
+    element: {id: ProfileFirstName}
+- tapOn: {id: ProfileFirstName}
+- eraseText
+- inputText: Grace
+- scrollUntilVisible:
+    element: {id: ProfileLastName}
+- tapOn: {id: ProfileLastName}
+- eraseText
+- inputText: Hopper
+- hideKeyboard
+- scrollUntilVisible:
+    element: {id: SaveProfileButton}
+- tapOn: {id: SaveProfileButton}
+- assertNotVisible: {id: SaveProfileButton}
+- scrollUntilVisible:
+    element: {id: ProfileFirstName, text: "Grace"}
+    direction: UP
+# Relaunch: the edit was saved to the database, not only held on screen.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsProfile}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- scrollUntilVisible:
+    element: {id: ProfileFirstName, text: "Grace"}
+- scrollUntilVisible:
+    element: {id: ProfileLastName}
+- assertVisible: {id: ProfileLastName, text: "Hopper"}
+- scrollUntilVisible:
+    element: {id: ProfileWallet}
+- assertVisible: {id: ProfileWallet, text: "5551230001"}

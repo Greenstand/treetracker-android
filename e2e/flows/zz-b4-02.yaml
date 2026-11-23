@@ -1,0 +1,38 @@
+appId: org.greenstand.android.TreeTracker.debug
+name: B4 rep 02
+tags: [capture]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: NoteButton}
+- tapOn: {id: DialogTextField}
+- inputText: Oak by the gate
+- hideKeyboard
+- tapOn: {id: DialogPositiveButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: SettingsButton}
+    timeout: 15000
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsEditTrees}
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: TreeButton_0}
+- tapOn: {id: ArrowForwardButton}
+- scrollUntilVisible:
+    element: {id: TreeNoteField}
+- assertVisible: {id: TreeNoteField, text: "Oak by the gate"}
