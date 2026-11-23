@@ -52,10 +52,9 @@ object RouteRegistry {
             ALIAS_TREE_IMAGE_REVIEW to ROUTE_TREE_IMAGE_REVIEW,
         )
 
-    fun resolveNoArgRoute(routeString: String): NavKey? {
-        return noArgRoutes[routeString]
+    fun resolveNoArgRoute(routeString: String): NavKey? =
+        noArgRoutes[routeString]
             ?: aliasMap[routeString]?.let { noArgRoutes[it] }
-    }
 
     fun isValidRoute(routeString: String): Boolean =
         routeString in noArgRoutes ||

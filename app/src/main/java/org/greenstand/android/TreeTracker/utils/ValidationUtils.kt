@@ -42,10 +42,9 @@ object ValidationUtils {
             }
         }
 
-    fun filterNameInput(input: String): String {
-        return input
+    fun filterNameInput(input: String): String =
+        input
             .filter { char ->
                 char.isLetter() || char.isWhitespace() || char == '-' || char == '\''
             }.take(50)
-    }
 }
