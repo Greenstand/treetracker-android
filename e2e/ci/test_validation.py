@@ -124,6 +124,7 @@ class VerdictTest(unittest.TestCase):
 
 FAKE_ADB = """#!/bin/sh
 case " $* " in
+  *" pm path "*) echo "package:/data/app/tb-helper/base.apk" ;;
   *" install "*) for a; do last=$a; done; cp "$last" "$FAKE_DIR/installed.apk" ;;
 esac
 exit 0
