@@ -1,0 +1,146 @@
+   0.000s tb 0.6.3: "A1 First run to dashboard (phone)" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-signup-phone.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.000s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-signup-phone.yaml:6)
+   4.956s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4956 ms
+   4.956s ▶ Run Sign up  (.ci-signup-phone.yaml:8)
+   4.956s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   5.620s     snapshot history: screen context changed; discarding 1 snapshots
+   7.652s     snapshot history: screen context changed; discarding 1 snapshots
+   7.652s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 2695 ms and 3 reads
+   7.652s   ✓ Wait until id: LanguageOption_ENGLISH is visible  2695 ms
+   7.652s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   7.752s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   7.871s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   7.871s     it was moving: at rest after 115 ms at [82,224][238,304]
+   8.065s     tap at (160, 264): the screen changed (sent in 50 ms, waited 92 ms)
+   8.065s   ✓ Tap on id: LanguageOption_ENGLISH  412 ms
+   8.065s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   8.206s     waited 140 ms for the last action's change to settle
+   8.288s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.384s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.679s     tap at (264, 572): the screen changed (sent in 62 ms, waited 208 ms)
+   8.679s   ✓ Tap on id: ArrowForwardButton  614 ms
+   8.679s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   8.866s     waited 187 ms for the last action's change to settle
+   9.459s     snapshot history: screen context changed; discarding 2 snapshots
+   9.459s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   9.544s     waited 84 ms for a still screen
+   9.576s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   9.666s     tap at (160, 571): the screen changed (sent in 4 ms, waited 41 ms)
+   9.666s   ✓ Tap on id: PrivacyPolicyCloseButton  986 ms
+   9.666s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+   9.856s     waited 189 ms for the last action's change to settle
+   9.856s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+   9.856s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  190 ms
+   9.856s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+   9.856s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+  10.005s       snapshot history: screen context changed; discarding 1 snapshots
+  10.005s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  10.079s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  11.122s       tap at (88, 244): nothing changed (sent in 8 ms, waited 1029 ms)
+  11.122s     ✓ Tap on id: PhoneCredentialButton  1265 ms
+  11.122s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+  11.137s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  11.247s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  11.247s       it was moving: at rest after 108 ms at [24,285][296,341]
+  11.474s       tap at (160, 313): the screen changed (sent in 46 ms, waited 150 ms)
+  11.474s     ✓ Tap on id: PhoneField  352 ms
+  11.474s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1618 ms
+  11.474s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+  11.618s     waited 143 ms for the last action's change to settle
+  11.618s     typing 10 characters
+  13.394s     typed with device verification: the screen changed (sent in 1732 ms, waited 0 ms)
+  13.394s   ✓ Input text 5551230001  1919 ms
+  13.394s   ▶ Hide keyboard  (signup.yaml:23)
+  13.734s     snapshot history: screen context changed; discarding 1 snapshots
+  13.734s   ✓ Hide keyboard  339 ms
+  13.734s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+  13.735s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  13.803s     waited 67 ms for a still screen
+  13.922s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  13.922s     it was moving: at rest after 119 ms at [233,541][295,603]
+  14.052s     tap at (264, 572): the screen changed (sent in 19 ms, waited 102 ms)
+  14.052s   ✓ Tap on id: ArrowForwardButton  317 ms
+  14.052s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+  14.372s     waited 320 ms for the last action's change to settle
+  14.398s     snapshot history: screen context changed; discarding 1 snapshots
+  14.398s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  14.472s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  14.561s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  14.561s     it was moving: at rest after 162 ms at [12,199][308,255]
+  14.717s     tap at (160, 227): the screen changed (sent in 24 ms, waited 78 ms)
+  14.717s   ✓ Tap on id: FirstNameField  664 ms
+  14.717s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+  14.880s     waited 163 ms for the last action's change to settle
+  14.881s     typing 3 characters
+  15.554s     typed with device verification: the screen changed (sent in 442 ms, waited 188 ms)
+  15.554s   ✓ Input text Ada  837 ms
+  15.554s   ▶ Tap on id: LastNameField  (signup.yaml:27)
+  15.686s     snapshot history: screen context changed; discarding 1 snapshots
+  15.687s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  15.774s     waited 87 ms for a still screen
+  15.862s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  16.048s     tap at (160, 315): the screen changed (sent in 31 ms, waited 129 ms)
+  16.048s   ✓ Tap on id: LastNameField  493 ms
+  16.048s   ▶ Input text ${LAST_NAME}  (signup.yaml:28)
+  16.251s     waited 203 ms for the last action's change to settle
+  16.331s     typing 5 characters
+  16.694s     typed with device verification: the screen changed (sent in 286 ms, waited 67 ms)
+  16.694s   ✓ Input text Admin  645 ms
+  16.694s   ▶ Hide keyboard  (signup.yaml:29)
+  16.771s     snapshot history: screen context changed; discarding 3 snapshots
+  16.771s   ✓ Hide keyboard  76 ms
+  16.771s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:30)
+  16.771s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  16.878s     waited 107 ms for a still screen
+  16.921s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  17.183s     tap at (264, 572): the screen changed (sent in 38 ms, waited 177 ms)
+  17.183s   ✓ Tap on id: ArrowForwardButton  411 ms
+  17.183s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:31)
+  17.285s     waited 101 ms for the last action's change to settle
+  18.176s     snapshot history: screen context changed; discarding 1 snapshots
+  19.448s     snapshot history: screen context changed; discarding 1 snapshots
+  19.448s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498], after 2163 ms and 2 reads
+  19.473s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.526s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.576s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.644s     tap at (160, 474): the screen changed (sent in 10 ms, waited 16 ms)
+  19.644s     the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+  19.644s     the device's window list had no readable app window (1 windows without a root); a read past the accessibility cache found app window 12
+  19.644s   ✓ Tap on id: TutorialDoneButton  2460 ms
+  19.644s   ▶ Tap on id: CaptureButton  (signup.yaml:32)
+  19.763s     waited 119 ms for the last action's change to settle
+  19.777s     snapshot history: screen context changed; discarding 1 snapshots
+  19.777s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  19.836s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  19.894s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.487s     tap at (160, 572): the screen changed (sent in 31 ms, waited 399 ms, held 113 ms for its new window to take input)
+  20.487s   ✓ Tap on id: CaptureButton  843 ms
+  20.487s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:33)
+  20.501s     snapshot history: screen context changed; discarding 1 snapshots
+  20.501s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.501s   ✓ Wait until id: ApproveButton is visible  13 ms
+  20.501s   ▶ Tap on id: ApproveButton  (signup.yaml:36)
+  20.665s     waited 164 ms for the last action's change to settle
+  20.671s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.718s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.765s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.789s     tap at (202, 574): the screen changed (sent in 4 ms, waited 17 ms)
+  20.789s   ✓ Tap on id: ApproveButton  288 ms
+  20.789s   ▶ Wait until id: TrackButton is visible  (signup.yaml:37)
+  20.852s     snapshot history: screen context changed; discarding 1 snapshots
+  21.138s     snapshot history: screen context changed; discarding 1 snapshots
+  21.257s     snapshot history: screen context changed; discarding 1 snapshots
+  21.258s     found id: TrackButton: View #TrackButton [20,473][300,606], after 468 ms and 3 reads
+  21.258s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 10
+  21.258s   ✓ Wait until id: TrackButton is visible  468 ms
+  21.258s ✓ Run Sign up  16301 ms
+  21.258s ▶ Assert that "0", id: TreesToSyncCount is visible  (.ci-signup-phone.yaml:11)
+  21.274s   found "0", id: TreesToSyncCount: TextView "0" #TreesToSyncCount [81,233][92,300]
+  21.274s ✓ Assert that "0", id: TreesToSyncCount is visible  16 ms
+  21.274s ▶ Assert that "0", id: TreesSyncedCount is visible  (.ci-signup-phone.yaml:12)
+  21.281s   found "0", id: TreesSyncedCount: TextView "0" #TreesSyncedCount [172,120][189,149]
+  21.281s ✓ Assert that "0", id: TreesSyncedCount is visible  6 ms
+  21.281s ▶ Take screenshot step-04-end-assertVisible-TreesSyncedCount  (.ci-signup-phone.yaml:13)
+  21.415s ✓ Take screenshot step-04-end-assertVisible-TreesSyncedCount  133 ms
+  21.415s PASSED in 21.415s

@@ -1,0 +1,31 @@
+▶ A1 First run to dashboard (phone) on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  5.0s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.7s
+    ✓ Tap on id: LanguageOption_ENGLISH  412ms
+    ✓ Tap on id: ArrowForwardButton  614ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  986ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  190ms
+      ✓ Tap on id: PhoneCredentialButton  1.3s
+      ✓ Tap on id: PhoneField  352ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1.6s
+    ✓ Input text 5551230001  1.9s
+    ✓ Hide keyboard  339ms
+    ✓ Tap on id: ArrowForwardButton  317ms
+    ✓ Tap on id: FirstNameField  664ms
+    ✓ Input text Ada  837ms
+    ✓ Tap on id: LastNameField  493ms
+    ✓ Input text Admin  645ms
+    ✓ Hide keyboard  76ms
+    ✓ Tap on id: ArrowForwardButton  411ms
+    ✓ Tap on id: TutorialDoneButton  2.5s
+    ✓ Tap on id: CaptureButton  843ms
+    ✓ Wait until id: ApproveButton is visible  13ms
+    ✓ Tap on id: ApproveButton  288ms
+    ✓ Wait until id: TrackButton is visible  468ms
+  ✓ Run Sign up  16.3s
+  ✓ Assert that "0", id: TreesToSyncCount is visible  16ms
+  ✓ Assert that "0", id: TreesSyncedCount is visible  6ms
+  ✓ Take screenshot step-04-end-assertVisible-TreesSyncedCount  133ms
+✓ A1 First run to dashboard (phone) passed in 21.4s
+
+1 passed in 23.7s
