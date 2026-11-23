@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -46,8 +47,10 @@ import org.greenstand.android.TreeTracker.navigation.orgRepoWith
 import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
 import org.greenstand.android.TreeTracker.root.LocalViewModelFactory
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
+import org.greenstand.android.TreeTracker.userselect.UserSelectAction
 import org.greenstand.android.TreeTracker.userselect.UserSelectScreen
 import org.greenstand.android.TreeTracker.userselect.UserSelectViewModel
+import org.greenstand.android.TreeTracker.view.ARROW_BACK_BUTTON_TAG
 import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -206,6 +209,47 @@ class ReturnToUserSelectFromCaptureUiTest : ComposeUiTest() {
         assertSame(setupData, CaptureSetupScopeManager.getData())
         assertEquals(userSelectTestUsers[0], setupData.user)
         assertEquals(1, userSelectViewModelsCreated)
+        coVerify(exactly = 1) { setupNav.navForward(any()) }
+    }
+
+    @Test
+    fun `after another user is deleted in Settings, Next on the returning user select sets up capture for the highlighted user`() {
+        setNavDisplay()
+        selectUserAndStartCapture(ANN_NAME)
+        composeTestRule.runOnIdle { captureFlowNav.goToUserSelect(navigator) }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(BEN_NAME).performClick()
+        composeTestRule.onNodeWithTag(ARROW_BACK_BUTTON_TAG).performClick()
+        composeTestRule.onNodeWithText("Dashboard").assertExists()
+        assertEquals(listOf(UserSelectRoute, DashboardRoute), backStack.toList())
+
+        val ann = userSelectTestUsers[0]
+        coEvery { userRepo.deleteUser(ann.wallet) } returns true
+        composeTestRule.runOnIdle {
+            val deleteAccount =
+                UserSelectViewModel(
+                    userId = null,
+                    userRepo = userRepo,
+                    messageRepo = mockk(relaxed = true),
+                    locationDataCapturer = mockk(relaxed = true),
+                    prefs = mockk(relaxed = true),
+                )
+            deleteAccount.handleAction(UserSelectAction.SelectUser(ann))
+            deleteAccount.handleAction(UserSelectAction.DeleteUser)
+        }
+        composeTestRule.waitForIdle()
+
+        composeTestRule.runOnIdle { navigator.navigate(UserSelectRoute) }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag(ARROW_FORWARD_BUTTON_TAG).performClick()
+        composeTestRule.waitForIdle()
+
+        assertEquals(
+            "Next on user select, with $BEN_NAME highlighted, set up capture for another user " +
+                "(the deleted $ANN_NAME, or nobody)",
+            userSelectTestUsers[1],
+            CaptureSetupScopeManager.getData().user,
+        )
         coVerify(exactly = 1) { setupNav.navForward(any()) }
     }
 }
