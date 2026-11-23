@@ -246,7 +246,6 @@ class UserSelectViewModelTest {
 
             viewModel.handleAction(UserSelectAction.DeleteUser)
 
-            // The resulting state is checked by the ACCOUNTDELETEDANDADMINREQUESTED test below.
             coVerifyOrder {
                 userRepo.deleteUser("0712345678")
                 messagesRepo.saveMessage(
@@ -293,8 +292,6 @@ class UserSelectViewModelTest {
             viewModel.handleAction(UserSelectAction.DeleteUser)
 
             coVerify(exactly = 1) { messagesRepo.syncMessages() }
-            // ACCOUNTDELETEDLOCALLY must mean "the admin request is still queued"; without this state
-            // a successful upload and a failed one leave the screen in the same state.
             assertEquals(
                 DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED,
                 viewModel.state.value.deleteProfileState,

@@ -157,12 +157,9 @@ class UserSelectViewModel(
                     body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost.",
                 )
                 // The user is already deleted locally and the message is queued, so a failed sync
-                // (for example offline) must not crash the app; the state stays ACCOUNTDELETEDLOCALLY
-                // and the next sync uploads the message.
+                // (for example offline) must not crash the app; the next sync uploads it.
                 try {
                     messageRepo.syncMessages()
-                    // Only move on from ACCOUNTDELETEDLOCALLY, so a sync that returns after the
-                    // state was changed by another action never overwrites that newer state.
                     updateState {
                         if (deleteProfileState == DeleteProfileState.ACCOUNTDELETEDLOCALLY) {
                             copy(deleteProfileState = DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED)

@@ -53,6 +53,9 @@ maintainer).
 - New test: state changed during the upload → kept.
 - The old success test asserted `ACCOUNTDELETEDLOCALLY` after a successful sync, which was the bug;
   it now checks only the call order.
+- New test (review of 23 Nov): while the sync runs the state is already `ACCOUNTDELETEDLOCALLY`, so
+  the "Account Deleted" dialog shows before the upload finishes. It replaces the ordering the old
+  success test's assertion used to pin, and fails if the state update moves after the sync.
 - The existing failure test (sync throws → `ACCOUNTDELETEDLOCALLY`, no crash) is unchanged.
 - `e2e/flows/settings-delete-user-offline.yaml` is unchanged; the dialog it checks shows for both
   states.
@@ -70,3 +73,8 @@ None: no flow can show this change (`pr-validating-flow`, "When no flow can show
   and this branch, so it is not proof.
 
 Proof is the unit test above, which failed on 7b46414 and passes with the fix.
+
+## Code comments
+
+The PR adds no code comments; the reasoning lives here and in the PR description. The comment above
+the `syncMessages()` call in `deleteUser` is master's (#1429), unchanged.
