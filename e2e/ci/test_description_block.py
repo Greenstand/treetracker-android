@@ -32,6 +32,8 @@ const github = {
       updateComment: async a => { calls.push(['updateComment', a]); },
       createComment: async a => { calls.push(['createComment', a]); },
     },
+    checks: { listForRef: async a => { calls.push(['listChecks', a]); return { data: { check_runs: input.checks } }; } },
+    actions: { reRunWorkflow: async a => { calls.push(['rerun', a]); if (input.rerunFails) throw new Error('nope'); } },
     pulls: {
       get: async () => ({ data: { body: input.body } }),
       update: async a => { calls.push(['updatePull', a]); },
@@ -63,7 +65,8 @@ def workflow_script():
 
 @unittest.skipUnless(shutil.which("node"), "needs node")
 class DescriptionBlockTest(unittest.TestCase):
-    def run_script(self, body, validate="e2e/flows/my-flow.yaml", verdict="validated", comments=(), flows=""):
+    def run_script(self, body, validate="e2e/flows/my-flow.yaml", verdict="validated", comments=(), flows="",
+                   checks=(), rerun_fails=False):
         tmp = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, tmp, True)
         if verdict:
@@ -82,7 +85,7 @@ class DescriptionBlockTest(unittest.TestCase):
         (tmp / "script.js").write_text(workflow_script())
         (tmp / "harness.js").write_text(HARNESS)
         (tmp / "input.json").write_text(json.dumps({
-            "cwd": str(tmp), "body": body, "comments": list(comments),
+            "cwd": str(tmp), "body": body, "comments": list(comments), "checks": list(checks), "rerunFails": rerun_fails,
             "env": {"PR": "7", "SHA": SHA, "TABLE": "### Before and after: 1 validating flow", "FLOWS": flows,
                     "VALIDATE": validate, "BEFORE": "b" * 40, "ARTIFACT": "art", "BRANCH": "flow-results/affected-pr-7",
                     "RESULTS_SHA": "c" * 40, "RUN_URL": "https://github.com/o/r/actions/runs/1"}}))
@@ -108,7 +111,7 @@ class DescriptionBlockTest(unittest.TestCase):
         self.assertIn("Assertion is false", block)
         self.assertIn("--record --annotate", block)
         self.assertEqual(new.count(START), 1)
-        self.assertEqual([c[0] for c in calls], ["createComment", "updatePull"])
+        self.assertEqual([c[0] for c in calls], ["createComment", "updatePull", "listChecks"])
 
     def test_a_second_run_changes_nothing_else(self):
         first, _ = self.run_script(f"Intro.\n\n{START}\n{END}\n\nOutro.\n")
@@ -131,6 +134,22 @@ class DescriptionBlockTest(unittest.TestCase):
         new, _ = self.run_script(f"Intro.\n{START}\nold videos\n{END}\n", validate="", verdict=None, flows="e2e/flows/x.yaml")
         self.assertNotIn("old videos", new)
         self.assertIn("No validating flow ran", new)
+
+    def test_the_media_check_runs_again_when_it_is_not_green(self):
+        failed = {"status": "completed", "conclusion": "failure",
+                  "details_url": "https://github.com/o/r/actions/runs/987/job/654"}
+        _, calls = self.run_script(f"{START}\n{END}\n", checks=[failed])
+        self.assertEqual([c[0] for c in calls][-3:], ["updatePull", "listChecks", "rerun"])
+        self.assertEqual(calls[-2][1]["ref"], SHA)
+        self.assertEqual(calls[-2][1]["check_name"], "Check for screenshot & video")
+        self.assertEqual(calls[-1][1]["run_id"], 987)
+        # Already green, or still running: left alone.
+        for check in ({**failed, "conclusion": "success"}, {**failed, "status": "in_progress", "conclusion": None}):
+            _, calls = self.run_script(f"{START}\n{END}\n", checks=[check])
+            self.assertNotIn("rerun", [c[0] for c in calls])
+        # A re-run that is refused is a warning, not a failed job.
+        _, calls = self.run_script(f"{START}\n{END}\n", checks=[failed], rerun_fails=True)
+        self.assertEqual(calls[-1][0], "warning")
 
     def test_the_block_is_not_read_as_a_validates_line(self):
         import validating

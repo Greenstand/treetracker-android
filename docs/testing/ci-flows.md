@@ -167,9 +167,13 @@ The verdict (`e2e/ci/verdict.py`), in the PR comment with both videos side by si
 The same table, with both videos, is also written into the PR **description**, between
 `<!-- e2e-videos:start -->` and `<!-- e2e-videos:end -->` (the PR template has the markers; without
 them the block is added at the end when validating flows ran). Only the text between the markers
-is replaced, on every run. An edit by the workflow's token does not start other workflows, so
-"Check for screenshot & video" sees the videos the next time a person or an agent saves the
-description. How an agent writes such a flow and what it does with each verdict:
+is replaced, on every run. An edit by the workflow's token starts no other workflow, so the same
+job then re-runs "Check for screenshot & video" when it is not green, and that check reads the
+description as it is at that moment: nobody has to save the description again. (Don't, from a
+Claude Code cloud session: a PR description saved from there gets its media links rewritten,
+`<img` to `&lt;img` and backticks around the URLs, which removes the videos until the next run
+writes the block again.) A PR whose description has a line `No validating flow: <why>` passes
+that check without a video once a maintainer adds the `no-validating-flow` label. How an agent writes such a flow and what it does with each verdict:
 [`pr-validating-flow`](../../.claude/skills/pr-validating-flow/SKILL.md).
 
 Only **broken** fails the job. The comment also quotes the error each failing run stopped at:

@@ -81,6 +81,22 @@ class SkillTest(unittest.TestCase):
             self.assertIn(word, SKILL)
             self.assertTrue(any(word in text for text in verdict.TEXT.values()), word)
 
+    def test_what_it_says_about_the_media_check_is_what_ci_does(self):
+        check = (ROOT / ".github/workflows/require-pr-media.yml").read_text()
+        affected = (ROOT / ".github/workflows/e2e-affected.yml").read_text()
+        # The label and the statement the check looks for.
+        self.assertIn("`no-validating-flow`", SKILL)
+        self.assertIn("'no-validating-flow'", check)
+        self.assertIn("`No validating flow: <one sentence", SKILL)
+        self.assertIn("no validating flow:", check)
+        # CI re-runs the check by its name, reading the live description: no re-save by an agent.
+        name = re.search(r"name: (Check for screenshot & video)", check).group(1)
+        self.assertIn(f"check_name: '{name}'", affected)
+        self.assertIn("reRunWorkflow", affected)
+        self.assertIn("github.rest.pulls.get", check)
+        self.assertIn("don't save the description again", SKILL)
+        self.assertNotIn("Saving\n  the description yourself does", SKILL)
+
     def test_it_is_linked_where_agents_look(self):
         for f in ("CLAUDE.md", "AGENTS.md", "docs/README.md", "docs/testing/ci-flows.md", ".github/pull_request_template.md"):
             self.assertIn("pr-validating-flow", (ROOT / f).read_text(), f)

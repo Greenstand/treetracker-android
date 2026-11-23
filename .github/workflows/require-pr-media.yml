@@ -4,6 +4,11 @@ name: Require PR media
 # changes. Posts a friendly comment tagging the author when something is missing,
 # and fails a status check so the PR cannot be merged until it is fixed.
 #
+# A fix or feature PR normally gets its video from CI: "Affected flows (annotated video)" writes
+# the before/after recordings into the description and then re-runs this check, so nobody has
+# to save the description again. A PR whose description says "No validating flow: <why>" passes
+# without a video once a maintainer adds the `no-validating-flow` label.
+#
 # Escape hatch: apply the `non-ui` label (or tick the "no user-visible / UI effect"
 # box in the PR description) to skip the screenshot requirement. A video is still
 # required even for non-UI changes.
@@ -32,8 +37,15 @@ jobs:
         with:
           script: |
             const MARKER = '<!-- require-pr-media -->';
-            const pr = context.payload.pull_request;
-            const body = pr.body || '';
+            // The PR as it is now, not as the event saw it: "Affected flows" re-runs this job
+            // after it has written the before/after videos into the description, and a re-run
+            // gets the first run's event again.
+            const { data: pr } = await github.rest.pulls.get({
+              ...context.repo, pull_number: context.payload.pull_request.number,
+            });
+            // Without HTML comments: the template's own hint ("Drag a ... (.mp4 / .mov / .webm)
+            // here") is not a video.
+            const body = (pr.body || '').replace(/<!--[\s\S]*?-->/g, ' ');
             const author = pr.user.login;
 
             // --- Detect a screenshot (an embedded image) --------------------
@@ -65,9 +77,19 @@ jobs:
               /- \[x\][^\n]*no\b[^\n]*ui\b/i.test(body);
             const isNonUi = nonUiLabel || nonUiCheckbox;
 
+            // --- A change no flow can show ---------------------------------
+            // "No validating flow: <why>" in the description says no recording can show the
+            // change (.claude/skills/pr-validating-flow). Whether that is acceptable is a
+            // maintainer's call: the `no-validating-flow` label is their yes.
+            const saysNoFlow = /^[\s>*-]*no validating flow:\s*\S.{14,}/im.test(body);
+            const noFlowLabel = labels.includes('no-validating-flow');
+            const videoWaived = saysNoFlow && noFlowLabel;
+
             // --- Work out what is missing ----------------------------------
             const missing = [];
-            if (!hasVideo) {
+            if (!hasVideo && saysNoFlow && !noFlowLabel) {
+              missing.push('a maintainer\'s decision: the description says **no validating flow** can show this change. A maintainer who accepts that adds the `no-validating-flow` label; otherwise add a **🎥 screen recording / video**');
+            } else if (!hasVideo && !videoWaived) {
               missing.push('a **🎥 screen recording / video** demonstrating the change — **a video is required even when there are no UI changes**, to show that the parts of the app affected by this change still work');
             }
             if (!isNonUi && !hasScreenshot) {
