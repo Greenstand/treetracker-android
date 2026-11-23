@@ -173,7 +173,9 @@ description as it is at that moment: nobody has to save the description again. (
 Claude Code cloud session: a PR description saved from there gets its media links rewritten,
 `<img` to `&lt;img` and backticks around the URLs, which removes the videos until the next run
 writes the block again.) A PR whose description has a line `No validating flow: <why>` passes
-that check without a video once a maintainer adds the `no-validating-flow` label. How an agent writes such a flow and what it does with each verdict:
+that check without a video once a maintainer adds the `no-validating-flow` label. (GitHub runs
+that check, a `pull_request_target` workflow, from the default branch's copy of
+`require-pr-media.yml`, so a change to it only takes effect once it is on master.) How an agent writes such a flow and what it does with each verdict:
 [`pr-validating-flow`](../../.claude/skills/pr-validating-flow/SKILL.md).
 
 Only **broken** fails the job. The comment also quotes the error each failing run stopped at:
