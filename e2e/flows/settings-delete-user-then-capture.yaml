@@ -1,0 +1,112 @@
+# After deleting a user in Settings, capture must still be for the user highlighted on user select
+# (#1448, found in the review of #1429 / #1416).
+#
+# Capture ends on user select through the profile button; Back from there opens the Dashboard and
+# keeps that user select. Settings > Delete account picks Bob, which made Bob the capture setup
+# user, and deletes him. Track shows the kept user select with Ada still highlighted, and Next must
+# set up capture for Ada: the tree captured then counts on Ada's card. Before the fix the tree went
+# to the deleted Bob, so Ada's card still showed 0.
+appId: org.greenstand.android.TreeTracker.debug
+name: Delete user then capture for the highlighted user
+tags: [settings, capture]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+# Add a second user, Bob.
+- tapOn: {id: TrackButton}
+- tapOn: {id: OrangeAddButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+- tapOn: {id: PhoneField}
+- inputText: "5551230002"
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: FirstNameField}
+- inputText: Bob
+- tapOn: {id: LastNameField}
+- inputText: Builder
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: CaptureButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+- back
+- back
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# Start capture as Ada, then leave it through the profile button: capture ends on user select.
+- runFlow:
+    file: subflows/start-capture.yaml
+    env: {WALLET: "5551230001"}
+- tapOn: {id: UserImageButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- tapOn: {id: "UserButton_5551230001"}
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# Delete Bob from Settings.
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsDeleteAccount}
+- tapOn: {id: "UserButton_5551230002"}
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: DialogPositiveButton}
+- extendedWaitUntil:
+    visible: {id: DialogTitle, text: "Account Deleted"}
+    timeout: 10000
+- tapOn: {id: DialogPositiveButton}
+- assertVisible: {id: SettingsDeleteAccount}
+- back
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# Track opens the kept user select, Ada still highlighted. Next and capture one tree.
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- assertNotVisible: {id: "UserButton_5551230002"}
+- tapOn: {id: ArrowForwardButton}
+- extendedWaitUntil:
+    visible: {id: OrgNameField}
+    timeout: 15000
+- tapOn: {id: ArrowForwardButton}
+- runFlow:
+    when: {visible: {id: TutorialDoneButton}}
+    commands:
+      - tapOn: {id: TutorialDoneButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 30000
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- assertVisible: {id: ApproveButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "1"}
+# The tree is Ada's. Relaunch so user select reads the tree counts again.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- tapOn: {id: TrackButton}
+- assertVisible:
+    id: "UserButton_5551230001"
+    containsDescendants:
+      - text: "1"

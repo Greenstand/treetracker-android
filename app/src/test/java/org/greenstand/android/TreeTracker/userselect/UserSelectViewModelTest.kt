@@ -50,6 +50,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -81,6 +82,7 @@ class UserSelectViewModelTest {
         MockKAnnotations.init(this)
         mockkObject(CaptureSetupScopeManager)
         every { CaptureSetupScopeManager.open() } just Runs
+        every { CaptureSetupScopeManager.isOpen } returns true
         captureSetupData = mockk(relaxed = true)
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
         every { userRepo.users() } returns flowOf(emptyList())
@@ -89,6 +91,14 @@ class UserSelectViewModelTest {
     @After
     fun tearDown() {
         unmockkObject(CaptureSetupScopeManager)
+    }
+
+    private fun assertDeleted(viewModel: UserSelectViewModel) {
+        val state = viewModel.state.value.deleteProfileState
+        assertTrue(
+            state == DeleteProfileState.ACCOUNTDELETEDLOCALLY || state == DeleteProfileState.ACCOUNTDELETEDANDADMINREQUESTED,
+            "Expected a deleted state, was $state",
+        )
     }
 
     private fun createViewModel(userId: Long? = null): UserSelectViewModel =
@@ -255,6 +265,96 @@ class UserSelectViewModelTest {
                     body = "Hi admin, I would like to delete my account with the wallet 0712345678 I understand that all my data will be lost.",
                 )
                 messagesRepo.syncMessages()
+            }
+        }
+
+    @Test
+    fun `GIVEN a user selected for deletion WHEN delete succeeds THEN the deleted user is no longer the current user`() =
+        runTest {
+            val currentUserIds = mutableListOf<Long?>()
+            every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
+            val setupData = CaptureSetupData(mockk(relaxed = true))
+            every { CaptureSetupScopeManager.getData() } returns setupData
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertDeleted(viewModel)
+            assertNotEquals(
+                planter.id,
+                currentUserIds.lastOrNull(),
+                "Deleted user ${planter.id} is still the current user id in Preferences",
+            )
+            assertNotEquals(
+                planter.id,
+                setupData.user?.id,
+                "Deleted user ${planter.id} is still the current capture-setup user",
+            )
+        }
+
+    @Test
+    fun `GIVEN a user selected for deletion WHEN delete fails THEN they stay the current user`() =
+        runTest {
+            val currentUserIds = mutableListOf<Long?>()
+            every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
+            val setupData = CaptureSetupData(mockk(relaxed = true))
+            every { CaptureSetupScopeManager.getData() } returns setupData
+            coEvery { userRepo.deleteUser("0712345678") } returns false
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertEquals(listOf<Long?>(planter.id), currentUserIds)
+            assertEquals(planter, setupData.user)
+        }
+
+    @Test
+    fun `GIVEN another user is current WHEN a user opened by id is deleted THEN the current user is kept`() =
+        runTest {
+            val other = FakeFileGenerator.fakeUsers[1]
+            val setupData = CaptureSetupData(mockk(relaxed = true))
+            setupData.user = other
+            every { CaptureSetupScopeManager.getData() } returns setupData
+            coEvery { userRepo.getUser(planter.id) } returns planter
+            coEvery { userRepo.deleteUser("0712345678") } returns true
+            val viewModel = createViewModel(userId = planter.id)
+            withContext(Dispatchers.Default) {
+                withTimeout(5_000) { viewModel.state.first { it.selectedUser != null } }
+            }
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertDeleted(viewModel)
+            verify(exactly = 0) { preferences.setUserId(any()) }
+            assertEquals(other, setupData.user)
+        }
+
+    @Test
+    fun `GIVEN the setup scope closes while the delete runs WHEN delete succeeds THEN it does not crash and still asks admin`() =
+        runTest {
+            val currentUserIds = mutableListOf<Long?>()
+            every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
+            coEvery { userRepo.deleteUser("0712345678") } coAnswers {
+                every { CaptureSetupScopeManager.isOpen } returns false
+                every { CaptureSetupScopeManager.getData() } throws IllegalStateException("CaptureSetupScope not open")
+                true
+            }
+            val viewModel = createViewModel()
+            viewModel.handleAction(UserSelectAction.SelectUser(planter))
+
+            viewModel.handleAction(UserSelectAction.DeleteUser)
+
+            assertDeleted(viewModel)
+            assertEquals(null, currentUserIds.lastOrNull(), "Deleted user ${planter.id} is still the current user id in Preferences")
+            coVerify {
+                messagesRepo.saveMessage(
+                    wallet = "0712345678",
+                    to = "admin",
+                    body = "Hi admin, I would like to delete my account with the wallet 0712345678 I understand that all my data will be lost.",
+                )
             }
         }
 
