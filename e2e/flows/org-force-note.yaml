@@ -24,6 +24,7 @@ tags: [org-config]
     timeout: 15000
 - tapOn: {id: DialogTextField}
 - inputText: Planted beside the river
+- assertVisible: {id: DialogTextField, text: "Planted beside the river"}
 - hideKeyboard
 - tapOn: {id: DialogPositiveButton}
 - assertNotVisible: {id: DialogTextField}
