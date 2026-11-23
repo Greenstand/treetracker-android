@@ -39,7 +39,8 @@ fun UserSelectScreen(
         isCreateUserEnabled = true,
         isNotificationEnabled = true,
         viewModel = viewModel,
-        onNavigateForward = {
+        onNavigateForward = { user ->
+            viewModel.handleAction(UserSelectAction.SelectUser(user))
             scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
         },
     )
