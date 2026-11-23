@@ -109,10 +109,6 @@ fun MapScreen(
     )
 }
 
-/**
- * Stateless map screen UI: the [map] slot (MapLibre in the app) with the back button and
- * the tree carousel drawn over it.
- */
 @Composable
 fun MapContent(
     state: MapState,
@@ -125,7 +121,6 @@ fun MapContent(
     ) {
         map()
 
-        // Back button in top left corner
         Surface(
             modifier =
                 Modifier
@@ -147,7 +142,6 @@ fun MapContent(
             }
         }
 
-        // Carousel overlay at bottom
         if (state.markers.isNotEmpty()) {
             TreeMarkerCarousel(
                 modifier =
@@ -177,20 +171,17 @@ fun TreeMarkerCarousel(
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
 
-    // Calculate centering offset based on selected card size
     val screenWidth = configuration.screenWidthDp.dp
     val centerOffset =
         with(density) {
             ((screenWidth - CARD_WIDTH_SELECTED) / 2).toPx().toInt()
         }
 
-    // Scroll to selected marker when it changes
     LaunchedEffect(selectedMarkerId) {
         selectedMarkerId?.let { id ->
             val index = markers.indexOfFirst { it.id == id }
             if (index != -1) {
                 coroutineScope.launch {
-                    // Scroll with offset to center the selected item
                     listState.animateScrollToItem(
                         index = index,
                         scrollOffset = -centerOffset,
@@ -225,7 +216,6 @@ fun TreeMarkerCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Animate width and height by 10% when selected
     val cardWidth by animateDpAsState(
         targetValue = if (isSelected) CARD_WIDTH_SELECTED else CARD_WIDTH_NORMAL,
         animationSpec = tween(durationMillis = 300),
@@ -251,7 +241,6 @@ fun TreeMarkerCard(
         Column(
             modifier = Modifier.fillMaxHeight(),
         ) {
-            // Tree image loaded from file path - takes 2/3 of card space
             AsyncImage(
                 model = marker.imagePath?.let { File(it) },
                 contentDescription = "Tree image",
@@ -265,7 +254,6 @@ fun TreeMarkerCard(
                 fallback = painterResource(id = R.drawable.yellow_leafs_placeholder),
             )
 
-            // Content section - takes 1/3 of card space
             Column(
                 modifier =
                     Modifier
@@ -289,7 +277,6 @@ fun TreeMarkerCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Note
                 Text(
                     text = marker.note.ifEmpty { "No note" },
                     style = CustomTheme.typography.small,
@@ -300,7 +287,6 @@ fun TreeMarkerCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Plant date
                 Text(
                     text = formatPlantDate(marker.plantDate),
                     style = CustomTheme.typography.small,
@@ -320,7 +306,6 @@ private fun formatPlantDate(instant: Instant): String {
     return javaDateTime.format(formatter)
 }
 
-// Card size constants
 private val CARD_WIDTH_NORMAL = 200.dp
 private val CARD_WIDTH_SELECTED = 220.dp
 private val CARD_HEIGHT_NORMAL = 280.dp

@@ -63,7 +63,6 @@ class DeviceOrientation(
             sensor: Sensor?,
             accuracy: Int,
         ) {
-            // Ignore
         }
 
         override fun onSensorChanged(event: SensorEvent?) {

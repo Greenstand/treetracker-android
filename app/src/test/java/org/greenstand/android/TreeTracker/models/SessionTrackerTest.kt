@@ -177,8 +177,6 @@ class SessionTrackerTest {
             assertEquals(current, sessionTracker.currentSessionId)
         }
 
-    // --- Org name attribution tests ---
-
     private fun setupStartSessionMocks(
         organizationName: String? = null,
         currentOrgName: String = "Kasiki Hai",

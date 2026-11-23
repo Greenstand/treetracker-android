@@ -41,7 +41,6 @@ class TreeTrackerApplication : Application() {
         ObjectStorageClient.init(applicationContext)
 
         startKoin {
-//            androidLogger()
             androidLogger(Level.NONE)
             androidContext(applicationContext)
             modules(

@@ -20,10 +20,6 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 
-/**
- * A localization-agnostic text reference that ViewModels can emit without holding a
- * [Context]. Resolved to a `String` on the UI side by the consuming Composable.
- */
 sealed interface TextRef {
     data class Plain(
         val value: String,
@@ -40,7 +36,6 @@ sealed interface TextRef {
     }
 
     companion object {
-        /** Convenience builder so call sites read `TextRef(R.string.foo)` instead of `TextRef.Res(R.string.foo)`. */
         operator fun invoke(
             @StringRes id: Int,
             vararg args: Any,

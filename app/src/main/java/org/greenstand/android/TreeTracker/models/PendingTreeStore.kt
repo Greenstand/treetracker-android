@@ -23,10 +23,6 @@ import org.greenstand.android.TreeTracker.preferences.Preferences
 import timber.log.Timber
 import java.util.UUID
 
-/**
- * Keeps the tree being captured (photo taken, not yet saved) in preferences, so the capture flow
- * can pick it up again when Android kills the app in the background and restores image review.
- */
 class PendingTreeStore(
     private val preferences: Preferences,
 ) {

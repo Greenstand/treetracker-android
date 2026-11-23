@@ -30,8 +30,6 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
 class UiEventsTest {
-    // --- ConsumableEvent ---
-
     @Test
     fun `ConsumableEvent returns its content on the first read`() {
         val event = TestEvent(1)
@@ -73,8 +71,6 @@ class UiEventsTest {
         }
     }
 
-    // --- NavigationEvent ---
-
     @Test
     fun `NavigationEvent runs its lambda with the navigator as receiver`() =
         runTest {
@@ -101,14 +97,10 @@ class UiEventsTest {
             assertEquals(listOf<Any>(DashboardRoute), navigator.backStack)
         }
 
-    // --- PopBackStackEvent ---
-
     @Test
     fun `PopBackStackEvent is a singleton with a readable name`() {
         assertEquals("PopBackStackEvent", PopBackStackEvent.toString())
     }
-
-    // --- ShowSnackbar ---
 
     @Test
     fun `ShowSnackbar defaults to a short snackbar without an action`() {

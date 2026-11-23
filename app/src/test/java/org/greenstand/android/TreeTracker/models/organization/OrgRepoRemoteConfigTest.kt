@@ -31,10 +31,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-/**
- * Covers parsing org JSON from Remote Config (valid, partial, malformed) and the
- * minimal-org fallback, asserting on what ends up stored and selected.
- */
 @RunWith(RobolectricTestRunner::class)
 class OrgRepoRemoteConfigTest {
     private lateinit var sharedPrefs: SharedPreferences

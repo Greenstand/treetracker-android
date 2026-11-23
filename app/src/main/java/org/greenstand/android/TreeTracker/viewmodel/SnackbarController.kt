@@ -20,12 +20,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-/**
- * App-wide bus for [ShowSnackbar] events. A single instance is provided at the root via
- * [LocalSnackbarController] and a single `SnackbarHost` consumes it, so any ViewModel can
- * raise a snackbar with `sendEvent(ShowSnackbar(TextRef.Res(R.string.something)))`
- * without each screen wiring its own host.
- */
 class SnackbarController {
     private val _events = MutableSharedFlow<ShowSnackbar>(extraBufferCapacity = 16)
     val events: SharedFlow<ShowSnackbar> = _events.asSharedFlow()
@@ -35,11 +29,6 @@ class SnackbarController {
     }
 }
 
-/**
- * CompositionLocal that gives any Composable access to the app's [SnackbarController].
- * [HandleUIEvents] uses it to forward `ShowSnackbar` events; [org.greenstand.android.TreeTracker.root.Root]
- * provides it.
- */
 val LocalSnackbarController =
     compositionLocalOf<SnackbarController> {
         error("SnackbarController not provided. Wrap your content in Root.")

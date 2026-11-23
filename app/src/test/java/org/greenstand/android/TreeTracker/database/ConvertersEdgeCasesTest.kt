@@ -20,7 +20,6 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-/** Edge inputs for the Room [Converters] shared by AppDatabase and MessageDatabase. ConvertersTest covers the basics. */
 class ConvertersEdgeCasesTest {
     @Test
     fun `empty map round trips as an empty JSON object`() {

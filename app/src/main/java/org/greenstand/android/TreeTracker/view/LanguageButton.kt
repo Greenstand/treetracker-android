@@ -36,8 +36,6 @@ import org.greenstand.android.TreeTracker.theme.CustomTheme
 @Composable
 fun BoxScope.LanguageButton() {
     val navigator = LocalNavigator.current
-    // Avoid creating a viewmodel if we're in Preview Mode.
-    // Viewmodels are large, we do not want to load them in the preview
     val languageViewModel: LanguagePickerViewModel? =
         if (!LocalInspectionMode.current) {
             viewModel(factory = LocalViewModelFactory.current)

@@ -25,18 +25,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.greenstand.android.TreeTracker.navigation.NavOptions
 
-/**
- * Base ViewModel that exposes:
- *
- * - `state: StateFlow<S>` — the screen's persistent UI state, survives recomposition.
- * - `events: SharedFlow<ConsumableEvent<UiEvent>>` — one-shot UI signals
- *   (navigation, snackbars, etc.) delivered to the screen via [HandleUIEvents].
- *
- * The event flow uses `replay = 5` so events emitted before the first [HandleUIEvents]
- * collector subscribes (the common case for events fired from `init`) are still
- * delivered. Each event is wrapped in [ConsumableEvent] so the replay doesn't
- * cause the same event to fire twice.
- */
 abstract class BaseViewModel<S, A : Action>(
     initialState: S,
 ) : ViewModel() {
@@ -60,18 +48,12 @@ abstract class BaseViewModel<S, A : Action>(
         _events.tryEmit(ConsumableEvent(event))
     }
 
-    /** Backwards-compatible alias for [sendEvent]. */
     protected fun triggerEvent(event: UiEvent) = sendEvent(event)
 
-    /** Emit a navigation event to [route], debounced via `throttledNavigate`. */
     protected fun navigate(route: NavKey) {
         sendEvent(NavigationEvent { throttledNavigate(route) })
     }
 
-    /**
-     * Emit a navigation event to [route] with [NavOptions] (popUpTo, launchSingleTop, …),
-     * debounced via `throttledNavigate`.
-     */
     protected fun navigate(
         route: NavKey,
         builder: NavOptions.() -> Unit,
@@ -79,7 +61,6 @@ abstract class BaseViewModel<S, A : Action>(
         sendEvent(NavigationEvent { throttledNavigate(route, builder) })
     }
 
-    /** Emit a back-stack-pop event, debounced via `throttledPopBackStack`. */
     protected fun popBackStack() {
         sendEvent(PopBackStackEvent)
     }
@@ -87,8 +68,6 @@ abstract class BaseViewModel<S, A : Action>(
     abstract fun handleAction(action: A)
 
     private companion object {
-        // Replay so events emitted before the first HandleUIEvents subscriber (typically
-        // from init) are not dropped. ConsumableEvent makes the replay idempotent.
         const val EVENT_REPLAY = 5
         const val EVENT_EXTRA_BUFFER = 16
     }

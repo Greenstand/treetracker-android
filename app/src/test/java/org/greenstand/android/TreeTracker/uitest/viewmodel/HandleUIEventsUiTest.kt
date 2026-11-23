@@ -44,7 +44,6 @@ class HandleUIEventsUiTest : ComposeUiTest() {
     private val mockSnackbarController = mockk<SnackbarController>(relaxed = true)
     private val interceptedEvents = mutableListOf<UiEvent>()
 
-    /** Renders [HandleUIEvents] with an optional hosting entry content key and [onEvent] handler. */
     private fun setEventHandler(
         entryContentKey: Any? = null,
         onEvent: ((UiEvent) -> Boolean)? = null,
@@ -65,8 +64,6 @@ class HandleUIEventsUiTest : ComposeUiTest() {
             interceptedEvents += event
             handled
         }
-
-    // --- built-in dispatch ---
 
     @Test
     fun `navigation event runs on the navigator`() {
@@ -152,8 +149,6 @@ class HandleUIEventsUiTest : ComposeUiTest() {
         assertEquals(listOf(DashboardRoute, SettingsRoute), backStack.toList())
     }
 
-    // --- consumption ---
-
     @Test
     fun `already consumed event is skipped`() {
         viewModel.navigateTo(SettingsRoute)
@@ -179,8 +174,6 @@ class HandleUIEventsUiTest : ComposeUiTest() {
 
         assertEquals(listOf(DashboardRoute, SettingsRoute), backStack.toList())
     }
-
-    // --- onEvent interception ---
 
     @Test
     fun `onEvent returning true consumes the event`() {
@@ -233,8 +226,6 @@ class HandleUIEventsUiTest : ComposeUiTest() {
         assertEquals(listOf<UiEvent>(snackbar), interceptedEvents)
         verify(exactly = 0) { mockSnackbarController.show(any()) }
     }
-
-    // --- hosting entry guard ---
 
     @Test
     fun `navigation runs when the hosting entry is on top`() {

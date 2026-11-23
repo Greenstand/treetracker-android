@@ -28,10 +28,8 @@ sealed interface InstallReferrerResult {
         val referrer: String?,
     ) : InstallReferrerResult
 
-    /** Play Store too old, or absent. Nothing to wait for on a later launch. */
     data object Unsupported : InstallReferrerResult
 
-    /** Transient, so the caller leaves the referrer unconsumed and retries. */
     data object Unavailable : InstallReferrerResult
 }
 
@@ -39,7 +37,6 @@ fun interface InstallReferrerDataSource {
     suspend fun fetch(): InstallReferrerResult
 }
 
-/** Wraps [InstallReferrerClient] so callers see a result instead of a connection. */
 class PlayInstallReferrerDataSource(
     private val context: Context,
 ) : InstallReferrerDataSource {

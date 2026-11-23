@@ -104,8 +104,6 @@ fun ImageCapturing(
             style = CustomTheme.typography.medium,
             fontWeight = FontWeight.Bold,
         )
-        // A picture of the capture button, not a button: hidden from accessibility so it is
-        // not mistaken for the real one under the dialog.
         CaptureButton(
             modifier = Modifier.clearAndSetSemantics { },
             onClick = {},
@@ -258,7 +256,6 @@ fun TutorialDialog(
         title = null,
         modifier =
             Modifier
-                // A dialog is a window of its own, so it needs its own exposeTestTags.
                 .exposeTestTags()
                 .fillMaxWidth()
                 .wrapContentHeight()

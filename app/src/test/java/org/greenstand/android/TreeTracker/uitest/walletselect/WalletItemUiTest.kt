@@ -31,7 +31,6 @@ import org.greenstand.android.TreeTracker.walletselect.WalletSelectState
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tests for a single [WalletItem] and how [WalletSelect] reacts to state changes. */
 class WalletItemUiTest : ComposeUiTest() {
     @Test
     fun `wallet item shows the planter name wallet and tree count`() {

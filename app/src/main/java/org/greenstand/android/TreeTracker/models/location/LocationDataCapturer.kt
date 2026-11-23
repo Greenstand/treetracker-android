@@ -60,7 +60,6 @@ class LocationDataCapturer(
     val percentageConvergenceObservers = mutableListOf<(Float) -> Unit>()
     private val locationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     var newestPercentageConvergence: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        // convergence percentage fluctuates so it is only updated when it increases
         if (newValue > oldValue) {
             percentageConvergenceObservers.forEach { it(newValue) }
         }
@@ -155,8 +154,6 @@ class LocationDataCapturer(
         if (areLocationUpdatesOn) {
             return
         }
-        // Without location permission nothing starts. Leave updates off so that a later call,
-        // once the permission is granted, starts them.
         if (!locationUpdateManager.startLocationUpdates()) {
             return
         }
@@ -175,12 +172,6 @@ class LocationDataCapturer(
         areLocationUpdatesOn = false
     }
 
-    /**
-     *  Guarantees a Convergence instance that is within the variance threshold or the current
-     *  running instance (Not converged) as long as this method is invoked during a tree capture.
-     *
-     *  @throws IllegalStateException - If invoked outside the scope of tree capture
-     */
     fun convergence(): Convergence {
         check(isInTreeCaptureMode()) { "Invoked outside the scope of tree capture" }
         return lastConvergenceWithinRange ?: currentConvergence!!

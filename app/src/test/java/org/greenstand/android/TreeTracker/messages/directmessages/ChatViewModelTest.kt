@@ -223,7 +223,6 @@ class ChatViewModelTest {
     @Test
     fun `Check chat author, last message of a run by the same author`() =
         runTest {
-            // Authors are Carla, Carla, Mary.
             assertFalse(testSubject.checkChatAuthor(0, false))
             assertTrue(testSubject.checkChatAuthor(1, false))
             assertTrue(testSubject.checkChatAuthor(2, false))

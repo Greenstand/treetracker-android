@@ -40,8 +40,6 @@ class BaseViewModelTest {
             .single()
             .getContentIfNotConsumed()
 
-    // --- state ---
-
     @Test
     fun `state starts with the initial state`() {
         assertEquals(TestState(), viewModel.state.value)
@@ -84,8 +82,6 @@ class BaseViewModelTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
-
-    // --- events ---
 
     @Test
     fun `no events are emitted initially`() {
@@ -159,7 +155,6 @@ class BaseViewModelTest {
         runTest {
             val clock = FakeClock()
             val navigator = fakeNavigator(DashboardRoute, clock = clock)
-            // A navigation right now opens the throttle window.
             navigator.navigate(SettingsRoute)
             viewModel.navigateTo(MapRoute)
 

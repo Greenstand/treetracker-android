@@ -177,10 +177,6 @@ class AgentAccountCreatorTest {
             assertEquals(listOf("5550000001"), saved.map { it.wallet })
         }
 
-    /**
-     * A user table whose every call suspends, so two createAccount calls interleave the way they
-     * do on a device. Returns the saved users.
-     */
     private fun fakeRepoThatSuspends(): MutableList<User> {
         val saved = mutableListOf<User>()
         coEvery { userRepo.doesUserExists(any()) } coAnswers {

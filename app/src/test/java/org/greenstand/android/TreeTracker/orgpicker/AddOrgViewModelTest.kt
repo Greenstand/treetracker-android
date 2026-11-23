@@ -160,8 +160,6 @@ class AddOrgViewModelTest {
             verify { mockEditor.apply() }
         }
 
-    // --- Org pre-fill tests ---
-
     @Test
     fun `WHEN current org is non-default THEN orgName is pre-filled`() =
         runTest {
@@ -338,8 +336,6 @@ class AddOrgViewModelTest {
             assertTrue(viewModel.events.replayCache.isEmpty())
             verify(exactly = 0) { mockEditor.putString(any(), any()) }
         }
-
-    // --- Process death restore (#1418) ---
 
     @Test
     fun `WHEN init with the setup scope open THEN saves the setup user id`() =

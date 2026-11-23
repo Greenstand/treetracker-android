@@ -19,9 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-/**
- *  checks if the internet is available on the user's device
- */
 class CheckForInternetUseCase : UseCase<Unit, Boolean>() {
     override suspend fun execute(params: Unit): Boolean =
         withContext(Dispatchers.IO) {

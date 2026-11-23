@@ -40,7 +40,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.format.DateTimeFormatter
 
-/** Tests for the stateless [MapContent] overlay, with a placeholder instead of MapLibre. */
 class MapUiTest : ComposeUiTest() {
     private var backClicks = 0
     private val selectedMarkerIds = mutableListOf<String>()

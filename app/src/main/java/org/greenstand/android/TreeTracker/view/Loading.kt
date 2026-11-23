@@ -70,7 +70,6 @@ fun DeterminateProgressBar(
         val diameterOffset = stroke.width / 2
         val arcDimension = size.width - 2 * diameterOffset
 
-        // Function to draw a default styled arc.
         fun drawProgress(
             color: Color,
             sweepAngle: Float,
@@ -84,7 +83,7 @@ fun DeterminateProgressBar(
             style = stroke,
         )
 
-        drawProgress(AppColors.MediumGray, 360f) // Background progress.
-        drawProgress(AppColors.Orange, progress * 360f) // Foreground progress.
+        drawProgress(AppColors.MediumGray, 360f)
+        drawProgress(AppColors.Orange, progress * 360f)
     }
 }

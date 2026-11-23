@@ -54,10 +54,6 @@ import org.koin.dsl.module
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 
-/**
- * Tests for [Root] (the org gate in front of the app) and [Host] (the navigation host), with
- * every dependency of the start route's splash screen bound in Koin as a MockK double.
- */
 @OptIn(ExperimentalComposeApi::class)
 class RootUiTest : RootScreenUiTest() {
     private val orgRepo = mockk<OrgRepo>(relaxed = true)

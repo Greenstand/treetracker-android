@@ -32,11 +32,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-/**
- * Drives [PlayInstallReferrerDataSource] through a mocked [InstallReferrerClient], so no
- * Play Store connection is needed. The listener is invoked synchronously from
- * `startConnection`, as the real client does when it fails fast.
- */
 class PlayInstallReferrerDataSourceTest {
     private val context: Context = mockk(relaxed = true)
     private val client: InstallReferrerClient = mockk(relaxed = true)

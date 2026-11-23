@@ -20,7 +20,6 @@ import java.security.NoSuchAlgorithmException
 
 fun String.md5(): String {
     try {
-        // Create MD5 Hash
         val digest = java.security.MessageDigest.getInstance("MD5")
         digest.update(this.toByteArray())
         val messageDigest = digest.digest()

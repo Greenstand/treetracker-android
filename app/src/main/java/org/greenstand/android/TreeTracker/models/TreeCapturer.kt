@@ -92,13 +92,8 @@ class TreeCapturer(
         currentTree = currentTree?.copy(content = note)?.also { pendingTreeStore.save(it) }
     }
 
-    /**
-     * Brings back the tree whose photo was taken before Android killed the app, so image review
-     * can show and save it. Returns null when there is none.
-     */
     fun restorePendingTree(): Tree? = pendingTreeStore.load()?.also { currentTree = it }
 
-    /** Forgets the unsaved tree, for when the user leaves the capture flow. */
     fun discardPendingTree() {
         currentTree = null
         pendingTreeStore.clear()

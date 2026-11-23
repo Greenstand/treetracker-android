@@ -18,10 +18,6 @@ package org.greenstand.android.TreeTracker.navigation
 import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.models.organization.Destination
 
-/**
- * Base class for org-configured flow navigation controllers.
- * Provides common index-tracking, bounds checking, and route resolution logic.
- */
 abstract class FlowNavigationController(
     protected val navPath: List<Destination>,
 ) {
@@ -53,10 +49,6 @@ abstract class FlowNavigationController(
         currentNavPathIndex = 0
     }
 
-    /**
-     * Resolves a Destination to a typed route object for no-arg routes.
-     * Returns null for routes that require arguments.
-     */
     protected fun resolveNoArgDestination(destination: Destination): NavKey? {
         val normalized = RouteRegistry.normalize(destination.route)
         return RouteRegistry.resolveNoArgRoute(normalized)

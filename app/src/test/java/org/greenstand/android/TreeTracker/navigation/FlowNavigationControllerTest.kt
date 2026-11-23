@@ -24,7 +24,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class FlowNavigationControllerTest {
-    /** Exposes the protected index helpers of the base class. */
     private class TestFlowController(
         navPath: List<Destination>,
     ) : FlowNavigationController(navPath) {

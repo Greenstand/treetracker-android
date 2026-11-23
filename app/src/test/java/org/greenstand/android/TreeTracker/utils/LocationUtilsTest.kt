@@ -41,7 +41,6 @@ class LocationUtilsTest {
         repeat(500) {
             val (lat, lon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon, radiusMiles)
 
-            // Undo the longitude stretch to measure the distance in latitude degrees
             val latOffset = lat - centerLat
             val lonOffset = (lon - centerLon) * cos(Math.toRadians(centerLat))
             val distance = sqrt(latOffset.pow(2) + lonOffset.pow(2))

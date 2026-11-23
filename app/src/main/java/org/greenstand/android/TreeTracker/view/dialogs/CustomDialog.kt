@@ -47,15 +47,6 @@ import org.greenstand.android.TreeTracker.view.ApprovalButton
 import org.greenstand.android.TreeTracker.view.TestTags
 import org.greenstand.android.TreeTracker.view.exposeTestTags
 
-/**
- * @param dialogIcon Icon to be displayed in the dialog.
- * @param title The Dialog's title text.
- * @param textContent The text content of the dialog. Can be left empty if it is an input dialog
- * @param content Composable's content. Allows you display other composable in the dialog as content
- * @param onPositiveClick The callback action for clicking the positive approval button.
- * @param onNegativeClick The callback action for clicking the negative approval button.
- * @param textInputValue The text content of the dialog. Can be left empty if it is an input dialog
- */
 @Composable
 fun CustomDialog(
     dialogIcon: Painter? = painterResource(id = R.drawable.greenstand_logo),
@@ -102,7 +93,6 @@ fun CustomDialog(
         },
         modifier =
             backgroundModifier
-                // A dialog is a window of its own, so it needs its own exposeTestTags.
                 .exposeTestTags()
                 .fillMaxWidth()
                 .wrapContentHeight()

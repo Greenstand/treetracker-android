@@ -66,8 +66,6 @@ fun DebugOverlayHost(
     val showSensor by overlayManager.showSensorOverlay.collectAsState()
     var showMenu by remember { mutableStateOf(false) }
 
-    // Start/stop sensor tracker based on overlay visibility.
-    // DisposableEffect guarantees stop() runs when the composable leaves the tree.
     DisposableEffect(showSensor) {
         if (showSensor) {
             sensorDiagnosticsTracker.start()

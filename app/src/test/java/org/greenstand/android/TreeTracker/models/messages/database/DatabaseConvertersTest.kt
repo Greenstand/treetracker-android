@@ -74,8 +74,6 @@ class DatabaseConvertersTest {
             Question(prompt = "Height?", choices = listOf("<1m", ">1m")),
         )
 
-    // region createMessageRequestFromEntities
-
     @Test
     fun `direct message becomes a message request without survey fields`() {
         val request =
@@ -148,10 +146,6 @@ class DatabaseConvertersTest {
 
         assertTrue(error.message!!.contains("SURVEY"))
     }
-
-    // endregion
-
-    // region createMessageFromEntities
 
     @Test
     fun `direct message entity becomes a DirectMessage`() {
@@ -300,6 +294,4 @@ class DatabaseConvertersTest {
             DatabaseConverters.createMessageFromEntities(entity(MessageType.SURVEY_RESPONSE), null, questions)
         }
     }
-
-    // endregion
 }

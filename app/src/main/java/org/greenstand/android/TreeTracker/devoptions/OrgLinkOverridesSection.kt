@@ -38,11 +38,6 @@ import org.greenstand.android.TreeTracker.models.organization.OrgFlow
 import org.greenstand.android.TreeTracker.view.AppColors
 import org.greenstand.android.TreeTracker.view.TestTags
 
-/**
- * The "Org Link Overrides" part of the dev options list. Each setting shows what the current
- * org's link (or the default org) sets, and a switch that overrides it. Overrides are saved
- * at once and apply while "Apply overrides" is on.
- */
 fun LazyListScope.orgLinkOverridesSection(
     state: OrgLinkOverridesState,
     onHandleAction: (DevOptionsAction) -> Unit,
@@ -169,7 +164,6 @@ private fun SubHeader(text: String) {
     )
 }
 
-/** [onSet] gets the new override, or null to follow the org again. */
 @Composable
 private fun OverrideRow(
     row: OrgSettingRow,

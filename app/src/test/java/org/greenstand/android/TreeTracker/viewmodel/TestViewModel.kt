@@ -31,12 +31,10 @@ sealed interface TestAction : Action {
     ) : TestAction
 }
 
-/** A feature-specific event, for exercising custom [UiEvent] handling. */
 data class TestEvent(
     val id: Int,
 ) : UiEvent
 
-/** Minimal [BaseViewModel] that exposes its protected helpers to tests. */
 class TestViewModel : BaseViewModel<TestState, TestAction>(TestState()) {
     override fun handleAction(action: TestAction) {
         when (action) {

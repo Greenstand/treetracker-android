@@ -146,7 +146,6 @@ class AgentInputTest {
         }
     }
 
-    /** Sign-up rejects these too: it only accepts 7 to 15 digits, with nothing else. */
     @RunWith(Parameterized::class)
     class InvalidPhones(
         private val input: String,

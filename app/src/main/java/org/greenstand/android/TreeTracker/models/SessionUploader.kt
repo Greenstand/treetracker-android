@@ -51,7 +51,6 @@ class SessionUploader(
         val bundleId = jsonBundle.md5() + "_sessions"
         val sessionIds = sessionsToUpload.map { it.id }
 
-        // Update the trees in DB with the bundleId
         dao.updateSessionBundleIds(sessionIds, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
         dao.updateSessionUploadStatus(sessionIds, true)

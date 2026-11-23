@@ -26,13 +26,6 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
-/**
- * AppFunctions that let agents set up test data without driving the UI. Debug and dev builds
- * only. The AppFunctions compiler generates [AgentAppFunctionService] from this class, and
- * src/debug/AndroidManifest.xml declares it.
- *
- * See docs/testing/agent-app-functions.md for how to call them over adb.
- */
 @RequiresApi(Build.VERSION_CODES.BAKLAVA)
 @AppFunctionServiceEntryPoint(
     serviceName = "AgentAppFunctionService",
@@ -92,7 +85,6 @@ abstract class AgentAppFunctions :
                 .captureTrees(count, wallet, latitude, longitude, note)
         }
 
-    // AppFunctions are called on the main thread
     private suspend fun <T> runAgentFunction(block: suspend () -> T): T =
         withContext(Dispatchers.IO) {
             try {

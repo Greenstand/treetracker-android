@@ -55,7 +55,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-/** Tests for [UserSelect] (ViewModel + navigation wiring) and the [UserSelectScreen] root. */
 class UserSelectScreenUiTest : ComposeUiTest() {
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val preferences = mockk<Preferences>(relaxed = true)

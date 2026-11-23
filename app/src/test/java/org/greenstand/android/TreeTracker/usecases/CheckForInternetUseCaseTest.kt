@@ -54,7 +54,6 @@ class CheckForInternetUseCaseTest {
         try {
             unmockkStatic(Runtime::class)
         } catch (_: Exception) {
-            // no-op if not mocked
         }
     }
 

@@ -18,16 +18,11 @@ package org.greenstand.android.TreeTracker.appfunctions
 import org.greenstand.android.TreeTracker.utilities.Validation
 import org.greenstand.android.TreeTracker.utils.ValidationUtils
 
-/**
- * Checks and normalizes what agents pass to the AppFunctions, by the same rules as the sign-up
- * and capture screens. Bad input throws [IllegalArgumentException] with a message for the agent.
- */
 object AgentInput {
     const val DEFAULT_FIRST_NAME = "Test"
     const val DEFAULT_LAST_NAME = "User"
     const val MAX_TREES = 500
 
-    /** createAccount's input, ready to save. At most one of [phone] and [email] is set. */
     data class AccountDetails(
         val firstName: String,
         val lastName: String,
@@ -51,21 +46,18 @@ object AgentInput {
         val trimmedPhone = phone?.trim()
         trimmedPhone?.let { require(Validation.isValidPhoneNumber(it)) { "phone '$it' must be 7 to 15 digits." } }
 
-        // Sign-up lowercases emails before they become the wallet, and only checks for an @
         val normalizedEmail = email?.trim()?.lowercase()
         normalizedEmail?.let { require('@' in it) { "email '$it' must contain an @." } }
 
         return AccountDetails(first, last, trimmedPhone, normalizedEmail)
     }
 
-    /** Wallets to look an account up by: as given, then lowercased, as email wallets are saved. */
     fun walletLookups(wallet: String): List<String> = listOf(wallet.trim(), wallet.trim().lowercase()).distinct()
 
     fun requireTreeCount(count: Int) {
         require(count in 1..MAX_TREES) { "count must be between 1 and $MAX_TREES, was $count." }
     }
 
-    /** The latitude and longitude to place trees around, or null when neither was passed. */
     fun treeCenter(
         latitude: Double?,
         longitude: Double?,
@@ -77,10 +69,6 @@ object AgentInput {
         return latitude to longitude
     }
 
-    /**
-     * Brings a point back into range: latitude clamped to -90..90, longitude wrapped into
-     * -180..180 (exclusive of 180). Spreading trees near a pole or the antimeridian can leave it.
-     */
     fun normalizeCoordinates(
         latitude: Double,
         longitude: Double,

@@ -60,10 +60,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Covers the dashboard's sync button, WorkManager state observation (snackbars), tree count
- * bookkeeping during a sync, org/message flags and lifecycle cleanup.
- */
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -90,7 +86,6 @@ class DashboardViewModelSyncTest {
     fun setUp() {
         mockkObject(FeatureFlags)
         every { FeatureFlags.DEBUG_ENABLED } returns false
-        // 3 + 5 = 8 synced, 2 + 4 = 6 remaining
         every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
         every { dao.getUploadedTreeImageCountFlow() } returns flowOf(5)
         every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
@@ -365,7 +360,6 @@ class DashboardViewModelSyncTest {
 
     @Test
     fun `navigation actions are left to the screen`() {
-        // A single org and no unread messages keep the async flag refresh equal to the defaults.
         coEvery { orgRepo.getOrgs() } returns listOf(FakeFileGenerator.fakeOrganizationList.first())
         val vm = createViewModel()
         val initialState = vm.state.value

@@ -57,10 +57,7 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEnti
         OrganizationEntity::class,
     ],
     autoMigrations = [
-        // 7 -> 8: adds the v2 tables (shipped in 2.0.0). The 1.x releases shipped schemas 3, 4 and 6
-        // (1.4.0 = 6), and all of them upgrade through 7 -> 8, so this must stay.
         AutoMigration(from = 7, to = 8),
-        // 8 -> 9: organization table and session.note (first shipped in 2.2.0)
         AutoMigration(from = 8, to = 9),
     ],
 )
@@ -94,10 +91,6 @@ abstract class AppDatabase : RoomDatabase() {
             return INSTANCE!!
         }
 
-        /**
-         * A builder with the app's database configuration, for a database file named [name].
-         * [getInstance] uses it, and tests use it to open a database exactly as the app does.
-         */
         internal fun builder(
             context: Context,
             name: String,
@@ -106,7 +99,6 @@ abstract class AppDatabase : RoomDatabase() {
                 .databaseBuilder(context, AppDatabase::class.java, name)
                 .addMigrations(*MANUAL_MIGRATIONS)
 
-        /** Hand-written migrations. Later versions use the auto migrations declared on @Database. */
         private val MANUAL_MIGRATIONS =
             arrayOf(
                 MIGRATION_3_4,

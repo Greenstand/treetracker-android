@@ -31,8 +31,6 @@ import org.robolectric.annotation.Config
 class TextRefTest {
     private val context: Context = RuntimeEnvironment.getApplication()
 
-    // --- factories ---
-
     @Test
     fun `invoke with a string builds a Plain ref`() {
         assertEquals(TextRef.Plain("hello"), TextRef("hello"))
@@ -66,8 +64,6 @@ class TextRefTest {
     fun `refs with different args are not equal`() {
         assertNotEquals(TextRef(R.string.tree_list_title, "Ada"), TextRef(R.string.tree_list_title, "Bea"))
     }
-
-    // --- Context.resolve ---
 
     @Test
     fun `resolve returns a Plain value unchanged`() {

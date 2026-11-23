@@ -51,8 +51,6 @@ class PreferencesTest {
         preferences = Preferences(sharedPreferences)
     }
 
-    // region getters and defaults
-
     @Test
     fun `getters return their built-in defaults for missing keys`() {
         assertNull(preferences.getString(key))
@@ -153,10 +151,6 @@ class PreferencesTest {
         assertEquals(6, preferences.getInt(otherKey))
     }
 
-    // endregion
-
-    // region key paths
-
     @Test
     fun `a plain key is stored under its path`() {
         preferences.edit().putInt(key, 5).apply()
@@ -249,10 +243,6 @@ class PreferencesTest {
         assertEquals(1, preferences.getInt(userKey))
     }
 
-    // endregion
-
-    // region clearSessionData
-
     @Test
     fun `clearSessionData removes every session value including user scoped ones`() {
         preferences.setUserId(4)
@@ -295,10 +285,6 @@ class PreferencesTest {
 
         assertTrue(sharedPreferences.all.isEmpty())
     }
-
-    // endregion
-
-    // region observe
 
     @Test
     fun `observeInt emits the new value when the key changes`() =
@@ -413,6 +399,4 @@ class PreferencesTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
-
-    // endregion
 }

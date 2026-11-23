@@ -34,7 +34,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Tests for the stateless [UserSelectContent] grid. */
 class UserSelectUiTest : ComposeUiTest() {
     private val clickedUsers = mutableListOf<User>()
     private val forwardedUsers = mutableListOf<User>()

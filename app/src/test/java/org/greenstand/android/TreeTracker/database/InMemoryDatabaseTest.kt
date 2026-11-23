@@ -28,10 +28,6 @@ import kotlinx.coroutines.flow.toList
 import org.junit.After
 import org.junit.Before
 
-/**
- * Base class for DAO tests: opens a fresh in-memory [AppDatabase] before each test and closes it after.
- * Subclasses add `@RunWith(RobolectricTestRunner::class)` and `@Config(manifest = Config.NONE)`.
- */
 abstract class InMemoryDatabaseTest {
     protected lateinit var database: AppDatabase
 
@@ -47,10 +43,6 @@ abstract class InMemoryDatabaseTest {
     }
 }
 
-/**
- * Collects this flow's first value, runs [change], and returns the first value together with the
- * value emitted after [change]. Used to check that a Room flow re-emits when its tables change.
- */
 suspend fun <T> Flow<T>.valuesBeforeAndAfter(change: suspend () -> Unit): Pair<T, T> =
     coroutineScope {
         val firstEmitted = CompletableDeferred<Unit>()

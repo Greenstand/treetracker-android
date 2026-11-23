@@ -48,7 +48,6 @@ import org.junit.Before
 import org.junit.Test
 import org.koin.dsl.module
 
-/** Tests for [DevOptionsRoot] showing and changing the values already stored in the [Configurator]. */
 class DevOptionsStoredValuesUiTest : RootScreenUiTest() {
     private val configurator = mockk<Configurator>(relaxed = true)
     private val overlayManager = DebugOverlayManager()

@@ -35,8 +35,6 @@ class PermissionViewModel(
     override fun handleAction(action: PermissionAction) {
         when (action) {
             is PermissionAction.CheckLocationEnabled -> {
-                // Sent while location is granted. If it was denied at first launch and granted
-                // only now, GPS updates haven't started yet; this starts them (a no-op otherwise).
                 locationDataCapturer.startGpsUpdates()
                 updateState {
                     copy(isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))

@@ -41,11 +41,6 @@ import org.junit.Test
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 
-/**
- * Tests for the [LocationRationaleDialog] and [PermissionDeniedPermanentlyDialog] on their own.
- * [PermissionRequestUiTest] cannot reach the rationale dialog because Robolectric never asks
- * to show a rationale, so it is driven here with a fake [PermissionState].
- */
 @OptIn(ExperimentalPermissionsApi::class)
 class PermissionDialogsUiTest : ComposeUiTest() {
     private val application = RuntimeEnvironment.getApplication()
@@ -78,7 +73,6 @@ class PermissionDialogsUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
     }
 
-    /** Returns and clears every activity start Robolectric recorded so far. */
     private fun drainStartedActivities(): List<Intent> = generateSequence { shadowOf(application).nextStartedActivity }.toList()
 
     @Test

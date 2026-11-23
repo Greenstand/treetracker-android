@@ -70,13 +70,10 @@ fun AddOrgScreen(viewModel: AddOrgViewModel = viewModel(factory = LocalViewModel
         AddOrg(
             state = state,
             onHandleAction = { action ->
-                // Until a restored Add org has its user back, leaving it would start setup without one.
                 val canLeave = !state.restoring && !state.setupLost
                 when (action) {
                     is AddOrgAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
                     is AddOrgAction.NavigateNext -> {
-                        // Next sits where user select's Next was, so the second tap of a double tap
-                        // there lands here (#1423). Drop it.
                         if (canLeave && !doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
                             viewModel.handleAction(AddOrgAction.SetDefaultOrg)
                             scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }

@@ -17,11 +17,6 @@ package org.greenstand.android.TreeTracker.models
 
 import android.hardware.SensorEvent
 
-/**
- * Builds a [SensorEvent] holding [values]. SensorEvent has no public constructor, so this calls
- * its package-private `SensorEvent(int valueSize)` constructor. Only usable under Robolectric,
- * where the real framework class is loaded.
- */
 internal fun sensorEventOf(vararg values: Float): SensorEvent {
     val constructor = SensorEvent::class.java.getDeclaredConstructor(Int::class.javaPrimitiveType)
     constructor.isAccessible = true

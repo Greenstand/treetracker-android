@@ -15,19 +15,11 @@
  */
 package org.greenstand.android.TreeTracker.utils
 
-/**
- * Utility class for validating user input fields
- */
 object ValidationUtils {
     private val NAME_PATTERN = """^[\p{L}\s'-]+$""".toRegex()
 
     private val INVALID_CHARS_PATTERN = """[0-9!@#$%^&*()_+=\[\]{};:"|<>?,./\\~`]""".toRegex()
 
-    /**
-     * Validates a name field (first name or last name)
-     * @param name The name to validate
-     * @return Pair of (isValid, errorMessage)
-     */
     fun validateName(name: String?): Pair<Boolean, String?> =
         when {
             name.isNullOrBlank() -> {
@@ -50,13 +42,10 @@ object ValidationUtils {
             }
         }
 
-    /**
-     * Filters out invalid characters from input
-     */
     fun filterNameInput(input: String): String {
         return input
             .filter { char ->
                 char.isLetter() || char.isWhitespace() || char == '-' || char == '\''
-            }.take(50) // Also enforce max length
+            }.take(50)
     }
 }

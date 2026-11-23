@@ -41,7 +41,6 @@ import org.greenstand.android.TreeTracker.view.TestTags
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tests for the dashboard building blocks and how [Dashboard] follows state changes. */
 @OptIn(ExperimentalComposeApi::class)
 class DashboardComponentsUiTest : ComposeUiTest() {
     private fun progressBar() = composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo))

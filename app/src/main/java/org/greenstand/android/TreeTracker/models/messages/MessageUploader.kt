@@ -58,7 +58,6 @@ class MessageUploader(
         val bundleId = jsonBundle.md5() + "_messages"
         val messageIds = messageEntitiesToUpload.map { it.id }
 
-        // Update the trees in DB with the bundleId
         messagesDAO.updateMessageBundleIds(messageIds, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
         messagesDAO.markMessagesAsUploaded(messageIds)

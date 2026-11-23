@@ -84,10 +84,6 @@ class TreeCaptureViewModel(
     private var pinLocationDeferred: CompletableDeferred<Boolean>? = null
 
     init {
-        // After Android kills the app, the capture screen is restored without going through
-        // capture setup, so resume the session, sensors and GPS updates it started. When a
-        // session is already current (normal path, or returning from a restored image review)
-        // the sensors are left alone so their step baseline isn't reset, and GPS is already on.
         if (sessionTracker.wasSessionInterrupted() && sessionTracker.resumeInterruptedSession()) {
             stepCounter.enable()
             deviceOrientation.enable()

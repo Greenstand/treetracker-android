@@ -79,10 +79,6 @@ class TreeImageReviewViewModelTest {
 
     private fun createViewModel(): TreeImageReviewViewModel = TreeImageReviewViewModel(treeCapturer = treeCapturer, userRepo = userRepo, featureResolver = featureResolver)
 
-    /**
-     * Opens a real capture flow and moves it from TreeCapture to TreeImageReview, the state the
-     * review screen is shown in. The clock is advanced past the navigation throttle afterwards.
-     */
     private suspend fun navigatorOnImageReview(captureFlow: List<Destination>): Navigator {
         every { treeCapturer.currentTree } returns CaptureFlowTestFixtures.tree()
         coEvery { treeCapturer.saveTree() } returns true
@@ -136,7 +132,6 @@ class TreeImageReviewViewModelTest {
     @Test
     fun `CheckIfCanNavigateForward without forceNote emits NavigationEvent`() =
         runTest {
-            // featureResolver defaults to false (relaxed mock) → forceNote = false
             testSubject.handleAction(TreeImageReviewAction.CheckIfCanNavigateForward)
 
             val event = testSubject.events.first().getContentIfNotConsumed()

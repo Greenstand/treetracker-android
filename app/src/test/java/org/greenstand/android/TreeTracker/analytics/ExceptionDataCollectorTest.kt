@@ -119,7 +119,6 @@ class ExceptionDataCollectorTest {
     }
 
     companion object {
-        // Mirrors the private keys in ExceptionDataCollector
         private const val ROUTE = "route"
         private const val LAST_ROUTE = "last_route"
     }

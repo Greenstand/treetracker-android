@@ -78,8 +78,6 @@ class LocationUpdateManager(
                     )
                     isUpdating = true
                 } catch (e: SecurityException) {
-                    // Before Android 12 the GPS provider needs fine location; approximate alone
-                    // throws here.
                     Timber.w(e, "GPS updates need fine location")
                 }
             }
@@ -101,10 +99,6 @@ class LocationUpdateManager(
         return true
     }
 
-    /**
-     *  Meant to be used to dynamically update the location update request with
-     *  updated values for min time between updates and min distance between updates.
-     */
     fun refreshLocationUpdateRequest() {
         val locationDataConfig = convergenceConfiguration.locationDataConfig
         locationManager.removeUpdates(locationUpdateListener)

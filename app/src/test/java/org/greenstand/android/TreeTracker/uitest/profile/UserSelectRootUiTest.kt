@@ -37,10 +37,6 @@ import org.junit.Before
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-/**
- * Shared setup for the profile root screens, which all run on a [UserSelectViewModel]
- * built from mocked repositories.
- */
 abstract class UserSelectRootUiTest : RootScreenUiTest() {
     val userRepo = mockk<UserRepo>(relaxed = true)
     val messagesRepo = mockk<MessagesRepo>(relaxed = true)
@@ -74,7 +70,6 @@ abstract class UserSelectRootUiTest : RootScreenUiTest() {
         unmockkObject(CaptureSetupScopeManager)
     }
 
-    /** Binds the repositories `UserSelectViewModelFactory` resolves from Koin. */
     fun repositoriesModule(): Module =
         module {
             single { userRepo }
@@ -83,7 +78,6 @@ abstract class UserSelectRootUiTest : RootScreenUiTest() {
             single { preferences }
         }
 
-    /** Binds a [UserSelectViewModel] for screens that resolve it through `LocalViewModelFactory`. */
     fun userSelectViewModelModule(): Module {
         val viewModel =
             UserSelectViewModel(

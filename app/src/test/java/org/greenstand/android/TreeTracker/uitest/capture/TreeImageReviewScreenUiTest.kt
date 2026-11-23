@@ -49,7 +49,6 @@ import org.junit.Test
 import org.greenstand.android.TreeTracker.uitest.TEXT_FIELD_DIALOG_QUALIFIERS
 import org.robolectric.annotation.Config
 
-/** Tests for the [TreeImageReviewScreen] root: ViewModel wiring and capture flow navigation. */
 @Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)
 class TreeImageReviewScreenUiTest : ComposeUiTest() {
     private val treeCapturer = mockk<TreeCapturer>(relaxed = true)

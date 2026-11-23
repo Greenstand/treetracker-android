@@ -39,14 +39,9 @@ import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/**
- * Verifies the JSON produced for every request that ends up in an upload bundle. Field names are
- * part of the contract with the batch upload processor, so they are asserted explicitly.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class UploadRequestsSerializationTest {
-    // Same configuration as the app's Json instance (see AppModule)
     private val json =
         Json {
             explicitNulls = true

@@ -29,15 +29,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Conflict strategies, foreign key behaviour and value fidelity across the AppDatabase DAOs: what happens to
- * child rows when a parent is replaced or re-keyed, and what comes back for rows that don't exist.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class DaoConflictAndIntegrityTest : InMemoryDatabaseTest() {
-    // region REPLACE on parents that have children
-
     @Test
     fun `insertSession with an existing id replaces the session and keeps its trees and locations`() =
         runTest {
@@ -134,10 +128,6 @@ class DaoConflictAndIntegrityTest : InMemoryDatabaseTest() {
             assertEquals(listOf("4"), treeDao.getTreeAttributeByTreeCaptureId(captureId).map { it.value })
         }
 
-    // endregion
-
-    // region ON UPDATE CASCADE
-
     @Test
     fun `changing a session id moves its trees and locations with it`() =
         runTest {
@@ -176,10 +166,6 @@ class DaoConflictAndIntegrityTest : InMemoryDatabaseTest() {
             val capture = database.treeDao().getAllTreeCaptures().single()
             assertEquals(checkInId, capture.planterCheckInId)
         }
-
-    // endregion
-
-    // region missing rows and empty id lists
 
     @Test
     fun `getSessionById throws for an unknown id because it returns a non-null session`() =
@@ -237,10 +223,6 @@ class DaoConflictAndIntegrityTest : InMemoryDatabaseTest() {
             val trees = database.treeDao().getTreesByUserWallet("someone-else").first()
             assertTrue(trees.isEmpty())
         }
-
-    // endregion
-
-    // region value fidelity
 
     @Test
     fun `instants keep nanosecond precision through the database`() =
@@ -308,6 +290,4 @@ class DaoConflictAndIntegrityTest : InMemoryDatabaseTest() {
 
             assertEquals("later", dao.getLatestDeviceConfig()?.uuid)
         }
-
-    // endregion
 }

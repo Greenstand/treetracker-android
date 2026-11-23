@@ -30,7 +30,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
-/** Test tag of a [UserImageButton]. */
 const val USER_IMAGE_BUTTON_TAG = "UserImageButton"
 
 @Composable

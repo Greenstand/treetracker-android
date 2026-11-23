@@ -21,12 +21,10 @@ import org.greenstand.android.TreeTracker.models.organization.Destination
 import org.greenstand.android.TreeTracker.models.organization.Org
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 
-/** Shortest gap between two throttled navigations on an unscoped [Navigator]. */
 internal const val THROTTLE_WINDOW_MS = 300L
 
 internal fun destinations(vararg routes: String): List<Destination> = routes.map { Destination(it) }
 
-/** An [OrgRepo] mock whose current org has the given setup and capture flows. */
 internal fun orgRepoWith(
     setupFlow: List<Destination> = emptyList(),
     captureFlow: List<Destination> = emptyList(),

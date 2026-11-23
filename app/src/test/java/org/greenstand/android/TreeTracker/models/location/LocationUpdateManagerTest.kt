@@ -221,7 +221,6 @@ class LocationUpdateManagerTest {
 
         locationUpdateManager.stopLocationUpdates()
 
-        // The live data is reset for observers, but TimeProvider and capture still read the last fix.
         assertNull(locationUpdateManager.locationUpdateLiveData.value)
         assertSame(lastFix, locationUpdateManager.currentLocation)
     }

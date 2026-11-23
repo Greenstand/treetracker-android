@@ -49,10 +49,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
-/**
- * Covers what [MessagesUserSelectScreen] adds on top of the shared `UserSelect` screen:
- * no "create user" button, and forward navigation into the selected user's messages.
- */
 class MessagesUserSelectScreenUiTest : ComposeUiTest() {
     @Before
     fun setUp() {

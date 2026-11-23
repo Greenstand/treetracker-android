@@ -100,7 +100,7 @@ class TreeUploader(
         log("Uploading tree images...")
         coroutineScope {
             trees
-                .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
+                .filter { it.photoUrl == null }
                 .map { tree ->
                     async {
                         val imageUrl =
@@ -112,7 +112,6 @@ class TreeUploader(
                                 ),
                             ) ?: error("No imageUrl")
 
-                        // Update local tree data with image Url
                         tree.photoUrl = imageUrl
                         dao.updateTreeCapture(tree)
                     }
@@ -125,7 +124,7 @@ class TreeUploader(
         log("Uploading tree images...")
         coroutineScope {
             trees
-                .filter { it.photoUrl == null } // Upload photo only if it hasn't been saved in the DB (hasn't been uploaded yet)
+                .filter { it.photoUrl == null }
                 .map { tree ->
                     async {
                         val imageUrl =
@@ -137,7 +136,6 @@ class TreeUploader(
                                 ),
                             ) ?: error("No imageUrl")
 
-                        // Update local tree data with image Url
                         tree.photoUrl = imageUrl
                         dao.updateTree(tree)
                     }
@@ -152,7 +150,6 @@ class TreeUploader(
         instanceId: String,
     ) {
         log("Uploading Tree Bundle...")
-        // Create a request object for each tree
         val treeRequestList =
             trees.map { tree ->
                 createTreeRequestUseCase.execute(
@@ -165,10 +162,8 @@ class TreeUploader(
 
         val jsonBundle = json.encodeToString(UploadBundle.createV1(newTreeRequests = treeRequestList, instanceId = instanceId))
 
-        // Create a hash ID to reference this upload bundle later
         val bundleId = jsonBundle.md5()
 
-        // Update the trees in DB with the bundleId
         dao.updateTreeCapturesBundleIds(trees.map { it.id }, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
         dao.updateTreeCapturesUploadStatus(trees.map { it.id }, true)
@@ -177,7 +172,6 @@ class TreeUploader(
 
     private suspend fun uploadTreeBundles(trees: List<TreeEntity>) {
         log("Uploading Tree Bundle...")
-        // Create a request object for each tree
         val treeRequestList =
             trees.map { tree ->
                 val sessionUuid = dao.getSessionById(tree.sessionId).uuid
@@ -192,16 +186,14 @@ class TreeUploader(
                     stepCount = null,
                     deltaStepCount = null,
                     rotationMatrix = null,
-                    extraAttributes = null, // gson.toJson(tree.extraAttributes)  extra attributes disabled
+                    extraAttributes = null,
                 )
             }
 
         val jsonBundle = json.encodeToString(UploadBundle.createV2(treeCaptures = treeRequestList))
 
-        // Create a hash ID to reference this upload bundle later
         val bundleId = "${jsonBundle.md5()}_captures"
 
-        // Update the trees in DB with the bundleId
         dao.updateTreesBundleIds(trees.map { it.id }, bundleId)
         objectStorageClient.uploadBundle(jsonBundle, bundleId)
         dao.updateTreesUploadStatus(trees.map { it.id }, true)

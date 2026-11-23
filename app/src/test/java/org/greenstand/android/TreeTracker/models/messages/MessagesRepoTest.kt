@@ -61,7 +61,6 @@ class MessagesRepoTest {
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
 
-    // Set the main coroutines dispatcher for unit testing.
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -71,7 +70,6 @@ class MessagesRepoTest {
     private lateinit var messagesDAO: MessagesDAO
     private lateinit var messageUploader: MessageUploader
 
-    // system under test
     private lateinit var messagesRepo: MessagesRepo
 
     @Before
@@ -119,7 +117,6 @@ class MessagesRepoTest {
     @Test
     fun `sync messages method fetches messages from api and saves them in database for every page and wallet correctly`() =
         runTest {
-            // mock
             coEvery {
                 userRepo.getUserList()
             } returns userList
@@ -157,10 +154,8 @@ class MessagesRepoTest {
                 }
             }
 
-            // perform
             messagesRepo.syncMessages()
 
-            // assert
             for (i in userList.indices) {
                 val limit = 100
                 val total = (i + 1) * 100 + 5
@@ -194,7 +189,6 @@ class MessagesRepoTest {
 
         do {
             action.invoke(offset)
-            // prepare for next iteration
             offset += limit
         } while (offset <= total)
     }

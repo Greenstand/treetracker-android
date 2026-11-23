@@ -25,10 +25,6 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-/**
- * `rememberNavBackStack` saves the back stack through each route's kotlinx serializer, so every
- * route has to survive a round trip for the app to restore the stack after process death.
- */
 class RoutesSerializationTest {
     private val json = Json
 
@@ -112,7 +108,6 @@ class RoutesSerializationTest {
 
     @Test
     fun `route names used for screen tracking drop the arguments`() {
-        // ScreenTrackingNavEntryDecorator reports toString() up to the first '('.
         assertEquals("DashboardRoute", DashboardRoute.toString().substringBefore('('))
         assertEquals("TreeDetailRoute", TreeDetailRoute(5L).toString().substringBefore('('))
         assertEquals("ChatRoute", ChatRoute(1L, "x(y)").toString().substringBefore('('))

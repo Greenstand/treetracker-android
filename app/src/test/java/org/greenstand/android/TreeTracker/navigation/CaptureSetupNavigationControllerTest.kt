@@ -108,12 +108,9 @@ class CaptureSetupNavigationControllerTest {
             deviceOrientation = deviceOrientation,
         )
 
-    /** Moves the fake clock past the unscoped throttle window so the next throttled call goes through. */
     private fun settle() = clock.advance(THROTTLE_WINDOW_MS)
 
     private val fullFlow = destinations("user-select", "wallet-select", "add-org", "session-note")
-
-    // --- navForward through the flow ---
 
     @Test
     fun `navForward from the first step navigates to the second destination`() =
@@ -200,8 +197,6 @@ class CaptureSetupNavigationControllerTest {
             assertEquals("Unknown setup flow destination: tree-capture", error?.message)
         }
 
-    // --- end of setup flow ---
-
     @Test
     fun `navForward on the last step navigates to tree capture with the user photo`() =
         runTest {
@@ -267,7 +262,6 @@ class CaptureSetupNavigationControllerTest {
             settle()
             controller.navForward(navigator)
             settle()
-            // Cancelling the camera rationale pops capture off, back onto Add org.
             navigator.throttledPopBackStack()
             settle()
             controller.navForward(navigator)
@@ -319,8 +313,6 @@ class CaptureSetupNavigationControllerTest {
             assertEquals(listOf(DashboardRoute, TreeCaptureRoute("/photos/ada.jpg")), navigator.backStack)
             coVerify { sessionTracker.startSession() }
         }
-
-    // --- double tap (issue #1423) ---
 
     @Test
     fun `second navForward from user select after it navigated is dropped`() =
@@ -393,8 +385,6 @@ class CaptureSetupNavigationControllerTest {
             assertTrue(CaptureSetupScopeManager.isOpen)
         }
 
-    // --- navBackward ---
-
     @Test
     fun `navBackward from the middle pops and returns to the previous step`() =
         runTest {
@@ -428,8 +418,6 @@ class CaptureSetupNavigationControllerTest {
     @Test
     fun `a fresh controller under a restored Add org continues from Add org (#1418)`() =
         runTest {
-            // After process death the setup scope, and so this controller, is new (index 0), while
-            // Nav3 has restored the back stack up to Add org.
             val controller = controllerFor(fullFlow)
             val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, WalletSelectRoute, AddOrgRoute, clock = clock)
 
@@ -462,8 +450,6 @@ class CaptureSetupNavigationControllerTest {
         coVerify(exactly = 0) { sessionTracker.endSession() }
         assertTrue(CaptureSetupScopeManager.isOpen)
     }
-
-    // --- system back (pops the stack without navBackward) ---
 
     @Test
     fun `navForward after system back from add org opens add org again`() =
@@ -519,7 +505,6 @@ class CaptureSetupNavigationControllerTest {
             val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, clock = clock)
             controller.navForward(navigator)
             settle()
-            // The second tap's pop is throttled away, but navBackward still decrements the index.
             controller.navBackward(navigator)
             controller.navBackward(navigator)
             assertEquals(listOf(DashboardRoute, UserSelectRoute), navigator.backStack)
@@ -600,8 +585,6 @@ class CaptureSetupNavigationControllerTest {
             assertEquals(Destination("add-org"), controller.currentDestination)
         }
 
-    // --- navToUserSelect ---
-
     @Test
     fun `navToUserSelect pops back to dashboard and shows user select`() =
         runTest {
@@ -657,8 +640,6 @@ class CaptureSetupNavigationControllerTest {
 
         assertEquals(listOf(SettingsRoute, UserSelectRoute), navigator.backStack)
     }
-
-    // --- navFromNewUserCreation ---
 
     @Test
     fun `navFromNewUserCreation replaces signup with the next setup step`() =
@@ -718,8 +699,6 @@ class CaptureSetupNavigationControllerTest {
             assertEquals("Unknown setup flow destination: bogus-route", error?.message)
             assertEquals(listOf(DashboardRoute, UserSelectRoute, SignupFlowRoute), navigator.backStack)
         }
-
-    // --- throttling ---
 
     @Test
     fun `a second navForward inside the throttle window does not navigate`() =

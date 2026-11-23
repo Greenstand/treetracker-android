@@ -32,7 +32,6 @@ import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tests for the stateless [TreeHeight] colour picker. */
 class TreeHeightUiTest : ComposeUiTest() {
     private val defaultColors = TreeHeightSelectionState().colors
     private val selectedColors = mutableListOf<ButtonColors>()

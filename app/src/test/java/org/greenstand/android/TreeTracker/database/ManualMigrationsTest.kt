@@ -33,11 +33,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Runs the hand-written migrations (MIGRATION_3_4 to MIGRATION_6_7) directly against a raw database,
- * and the whole chain from a 1.2.x-era (schema 3) database through AppDatabase.builder.
- * AppDatabaseMigrationTest covers upgrades from the exported schemas 6 and later.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class ManualMigrationsTest {
@@ -72,8 +67,6 @@ class ManualMigrationsTest {
         helper.close()
         context.deleteDatabase(TEST_DB)
     }
-
-    // region MIGRATION_3_4
 
     @Test
     fun `MIGRATION_3_4 splits planter locations into latitude and longitude and converts dates to epoch seconds`() {
@@ -168,10 +161,6 @@ class ManualMigrationsTest {
         }
     }
 
-    // endregion
-
-    // region MIGRATION_4_5 .. MIGRATION_6_7
-
     @Test
     fun `MIGRATION_4_5 adds record_uuid with an empty default to existing and new planters`() {
         createLegacySchema3(db::execSQL)
@@ -216,10 +205,6 @@ class ManualMigrationsTest {
         }
     }
 
-    // endregion
-
-    // region whole chain through AppDatabase
-
     @Test
     fun `a schema 3 database upgrades to latest through every manual and auto migration`() =
         runTest {
@@ -245,7 +230,6 @@ class ManualMigrationsTest {
                 assertEquals(TREE_CREATED_EPOCH, capture.createAt)
                 assertEquals(listOf("height" to "3"), treeDao.getTreeAttributeByTreeCaptureId(1L).map { it.key to it.value })
 
-                // The 1.2.x `tree` and `location` tables were replaced by the empty v2 tables.
                 assertTrue(treeDao.getAllTrees().isEmpty())
                 assertTrue(database.locationDao().getLocationData().isEmpty())
                 assertTrue(database.userDao().getAllUsersList().isEmpty())
@@ -270,8 +254,6 @@ class ManualMigrationsTest {
         }
     }
 
-    // endregion
-
     private fun createFileDatabase(
         version: Int,
         create: (SQLiteDatabase) -> Unit,
@@ -283,7 +265,6 @@ class ManualMigrationsTest {
         }
     }
 
-    /** The 1.2.x tables MIGRATION_3_4 reads, with the columns it uses, seeded with two trees. */
     private fun createLegacySchema3(exec: (String) -> Unit) {
         exec(
             "CREATE TABLE planter_details (_id INTEGER PRIMARY KEY, identifier TEXT, first_name TEXT, last_name TEXT, " +
@@ -361,7 +342,6 @@ class ManualMigrationsTest {
     private companion object {
         const val TEST_DB = "manual-migration-test.db"
 
-        // strftime('%s', '2019-05-01 10:00:00') and strftime('%s', '2019-05-01 10:05:00') (UTC)
         const val PLANTER_CREATED_EPOCH = 1_556_704_800L
         const val TREE_CREATED_EPOCH = 1_556_705_100L
         const val CHECK_IN_CREATED_AT = 1_556_704_900L

@@ -103,7 +103,6 @@ class AgentTreeCapturerTest {
             sessionFor(powerUser.wallet).apply { id = NEW_SESSION_ID }
         coEvery { createTreeUseCase.execute(capture(savedTrees)) } returns 1L
 
-        // Without a passed location, trees go around the app's current GPS fix
         val currentLocation = mockk<Location>()
         every { currentLocation.latitude } returns 1.0
         every { currentLocation.longitude } returns 2.0
@@ -244,7 +243,6 @@ class AgentTreeCapturerTest {
         runTest {
             coEvery { createTreeUseCase.execute(any()) } coAnswers { awaitCancellation() }
             var closedSessionId: Long? = null
-            // yield() throws in a cancelled coroutine, so this only completes if closing is NonCancellable
             coEvery { sessionTracker.closeSession(any()) } coAnswers {
                 yield()
                 closedSessionId = firstArg<Long>()
@@ -262,7 +260,6 @@ class AgentTreeCapturerTest {
         runTest {
             val insertDone = CompletableDeferred<Unit>()
             coEvery { sessionTracker.createSession(any(), any(), any()) } coAnswers {
-                // await() throws in a cancelled coroutine, so creation only finishes if it is NonCancellable
                 insertDone.await()
                 sessionFor(powerUser.wallet).apply { id = NEW_SESSION_ID }
             }

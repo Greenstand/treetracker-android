@@ -61,20 +61,10 @@ import org.koin.dsl.module
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Process death on the capture setup steps after user select (session note, wallet select and
- * add wallet). Android kills the app in the background and Navigation 3 restores the step's
- * screen, but [CaptureSetupScopeManager] only kept the setup scope in memory, so it is closed.
- *
- * The view models come from the real app Koin graph through [TreeTrackerViewModelFactory], the
- * way the screens get them. Only the user and org repositories are replaced, so a step's user
- * is known and the org's setup flow has the step in it.
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [35])
 class CaptureSetupProcessDeathTest {
-    // Init blocks launch on Main; an unconfined dispatcher runs them while the view model is built.
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
@@ -149,8 +139,6 @@ class CaptureSetupProcessDeathTest {
     fun tearDown() {
         CaptureSetupScopeManager.close()
         stopKoin()
-        // kotlinx-coroutines-test also keeps a crash from a view model's init and fails the next
-        // runTest in this JVM with it. This test already reported it, so drop it here.
         runCatching { runTest { } }
     }
 
@@ -190,11 +178,6 @@ class CaptureSetupProcessDeathTest {
         assertSetupScopeRestored()
     }
 
-    /**
-     * Opens setup for [user] the way user select does and shows the step once. Then the process
-     * dies: the in-memory setup scope is gone, and Android restores the step, building a new view
-     * model. Fails if building it crashes.
-     */
     private fun <VM : ViewModel> reopenAfterProcessDeath(
         type: Class<VM>,
         step: String,

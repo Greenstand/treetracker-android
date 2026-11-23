@@ -31,9 +31,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Edge payloads for the messaging API models. MessagesSerializationTest covers the realistic payloads. */
 class MessagesResponsesEdgeCasesTest {
-    // Same configuration as the app's Json instance (see AppModule)
     private val json =
         Json {
             explicitNulls = true
@@ -146,8 +144,6 @@ class MessagesResponsesEdgeCasesTest {
                 )
             }
 
-        // The request's parent id key is camelCase (unlike the response's), so the snake case key is unknown and
-        // the required parentMessageId is missing.
         assertTrue(result.exceptionOrNull() is SerializationException)
     }
 

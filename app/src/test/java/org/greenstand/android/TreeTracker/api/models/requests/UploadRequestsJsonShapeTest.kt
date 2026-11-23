@@ -40,14 +40,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-/**
- * Exact JSON key sets and value encodings of the upload requests that UploadRequestsSerializationTest
- * doesn't pin down. The batch upload processor matches on these names, including the camelCase ones.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class UploadRequestsJsonShapeTest {
-    // Same configuration as the app's Json instance (see AppModule)
     private val json =
         Json {
             explicitNulls = true

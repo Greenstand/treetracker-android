@@ -44,12 +44,10 @@ sealed class TreeHeightAction : Action {
 
 class TreeHeightSelectionViewModel(
     private val treeCapturer: TreeCapturer,
-    // True when the capture flow was rebuilt after Android killed the app on this screen.
     restoredAfterProcessDeath: Boolean = false,
 ) : BaseViewModel<TreeHeightSelectionState, TreeHeightAction>(TreeHeightSelectionState()) {
     init {
         if (restoredAfterProcessDeath && treeCapturer.currentTree == null) {
-            // The tree could not be restored, so there is nothing to measure.
             sendEvent(NavigationEvent { CaptureFlowScopeManager.nav.goToDashboard(this) })
         }
     }

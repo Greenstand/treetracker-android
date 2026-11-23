@@ -66,10 +66,6 @@ fun Root(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    // OrgRepo holds its current org only in memory, so it is lost on process death.
-    // When the OS restores the app into a deep screen the splash screen — and therefore
-    // OrgRepo.init() — is bypassed, and any screen that reads currentOrg() would crash.
-    // Re-hydrate it once per process before rendering the (possibly restored) back stack.
     val orgRepo = koinInject<OrgRepo>()
     var isOrgReady by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {

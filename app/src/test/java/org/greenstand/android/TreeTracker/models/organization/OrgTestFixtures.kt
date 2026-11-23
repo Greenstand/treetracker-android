@@ -23,7 +23,6 @@ import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
 import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 
-/** Same configuration as the app's Koin `Json` single. */
 internal val orgTestJson =
     Json {
         explicitNulls = true
@@ -31,10 +30,6 @@ internal val orgTestJson =
         encodeDefaults = true
     }
 
-/**
- * A [TreeTrackerDAO] whose org queries are backed by an in-memory table with
- * Room's REPLACE-on-conflict semantics. Every other DAO call is relaxed.
- */
 internal class FakeOrgStore {
     val orgs = linkedMapOf<String, OrganizationEntity>()
     val inserted = mutableListOf<OrganizationEntity>()

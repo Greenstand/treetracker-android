@@ -29,12 +29,6 @@ data class OrgLink(
     val name: String,
 )
 
-/**
- * The org a planter was invited to, from the Play install referrer.
- *
- * The app:// deep link cannot carry it: it never reaches a device without the app.
- * Read once, so a later org switch is not overwritten.
- */
 class InstallReferrerOrgProvider(
     private val prefs: Preferences,
     private val dataSource: InstallReferrerDataSource,
@@ -81,7 +75,6 @@ class InstallReferrerOrgProvider(
         private const val REFERRER_TIMEOUT_MS = 3_000L
         private val CONSUMED_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("install-referrer-consumed")
 
-        /** Parses `org_id=42&org_name=Acme%20Trees`, the shape the admin panel puts on the Play url. */
         internal fun parseOrgLink(referrer: String?): OrgLink? {
             if (referrer.isNullOrBlank()) return null
             val uri = Uri.parse("https://referrer/?$referrer")

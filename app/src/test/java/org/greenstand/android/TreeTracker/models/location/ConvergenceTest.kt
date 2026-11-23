@@ -30,7 +30,6 @@ class ConvergenceTest {
 
     val locations = mutableListOf<Location>()
 
-    // Hard coded longitude and latitude pair values
     val locationValues =
         listOf(
             Pair(-122.08400001, 37.42149486),
@@ -41,7 +40,6 @@ class ConvergenceTest {
             Pair(-121.0184743902, 37.42149490),
         )
 
-    // Stats derived from first five pairs from locationValues
     val LONGITUDINAL_MEAN = -122.08619670284
     val LONGITUDINAL_VARIANCE = 0.00003215001617309765000
     val LONGITUDINAL_STD_DEV = 0.005670098427108444
@@ -49,7 +47,6 @@ class ConvergenceTest {
     val LATITUDINAL_VARIANCE = 0.0000000000000008159999758707253
     val LATITUDINAL_STD_DEV = 0.000000028565713291824612
 
-    // Sliding window calculations - excluding 0th value and including 5th value from locationValues
     val SLIDING_LONGITUDINAL_MEAN = -121.87309157888
     val SLIDING_LONGITUDINAL_VARIANCE = 0.1461052927617462
     val SLIDING_LONGITUDINAL_STD_DEV = 0.38223722053424647
@@ -126,11 +123,8 @@ class ConvergenceTest {
 
     @Test
     fun longitudinalSlidingWindowComputation() {
-        // Perform initial computation
         convergence.computeConvergence()
 
-        // Perform sliding window computation - exclude 0th and include 5th location value from
-        // locationValues
         convergence.computeSlidingWindowConvergence(locations[0], locations[5])
 
         assertEquals(
@@ -155,10 +149,8 @@ class ConvergenceTest {
 
     @Test
     fun latitudeSlidingWindowComputation() {
-        // Perform initial computation
         convergence.computeConvergence()
 
-        // Sliding window computation
         convergence.computeSlidingWindowConvergence(locations[0], locations[5])
 
         assertEquals(
@@ -233,7 +225,6 @@ class ConvergenceTest {
                 newValue = 5.0,
             )
 
-        // mean = 1 - 1/4 + 5/4 = 2; variance = 0 - 0/4 + (5 - 2)^2 / 4 = 2.25
         assertEquals(2.0, stats.mean, 0.0)
         assertEquals(2.25, stats.variance, 0.0)
         assertEquals(1.5, stats.standardDeviation, 0.0)

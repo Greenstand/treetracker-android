@@ -38,7 +38,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-/** Tests for the [TreeHeightScreen] root: ViewModel wiring and capture flow navigation. */
 class TreeHeightScreenUiTest : ComposeUiTest() {
     private val treeCapturer = mockk<TreeCapturer>(relaxed = true)
     private val flowNav = mockk<CaptureFlowNavigationController>(relaxed = true)

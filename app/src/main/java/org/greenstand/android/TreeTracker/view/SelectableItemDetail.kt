@@ -180,7 +180,7 @@ fun UserButton(
                         .size(width = 20.dp, height = 22.dp),
             )
             Text(
-                text = user.numberOfTrees.toString(), // See issue #1285
+                text = user.numberOfTrees.toString(),
                 modifier = Modifier.weight(3f).padding(start = 4.dp),
                 color = CustomTheme.textColors.lightText,
                 style = CustomTheme.typography.medium,

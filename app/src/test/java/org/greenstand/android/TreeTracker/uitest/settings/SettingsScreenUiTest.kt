@@ -48,10 +48,6 @@ import org.junit.Test
 import org.koin.dsl.module
 import org.maplibre.android.MapLibre
 
-/**
- * Tests for the [SettingsScreen] root: the real [SettingsViewModel] and its navigation events.
- * `MapLibre.getInstance` needs native code Robolectric cannot load, so it is stubbed.
- */
 class SettingsScreenUiTest : RootScreenUiTest() {
     private val userRepo = mockk<UserRepo>(relaxed = true)
 

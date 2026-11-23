@@ -30,11 +30,9 @@ import org.greenstand.android.TreeTracker.navigation.CaptureFlowNavigationContro
 import org.greenstand.android.TreeTracker.navigation.RouteRegistry
 import java.util.UUID
 
-/** Builds a real [CaptureFlowNavigationController] over an org capture flow for ViewModel tests. */
 internal object CaptureFlowTestFixtures {
     const val PHOTO_PATH = "/photos/tree.jpg"
 
-    /** capture -> image review -> tree height, then back to capture. */
     val defaultCaptureFlow: List<Destination> =
         listOf(
             Destination(route = RouteRegistry.ROUTE_TREE_CAPTURE),
@@ -42,7 +40,6 @@ internal object CaptureFlowTestFixtures {
             Destination(route = RouteRegistry.ROUTE_TREE_HEIGHT),
         )
 
-    /** capture -> image review, then back to capture. */
     val shortCaptureFlow: List<Destination> =
         listOf(
             Destination(route = RouteRegistry.ROUTE_TREE_CAPTURE),

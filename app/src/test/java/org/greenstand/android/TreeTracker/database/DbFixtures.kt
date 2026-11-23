@@ -27,7 +27,6 @@ import org.greenstand.android.TreeTracker.database.legacy.entity.PlanterInfoEnti
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeAttributeEntity
 import org.greenstand.android.TreeTracker.database.legacy.entity.TreeCaptureEntity
 
-/** Entity factories with fixed, deterministic values for the DAO tests. */
 object DbFixtures {
     val CREATED_AT: Instant = Instant.parse("2024-03-01T10:15:30Z")
 

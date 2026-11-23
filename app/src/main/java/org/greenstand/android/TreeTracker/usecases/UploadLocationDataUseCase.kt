@@ -39,7 +39,6 @@ class UploadLocationDataUseCase(
         try {
             Timber.d("Processing tree location data")
             withContext(Dispatchers.IO) {
-                // V2
                 val locationEntities = dao.getLocationData()
                 val sessionIdToLocations = locationEntities.groupBy { it.sessionId }
                 val sessionIdToLocationRequests =

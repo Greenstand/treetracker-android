@@ -47,10 +47,6 @@ import org.junit.Test
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 
-/**
- * Tests for [PermissionRequest] with permissions granted or denied through Robolectric.
- * The rationale dialogs are not covered: Robolectric never asks to show a rationale.
- */
 @OptIn(ExperimentalPermissionsApi::class)
 class PermissionRequestUiTest : ComposeUiTest() {
     private val application = RuntimeEnvironment.getApplication()
@@ -71,7 +67,6 @@ class PermissionRequestUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
     }
 
-    /** Returns and clears every activity start Robolectric recorded so far. */
     private fun drainStartedActivities(): List<Intent> = generateSequence { shadowOf(application).nextStartedActivity }.toList()
 
     @Test

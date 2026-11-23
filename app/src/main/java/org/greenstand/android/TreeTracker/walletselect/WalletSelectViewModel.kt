@@ -31,9 +31,7 @@ data class WalletSelectState(
     val currentUser: User? = null,
     val alternateUsers: List<User> = emptyList(),
     val selectedUser: User? = null,
-    /** True while wallet select, restored after process death, reloads its setup user. Navigation waits. */
     val restoring: Boolean = false,
-    /** True when wallet select came back after process death and its user could not be found again. */
     val setupLost: Boolean = false,
 )
 
@@ -56,7 +54,6 @@ class WalletSelectViewModel(
     setupRestorer: CaptureSetupRestorer,
 ) : BaseViewModel<WalletSelectState, WalletSelectAction>(WalletSelectState()) {
     init {
-        // After process death Nav3 restores wallet select with the capture setup scope closed.
         val restoring = setupRestorer.reopenIfClosed()
         if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
@@ -78,7 +75,6 @@ class WalletSelectViewModel(
     }
 
     override fun handleAction(action: WalletSelectAction) {
-        // The setup scope is closed once setup is lost; the screen is on its way to the Dashboard.
         if (currentState.setupLost) return
         when (action) {
             is WalletSelectAction.SelectPlanter -> {

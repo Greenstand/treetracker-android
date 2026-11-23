@@ -149,7 +149,6 @@ class TreeCaptureViewModelTest {
     @Test
     fun `WHEN created on the normal path THEN the sensors set up by capture setup are left alone`() =
         runTest {
-            // A session is already current: resumeInterruptedSession() returns true for it.
             every { sessionTracker.wasSessionInterrupted() } returns false
             every { sessionTracker.resumeInterruptedSession() } returns true
 

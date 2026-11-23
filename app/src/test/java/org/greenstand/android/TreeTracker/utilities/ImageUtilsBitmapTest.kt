@@ -37,10 +37,6 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * Covers the bitmap and file helpers in [ImageUtils]. Native graphics mode gives real bitmap
- * decoding, encoding and transforms.
- */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [35])
@@ -50,7 +46,6 @@ class ImageUtilsBitmapTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
-    /** Writes a [width] x [height] image whose left half is red and right half is blue. */
     private fun imageFile(
         width: Int,
         height: Int,
@@ -142,7 +137,6 @@ class ImageUtilsBitmapTest {
 
         val gray = ImageUtils.getGrayPixelFromBitmap(file.absolutePath, 2)!!
 
-        // 0.299 R + 0.587 G + 0.114 B, truncated
         assertEquals(listOf(76, 149), gray[0].toList())
         assertEquals(listOf(29, 0), gray[1].toList())
     }
@@ -311,8 +305,6 @@ class ImageUtilsBitmapTest {
 
         ImageUtils.orientImage(missing.absolutePath)
 
-        // Robolectric's native BitmapFactory.decodeFile creates an empty file at the path,
-        // so check that nothing was written rather than that the file doesn't exist.
         assertEquals(0L, missing.length())
     }
 

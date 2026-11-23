@@ -32,10 +32,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-/**
- * Covers the default org, init/ensureInitialized, org switching and persistence of the
- * selected org, using real [Preferences] and an in-memory org table.
- */
 @RunWith(RobolectricTestRunner::class)
 class OrgRepoLifecycleTest {
     private lateinit var sharedPrefs: SharedPreferences

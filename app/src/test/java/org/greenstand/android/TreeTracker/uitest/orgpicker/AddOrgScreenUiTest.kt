@@ -58,10 +58,6 @@ import org.junit.Before
 import org.junit.Test
 import org.robolectric.RuntimeEnvironment
 
-/**
- * Tests for the [AddOrgScreen] root with a real [AddOrgViewModel] over real [Preferences],
- * covering the current-org prefill and the "previous org" autofill shortcut.
- */
 class AddOrgScreenUiTest : ComposeUiTest() {
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val captureSetupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
@@ -216,8 +212,6 @@ class AddOrgScreenUiTest : ComposeUiTest() {
     private companion object {
         val PREV_ORG_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("autofill-org")
     }
-
-    // --- Restored after process death (#1418) ---
 
     private fun restoreAfterProcessDeath() {
         every { CaptureSetupScopeManager.isOpen } returns false

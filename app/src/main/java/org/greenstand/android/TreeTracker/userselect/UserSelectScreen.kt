@@ -31,8 +31,6 @@ fun UserSelectScreen(
 ) {
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
-    // Capture can end the setup this ViewModel started and then show this screen again with
-    // the same ViewModel (see UserSelectViewModel.resumeSetup).
     LaunchedEffect(viewModel) { viewModel.resumeSetup() }
     UserSelect(
         navigationButtonColors = AppButtonColors.ProgressGreen,

@@ -85,8 +85,6 @@ class MessagesDaoTest {
         isSurveyComplete = isSurveyComplete,
     )
 
-    // region messages
-
     @Test
     fun `insertMessage stores every field and getMessage finds it by id`() =
         runTest {
@@ -344,10 +342,6 @@ class MessagesDaoTest {
             assertEquals(1, dao.getUnreadMessageCountForWallet("a"))
         }
 
-    // endregion
-
-    // region surveys and questions
-
     @Test
     fun `insertSurvey stores the survey and getSurvey finds it by id`() =
         runTest {
@@ -460,6 +454,4 @@ class MessagesDaoTest {
 
             assertNull(dao.getSurvey("a"))
         }
-
-    // endregion
 }

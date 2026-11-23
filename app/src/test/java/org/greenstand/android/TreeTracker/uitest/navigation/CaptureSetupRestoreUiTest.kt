@@ -52,10 +52,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-/**
- * Setup steps after user select, restored after process death: they wait while their user
- * reloads, and leave for the Dashboard when that user is gone.
- */
 class CaptureSetupRestoreUiTest : ComposeUiTest() {
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)

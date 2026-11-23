@@ -42,7 +42,6 @@ import org.junit.Test
 import org.robolectric.annotation.Config
 import org.junit.Assert.assertTrue
 
-/** Tests for the stateless [Selfie] screen, with a placeholder instead of the camera. */
 class SelfieUiTest : ComposeUiTest() {
     private var infoClicks = 0
     private var captureClicks = 0

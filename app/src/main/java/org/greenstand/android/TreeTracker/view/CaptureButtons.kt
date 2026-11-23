@@ -31,10 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
 
-/** Test tag of an [OrangeAddButton]. */
 const val ORANGE_ADD_BUTTON_TAG = "OrangeAddButton"
 
-/** Test tag of a [CaptureButton]. */
 const val CAPTURE_BUTTON_TAG = "CaptureButton"
 
 @Composable

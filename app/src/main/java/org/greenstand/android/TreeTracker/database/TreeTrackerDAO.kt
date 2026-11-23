@@ -370,10 +370,6 @@ interface TreeTrackerDAO {
     @Query("SELECT * FROM device_config ORDER BY logged_at DESC LIMIT 1")
     suspend fun getLatestDeviceConfig(): DeviceConfigEntity?
 
-    /**
-     * ORG LINK QUERIES
-     */
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrg(orgEntity: OrganizationEntity): Long
 

@@ -121,7 +121,6 @@ class SensorDiagnosticsTracker(
         pollingJob = null
         locationDataCapturer.percentageConvergenceObservers.remove(convergenceObserver)
         locationUpdateManager.locationUpdateLiveData.removeObserver(locationObserver)
-        // Cancel and recreate scope to avoid accumulating cancelled children
         scopeJob.cancel()
         scopeJob = Job()
         scope = CoroutineScope(Dispatchers.Main + scopeJob)
