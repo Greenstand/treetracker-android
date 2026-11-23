@@ -1,0 +1,84 @@
+▶ Delete user then capture for the highlighted user on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.4s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  417ms
+    ✓ Tap on id: ArrowForwardButton  409ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  296ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  7ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  175ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  524ms
+    ✓ Hide keyboard  59ms
+    ✓ Tap on id: ArrowForwardButton  116ms
+    ✓ Tap on id: FirstNameField  148ms
+    ✓ Input text Ada  276ms
+    ✓ Tap on id: LastNameField  243ms
+    ✓ Input text Admin  311ms
+    ✓ Hide keyboard  93ms
+    ✓ Tap on id: ArrowForwardButton  204ms
+    ✓ Tap on id: TutorialDoneButton  1.1s
+    ✓ Tap on id: CaptureButton  561ms
+    ✓ Wait until id: ApproveButton is visible  6ms
+    ✓ Tap on id: ApproveButton  134ms
+    ✓ Wait until id: TrackButton is visible  145ms
+  ✓ Run Sign up  22.3s
+  ✓ Tap on id: TrackButton  202ms
+  ✓ Tap on id: OrangeAddButton  184ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  129ms
+  ✓ Tap on id: PhoneField  156ms
+  ✓ Input text 5551230002  500ms
+  ✓ Hide keyboard  71ms
+  ✓ Tap on id: ArrowForwardButton  140ms
+  ✓ Tap on id: FirstNameField  146ms
+  ✓ Input text Bob  247ms
+  ✓ Tap on id: LastNameField  155ms
+  ✓ Input text Builder  310ms
+  ✓ Hide keyboard  96ms
+  ✓ Tap on id: ArrowForwardButton  170ms
+  ✓ Tap on id: CaptureButton  555ms
+  ✓ Tap on id: ApproveButton  133ms
+  ✓ Wait until id: OrgNameField is visible  14ms
+  ✓ Press back  60ms
+  ✓ Press back  80ms
+  ✓ Wait until id: TrackButton is visible  10ms
+    ✓ Tap on id: TrackButton  107ms
+    ✓ Wait until id: UserButton_${WALLET} is visible  11ms
+    ✓ Tap on id: UserButton_5551230001  123ms
+    ✓ Tap on id: ArrowForwardButton  158ms
+    ✓ Wait until id: OrgNameField is visible  13ms
+    ✓ Tap on id: ArrowForwardButton  159ms
+      ✓ Tap on id: TutorialDoneButton  181ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.1s
+    ✓ Wait until id: CaptureButton is visible  15ms
+  ✓ Run Start capture  5.5s
+  ✓ Tap on id: UserImageButton  252ms
+  ✓ Wait until id: UserButton_5551230001 is visible  9ms
+  ✓ Tap on id: UserButton_5551230001  123ms
+  ✓ Tap on id: ArrowBackButton  184ms
+  ✓ Wait until id: TrackButton is visible  9ms
+  ✓ Tap on id: SettingsButton  112ms
+  ✓ Tap on id: SettingsDeleteAccount  161ms
+  ✓ Tap on id: UserButton_5551230002  144ms
+  ✓ Tap on id: ArrowForwardButton  133ms
+  ✓ Tap on id: DialogPositiveButton  130ms
+  ✓ Wait until "Account Deleted", id: DialogTitle is visible  7ms
+  ✓ Tap on id: DialogPositiveButton  169ms
+  ✓ Assert that id: SettingsDeleteAccount is visible  8ms
+  ✓ Press back  58ms
+  ✓ Wait until id: TrackButton is visible  9ms
+  ✓ Tap on id: TrackButton  140ms
+  ✓ Wait until id: UserButton_5551230001 is visible  11ms
+  ✓ Assert that id: UserButton_5551230002 is not visible  7ms
+  ✓ Tap on id: ArrowForwardButton  179ms
+  ✓ Wait until id: OrgNameField is visible  8ms
+  ✓ Tap on id: ArrowForwardButton  1.1s
+  ○ Run flow when id: TutorialDoneButton is visible  7.0s
+  ✗ Wait until id: CaptureButton is visible  23.0s
+      Assertion is false: id: CaptureButton is visible
+✗ Delete user then capture for the highlighted user failed in 1m41s on sdk gphone64 x86 64
+  Assertion is false: id: CaptureButton is visible
+  debug: build/flow-results/validate/before/flows/settings-delete-user-then-capture/tb/Delete_user_then_capture_for_the_highlighted_user (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/settings-delete-user-then-capture/tb/Delete_user_then_capture_for_the_highlighted_user/recording.mp4
+
+0 passed, 1 failed in 1m43s

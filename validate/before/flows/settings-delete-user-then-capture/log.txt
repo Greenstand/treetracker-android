@@ -1,0 +1,443 @@
+   0.000s tb 0.6.3: "Delete user then capture for the highlighted user" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-settings-delete-user-then-capture.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.475s recording the screen to recording.mp4
+   0.476s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-settings-delete-user-then-capture.yaml:13)
+   4.921s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4445 ms
+   4.921s ▶ Run Sign up  (.ci-settings-delete-user-then-capture.yaml:14)
+   4.921s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   5.849s     snapshot history: screen context changed; discarding 1 snapshots
+   7.683s     snapshot history: screen context changed; discarding 1 snapshots
+   7.683s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 2762 ms and 4 reads
+   7.683s   ✓ Wait until id: LanguageOption_ENGLISH is visible  2762 ms
+   7.683s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   7.779s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   7.841s     waited 61 ms for a still screen
+   7.912s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   8.100s     tap at (160, 264): the screen changed (sent in 60 ms, waited 75 ms)
+   8.101s   ✓ Tap on id: LanguageOption_ENGLISH  417 ms
+   8.101s     --annotate: holding the screen 810ms for the recording
+   8.913s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   8.942s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   9.013s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   9.080s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   9.323s     tap at (264, 572): the screen changed (sent in 23 ms, waited 176 ms)
+   9.323s   ✓ Tap on id: ArrowForwardButton  409 ms
+   9.323s     --annotate: holding the screen 760ms for the recording
+  10.080s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+  10.094s     snapshot history: screen context changed; discarding 2 snapshots
+  10.094s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  10.157s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  10.263s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  10.263s     it was moving: at rest after 167 ms at [135,547][185,595]
+  10.376s     tap at (160, 571): the screen changed (sent in 8 ms, waited 59 ms)
+  10.377s   ✓ Tap on id: PrivacyPolicyCloseButton  296 ms
+  10.377s     --annotate: holding the screen 890ms for the recording
+  11.264s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+  11.272s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+  11.272s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  7 ms
+  11.272s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+  11.272s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+  11.283s       snapshot history: screen context changed; discarding 1 snapshots
+  11.283s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  11.333s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  12.341s       tap at (88, 244): nothing changed (sent in 3 ms, waited 1001 ms)
+  12.342s     ✓ Tap on id: PhoneCredentialButton  1069 ms
+  12.342s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+  12.354s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  12.417s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  12.517s       tap at (160, 313): the screen changed (sent in 31 ms, waited 65 ms)
+  12.517s     ✓ Tap on id: PhoneField  175 ms
+  12.517s       --annotate: holding the screen 900ms for the recording
+  13.418s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2146 ms
+  13.418s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+  13.419s     typing 10 characters
+  13.942s     typed with device verification: the screen changed (sent in 368 ms, waited 151 ms)
+  13.942s   ✓ Input text 5551230001  524 ms
+  13.942s     --annotate: holding the screen 480ms for the recording
+  14.419s   ▶ Hide keyboard  (signup.yaml:23)
+  14.478s     snapshot history: screen context changed; discarding 1 snapshots
+  14.478s   ✓ Hide keyboard  59 ms
+  14.478s     --annotate: holding the screen 940ms for the recording
+  15.419s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+  15.419s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  15.475s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  15.536s     tap at (264, 572): the screen changed (sent in 9 ms, waited 46 ms)
+  15.536s   ✓ Tap on id: ArrowForwardButton  116 ms
+  15.536s     --annotate: holding the screen 940ms for the recording
+  16.475s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+  16.488s     snapshot history: screen context changed; discarding 1 snapshots
+  16.488s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  16.538s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  16.587s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  16.624s     tap at (160, 227): the screen changed (sent in 9 ms, waited 24 ms)
+  16.624s   ✓ Tap on id: FirstNameField  148 ms
+  16.624s     --annotate: holding the screen 960ms for the recording
+  17.588s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+  17.589s     typing 3 characters
+  17.865s     typed with device verification: the screen changed (sent in 132 ms, waited 139 ms)
+  17.865s   ✓ Input text Ada  276 ms
+  17.865s     --annotate: holding the screen 720ms for the recording
+  18.589s   ▶ Tap on id: LastNameField  (signup.yaml:27)
+  18.638s     snapshot history: screen context changed; discarding 1 snapshots
+  18.638s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  18.661s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  18.749s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  18.749s     it was moving: at rest after 88 ms at [12,287][308,343]
+  18.832s     tap at (160, 315): the screen changed (sent in 13 ms, waited 22 ms)
+  18.832s   ✓ Tap on id: LastNameField  243 ms
+  18.832s     --annotate: holding the screen 920ms for the recording
+  19.750s   ▶ Input text ${LAST_NAME}  (signup.yaml:28)
+  19.800s     typing 5 characters
+  20.062s     typed with device verification: the screen changed (sent in 110 ms, waited 150 ms)
+  20.062s   ✓ Input text Admin  311 ms
+  20.062s     --annotate: holding the screen 690ms for the recording
+  20.750s   ▶ Hide keyboard  (signup.yaml:29)
+  20.844s     snapshot history: screen context changed; discarding 2 snapshots
+  20.844s   ✓ Hide keyboard  93 ms
+  20.844s     --annotate: holding the screen 910ms for the recording
+  21.751s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:30)
+  21.751s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  21.800s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  21.955s     tap at (264, 572): the screen changed (sent in 16 ms, waited 95 ms)
+  21.955s   ✓ Tap on id: ArrowForwardButton  204 ms
+  21.955s     --annotate: holding the screen 850ms for the recording
+  22.801s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:31)
+  22.921s     waited 119 ms for the last action's change to settle
+  22.981s     snapshot history: screen context changed; discarding 1 snapshots
+  22.982s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  23.837s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  23.837s     it was moving: at rest after 850 ms at [136,450][184,498]
+  23.931s     tap at (160, 474): the screen changed (sent in 10 ms, waited 26 ms)
+  23.932s   ✓ Tap on id: TutorialDoneButton  1130 ms
+  23.932s     --annotate: holding the screen 910ms for the recording
+  24.838s   ▶ Tap on id: CaptureButton  (signup.yaml:32)
+  24.856s     snapshot history: screen context changed; discarding 2 snapshots
+  24.857s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  24.910s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  24.961s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  25.400s     tap at (160, 572): the screen changed (sent in 12 ms, waited 418 ms)
+  25.400s   ✓ Tap on id: CaptureButton  561 ms
+  25.400s     --annotate: holding the screen 560ms for the recording
+  25.962s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:33)
+  25.969s     snapshot history: screen context changed; discarding 1 snapshots
+  25.969s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  25.969s   ✓ Wait until id: ApproveButton is visible  6 ms
+  25.969s   ▶ Tap on id: ApproveButton  (signup.yaml:36)
+  25.970s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  26.018s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  26.066s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  26.103s     tap at (202, 574): the screen changed (sent in 7 ms, waited 24 ms)
+  26.103s   ✓ Tap on id: ApproveButton  134 ms
+  26.103s     --annotate: holding the screen 960ms for the recording
+  27.066s   ▶ Wait until id: TrackButton is visible  (signup.yaml:37)
+  27.211s     snapshot history: screen context changed; discarding 1 snapshots
+  27.211s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  27.211s   ✓ Wait until id: TrackButton is visible  145 ms
+  27.212s ✓ Run Sign up  22290 ms
+  27.212s ▶ Tap on id: TrackButton  (.ci-settings-delete-user-then-capture.yaml:18)
+  27.216s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  27.270s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  27.323s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  27.414s   tap at (160, 539): the screen changed (sent in 4 ms, waited 80 ms)
+  27.414s ✓ Tap on id: TrackButton  202 ms
+  27.414s   --annotate: holding the screen 910ms for the recording
+  28.324s ▶ Tap on id: OrangeAddButton  (.ci-settings-delete-user-then-capture.yaml:19)
+  28.334s   snapshot history: screen context changed; discarding 2 snapshots
+  28.334s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  28.393s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  28.442s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  28.508s   tap at (160, 572): the screen changed (sent in 4 ms, waited 60 ms)
+  28.509s ✓ Tap on id: OrangeAddButton  184 ms
+  28.509s   --annotate: holding the screen 930ms for the recording
+  29.442s ▶ Tap on id: PrivacyPolicyCloseButton  (.ci-settings-delete-user-then-capture.yaml:20)
+  29.452s   snapshot history: screen context changed; discarding 1 snapshots
+  29.452s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  29.501s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  29.550s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  29.571s   tap at (160, 571): the screen changed (sent in 4 ms, waited 13 ms)
+  29.572s ✓ Tap on id: PrivacyPolicyCloseButton  129 ms
+  29.572s   --annotate: holding the screen 980ms for the recording
+  30.550s ▶ Tap on id: PhoneField  (.ci-settings-delete-user-then-capture.yaml:21)
+  30.561s   snapshot history: screen context changed; discarding 1 snapshots
+  30.561s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  30.609s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  30.657s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  30.707s   tap at (160, 313): the screen changed (sent in 7 ms, waited 39 ms)
+  30.707s ✓ Tap on id: PhoneField  156 ms
+  30.707s   --annotate: holding the screen 950ms for the recording
+  31.658s ▶ Input text 5551230002  (.ci-settings-delete-user-then-capture.yaml:22)
+  31.659s   typing 10 characters
+  32.158s   typed with device verification: the screen changed (sent in 360 ms, waited 137 ms)
+  32.158s ✓ Input text 5551230002  500 ms
+  32.158s   --annotate: holding the screen 500ms for the recording
+  32.658s ▶ Hide keyboard  (.ci-settings-delete-user-then-capture.yaml:23)
+  32.729s   snapshot history: screen context changed; discarding 1 snapshots
+  32.729s ✓ Hide keyboard  71 ms
+  32.729s   --annotate: holding the screen 930ms for the recording
+  33.659s ▶ Tap on id: ArrowForwardButton  (.ci-settings-delete-user-then-capture.yaml:24)
+  33.659s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  33.710s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  33.799s   tap at (264, 572): the screen changed (sent in 4 ms, waited 41 ms)
+  33.799s ✓ Tap on id: ArrowForwardButton  140 ms
+  33.799s   --annotate: holding the screen 910ms for the recording
+  34.710s ▶ Tap on id: FirstNameField  (.ci-settings-delete-user-then-capture.yaml:25)
+  34.719s   snapshot history: screen context changed; discarding 1 snapshots
+  34.719s   found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  34.768s   found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  34.816s   found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  34.856s   tap at (160, 227): the screen changed (sent in 8 ms, waited 29 ms)
+  34.856s ✓ Tap on id: FirstNameField  146 ms
+  34.856s   --annotate: holding the screen 960ms for the recording
+  35.816s ▶ Input text Bob  (.ci-settings-delete-user-then-capture.yaml:26)
+  35.817s   typing 3 characters
+  36.063s   typed with device verification: the screen changed (sent in 42 ms, waited 201 ms)
+  36.063s ✓ Input text Bob  247 ms
+  36.063s   --annotate: holding the screen 750ms for the recording
+  36.817s ▶ Tap on id: LastNameField  (.ci-settings-delete-user-then-capture.yaml:27)
+  36.856s   snapshot history: screen context changed; discarding 1 snapshots
+  36.856s   found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  36.901s   found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  36.972s   tap at (160, 315): the screen changed (sent in 13 ms, waited 35 ms)
+  36.973s ✓ Tap on id: LastNameField  155 ms
+  36.973s   --annotate: holding the screen 930ms for the recording
+  37.902s ▶ Input text Builder  (.ci-settings-delete-user-then-capture.yaml:28)
+  37.953s   typing 7 characters
+  38.213s   typed with device verification: the screen changed (sent in 104 ms, waited 153 ms)
+  38.213s ✓ Input text Builder  310 ms
+  38.213s   --annotate: holding the screen 690ms for the recording
+  38.903s ▶ Hide keyboard  (.ci-settings-delete-user-then-capture.yaml:29)
+  38.999s   snapshot history: screen context changed; discarding 2 snapshots
+  39.000s ✓ Hide keyboard  96 ms
+  39.000s   --annotate: holding the screen 900ms for the recording
+  39.904s ▶ Tap on id: ArrowForwardButton  (.ci-settings-delete-user-then-capture.yaml:30)
+  39.914s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  39.966s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  40.074s   tap at (264, 572): the screen changed (sent in 7 ms, waited 96 ms)
+  40.074s ✓ Tap on id: ArrowForwardButton  170 ms
+  40.074s   --annotate: holding the screen 890ms for the recording
+  40.966s ▶ Tap on id: CaptureButton  (.ci-settings-delete-user-then-capture.yaml:31)
+  40.979s   snapshot history: screen context changed; discarding 2 snapshots
+  40.979s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  41.038s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  41.089s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  41.522s   tap at (160, 572): the screen changed (sent in 6 ms, waited 383 ms)
+  41.523s ✓ Tap on id: CaptureButton  557 ms
+  41.523s   --annotate: holding the screen 570ms for the recording
+  42.090s ▶ Tap on id: ApproveButton  (.ci-settings-delete-user-then-capture.yaml:32)
+  42.098s   snapshot history: screen context changed; discarding 1 snapshots
+  42.098s   found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  42.146s   found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  42.194s   found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  42.223s   tap at (202, 574): the screen changed (sent in 4 ms, waited 21 ms)
+  42.223s ✓ Tap on id: ApproveButton  133 ms
+  42.223s   --annotate: holding the screen 970ms for the recording
+  43.194s ▶ Wait until id: OrgNameField is visible  (.ci-settings-delete-user-then-capture.yaml:33)
+  43.208s   snapshot history: screen context changed; discarding 1 snapshots
+  43.209s   found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  43.209s ✓ Wait until id: OrgNameField is visible  14 ms
+  43.209s ▶ Press back  (.ci-settings-delete-user-then-capture.yaml:36)
+  43.270s   the screen changed (sent in 3 ms, waited 55 ms)
+  43.270s ✓ Press back  60 ms
+  43.270s   --annotate: holding the screen 940ms for the recording
+  44.209s ▶ Press back  (.ci-settings-delete-user-then-capture.yaml:37)
+  44.290s   the screen changed (sent in 9 ms, waited 68 ms)
+  44.290s ✓ Press back  80 ms
+  44.290s   --annotate: holding the screen 920ms for the recording
+  45.210s ▶ Wait until id: TrackButton is visible  (.ci-settings-delete-user-then-capture.yaml:38)
+  45.221s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  45.221s ✓ Wait until id: TrackButton is visible  10 ms
+  45.221s ▶ Run Start capture  (.ci-settings-delete-user-then-capture.yaml:42)
+  45.222s   ▶ Tap on id: TrackButton  (start-capture.yaml:6)
+  45.222s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  45.274s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  45.329s     tap at (160, 539): the screen changed (sent in 3 ms, waited 48 ms)
+  45.329s   ✓ Tap on id: TrackButton  107 ms
+  45.329s     --annotate: holding the screen 940ms for the recording
+  46.275s   ▶ Wait until id: UserButton_${WALLET} is visible  (start-capture.yaml:7)
+  46.286s     snapshot history: screen context changed; discarding 1 snapshots
+  46.286s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  46.286s   ✓ Wait until id: UserButton_${WALLET} is visible  11 ms
+  46.286s   ▶ Tap on id: UserButton_${WALLET}  (start-capture.yaml:10)
+  46.287s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  46.336s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  46.386s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  46.409s     tap at (84, 177): the screen changed (sent in 4 ms, waited 14 ms)
+  46.409s   ✓ Tap on id: UserButton_5551230001  123 ms
+  46.409s     --annotate: holding the screen 980ms for the recording
+  47.387s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:11)
+  47.397s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  47.447s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  47.495s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  47.546s     tap at (264, 572): the screen changed (sent in 3 ms, waited 44 ms)
+  47.546s   ✓ Tap on id: ArrowForwardButton  158 ms
+  47.546s     --annotate: holding the screen 950ms for the recording
+  48.496s   ▶ Wait until id: OrgNameField is visible  (start-capture.yaml:12)
+  48.509s     snapshot history: screen context changed; discarding 2 snapshots
+  48.510s     found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  48.510s   ✓ Wait until id: OrgNameField is visible  13 ms
+  48.510s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:15)
+  48.511s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.560s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.608s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.669s     tap at (264, 572): the screen changed (sent in 4 ms, waited 53 ms)
+  48.669s   ✓ Tap on id: ArrowForwardButton  159 ms
+  48.669s     --annotate: holding the screen 940ms for the recording
+  49.608s   ▶ Run flow when id: TutorialDoneButton is visible  (start-capture.yaml:16)
+  49.672s     snapshot history: screen context changed; discarding 1 snapshots
+  49.672s     found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  49.672s     ▶ Tap on id: TutorialDoneButton  (start-capture.yaml:19)
+  49.672s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  49.732s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  49.854s       tap at (160, 469): the screen changed (sent in 3 ms, waited 17 ms, held 90 ms for its new window to take input)
+  49.854s     ✓ Tap on id: TutorialDoneButton  181 ms
+  49.854s       --annotate: holding the screen 880ms for the recording
+  50.733s   ✓ Run flow when id: TutorialDoneButton is visible  1124 ms
+  50.733s   ▶ Wait until id: CaptureButton is visible  (start-capture.yaml:20)
+  50.748s     snapshot history: screen context changed; discarding 1 snapshots
+  50.748s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  50.748s   ✓ Wait until id: CaptureButton is visible  15 ms
+  50.748s ✓ Run Start capture  5527 ms
+  50.748s ▶ Tap on id: UserImageButton  (.ci-settings-delete-user-then-capture.yaml:45)
+  50.751s   found id: UserImageButton: View #UserImageButton [21,31][96,106]
+  50.831s   found id: UserImageButton: View #UserImageButton [21,31][96,106]
+  50.890s   found id: UserImageButton: View #UserImageButton [21,31][96,106]
+  51.000s   tap at (58, 68): the screen changed (sent in 3 ms, waited 58 ms)
+  51.000s ✓ Tap on id: UserImageButton  252 ms
+  51.000s   --annotate: holding the screen 890ms for the recording
+  51.891s ▶ Wait until id: UserButton_5551230001 is visible  (.ci-settings-delete-user-then-capture.yaml:46)
+  51.900s   snapshot history: screen context changed; discarding 1 snapshots
+  51.900s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  51.900s ✓ Wait until id: UserButton_5551230001 is visible  9 ms
+  51.900s ▶ Tap on id: UserButton_5551230001  (.ci-settings-delete-user-then-capture.yaml:49)
+  51.901s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  51.951s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  52.000s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  52.023s   tap at (84, 177): the screen changed (sent in 3 ms, waited 14 ms)
+  52.023s ✓ Tap on id: UserButton_5551230001  123 ms
+  52.023s   --annotate: holding the screen 980ms for the recording
+  53.001s ▶ Tap on id: ArrowBackButton  (.ci-settings-delete-user-then-capture.yaml:50)
+  53.011s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  53.069s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  53.122s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  53.185s   tap at (56, 572): the screen changed (sent in 3 ms, waited 57 ms)
+  53.186s ✓ Tap on id: ArrowBackButton  184 ms
+  53.186s   --annotate: holding the screen 940ms for the recording
+  54.122s ▶ Wait until id: TrackButton is visible  (.ci-settings-delete-user-then-capture.yaml:51)
+  54.131s   snapshot history: screen context changed; discarding 3 snapshots
+  54.131s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  54.131s ✓ Wait until id: TrackButton is visible  9 ms
+  54.131s ▶ Tap on id: SettingsButton  (.ci-settings-delete-user-then-capture.yaml:55)
+  54.133s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  54.183s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  54.232s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  54.244s   tap at (39, 68): the screen changed (sent in 4 ms, waited 1 ms)
+  54.244s ✓ Tap on id: SettingsButton  112 ms
+  54.244s   --annotate: holding the screen 990ms for the recording
+  55.232s ▶ Tap on id: SettingsDeleteAccount  (.ci-settings-delete-user-then-capture.yaml:56)
+  55.243s   snapshot history: screen context changed; discarding 1 snapshots
+  55.243s   found id: SettingsDeleteAccount: View #SettingsDeleteAccount [20,483][300,531]
+  55.293s   found id: SettingsDeleteAccount: View #SettingsDeleteAccount [20,483][300,531]
+  55.343s   found id: SettingsDeleteAccount: View #SettingsDeleteAccount [20,483][300,531]
+  55.394s   tap at (160, 507): the screen changed (sent in 3 ms, waited 45 ms)
+  55.394s ✓ Tap on id: SettingsDeleteAccount  161 ms
+  55.394s   --annotate: holding the screen 950ms for the recording
+  56.343s ▶ Tap on id: UserButton_5551230002  (.ci-settings-delete-user-then-capture.yaml:57)
+  56.355s   snapshot history: screen context changed; discarding 1 snapshots
+  56.355s   found id: UserButton_5551230002: View #UserButton_5551230002 [168,42][304,312]
+  56.405s   found id: UserButton_5551230002: View #UserButton_5551230002 [168,42][304,312]
+  56.454s   found id: UserButton_5551230002: View #UserButton_5551230002 [168,42][304,312]
+  56.487s   tap at (236, 177): the screen changed (sent in 3 ms, waited 23 ms)
+  56.487s ✓ Tap on id: UserButton_5551230002  144 ms
+  56.487s   --annotate: holding the screen 970ms for the recording
+  57.455s ▶ Tap on id: ArrowForwardButton  (.ci-settings-delete-user-then-capture.yaml:58)
+  57.466s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  57.516s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  57.570s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  57.589s   tap at (264, 572): the screen changed (sent in 4 ms, waited 11 ms)
+  57.589s ✓ Tap on id: ArrowForwardButton  133 ms
+  57.589s   --annotate: holding the screen 980ms for the recording
+  58.571s ▶ Tap on id: DialogPositiveButton  (.ci-settings-delete-user-then-capture.yaml:59)
+  58.580s   snapshot history: screen context changed; discarding 2 snapshots
+  58.580s   found id: DialogPositiveButton: View #DialogPositiveButton [168,534][216,582]
+  58.629s   found id: DialogPositiveButton: View #DialogPositiveButton [168,534][216,582]
+  58.676s   found id: DialogPositiveButton: View #DialogPositiveButton [168,534][216,582]
+  58.702s   tap at (192, 558): the screen changed (sent in 4 ms, waited 16 ms)
+  58.702s ✓ Tap on id: DialogPositiveButton  130 ms
+  58.702s   --annotate: holding the screen 970ms for the recording
+  59.677s ▶ Wait until "Account Deleted", id: DialogTitle is visible  (.ci-settings-delete-user-then-capture.yaml:60)
+  59.685s   snapshot history: screen context changed; discarding 1 snapshots
+  59.685s   found "Account Deleted", id: DialogTitle: TextView "Account Deleted" #DialogTitle [47,119][185,138]
+  59.685s ✓ Wait until "Account Deleted", id: DialogTitle is visible  7 ms
+  59.685s ▶ Tap on id: DialogPositiveButton  (.ci-settings-delete-user-then-capture.yaml:63)
+  59.686s   found id: DialogPositiveButton: View #DialogPositiveButton [136,489][184,537]
+  59.734s   found id: DialogPositiveButton: View #DialogPositiveButton [136,489][184,537]
+  59.784s   found id: DialogPositiveButton: View #DialogPositiveButton [136,489][184,537]
+  59.855s   tap at (160, 513): the screen changed (sent in 4 ms, waited 57 ms)
+  59.855s ✓ Tap on id: DialogPositiveButton  169 ms
+  59.855s   --annotate: holding the screen 930ms for the recording
+  60.785s ▶ Assert that id: SettingsDeleteAccount is visible  (.ci-settings-delete-user-then-capture.yaml:64)
+  60.794s   snapshot history: screen context changed; discarding 1 snapshots
+  60.794s   found id: SettingsDeleteAccount: View #SettingsDeleteAccount [20,483][300,531]
+  60.794s ✓ Assert that id: SettingsDeleteAccount is visible  8 ms
+  60.794s ▶ Press back  (.ci-settings-delete-user-then-capture.yaml:65)
+  60.852s   the screen changed (sent in 2 ms, waited 51 ms)
+  60.852s ✓ Press back  58 ms
+  60.852s   --annotate: holding the screen 940ms for the recording
+  61.794s ▶ Wait until id: TrackButton is visible  (.ci-settings-delete-user-then-capture.yaml:66)
+  61.804s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  61.804s ✓ Wait until id: TrackButton is visible  9 ms
+  61.804s ▶ Tap on id: TrackButton  (.ci-settings-delete-user-then-capture.yaml:70)
+  61.804s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  61.854s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  61.903s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  61.944s   tap at (160, 539): the screen changed (sent in 3 ms, waited 33 ms)
+  61.944s ✓ Tap on id: TrackButton  140 ms
+  61.944s   --annotate: holding the screen 960ms for the recording
+  62.904s ▶ Wait until id: UserButton_5551230001 is visible  (.ci-settings-delete-user-then-capture.yaml:71)
+  62.916s   snapshot history: screen context changed; discarding 1 snapshots
+  62.916s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  62.916s ✓ Wait until id: UserButton_5551230001 is visible  11 ms
+  62.916s ▶ Assert that id: UserButton_5551230002 is not visible  (.ci-settings-delete-user-then-capture.yaml:74)
+  62.924s   gone: id: UserButton_5551230002 (checked on a settled screen, 7 ms)
+  62.924s ✓ Assert that id: UserButton_5551230002 is not visible  7 ms
+  62.924s ▶ Tap on id: ArrowForwardButton  (.ci-settings-delete-user-then-capture.yaml:75)
+  62.924s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  62.973s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  63.022s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  63.103s   tap at (264, 572): the screen changed (sent in 3 ms, waited 34 ms)
+  63.103s ✓ Tap on id: ArrowForwardButton  179 ms
+  63.103s   --annotate: holding the screen 920ms for the recording
+  64.022s ▶ Wait until id: OrgNameField is visible  (.ci-settings-delete-user-then-capture.yaml:76)
+  64.031s   snapshot history: screen context changed; discarding 1 snapshots
+  64.031s   found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  64.031s ✓ Wait until id: OrgNameField is visible  8 ms
+  64.031s ▶ Tap on id: ArrowForwardButton  (.ci-settings-delete-user-then-capture.yaml:79)
+  64.032s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  64.081s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  64.135s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  65.141s   tap at (264, 572): nothing changed (sent in 2 ms, waited 1000 ms)
+  65.141s ✓ Tap on id: ArrowForwardButton  1109 ms
+  65.141s ▶ Run flow when id: TutorialDoneButton is visible  (.ci-settings-delete-user-then-capture.yaml:80)
+  70.154s   snapshot history: screen context changed; discarding 1 snapshots
+  71.656s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  72.141s   deadline reached 478ms after the last read: reading the screen once more
+  72.149s   not found: id: TutorialDoneButton, after 7008 ms and 5 reads (screen: com.google.android.apps.nexuslauncher, 50 elements, allowed 7s)
+  72.149s   condition not met (id: TutorialDoneButton is visible): skipped
+  72.149s   the device's window list had no readable app window (1 windows without a root); a read past the accessibility cache found app window 0
+  72.149s ○ Run flow when id: TutorialDoneButton is visible  7008 ms
+  72.149s ▶ Wait until id: CaptureButton is visible  (.ci-settings-delete-user-then-capture.yaml:84)
+  73.656s   no change reported by the device for 1.5s while looking for id: CaptureButton: reading the screen again
+  76.664s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  79.673s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  82.681s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  85.690s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  88.699s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  91.707s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  94.717s   no change reported by the device for 3s while looking for id: CaptureButton: reading the screen again
+  95.141s   deadline reached 416ms after the last read: reading the screen once more
+  95.149s   not found: id: CaptureButton, after 22999 ms and 11 reads (screen: com.google.android.apps.nexuslauncher, 50 elements, allowed 22.991s)
+  95.149s ✗ Wait until id: CaptureButton is visible  22999 ms: Assertion is false: id: CaptureButton is visible
+  95.429s --annotate: recording.mp4 is in sync (its frame times say so, within -117 ms)
+ 100.766s --annotate: drew 70 captions and 39 touches on recording.mp4 in 5337 ms
+ 100.984s FAILED in 1m40.766s: Assertion is false: id: CaptureButton is visible
+ 100.984s the screen at the failure: screen*.txt, screenshot*.png, hierarchy*.json in this folder

@@ -1,0 +1,41 @@
+{
+  "beforeSha": "0303c068153932bdda3dc5aa9b866dd74b245a2f",
+  "beforeMissing": null,
+  "counts": {
+    "validated": 1,
+    "not-demonstrated": 0,
+    "broken": 0,
+    "inconclusive": 0
+  },
+  "flows": [
+    {
+      "name": "settings-delete-user-then-capture",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 104,
+        "error": "Assertion is false: id: CaptureButton is visible",
+        "ran": true,
+        "video": "before/videos/settings-delete-user-then-capture.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/settings-delete-user-then-capture/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 87,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/settings-delete-user-then-capture.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/settings-delete-user-then-capture/step-59-end-assertVisible-UserButton_5551230001.png"
+        ]
+      }
+    }
+  ]
+}

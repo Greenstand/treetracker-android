@@ -1,0 +1,43 @@
+{
+  "name": "flow-results-affected-pr1444-45102038404",
+  "ref": "8eb27e711ce4c7489fd8fb05fe92e43de717a1bc",
+  "sha": "8eb27e711ce4c7489fd8fb05fe92e43de717a1bc",
+  "pr": 1444,
+  "apiLevel": "35",
+  "runId": "45102038404",
+  "runUrl": "https://github.com/Greenstand/treetracker-android/actions/runs/45102038404",
+  "passed": 0,
+  "failed": 1,
+  "recordingsLost": 0,
+  "flows": [
+    {
+      "name": "settings-delete-user-then-capture",
+      "file": "e2e/flows/settings-delete-user-then-capture.yaml",
+      "status": "failed",
+      "seconds": 104,
+      "steps": null,
+      "error": "Assertion is false: id: CaptureButton is visible",
+      "screenshots": [
+        "screens/settings-delete-user-then-capture/failure.png"
+      ],
+      "video": "videos/settings-delete-user-then-capture.mp4",
+      "captions": "videos/settings-delete-user-then-capture.srt",
+      "videoParts": [],
+      "recording": "saved",
+      "recordingError": null,
+      "tries": 1,
+      "files": [
+        "flows/settings-delete-user-then-capture/commands.json",
+        "flows/settings-delete-user-then-capture/console.txt",
+        "flows/settings-delete-user-then-capture/crash.txt",
+        "flows/settings-delete-user-then-capture/error.txt",
+        "flows/settings-delete-user-then-capture/hierarchy.json",
+        "flows/settings-delete-user-then-capture/log.txt",
+        "flows/settings-delete-user-then-capture/logcat-app.txt",
+        "flows/settings-delete-user-then-capture/logcat.txt",
+        "flows/settings-delete-user-then-capture/report.xml",
+        "flows/settings-delete-user-then-capture/screen.txt"
+      ]
+    }
+  ]
+}
