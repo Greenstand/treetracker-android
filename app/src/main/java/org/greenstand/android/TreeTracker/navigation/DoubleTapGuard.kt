@@ -71,6 +71,7 @@ class DoubleTapGuard(
         if (tapBeforeNavigation != null) {
             return (pressUptimeMs ?: uptimeMillis()) - tapBeforeNavigation < doubleTapTimeoutMs()
         }
+        if (navigator.recordsPresses) return false
         val millisSincePress = pressUptimeMs?.let { uptimeMillis() - it } ?: 0L
         return isSecondTapOfDoubleTap(navigator.millisSinceLastNavigation, millisSincePress, doubleTapTimeoutMs())
     }

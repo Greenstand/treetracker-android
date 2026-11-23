@@ -18,13 +18,15 @@ tap in the app's window was the selfie button, long before. No double tap was po
   stack change remembers it (`pressBeforeLastNavigation`). The navigators an entry gets share this state with
   `scopedTo`.
 - `Modifier.recordPressesFor(navigator)` on the root `Box` in `Host.kt` records every finger down
-  in the app's navigation host once, in the Initial pass, without consuming it. This is the least
+  and its release in the app's navigation host once, in the Initial pass, without consuming it. This is the least
   invasive place: one line covers every screen, whether or not it has a guard. The alternative was
   hooking `MainActivity.dispatchTouchEvent`, which has no navigator and sees non-Compose touches.
 - `DoubleTapGuard.isSecondTapOfDoubleTap` judges a press against that tap when it is known: a
   double tap's second tap goes down within the double-tap timeout of the first tap's release
-  (as in Android's `GestureDetector`). When no tap is
-  known (tests, other hosts), it keeps the old rule (time since the navigation).
+  (as in Android's `GestureDetector`). When the host has
+  recorded presses but none before the navigation (no tap led there, e.g. after MainActivity was
+  recreated while the camera was open), the press is meant for the screen. When no press was ever
+  recorded (tests, other hosts), it keeps the old rule (time since the navigation).
 
 ## Tests
 
@@ -52,3 +54,30 @@ tap in the app's window was the selfie button, long before. No double tap was po
   Compose test clock; on master the guard can't know the earlier tap at all. `DoubleTapGuardUiTest`
   covers the recorder and guard together; `Host.kt`'s one-line install is covered by the B6 and H8
   e2e flows.
+
+## How the pieces fit (kept here; the code has no comments)
+
+- `recordPressesFor` listens in the Initial pass, so it sees a finger down and its release before
+  the screen's own click handler runs; a click navigates on the release, so the release time is
+  already recorded when the navigation snapshots it.
+- The double-tap timeout is measured from the first tap's release to the second tap's down, as in
+  Android's `GestureDetector`, so a first tap held for a while still counts.
+- A press with no event of its own (the keyboard's Go) is judged as happening now.
+- `DoubleTapGuardUiTest` injects both taps of each case as one gesture sequence on the root, so
+  their event times are exact.
+
+## Review 2 (independent subagent, at 3b55a22c)
+
+- Fixed (test first, 0db55ac): after MainActivity is recreated while the camera is open, the new
+  `Navigator` has no press recorded before signup opens Add org, so the guard fell back to the old
+  rule and dropped a quick first Next again. Now, once the host has recorded any press, "no press
+  before the navigation" means no tap led there (`Navigator.recordsPresses`).
+- Not fixed, outside what this PR claims (speculative): taps in other windows aren't recorded. A
+  double tap on the keyboard's Go, or on an `AlertDialog` button, whose second tap lands on the
+  next screen's guarded button is now judged against the last in-app touch, where master dropped
+  it within 300 ms of the navigation. Not seen in practice; the keyboard usually still covers that
+  spot while it hides.
+- Not fixed, by design: a navigation that takes longer than the timeout after its tap is not
+  followed by a "double tap" by Android's definition.
+- Not added: a test of `Host.kt`'s one-line install of the recorder (only the B6 and H8 e2e flows
+  cover it).

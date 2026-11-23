@@ -153,6 +153,9 @@ class Navigator private constructor(
     val pressBeforeLastNavigation: Long?
         get() = lastNavigation.pressBeforeNavigation
 
+    val recordsPresses: Boolean
+        get() = lastNavigation.lastPressUptime != null
+
     /** Push [route], honoring [NavOptions] (popUpTo / popUpToRoot / launchSingleTop). */
     fun navigate(
         route: NavKey,
