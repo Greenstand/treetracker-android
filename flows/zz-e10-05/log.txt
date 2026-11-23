@@ -1,0 +1,285 @@
+   0.000s tb 0.6.3: "E10 rep 05" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/zz-e10-05.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.000s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (zz-e10-05.yaml:9)
+   4.664s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4663 ms
+   4.664s ▶ Run Sign up  (zz-e10-05.yaml:10)
+   4.664s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   5.441s     snapshot history: screen context changed; discarding 1 snapshots
+   7.027s     no change reported by the device for 1.5s while looking for id: LanguageOption_ENGLISH: reading the screen again
+   7.855s     snapshot history: screen context changed; discarding 1 snapshots
+   7.855s     log: the screen changed without the device reporting it (found by a re-read after 1.5s of silence); waits on this app may be slower
+   7.885s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 3221 ms and 3 reads
+   7.885s   ✓ Wait until id: LanguageOption_ENGLISH is visible  3221 ms
+   7.885s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   7.885s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   8.041s     waited 155 ms for a still screen
+   8.077s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   8.210s     tap at (160, 264): the screen changed (sent in 33 ms, waited 78 ms)
+   8.210s   ✓ Tap on id: LanguageOption_ENGLISH  325 ms
+   8.210s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   8.363s     waited 152 ms for the last action's change to settle
+   8.409s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.489s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.559s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.828s     tap at (264, 572): the screen changed (sent in 35 ms, waited 223 ms)
+   8.828s   ✓ Tap on id: ArrowForwardButton  617 ms
+   8.828s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   9.000s     waited 172 ms for the last action's change to settle
+  10.050s     snapshot history: screen context changed; discarding 2 snapshots
+  10.050s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  10.130s     waited 80 ms for a still screen
+  10.172s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  10.229s     tap at (160, 571): the screen changed (sent in 11 ms, waited 38 ms)
+  10.229s   ✓ Tap on id: PrivacyPolicyCloseButton  1401 ms
+  10.229s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+  10.476s     waited 247 ms for the last action's change to settle
+  10.477s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+  10.477s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  247 ms
+  10.477s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+  10.477s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+  10.505s       snapshot history: screen context changed; discarding 1 snapshots
+  10.506s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  10.579s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+  11.615s       tap at (88, 244): nothing changed (sent in 19 ms, waited 1000 ms)
+  11.615s     ✓ Tap on id: PhoneCredentialButton  1137 ms
+  11.615s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+  11.700s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  11.785s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  11.785s       it was moving: at rest after 81 ms at [24,285][296,341]
+  12.003s       tap at (160, 313): the screen changed (sent in 52 ms, waited 117 ms)
+  12.003s     ✓ Tap on id: PhoneField  388 ms
+  12.003s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1526 ms
+  12.003s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+  12.258s     waited 254 ms for the last action's change to settle
+  12.258s     typing 10 characters
+  12.986s     typed with device verification: the screen changed (sent in 715 ms, waited 0 ms)
+  12.987s   ✓ Input text 5551230001  983 ms
+  12.987s   ▶ Hide keyboard  (signup.yaml:23)
+  13.108s     snapshot history: screen context changed; discarding 1 snapshots
+  13.108s   ✓ Hide keyboard  121 ms
+  13.108s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+  13.108s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  13.211s     waited 103 ms for a still screen
+  13.279s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  13.452s     tap at (264, 572): the screen changed (sent in 24 ms, waited 135 ms)
+  13.452s   ✓ Tap on id: ArrowForwardButton  343 ms
+  13.452s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+  13.757s     waited 305 ms for the last action's change to settle
+  13.793s     snapshot history: screen context changed; discarding 1 snapshots
+  13.793s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  13.878s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  14.061s     tap at (160, 227): the screen changed (sent in 35 ms, waited 94 ms)
+  14.061s   ✓ Tap on id: FirstNameField  609 ms
+  14.061s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+  14.306s     waited 244 ms for the last action's change to settle
+  14.307s     typing 3 characters
+  14.688s     typed with device verification: the screen changed (sent in 237 ms, waited 126 ms)
+  14.688s   ✓ Input text Ada  626 ms
+  14.688s   ▶ Tap on id: LastNameField  (signup.yaml:27)
+  14.862s     snapshot history: screen context changed; discarding 1 snapshots
+  14.862s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.967s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  15.132s     tap at (160, 315): the screen changed (sent in 31 ms, waited 97 ms)
+  15.132s   ✓ Tap on id: LastNameField  444 ms
+  15.132s   ▶ Input text ${LAST_NAME}  (signup.yaml:28)
+  15.261s     waited 128 ms for the last action's change to settle
+  15.373s     typing 5 characters
+  15.791s     typed with device verification: the screen changed (sent in 267 ms, waited 125 ms)
+  15.791s   ✓ Input text Admin  658 ms
+  15.791s   ▶ Hide keyboard  (signup.yaml:29)
+  15.965s     snapshot history: screen context changed; discarding 3 snapshots
+  15.965s   ✓ Hide keyboard  173 ms
+  15.965s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:30)
+  15.965s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  16.102s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  16.102s     it was moving: at rest after 87 ms at [233,541][295,603]
+  16.452s     tap at (264, 572): the screen changed (sent in 35 ms, waited 266 ms)
+  16.452s   ✓ Tap on id: ArrowForwardButton  487 ms
+  16.452s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:31)
+  16.597s     waited 144 ms for the last action's change to settle
+  18.259s     snapshot history: screen context changed; discarding 1 snapshots
+  18.260s     not found: id: TutorialDoneButton, after 1662 ms and 1 reads (screen: org.greenstand.android.TreeTracker.debug, 23 elements, allowed 1.5s)
+  18.260s     snapshot history: recovery skipped with 0 scroll containers
+  19.099s     snapshot history: screen context changed; discarding 1 snapshots
+  19.100s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.159s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.256s     tap at (160, 474): the screen changed (sent in 7 ms, waited 17 ms)
+  19.256s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 80
+  19.257s   ✓ Tap on id: TutorialDoneButton  2804 ms
+  19.257s   ▶ Tap on id: CaptureButton  (signup.yaml:32)
+  19.472s     waited 215 ms for the last action's change to settle
+  19.571s     snapshot history: screen context changed; discarding 1 snapshots
+  19.571s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  19.671s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.433s     tap at (160, 572): the screen changed (sent in 42 ms, waited 711 ms)
+  20.433s   ✓ Tap on id: CaptureButton  1176 ms
+  20.433s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:33)
+  20.582s     snapshot history: screen context changed; discarding 1 snapshots
+  20.582s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.582s   ✓ Wait until id: ApproveButton is visible  149 ms
+  20.582s   ▶ Tap on id: ApproveButton  (signup.yaml:36)
+  20.695s     waited 112 ms for the last action's change to settle
+  20.726s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.803s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.868s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  20.942s     tap at (202, 574): the screen changed (sent in 12 ms, waited 54 ms)
+  20.942s   ✓ Tap on id: ApproveButton  359 ms
+  20.942s   ▶ Wait until id: TrackButton is visible  (signup.yaml:37)
+  21.053s     snapshot history: screen context changed; discarding 1 snapshots
+  21.843s     snapshot history: screen context changed; discarding 1 snapshots
+  21.843s     found id: TrackButton: View #TrackButton [20,473][300,606], after 901 ms and 2 reads
+  21.843s     the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+  21.843s   ✓ Wait until id: TrackButton is visible  901 ms
+  21.844s ✓ Run Sign up  17179 ms
+  21.844s ▶ Tap on id: SettingsButton  (zz-e10-05.yaml:13)
+  21.914s   waited 70 ms for the last action's change to settle
+  21.940s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  22.006s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  22.073s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  22.474s   tap at (39, 68): the screen changed (sent in 15 ms, waited 377 ms)
+  22.474s ✓ Tap on id: SettingsButton  630 ms
+  22.474s ▶ Tap on id: SettingsProfile  (zz-e10-05.yaml:14)
+  22.530s   snapshot history: screen context changed; discarding 2 snapshots
+  22.530s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  22.698s   waited 168 ms for a still screen
+  22.722s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  22.831s   tap at (160, 156): the screen changed (sent in 8 ms, waited 51 ms)
+  22.831s ✓ Tap on id: SettingsProfile  356 ms
+  22.831s ▶ Tap on id: UserButton_5551230001  (zz-e10-05.yaml:15)
+  23.309s   waited 477 ms for the last action's change to settle
+  23.751s   snapshot history: screen context changed; discarding 1 snapshots
+  23.751s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  23.862s   waited 111 ms for a still screen
+  23.881s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  24.120s   tap at (84, 177): the screen changed (sent in 11 ms, waited 214 ms)
+  24.120s ✓ Tap on id: UserButton_5551230001  1289 ms
+  24.120s ▶ Tap on id: ArrowForwardButton  (zz-e10-05.yaml:16)
+  24.272s   waited 152 ms for the last action's change to settle
+  24.296s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  24.360s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  24.422s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  24.527s   tap at (264, 572): the screen changed (sent in 6 ms, waited 86 ms)
+  24.527s ✓ Tap on id: ArrowForwardButton  407 ms
+  24.527s ▶ Assert that "Ada", id: ProfileFirstName is visible  (zz-e10-05.yaml:17)
+  24.818s   snapshot history: screen context changed; discarding 2 snapshots
+  24.818s   found "Ada", id: ProfileFirstName: TextView "Ada" #ProfileFirstName [16,513][63,528]
+  24.818s ✓ Assert that "Ada", id: ProfileFirstName is visible  291 ms
+  24.818s ▶ Tap on id: EditProfileButton  (zz-e10-05.yaml:18)
+  24.959s   waited 140 ms for the last action's change to settle
+  24.990s   found id: EditProfileButton: View #EditProfileButton [82,392][238,472]
+  25.054s   found id: EditProfileButton: View #EditProfileButton [82,392][238,472]
+  25.116s   found id: EditProfileButton: View #EditProfileButton [82,392][238,472]
+  25.260s   tap at (160, 432): the screen changed (sent in 14 ms, waited 110 ms)
+  25.260s ✓ Tap on id: EditProfileButton  441 ms
+  25.260s ▶ Scroll DOWN until id: ProfileFirstName is visible  (zz-e10-05.yaml:20)
+  25.398s   waited 137 ms for the last action's change to settle
+  25.566s   drag 1: (160, 487) -> (160, 174); target not on screen yet, 2 texts seen
+  25.769s   in view after 1 swipes, 371 ms: EditText "Ada" #ProfileFirstName [24,224][296,280]
+  25.769s ✓ Scroll DOWN until id: ProfileFirstName is visible  508 ms
+  25.769s ▶ Tap on id: ProfileFirstName  (zz-e10-05.yaml:22)
+  25.769s   found id: ProfileFirstName: EditText "Ada" #ProfileFirstName [24,224][296,280]
+  25.826s   waited 57 ms for a still screen
+  25.885s   found id: ProfileFirstName: EditText "Ada" #ProfileFirstName [24,224][296,280]
+  26.055s   tap at (160, 252): the screen changed (sent in 20 ms, waited 141 ms)
+  26.055s ✓ Tap on id: ProfileFirstName  286 ms
+  26.055s ▶ Erase 50 characters  (zz-e10-05.yaml:23)
+  26.213s   waited 157 ms for the last action's change to settle
+  26.791s   erased up to 50 characters: the screen changed (sent in 486 ms, waited 0 ms)
+  26.791s ✓ Erase 50 characters  735 ms
+  26.791s ▶ Input text Grace  (zz-e10-05.yaml:24)
+  26.791s   typing 5 characters
+  27.028s   typed with device verification: the screen changed (sent in 227 ms, waited 0 ms)
+  27.028s ✓ Input text Grace  237 ms
+  27.028s ▶ Scroll DOWN until id: ProfileLastName is visible  (zz-e10-05.yaml:25)
+  27.140s   snapshot history: screen context changed; discarding 3 snapshots
+  27.140s ✓ Scroll DOWN until id: ProfileLastName is visible  112 ms
+  27.140s ▶ Tap on id: ProfileLastName  (zz-e10-05.yaml:27)
+  27.283s   found id: ProfileLastName: EditText "Admin" #ProfileLastName [24,343][296,399]
+  27.366s   found id: ProfileLastName: EditText "Admin" #ProfileLastName [24,343][296,399]
+  27.521s   tap at (160, 371): the screen changed (sent in 28 ms, waited 117 ms)
+  27.521s ✓ Tap on id: ProfileLastName  380 ms
+  27.521s ▶ Erase 50 characters  (zz-e10-05.yaml:28)
+  27.766s   waited 244 ms for the last action's change to settle
+  28.095s   erased up to 50 characters: the screen changed (sent in 224 ms, waited 72 ms)
+  28.096s ✓ Erase 50 characters  574 ms
+  28.096s ▶ Input text Hopper  (zz-e10-05.yaml:29)
+  28.096s   typing 6 characters
+  28.537s   typed with device verification: the screen changed (sent in 373 ms, waited 65 ms)
+  28.537s ✓ Input text Hopper  441 ms
+  28.537s ▶ Hide keyboard  (zz-e10-05.yaml:30)
+  28.660s   snapshot history: screen context changed; discarding 2 snapshots
+  28.660s ✓ Hide keyboard  122 ms
+  28.660s ▶ Scroll DOWN until id: SaveProfileButton is visible  (zz-e10-05.yaml:31)
+  28.868s   drag 1: (160, 487) -> (160, 173); target not on screen yet, 7 texts seen
+  29.054s   in view after 1 swipes, 393 ms: View #SaveProfileButton [85,452][235,512]
+  29.054s ✓ Scroll DOWN until id: SaveProfileButton is visible  393 ms
+  29.054s ▶ Tap on id: SaveProfileButton  (zz-e10-05.yaml:33)
+  29.054s   found id: SaveProfileButton: View #SaveProfileButton [85,452][235,512]
+  29.127s   found id: SaveProfileButton: View #SaveProfileButton [85,452][235,512]
+  29.240s   tap at (160, 482): the screen changed (sent in 9 ms, waited 81 ms)
+  29.240s ✓ Tap on id: SaveProfileButton  185 ms
+  29.240s ▶ Assert that id: SaveProfileButton is not visible  (zz-e10-05.yaml:34)
+  29.359s   gone: id: SaveProfileButton (checked on a settled screen, 119 ms)
+  29.360s ✓ Assert that id: SaveProfileButton is not visible  119 ms
+  29.360s ▶ Scroll UP until "Grace", id: ProfileFirstName is visible  (zz-e10-05.yaml:35)
+  29.402s ✓ Scroll UP until "Grace", id: ProfileFirstName is visible  42 ms
+  29.402s ▶ Stop app "org.greenstand.android.TreeTracker.debug"  (zz-e10-05.yaml:39)
+  29.983s ✓ Stop app "org.greenstand.android.TreeTracker.debug"  581 ms
+  29.983s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (zz-e10-05.yaml:40)
+  33.720s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  3736 ms
+  33.720s ▶ Wait until id: TrackButton is visible  (zz-e10-05.yaml:41)
+  34.815s   snapshot history: screen context changed; discarding 1 snapshots
+  36.350s   no change reported by the device for 1.5s while looking for id: TrackButton: reading the screen again
+  37.527s   snapshot history: screen context changed; discarding 1 snapshots
+  37.571s   found id: TrackButton: View #TrackButton [20,473][300,606], after 3851 ms and 3 reads
+  37.571s ✓ Wait until id: TrackButton is visible  3851 ms
+  37.571s ▶ Tap on id: SettingsButton  (zz-e10-05.yaml:44)
+  37.571s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  37.673s   waited 102 ms for a still screen
+  37.745s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  37.800s   tap at (39, 68): the screen changed (sent in 26 ms, waited 9 ms)
+  37.800s ✓ Tap on id: SettingsButton  228 ms
+  37.800s ▶ Tap on id: SettingsProfile  (zz-e10-05.yaml:45)
+  37.961s   waited 161 ms for the last action's change to settle
+  38.378s   snapshot history: screen context changed; discarding 1 snapshots
+  38.378s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  38.522s   waited 144 ms for a still screen
+  38.548s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  38.845s   tap at (160, 156): the screen changed (sent in 16 ms, waited 269 ms)
+  38.845s ✓ Tap on id: SettingsProfile  1045 ms
+  38.845s ▶ Tap on id: UserButton_5551230001  (zz-e10-05.yaml:46)
+  38.978s   waited 132 ms for the last action's change to settle
+  39.283s   snapshot history: screen context changed; discarding 1 snapshots
+  40.106s   snapshot history: screen context changed; discarding 1 snapshots
+  40.107s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312], after 1128 ms and 2 reads
+  40.123s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  40.199s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  40.264s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  40.585s   tap at (84, 177): the screen changed (sent in 19 ms, waited 249 ms)
+  40.585s ✓ Tap on id: UserButton_5551230001  1740 ms
+  40.585s ▶ Tap on id: ArrowForwardButton  (zz-e10-05.yaml:47)
+  40.728s   waited 142 ms for the last action's change to settle
+  40.760s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  40.834s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  40.902s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  41.054s   tap at (264, 572): the screen changed (sent in 7 ms, waited 132 ms)
+  41.054s ✓ Tap on id: ArrowForwardButton  468 ms
+  41.054s ▶ Scroll DOWN until "Grace", id: ProfileFirstName is visible  (zz-e10-05.yaml:48)
+  41.255s   waited 200 ms for the last action's change to settle
+  41.386s   snapshot history: screen context changed; discarding 2 snapshots
+  41.386s   it sits flush with the edge of its list: it may be cut off there; bringing it in
+  41.386s   the screen changed after the read the scroll was decided on: reading it again before the first swipe
+  41.646s   drag 1: (160, 320) -> (160, 120); target listed but 100% visible
+  41.783s   in view after 1 swipes, 528 ms: TextView "Grace" #ProfileFirstName [16,349][83,378]
+  41.783s ✓ Scroll DOWN until "Grace", id: ProfileFirstName is visible  729 ms
+  41.783s ▶ Scroll DOWN until id: ProfileLastName is visible  (zz-e10-05.yaml:50)
+  41.838s ✓ Scroll DOWN until id: ProfileLastName is visible  54 ms
+  41.838s ▶ Assert that "Hopper", id: ProfileLastName is visible  (zz-e10-05.yaml:52)
+  41.855s   found "Hopper", id: ProfileLastName: TextView "Hopper" #ProfileLastName [16,417][105,446]
+  41.855s ✓ Assert that "Hopper", id: ProfileLastName is visible  17 ms
+  41.855s ▶ Scroll DOWN until id: ProfileWallet is visible  (zz-e10-05.yaml:53)
+  41.876s ✓ Scroll DOWN until id: ProfileWallet is visible  20 ms
+  41.876s ▶ Assert that "5551230001", id: ProfileWallet is visible  (zz-e10-05.yaml:55)
+  41.893s   found "5551230001", id: ProfileWallet: TextView "5551230001" #ProfileWallet [16,477][158,506]
+  41.894s ✓ Assert that "5551230001", id: ProfileWallet is visible  18 ms
+  41.894s PASSED in 41.894s
