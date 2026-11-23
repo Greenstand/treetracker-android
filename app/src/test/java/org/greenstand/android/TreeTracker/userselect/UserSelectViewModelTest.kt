@@ -82,7 +82,6 @@ class UserSelectViewModelTest {
         MockKAnnotations.init(this)
         mockkObject(CaptureSetupScopeManager)
         every { CaptureSetupScopeManager.open() } just Runs
-        // open() is stubbed, so report the scope as open to match getData() below.
         every { CaptureSetupScopeManager.isOpen } returns true
         captureSetupData = mockk(relaxed = true)
         every { CaptureSetupScopeManager.getData() } returns captureSetupData
@@ -94,7 +93,6 @@ class UserSelectViewModelTest {
         unmockkObject(CaptureSetupScopeManager)
     }
 
-    /** The delete succeeded: the admin request is either still queued or already sent. */
     private fun assertDeleted(viewModel: UserSelectViewModel) {
         val state = viewModel.state.value.deleteProfileState
         assertTrue(
@@ -273,14 +271,12 @@ class UserSelectViewModelTest {
     @Test
     fun `GIVEN a user selected for deletion WHEN delete succeeds THEN the deleted user is no longer the current user`() =
         runTest {
-            // Record every current-user id written to Preferences, and keep the capture-setup user in a real holder.
             val currentUserIds = mutableListOf<Long?>()
             every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
             val setupData = CaptureSetupData(mockk(relaxed = true))
             every { CaptureSetupScopeManager.getData() } returns setupData
             coEvery { userRepo.deleteUser("0712345678") } returns true
             val viewModel = createViewModel()
-            // DeleteProfileScreen sends SelectUser for the user picked for deletion, then DeleteUser.
             viewModel.handleAction(UserSelectAction.SelectUser(planter))
 
             viewModel.handleAction(UserSelectAction.DeleteUser)
@@ -342,7 +338,6 @@ class UserSelectViewModelTest {
             val currentUserIds = mutableListOf<Long?>()
             every { preferences.setUserId(captureNullable(currentUserIds)) } just Runs
             coEvery { userRepo.deleteUser("0712345678") } coAnswers {
-                // Something closes the capture setup scope while the delete is suspended.
                 every { CaptureSetupScopeManager.isOpen } returns false
                 every { CaptureSetupScopeManager.getData() } throws IllegalStateException("CaptureSetupScope not open")
                 true

@@ -86,7 +86,6 @@ class UserSelectViewModel(
     private val locationDataCapturer: LocationDataCapturer,
     private val prefs: Preferences,
 ) : BaseViewModel<UserSelectState, UserSelectAction>(UserSelectState()) {
-    // The user SelectUser last made the current user, so deleting them can clear it again.
     private var currentUserId: Long? = null
 
     init {
@@ -175,15 +174,11 @@ class UserSelectViewModel(
         }
     }
 
-    /** A deleted user must not stay the current user that SelectUser set. */
     private fun clearCurrentUser(deletedUser: User) {
-        // Only clear the id this ViewModel set. Today only DeleteProfileScreen deletes, and it
-        // always sends SelectUser first, so this is a defensive check.
         if (currentUserId == deletedUser.id) {
             prefs.setUserId(null)
             currentUserId = null
         }
-        // The delete suspended, so the setup scope may have closed since; getData() would throw.
         if (!CaptureSetupScopeManager.isOpen) return
         val setupData = CaptureSetupScopeManager.getData()
         if (setupData.user?.id == deletedUser.id) {
