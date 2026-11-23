@@ -21,13 +21,15 @@ next person who opens the app as the previous power user.
 `WHEN logout before the power user has loaded THEN the power-user flag is still cleared`.
 The `getPowerUser()` mock suspends on a `CompletableDeferred`, so `LogoutConfirmed` runs while
 `state.powerUser` is still `null`. The test then lets the load finish and asserts that
-`setPowerUserStatus(id, false)` was called. A unit test is enough because the race is entirely in
+`setPowerUserStatus(id, false)` was called. A unit test is enough because the race is in
 the ViewModel. An e2e flow can't reliably tap Logout inside the few milliseconds the Room query takes.
 
 ## Fix (#1436)
 
 In `Logout`, read the power user from the repository when logging out instead of using the cached
-state.## Review follow-up: not fixed here
+state.
+
+## Review follow-up: not fixed here
 
 An independent review found a second way to lose the write. It was already on master, and it is not
 the bug this task fixes. `LogoutConfirmed` launches the clear in `viewModelScope`, then navigates with
@@ -44,7 +46,7 @@ change"). What was tried:
    Dashboard as the previous power user (`SplashScreenViewModel.isInitialSetupRequired()` is
    `getPowerUser() == null`) instead of the language picker.
 2. Reachable offline: yes, sign-up and logout need no server.
-3. Hit reliably by a driven UI: no. Logout only clears the cached `state.powerUser`, so the bug needs
+3. Hit reliably by a driven UI: no. Logout used to clear the flag only through the cached `state.powerUser`, so the bug needs
    Logout to be confirmed (two taps: Logout, then the dialog's OK) before the `getPowerUser()` Room
    query that starts when Settings opens returns, which takes milliseconds. Nothing reachable from
    Settings changes who the power user is, so the cache can't go stale any other way.

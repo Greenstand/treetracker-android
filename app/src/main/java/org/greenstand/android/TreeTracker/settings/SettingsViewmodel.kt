@@ -75,7 +75,6 @@ class SettingsViewModel(
             }
             is SettingsAction.Logout -> {
                 viewModelScope.launch {
-                    // Read from the repo, not state: the init load may not have finished yet.
                     userRepo.getPowerUser()?.let {
                         userRepo.setPowerUserStatus(it.id, false)
                     }

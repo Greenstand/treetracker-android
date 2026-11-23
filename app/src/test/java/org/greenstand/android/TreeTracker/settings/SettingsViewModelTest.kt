@@ -374,8 +374,6 @@ class SettingsViewModelTest {
     @Test
     fun `WHEN logout before the power user has loaded THEN the power-user flag is still cleared`() =
         runTest {
-            // getPowerUser() suspends until we release it, so the user taps Logout while the
-            // init load is still in flight and state.powerUser is still null.
             val powerUser = FakeFileGenerator.fakeUsers.first()
             val loaded = CompletableDeferred<User?>()
             coEvery { userRepo.getPowerUser() } coAnswers { loaded.await() }
