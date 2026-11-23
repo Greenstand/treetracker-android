@@ -1,0 +1,59 @@
+ACCESSIBILITY MANAGER (dumpsys accessibility)
+
+currentUserId=0
+hasMagnificationConnection=false
+Magnifier on display#0
+    MagnificationConfig[mode: 1, activated: false, scale: 1.0, centerX: 160.0, centerY: 320.0] 
+    Magnification region=SkRegion((0,0,320,640))
+    IdOfLastServiceToMagnify=-1
+    SupportWindowMagnification=true
+    WindowMagnificationConnectionState=DISCONNECTED
+User state[
+     attributes:{id=0, touchExplorationEnabled=false, serviceHandlesDoubleTap=false, requestMultiFingerGestures=false, requestTwoFingerPassthrough=false, sendMotionEventsEnabledfalse, displayMagnificationEnabled=false, autoclickEnabled=false, nonInteractiveUiTimeout=0, interactiveUiTimeout=0, installedServiceCount=4, magnificationModes={0=1}, magnificationCapabilities=3, audioDescriptionByDefaultEnabled=false, magnificationFollowTypingEnabled=true, alwaysOnMagnificationEnabled=true}
+     shortcut key:{}
+     button:{}
+     button target:{null}
+     qs shortcut targets:{}
+     a11y tiles in QS panel:{}
+     Bound services:{Service[label=Test Buddy, feedbackType[FEEDBACK_GENERIC], capabilities=1, eventTypes=TYPES_ALL_MASK, notificationTimeout=1000, requestA11yBtn=false]}
+     Enabled services:{{dev.testbuddy.agent/dev.testbuddy.agent.NoopService}}
+     Binding services:{}
+     Crashed services:{}
+     Client list info:{
+          Client list callbacks: 10
+          Client list killed: false
+          Client list broadcasts count: -1
+          Registered clients:{
+[dev.testbuddy.agent][com.google.android.apps.nexuslauncher][com.google.android.apps.messaging][com.google.android.as][com.google.android.apps.wellbeing][com.google.android.tts][com.google.android.googlequicksearchbox][com.google.android.inputmethod.latin][com.google.android.googlequicksearchbox][org.greenstand.android.TreeTracker.debug]}]
+Ui Automation[eventTypes=TYPES_ALL_MASK, notificationTimeout=0]
+Global Info [ Top focused display Id = 0
+     Active Window Id = 29
+     Top Focused Window Id = 29
+     Accessibility Focused Window Id = -1 ]
+
+Display[0] : 
+A11yWindow[AccessibilityWindowInfo[title=null, displayId=0, id=13, taskId=-1, type=TYPE_SYSTEM, layer=1, region=SkRegion((0,0,320,24)), bounds=Rect(0, 0 - 320, 24), focused=false, active=false, pictureInPicture=false, transitionTime=57950, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=null, displayId=0, taskId=-1, type=2000, layer=0, token=android.os.BinderProxy@5d5637b, region=SkRegion((0,0,320,24)), bounds=Rect(0, 0 - 320, 24), parent=null, focused=false, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, 0.0][0.0, 1.0, 0.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>, locales=[en_US]]]
+,
+A11yWindow[AccessibilityWindowInfo[title=Tree Tracker(debug), displayId=0, id=29, taskId=10, type=TYPE_APPLICATION, layer=0, region=SkRegion((0,0,320,640)), bounds=Rect(0, 0 - 320, 640), focused=true, active=true, pictureInPicture=false, transitionTime=98310, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=Tree Tracker(debug), displayId=0, taskId=10, type=1, layer=1, token=android.os.BinderProxy@1462789, region=SkRegion((0,0,320,640)), bounds=Rect(0, 0 - 320, 640), parent=null, focused=true, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, 0.0][0.0, 1.0, 0.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>, locales=[en,en_US]]]
+
+
+Window attributes:[{10=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[en_US]}, 11=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[en_US]}, 12=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[en_US]}, 13=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[en_US]}, 14=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[en_US]}, 15=AccessibilityWindowAttributes{mAccessibilityWindowTitle=Dial keyboardmLocales=[en_US]}, 17=AccessibilityWindowAttributes{mAccessibilityWindowTitle=HomemLocales=[en_US]}, 18=AccessibilityWindowAttributes{mAccessibilityWindowTitle=Navigation barmLocales=[en_US]}, 29=AccessibilityWindowAttributes{mAccessibilityWindowTitle=Tree Tracker(debug)mLocales=[en,en_US]}}]
+Global client list info:{
+    Client list callbacks: 7
+    Client list killed: false
+    Client list broadcasts count: -1
+    Registered clients:{
+[com.google.android.googlesdksetup][com.google.android.settings.intelligence][com.android.server.telecom, com.android.keychain, com.android.providers.settings, com.android.emulator.multidisplay, com.android.location.fused, com.android.settings, com.android.dynsystem, com.android.localtransport, com.android.DeviceAsWebcam, android, com.android.inputdevices][com.google.android.documentsui][com.android.server.telecom, com.android.keychain, com.android.providers.settings, com.android.emulator.multidisplay, com.android.location.fused, com.android.settings, com.android.dynsystem, com.android.localtransport, com.android.DeviceAsWebcam, android, com.android.inputdevices][com.google.android.permissioncontroller][com.android.systemui]
+
+Proxy manager state:
+    Number of proxy connections: 0
+    Registered proxy connections:
+Accessibility Display Listener:
+    SystemUI uid: 10181
+    1 valid display: 0
+dev.testbuddy.agent/.NoopService
+ 05:38:50 up 1 min,  0 users,  load average: 14.52, 6.08, 2.23
+u0_a210       3005   370   15991512  89836 0                   0 S dev.testbuddy.agent
+shell         3661     1   15568844 125780 do_epoll_wait       0 S tb-agent
