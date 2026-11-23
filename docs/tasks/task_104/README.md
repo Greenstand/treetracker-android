@@ -79,3 +79,42 @@ following the wrong state forward on master's app:
 Proof instead: the `PermissionRequestUiTest` tests fail on the test-only commit dba6c22
 ("... left capture without ending the capture session") and pass from the fix (7bd69c6) on.
 The comment-only edits to the two camera flows were dropped, so CI doesn't present them as proof.
+
+## Notes moved from code comments
+
+The PR's code carries no comments; what they said:
+
+- `leaveToSetup` pops capture back to the screen under it (the last setup step) and, only if the
+  pop happened, ends the session like `goToDashboard`, but keeps the setup scope open: the setup
+  screens are still on the back stack and Next there starts a new session (#1421).
+- In `PermissionRequest`, every dialog that leaves capture ends the capture session. When the
+  capture scope is already closed (e.g. a first tap on another permission dialog closed it) there
+  is no session to end, so the dialog just pops.
+- `PermissionRequestUiTest` runs each test inside a capture session (setup and capture scopes open,
+  as after Next on the last setup step). Robolectric only shows a rationale when a test sets
+  `ShadowPackageManager.setShouldShowRequestPermissionRationale`. The session-end check covers the
+  session, step counter and orientation sensor; GPS stops on the main looper, which Robolectric
+  doesn't run there.
+- `CaptureFlowNavigationControllerTest`: the controller ends sessions on its own IO scope and
+  finishes on `Dispatchers.Main`. `tearDown` waits for every session end a test started (counted
+  from `discardPendingTree()` to `turnOffTreeCaptureMode()`) before `MainCoroutineRule` resets
+  Main, and fails if one is still running. The failing-`endSession` test balances the count itself
+  because that session end never reaches Main.
+
+## Second review (23 Nov, head 873ffef)
+
+A fresh subagent, given only the diff and the issue, found no bug in what the PR claims to fix.
+
+- Fixed: `tearDown` now fails when a session end is still running instead of giving up silently.
+- Not fixed, outside this bug or not reproducible:
+  - Ending the old session runs asynchronously; a Next on Add org after the ~300 ms double-tap
+    guard, while that DB write is still running, could have its new session id cleared.
+    `goToUserSelect` has the same race on master. The fix belongs in `SessionTracker`
+    (serialize start and end).
+  - If Next re-opens capture before the old capture entry finishes its 300 ms fade-out and is
+    disposed, Navigation 3 could reuse the old `TreeCaptureViewModel`, whose factory is what
+    opens the capture scope. Next can't land before ~300 ms plus a DB write, so the window is at
+    most a frame; Robolectric can't reproduce Navigation 3's transition timing, so there is no
+    failing test to write. A defensive fix would open the scope when the capture screen shows.
+  - No separate UI test for location "open settings" Cancel and location rationale OK: they use
+    the same `leaveCapture` path as the tested dialogs.

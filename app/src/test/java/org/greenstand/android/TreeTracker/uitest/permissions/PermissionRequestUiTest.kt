@@ -72,11 +72,6 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Tests for [PermissionRequest] with permissions granted or denied through Robolectric.
- * Robolectric never asks to show a rationale unless a test sets it on the package manager
- * (see [showCameraRationale]).
- *
- * [PermissionRequest] runs on the capture screen, so each test starts inside a capture session:
- * the setup and capture scopes are open, like after Next on the last setup step.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 class PermissionRequestUiTest : ComposeUiTest() {
@@ -106,7 +101,6 @@ class PermissionRequestUiTest : ComposeUiTest() {
         stopKoin()
     }
 
-    /** Opens the setup and capture scopes as finishing setup and opening capture does. */
     private fun startCaptureSession() {
         CaptureFlowScopeManager.close()
         CaptureSetupScopeManager.close()
@@ -137,7 +131,6 @@ class PermissionRequestUiTest : ComposeUiTest() {
         CaptureFlowScopeManager.open()
     }
 
-    /** Camera denied once: Android asks to explain why before asking again. */
     private fun showCameraRationale() {
         shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         shadowOf(application.packageManager).setShouldShowRequestPermissionRationale(Manifest.permission.CAMERA, true)
@@ -148,12 +141,6 @@ class PermissionRequestUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
     }
 
-    /**
-     * Asserts that leaving capture from a permission dialog ended the capture session: the
-     * session, step counter and orientation sensor are stopped (GPS stops on the main looper,
-     * which Robolectric doesn't run here) and the capture scope is closed, while the setup scope
-     * stays open because the setup screens are still on the back stack (#1421).
-     */
     private fun assertCaptureSessionEnded(dialog: String) {
         assertTrue(
             "$dialog left capture without ending the capture session (SessionTracker.endSession() was never called)",
@@ -257,8 +244,6 @@ class PermissionRequestUiTest : ComposeUiTest() {
         composeTestRule.onNodeWithText(string(R.string.accept_location_permission_header)).assertDoesNotExist()
     }
 
-    // --- Leaving capture from a permission dialog ends the capture session ---
-
     @Test
     fun `cancelling the camera rationale ends the capture session`() {
         backStack.add(1, AddOrgRoute)
@@ -329,7 +314,6 @@ class PermissionRequestUiTest : ComposeUiTest() {
 
     @Test
     fun `declining the open settings dialog without a capture scope still leaves the screen`() {
-        // E.g. the scope was already closed by a first tap on another permission dialog.
         CaptureFlowScopeManager.close()
         shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         render()

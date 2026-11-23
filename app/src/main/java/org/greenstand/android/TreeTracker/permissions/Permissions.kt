@@ -56,8 +56,6 @@ fun PermissionRequest(
     viewModel: PermissionViewModel = viewModel(factory = LocalViewModelFactory.current),
 ) {
     val navigator = LocalNavigator.current
-    // The dialogs below leave capture, so they end the capture session too. Without a capture
-    // scope (already closed, e.g. by a second tap) there is no session to end: just pop.
     val leaveCapture: () -> Unit = {
         if (CaptureFlowScopeManager.isOpen) {
             CaptureFlowScopeManager.nav.leaveToSetup(navigator)
