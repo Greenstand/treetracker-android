@@ -10,7 +10,7 @@ This page consolidates legacy "Android pre-release testing" and "Tree Tracker te
 
 ## Publishing A Build
 
-Run the **Deploy to Firebase Beta** workflow (`.github/workflows/deploy-firebase-beta.yml`) from
+Run the **Deploy to Firebase** workflow (`.github/workflows/deploy-firebase-beta.yml`) from
 the Actions tab. Its inputs:
 
 - **Branch**: the branch to build from.

@@ -2,7 +2,7 @@
 
 ## Problem
 
-The "Deploy to Firebase Beta" workflow could only build and upload the `beta` build type.
+The "Deploy to Firebase Beta" workflow (now named "Deploy to Firebase") could only build and upload the `beta` build type.
 
 ## Change
 
